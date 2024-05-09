@@ -4,7 +4,7 @@ import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
 import { useEffect, useRef, useState } from 'react';
 import { TokenPickerMode, getWindowDimensions } from '../../tokenpicker';
-import type { ISearchBox, PivotItem } from '@fluentui/react';
+import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint, SearchBox } from '@fluentui/react';
 import { TokenPickerPivot } from '../../tokenpicker/tokenpickerpivot';
 import { useIntl } from 'react-intl';
@@ -13,6 +13,7 @@ import { TokenPickerFooter } from '../../tokenpicker/tokenpickerfooter';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
 import type { NodeKey } from 'lexical';
+import { useBoolean } from '@fluentui/react-hooks';
 
 export interface ConditionExpressionProps {
   editorId: string;
@@ -25,6 +26,8 @@ export interface ConditionExpressionProps {
 }
 
 export function ConditionExpression({
+  editorId,
+  labelId,
   filteredTokenGroup,
   tokenGroup,
   expressionGroup,
@@ -39,6 +42,7 @@ export function ConditionExpression({
   const [_expressionEditorError, setExpressionEditorError] = useState<string>('');
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [expressionToBeUpdated, _setExpressionToBeUpdated] = useState<NodeKey | null>(null);
+  const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
 
   const searchBoxRef = useRef<ISearchBox | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -84,9 +88,20 @@ export function ConditionExpression({
     return false;
   };
 
+  const calloutStyles: Partial<ICalloutContentStyles> = {
+    root: {
+      width: '500px',
+      maxWidth: '500px',
+      maxHeight: '470px !important',
+    },
+    calloutMain: {
+      overflow: 'visible',
+    },
+  };
+
   return (
     <>
-      <div id="conditionToken">
+      <div id={`condition-expression-${editorId}`} onClick={toggleIsCalloutVisible}>
         <ExpressionEditor
           initialValue={expression.value}
           editorRef={expressionEditorRef}
@@ -97,59 +112,63 @@ export function ConditionExpression({
           currentHeight={expressionEditorCurrentHeight}
           setCurrentHeight={setExpressionEditorCurrentHeight}
           setExpressionEditorError={setExpressionEditorError}
-          hideUTFExpressions={undefined}
+          hideUTFExpressions={false}
         />
       </div>
-
-      <Callout
-        role="dialog"
-        ariaLabelledBy={'labelId'}
-        gapSpace={10}
-        target={'#conditionToken'}
-        isBeakVisible={false}
-        directionalHint={DirectionalHint.bottomCenter}
-        onRestoreFocus={() => {
-          return;
-        }}
-        layerProps={{
-          hostId: 'msla-layer-host',
-        }}
-      >
-        <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={false} />
-        <div className="msla-token-picker-search-container">
-          <SearchBox
-            className="msla-token-picker-search"
-            componentRef={(e) => {
-              searchBoxRef.current = e;
-            }}
-            placeholder={tokenPickerPlaceHolderText}
-            onChange={(_, newValue) => {
-              setSearchQuery(newValue ?? '');
-            }}
-            data-automation-id="msla-token-picker-search"
+      {isCalloutVisible && (
+        <Callout
+          role="dialog"
+          ariaLabelledBy={labelId}
+          target={`#condition-expression-${editorId}`}
+          isBeakVisible={false}
+          directionalHint={DirectionalHint.bottomCenter}
+          onRestoreFocus={() => {
+            return;
+          }}
+          layerProps={{
+            hostId: 'msla-layer-host',
+          }}
+          onDismiss={() => {
+            toggleIsCalloutVisible();
+          }}
+          styles={calloutStyles}
+        >
+          <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={false} />
+          <div className="msla-token-picker-search-container">
+            <SearchBox
+              className="msla-token-picker-search"
+              componentRef={(e) => {
+                searchBoxRef.current = e;
+              }}
+              placeholder={tokenPickerPlaceHolderText}
+              onChange={(_, newValue) => {
+                setSearchQuery(newValue ?? '');
+              }}
+              data-automation-id="msla-token-picker-search"
+            />
+          </div>
+          <TokenPickerSection
+            tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
+            expressionGroup={expressionGroup ?? []}
+            expressionEditorRef={expressionEditorRef}
+            selectedKey={selectedKey}
+            searchQuery={searchQuery}
+            fullScreen={false}
+            expression={expression}
+            setExpression={setExpression}
+            getValueSegmentFromToken={getValueSegmentFromToken}
+            noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
+            expressionEditorCurrentHeight={expressionEditorCurrentHeight}
           />
-        </div>
-        <TokenPickerSection
-          tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
-          expressionGroup={expressionGroup ?? []}
-          expressionEditorRef={expressionEditorRef}
-          selectedKey={selectedKey}
-          searchQuery={searchQuery}
-          fullScreen={false}
-          expression={expression}
-          setExpression={setExpression}
-          getValueSegmentFromToken={getValueSegmentFromToken}
-          noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
-          expressionEditorCurrentHeight={expressionEditorCurrentHeight}
-        />
-        <TokenPickerFooter
-          tokenGroup={tokenGroup ?? []}
-          expression={expression}
-          expressionToBeUpdated={expressionToBeUpdated}
-          getValueSegmentFromToken={getValueSegmentFromToken}
-          setExpressionEditorError={setExpressionEditorError}
-        />
-      </Callout>
+          <TokenPickerFooter
+            tokenGroup={tokenGroup ?? []}
+            expression={expression}
+            expressionToBeUpdated={expressionToBeUpdated}
+            getValueSegmentFromToken={getValueSegmentFromToken}
+            setExpressionEditorError={setExpressionEditorError}
+          />
+        </Callout>
+      )}
     </>
   );
 }

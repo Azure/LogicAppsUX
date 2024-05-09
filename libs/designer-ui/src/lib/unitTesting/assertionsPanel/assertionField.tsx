@@ -32,10 +32,12 @@ const EXPRESSION_KEY = 'expression';
 export interface ParameterFieldDetails {
   description: string;
   name: string;
+  expressionKey: string;
   expression: string;
 }
 
 export interface AssertionFieldProps {
+  key: string;
   name: string;
   description: string;
   expression: Record<string, any>;
@@ -50,6 +52,7 @@ export interface AssertionFieldProps {
 }
 
 export const AssertionField = ({
+  key,
   name,
   description,
   setName,
@@ -66,6 +69,7 @@ export const AssertionField = ({
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
     name: `${name}-${NAME_KEY}`,
+    expressionKey: `${key}-${EXPRESSION_KEY}`,
     expression: `${name}-${EXPRESSION_KEY}`,
   };
 
@@ -121,7 +125,7 @@ export const AssertionField = ({
   };
 
   const conditionExpression = getConditionExpression(
-    parameterDetails.expression,
+    parameterDetails.expressionKey,
     parameterDetails.expression,
     constants.SWAGGER.TYPE.ANY,
     onExpressionChange

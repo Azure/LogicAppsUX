@@ -39,15 +39,17 @@ export type GetConditionExpressionHandler = (
 ) => JSX.Element;
 
 export interface AssertionProps {
+  key: string;
   assertion: AssertionDefintion;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   getConditionExpression: GetConditionExpressionHandler;
-  validationErrors?: Record<string, string | undefined>;
   isInverted: boolean;
+  validationErrors?: Record<string, string | undefined>;
 }
 
 export function Assertion({
+  key,
   assertion,
   onAssertionDelete,
   getConditionExpression,
@@ -100,6 +102,7 @@ export function Assertion({
       </div>
       <div className="msla-workflow-assertion-content">
         <AssertionField
+          key={key}
           name={name}
           description={description}
           expression={expression}
