@@ -37,7 +37,7 @@ export function ConditionExpression({
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
-  const [expressionEditorDragDistance, _setExpressionEditorDragDistance] = useState(0);
+  const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [_expressionEditorError, setExpressionEditorError] = useState<string>('');
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -79,6 +79,12 @@ export function ConditionExpression({
     setExpression(e);
   };
 
+  const handleExpressionEditorMoveDistance = (e: any) => {
+    if (isDraggingExpressionEditor) {
+      setExpressionEditorDragDistance(e.clientY);
+    }
+  };
+
   const isDynamicContentAvailable = (tokenGroup: TokenGroup[]): boolean => {
     for (const tg of tokenGroup) {
       if (tg.tokens.length > 0) {
@@ -101,7 +107,7 @@ export function ConditionExpression({
 
   return (
     <>
-      <div id={`condition-expression-${editorId}`} onClick={toggleIsCalloutVisible}>
+      <div id={`condition-expression-${editorId}`} onMouseMove={handleExpressionEditorMoveDistance} onClick={toggleIsCalloutVisible}>
         <ExpressionEditor
           initialValue={expression.value}
           editorRef={expressionEditorRef}
