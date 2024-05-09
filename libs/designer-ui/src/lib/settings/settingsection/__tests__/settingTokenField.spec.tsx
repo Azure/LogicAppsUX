@@ -37,6 +37,7 @@ describe('ui/settings/settingTokenField', () => {
         },
       ],
       tokenEditor: true,
+      tokenMapping: {},
       onCastParameter: vi.fn(),
       getTokenPicker: vi.fn(),
     };
@@ -53,7 +54,7 @@ describe('ui/settings/settingTokenField', () => {
 
     const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
     expect(tokenField[0].type).toBe(TokenField);
-    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
+    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining(props.label) });
   });
 
   it('custom editor: should render label and custom token field', () => {
@@ -68,6 +69,7 @@ describe('ui/settings/settingTokenField', () => {
         },
       ],
       tokenEditor: true,
+      tokenMapping: {},
       onCastParameter: vi.fn(),
       getTokenPicker: vi.fn(),
       editor: 'internal-custom-editor',
@@ -88,7 +90,7 @@ describe('ui/settings/settingTokenField', () => {
 
     const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
     expect(tokenField[0].type).toBe(CustomTokenField);
-    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
+    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining(props.label) });
   });
 
   it('custom editor: should support hiding label label', () => {
@@ -103,6 +105,7 @@ describe('ui/settings/settingTokenField', () => {
         },
       ],
       tokenEditor: true,
+      tokenMapping: {},
       onCastParameter: vi.fn(),
       getTokenPicker: vi.fn(),
       editor: 'internal-custom-editor',
@@ -121,6 +124,6 @@ describe('ui/settings/settingTokenField', () => {
 
     const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
     expect(tokenField[0].type).toBe(CustomTokenField);
-    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining('msla-editor-label') });
+    expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining(props.label) });
   });
 });

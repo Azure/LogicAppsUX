@@ -62,7 +62,7 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const labelId = useId('msla-editor-label');
+  const labelId = useId(props.label);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
@@ -326,6 +326,7 @@ export const TokenField = ({
     case constants.PARAMETER.EDITOR.HTML:
       return (
         <HTMLEditor
+          labelId={labelId}
           initialValue={value}
           placeholder={placeholder}
           basePlugins={{ tokens: showTokens }}
