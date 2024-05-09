@@ -1,9 +1,5 @@
 import constants from '../../constants';
-import type { ValueSegment } from '../../editor';
-import type { ChangeState } from '../../editor/base';
-import { TokenField } from '../../settings/settingsection/settingTokenField';
-import type { TokenPickerMode } from '../../tokenpicker';
-import type { GetAssertionTokenPickerHandler } from './assertion';
+import type { GetConditionExpressionHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
 import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -48,10 +44,8 @@ export interface AssertionFieldProps {
   setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   isEditable: boolean;
   isExpanded: boolean;
-  getTokenPicker: GetAssertionTokenPickerHandler;
+  getConditionExpression: GetConditionExpressionHandler;
   handleUpdate: (newAssertion: Assertion) => void;
-  tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString: (value: string) => ValueSegment[];
   validationErrors?: Record<string, string | undefined>;
 }
 
@@ -60,14 +54,11 @@ export const AssertionField = ({
   description,
   setName,
   setDescription,
-  setExpression,
   expression,
   isEditable,
   isExpanded,
-  getTokenPicker,
+  getConditionExpression,
   handleUpdate,
-  tokenMapping,
-  loadParameterValueFromString,
   validationErrors,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
@@ -124,10 +115,17 @@ export const AssertionField = ({
     handleUpdate({ name: newValue ?? '', description, expression });
   };
 
-  const onExpressionChange = (newState: ChangeState): void => {
-    setExpression(newState.viewModel);
+  const onExpressionChange = (newState: any): void => {
+    //setExpression(newState.viewModel);
     handleUpdate({ name, description, expression: newState.viewModel });
   };
+
+  const conditionExpression = getConditionExpression(
+    parameterDetails.expression,
+    parameterDetails.expression,
+    constants.SWAGGER.TYPE.ANY,
+    onExpressionChange
+  );
 
   return (
     <>
@@ -185,26 +183,7 @@ export const AssertionField = ({
         <div className="msla-assertion-condition-editor">
           {isExpanded ? (
             <>
-              <TokenField
-                editor="condition"
-                editorViewModel={expression ?? {}}
-                readOnly={!isEditable}
-                label="Condition"
-                labelId="condition-label"
-                tokenEditor={true}
-                value={[]}
-                tokenMapping={tokenMapping}
-                loadParameterValueFromString={loadParameterValueFromString}
-                getTokenPicker={(
-                  editorId: string,
-                  labelId: string,
-                  tokenPickerMode?: TokenPickerMode,
-                  editorType?: string,
-                  tokenClickedCallback?: (token: ValueSegment) => void
-                ) => getTokenPicker(editorId, labelId, editorType ?? constants.SWAGGER.TYPE.ANY, tokenPickerMode, tokenClickedCallback)}
-                onCastParameter={() => ''}
-                onValueChange={onExpressionChange}
-              />
+              {conditionExpression}
               {!isNullOrUndefined(validationErrors) && validationErrors[EXPRESSION_KEY] && (
                 <span className="msla-input-parameter-error" role="alert">
                   {validationErrors[EXPRESSION_KEY]}

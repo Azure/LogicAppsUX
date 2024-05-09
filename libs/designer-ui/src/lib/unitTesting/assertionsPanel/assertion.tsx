@@ -1,7 +1,5 @@
 import { TrafficLightDot } from '../../card/images/dynamicsvgs/trafficlightsvgs';
-import type { ValueSegment } from '../../editor';
 import type { EventHandler } from '../../eventhandler';
-import type { TokenPickerMode } from '../../tokenpicker';
 import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
@@ -33,21 +31,18 @@ export interface AssertionAddEvent {
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
 export type AssertionUpdateHandler = EventHandler<AssertionUpdateEvent>;
 export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
-export type GetAssertionTokenPickerHandler = (
+export type GetConditionExpressionHandler = (
   editorId: string,
   labelId: string,
   type: string,
-  tokenPickerMode?: TokenPickerMode,
-  tokenClickedCallback?: (token: ValueSegment) => void
+  onChange: (value: string) => void
 ) => JSX.Element;
 
 export interface AssertionProps {
   assertion: AssertionDefintion;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
-  getTokenPicker: GetAssertionTokenPickerHandler;
-  tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString: (value: string) => ValueSegment[];
+  getConditionExpression: GetConditionExpressionHandler;
   validationErrors?: Record<string, string | undefined>;
   isInverted: boolean;
 }
@@ -55,10 +50,8 @@ export interface AssertionProps {
 export function Assertion({
   assertion,
   onAssertionDelete,
-  getTokenPicker,
+  getConditionExpression,
   onAssertionUpdate,
-  tokenMapping,
-  loadParameterValueFromString,
   validationErrors,
   isInverted,
 }: AssertionProps): JSX.Element {
@@ -115,10 +108,8 @@ export function Assertion({
           setExpression={setExpression}
           isEditable={isEditable}
           isExpanded={expanded}
-          getTokenPicker={getTokenPicker}
+          getConditionExpression={getConditionExpression}
           handleUpdate={handleUpdate}
-          tokenMapping={tokenMapping}
-          loadParameterValueFromString={loadParameterValueFromString}
           validationErrors={validationErrors}
         />
       </div>
