@@ -1,6 +1,3 @@
-import chevronDownDark from './../../icons/dark/chevron-down.svg';
-import chevronDownLight from './../../icons/light/chevron-down.svg';
-import { useTheme } from '@fluentui/react';
 import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
 import { useOutsideClick } from '@microsoft/logic-apps-shared';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
@@ -32,7 +29,6 @@ export const DropDown = ({
   stopCloseOnClickSelf,
   editor,
 }: DropdownProps): JSX.Element => {
-  const { isInverted } = useTheme();
   const intl = useIntl();
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -82,12 +78,6 @@ export const DropDown = ({
     description: 'alt text for button icon',
   });
 
-  const altTextForChevronDown = intl.formatMessage({
-    defaultMessage: 'Alt text for down chevron',
-    id: '+Uvo/p',
-    description: 'Alt text for down chevron',
-  });
-
   return (
     <Popover
       closeOnScroll={true}
@@ -97,7 +87,7 @@ export const DropDown = ({
       open={showDropDown}
       positioning="below"
     >
-      <PopoverTrigger disableButtonEnhancement>
+      <PopoverTrigger disableButtonEnhancement={true}>
         <button
           onMouseDown={(e) => {
             e.preventDefault();
@@ -109,7 +99,6 @@ export const DropDown = ({
         >
           {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
           {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
-          <img className="chevron-down" src={isInverted ? chevronDownDark : chevronDownLight} alt={altTextForChevronDown} />
         </button>
       </PopoverTrigger>
       <PopoverSurface

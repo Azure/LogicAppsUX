@@ -1,3 +1,4 @@
+import { ToolbarButton } from '@fluentui/react-components';
 import constants from '../../../constants';
 import fontColorSvgDark from '../icons/dark/font-color.svg';
 import linkDark from '../icons/dark/link.svg';
@@ -217,7 +218,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
 
   return (
     <>
-      <button
+      <ToolbarButton
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
@@ -226,10 +227,9 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         title={isApple() ? boldTitleMac : boldTitleNonMac}
         aria-label={isApple() ? boldTitleMacAriaLabel : boldTitleNonMacAriaLabel}
         disabled={readonly}
-      >
-        <img className={'format'} src={isInverted ? boldDark : boldLight} alt={'bold icon'} />
-      </button>
-      <button
+        icon={<img className={'format'} src={isInverted ? boldDark : boldLight} alt={'bold icon'} />}
+      />
+      <ToolbarButton
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
@@ -238,10 +238,9 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         title={isApple() ? italicTitleMac : italicTitleNonMac}
         aria-label={isApple() ? italicTitleMacAriaLabel : italicTitleNonMacAriaLabel}
         disabled={readonly}
-      >
-        <img className={'format'} src={isInverted ? italicDark : italicLight} alt={'italic icon'} />
-      </button>
-      <button
+        icon={<img className={'format'} src={isInverted ? italicDark : italicLight} alt={'italic icon'} />}
+      />
+      <ToolbarButton
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
@@ -250,19 +249,8 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         title={isApple() ? underlineTitleMac : underlineTitleNonMac}
         aria-label={isApple() ? underlineTitleMacAriaLabel : underlineTitleNonMacAriaLabel}
         disabled={readonly}
-      >
-        <img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />
-      </button>
-      <button
-        onMouseDown={(e) => e.preventDefault()}
-        disabled={readonly}
-        onClick={insertLink}
-        className={`toolbar-item spaced ${isLink ? 'active' : ''}`}
-        aria-label={insertLinkLabel}
-        title={insertLinkLabel}
-      >
-        <img className={'format'} src={isInverted ? linkDark : linkLight} alt={'link icon'} />
-      </button>
+        icon={<img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />}
+      />
       <DropdownColorPicker
         editor={activeEditor}
         disabled={readonly}
@@ -282,6 +270,15 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         color={bgColor}
         onChange={onBgColorSelect}
         title="background color"
+      />
+      <ToolbarButton
+        onMouseDown={(e) => e.preventDefault()}
+        disabled={readonly}
+        onClick={insertLink}
+        className={`toolbar-item spaced ${isLink ? 'active' : ''}`}
+        aria-label={insertLinkLabel}
+        title={insertLinkLabel}
+        icon={<img className={'format'} src={isInverted ? linkDark : linkLight} alt={'link icon'} />}
       />
     </>
   );

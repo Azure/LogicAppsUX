@@ -1,3 +1,5 @@
+import chevronDownDark from '../icons/dark/chevron-down.svg';
+import chevronDownLight from '../icons/light/chevron-down.svg';
 import numberListSvgDark from '../icons/dark/list-ol.svg';
 import bulletListSvgDark from '../icons/dark/list-ul.svg';
 import h1SvgDark from '../icons/dark/text-h1.svg';
@@ -10,11 +12,10 @@ import h1SvgLight from '../icons/light/text-h1.svg';
 import h2SvgLight from '../icons/light/text-h2.svg';
 import h3SvgLight from '../icons/light/text-h3.svg';
 import paragraphSvgLight from '../icons/light/text-paragraph.svg';
-import { blockTypeToBlockName } from './Toolbar';
-import { DropDown } from './helper/Dropdown';
+import { blockTypeToBlockName } from './RichTextToolbar';
 import { dropDownActiveClass } from './helper/util';
 import { useTheme } from '@fluentui/react';
-import { MenuItem } from '@fluentui/react-components';
+import { MenuItem, Popover, PopoverSurface, PopoverTrigger, ToolbarButton } from '@fluentui/react-components';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from '@lexical/list';
 import { $createHeadingNode } from '@lexical/rich-text';
 import type { HeadingTagType } from '@lexical/rich-text';
@@ -23,6 +24,7 @@ import type { LexicalEditor } from 'lexical';
 import { $createParagraphNode, $isRangeSelection, $getSelection } from 'lexical';
 import { $isTableSelection } from '@lexical/table';
 import { useIntl } from 'react-intl';
+import { useState } from 'react';
 
 interface BlockFormatDropDownProps {
   blockType: keyof typeof blockTypeToBlockName;
@@ -33,6 +35,8 @@ interface BlockFormatDropDownProps {
 export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: BlockFormatDropDownProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const formatParagraph = () => {
     editor.update(() => {
@@ -79,56 +83,67 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
     numberListText: intl.formatMessage({ defaultMessage: 'Numbered List', id: 'YWOKlU', description: 'Numbered List text' }),
   };
 
+  const altTextForChevronDown = intl.formatMessage({
+    defaultMessage: 'Alt text for down chevron',
+    id: '+Uvo/p',
+    description: 'Alt text for down chevron',
+  });
+
   return (
-    <DropDown
-      disabled={disabled}
-      buttonClassName="toolbar-item block-controls"
-      buttonLabel={blockTypeToBlockName[blockType]}
-      buttonAriaLabel="Formatting options for text style"
-      editor={editor}
-    >
-      <MenuItem
-        className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'paragraph')}`}
-        icon={<img className="icon paragraph" src={isInverted ? paragraphSvgDark : paragraphSvgLight} alt="paragraph icon" />}
-        onClick={formatParagraph}
-      >
-        <span className="text">{TextNames.paragraphText}</span>
-      </MenuItem>
-      <MenuItem
-        className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'h1')}`}
-        icon={<img className="icon heading1" src={isInverted ? h1SvgDark : h1SvgLight} alt="h1 icon" />}
-        onClick={() => formatHeading('h1')}
-      >
-        <span className="text">{TextNames.h1Text}</span>
-      </MenuItem>
-      <MenuItem
-        className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'h2')}`}
-        icon={<img className="icon heading2" src={isInverted ? h2SvgDark : h2SvgLight} alt="h2 icon" />}
-        onClick={() => formatHeading('h2')}
-      >
-        <span className="text">{TextNames.h2Text}</span>
-      </MenuItem>
-      <MenuItem
-        className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'h3')}`}
-        icon={<img className="icon heading3" src={isInverted ? h3SvgDark : h3SvgLight} alt="h3 icon" />}
-        onClick={() => formatHeading('h3')}
-      >
-        <span className="text">{TextNames.h3Text}</span>
-      </MenuItem>
-      <MenuItem
-        className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'bullet')}`}
-        icon={<img className="icon bulletList" src={isInverted ? bulletListSvgDark : bulletListSvgLight} alt="bulletList icon" />}
-        onClick={formatBulletList}
-      >
-        <span className="text">{TextNames.bulletListText}</span>
-      </MenuItem>
-      <MenuItem
-        className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'number')}`}
-        icon={<img className="icon numberList" src={isInverted ? numberListSvgDark : numberListSvgLight} alt="numberList icon" />}
-        onClick={formatNumberedList}
-      >
-        <span className="text">{TextNames.numberListText}</span>
-      </MenuItem>
-    </DropDown>
+    <Popover onOpenChange={(_, data) => setIsOpen(data.open)} open={isOpen} positioning="below" trapFocus={true}>
+      <PopoverTrigger disableButtonEnhancement={true}>
+        <ToolbarButton
+          className="toolbar-item toolbar-item-with-chevron block-controls"
+          disabled={disabled}
+          icon={<img className="chevron-down" src={isInverted ? chevronDownDark : chevronDownLight} alt={altTextForChevronDown} />}
+        >
+          <span className="toolbar-item-label">{blockTypeToBlockName[blockType]}</span>
+        </ToolbarButton>
+      </PopoverTrigger>
+      <PopoverSurface>
+        <MenuItem
+          className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'paragraph')}`}
+          icon={<img className="icon paragraph" src={isInverted ? paragraphSvgDark : paragraphSvgLight} alt="paragraph icon" />}
+          onClick={formatParagraph}
+        >
+          <span className="text">{TextNames.paragraphText}</span>
+        </MenuItem>
+        <MenuItem
+          className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'h1')}`}
+          icon={<img className="icon heading1" src={isInverted ? h1SvgDark : h1SvgLight} alt="h1 icon" />}
+          onClick={() => formatHeading('h1')}
+        >
+          <span className="text">{TextNames.h1Text}</span>
+        </MenuItem>
+        <MenuItem
+          className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'h2')}`}
+          icon={<img className="icon heading2" src={isInverted ? h2SvgDark : h2SvgLight} alt="h2 icon" />}
+          onClick={() => formatHeading('h2')}
+        >
+          <span className="text">{TextNames.h2Text}</span>
+        </MenuItem>
+        <MenuItem
+          className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'h3')}`}
+          icon={<img className="icon heading3" src={isInverted ? h3SvgDark : h3SvgLight} alt="h3 icon" />}
+          onClick={() => formatHeading('h3')}
+        >
+          <span className="text">{TextNames.h3Text}</span>
+        </MenuItem>
+        <MenuItem
+          className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'bullet')}`}
+          icon={<img className="icon bulletList" src={isInverted ? bulletListSvgDark : bulletListSvgLight} alt="bulletList icon" />}
+          onClick={formatBulletList}
+        >
+          <span className="text">{TextNames.bulletListText}</span>
+        </MenuItem>
+        <MenuItem
+          className={`item blockcontrol-item ${dropDownActiveClass(blockType === 'number')}`}
+          icon={<img className="icon numberList" src={isInverted ? numberListSvgDark : numberListSvgLight} alt="numberList icon" />}
+          onClick={formatNumberedList}
+        >
+          <span className="text">{TextNames.numberListText}</span>
+        </MenuItem>
+      </PopoverSurface>
+    </Popover>
   );
 };
