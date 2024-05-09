@@ -22,6 +22,7 @@ export interface ExpressionEditorProps {
   onBlur?: EventHandler<ExpressionEditorEvent>;
   setIsDragging: (isDragging: boolean) => void;
   setExpressionEditorError: (error: string) => void;
+  onFocus?: () => void;
 }
 
 export function ExpressionEditor({
@@ -33,6 +34,7 @@ export function ExpressionEditor({
   currentHeight,
   setCurrentHeight,
   onBlur,
+  onFocus,
   setIsDragging,
   setExpressionEditorError,
 }: ExpressionEditorProps): JSX.Element {
@@ -76,6 +78,7 @@ export function ExpressionEditor({
         overviewRulerBorder={false}
         contextMenu={false}
         onBlur={handleBlur}
+        onFocus={onFocus}
         onContentChanged={handleChangeEvent}
         width={'100%'}
         wordWrap="bounded"

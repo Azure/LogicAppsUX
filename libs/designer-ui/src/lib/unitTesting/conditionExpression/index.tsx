@@ -40,13 +40,13 @@ export function ConditionExpression({
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [_expressionEditorError, setExpressionEditorError] = useState<string>('');
-  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [expressionToBeUpdated, _setExpressionToBeUpdated] = useState<NodeKey | null>(null);
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
-
-  const searchBoxRef = useRef<ISearchBox | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(TokenPickerMode.EXPRESSION);
+
+  const searchBoxRef = useRef<ISearchBox | null>(null);
+  const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
@@ -67,12 +67,6 @@ export function ConditionExpression({
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      expressionEditorRef.current?.focus();
-    }, 300);
   }, []);
 
   const onExpressionEditorBlur = (e: ExpressionEditorEvent): void => {
@@ -105,9 +99,21 @@ export function ConditionExpression({
     },
   };
 
+  // Pending things to do
+  // 1.- on value change
+  // 2.- z-index
+
   return (
     <>
-      <div id={`condition-expression-${editorId}`} onMouseMove={handleExpressionEditorMoveDistance} onClick={toggleIsCalloutVisible}>
+      <div
+        id={`condition-expression-${editorId}`}
+        onMouseUp={() => {
+          if (isDraggingExpressionEditor) {
+            setIsDraggingExpressionEditor(false);
+          }
+        }}
+        onMouseMove={handleExpressionEditorMoveDistance}
+      >
         <ExpressionEditor
           initialValue={expression.value}
           editorRef={expressionEditorRef}
@@ -119,6 +125,7 @@ export function ConditionExpression({
           setCurrentHeight={setExpressionEditorCurrentHeight}
           setExpressionEditorError={setExpressionEditorError}
           hideUTFExpressions={false}
+          onFocus={toggleIsCalloutVisible}
         />
       </div>
       {isCalloutVisible && (
