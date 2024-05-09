@@ -37,7 +37,7 @@ export interface ParameterFieldDetails {
 }
 
 export interface AssertionFieldProps {
-  key: string;
+  id: string;
   name: string;
   description: string;
   expression: Record<string, any>;
@@ -52,7 +52,7 @@ export interface AssertionFieldProps {
 }
 
 export const AssertionField = ({
-  key,
+  id,
   name,
   description,
   setName,
@@ -69,7 +69,7 @@ export const AssertionField = ({
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
     name: `${name}-${NAME_KEY}`,
-    expressionKey: `${key}-${EXPRESSION_KEY}`,
+    expressionKey: `${id}-${EXPRESSION_KEY}`,
     expression: `${name}-${EXPRESSION_KEY}`,
   };
 

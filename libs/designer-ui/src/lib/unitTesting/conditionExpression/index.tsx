@@ -101,8 +101,6 @@ export function ConditionExpression({
 
   // Pending things to do
   // 1.- on value change
-  // 2.- z-index
-
   return (
     <>
       <div

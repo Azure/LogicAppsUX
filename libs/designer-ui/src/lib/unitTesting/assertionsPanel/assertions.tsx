@@ -72,6 +72,7 @@ export function Assertions({
     return (
       <Assertion
         key={item.id}
+        id={item.id}
         assertion={item}
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
