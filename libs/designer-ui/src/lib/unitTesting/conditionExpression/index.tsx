@@ -9,10 +9,8 @@ import { Callout, DirectionalHint, SearchBox } from '@fluentui/react';
 import { TokenPickerPivot } from '../../tokenpicker/tokenpickerpivot';
 import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
-import { TokenPickerFooter } from '../../tokenpicker/tokenpickerfooter';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
-import type { NodeKey } from 'lexical';
 import { useBoolean } from '@fluentui/react-hooks';
 
 export interface ConditionExpressionProps {
@@ -40,7 +38,6 @@ export function ConditionExpression({
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [_expressionEditorError, setExpressionEditorError] = useState<string>('');
-  const [expressionToBeUpdated, _setExpressionToBeUpdated] = useState<NodeKey | null>(null);
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(TokenPickerMode.EXPRESSION);
@@ -101,11 +98,17 @@ export function ConditionExpression({
 
   // Pending things to do
   // 1.- on value change
+  // 2.- z-index
   return (
     <>
       <div
         id={`condition-expression-${editorId}`}
         onMouseUp={() => {
+          if (isDraggingExpressionEditor) {
+            setIsDraggingExpressionEditor(false);
+          }
+        }}
+        onMouseLeave={() => {
           if (isDraggingExpressionEditor) {
             setIsDraggingExpressionEditor(false);
           }
@@ -170,13 +173,6 @@ export function ConditionExpression({
             getValueSegmentFromToken={getValueSegmentFromToken}
             noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
             expressionEditorCurrentHeight={expressionEditorCurrentHeight}
-          />
-          <TokenPickerFooter
-            tokenGroup={tokenGroup ?? []}
-            expression={expression}
-            expressionToBeUpdated={expressionToBeUpdated}
-            getValueSegmentFromToken={getValueSegmentFromToken}
-            setExpressionEditorError={setExpressionEditorError}
           />
         </Callout>
       )}
