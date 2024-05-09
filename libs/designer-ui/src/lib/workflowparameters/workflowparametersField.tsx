@@ -342,12 +342,12 @@ export const WorkflowparameterField = ({
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         )}
       </div>
-      {parameterDetails.description && (
+      {definition?.description && (
         <div className="msla-workflow-parameter-field">
           <Label styles={labelStyles} required={false} htmlFor={parameterDetails.description}>
             {descriptionTitle}
           </Label>
-          <Text className="msla-workflow-parameter-read-only">{type}</Text>
+          <Text className="msla-workflow-parameter-read-only">{definition.description}</Text>
         </div>
       )}
       {useLegacy ? (

@@ -33,6 +33,7 @@ export interface WorkflowParameterDefinition {
   type: string;
   defaultValue?: string;
   required?: boolean;
+  description?: string;
 }
 
 export interface WorkflowParameterProps {
