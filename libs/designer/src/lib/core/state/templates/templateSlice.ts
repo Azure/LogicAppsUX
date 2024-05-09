@@ -2,7 +2,7 @@ import { getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@micro
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
-import type { TemplateParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
 export interface TemplateState {
@@ -66,18 +66,19 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<TemplateParameterUpdateEvent>) => {
+    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
-        name,
+        id,
         newDefinition: { type, value, required },
       } = action.payload;
+
       const validationError = validateParameterValue({ type, value }, required);
 
-      state.parameters.definitions[name] = {
-        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
+      state.parameters.definitions[id] = {
+        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[name] = validationError;
+      state.parameters.validationErrors[id] = validationError;
     },
   },
   extraReducers: (builder) => {

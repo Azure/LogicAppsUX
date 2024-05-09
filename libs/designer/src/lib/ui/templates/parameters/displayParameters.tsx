@@ -1,10 +1,10 @@
 import { List, Text } from '@fluentui/react';
-import type { TemplateParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { TemplateparameterField } from '@microsoft/designer-ui';
+import { WorkflowparameterField } from '@microsoft/designer-ui';
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export const DisplayParameters = () => {
@@ -14,7 +14,7 @@ export const DisplayParameters = () => {
   const validationErrors = parameters.validationErrors;
   const parametersDefinition = Object.entries(parameters.definitions).map(([key, value]) => ({ id: key, ...value }));
 
-  const onUpdateParameterValue = (event: TemplateParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
+  const onUpdateParameterValue = (event: WorkflowParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -26,13 +26,24 @@ export const DisplayParameters = () => {
     if (!item) {
       return <></>;
     }
+
     return (
-      <div className="msla-workflow-parameter">
+      <div key={item?.name} className="msla-workflow-parameter">
         <div>
-          <TemplateparameterField
-            definition={item}
-            validationError={validationErrors[item?.name ?? '']}
+          <WorkflowparameterField
+            name={item?.name}
+            definition={{ id: item?.name ?? 'id', ...item }}
+            validationErrors={{
+              value: validationErrors[item?.name ?? ''],
+            }}
+            setName={() => {}}
             onChange={onUpdateParameterValue}
+            isEditable={{
+              value: true,
+            }}
+            required={{
+              value: item?.required ?? false,
+            }}
           />
         </div>
       </div>

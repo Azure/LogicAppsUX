@@ -78,7 +78,6 @@ export * from './settings/settingsection';
 export * from './staticResult';
 export * from './table';
 export * from './telemetry/models';
-export * from './templates';
 // export * from './textbox';
 export * from './tip';
 export * from './tokenpicker';
