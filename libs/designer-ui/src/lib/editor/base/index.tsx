@@ -170,7 +170,6 @@ export const BaseEditor = ({
 
   const id = useId('msla-described-by-message');
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
-
   return (
     <>
       <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
