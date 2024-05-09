@@ -1,5 +1,5 @@
 import { Toolbar } from '../../html/plugins/toolbar/Toolbar';
-import type { TokenPickerMode } from '../../tokenpicker';
+import { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
 import { ArrowNavigation } from './plugins/ArrowNavigation';
@@ -111,7 +111,9 @@ export const BaseEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(basePlugins.focusOpensTokenPicker === true);
+  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
+  const [focusOpensTokenPicker, setFocusOpensTokenPicker] = useState(false);
+  const [userClosedTokenPicker, setUserClosedTokenPicker] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
@@ -149,6 +151,11 @@ export const BaseEditor = ({
   const handleFocus = () => {
     onFocus?.();
     setIsEditorFocused(true);
+    if (basePlugins.focusOpensTokenPicker && !userClosedTokenPicker) {
+      openTokenPicker(TokenPickerMode.TOKEN);
+      setFocusOpensTokenPicker(true);
+    }
+    setUserClosedTokenPicker(false);
   };
 
   const handleBlur = () => {
@@ -156,10 +163,11 @@ export const BaseEditor = ({
       onBlur?.();
     }
     setIsEditorFocused(false);
+    setFocusOpensTokenPicker(false);
   };
 
   const handleClick = () => {
-    if (isTokenPickerOpened) {
+    if (isTokenPickerOpened && focusOpensTokenPicker) {
       setIsTokenPickerOpened(false);
     }
   };
@@ -167,6 +175,12 @@ export const BaseEditor = ({
   const openTokenPicker = (mode: TokenPickerMode) => {
     setIsTokenPickerOpened(true);
     setTokenPickerMode(mode);
+    setFocusOpensTokenPicker(false);
+  };
+
+  const closeTokenPicker = () => {
+    setIsTokenPickerOpened(false);
+    setUserClosedTokenPicker(true);
   };
 
   const id = useId('msla-described-by-message');
@@ -219,7 +233,7 @@ export const BaseEditor = ({
             <InsertTokenNode />
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
-            <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
+            <CloseTokenPicker closeTokenPicker={closeTokenPicker} />
             <TokenTypeAheadPlugin
               openTokenPicker={openTokenPicker}
               isEditorFocused={isEditorFocused}
