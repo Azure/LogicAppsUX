@@ -9,6 +9,7 @@ import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { getIntl } from '@microsoft/logic-apps-shared';
+import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
@@ -362,15 +363,13 @@ const getMode = (selectedKey: string, selectedKeys: string[], initialValue: Valu
   }
   if (selectedKeys.length > 0) {
     for (const key of selectedKeys) {
-      const hasValue = initialValue.length > 0 && initialValue[0].value;
-      if (hasValue && !key) {
+      if (!isEmptySegments(initialValue) && !key) {
         return Mode.Custom;
       }
     }
     return Mode.Default;
   }
-  const hasValue = initialValue.length > 0 && initialValue[0].value;
-  return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
+  return isEmptySegments(initialValue) ? Mode.Default : selectedKey ? Mode.Default : Mode.Custom;
 };
 
 const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean): string => {
