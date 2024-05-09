@@ -194,7 +194,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
+                  aria-label="Select all text in 'Duration'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -203,6 +203,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -233,6 +234,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -258,8 +260,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -268,14 +270,14 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -296,7 +298,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -304,7 +306,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
+                  aria-label="Switch 'Start time' to the UTC time format"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -313,6 +315,38 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
                   type="button"
                 >
                   <span
@@ -343,6 +377,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -368,8 +403,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -378,14 +413,157 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 7:52:00 PM
+                    2/8/2022, 2:52:00 PM (Local Time)
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -414,7 +592,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
+                  aria-label="Select all text in 'Status'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -423,6 +601,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -453,6 +632,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -478,8 +658,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -488,7 +668,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -524,7 +704,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
+                  aria-label="Select all text in 'Client request ID'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -533,6 +713,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -563,6 +744,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -588,8 +770,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -598,7 +780,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -676,7 +858,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           </button>
           <div
             hidden={true}
-            id="tooltip70"
+            id="tooltip88"
             style={
               {
                 "border": 0,
@@ -752,7 +934,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           </button>
           <div
             hidden={true}
-            id="tooltip74"
+            id="tooltip92"
             style={
               {
                 "border": 0,
@@ -812,7 +994,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
+                  aria-label="Select all text in 'Duration'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -821,6 +1003,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -851,6 +1034,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -876,8 +1060,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -886,14 +1070,14 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -914,7 +1098,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -922,7 +1106,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
+                  aria-label="Switch 'Start time' to the UTC time format"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -931,6 +1115,38 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
                   type="button"
                 >
                   <span
@@ -961,6 +1177,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -986,8 +1203,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -996,14 +1213,157 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 7:52:00 PM
+                    2/8/2022, 2:52:00 PM (Local Time)
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -1032,7 +1392,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
+                  aria-label="Select all text in 'Status'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1041,6 +1401,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -1071,6 +1432,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1096,8 +1458,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1106,7 +1468,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -1142,7 +1504,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
+                  aria-label="Select all text in 'Client request ID'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1151,6 +1513,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -1181,6 +1544,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1206,8 +1570,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1216,7 +1580,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -1252,7 +1616,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Service request ID"
+                  aria-label="Select all text in 'Service request ID'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1261,6 +1625,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Service request ID'"
                   type="button"
                 >
                   <span
@@ -1291,6 +1656,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Service request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1316,8 +1682,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1326,7 +1692,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -1404,7 +1770,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           </button>
           <div
             hidden={true}
-            id="tooltip32"
+            id="tooltip44"
             style={
               {
                 "border": 0,
@@ -1480,7 +1846,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           </button>
           <div
             hidden={true}
-            id="tooltip36"
+            id="tooltip48"
             style={
               {
                 "border": 0,
@@ -1540,7 +1906,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
+                  aria-label="Select all text in 'Duration'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1549,6 +1915,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -1579,6 +1946,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1604,8 +1972,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1614,7 +1982,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -1642,7 +2010,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -1650,7 +2018,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
+                  aria-label="Switch 'Start time' to the UTC time format"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1659,6 +2027,38 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
                   type="button"
                 >
                   <span
@@ -1689,6 +2089,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1714,8 +2115,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1724,14 +2125,14 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 7:52:00 PM
+                    2/8/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -1752,7 +2153,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
             <div
               aria-label="End time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -1760,7 +2161,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in End time"
+                  aria-label="Switch 'End time' to the UTC time format"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1769,6 +2170,38 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
                   type="button"
                 >
                   <span
@@ -1799,6 +2232,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1824,8 +2258,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1834,14 +2268,14 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 8:10:00 PM
+                    2/8/2022, 3:10:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -1870,7 +2304,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
+                  aria-label="Select all text in 'Status'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1879,6 +2313,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -1909,6 +2344,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1934,8 +2370,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -1944,7 +2380,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -1980,7 +2416,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
+                  aria-label="Select all text in 'Client request ID'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1989,6 +2425,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -2019,6 +2456,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2044,8 +2482,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -2054,7 +2492,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -2132,7 +2570,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           </button>
           <div
             hidden={true}
-            id="tooltip108"
+            id="tooltip138"
             style={
               {
                 "border": 0,
@@ -2208,7 +2646,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           </button>
           <div
             hidden={true}
-            id="tooltip112"
+            id="tooltip142"
             style={
               {
                 "border": 0,
@@ -2231,6 +2669,36 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
   <div
     className="msla-panel-callout-content"
   >
+    <div
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-130"
+    >
+      <div
+        className="ms-MessageBar-content content-131"
+      >
+        <div
+          aria-hidden={true}
+          className="ms-MessageBar-icon iconContainer-132"
+        >
+          <i
+            aria-hidden={true}
+            className="icon-140"
+            data-icon-name="Warning"
+          >
+            
+          </i>
+        </div>
+        <div
+          aria-live="assertive"
+          className="ms-MessageBar-text text-134"
+          id="MessageBar146"
+          role="alert"
+        >
+          <span
+            className="ms-MessageBar-innerText innerText-135"
+          />
+        </div>
+      </div>
+    </div>
     <div
       className="msla-trace-inputs-outputs"
     >
@@ -2268,7 +2736,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
+                  aria-label="Select all text in 'Duration'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2277,6 +2745,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -2307,6 +2776,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2332,8 +2802,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -2342,14 +2812,14 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -2370,7 +2840,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -2378,7 +2848,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
+                  aria-label="Switch 'Start time' to the UTC time format"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2387,6 +2857,38 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
                   type="button"
                 >
                   <span
@@ -2417,6 +2919,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2442,8 +2945,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -2452,14 +2955,157 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 7:52:00 PM
+                    2/8/2022, 2:52:00 PM (Local Time)
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -2488,7 +3134,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
+                  aria-label="Select all text in 'Status'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2497,6 +3143,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -2527,6 +3174,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2552,8 +3200,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -2562,7 +3210,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -2598,7 +3246,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
+                  aria-label="Select all text in 'Client request ID'"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2607,6 +3255,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -2637,6 +3286,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2662,8 +3312,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -2672,7 +3322,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
