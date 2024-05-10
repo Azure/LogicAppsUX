@@ -2,14 +2,14 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface WorkflowState {
-    appId?: string;
-    workflowName?: string;
-    isConsumption: boolean;
+  appId?: string;
+  workflowName?: string;
+  isConsumption: boolean;
 }
 
 const initialState: WorkflowState = {
-    appId: undefined,
-    isConsumption: false,
+  appId: undefined,
+  isConsumption: false,
 };
 
 export const workflowSlice = createSlice({
@@ -17,19 +17,19 @@ export const workflowSlice = createSlice({
   initialState,
   reducers: {
     setAppid: (state, action: PayloadAction<string>) => {
-        state.appId = action.payload;
+      state.appId = action.payload;
     },
     setWorkflowName: (state, action: PayloadAction<string>) => {
-        state.workflowName = action.payload;
+      state.workflowName = action.payload;
     },
     clearWorkflowDetails: (state) => {
-        state.appId = undefined;
-        state.workflowName = undefined;
+      state.appId = undefined;
+      state.workflowName = undefined;
     },
     setConsumption: (state, action: PayloadAction<boolean>) => {
-        state.isConsumption = action.payload;
-        state.appId = undefined;
-        state.workflowName = undefined;
+      state.isConsumption = action.payload;
+      state.appId = undefined;
+      state.workflowName = undefined;
     },
   },
 });

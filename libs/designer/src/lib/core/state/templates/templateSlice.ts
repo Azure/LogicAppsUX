@@ -9,6 +9,7 @@ export interface TemplateState {
   templateName?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
+  kind: string | undefined;
   parameters: {
     definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
@@ -19,6 +20,7 @@ export interface TemplateState {
 const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
+  kind: undefined,
   parameters: {
     definitions: {},
     validationErrors: {},
@@ -66,6 +68,9 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
+    updateKind: (state, action: PayloadAction<string>) => {
+      state.kind = action.payload;
+    },
     updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
         id,
@@ -104,7 +109,7 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { changeCurrentTemplateName, updateTemplateParameterValue } = templateSlice.actions;
+export const { changeCurrentTemplateName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
 
 const loadTemplateFromGithub = async (
   templateName: string,
@@ -128,6 +133,7 @@ const loadTemplateFromGithub = async (
     return {
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
+      kind: undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},
