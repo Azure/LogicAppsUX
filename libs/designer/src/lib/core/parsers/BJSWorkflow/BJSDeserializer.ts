@@ -5,7 +5,6 @@ import type { Workflow } from '../../../common/models/workflow';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
-import { toConditionViewModel } from '../../utils/parameters/helper';
 import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import {
@@ -210,7 +209,7 @@ export const deserializeUnitTestDefinition = (
   // deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
     const { name, description, expression } = assertion;
-    return { name, description, expression: toConditionViewModel(expression) };
+    return { name, description, expression: expression };
   });
 
   return { mockResults, assertions: assertions };

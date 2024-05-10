@@ -14,7 +14,7 @@ export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
-  expression: Record<string, any>;
+  expression: string;
   isEditable: boolean;
 }
 
@@ -25,7 +25,7 @@ export interface AssertionDeleteEvent {
 export interface AssertionAddEvent {
   name: string;
   description: string;
-  expression: Record<string, any>;
+  expression: string;
 }
 
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;

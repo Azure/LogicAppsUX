@@ -13,7 +13,6 @@ import {
   generateExpressionFromKey,
   getTokenExpressionMethodFromKey,
   getTokenValueFromToken,
-  toConditionViewModel,
 } from '../../../core/utils/parameters/helper';
 import { type TokenGroup, getExpressionTokenSections } from '../../../core/utils/tokens';
 import { convertVariableTypeToSwaggerType } from '../../../core/utils/variables';
@@ -219,7 +218,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         name: event.name,
         isEditable: true,
         description: event.description,
-        expression: toConditionViewModel(event.expression),
+        expression: event.expression,
       },
     };
     setAssertions(newAssertions);

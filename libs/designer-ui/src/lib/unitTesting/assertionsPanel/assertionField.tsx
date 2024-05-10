@@ -40,10 +40,10 @@ export interface AssertionFieldProps {
   id: string;
   name: string;
   description: string;
-  expression: Record<string, any>;
+  expression: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
-  setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  setExpression: React.Dispatch<React.SetStateAction<string>>;
   isEditable: boolean;
   isExpanded: boolean;
   getConditionExpression: GetConditionExpressionHandler;
@@ -57,6 +57,7 @@ export const AssertionField = ({
   description,
   setName,
   setDescription,
+  setExpression,
   expression,
   isEditable,
   isExpanded,
@@ -119,9 +120,9 @@ export const AssertionField = ({
     handleUpdate({ name: newValue ?? '', description, expression });
   };
 
-  const onExpressionChange = (newState: any): void => {
-    //setExpression(newState.viewModel);
-    handleUpdate({ name, description, expression: newState.viewModel });
+  const onExpressionChange = (conditionExpression: string): void => {
+    setExpression(conditionExpression);
+    handleUpdate({ name, description, expression: conditionExpression });
   };
 
   const conditionExpression = getConditionExpression(

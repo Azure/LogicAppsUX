@@ -11,6 +11,7 @@ import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
+import type { EditorContentChangedEventArgs } from '../../editor/monaco';
 
 export interface ConditionExpressionProps {
   editorId: string;
@@ -29,6 +30,7 @@ export function ConditionExpression({
   tokenGroup,
   expressionGroup,
   getValueSegmentFromToken,
+  onChange,
 }: ConditionExpressionProps): JSX.Element {
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
@@ -102,14 +104,16 @@ export function ConditionExpression({
   }, [isDraggingExpressionEditor]);
 
   const handleFocusExpression = useCallback(() => {
-    console.log('charlie', isCalloutVisible);
     if (!isCalloutVisible) {
       setIsCalloutVisible(true);
     }
   }, [isCalloutVisible]);
 
+  const onContentChanged = (e: EditorContentChangedEventArgs): void => {
+    onChange(e.value ?? '');
+  };
+
   // Pending things to do
-  // 1.- on value change
   // 2.- z-index
   return (
     <>
@@ -131,6 +135,7 @@ export function ConditionExpression({
           setExpressionEditorError={setExpressionEditorError}
           hideUTFExpressions={false}
           onFocus={handleFocusExpression}
+          onContentChanged={onContentChanged}
         />
       </div>
       {isCalloutVisible && (
