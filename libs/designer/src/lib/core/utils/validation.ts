@@ -21,6 +21,8 @@ import {
   startsWith,
 } from '@microsoft/logic-apps-shared';
 import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
+import { convertWorkflowParameterTypeToSwaggerType } from './tokens';
+import type { IntlShape } from 'react-intl';
 
 const regex = {
   datetime:
@@ -512,6 +514,65 @@ function validateStringEmails(parameterValue: string): string {
 
   return '';
 }
+
+export const validateParameterValueWithSwaggerType = (
+  type: string | undefined,
+  valueToValidate: string | undefined,
+  required: boolean,
+  intl: IntlShape
+): string | undefined => {
+  if (valueToValidate === '' || valueToValidate === undefined) {
+    if (!required) {
+      return undefined;
+    }
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for parameter.',
+      id: 'VL9wOu',
+      description: 'Error message when the workflow parameter value is empty.',
+    });
+  }
+
+  const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
+  let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
+
+  if (error) {
+    return error;
+  }
+
+  switch (swaggerType) {
+    case Constants.SWAGGER.TYPE.ARRAY: {
+      let isInvalid = false;
+      try {
+        isInvalid = !Array.isArray(JSON.parse(valueToValidate));
+      } catch {
+        isInvalid = true;
+      }
+
+      error = isInvalid
+        ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
+        : undefined;
+      break;
+    }
+
+    case Constants.SWAGGER.TYPE.OBJECT:
+    case Constants.SWAGGER.TYPE.BOOLEAN: {
+      try {
+        JSON.parse(valueToValidate);
+      } catch {
+        error =
+          swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
+            : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
+      }
+      break;
+    }
+
+    default:
+      break;
+  }
+
+  return error;
+};
 
 function isValidJSONObjectFormat(value: string): boolean {
   const trimmedValue = (value || '').trim();
