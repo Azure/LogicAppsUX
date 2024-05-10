@@ -16,12 +16,22 @@ Ensure you have the following installed on your system:
 
 ### Pnpm CLI Installation (Recommended)
 
-Check here for system specific ways to install:
+Check here for system specific ways to install: [Pnpm installation](https://pnpm.io/installation)
 
 Or you can just install using npm:
 
 ```bash
 npm install -g pnpm
+```
+
+### Turbo Installation
+
+Check here for package manager specific ways to install: [Turbo installation](https://turbo.build/repo/docs/installing)
+
+Or you can just install using pnpm:
+
+```bash
+pnpm install -g turbo
 ```
 
 ## Running the Code
