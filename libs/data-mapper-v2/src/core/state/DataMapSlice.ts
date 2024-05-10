@@ -323,42 +323,42 @@ export const dataMapSlice = createSlice({
     //   }
     // },
 
-    // addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
-    //   if (state.curDataMapOperation.currentTargetSchemaNode) {
-    //     const newState: DataMapOperationState = {
-    //       ...state.curDataMapOperation,
-    //       functionNodes: { ...state.curDataMapOperation.functionNodes },
-    //     };
+    addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
+      if (state.curDataMapOperation.currentTargetSchemaNode) {
+        const newState: DataMapOperationState = {
+          ...state.curDataMapOperation,
+          functionNodes: { ...state.curDataMapOperation.functionNodes },
+        };
 
-    //     let fnReactFlowKey: string;
-    //     let fnData: FunctionData;
+        let fnReactFlowKey: string;
+        let fnData: FunctionData;
 
-    //     // Default - just provide the FunctionData and the key will be handled under the hood
-    //     if (!('newReactFlowKey' in action.payload)) {
-    //       fnData = { ...action.payload, isNewNode: true };
-    //       fnReactFlowKey = createReactFlowFunctionKey(fnData);
-    //       newState.functionNodes[fnReactFlowKey] = {
-    //         functionData: fnData,
-    //         functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
-    //       };
-    //     } else {
-    //       // Alternative - specify the key you want to use (needed for adding inline Functions)
-    //       fnData = action.payload.functionData;
-    //       fnReactFlowKey = action.payload.newReactFlowKey;
-    //       newState.functionNodes[fnReactFlowKey] = {
-    //         functionData: fnData,
-    //         functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
-    //       };
-    //     }
+        // Default - just provide the FunctionData and the key will be handled under the hood
+        // if (!('newReactFlowKey' in action.payload)) {
+        //   fnData = { ...action.payload, isNewNode: true };
+        //   fnReactFlowKey = createReactFlowFunctionKey(fnData);
+        //   newState.functionNodes[fnReactFlowKey] = {
+        //     functionData: fnData,
+        //     functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
+        //   };
+        // } else {
+        //   // Alternative - specify the key you want to use (needed for adding inline Functions)
+        //   fnData = action.payload.functionData;
+        //   fnReactFlowKey = action.payload.newReactFlowKey;
+        //   newState.functionNodes[fnReactFlowKey] = {
+        //     functionData: fnData,
+        //     functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
+        //   };
+        // }
 
-    //     // Create connection entry to instantiate default connection inputs
-    //     createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
+        // Create connection entry to instantiate default connection inputs
+        //createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
 
-    //     updateFunctionNodeLocations(newState, fnReactFlowKey);
+        //updateFunctionNodeLocations(newState, fnReactFlowKey);
 
-    //     doDataMapOperation(state, newState, 'Add function node');
-    //   }
-    // },
+        doDataMapOperation(state, newState, 'Add function node');
+      }
+    },
 
     // deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string; port?: string }>) => {
     //   const newState = { ...state.curDataMapOperation };
@@ -559,7 +559,7 @@ export const {
   // removeSourceSchemaNodes,
   // setCurrentTargetSchemaNode,
   // setSelectedItem,
-  // addFunctionNode,
+  addFunctionNode,
   // makeConnection,
   // setConnectionInput,
   // saveDataMap,

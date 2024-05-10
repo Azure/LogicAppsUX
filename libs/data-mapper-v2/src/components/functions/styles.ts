@@ -5,6 +5,10 @@ export const useStyles = makeStyles({
     height: '20px',
     width: '20px',
   },
+  chevronButton: {
+    paddingLeft: '0px',
+    paddingRight: '0px',
+  },
   functionsChevronIcon: {
     alignSelf: 'center',
   },
@@ -41,9 +45,6 @@ export const useStyles = makeStyles({
     fontWeight: 'initial',
     fontSize: '20px',
   },
-  functionSearchBox: {
-    width: '85%',
-  },
   drawerHeaderIcon: {
     alignSelf: 'center',
     marginLeft: 'auto',
@@ -53,6 +54,7 @@ export const useStyles = makeStyles({
   functionList: {
     justifyContent: 'center',
     display: 'flex',
+    flexDirection: 'column',
     width: '100%',
   },
 });
