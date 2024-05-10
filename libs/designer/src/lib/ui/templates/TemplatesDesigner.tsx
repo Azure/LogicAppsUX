@@ -13,19 +13,19 @@ export const TemplatesDesigner = ({
     workflow: LogicAppsV2.WorkflowDefinition,
     connectionsData: any,
     parametersData: Record<string, Template.ParameterDefinition>
-  ) => void;
+  ) => Promise<void>;
 }) => {
   const { workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { workflowName, kind, workflowDefinition, parameters } = useSelector((state: RootState) => state.template);
   const availableTemplatesNames = useSelector((state: RootState) => state.manifest.availableTemplateNames);
 
-  const onCreateClick = () => {
+  const onCreateClick = async () => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (!workflowNameToUse || !kind || !workflowDefinition || Object.keys(parameters.validationErrors).length > 0) {
       // TODO: Show error message
       return;
     }
-    createWorkflowCall(
+    await createWorkflowCall(
       workflowNameToUse,
       kind,
       workflowDefinition,

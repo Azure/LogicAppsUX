@@ -7,12 +7,13 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
-import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
+import { useIsConsumption, useIsLocal } from '../../designer/state/workflowLoadingSelectors';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { workflowLoaderSlice } from '../state/WorkflowLoader';
+import SourceSettings from '../../designer/app/SettingsSections/sourceSettings';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -34,6 +35,7 @@ export const DevToolbox = () => {
     [dispatch]
   );
 
+  const isLocal = useIsLocal();
   const isConsumption = useIsConsumption();
 
   return (
@@ -83,9 +85,11 @@ export const DevToolbox = () => {
                       style={{ marginBottom: '12px' }}
                     />
                   </StackItem>
-
                   <StackItem style={{ width: '100%' }}>
-                    {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
+                    <SourceSettings showHistoryButton={false} />
+                  </StackItem>
+                  <StackItem style={{ width: '100%' }}>
+                    {isLocal ? null : isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
                   </StackItem>
                 </Stack>
               </AccordionPanel>

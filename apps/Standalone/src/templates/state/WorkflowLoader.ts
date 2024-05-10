@@ -9,12 +9,14 @@ export interface WorkflowLoadingState {
   workflowName?: string;
   runId?: string;
   isConsumption: boolean;
+  isLocal: boolean;
   theme: ThemeType;
 }
 
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   isConsumption: false,
+  isLocal: false,
   theme: ThemeType.Light,
 };
 
@@ -46,13 +48,19 @@ export const workflowLoaderSlice = createSlice({
       state.workflowName = undefined;
       state.resourcePath = '';
     },
+    setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
+      state.isLocal = action.payload;
+      state.appId = undefined;
+      state.workflowName = undefined;
+      state.resourcePath = '';
+    },
     changeTheme: (state, action: PayloadAction<ThemeType>) => {
       state.theme = action.payload;
     },
   },
 });
 
-export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setConsumption, changeRunId } =
+export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setConsumption, setIsLocalSelected, changeRunId } =
   workflowLoaderSlice.actions;
 
 export default workflowLoaderSlice.reducer;

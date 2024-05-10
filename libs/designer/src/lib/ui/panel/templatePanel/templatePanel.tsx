@@ -6,7 +6,7 @@ import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
 import { QuickViewPanel } from './quickViewPanel/quickViewPanel';
 
-export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => void }) => {
+export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
 

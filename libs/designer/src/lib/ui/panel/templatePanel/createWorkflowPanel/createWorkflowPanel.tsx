@@ -7,7 +7,7 @@ import { Button } from '@fluentui/react-components';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
 import { updateKind, updateWorkflowName } from '../../../../core/state/templates/templateSlice';
 
-export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => void }) => {
+export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { workflowName, kind, manifest, parameters, connections } = useSelector((state: RootState) => state.template);
@@ -93,7 +93,7 @@ export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => vo
         }}
         selectedKey={kind}
       />
-      <Button appearance="outline" onClick={onCreateClick} disabled={false}>
+      <Button appearance="outline" onClick={onCreateClick} disabled={!(existingWorkflowName ?? workflowName) || !kind}>
         {intlText.CREATE}
       </Button>
     </>
