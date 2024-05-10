@@ -1,4 +1,3 @@
-import { ToolbarButton } from '@fluentui/react-components';
 import constants from '../../../constants';
 import fontColorSvgDark from '../icons/dark/font-color.svg';
 import linkDark from '../icons/dark/link.svg';
@@ -15,19 +14,20 @@ import underlineLight from '../icons/light/type-underline.svg';
 import { DropdownColorPicker } from './DropdownColorPicker';
 import { getSelectedNode, sanitizeUrl } from './helper/functions';
 import { useTheme } from '@fluentui/react';
+import { ToolbarButton } from '@fluentui/react-components';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
+import { $getSelectionStyleValueForProperty, $patchStyleText } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
 import { isApple } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import {
-  COMMAND_PRIORITY_NORMAL,
-  KEY_MODIFIER_COMMAND,
-  COMMAND_PRIORITY_CRITICAL,
-  SELECTION_CHANGE_COMMAND,
   $getSelection,
   $isRangeSelection,
+  COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_NORMAL,
   FORMAT_TEXT_COMMAND,
+  KEY_MODIFIER_COMMAND,
+  SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';

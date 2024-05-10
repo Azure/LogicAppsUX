@@ -20,7 +20,7 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
-import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
+import { $findMatchingParent, $getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import { isApple } from '@microsoft/logic-apps-shared';
 import {
