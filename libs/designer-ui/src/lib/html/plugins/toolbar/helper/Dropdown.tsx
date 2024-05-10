@@ -1,5 +1,4 @@
 import { Button, Popover, PopoverSurface, PopoverTrigger, ToolbarButton } from '@fluentui/react-components';
-import { useOutsideClick } from '@microsoft/logic-apps-shared';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';
@@ -33,12 +32,6 @@ export const DropDown = ({
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
-
-  useOutsideClick([dropDownRef, buttonRef], () => {
-    if (showDropDown) {
-      handleClose();
-    }
-  });
 
   const handleClose = () => {
     setShowDropDown(false);
@@ -110,12 +103,9 @@ export const DropDown = ({
             handleClose();
           }
         }}
-        style={{ padding: '4px' }}
       >
-        <div className="msla-html-editor-dropdown-items-surface">
           {children}
           <Button onClick={handleClose}>Close</Button>
-        </div>
       </PopoverSurface>
     </Popover>
   );
