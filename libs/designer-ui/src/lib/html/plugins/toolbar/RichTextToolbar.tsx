@@ -233,9 +233,6 @@ export const RichTextToolbar = ({ isRawText, isSwitchFromPlaintextBlocked, reado
             className={css('toolbar-item', isRawText && 'active')}
             disabled={readonly || (isRawText && isSwitchFromPlaintextBlocked)}
             icon={<img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />}
-            onMouseDown={(e) => {
-              e.preventDefault();
-            }}
             onClick={() => {
               const nodeMap = new Map<string, ValueSegment>();
               activeEditor.getEditorState().read(() => {
