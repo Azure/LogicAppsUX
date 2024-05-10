@@ -3,15 +3,17 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import { useDispatch, useSelector } from 'react-redux';
 import { DisplayConnections } from '../../../templates/connections/displayConnections';
 import { DisplayParameters } from '../../../templates/parameters/displayParameters';
-import { Button } from '@fluentui/react-components';
+import { Button, Spinner } from '@fluentui/react-components';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
 import { updateKind, updateWorkflowName } from '../../../../core/state/templates/templateSlice';
+import { useState } from 'react';
 
 export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { workflowName, kind, manifest, parameters, connections } = useSelector((state: RootState) => state.template);
   const { workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
   const intlText = {
     STATE_TYPE: intl.formatMessage({
@@ -93,8 +95,16 @@ export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Pr
         }}
         selectedKey={kind}
       />
-      <Button appearance="outline" onClick={onCreateClick} disabled={!(existingWorkflowName ?? workflowName) || !kind}>
-        {intlText.CREATE}
+      <Button
+        appearance="outline"
+        onClick={async () => {
+          setIsLoadingCreate(true);
+          await onCreateClick();
+          setIsLoadingCreate(false);
+        }}
+        disabled={!(existingWorkflowName ?? workflowName) || !kind}
+      >
+        {isLoadingCreate ? <Spinner size="extra-tiny" /> : intlText.CREATE}
       </Button>
     </>
   );

@@ -27,6 +27,7 @@ export const TemplatesStandaloneDesigner = () => {
     _connectionsData: any,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
+    console.log('--create workflow call ');
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     const workflow = {
       definition: workflowDefinition,

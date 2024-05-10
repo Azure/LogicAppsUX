@@ -21,8 +21,14 @@ export const TemplatesDesigner = ({
 
   const onCreateClick = async () => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
-    if (!workflowNameToUse || !kind || !workflowDefinition || Object.keys(parameters.validationErrors).length > 0) {
+    if (
+      !workflowNameToUse ||
+      !kind ||
+      !workflowDefinition ||
+      Object.values(parameters.validationErrors)?.filter((error) => error).length > 0
+    ) {
       // TODO: Show error message
+      console.log('Error checking conditions before calling createWorkflowCall');
       return;
     }
     await createWorkflowCall(
