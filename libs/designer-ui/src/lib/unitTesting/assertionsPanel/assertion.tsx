@@ -34,6 +34,7 @@ export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
 export type GetConditionExpressionHandler = (
   editorId: string,
   labelId: string,
+  initialValue: string,
   type: string,
   onChange: (value: string) => void
 ) => JSX.Element;

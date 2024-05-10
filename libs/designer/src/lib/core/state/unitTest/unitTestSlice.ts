@@ -65,8 +65,8 @@ export const validateAssertion = (
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
-          defaultMessage: 'Must provide the Assertion name.',
-          id: 'Fr58Kg',
+          defaultMessage: 'Must provide the assertion name.',
+          id: 'tHDcfJ',
           description: 'Error message when the assertion name is empty.',
         });
       }
@@ -87,9 +87,9 @@ export const validateAssertion = (
       const { expression } = data;
       if (!expression) {
         return intl.formatMessage({
-          defaultMessage: 'Must provide the a condition expression name.',
-          id: 'V5Z0CC',
-          description: 'Error message when the assertion condition expression name is empty.',
+          defaultMessage: 'Must provide a condition expression.',
+          id: 'FUvA4o',
+          description: 'Error message when the assertion condition expression is empty.',
         });
       }
 

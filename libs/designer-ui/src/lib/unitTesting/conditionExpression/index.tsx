@@ -16,6 +16,7 @@ import type { EditorContentChangedEventArgs } from '../../editor/monaco';
 export interface ConditionExpressionProps {
   editorId: string;
   labelId: string;
+  initialValue: string;
   getValueSegmentFromToken: GetValueSegmentHandler;
   tokenGroup?: TokenGroup[];
   filteredTokenGroup?: TokenGroup[];
@@ -26,6 +27,7 @@ export interface ConditionExpressionProps {
 export function ConditionExpression({
   editorId,
   labelId,
+  initialValue,
   filteredTokenGroup,
   tokenGroup,
   expressionGroup,
@@ -34,7 +36,7 @@ export function ConditionExpression({
 }: ConditionExpressionProps): JSX.Element {
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-  const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
+  const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: initialValue, selectionStart: 0, selectionEnd: 0 });
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);

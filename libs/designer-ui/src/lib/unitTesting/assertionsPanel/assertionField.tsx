@@ -128,6 +128,7 @@ export const AssertionField = ({
   const conditionExpression = getConditionExpression(
     parameterDetails.expressionKey,
     parameterDetails.expression,
+    expression,
     constants.SWAGGER.TYPE.ANY,
     onExpressionChange
   );

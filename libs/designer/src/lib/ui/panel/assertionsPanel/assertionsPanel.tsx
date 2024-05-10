@@ -154,6 +154,7 @@ const getValueSegmentFromToken = (token: OutputToken): ValueSegment => {
 const getConditionExpression = (
   editorId: string,
   labelId: string,
+  initialValue: string,
   type: string,
   tokenGroup: TokenGroup[],
   expressionGroup: TokenGroup[],
@@ -169,6 +170,7 @@ const getConditionExpression = (
     <ConditionExpression
       editorId={editorId}
       labelId={labelId}
+      initialValue={initialValue}
       tokenGroup={filteredTokens}
       filteredTokenGroup={filteredTokens}
       expressionGroup={expressionGroup}
@@ -249,10 +251,11 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   }, [tokens]);
 
   const getConditionExpressionHandler = useCallback(
-    (editorId: string, labelId: string, type: string, onChange: (value: string) => void) => {
+    (editorId: string, labelId: string, initialValue: string, type: string, onChange: (value: string) => void) => {
       return getConditionExpression(
         editorId,
         labelId,
+        initialValue,
         type,
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
