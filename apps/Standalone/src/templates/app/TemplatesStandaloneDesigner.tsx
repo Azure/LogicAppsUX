@@ -13,13 +13,18 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 };
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
+  const { appId, isConsumption, workflowName } = useSelector((state: RootState) => state.workflowLoader);
 
   return (
     <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
         <TemplatesDesignerProvider locale="en-US" theme={theme}>
-          <TemplatesDataProvider>
+          <TemplatesDataProvider
+            appId={appId}
+            isConsumption={isConsumption}
+            workflowName={workflowName}
+          >
             <TemplatesDesigner />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>

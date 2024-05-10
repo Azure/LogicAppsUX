@@ -5,17 +5,19 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { setAppid, setConsumption, setWorkflowName } from '../state/templates/workflowSlice';
 
 export interface TemplatesDataProviderProps {
-  kinds?: Template.Kind[];
-  skus?: Template.SkuType[];
+  appId: string | undefined;
+  isConsumption: boolean | undefined;
+  workflowName: string | undefined;
   children?: React.ReactNode;
 }
 
 const DataProviderInner = ({
-  // kinds,
-  // skus,
+  appId,
+  isConsumption,
+  workflowName,
   children,
 }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +32,22 @@ const DataProviderInner = ({
   useEffect(() => {
     dispatch(loadManifestNames());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (appId) {
+      dispatch(setAppid(appId));
+    }
+  }, [dispatch, appId]);
+
+  useEffect(() => {
+    dispatch(setConsumption(!!isConsumption));
+  }, [dispatch, isConsumption]);
+
+  useEffect(() => {
+    if (workflowName) {
+      dispatch(setWorkflowName(workflowName));
+    }
+  }, [dispatch, workflowName]);
 
   return <>{children}</>;
 };
