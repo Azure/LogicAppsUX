@@ -3,10 +3,9 @@ import { DropDown } from './helper/Dropdown';
 import { MoveWrapper } from './helper/MoveWrapper';
 import { basicColors, COLORPICKER_HEIGHT as HEIGHT, COLORPICKER_WIDTH as WIDTH } from './helper/constants';
 import type { Position } from './helper/util';
-import { Text } from '@fluentui/react-components';
+import { Text, useArrowNavigationGroup } from '@fluentui/react-components';
 import { capitalizeFirstLetter, transformColor } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
-import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 interface DropdownColorPickerProps {
@@ -16,7 +15,6 @@ interface DropdownColorPickerProps {
   buttonIconSrc?: string;
   buttonLabel?: string;
   color: string;
-  children?: ReactNode;
   onChange?: (color: string) => void;
   title?: string;
   editor: LexicalEditor;
@@ -26,7 +24,6 @@ export const DropdownColorPicker = ({
   editor,
   disabled,
   color,
-  children,
   onChange,
   title,
   buttonIconSrc,
@@ -35,6 +32,8 @@ export const DropdownColorPicker = ({
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);
+
+  const arrowNavigationAttributes = useArrowNavigationGroup({ axis: "horizontal", circular: true });
 
   const saturationPosition = useMemo(
     () => ({
@@ -99,7 +98,7 @@ export const DropdownColorPicker = ({
       <div className="color-picker-wrapper" style={{ width: WIDTH }} ref={innerDivRef}>
         <Text className="color-picker-title">{capitalizeFirstLetter(title ?? '')}</Text>
         <TextInput label="Hex" onChange={onSetHex} value={inputColor} />
-        <div className="color-picker-basic-color">
+        <div className="color-picker-basic-color" {...arrowNavigationAttributes}>
           {basicColors.map((basicColor) => (
             <button
               className={basicColor === selfColor.hex ? 'default-color-buttons active' : 'default-color-buttons'}
@@ -137,7 +136,6 @@ export const DropdownColorPicker = ({
         </MoveWrapper>
         <div className="color-picker-color" style={{ backgroundColor: selfColor.hex }} />
       </div>
-      {children}
     </DropDown>
   );
 };

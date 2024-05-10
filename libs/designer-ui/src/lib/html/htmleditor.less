@@ -124,8 +124,14 @@ div.msla-html-editor-toolbar {
   }
 }
 
-.msla-html-editor-dropdown-items-container {
+div.msla-html-editor-dropdown-items-container {
   z-index: 1000001;
+  .msla-html-editor-dropdown-items-surface {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+  }
   .item {
     max-width: 250px;
     min-width: 100px;
@@ -232,7 +238,6 @@ div.msla-toolbar-divider {
 }
 
 .color-picker-wrapper {
-  padding: 10px;
   .color-picker-title {
     text-align: center;
     display: -webkit-box;
@@ -313,7 +318,6 @@ div.msla-toolbar-divider {
 .color-picker-color {
   border: 1px solid #ccc;
   margin-top: 15px;
-  width: 100%;
   height: 20px;
 }
 

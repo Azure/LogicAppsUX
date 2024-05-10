@@ -1,4 +1,4 @@
-import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
+import { Button, Popover, PopoverSurface, PopoverTrigger, ToolbarButton } from '@fluentui/react-components';
 import { useOutsideClick } from '@microsoft/logic-apps-shared';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
@@ -81,17 +81,19 @@ export const DropDown = ({
   return (
     <Popover
       closeOnScroll={true}
-      onOpenChange={(e, { open }) => {
-        setShowDropDown(open);
+      onOpenChange={(_, { open }) => {
+        if (open) {
+          setShowDropDown(open);
+        } else {
+          handleClose();
+        }
       }}
       open={showDropDown}
       positioning="below"
+      trapFocus={true}
     >
       <PopoverTrigger disableButtonEnhancement={true}>
-        <button
-          onMouseDown={(e) => {
-            e.preventDefault();
-          }}
+        <ToolbarButton
           disabled={disabled}
           aria-label={buttonAriaLabel || buttonLabel}
           className={buttonClassName}
@@ -99,7 +101,7 @@ export const DropDown = ({
         >
           {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
           {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
-        </button>
+        </ToolbarButton>
       </PopoverTrigger>
       <PopoverSurface
         className="msla-html-editor-dropdown-items-container"
@@ -110,7 +112,10 @@ export const DropDown = ({
         }}
         style={{ padding: '4px' }}
       >
-        {children}
+        <div className="msla-html-editor-dropdown-items-surface">
+          {children}
+          <Button onClick={handleClose}>Close</Button>
+        </div>
       </PopoverSurface>
     </Popover>
   );
