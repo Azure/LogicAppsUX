@@ -1,6 +1,5 @@
 import { ReactFlowNodeType } from '../../../constants/ReactFlowConstants';
 import { customTokens } from '../../../core';
-import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import { isNodeHighlighted } from '../../../utils/ReactFlow.Util';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
@@ -9,10 +8,9 @@ import { errorCardStyles, getStylesForSharedState, highlightedCardStyles, select
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
 import { Button, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
+import { useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
@@ -20,7 +18,6 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, disabled, functionBranding, displayHandle, onClick, dataTestId } = props.data;
   const reactFlowId = props.id;
 
-  const dispatch = useDispatch();
   const classes = useFunctionCardStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -41,11 +38,6 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
   const contextMenu = useCardContextMenu();
-
-  const handleDeleteClick = () => {
-    dispatch(setSelectedItem(reactFlowId));
-    dispatch(deleteCurrentlySelectedItem());
-  };
 
   const displayTargetHandle = shouldDisplayTargetHandle(displayHandle, sourceNodeConnectionBeingDrawnFromId, reactFlowId, functionData);
   const displaySourceHandle = shouldDisplaySourceHandle(
@@ -122,13 +114,6 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         shouldDisplay={displaySourceHandle}
         nodeReactFlowType={ReactFlowNodeType.FunctionNode}
         nodeReactFlowId={reactFlowId}
-      />
-      <CardContextMenu
-        title={'Delete'}
-        contextMenuLocation={contextMenu.location}
-        menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
-        open={contextMenu.isShowing}
-        setOpen={contextMenu.setIsShowing}
       />
     </div>
   );

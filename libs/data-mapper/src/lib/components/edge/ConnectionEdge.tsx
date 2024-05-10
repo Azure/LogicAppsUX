@@ -1,9 +1,4 @@
-import {
-  deleteCurrentlySelectedItem,
-  setCanvasToolboxTabToDisplay,
-  setInlineFunctionInputOutputKeys,
-  setSelectedItem,
-} from '../../core/state/DataMapSlice';
+import { setCanvasToolboxTabToDisplay, setInlineFunctionInputOutputKeys } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { getSmoothStepEdge } from '../../utils/Edge.Utils';
 import {
@@ -16,8 +11,7 @@ import {
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
+import { useCardContextMenu } from '@microsoft/designer-ui';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -157,11 +151,6 @@ export const ConnectionEdge = (props: EdgeProps) => {
 
   const contextMenu = useCardContextMenu();
 
-  const handleDeleteClick = () => {
-    dispatch(setSelectedItem(id));
-    dispatch(deleteCurrentlySelectedItem());
-  };
-
   return (
     <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onContextMenu={contextMenu.handle}>
       <BaseEdge
@@ -206,13 +195,6 @@ export const ConnectionEdge = (props: EdgeProps) => {
           </Tooltip>
         ) : null}
       </foreignObject>
-      <CardContextMenu
-        title={'Delete'}
-        contextMenuLocation={contextMenu.location}
-        menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
-        open={contextMenu.isShowing}
-        setOpen={contextMenu.setIsShowing}
-      />
     </svg>
   );
 };
