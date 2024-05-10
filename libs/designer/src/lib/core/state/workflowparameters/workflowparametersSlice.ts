@@ -1,8 +1,5 @@
-/* eslint-disable no-case-declarations */
-import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
-import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
-import { validateType } from '../../utils/validation';
+import { validateParameterValueWithSwaggerType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
@@ -75,45 +72,7 @@ export const validateParameter = (
         });
       }
 
-      const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
-      let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
-
-      if (error) {
-        return error;
-      }
-
-      switch (swaggerType) {
-        case Constants.SWAGGER.TYPE.ARRAY: {
-          let isInvalid = false;
-          try {
-            isInvalid = !Array.isArray(JSON.parse(valueToValidate));
-          } catch {
-            isInvalid = true;
-          }
-
-          error = isInvalid
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
-            : undefined;
-          break;
-        }
-
-        case Constants.SWAGGER.TYPE.OBJECT:
-        case Constants.SWAGGER.TYPE.BOOLEAN: {
-          try {
-            JSON.parse(valueToValidate);
-          } catch {
-            error =
-              swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-                ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
-                : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
-          }
-          break;
-        }
-
-        default:
-          break;
-      }
-      return error;
+      return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
     }
 
     default:
