@@ -16,7 +16,7 @@ describe('ui/templates/DisplayParameters', () => {
 
   beforeAll(() => {
     param1DefaultValue = 'default value for param 1';
-    param2DefaultValue = 'default value for param 2';
+    param2DefaultValue = 'boolean';
     template1Manifest = {
       title: 'Template 1',
       description: 'Template 1 Description',
@@ -47,7 +47,7 @@ describe('ui/templates/DisplayParameters', () => {
         },
         {
           name: 'param3',
-          type: 'object',
+          type: 'boolean',
           description: 'param3 description',
           default: param2DefaultValue,
           required: true,
