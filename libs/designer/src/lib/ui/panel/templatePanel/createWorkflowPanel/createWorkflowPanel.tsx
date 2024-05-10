@@ -4,14 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DisplayConnections } from '../../../templates/connections/displayConnections';
 import { DisplayParameters } from '../../../templates/parameters/displayParameters';
 import { Button } from '@fluentui/react-components';
-import { ChoiceGroup } from '@fluentui/react';
-import { updateKind } from '../../../../core/state/templates/templateSlice';
+import { ChoiceGroup, Label, TextField } from '@fluentui/react';
+import { updateKind, updateWorkflowName } from '../../../../core/state/templates/templateSlice';
 
-export const CreateWorkflowPanel = () => {
+export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { kind, manifest, parameters, connections } = useSelector((state: RootState) => state.template);
-  const { appId } = useSelector((state: RootState) => state.workflow);
+  const { workflowName, kind, manifest, parameters, connections } = useSelector((state: RootState) => state.template);
+  const { workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
     STATE_TYPE: intl.formatMessage({
@@ -28,6 +28,11 @@ export const CreateWorkflowPanel = () => {
       defaultMessage: 'Stateless: Optimized for low latency, ideal for request-response and processing IoT events.',
       id: 'mBZnZP',
       description: 'Description for Stateless Type',
+    }),
+    WORKFLOW_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow Name',
+      id: '8WZwsC',
+      description: 'Label for workflow Name',
     }),
     CREATE_NEW_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Create New Workflow',
@@ -46,7 +51,6 @@ export const CreateWorkflowPanel = () => {
     }),
   };
 
-  const createWorkflowCall = () => {};
   return (
     <>
       <div>
@@ -59,6 +63,19 @@ export const CreateWorkflowPanel = () => {
       {connections ? <DisplayConnections connections={connections} /> : <>PLACEHOLDER: no connections to be made</>}
       {parameters ? <DisplayParameters /> : <>PLACEHOLDER: no parameters</>}
 
+      <Label required={true} htmlFor={'workflowName'}>
+        {intlText.WORKFLOW_NAME}
+      </Label>
+      <TextField
+        data-testid={'workflowName'}
+        id={'workflowName'}
+        ariaLabel={intlText.WORKFLOW_NAME}
+        value={existingWorkflowName ?? workflowName}
+        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
+          dispatch(updateWorkflowName(newValue ?? ''))
+        }
+        disabled={!!existingWorkflowName}
+      />
       <ChoiceGroup
         label={intlText.STATE_TYPE}
         options={[
@@ -76,7 +93,7 @@ export const CreateWorkflowPanel = () => {
         }}
         selectedKey={kind}
       />
-      <Button appearance="outline" onClick={createWorkflowCall} disabled={!appId}>
+      <Button appearance="outline" onClick={onCreateClick} disabled={false}>
         {intlText.CREATE}
       </Button>
     </>
