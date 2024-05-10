@@ -1,17 +1,22 @@
-import { describe, beforeAll, expect, it } from 'vitest';
+import { describe, beforeAll, expect, it, beforeEach } from 'vitest';
 import type { AppStore } from '../../../core/state/templates/store';
 import { setupStore } from '../../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { DisplayParameters } from '../parameters/displayParameters';
-import type { TemplateState } from '../../../core/state/templates/templateSlice';
+import { updateTemplateParameterValue, type TemplateState } from '../../../core/state/templates/templateSlice';
 
 describe('ui/templates/DisplayParameters', () => {
   let store: AppStore;
+  let templateSliceData: TemplateState;
   let template1Manifest: Template.Manifest;
+  let param1DefaultValue: string;
+  let param2DefaultValue: string;
 
   beforeAll(() => {
+    param1DefaultValue = 'default value for param 1';
+    param2DefaultValue = 'default value for param 2';
     template1Manifest = {
       title: 'Template 1',
       description: 'Template 1 Description',
@@ -31,15 +36,26 @@ describe('ui/templates/DisplayParameters', () => {
       parameters: [
         {
           name: 'param1',
-          type: 'object',
+          type: 'string',
           description: 'param1 description',
+          default: param1DefaultValue,
+        },
+        {
+          name: 'param2',
+          type: 'object',
+          description: 'param2 description',
+        },
+        {
+          name: 'param3',
+          type: 'object',
+          description: 'param3 description',
+          default: param2DefaultValue,
+          required: true,
         },
       ],
     };
-  });
 
-  it('Renders TemplateCard and loads template state correctly on buttons click', async () => {
-    const templateSliceData: TemplateState = {
+    templateSliceData = {
       templateName: template1Manifest.title,
       manifest: template1Manifest,
       workflowDefinition: {
@@ -62,12 +78,58 @@ describe('ui/templates/DisplayParameters', () => {
       template: templateSliceData,
     };
     store = setupStore(minimalStoreData);
+  });
 
+  beforeEach(() => {
     renderWithProviders(<DisplayParameters />, { store });
+  });
 
-    expect(screen.getByText(template1Manifest?.parameters[0].name)).toBeDefined();
-    expect(screen.getByText(template1Manifest.parameters[0].type)).toBeDefined();
-    expect(screen.getByText(template1Manifest.parameters[0].description)).toBeDefined();
-    // expect(screen.getByText(template1Manifest.parameters[0]?.value)).toBeDefined();
+  it('DisplayParameters with default case ', async () => {
+    const parameter1 = template1Manifest?.parameters[0];
+    expect(screen.getByText(parameter1.name)).toBeDefined();
+    expect(screen.getByText(parameter1.type)).toBeDefined();
+    expect(screen.getByText(parameter1.description)).toBeDefined();
+    expect(screen.getAllByDisplayValue(param1DefaultValue)).toBeDefined();
+  });
+
+  it('Renders DisplayParameters, updating parameter with wrong type ', async () => {
+    const parameter2 = template1Manifest?.parameters[1];
+
+    expect(screen.getByText(parameter2.name)).toBeDefined();
+    expect(screen.getByText(parameter2.type)).toBeDefined();
+    expect(screen.getByText(parameter2.description)).toBeDefined();
+
+    store.dispatch(
+      updateTemplateParameterValue({
+        id: parameter2.name,
+        newDefinition: {
+          id: parameter2.name,
+          type: parameter2.type,
+          value: 'non-object value',
+        },
+      })
+    );
+    expect(store.getState().template.parameters.validationErrors[parameter2.name]).toBe('Enter a valid JSON.');
+  });
+
+  it('Renders DisplayParameters, updating required parameter with empty value ', async () => {
+    const parameter3 = template1Manifest?.parameters[2];
+
+    expect(screen.getByText(parameter3.name)).toBeDefined();
+    expect(screen.getByText(parameter3.type)).toBeDefined();
+    expect(screen.getByText(parameter3.description)).toBeDefined();
+    expect(screen.getAllByDisplayValue(param2DefaultValue)).toBeDefined();
+
+    store.dispatch(
+      updateTemplateParameterValue({
+        id: parameter3.name,
+        newDefinition: {
+          id: parameter3.name,
+          type: parameter3.type,
+          value: '',
+        },
+      })
+    );
+    expect(store.getState().template.parameters.validationErrors[parameter3.name]).toBe('Must provide value for parameter.');
   });
 });
