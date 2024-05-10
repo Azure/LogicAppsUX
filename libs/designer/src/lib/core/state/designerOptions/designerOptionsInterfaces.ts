@@ -18,6 +18,7 @@ import type {
   IChatbotService,
   ICustomCodeService,
   LogicApps,
+  ICopilotService,
 } from '@microsoft/logic-apps-shared';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
@@ -62,4 +63,5 @@ export interface ServiceOptions {
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
   customCodeService?: ICustomCodeService;
+  copilotService?: ICopilotService;
 }
