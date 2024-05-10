@@ -94,8 +94,6 @@ export const DropdownColorPicker = ({
     setInputColor(newColor.hex);
   }, [color]);
 
-  console.log(selfColor, inputColor, color);
-
   return (
     <DropDown {...dropdownProps} disabled={disabled} stopCloseOnClickSelf buttonIconSrc={buttonIconSrc} editor={editor}>
       <div className="color-picker-wrapper" style={{ width: WIDTH }} ref={innerDivRef}>

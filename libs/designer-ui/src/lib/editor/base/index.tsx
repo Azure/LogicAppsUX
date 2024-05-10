@@ -187,6 +187,7 @@ export const BaseEditor = ({
               className={css('editor-input', readonly && 'readonly')}
               ariaLabelledBy={labelId}
               ariaDescribedBy={id}
+              tabIndex={0}
               title={placeholder}
             />
           }
