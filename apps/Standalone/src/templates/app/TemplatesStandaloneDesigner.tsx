@@ -80,7 +80,7 @@ export const TemplatesStandaloneDesigner = () => {
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
         <TemplatesDesignerProvider locale="en-US" theme={theme}>
-          <TemplatesDataProvider appId={appId} isConsumption={isConsumption} workflowName={existingWorkflowName}>
+          <TemplatesDataProvider isConsumption={isConsumption} workflowName={existingWorkflowName}>
             <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>

@@ -5,16 +5,15 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
-import { setAppid, setConsumption, setWorkflowName } from '../state/templates/workflowSlice';
+import { setConsumption, setWorkflowName } from '../state/templates/workflowSlice';
 
 export interface TemplatesDataProviderProps {
-  appId: string | undefined;
   isConsumption: boolean | undefined;
   workflowName: string | undefined;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ appId, isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { availableTemplateNames } = useSelector((state: RootState) => state.manifest);
 
@@ -27,12 +26,6 @@ const DataProviderInner = ({ appId, isConsumption, workflowName, children }: Tem
   useEffect(() => {
     dispatch(loadManifestNames());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (appId) {
-      dispatch(setAppid(appId));
-    }
-  }, [dispatch, appId]);
 
   useEffect(() => {
     dispatch(setConsumption(!!isConsumption));
