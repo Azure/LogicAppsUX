@@ -1,6 +1,7 @@
 import { isBuiltInConnector } from '../connectors/predicates';
 import { InfoDot } from '../infoDot';
-import { Text, css } from '@fluentui/react';
+import { css } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
@@ -12,6 +13,12 @@ export interface ConnectorSummaryCardProps {
   onClick?: (id: string) => void;
   isCard?: boolean;
 }
+
+const pseudoBadgeStyles = {
+  fontSize: '11px',
+  lineHeight: '16px',
+  fontWeight: 600,
+};
 
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const { connector, category, onClick, isCard = true, displayRuntimeInfo } = props;
@@ -42,7 +49,13 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
         />
       </div>
       {displayRuntimeInfo ? (
-        <div className="msla-connector-summary-labels">{isBuiltIn ? <Text className="msla-psuedo-badge">{category}</Text> : null}</div>
+        <div className="msla-connector-summary-labels">
+          {isBuiltIn ? (
+            <Text style={pseudoBadgeStyles} className="msla-psuedo-badge">
+              {category}
+            </Text>
+          ) : null}
+        </div>
       ) : null}
     </>
   );
