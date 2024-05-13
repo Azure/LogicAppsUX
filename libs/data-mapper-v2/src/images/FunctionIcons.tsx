@@ -1,8 +1,8 @@
-import type { IconProps } from './IconModel';
+import type { FluentIconsProps } from '@fluentui/react-icons';
 import { wrapIcon } from '@fluentui/react-icons';
 import React from 'react';
 
-const Count32RegularIcon = (props: IconProps) => {
+const Count32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -20,7 +20,7 @@ const Count32RegularIcon = (props: IconProps) => {
   );
 };
 
-const CreatePercentageIcon = (props: IconProps) => {
+const CreatePercentageIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -40,7 +40,7 @@ const CreatePercentageIcon = (props: IconProps) => {
 
 export const PercentageIcon = wrapIcon(CreatePercentageIcon, 'PercentageIcon');
 
-const CreateAngleIcon = (props: IconProps) => {
+const CreateAngleIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -62,7 +62,7 @@ export const AngleIcon = wrapIcon(CreateAngleIcon, 'AngleIcon'); // named ChartY
 
 export const Count32Regular = wrapIcon(Count32RegularIcon, 'Count32Regular');
 
-const GreaterThan32RegularIcon = (props: IconProps) => {
+const GreaterThan32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -82,7 +82,7 @@ const GreaterThan32RegularIcon = (props: IconProps) => {
 
 export const GreaterThan32Regular = wrapIcon(GreaterThan32RegularIcon, 'GreaterThan32Regular');
 
-const GreaterThanOrEqual32RegularIcon = (props: IconProps) => {
+const GreaterThanOrEqual32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -102,7 +102,7 @@ const GreaterThanOrEqual32RegularIcon = (props: IconProps) => {
 
 export const GreaterThanOrEqual32Regular = wrapIcon(GreaterThanOrEqual32RegularIcon, 'GreaterThanOrEqual32Regular');
 
-const LessThan32RegularIcon = (props: IconProps) => {
+const LessThan32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -122,7 +122,7 @@ const LessThan32RegularIcon = (props: IconProps) => {
 
 export const LessThan32Regular = wrapIcon(LessThan32RegularIcon, 'LessThan32Regular');
 
-const LessThanOrEqual32RegularIcon = (props: IconProps) => {
+const LessThanOrEqual32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -142,7 +142,7 @@ const LessThanOrEqual32RegularIcon = (props: IconProps) => {
 
 export const LessThanOrEqual32Regular = wrapIcon(LessThanOrEqual32RegularIcon, 'LessThanOrEqual32Regular');
 
-const AbsoluteValue32RegularIcon = (props: IconProps) => {
+const AbsoluteValue32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -162,7 +162,7 @@ const AbsoluteValue32RegularIcon = (props: IconProps) => {
 
 export const AbsoluteValue32Regular = wrapIcon(AbsoluteValue32RegularIcon, 'AbsoluteValue32Regular');
 
-const FloorValue32RegularIcon = (props: IconProps) => {
+const FloorValue32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -182,7 +182,7 @@ const FloorValue32RegularIcon = (props: IconProps) => {
 
 export const FloorValue32Regular = wrapIcon(FloorValue32RegularIcon, 'FloorValue32Regular');
 
-const CeilingValue32RegularIcon = (props: IconProps) => {
+const CeilingValue32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -202,7 +202,7 @@ const CeilingValue32RegularIcon = (props: IconProps) => {
 
 export const CeilingValue32Regular = wrapIcon(CeilingValue32RegularIcon, 'CeilingValue32Regular');
 
-const SquareRoot32RegularIcon = (props: IconProps) => {
+const SquareRoot32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -222,7 +222,7 @@ const SquareRoot32RegularIcon = (props: IconProps) => {
 
 export const SquareRoot32Regular = wrapIcon(SquareRoot32RegularIcon, 'SquareRoot32Regular');
 
-const RightTriangleRegularIcon = (props: IconProps) => {
+const RightTriangleRegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -242,7 +242,7 @@ const RightTriangleRegularIcon = (props: IconProps) => {
 
 export const RightTriangleRegular = wrapIcon(RightTriangleRegularIcon, 'RightTriangleRegular');
 
-const IndexRegularIcon = (props: IconProps) => {
+const IndexRegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -262,7 +262,7 @@ const IndexRegularIcon = (props: IconProps) => {
 
 export const IndexRegular = wrapIcon(IndexRegularIcon, 'IndexRegular');
 
-const Divide32RegularIcon = (props: IconProps) => {
+const Divide32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -283,7 +283,7 @@ const Divide32RegularIcon = (props: IconProps) => {
 
 export const Divide32Regular = wrapIcon(Divide32RegularIcon, 'Divide32Regular');
 
-const EPowerX32RegularIcon = (props: IconProps) => {
+const EPowerX32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -304,7 +304,7 @@ const EPowerX32RegularIcon = (props: IconProps) => {
 
 export const EPowerX32Regular = wrapIcon(EPowerX32RegularIcon, 'EPowerX32Regular');
 
-const TenPowerX32RegularIcon = (props: IconProps) => {
+const TenPowerX32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -325,7 +325,7 @@ const TenPowerX32RegularIcon = (props: IconProps) => {
 
 export const TenPowerX32Regular = wrapIcon(TenPowerX32RegularIcon, 'TenPowerX32Regular');
 
-const XDivide132RegularIcon = (props: IconProps) => {
+const XDivide132RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -346,7 +346,7 @@ const XDivide132RegularIcon = (props: IconProps) => {
 
 export const XDivide132Regular = wrapIcon(XDivide132RegularIcon, 'XDivide132Regular');
 
-const LogYX32RegularIcon = (props: IconProps) => {
+const LogYX32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -367,7 +367,7 @@ const LogYX32RegularIcon = (props: IconProps) => {
 
 export const LogYX32Regular = wrapIcon(LogYX32RegularIcon, 'LogYX32Regular');
 
-const XPowerY32RegularIcon = (props: IconProps) => {
+const XPowerY32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -388,7 +388,7 @@ const XPowerY32RegularIcon = (props: IconProps) => {
 
 export const XPowerY32Regular = wrapIcon(XPowerY32RegularIcon, 'XPowerY32Regular');
 
-const RoundRegularIcon = (props: IconProps) => {
+const RoundRegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',

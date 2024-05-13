@@ -3,7 +3,7 @@ import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
-  headerText: {
+  header: {
     ...typographyStyles.caption1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     color: tokens.colorNeutralForeground1,

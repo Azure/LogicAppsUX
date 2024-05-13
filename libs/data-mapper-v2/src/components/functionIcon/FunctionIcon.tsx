@@ -16,6 +16,6 @@ export const FunctionIcon = ({ functionKey, functionName, categoryName, color, i
   return FunctionIcon ? (
     FunctionIcon
   ) : (
-    <CategoryIcon styles={{ height: iconSize, width: iconSize }} fontSize={`${iconSize}px`} title={functionName} primaryFill={color} />
+    <CategoryIcon style={{ height: iconSize, width: iconSize }} fontSize={`${iconSize}px`} title={functionName} primaryFill={color} />
   );
 };

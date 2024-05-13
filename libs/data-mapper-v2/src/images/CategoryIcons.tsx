@@ -1,8 +1,8 @@
-import type { IconProps } from './IconModel';
+import type { FluentIconsProps } from '@fluentui/react-icons';
 import { wrapIcon } from '@fluentui/react-icons';
 import React from 'react';
 
-const CollectionRegularIcon = (props: IconProps) => {
+const CollectionRegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -24,7 +24,7 @@ const CollectionRegularIcon = (props: IconProps) => {
 
 export const CollectionRegular = wrapIcon(CollectionRegularIcon, 'CollectionRegular');
 
-const StringCategory20RegularIcon = (props: IconProps) => {
+const StringCategory20RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
