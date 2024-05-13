@@ -1,3 +1,4 @@
+import React from 'react';
 import type { AboutProps } from '../';
 import { About } from '../';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
@@ -46,6 +47,36 @@ describe('lib/monitoring/requestpanel/request', () => {
       ],
     };
 
+    const tree = renderer.render(<About {...props} />);
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('renders correctly with different connectorDisplayName values', () => {
+    const props = {
+      ...minimal,
+      connectorDisplayName: 'new test',
+    };
+    const tree = renderer.render(<About {...props} />);
+    expect(tree).toMatchSnapshot();
+  });
+
+  test('renders correctly with different headerIcons values', () => {
+    const props = {
+      ...minimal,
+      headerIcons: [
+        { title: 'NewTag1', badgeText: 'new test' },
+        { title: 'NewTag2', badgeText: 'new more' },
+      ],
+    };
+    const tree = renderer.render(<About {...props} />);
+    expect(tree).toMatchSnapshot();
+  });
+
+  test('renders correctly when descriptionDocumentation is undefined', () => {
+    const props = {
+      ...minimal,
+      descriptionDocumentation: undefined,
+    };
     const tree = renderer.render(<About {...props} />);
     expect(tree).toMatchSnapshot();
   });

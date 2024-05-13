@@ -12,7 +12,7 @@ export interface AboutProps {
   headerIcons?: BadgeProps[];
   isLoading?: boolean;
   connectorType?: string;
-  displayRuntimeInfo: boolean;
+  displayRuntimeInfo?: boolean;
 }
 
 export const About = ({
