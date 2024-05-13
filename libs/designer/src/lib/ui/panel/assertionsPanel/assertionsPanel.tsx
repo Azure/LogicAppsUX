@@ -13,8 +13,6 @@ import {
   generateExpressionFromKey,
   getTokenExpressionMethodFromKey,
   getTokenValueFromToken,
-  loadParameterValueFromString,
-  toConditionViewModel,
 } from '../../../core/utils/parameters/helper';
 import { type TokenGroup, getExpressionTokenSections } from '../../../core/utils/tokens';
 import { convertVariableTypeToSwaggerType } from '../../../core/utils/variables';
@@ -27,9 +25,8 @@ import {
   type ValueSegment,
   type OutputToken,
   TokenType,
-  TokenPicker,
-  type TokenPickerMode,
   ValueSegmentType,
+  ConditionExpression,
 } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -154,14 +151,14 @@ const getValueSegmentFromToken = (token: OutputToken): ValueSegment => {
   return segment;
 };
 
-const getTokenPicker = (
+const getConditionExpression = (
   editorId: string,
   labelId: string,
+  initialValue: string,
   type: string,
   tokenGroup: TokenGroup[],
   expressionGroup: TokenGroup[],
-  tokenPickerMode?: TokenPickerMode,
-  tokenClickedCallback?: (token: ValueSegment) => void
+  onChange: (value: string) => void
 ): JSX.Element => {
   const supportedTypes: string[] = getPropertyValue(Constants.TOKENS, type);
   const filteredTokens = tokenGroup.map((group) => ({
@@ -170,15 +167,15 @@ const getTokenPicker = (
   }));
 
   return (
-    <TokenPicker
+    <ConditionExpression
       editorId={editorId}
       labelId={labelId}
+      initialValue={initialValue}
       tokenGroup={filteredTokens}
       filteredTokenGroup={filteredTokens}
       expressionGroup={expressionGroup}
-      initialMode={tokenPickerMode}
       getValueSegmentFromToken={(token: OutputToken) => Promise.resolve(getValueSegmentFromToken(token))}
-      tokenClickedCallback={tokenClickedCallback}
+      onChange={onChange}
     />
   );
 };
@@ -223,7 +220,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         name: event.name,
         isEditable: true,
         description: event.description,
-        expression: toConditionViewModel(event.expression),
+        expression: event.expression,
       },
     };
     setAssertions(newAssertions);
@@ -253,22 +250,16 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     callback();
   }, [tokens]);
 
-  const onGetTokenPicker = useCallback(
-    (
-      editorId: string,
-      labelId: string,
-      type: string,
-      tokenPickerMode?: TokenPickerMode,
-      tokenClickedCallback?: (token: ValueSegment) => void
-    ) => {
-      return getTokenPicker(
+  const getConditionExpressionHandler = useCallback(
+    (editorId: string, labelId: string, initialValue: string, type: string, onChange: (value: string) => void) => {
+      return getConditionExpression(
         editorId,
         labelId,
+        initialValue,
         type,
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
-        tokenPickerMode,
-        tokenClickedCallback
+        onChange
       );
     },
     [tokens]
@@ -281,9 +272,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       onDismiss={onClose}
       onAssertionDelete={onAssertionDelete}
       onAssertionUpdate={onAssertionUpdate}
-      getTokenPicker={onGetTokenPicker}
-      tokenMapping={tokenMapping}
-      loadParameterValueFromString={(value: string) => loadParameterValueFromString(value)}
+      getConditionExpression={getConditionExpressionHandler}
       validationErrors={assertionsValidationErrors}
     />
   );

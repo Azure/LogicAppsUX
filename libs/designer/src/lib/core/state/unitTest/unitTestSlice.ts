@@ -1,4 +1,3 @@
-import { recurseSerializeCondition } from '../../utils/parameters/helper';
 import { validateParameter } from '../workflowparameters/workflowparametersSlice';
 import type {
   UpdateAssertionsPayload,
@@ -8,7 +7,7 @@ import type {
   UnitTestState,
   updateMockResultPayload,
 } from './unitTestInterfaces';
-import { ActionResults, type ParameterInfo } from '@microsoft/designer-ui';
+import { ActionResults } from '@microsoft/designer-ui';
 import {
   type Assertion,
   type AssertionDefintion,
@@ -41,7 +40,7 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
   return assertions.reduce((acc, assertion) => {
     const { name, description, expression } = assertion;
     const id = guid();
-    return { ...acc, [id]: { id, name, description, expression, isEditable: false } };
+    return Object.assign(acc, { [id]: { id, name, description, expression, isEditable: false } });
   }, {});
 };
 
@@ -55,7 +54,7 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
  */
 export const validateAssertion = (
   id: string,
-  data: { name?: string; expression?: Record<string, any> },
+  data: { name?: string; expression?: string },
   keyToValidate: string,
   allDefinitions: Record<string, AssertionDefintion>
 ): string | undefined => {
@@ -66,9 +65,9 @@ export const validateAssertion = (
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
-          defaultMessage: 'Must provide the Assertion name.',
-          id: 'YjSqtf',
-          description: 'Error message when the workflow assertion name is empty.',
+          defaultMessage: 'Must provide the assertion name.',
+          id: 'tHDcfJ',
+          description: 'Error message when the assertion name is empty.',
         });
       }
 
@@ -86,21 +85,15 @@ export const validateAssertion = (
     }
     case 'expression': {
       const { expression } = data;
-      const expresisonErrors: string[] = [];
-      recurseSerializeCondition(
-        {
-          suppressCasting: false,
-          info: {
-            isDynamic: false,
-          },
-        } as ParameterInfo,
-        expression?.items,
-        false,
-        {},
-        expresisonErrors
-      );
+      if (!expression) {
+        return intl.formatMessage({
+          defaultMessage: 'Must provide a condition expression.',
+          id: 'FUvA4o',
+          description: 'Error message when the assertion condition expression is empty.',
+        });
+      }
 
-      return expresisonErrors.length > 0 ? expresisonErrors[0] : undefined;
+      return undefined;
     }
 
     default: {
@@ -132,7 +125,9 @@ export const unitTestSlice = createSlice({
         ...(getRecordEntry(state.validationErrors.mocks, operationOutputId) ?? {}),
         ...validationErrors,
       };
-      if (!newErrorObj.value) delete newErrorObj.value;
+      if (!newErrorObj.value) {
+        delete newErrorObj.value;
+      }
       if (Object.keys(newErrorObj).length === 0) {
         delete state.validationErrors.mocks[operationOutputId];
       } else {
@@ -175,8 +170,12 @@ export const unitTestSlice = createSlice({
         ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),
         ...validationErrors,
       };
-      if (!newErrorObj.name) delete newErrorObj.name;
-      if (!newErrorObj.expression) delete newErrorObj.expression;
+      if (!newErrorObj.name) {
+        delete newErrorObj.name;
+      }
+      if (!newErrorObj.expression) {
+        delete newErrorObj.expression;
+      }
       if (Object.keys(newErrorObj).length === 0) {
         delete state.validationErrors.assertions[id];
       } else {

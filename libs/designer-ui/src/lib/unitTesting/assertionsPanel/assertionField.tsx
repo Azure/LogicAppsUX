@@ -1,9 +1,5 @@
 import constants from '../../constants';
-import type { ValueSegment } from '../../editor';
-import type { ChangeState } from '../../editor/base';
-import { TokenField } from '../../settings/settingsection/settingTokenField';
-import type { TokenPickerMode } from '../../tokenpicker';
-import type { GetAssertionTokenPickerHandler } from './assertion';
+import type { GetConditionExpressionHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
 import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -36,26 +32,27 @@ const EXPRESSION_KEY = 'expression';
 export interface ParameterFieldDetails {
   description: string;
   name: string;
+  expressionKey: string;
   expression: string;
 }
 
 export interface AssertionFieldProps {
+  id: string;
   name: string;
   description: string;
-  expression: Record<string, any>;
+  expression: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
-  setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+  setExpression: React.Dispatch<React.SetStateAction<string>>;
   isEditable: boolean;
   isExpanded: boolean;
-  getTokenPicker: GetAssertionTokenPickerHandler;
+  getConditionExpression: GetConditionExpressionHandler;
   handleUpdate: (newAssertion: Assertion) => void;
-  tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString: (value: string) => ValueSegment[];
   validationErrors?: Record<string, string | undefined>;
 }
 
 export const AssertionField = ({
+  id,
   name,
   description,
   setName,
@@ -64,10 +61,8 @@ export const AssertionField = ({
   expression,
   isEditable,
   isExpanded,
-  getTokenPicker,
+  getConditionExpression,
   handleUpdate,
-  tokenMapping,
-  loadParameterValueFromString,
   validationErrors,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
@@ -75,6 +70,7 @@ export const AssertionField = ({
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
     name: `${name}-${NAME_KEY}`,
+    expressionKey: `${id}-${EXPRESSION_KEY}`,
     expression: `${name}-${EXPRESSION_KEY}`,
   };
 
@@ -124,10 +120,18 @@ export const AssertionField = ({
     handleUpdate({ name: newValue ?? '', description, expression });
   };
 
-  const onExpressionChange = (newState: ChangeState): void => {
-    setExpression(newState.viewModel);
-    handleUpdate({ name, description, expression: newState.viewModel });
+  const onExpressionChange = (conditionExpression: string): void => {
+    setExpression(conditionExpression);
+    handleUpdate({ name, description, expression: conditionExpression });
   };
+
+  const conditionExpression = getConditionExpression(
+    parameterDetails.expressionKey,
+    parameterDetails.expression,
+    expression,
+    constants.SWAGGER.TYPE.ANY,
+    onExpressionChange
+  );
 
   return (
     <>
@@ -185,26 +189,7 @@ export const AssertionField = ({
         <div className="msla-assertion-condition-editor">
           {isExpanded ? (
             <>
-              <TokenField
-                editor="condition"
-                editorViewModel={expression ?? {}}
-                readOnly={!isEditable}
-                label="Condition"
-                labelId="condition-label"
-                tokenEditor={true}
-                value={[]}
-                tokenMapping={tokenMapping}
-                loadParameterValueFromString={loadParameterValueFromString}
-                getTokenPicker={(
-                  editorId: string,
-                  labelId: string,
-                  tokenPickerMode?: TokenPickerMode,
-                  editorType?: string,
-                  tokenClickedCallback?: (token: ValueSegment) => void
-                ) => getTokenPicker(editorId, labelId, editorType ?? constants.SWAGGER.TYPE.ANY, tokenPickerMode, tokenClickedCallback)}
-                onCastParameter={() => ''}
-                onValueChange={onExpressionChange}
-              />
+              {conditionExpression}
               {!isNullOrUndefined(validationErrors) && validationErrors[EXPRESSION_KEY] && (
                 <span className="msla-input-parameter-error" role="alert">
                   {validationErrors[EXPRESSION_KEY]}
