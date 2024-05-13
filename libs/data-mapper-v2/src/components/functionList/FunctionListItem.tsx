@@ -64,6 +64,7 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
               functionName={functionData.functionName}
               categoryName={functionData.category}
               color={tokens.colorNeutralForegroundInverted}
+              iconSize={10}
             />
           </div>
 

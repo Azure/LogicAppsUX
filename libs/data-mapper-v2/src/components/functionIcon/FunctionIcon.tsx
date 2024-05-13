@@ -6,11 +6,16 @@ export interface FunctionIconProps {
   functionName: string;
   categoryName: FunctionCategory;
   color: string;
+  iconSize: number;
 }
 
-export const FunctionIcon = ({ functionKey, functionName, categoryName, color }: FunctionIconProps) => {
-  const FunctionIcon = iconForFunction(functionKey, color);
+export const FunctionIcon = ({ functionKey, functionName, categoryName, color, iconSize }: FunctionIconProps) => {
+  const FunctionIcon = iconForFunction(functionKey, color, iconSize);
   const CategoryIcon = iconForFunctionCategory(categoryName);
 
-  return FunctionIcon ? FunctionIcon : <CategoryIcon fontSize="10px" title={functionName} primaryFill={color} />;
+  return FunctionIcon ? (
+    FunctionIcon
+  ) : (
+    <CategoryIcon styles={{ height: iconSize, width: iconSize }} fontSize={`${iconSize}px`} title={functionName} primaryFill={color} />
+  );
 };

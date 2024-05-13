@@ -20,6 +20,46 @@ const Count32RegularIcon = (props: IconProps) => {
   );
 };
 
+const CreatePercentageIcon = (props: IconProps) => {
+  const { fill: primaryFill = 'currentColor', className } = props;
+  return React.createElement(
+    'svg',
+    Object.assign({}, props, {
+      width: 12,
+      height: 12,
+      viewBox: '0 0 2048 2048',
+      xmlns: 'http://www.w3.org/2000/svg',
+      className: className,
+    }),
+    <path
+      d="M384 1855q0-19 11-35L1547 156q19-28 53-28 28 0 46 18t18 46q0 19-11 36L501 1892q-8 12-23 20t-30 8q-26 0-45-19t-19-46zM128 512v-8q0-78 31-146t84-120 122-80 147-30q80 0 150 30t122 82 82 122 30 150q0 80-30 150t-82 122-122 82-150 30q-80 0-150-30t-122-82-82-122-30-150zm640 0v-5q0-52-21-97t-56-80-81-54-98-20q-53 0-99 20t-81 55-55 82-21 99q0 53 20 99t55 81 81 55 100 21q52 0 99-20t81-55 55-81 21-100zm384 1024v-8q0-78 31-146t84-120 122-80 147-30q80 0 150 30t122 82 82 122 30 150q0 80-30 150t-82 122-122 82-150 30q-80 0-150-30t-122-82-82-122-30-150zm640 0v-5q0-52-21-97t-56-80-81-54-98-20q-53 0-99 20t-81 55-55 82-21 99q0 53 20 99t55 81 81 55 100 21q52 0 99-20t81-55 55-81 21-100z"
+      fill={primaryFill}
+    />
+  );
+};
+
+export const PercentageIcon = wrapIcon(CreatePercentageIcon, 'PercentageIcon');
+
+const CreateAngleIcon = (props: IconProps) => {
+  const { fill: primaryFill = 'currentColor', className } = props;
+  return React.createElement(
+    'svg',
+    Object.assign({}, props, {
+      width: 12,
+      height: 12,
+      viewBox: '0 0 2048 2048',
+      xmlns: 'http://www.w3.org/2000/svg',
+      className: className,
+    }),
+    <path
+      d="M1808 1597q0 36-4 73t-14 73q-6 22-22 35t-40 14H192q-26 0-45-19t-19-45q0-26 19-45L1683 147q19-19 45-19t45 19 19 45q0 26-19 45L347 1664h1328q2-16 3-32t1-33q0-84-24-157t-69-131-112-96-150-54q6 13 20 38t28 54 25 53 11 38q0 26-19 45t-45 19q-17 0-33-9t-24-26l-128-256q-3-6-5-14t-2-15q0-17 10-33t25-24l256-128q14-7 29-7 26 0 45 19t19 45q0 21-11 35t-28 25-36 19-34 15q90 29 161 82t119 125 75 157 26 179z"
+      fill={primaryFill}
+    />
+  );
+};
+
+export const AngleIcon = wrapIcon(CreateAngleIcon, 'AngleIcon');
+
 export const Count32Regular = wrapIcon(Count32RegularIcon, 'Count32Regular');
 
 const GreaterThan32RegularIcon = (props: IconProps) => {
@@ -107,6 +147,8 @@ const AbsoluteValue32RegularIcon = (props: IconProps) => {
   return React.createElement(
     'svg',
     Object.assign({}, props, {
+      width: 12,
+      height: 12,
       viewBox: '0 0 2048 2048',
       xmlns: 'http://www.w3.org/2000/svg',
       className: className,
@@ -125,8 +167,8 @@ const FloorValue32RegularIcon = (props: IconProps) => {
   return React.createElement(
     'svg',
     Object.assign({}, props, {
-      width: 32,
-      height: 32,
+      width: 12,
+      height: 12,
       viewBox: '0 0 2048 2048',
       xmlns: 'http://www.w3.org/2000/svg',
       className: className,
