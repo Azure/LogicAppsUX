@@ -232,7 +232,7 @@ export const iconUriForIconImageName = (iconImageName: string) => {
 // };
 
 export const iconForFunction = (functionKey: string, color: string) => {
-  const defaultStyle = { height: 20, width: 20, margin: 'auto' };
+  const defaultStyle = { height: 10, width: 10, margin: 'auto' };
   const coloredDefaultStyle = { ...defaultStyle, color };
   const iconToEdgeStyle = { ...defaultStyle, height: 18, width: 18 };
 

@@ -28,8 +28,8 @@ export const useStyles = makeStyles({
   drawerHeaderWrapper: {
     display: 'flex',
     width: '100%',
-    marginTop: '20px',
-    marginBottom: '10px',
+    marginTop: '15px',
+    marginBottom: '5px',
   },
   collapsedDrawerBodyWrapper: {
     display: 'flex',
@@ -39,9 +39,9 @@ export const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    marginLeft: '10px',
   },
   drawerHeader: {
-    paddingLeft: '20px',
     fontWeight: 'initial',
     fontSize: '20px',
   },

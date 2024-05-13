@@ -2,7 +2,14 @@ import { makeStyles } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   functionSearchBox: {
-    width: '85%',
+    width: '210 px',
+  },
+  functionTree: {
+    backgroundColor: '#E8F3FE',
+  },
+  functionTreeItem: {
+    backgroundColor: '#E8F3FE',
+    paddingLeft: '10px',
   },
 });
 

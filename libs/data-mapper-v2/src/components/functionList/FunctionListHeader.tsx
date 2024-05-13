@@ -5,14 +5,15 @@ import type { FunctionDataTreeItem } from './FunctionList';
 import FunctionListItem from './FunctionListItem';
 
 const useStyles = makeStyles({
-  header: {
+  headerText: {
     ...typographyStyles.caption1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    color: tokens.colorNeutralForeground1,
     paddingLeft: tokens.spacingHorizontalXS,
+    fontSize: '13px',
     marginTop: '8px',
     marginBottom: '8px',
   },
+  headerCell: {},
 });
 
 interface FunctionListHeaderProps {
@@ -26,13 +27,13 @@ const FunctionListHeader = ({ category, functions }: FunctionListHeaderProps) =>
   const categoryName = getFunctionBrandingForCategory(category).displayName;
 
   const functionItems = functions.children.map((func) => {
-    return <FunctionListItem key={func.displayName} functionData={func}></FunctionListItem>;
+    return <FunctionListItem key={func.displayName} functionData={func} />;
   });
 
   return (
-    <TreeItem itemType="branch">
-      <TreeItemLayout>
-        <Text className={styles.header}>{categoryName}</Text>{' '}
+    <TreeItem className={styles.headerCell} itemType="branch">
+      <TreeItemLayout className={styles.headerCell}>
+        <Text className={styles.headerText}>{categoryName}</Text>
       </TreeItemLayout>
       <Tree>{functionItems}</Tree>
     </TreeItem>

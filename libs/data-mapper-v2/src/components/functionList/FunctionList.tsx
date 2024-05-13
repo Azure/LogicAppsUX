@@ -142,7 +142,9 @@ export const FunctionList = () => {
         />
       </span>
 
-      <Tree>{treeItems}</Tree>
+      <Tree appearance="transparent" className={styles.functionTree}>
+        {treeItems}
+      </Tree>
     </>
   );
 };
