@@ -1,16 +1,9 @@
 import type { BadgeProps } from '../card';
 import { DocumentationItem } from '../recommendation/documentationItem';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import type { ILabelStyles } from '@fluentui/react/lib/Label';
-import { Label } from '@fluentui/react/lib/Label';
+import { Label } from '@fluentui/react-components';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
-
-const labelStyles: Partial<ILabelStyles> = {
-  root: {
-    fontSize: '14px',
-  },
-};
 
 export interface AboutProps {
   connectorDisplayName?: string;
@@ -96,13 +89,13 @@ export const About = ({
   return (
     <div className="msla-panel-about-container">
       <div className="msla-panel-about-name">
-        <Label className="msla-panel-connector-label" styles={labelStyles}>
+        <Label className="msla-panel-connector-label" size="large">
           {connectorMsg}
         </Label>
-        <Label className="msla-panel-connector-name">{connectorDisplayName ? connectorDisplayName : notAvailable}</Label>
+        <div className="msla-panel-connector-name">{connectorDisplayName ? connectorDisplayName : notAvailable}</div>
       </div>
       <div className="msla-panel-about-description">
-        <Label className="msla-panel-description-label" styles={labelStyles}>
+        <Label className="msla-panel-description-label" size="large">
           {operationNoteMsg}
         </Label>
         <div className="msla-panel-description">
@@ -116,14 +109,14 @@ export const About = ({
       </div>
       {displayRuntimeInfo ? (
         <div className="msla-panel-about-description">
-          <Label className="msla-panel-description-label" styles={labelStyles}>
+          <Label className="msla-panel-description-label" size="large">
             {connectorTypeLabel}
           </Label>
           <div className="msla-panel-description">{connectorType}</div>
         </div>
       ) : null}
       <div className="msla-panel-about-tags">
-        <Label className="msla-panel-tags-label" styles={labelStyles}>
+        <Label className="msla-panel-tags-label" size="large">
           {tagsMessage}
         </Label>
         <div className="msla-panel-tags">{headerIcons && headerIcons.length > 0 ? badgeHeaderIcons(headerIcons) : noTags}</div>

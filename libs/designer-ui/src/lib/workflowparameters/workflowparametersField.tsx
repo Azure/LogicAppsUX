@@ -1,18 +1,12 @@
 import Constants from '../constants';
 import type { WorkflowParameterDefinition, WorkflowParameterUpdateHandler } from './workflowparameter';
-import type {
-  IDropdownOption,
-  IDropdownStyles,
-  ILabelStyles,
-  IStyle,
-  ITextFieldProps,
-  ITextFieldStyles,
-  ITextStyles,
-} from '@fluentui/react';
-import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
+import type { IDropdownOption, IDropdownStyles, ILabelStyles, IStyle, ITextFieldProps, ITextFieldStyles } from '@fluentui/react';
+import { Dropdown, FontWeights, getTheme, Label, TextField } from '@fluentui/react';
 import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
-import { useState } from 'react';
+import { type CSSProperties, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { Text } from '@fluentui/react-components';
+import { SmallText } from '../text';
 
 export const labelStyles: Partial<ILabelStyles> = {
   root: {
@@ -50,11 +44,9 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   root: fieldStyles,
 };
 
-const textStyles: Partial<ITextStyles> = {
-  root: {
-    color: getTheme().palette.yellow,
-    fontWeight: FontWeights.bold,
-  },
+const textStyles: CSSProperties = {
+  color: getTheme().palette.yellow,
+  fontWeight: FontWeights.bold,
 };
 
 const NAME_KEY = 'name';
@@ -294,11 +286,7 @@ export const WorkflowparameterField = ({
   };
 
   const onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
-    return (
-      <Text variant="small" styles={textStyles}>
-        {props?.description}
-      </Text>
-    );
+    return <SmallText style={textStyles} text={props?.description ?? ''} />;
   };
 
   return (
