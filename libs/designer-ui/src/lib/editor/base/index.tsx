@@ -170,16 +170,9 @@ export const BaseEditor = ({
 
   const id = useId('msla-described-by-message');
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
-
   return (
     <>
-      <div
-        className={className ?? 'msla-editor-container'}
-        id={editorId}
-        ref={containerRef}
-        data-automation-id={dataAutomationId}
-        title={placeholder}
-      >
+      <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
         {htmlEditor ? (
           <Toolbar
             isRawText={htmlEditor === 'raw-html'}
@@ -190,7 +183,12 @@ export const BaseEditor = ({
         ) : null}
         <TextPlugin
           contentEditable={
-            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+            <ContentEditable
+              className={css('editor-input', readonly && 'readonly')}
+              ariaLabelledBy={labelId}
+              ariaDescribedBy={id}
+              title={placeholder}
+            />
           }
           placeholder={
             <span className="editor-placeholder" ref={placeholderRef}>

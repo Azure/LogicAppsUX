@@ -20,7 +20,7 @@ describe('ui/monitoring/values/datetime', () => {
     renderer.unmount();
   });
 
-  it('should render', () => {
+  it('should render with local time', () => {
     const options: FormatDateOptions = {
       day: 'numeric',
       hour: 'numeric',
@@ -28,7 +28,6 @@ describe('ui/monitoring/values/datetime', () => {
       minute: 'numeric',
       month: 'numeric',
       second: 'numeric',
-      timeZone: 'UTC',
       year: 'numeric',
     };
 
@@ -38,7 +37,7 @@ describe('ui/monitoring/values/datetime', () => {
     expect(value.props.displayName).toBe(props.displayName);
 
     const intl = getTestIntl();
-    const expected = intl.formatDate(props.value, options);
+    const expected = intl.formatDate(props.value, options) + ' (Local Time)';
     expect(value.props.value).toBe(expected);
   });
 });
