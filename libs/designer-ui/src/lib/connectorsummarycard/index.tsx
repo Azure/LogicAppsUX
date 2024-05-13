@@ -1,7 +1,7 @@
 import { isBuiltInConnector } from '../connectors/predicates';
 import { InfoDot } from '../infoDot';
 import { css } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
+import { Badge, Text } from '@fluentui/react-components';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
@@ -51,9 +51,9 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
       {displayRuntimeInfo ? (
         <div className="msla-connector-summary-labels">
           {isBuiltIn ? (
-            <Text style={pseudoBadgeStyles} className="msla-psuedo-badge">
+            <Badge style={pseudoBadgeStyles} appearance="outline">
               {category}
-            </Text>
+            </Badge>
           ) : null}
         </div>
       ) : null}
