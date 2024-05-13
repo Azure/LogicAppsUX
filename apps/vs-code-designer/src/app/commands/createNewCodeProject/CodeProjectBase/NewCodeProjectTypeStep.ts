@@ -43,8 +43,8 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     context.language = ProjectLanguage.JavaScript;
 
     // Create directories based on user choices
-    const { workspacePath, isCustomCodeLogicApp } = context;
-    await this.createDirectories(context, workspacePath, isCustomCodeLogicApp);
+    const { workspacePath, isWorkspaceWithFunctions } = context;
+    await this.createDirectories(context, workspacePath, isWorkspaceWithFunctions);
   }
 
   /**
@@ -52,7 +52,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
    * @param context - Project wizard context containing user selections and settings
    * @returns True if user should be prompted, otherwise false
    */
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 
@@ -65,7 +65,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     const promptSteps: AzureWizardPromptStep<IProjectWizardContext>[] = [];
     const executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[] = [];
 
-    if (context.isCustomCodeLogicApp) {
+    if (context.isWorkspaceWithFunctions) {
       await this.setupCustomCodeLogicApp(context, executeSteps, promptSteps);
     } else {
       await this.setupRegularLogicApp(context, executeSteps, promptSteps);
@@ -78,14 +78,14 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
    * Creates required directories for the project
    * @param context - Project wizard context
    * @param workspacePath - Root path of the workspace
-   * @param isCustomCodeLogicApp - Flag to check if it's a custom code Logic App
+   * @param isWorkspaceWithFunctions - Flag to check if it's a workspace with functions
    */
-  private async createDirectories(context: IProjectWizardContext, workspacePath: string, isCustomCodeLogicApp: boolean): Promise<void> {
+  private async createDirectories(context: IProjectWizardContext, workspacePath: string, isWorkspaceWithFunctions: boolean): Promise<void> {
     await fs.ensureDir(workspacePath);
     context.customWorkspaceFolderPath = workspacePath;
 
     let logicAppFolderName = 'LogicApp';
-    if (!isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null && context.logicAppName) {
+    if (!isWorkspaceWithFunctions && context.logicAppName) {
       logicAppFolderName = context.logicAppName;
     }
 
@@ -96,7 +96,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     context.projectPath = logicAppFolderPath;
     context.workspacePath = logicAppFolderPath;
 
-    if (isCustomCodeLogicApp) {
+    if (isWorkspaceWithFunctions) {
       await this.setupCustomDirectories(context, workspacePath);
     }
     await this.createWorkspaceFile(context);
@@ -171,7 +171,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     const workspaceFolders = [];
 
     // Add Functions folder first if it's a custom code code Logic App
-    if (context.isCustomCodeLogicApp) {
+    if (context.isWorkspaceWithFunctions) {
       workspaceFolders.push({ name: 'Functions', path: './Function' });
     }
 
