@@ -1,13 +1,15 @@
+import { useTheme } from '@fluentui/react';
 import { TextInput } from './ColorPickerTextInput';
 import { DropDown } from './helper/Dropdown';
 import { MoveWrapper } from './helper/MoveWrapper';
 import { basicColors, COLORPICKER_HEIGHT as HEIGHT, COLORPICKER_WIDTH as WIDTH } from './helper/constants';
 import type { Position } from './helper/util';
 import { Text } from '@fluentui/react-components';
-import { capitalizeFirstLetter, transformColor } from '@microsoft/logic-apps-shared';
+import { transformColor } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import constants from '../../../constants';
 
 interface DropdownColorPickerProps {
   disabled?: boolean;
@@ -32,6 +34,7 @@ export const DropdownColorPicker = ({
   buttonIconSrc,
   ...dropdownProps
 }: DropdownColorPickerProps) => {
+  const { isInverted } = useTheme();
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);
@@ -97,7 +100,9 @@ export const DropdownColorPicker = ({
   return (
     <DropDown {...dropdownProps} disabled={disabled} stopCloseOnClickSelf buttonIconSrc={buttonIconSrc} editor={editor}>
       <div className="color-picker-wrapper" style={{ width: WIDTH }} ref={innerDivRef}>
-        <Text className="color-picker-title">{capitalizeFirstLetter(title ?? '')}</Text>
+        <Text className="color-picker-title" style={{ color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.STANDARD_TEXT_COLOR }}>
+          {title}
+        </Text>
         <TextInput label="Hex" onChange={onSetHex} value={inputColor} />
         <div className="color-picker-basic-color">
           {basicColors.map((basicColor) => (
