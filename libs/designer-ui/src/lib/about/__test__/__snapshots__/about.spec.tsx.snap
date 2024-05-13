@@ -7,39 +7,27 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
   <div
     className="msla-panel-about-name"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-connector-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Connector
-    </StyledLabelBase>
-    <StyledLabelBase
+    </Label>
+    <div
       className="msla-panel-connector-name"
     >
       Not available
-    </StyledLabelBase>
+    </div>
   </div>
   <div
     className="msla-panel-about-description"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-description-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Operation note
-    </StyledLabelBase>
+    </Label>
     <div
       className="msla-panel-description"
     >
@@ -49,18 +37,12 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
   <div
     className="msla-panel-about-tags"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-tags-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Tags
-    </StyledLabelBase>
+    </Label>
     <div
       className="msla-panel-tags"
     >
@@ -77,39 +59,27 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
   <div
     className="msla-panel-about-name"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-connector-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Connector
-    </StyledLabelBase>
-    <StyledLabelBase
+    </Label>
+    <div
       className="msla-panel-connector-name"
     >
       test
-    </StyledLabelBase>
+    </div>
   </div>
   <div
     className="msla-panel-about-description"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-description-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Operation note
-    </StyledLabelBase>
+    </Label>
     <div
       className="msla-panel-description"
     >
@@ -121,18 +91,12 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
   <div
     className="msla-panel-about-tags"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-tags-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Tags
-    </StyledLabelBase>
+    </Label>
     <div
       className="msla-panel-tags"
     >
@@ -164,39 +128,27 @@ exports[`lib/monitoring/requestpanel/request > should render a description with 
   <div
     className="msla-panel-about-name"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-connector-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Connector
-    </StyledLabelBase>
-    <StyledLabelBase
+    </Label>
+    <div
       className="msla-panel-connector-name"
     >
       test
-    </StyledLabelBase>
+    </div>
   </div>
   <div
     className="msla-panel-about-description"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-description-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Operation note
-    </StyledLabelBase>
+    </Label>
     <div
       className="msla-panel-description"
     >
@@ -214,18 +166,12 @@ exports[`lib/monitoring/requestpanel/request > should render a description with 
   <div
     className="msla-panel-about-tags"
   >
-    <StyledLabelBase
+    <Label
       className="msla-panel-tags-label"
-      styles={
-        {
-          "root": {
-            "fontSize": "14px",
-          },
-        }
-      }
+      size="large"
     >
       Tags
-    </StyledLabelBase>
+    </Label>
     <div
       className="msla-panel-tags"
     >
