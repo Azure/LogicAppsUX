@@ -75,6 +75,7 @@ const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const swiftmtdecode = 'swiftmtdecode';
 const swiftmtencode = 'swiftmtencode';
+const ruleexecute = 'ruleexecute';
 const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
@@ -196,6 +197,7 @@ export const supportedBaseManifestTypes = [
   swiftencode,
   swiftmtdecode,
   swiftmtencode,
+  ruleexecute,
   terminate,
   until,
   wait,
@@ -294,6 +296,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case swiftencode:
     case swiftmtdecode:
     case swiftmtencode:
+    case ruleexecute:
     case table:
     case terminate:
     case until:
@@ -625,6 +628,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [swiftmtencode]: {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftMTEncode',
+  },
+  [ruleexecute]: {
+    connectorId: 'connectionProviders/ruleEngineOperations',
+    operationId: 'ruleExecute',
   },
   [terminate]: {
     connectorId: controlConnectorId,
