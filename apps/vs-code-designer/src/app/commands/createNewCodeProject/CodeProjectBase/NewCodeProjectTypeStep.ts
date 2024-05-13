@@ -66,7 +66,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     const executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[] = [];
 
     if (context.isWorkspaceWithFunctions) {
-      await this.setupCustomCodeLogicApp(context, executeSteps, promptSteps);
+      await this.setupCustomLogicApp(context, executeSteps, promptSteps);
     } else {
       await this.setupRegularLogicApp(context, executeSteps, promptSteps);
     }
@@ -118,7 +118,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
    * @param executeSteps - List of steps to execute
    * @param promptSteps - List of steps to prompt
    */
-  private async setupCustomCodeLogicApp(
+  private async setupCustomLogicApp(
     context: IProjectWizardContext,
     executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
     promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
