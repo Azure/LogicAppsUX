@@ -35,10 +35,6 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName, targetFramework);
 
-    if (context.targetFramework === TargetFramework.Net8) {
-      await this.createNugetConfigFile(functionFolderPath);
-    }
-
     // Generate the Visual Studio Code configuration files in the specified folder.
     const createConfigFiles = new FunctionConfigFile();
     await createConfigFiles.prompt(context);
@@ -49,7 +45,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param context The project wizard context.
    * @returns True if the user has not yet set up an Azure Function project, false otherwise.
    */
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 
@@ -94,18 +90,5 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     const csprojFileContent = templateContent.replace(/<%= methodName %>/g, methodName);
     await fs.writeFile(csprojFilePath, csprojFileContent);
-  }
-
-  /**
-   * Creates a NuGet configuration file in the specified function folder path.
-   * @param {string} functionFolderPath - The path to the function folder.
-   * @returns A Promise that resolves when the NuGet configuration file is created.
-   */
-  private async createNugetConfigFile(functionFolderPath: string): Promise<void> {
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', 'FunctionsNugetConfig');
-    const nugetConfigContent = await fs.readFile(templatePath, 'utf-8');
-
-    const nugetConfigFilePath = path.join(functionFolderPath, 'Nuget.config');
-    await fs.writeFile(nugetConfigFilePath, nugetConfigContent);
   }
 }
