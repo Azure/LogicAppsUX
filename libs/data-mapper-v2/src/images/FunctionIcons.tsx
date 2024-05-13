@@ -58,7 +58,7 @@ const CreateAngleIcon = (props: IconProps) => {
   );
 };
 
-export const AngleIcon = wrapIcon(CreateAngleIcon, 'AngleIcon');
+export const AngleIcon = wrapIcon(CreateAngleIcon, 'AngleIcon'); // named ChartYAngle from Windows Fluent Icons
 
 export const Count32Regular = wrapIcon(Count32RegularIcon, 'Count32Regular');
 
