@@ -1,10 +1,10 @@
-import { List, Text } from '@fluentui/react';
+import { List } from '@fluentui/react';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { WorkflowparameterField } from '@microsoft/designer-ui';
+import { WorkflowparameterField, XLargeText } from '@microsoft/designer-ui';
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export const DisplayParameters = () => {
@@ -24,6 +24,7 @@ export const DisplayParameters = () => {
 
   const renderParameter = (item?: Template.ParameterDefinition): JSX.Element => {
     if (!item) {
+      // eslint-disable-next-line react/jsx-no-useless-fragment
       return <></>;
     }
 
@@ -52,8 +53,7 @@ export const DisplayParameters = () => {
 
   return (
     <>
-      <Text variant="xLarge">{titleText}</Text>
-
+      <XLargeText text={titleText} />
       <div className="msla-workflow-parameters">
         {parametersDefinition.length ? (
           <List items={parametersDefinition} onRenderCell={renderParameter} />

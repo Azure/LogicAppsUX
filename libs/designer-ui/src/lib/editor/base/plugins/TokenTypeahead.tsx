@@ -1,7 +1,8 @@
 import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
 import type { hideButtonOptions } from './tokenpickerbutton';
-import { Icon, Text, css, useTheme } from '@fluentui/react';
+import { Icon, css, useTheme } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { TextNode } from 'lexical';

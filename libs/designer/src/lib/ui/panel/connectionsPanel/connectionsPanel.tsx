@@ -1,3 +1,4 @@
+import { XLargeText } from '@microsoft/designer-ui';
 import { useSelectedNodeId } from '../../../core';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
@@ -6,7 +7,6 @@ import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
 import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
 import { SelectConnection } from './selectConnection/selectConnection';
-import { Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
@@ -81,7 +81,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   return (
     <>
       <div className="msla-app-action-header">
-        <Text variant="xLarge">{panelHeaderText}</Text>
+        <XLargeText text={panelHeaderText} />
         <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>

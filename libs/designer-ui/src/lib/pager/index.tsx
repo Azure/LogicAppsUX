@@ -1,5 +1,6 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { Icon, IconButton, Text, TextField, TooltipHost } from '@fluentui/react';
+import { Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import React, { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 

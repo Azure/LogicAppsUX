@@ -1,8 +1,8 @@
 import { InfoDot } from '../../../infoDot';
 import { getPreviewTag } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
-import { Text, Image } from '@fluentui/react';
-import { Badge } from '@fluentui/react-components';
+import { Image } from '@fluentui/react';
+import { Badge, Text } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 

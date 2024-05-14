@@ -1,8 +1,8 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
-import { List, Text } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { List } from '@fluentui/react';
+import { Spinner, Text } from '@fluentui/react-components';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';

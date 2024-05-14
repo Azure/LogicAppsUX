@@ -1,5 +1,6 @@
 import { isEnterKey, isSpaceKey } from '../utils';
-import { Text, Icon } from '@fluentui/react';
+import { Icon } from '@fluentui/react';
+import { MediumText } from '../text';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -74,9 +75,7 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
               .map((e) => (
                 <div key={e}>
                   <div className="msla-error-dot" />
-                  <Text key={e} variant="medium">
-                    {e}
-                  </Text>
+                  <MediumText key={e} text={e ?? ''} />
                 </div>
               ))}
           </div>

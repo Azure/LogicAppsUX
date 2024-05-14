@@ -54,7 +54,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
     });
     expect(header.props.className).toBe('msla-workflow-parameters-heading');
     const [headerTextSection]: any[] = React.Children.toArray(header.props.children);
-    const headerText = headerTextSection.props.children;
+    const headerText = headerTextSection.props.text;
     expect(headerText).toBe(headerTitle);
 
     expect(messageBar).toBeDefined();

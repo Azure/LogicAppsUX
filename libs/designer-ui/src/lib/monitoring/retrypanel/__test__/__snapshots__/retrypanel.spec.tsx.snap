@@ -80,7 +80,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -195,7 +195,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -212,7 +212,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -226,7 +226,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -243,7 +243,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -307,7 +307,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -324,7 +324,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -338,7 +338,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -355,7 +355,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -369,7 +369,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -386,7 +386,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -450,7 +450,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -467,7 +467,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -481,7 +481,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -498,7 +498,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -512,7 +512,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -529,7 +529,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -593,7 +593,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Status'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -610,7 +610,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -624,7 +624,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -641,7 +641,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -705,7 +705,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Client request ID'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -722,7 +722,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -736,7 +736,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -753,7 +753,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -880,7 +880,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -995,7 +995,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1012,7 +1012,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1026,7 +1026,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1043,7 +1043,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1107,7 +1107,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1124,7 +1124,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -1138,7 +1138,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1155,7 +1155,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1169,7 +1169,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1186,7 +1186,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1250,7 +1250,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1267,7 +1267,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -1281,7 +1281,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1298,7 +1298,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1312,7 +1312,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1329,7 +1329,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1393,7 +1393,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
               >
                 <button
                   aria-label="Select all text in 'Status'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1410,7 +1410,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1424,7 +1424,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1441,7 +1441,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1505,7 +1505,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
               >
                 <button
                   aria-label="Select all text in 'Client request ID'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1522,7 +1522,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1536,7 +1536,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1553,7 +1553,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1617,7 +1617,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
               >
                 <button
                   aria-label="Select all text in 'Service request ID'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1634,7 +1634,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1648,7 +1648,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Service request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1665,7 +1665,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1792,7 +1792,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -1907,7 +1907,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1924,7 +1924,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1938,7 +1938,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1955,7 +1955,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2019,7 +2019,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2036,7 +2036,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2050,7 +2050,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2067,7 +2067,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2081,7 +2081,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2098,7 +2098,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2162,7 +2162,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2179,7 +2179,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2193,7 +2193,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2210,7 +2210,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2224,7 +2224,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2241,7 +2241,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2305,7 +2305,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
               >
                 <button
                   aria-label="Select all text in 'Status'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2322,7 +2322,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2336,7 +2336,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2353,7 +2353,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2417,7 +2417,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
               >
                 <button
                   aria-label="Select all text in 'Client request ID'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2434,7 +2434,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2448,7 +2448,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2465,7 +2465,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2592,7 +2592,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -2670,18 +2670,18 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
     className="msla-panel-callout-content"
   >
     <div
-      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-130"
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-129"
     >
       <div
-        className="ms-MessageBar-content content-131"
+        className="ms-MessageBar-content content-130"
       >
         <div
           aria-hidden={true}
-          className="ms-MessageBar-icon iconContainer-132"
+          className="ms-MessageBar-icon iconContainer-131"
         >
           <i
             aria-hidden={true}
-            className="icon-140"
+            className="icon-139"
             data-icon-name="Warning"
           >
             
@@ -2689,12 +2689,12 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
         </div>
         <div
           aria-live="assertive"
-          className="ms-MessageBar-text text-134"
+          className="ms-MessageBar-text text-133"
           id="MessageBar146"
           role="alert"
         >
           <span
-            className="ms-MessageBar-innerText innerText-135"
+            className="ms-MessageBar-innerText innerText-134"
           />
         </div>
       </div>
@@ -2737,7 +2737,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2754,7 +2754,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2768,7 +2768,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2785,7 +2785,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2849,7 +2849,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2866,7 +2866,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2880,7 +2880,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2897,7 +2897,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2911,7 +2911,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2928,7 +2928,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2992,7 +2992,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3009,7 +3009,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3023,7 +3023,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3040,7 +3040,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3054,7 +3054,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3071,7 +3071,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3135,7 +3135,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
               >
                 <button
                   aria-label="Select all text in 'Status'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3152,7 +3152,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3166,7 +3166,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3183,7 +3183,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3247,7 +3247,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
               >
                 <button
                   aria-label="Select all text in 'Client request ID'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3264,7 +3264,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3278,7 +3278,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3295,7 +3295,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {

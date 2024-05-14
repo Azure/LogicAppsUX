@@ -214,6 +214,16 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
     id: 'tUCptx',
     description: 'label to insert link',
   });
+  const backgroundColorTitle = intl.formatMessage({
+    defaultMessage: 'Background Color',
+    id: 'r7ZizR',
+    description: 'label to set background color',
+  });
+  const textColorTitle = intl.formatMessage({
+    defaultMessage: 'Text Color',
+    id: 'ZVB4NL',
+    description: 'label to set text color',
+  });
 
   return (
     <>
@@ -271,7 +281,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         buttonIconSrc={isInverted ? fontColorSvgDark : fontColorSvgLight}
         color={fontColor}
         onChange={onFontColorSelect}
-        title="text color"
+        title={textColorTitle}
       />
       <DropdownColorPicker
         editor={activeEditor}
@@ -281,7 +291,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         buttonIconSrc={isInverted ? paintBucketSvgDark : paintBucketSvgLight}
         color={bgColor}
         onChange={onBgColorSelect}
-        title="background color"
+        title={backgroundColorTitle}
       />
     </>
   );
