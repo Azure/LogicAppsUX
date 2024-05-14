@@ -1,69 +1,86 @@
-.msla-html-editor-toolbar {
-  display: flex;
+div.msla-html-editor-toolbar {
   justify-content: space-between;
   margin-bottom: 1px;
   background: #fff;
   padding: 4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  vertical-align: middle;
   overflow: auto;
+  align-items: center;
   height: 36px;
-  button.toolbar-item {
-    border: 0;
+
+  .msla-html-editor-toolbar-group {
     display: flex;
+    flex-wrap: nowrap;
+  }
+
+  button.toolbar-item {
+    align-items: center;
+    border: 0;
     background: none;
     border-radius: 10px;
+    display: inline-flex;
+    font-weight: initial;
+    gap: 4px;
+    justify-content: space-between;
     padding: 8px 6px;
     cursor: pointer;
     vertical-align: middle;
+    flex-direction: row-reverse;
     flex-shrink: 0;
-    align-items: center;
-    justify-content: space-between;
-  }
-  button.toolbar-item:disabled {
-    cursor: not-allowed;
-  }
-  button.toolbar-item img.format {
-    background-size: contain;
-    display: inline-block;
-    height: 18px;
-    width: 18px;
-    vertical-align: -0.25em;
-    display: flex;
-    opacity: 0.6;
-  }
-  button.toolbar-item:disabled img {
-    opacity: 0.2;
-  }
-  button.toolbar-item.active {
-    background-color: rgba(223, 232, 250, 0.3);
-  }
+    flex-wrap: nowrap;
+    min-width: 0;
 
-  button.toolbar-item.active img {
-    opacity: 1;
-  }
+    &.toolbar-item-with-chevron {
+      span:not(.toolbar-item-label) {
+        height: 16px;
+        width: 16px;
+      }
+    }
 
-  .toolbar-item:hover:not([disabled]) {
-    background-color: #eee;
-  }
+    span {
+      margin: 0;
+      &.toolbar-item-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
 
-  .toolbar-item.block-controls {
-    width: 80px;
-  }
+    &.block-controls,
+    &.font-family {
+      width: 80px;
+    }
 
-  .toolbar-item.font-family {
-    width: 70px;
-  }
+    &:disabled {
+      cursor: not-allowed;
+    }
 
-  .toolbar-item.font-family .text {
-    display: block;
-  }
+    & img.format, &.color-picker img {
+      background-size: contain;
+      height: 18px;
+      width: 18px;
+      vertical-align: -0.25em;
+      display: flex;
+      opacity: 0.6;
+    }
 
-  .toolbar-item.font-size .text {
-    padding-right: 10px;
-  }
-  .toolbar-item {
+    &:disabled img {
+      opacity: 0.2;
+    }
+
+    &.active {
+      background-color: rgba(223, 232, 250, 0.3);
+    }
+
+    &.active img {
+      opacity: 1;
+    }
+
+    &:hover:not([disabled]) {
+      background-color: #eee;
+    }
+
     .text {
       line-height: 20px;
       vertical-align: middle;
@@ -107,29 +124,12 @@
   }
 }
 
-.msla-html-editor-dropdown-items-container {
+div.msla-html-editor-dropdown-items-container {
   z-index: 1000001;
-  display: block;
-  position: fixed;
-  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  min-height: 40px;
-  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   .item {
-    margin: 0 8px 0 8px;
-    padding: 8px;
-    color: currentColor;
-    cursor: pointer;
-    line-height: 16px;
-    font-size: 15px;
-    display: flex;
-    align-content: center;
-    flex-direction: row;
-    flex-shrink: 0;
-    justify-content: space-between;
-    background-color: #fff;
-    border-radius: 8px;
-    border: 0;
     max-width: 250px;
     min-width: 100px;
   }
@@ -138,51 +138,9 @@
       min-width: unset;
     }
   }
-  .msla-dropdown-item-active {
-    background-color: @ms-color-bodyText;
-  }
-  .item {
-    .active {
-      display: flex;
-      width: 20px;
-      height: 20px;
-      background-size: contain;
-    }
-    .text {
-      display: flex;
-      line-height: 20px;
-      flex-grow: 1;
-      min-width: 150px;
-    }
-    .icon {
-      display: flex;
-      width: 20px;
-      height: 20px;
-      user-select: none;
-      margin-right: 12px;
-      line-height: 16px;
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-  }
-  .item:first-child {
-    margin-top: 8px;
-  }
-  .item:last-child {
-    margin-bottom: 8px;
-  }
-  .item:hover {
-    background-color: #eee;
-  }
-  .divider {
-    width: auto;
-    background-color: #eee;
-    margin: 4px 8px;
-    height: 1px;
-  }
   &.inverted {
     background-color: @ms-color-primaryBackground;
+    color: @ms-color-neutralTertiary;
     .item {
       background-color: @ms-color-primaryBackground;
       color: @ms-color-neutralTertiary;
@@ -249,10 +207,8 @@ img.chevron-down {
   }
 }
 
-.msla-toolbar-divider {
-  width: 1px;
-  background-color: #eee;
-  margin: 0 4px;
+div.msla-toolbar-divider {
+  padding: 4px 8px;
 }
 .msla-colorpicker-input-wrapper {
   display: flex;
@@ -263,7 +219,7 @@ img.chevron-down {
 .msla-colorpicker-input-label {
   display: flex;
   flex: 1;
-  color: #666;
+  opacity: 0.6;
 }
 .msla-colorpicker-input {
   display: flex;
@@ -276,10 +232,12 @@ img.chevron-down {
   font-size: 16px;
   border-radius: 5px;
   min-width: 0;
+  &.inverted {
+    background-color: #999;
+  }
 }
 
 .color-picker-wrapper {
-  padding: 10px;
   .color-picker-title {
     text-align: center;
     display: -webkit-box;
@@ -360,7 +318,6 @@ img.chevron-down {
 .color-picker-color {
   border: 1px solid #ccc;
   margin-top: 15px;
-  width: 100%;
   height: 20px;
 }
 
@@ -403,31 +360,11 @@ img.chevron-down {
 }
 
 .msla-theme-dark {
-  .msla-toolbar-divider {
-    background-color: @panel-mode-panel-border-color;
-    opacity: 0.8;
-  }
   .msla-colorpicker-input {
     background-color: @ms-color-neutralTertiary;
   }
   .msla-html-link-editor {
     background-color: @ms-color-themeLighterAlt;
-  }
-  .msla-html-editor-toolbar {
-    .toolbar-item {
-      .text {
-        color: @ms-color-neutralTertiary;
-      }
-      img {
-        opacity: 0.8;
-      }
-    }
-    button.toolbar-item img.format {
-      opacity: 0.8;
-    }
-    button.toolbar-item:disabled img.format {
-      opacity: 0.3;
-    }
   }
   .msla-html-editor-dropdown-items-container {
     .item {
