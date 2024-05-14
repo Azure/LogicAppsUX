@@ -1,6 +1,7 @@
 import { css, useTheme } from '@fluentui/react';
 import { useContext, useEffect, useRef } from 'react';
 import { DropDownContext } from './helper/DropdownItems';
+import constants from '../../../constants';
 
 type Props = Readonly<{
   'data-test-id'?: string;
@@ -26,7 +27,12 @@ export function TextInput({ label, value, onChange, placeholder = '', 'data-test
 
   return (
     <div className="msla-colorpicker-input-wrapper">
-      <label className="msla-colorpicker-input-label">{label}</label>
+      <label
+        className="msla-colorpicker-input-label"
+        style={{ color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.STANDARD_TEXT_COLOR }}
+      >
+        {label}
+      </label>
       <input
         type="text"
         className={css('msla-colorpicker-input', isInverted && 'inverted')}

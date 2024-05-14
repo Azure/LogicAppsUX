@@ -6,11 +6,12 @@ import { ErrorsTab } from './tabs/errorsTab';
 import { useTotalNumErrors } from './tabs/errorsTab.hooks';
 import { WarningsTab } from './tabs/warningsTab';
 import { useTotalNumWarnings } from './tabs/warningsTab.hooks';
-import { FocusTrapZone, Text } from '@fluentui/react';
+import { FocusTrapZone } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { Button, Tab, TabList } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
+import { XLargeText } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -65,7 +66,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
   return (
     <FocusTrapZone>
       <div className="msla-app-action-header">
-        <Text variant="xLarge">{errorsPanelHeader}</Text>
+        <XLargeText text={errorsPanelHeader} />
         <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
