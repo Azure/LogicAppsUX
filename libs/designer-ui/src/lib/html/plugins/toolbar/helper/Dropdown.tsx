@@ -1,13 +1,8 @@
-import chevronDownDark from './../../icons/dark/chevron-down.svg';
-import chevronDownLight from './../../icons/light/chevron-down.svg';
-import { DropDownItems } from './DropdownItems';
-import { useTheme } from '@fluentui/react';
-import { useOutsideClick } from '@microsoft/logic-apps-shared';
+import { Button, Popover, PopoverSurface, PopoverTrigger, ToolbarButton } from '@fluentui/react-components';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 
 export const CLOSE_DROPDOWN_COMMAND: LexicalCommand<undefined> = createCommand();
@@ -33,17 +28,10 @@ export const DropDown = ({
   stopCloseOnClickSelf,
   editor,
 }: DropdownProps): JSX.Element => {
-  const { isInverted } = useTheme();
   const intl = useIntl();
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
-
-  useOutsideClick([dropDownRef, buttonRef], () => {
-    if (showDropDown) {
-      handleClose();
-    }
-  });
 
   const handleClose = () => {
     setShowDropDown(false);
@@ -83,39 +71,42 @@ export const DropDown = ({
     description: 'alt text for button icon',
   });
 
-  const altTextForChevronDown = intl.formatMessage({
-    defaultMessage: 'Alt text for down chevron',
-    id: '+Uvo/p',
-    description: 'Alt text for down chevron',
-  });
-
   return (
-    <>
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
-        }}
-        disabled={disabled}
-        aria-label={buttonAriaLabel || buttonLabel}
-        className={buttonClassName}
+    <Popover
+      closeOnScroll={true}
+      onOpenChange={(_, { open }) => {
+        if (open) {
+          setShowDropDown(open);
+        } else {
+          handleClose();
+        }
+      }}
+      open={showDropDown}
+      positioning="below"
+      trapFocus={true}
+    >
+      <PopoverTrigger disableButtonEnhancement={true}>
+        <ToolbarButton
+          disabled={disabled}
+          aria-label={buttonAriaLabel || buttonLabel}
+          className={buttonClassName}
+          ref={buttonRef}
+        >
+          {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
+          {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
+        </ToolbarButton>
+      </PopoverTrigger>
+      <PopoverSurface
+        className="msla-html-editor-dropdown-items-container"
         onClick={() => {
-          editor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
-          setShowDropDown(!showDropDown);
+          if (!stopCloseOnClickSelf) {
+            handleClose();
+          }
         }}
-        ref={buttonRef}
       >
-        {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
-        {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
-        <img className="chevron-down" src={isInverted ? chevronDownDark : chevronDownLight} alt={altTextForChevronDown} />
-      </button>
-
-      {showDropDown &&
-        createPortal(
-          <DropDownItems dropDownRef={dropDownRef} onClose={handleClose} stopCloseOnClickSelf={stopCloseOnClickSelf}>
-            {children}
-          </DropDownItems>,
-          document.body
-        )}
-    </>
+          {children}
+          <Button onClick={handleClose}>Close</Button>
+      </PopoverSurface>
+    </Popover>
   );
 };

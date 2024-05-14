@@ -12,6 +12,7 @@ import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { convertEditorState } from './helper/HTMLChangePlugin';
 import { css, useTheme } from '@fluentui/react';
+import { Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -19,7 +20,7 @@ import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
-import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
+import { $findMatchingParent, $getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import { isApple } from '@microsoft/logic-apps-shared';
 import {
@@ -39,7 +40,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const blockTypeToBlockName = {
-  bullet: 'Bulleted List',
+  bullet: 'Bullet List',
   check: 'Check List',
   code: 'Code Block',
   h1: 'Heading 1',
@@ -61,7 +62,7 @@ interface ToolbarProps {
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
+export const RichTextToolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -183,89 +184,79 @@ export const Toolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = fa
   const formattingButtonsDisabled = readonly || !!isRawText;
 
   return (
-    <div className="msla-html-editor-toolbar">
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
-        }}
-        disabled={!canUndo || readonly}
-        onClick={() => {
-          activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
-          activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
-        }}
-        title={isApple() ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
-        className="toolbar-item spaced"
-        aria-label="Undo"
-      >
-        <img
-          className={'format'}
-          src={isInverted ? counterClockWiseArrowDark : counterClockWiseArrowLight}
-          alt={'counter clockwise arrow'}
+    <Toolbar className="msla-html-editor-toolbar">
+      <ToolbarGroup className="msla-html-editor-toolbar-group" role="presentation">
+        <ToolbarButton
+          disabled={!canUndo || readonly}
+          onClick={() => {
+            activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
+            activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
+          }}
+          title={isApple() ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
+          className="toolbar-item"
+          aria-label="Undo"
+          icon={
+            <img
+              className={'format'}
+              src={isInverted ? counterClockWiseArrowDark : counterClockWiseArrowLight}
+              alt={'counter clockwise arrow'}
+            />
+          }
         />
-      </button>
-      <button
-        onMouseDown={(e) => {
-          e.preventDefault();
-        }}
-        disabled={!canRedo || readonly}
-        onClick={() => {
-          activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
-          activeEditor.dispatchCommand(REDO_COMMAND, undefined);
-        }}
-        title={isApple() ? 'Redo (⌘Y)' : 'Redo (Ctrl+Y)'}
-        className="toolbar-item"
-        aria-label="Redo"
-      >
-        <img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />
-      </button>
-      <Divider />
-      <BlockFormatDropDown disabled={formattingButtonsDisabled} blockType={blockType} editor={editor} />
-      <FontDropDown
-        fontDropdownType={FontDropDownType.FONTFAMILY}
-        value={fontFamily}
-        editor={editor}
-        disabled={formattingButtonsDisabled}
-      />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={formattingButtonsDisabled} />
-      <Divider />
-      <Format activeEditor={activeEditor} readonly={formattingButtonsDisabled} />
+        <ToolbarButton
+          disabled={!canRedo || readonly}
+          onClick={() => {
+            activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
+            activeEditor.dispatchCommand(REDO_COMMAND, undefined);
+          }}
+          title={isApple() ? 'Redo (⌘Y)' : 'Redo (Ctrl+Y)'}
+          className="toolbar-item"
+          aria-label="Redo"
+          icon={<img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />}
+        />
+        <ToolbarDivider className="msla-toolbar-divider" />
+        <BlockFormatDropDown disabled={formattingButtonsDisabled} blockType={blockType} editor={editor} />
+        <FontDropDown
+          fontDropdownType={FontDropDownType.FONTFAMILY}
+          value={fontFamily}
+          editor={editor}
+          disabled={formattingButtonsDisabled}
+        />
+        <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={formattingButtonsDisabled} />
+        <ToolbarDivider className="msla-toolbar-divider" />
+        <Format activeEditor={activeEditor} readonly={formattingButtonsDisabled} />
+      </ToolbarGroup>
+      {setIsRawText ? (
+        <ToolbarGroup className="msla-html-editor-toolbar-group" role="presentation">
+          <ToolbarButton
+            aria-label="Raw code toggle"
+            className={css('toolbar-item', isRawText && 'active')}
+            disabled={readonly || (isRawText && isSwitchFromPlaintextBlocked)}
+            icon={<img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />}
+            onClick={() => {
+              const nodeMap = new Map<string, ValueSegment>();
+              activeEditor.getEditorState().read(() => {
+                getChildrenNodes($getRoot(), nodeMap);
+              });
+              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: !!isRawText }).then((valueSegments) => {
+                activeEditor.update(() => {
+                  $getRoot().clear().select();
+                  if (isRawText) {
+                    parseHtmlSegments(valueSegments, { tokensEnabled: true, readonly });
+                    setIsRawText(false);
+                  } else {
+                    parseSegments(valueSegments, { tokensEnabled: true, readonly });
+                    setIsRawText(true);
+                  }
+                });
+              });
+            }}
+            title={toggleCodeViewMessage}
+          />
+        </ToolbarGroup>
+      ) : null}
       <ListPlugin />
       <LinkPlugin />
-      {setIsRawText ? (
-        <button
-          aria-label="Raw code toggle"
-          className={css('toolbar-item', isRawText && 'active')}
-          disabled={readonly || (isRawText && isSwitchFromPlaintextBlocked)}
-          onMouseDown={(e) => {
-            e.preventDefault();
-          }}
-          onClick={() => {
-            const nodeMap = new Map<string, ValueSegment>();
-            activeEditor.getEditorState().read(() => {
-              getChildrenNodes($getRoot(), nodeMap);
-            });
-            convertEditorState(activeEditor, nodeMap, { isValuePlaintext: !!isRawText }).then((valueSegments) => {
-              activeEditor.update(() => {
-                $getRoot().clear().select();
-                if (isRawText) {
-                  parseHtmlSegments(valueSegments, { tokensEnabled: true, readonly });
-                  setIsRawText(false);
-                } else {
-                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
-                  setIsRawText(true);
-                }
-              });
-            });
-          }}
-          title={toggleCodeViewMessage}
-        >
-          <img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />
-        </button>
-      ) : null}
-    </div>
+    </Toolbar>
   );
-};
-
-const Divider = (): JSX.Element => {
-  return <div className="msla-toolbar-divider" />;
 };
