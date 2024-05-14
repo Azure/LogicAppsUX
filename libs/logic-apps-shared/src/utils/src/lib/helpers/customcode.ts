@@ -45,17 +45,19 @@ export const getAppFileForFileExtension = (fileExtension: string): string => {
 export const generateDefaultCustomCodeValue = (language: EditorLanguage): string => {
   switch (language) {
     case EditorLanguage.powershell:
-      return `$action = Get-ActionOutput -actionName "Compose" 
+      return `# Use these cmdlets to retrieve outputs from prior steps
+# oldActionOutput = Get-ActionOutput -ActionName <name of old action>
+# oldTriggerOutput = Get-TriggerOutput
 
-$subId = $action["body"]["subscriptionId"] 
+$customResponse =  [PSCustomObject]@{
+Message = "Hello world!"
+}
 
-$resourceGroupName = $action["body"]["resourceGroupName"] 
+# Use Write-Host/ Write-Output/Write-Debug to log messages to application insights
+# Write-Host "Sending to application insight logs"
 
-$logicAppName = $action["body"]["logicAppName"] 
-
-$result = Start-AzLogicApp -ResourceGroupName $resourceGroupName -Name $logicAppName -TriggerName "manual" -Confirm 
-
-Push-ActionOutputs -body $result`;
+# Use Push-WorkflowOutput to push outputs forward to subsequent actions
+Push-WorkflowOutput -Output $customResponse`;
     case EditorLanguage.csharp:
       return `// Add the required libraries
 #r "Newtonsoft.Json"
@@ -64,58 +66,37 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Workflows.Scripting;
+using Newtonsoft.Json.Linq;
 
 /// <summary>
 /// Executes the inline csharp code.
 /// </summary>
 /// <param name="context">The workflow context.</param>
-public static async Task<Weather> Run(WorkflowContext context, ILogger log)
+/// <remarks> This is the entry-point to your code. The function signature should remain unchanged.</remarks>
+public static async Task<Results> Run(WorkflowContext context, ILogger log)
 {
-  var outputs = (await context.GetActionResults("compose").ConfigureAwait(false)).Outputs;
+  var triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs;
 
-  // Generate random temperature within a range based on the temperature scale
-  Random rnd = new Random();
-  var temperatureScale = outputs["temperatureScale"].ToString();
-  var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
-  var lowTemp = currentTemp - 10;
-  var highTemp = currentTemp + 10;
-  var zipCode = (int) outputs["zipCode"];
+  ////the following dereferences the 'name' property from trigger payload.
+  var name = triggerOutputs?["body"]?["name"]?.ToString();
 
-  log.LogInformation("Starting func_name with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
+  ////the following can be used to get the action outputs from a prior action
+  //var actionOutputs = (await context.GetActionResults("Compose").ConfigureAwait(false)).Outputs;
 
-  // Create a Weather object with the temperature information
-  var weather = new Weather()
+  ////these logs will show-up in Application Insight traces table
+  //log.LogInformation("Outputting results.");
+
+  //var name = null;
+
+  return new Results
   {
-    ZipCode = (int) outputs["zipCode"],
-    CurrentWeather = $"The current weather is {currentTemp} {temperatureScale}",
-    DayLow = $"The low for the day is {lowTemp} {temperatureScale}",
-    DayHigh = $"The high for the day is {highTemp} {temperatureScale}"
+    Message = !string.IsNullOrEmpty(name) ? $"Hello {name} from CSharp action" : "Hello from CSharp action."
   };
-
-  return weather;
 }
 
-/// <summary>
-/// Represents the weather information.
-/// </summary>
-public class Weather
+public class Results
 {
-    /// <summary>
-    /// Gets or sets the zip code.
-    /// </summary>
-    public int ZipCode { get; set; }
-    /// <summary>
-    /// Gets or sets the current weather.
-    /// </summary>
-    public string CurrentWeather { get; set; }
-    /// <summary>
-    /// Gets or sets the low temperature for the day.
-    /// </summary>
-    public string DayLow { get; set; }
-    /// <summary>
-    /// Gets or sets the high temperature for the day.
-    /// </summary>
-    public string DayHigh { get; set; }
+  public string Message {get; set;}
 }`;
     default:
       return '';
