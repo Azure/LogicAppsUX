@@ -7,13 +7,15 @@ import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getCodeEditorHeight, getInitialValue } from './util';
-import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
+import { Icon } from '@fluentui/react';
 import type { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { getFileExtensionName } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { Button, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
+import { DismissRegular } from '@fluentui/react-icons';
 
 const customCodeIconStyle = {
   root: {
@@ -128,9 +130,14 @@ export function CodeEditor({
   };
 
   const messageBarText = intl.formatMessage({
-    defaultMessage: 'To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC',
-    id: 'Mcvr0B',
-    description: 'This is a message to inform the user to add dependencies to use this action',
+    defaultMessage: 'Add custom modules, uncover new scenarios, and find troubleshooting tips',
+    id: 'QBK72a',
+    description: 'This is a message give link to user to find out more about this action',
+  });
+  const messageBarTextLink = intl.formatMessage({
+    defaultMessage: 'here',
+    id: 'yENrOg',
+    description: 'This is the link text in the message bar',
   });
 
   const closeButtonAriaLabel = intl.formatMessage({
@@ -181,13 +188,17 @@ export function CodeEditor({
           )
         : null}
       {customCodeEditor && showMessageBar ? (
-        <MessageBar
-          messageBarType={MessageBarType.info}
-          className="msla-custom-code-editor-message-bar"
-          dismissButtonAriaLabel={closeButtonAriaLabel}
-          onDismiss={() => setShowMessageBar(false)}
-        >
-          <div>{messageBarText}</div>
+        <MessageBar intent={'info'} className="msla-custom-code-editor-message-bar" layout="auto">
+          <MessageBarBody>
+            {messageBarText}{' '}
+            <a href={'https://aka.ms/logicapp-scripting'} target="_blank" rel="noreferrer" style={{ display: 'inline' }}>
+              {messageBarTextLink}
+            </a>
+          </MessageBarBody>
+          <MessageBarActions
+            containerAction={<Button aria-label={closeButtonAriaLabel} appearance="transparent" icon={<DismissRegular />} />}
+            onClick={() => setShowMessageBar(false)}
+          />
         </MessageBar>
       ) : null}
     </div>
