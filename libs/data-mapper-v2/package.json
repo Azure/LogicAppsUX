@@ -9,6 +9,7 @@
     "@fluentui/react-icons": "2.0.224",
     "@fluentui/react-migration-v8-v9": "^9.2.16",
     "@fluentui/react-portal-compat": "^9.0.60",
+    "@fluentui/react-search": "^9.0.3",
     "@microsoft/applicationinsights-react-js": "3.4.0",
     "@microsoft/applicationinsights-web": "2.8.9",
     "@microsoft/designer-ui": "workspace:*",
