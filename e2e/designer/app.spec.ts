@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { GoToMockWorkflow } from './utils/GoToWorkflow';
 
 test(
   'Sanity Check',
@@ -8,10 +9,9 @@ test(
   async ({ page }) => {
     await page.goto('/');
 
-    await page.getByText('Select an option').click();
-    await page.getByRole('option', { name: 'Simple Big Workflow' }).click();
-    await page.getByRole('button', { name: 'Toolbox' }).click();
-    await page.getByTestId('card-Increment variable').getByRole('button').click();
+    await GoToMockWorkflow(page, 'Simple Big Workflow');
+
+    await page.getByTestId('card-increment_variable').getByRole('button').click();
     await page.getByLabel('Value').getByRole('paragraph').click();
     await page.getByLabel('Value').press('Escape');
     await page.getByRole('tab', { name: 'Code View' }).click();

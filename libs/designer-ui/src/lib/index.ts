@@ -79,6 +79,7 @@ export * from './staticResult';
 export * from './table';
 export * from './telemetry/models';
 // export * from './textbox';
+export * from './text';
 export * from './tip';
 export * from './tokenpicker';
 export * from './editor/base/plugins/tokenpickerbutton';

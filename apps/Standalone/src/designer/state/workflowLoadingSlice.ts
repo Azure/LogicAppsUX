@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { getStateHistory, setStateHistory } from './historyHelpers';
 import type { RootState } from './store';
-import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
+import type { ConnectionReferences, WorkflowParameter } from '@microsoft/logic-apps-designer';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -20,6 +20,7 @@ export interface WorkflowLoadingState {
   isConsumption: boolean;
   isLocal: boolean;
   showChatBot?: boolean;
+  parameters: Record<string, WorkflowParameter>;
   showConnectionsPanel?: boolean;
   workflowKind?: string;
   language: string;
@@ -35,6 +36,7 @@ export interface WorkflowLoadingState {
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   workflowDefinition: null,
+  parameters: {},
   runInstance: null,
   connections: {},
   resourcePath: '',
@@ -58,6 +60,7 @@ const initialState: WorkflowLoadingState = {
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
+  parameters: Record<string, WorkflowParameter>;
 };
 
 type RunPayload = {
@@ -70,7 +73,8 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const wf = await import(`../../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
-    connectionReferences: {},
+    connectionReferences: wf.connections as ConnectionReferences,
+    parameters: wf.parameters ?? {},
   } as WorkflowPayload;
 });
 
@@ -182,9 +186,11 @@ export const workflowLoadingSlice = createSlice({
       }
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
+      state.parameters = action.payload?.parameters ?? {};
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
+      state.parameters = {};
     });
     builder.addCase(loadRun.fulfilled, (state, action: PayloadAction<RunPayload | null>) => {
       if (!action.payload) {

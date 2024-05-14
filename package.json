@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "4.8.0",
+  "version": "4.16.0",
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "@eslint/eslintrc": "^3.0.2",
@@ -12,8 +12,8 @@
     "@testing-library/react": "^15.0.2",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^20.12.7",
-    "@types/react": "^18.2.78",
-    "@types/react-dom": "^18.2.25",
+    "@types/react": "18.3.0",
+    "@types/react-dom": "18.3.0",
     "@types/react-test-renderer": "^18.0.7",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@vitejs/plugin-react": "^4.2.1",
@@ -44,16 +44,15 @@
     "jsdom": "^24.0.0",
     "jsonc-eslint-parser": "^2.4.0",
     "just-pnpm": "^1.0.2",
+    "lcov-result-merger": "^5.0.0",
     "lint-staged": "^15.2.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "react-test-renderer": "^18.2.0",
     "replace-in-file": "^7.1.0",
     "rimraf": "^5.0.5",
     "sherif": "^0.8.4",
     "standard-version": "^9.5.0",
     "tsup": "^8.0.2",
-    "turbo": "^1.13.2",
+    "turbo": "^1.13.3",
     "typescript": "^5.4.5",
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.5",
@@ -76,7 +75,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:vscode": "turbo run build:vscode",
+    "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
     "check": "biome check --apply .",
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
@@ -92,8 +91,12 @@
     "start:e2e": "turbo run e2e",
     "test:lib": "turbo run test:lib",
     "test:e2e": "playwright test",
+    "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
 }

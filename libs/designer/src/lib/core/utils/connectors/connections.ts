@@ -17,6 +17,7 @@ import {
   ConnectionType,
   getResourceName,
   getRecordEntry,
+  getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -142,22 +143,32 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   return undefined;
 }
 
-export async function getConnectionParametersForAzureConnection(connectionType?: ConnectionType, selectedSubResource?: any): Promise<any> {
+export async function getConnectionParametersForAzureConnection(
+  connectionType?: ConnectionType,
+  selectedSubResource?: any,
+  parameterValues?: Record<string, any>,
+  isMultiAuthConnection?: boolean // TODO - Should remove when backend bits are ready for multi-auth in resource picker connections
+): Promise<any> {
   if (connectionType === ConnectionType.Function) {
     const functionId = selectedSubResource?.id;
-    const authCodeValue = await FunctionService().fetchFunctionKey(functionId);
     const triggerUrl = selectedSubResource?.properties?.invoke_url_template;
+    const isQueryString = isMultiAuthConnection ? equals(getPropertyValue(parameterValues ?? {}, 'type'), 'querystring') : true;
+    let updatedParameterValues = { ...parameterValues };
+
+    if (isQueryString) {
+      const authCodeValue = await FunctionService().fetchFunctionKey(functionId);
+      updatedParameterValues = isMultiAuthConnection
+        ? { ...updatedParameterValues, value: authCodeValue }
+        : { ...updatedParameterValues, authentication: { type: 'QueryString', name: 'Code', value: authCodeValue } };
+    }
+
     return {
+      ...updatedParameterValues,
       function: { id: functionId },
       triggerUrl,
-      authentication: {
-        type: 'QueryString',
-        name: 'Code',
-        value: authCodeValue,
-      },
     };
-  }
-  if (connectionType === ConnectionType.ApiManagement) {
+    // biome-ignore lint/style/noUselessElse: needed for future implementation
+  } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
     const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);
@@ -166,13 +177,14 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
 
     return {
+      ...parameterValues,
       apiId: apimApiId,
       baseUrl: fullUrl,
       subscriptionKey,
     };
   }
 
-  return {};
+  return parameterValues;
 }
 
 export function getSupportedParameterSets(
@@ -212,7 +224,7 @@ export function isIdentityPresentInLogicApp(identity: string, managedIdentity: M
 }
 
 // NOTE: This method is specifically for Multi-Auth type connectors.
-export function isConnectionMultiAuthManagedIdentityType(connection: Connection | undefined, connector: Connector | undefined): boolean {
+export function isConnectionMultiAuthManagedIdentityType(connection?: Connection | null, connector?: Connector): boolean {
   const connectionParameterValueSet = (connection?.properties as any)?.parameterValueSet;
   const connectorConnectionParameterSets = connector?.properties?.connectionParameterSets;
 
@@ -249,7 +261,7 @@ function isManagedIdentitySupported(operationType: string, connectorCapabilities
   return true;
 }
 
-export function isUserAssignedIdentitySupportedForInApp(connectorCapabilities: string[] = []) {
+function isUserAssignedIdentitySupportedForInApp(connectorCapabilities: string[] = []) {
   return !!connectorCapabilities?.find((capability) => equals(capability, 'supportsUserAssignedIdentity'));
 }
 

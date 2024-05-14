@@ -32,7 +32,7 @@ import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessi
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -228,7 +228,7 @@ export const Designer = (props: DesignerProps) => {
     queryKey: ['recurrenceInterval'],
     initialData: recurrenceInterval,
     queryFn: () => {
-      return recurrenceInterval;
+      return recurrenceInterval ?? null;
     },
   });
 

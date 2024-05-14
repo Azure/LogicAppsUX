@@ -38,7 +38,11 @@ export const UploadNewSchema = (props: UploadNewSchemaProps) => {
     if (!schemaFile.path) {
       console.log('Path property is missing from file (should only occur in browser/standalone)');
     } else if (props.schemaType) {
-      props.setSelectedSchemaFile({ name: schemaFile.name, path: schemaFile.path, type: props.schemaType });
+      props.setSelectedSchemaFile({
+        name: schemaFile.name,
+        path: schemaFile.path,
+        type: props.schemaType,
+      });
     } else {
       console.error('Missing schemaType');
     }
@@ -48,8 +52,14 @@ export const UploadNewSchema = (props: UploadNewSchemaProps) => {
     <div>
       <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept={props.acceptedSchemaFileInputExtensions} hidden />
       <StackShim horizontal>
-        <Input value={props.selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
-        <Button appearance="primary" onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>
+        <Input size="small" value={props.selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
+        <Button
+          size="small"
+          shape="square"
+          appearance="secondary"
+          onClick={() => schemaFileInputRef.current?.click()}
+          style={{ marginLeft: 8 }}
+        >
           {browseLoc}
         </Button>
       </StackShim>

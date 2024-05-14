@@ -1,10 +1,10 @@
-import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Text } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox } from '@fluentui/react';
+import { Spinner, Text } from '@fluentui/react-components';
 import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface AssistedConnectionProps {
   resourceType: string;
@@ -30,6 +30,7 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
   includeScore: true,
   minMatchCharLength: 2,
   includeMatches: true,
+  ignoreLocation: true,
   threshold: 0.4,
   keys: ['text'],
 };

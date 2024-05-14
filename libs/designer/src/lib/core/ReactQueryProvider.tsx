@@ -1,5 +1,5 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
-// import { ReactQueryDevtools } from 'react-query/devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -35,13 +35,13 @@ export const ReactQueryProvider = (props: ProviderProps) => {
   return (
     <QueryClientProvider client={reactQueryClient}>
       {props.children}
-      {/* <ReactQueryDevtools
+      <ReactQueryDevtools
         initialIsOpen={false}
         position={'bottom-right'}
         panelProps={{ style: { zIndex: 9999999 } }}
         toggleButtonProps={{ style: { zIndex: 9999999 } }}
         closeButtonProps={{ style: { zIndex: 9999999 } }}
-      /> */}
+      />
     </QueryClientProvider>
   );
 };

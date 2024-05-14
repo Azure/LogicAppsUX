@@ -194,6 +194,7 @@ export const searchSchemaTreeFromRoot = (
     includeScore: true,
     minMatchCharLength: 2,
     includeMatches: true,
+    ignoreLocation: true,
     threshold: 0.4,
     keys: ['qName'],
   };

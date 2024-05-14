@@ -17,7 +17,7 @@ import type { DependencyInfo, NodeInputs, NodeOperation } from '../../state/oper
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../connectors/connections';
-import { buildOperationDetailsFromControls, loadInputValuesFromDefinition } from '../swagger/inputsbuilder';
+import { buildOperationDetailsFromControls, loadFormDataValue, loadInputValuesFromDefinition } from '../swagger/inputsbuilder';
 import {
   getArrayTypeForOutputs,
   getInputsValueFromDefinitionForManifest,
@@ -193,38 +193,25 @@ export async function getDynamicSchema(
 
       return schema ? { ...emptySchema, ...schema } : schema;
     }
-    const queryClient = getReactQueryClient();
-    const outputSchema = await queryClient.fetchQuery(
-      [
-        'getDynamicSchema',
-        connectionReference?.connection.id,
-        operationInfo.connectorId,
-        operationInfo.operationId,
-        dependencyInfo.parameter?.key,
-      ],
-      async () => {
-        const { connectorId } = operationInfo;
-        const { parameters, operationId } = definition.extension;
-        const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-        const inputs = getParameterValuesForLegacyDynamicOperation(
-          parsedSwagger,
-          operationId,
-          parameters,
-          nodeInputs,
-          idReplacements,
-          workflowParameters
-        );
-        const connectionId = (connectionReference as ConnectionReference).connection.id;
-        const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
-          connector,
-          connectionId,
-          connectionReference as ConnectionReference
-        );
-
-        return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
-      }
+    const { connectorId } = operationInfo;
+    const { parameters, operationId } = definition.extension;
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const inputs = getParameterValuesForLegacyDynamicOperation(
+      parsedSwagger,
+      operationId,
+      parameters,
+      nodeInputs,
+      idReplacements,
+      workflowParameters
     );
-    return outputSchema;
+    const connectionId = (connectionReference as ConnectionReference).connection.id;
+    const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+      connector,
+      connectionId,
+      connectionReference as ConnectionReference
+    );
+
+    return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
   } catch (error: any) {
     if (
       (error.name === UnsupportedExceptionName && error.code === UnsupportedExceptionCode.RUNTIME_EXPRESSION) ||
@@ -571,7 +558,12 @@ function getManifestBasedInputParameters(
   const knownKeys = new Set<string>(allInputKeys);
   const keyPrefix = 'inputs.$';
 
+  const isFormDataInput = (param: InputParameter) => param.serialization?.property?.type === 'formdata';
+  const formDataInputs: InputParameter[] = [];
+  let formDataInputKeyPrefix = '';
+  let formDataLocation = '';
   // Load known parameters directly by key.
+
   for (const inputParameter of dynamicInputs) {
     const clonedInputParameter = copy({ copyNonEnumerableProps: false }, {}, inputParameter);
     if (inputParameter.key === keyPrefix) {
@@ -589,9 +581,18 @@ function getManifestBasedInputParameters(
       }
       clonedInputParameter.value = stepInputsAreNonEmptyObject ? getObjectValue(inputPath, stepInputs) : undefined;
     }
-    result.push(clonedInputParameter);
 
-    knownKeys.add(clonedInputParameter.key);
+    if (isFormDataInput(clonedInputParameter)) {
+      if (formDataLocation === '') {
+        formDataInputKeyPrefix = clonedInputParameter.key.substring(0, clonedInputParameter.key.indexOf('.formData'));
+        formDataLocation = formDataInputKeyPrefix.replace(`${keyPrefix}.`, '');
+      }
+
+      formDataInputs.push({ ...clonedInputParameter, key: clonedInputParameter.serialization?.property?.parameterReference });
+    } else {
+      result.push(clonedInputParameter);
+      knownKeys.add(clonedInputParameter.key);
+    }
   }
 
   if (
@@ -603,6 +604,16 @@ function getManifestBasedInputParameters(
     const resultParameters = map(result, 'key');
     loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys);
     result = unmap(resultParameters);
+  }
+
+  if (formDataInputs.length) {
+    const formDataInputsValue = getObjectValue(formDataLocation, stepInputs);
+    result.push(
+      ...loadFormDataValue(formDataInputsValue, formDataInputs).map((input) => ({
+        ...input,
+        key: input.key.replace('formData.$', `${formDataInputKeyPrefix}.formData`),
+      }))
+    );
   }
 
   return result;

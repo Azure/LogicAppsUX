@@ -197,7 +197,6 @@ export default {
     },
   },
   DEFAULT_CUSTOM_CODE_INPUT: 'CodeFile',
-  INLINECODE: 'connectionProviders/inlineCode',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',
@@ -463,6 +462,10 @@ export default {
     STATIC_RESULT: 'STATIC_RESULT',
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
+  },
+  TEMPLATE_PANEL_TAB_NAMES: {
+    OVERVIEW: 'OVERVIEW',
+    WORKFLOW_VIEW: 'WORKFLOW_VIEW',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',

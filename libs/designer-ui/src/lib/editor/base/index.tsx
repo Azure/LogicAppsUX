@@ -1,4 +1,4 @@
-import { Toolbar } from '../../html/plugins/toolbar/Toolbar';
+import { RichTextToolbar } from '../../html/plugins/toolbar/RichTextToolbar';
 import type { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
@@ -170,18 +170,11 @@ export const BaseEditor = ({
 
   const id = useId('msla-described-by-message');
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
-
   return (
     <>
-      <div
-        className={className ?? 'msla-editor-container'}
-        id={editorId}
-        ref={containerRef}
-        data-automation-id={dataAutomationId}
-        title={placeholder}
-      >
+      <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
         {htmlEditor ? (
-          <Toolbar
+          <RichTextToolbar
             isRawText={htmlEditor === 'raw-html'}
             isSwitchFromPlaintextBlocked={isSwitchFromPlaintextBlocked}
             readonly={readonly}
@@ -190,7 +183,13 @@ export const BaseEditor = ({
         ) : null}
         <TextPlugin
           contentEditable={
-            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+            <ContentEditable
+              className={css('editor-input', readonly && 'readonly')}
+              ariaLabelledBy={labelId}
+              ariaDescribedBy={id}
+              tabIndex={0}
+              title={placeholder}
+            />
           }
           placeholder={
             <span className="editor-placeholder" ref={placeholderRef}>

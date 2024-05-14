@@ -3,7 +3,7 @@ import type { OnErrorFn } from '@formatjs/intl';
 import type React from 'react';
 import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface IntlProviderProps {
   locale: string;

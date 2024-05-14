@@ -1,11 +1,12 @@
+import { getIntl } from '../../../intl/src';
 import { ResponseCodes, SwaggerParser } from '../../../parsers';
-import { ArgumentException, equals, unmap } from '../../../utils/src';
+import { ArgumentException, equals, includes, unmap } from '../../../utils/src';
 import type { IApiManagementService } from '../apimanagement';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 
 export interface ApiManagementServiceOptions {
   apiVersion: string;
@@ -170,17 +171,7 @@ export class BaseApiManagementService implements IApiManagementService {
       case 'header':
       case 'query': {
         const property = $in === 'header' ? 'headers' : 'queries';
-        if (!schemaProperties[property]) {
-          schemaProperties[property] = { type: 'object', properties: {}, required: [] };
-        }
-
-        schemaProperties[property].properties[name] = parameter;
-        if (required) {
-          schemaProperties[property].required.push(name);
-          if (!finalSchema.required.includes(property)) {
-            finalSchema.required.push(property);
-          }
-        }
+        this._setScalarParameterInSchema(finalSchema, property, parameter);
         break;
       }
       case 'path': {
@@ -196,10 +187,74 @@ export class BaseApiManagementService implements IApiManagementService {
         }
         break;
       }
+      case 'formData': {
+        const formDataParameter = {
+          ...parameter,
+          'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}` } },
+        };
+        if (parameter.type === 'file') {
+          if (!includes(name, '"') && !includes(name, '@')) {
+            const intl = getIntl();
+            const properties: Record<string, any> = {
+              $content: {
+                ...parameter,
+                type: undefined,
+                'x-ms-summary': intl.formatMessage(
+                  { defaultMessage: '{fileContent} (content)', id: 'Rj/V1x', description: 'Title for file name parameter' },
+                  { fileContent: parameter['x-ms-summary'] ?? name }
+                ),
+                'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$content` } },
+                name: undefined,
+              },
+            };
+            if (parameter.format !== 'contentonly') {
+              properties['$filename'] = {
+                ...parameter,
+                type: 'string',
+                'x-ms-summary': intl.formatMessage(
+                  { defaultMessage: '{fileName} (file name)', id: 'UYRIS/', description: 'Title for file name parameter' },
+                  { fileName: parameter['x-ms-summary'] ?? name }
+                ),
+                'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$filename` } },
+                name: undefined,
+              };
+            }
+
+            this._setScalarParameterInSchema(finalSchema, $in, {
+              ...formDataParameter,
+              type: 'object',
+              properties,
+              required: required ? ['$content'] : [],
+            });
+          }
+
+          break;
+        }
+
+        this._setScalarParameterInSchema(finalSchema, $in, formDataParameter);
+        break;
+      }
       default: {
         // eslint-disable-next-line no-param-reassign
         finalSchema.properties[$in] = schema;
         break;
+      }
+    }
+  }
+
+  private _setScalarParameterInSchema(finalSchema: any, property: any, parameter: any) {
+    const schemaProperties = finalSchema.properties;
+    const { name, required } = parameter;
+
+    if (!schemaProperties[property]) {
+      schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+    }
+
+    schemaProperties[property].properties[name] = parameter;
+    if (required) {
+      schemaProperties[property].required.push(name);
+      if (!finalSchema.required.includes(property)) {
+        finalSchema.required.push(property);
       }
     }
   }
