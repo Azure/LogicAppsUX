@@ -45,17 +45,19 @@ export const getAppFileForFileExtension = (fileExtension: string): string => {
 export const generateDefaultCustomCodeValue = (language: EditorLanguage): string => {
   switch (language) {
     case EditorLanguage.powershell:
-      return `$action = Get-ActionOutput -actionName "Compose" 
+      return `# Use these cmdlets to retrieve outputs from prior steps
+# oldActionOutput = Get-ActionOutput -ActionName <name of old action>
+# oldTriggerOutput = Get-TriggerOutput
 
-$subId = $action["body"]["subscriptionId"] 
+$customResponse =  [PSCustomObject]@{
+Message = "Hello world!"
+}
 
-$resourceGroupName = $action["body"]["resourceGroupName"] 
+# Use Write-Host/ Write-Output/Write-Debug to log messages to application insights
+# Write-Host "Sending to application insight logs"
 
-$logicAppName = $action["body"]["logicAppName"] 
-
-$result = Start-AzLogicApp -ResourceGroupName $resourceGroupName -Name $logicAppName -TriggerName "manual" -Confirm 
-
-Push-ActionOutputs -body $result`;
+# Use Push-WorkflowOutput to push outputs forward to subsequent actions
+Push-WorkflowOutput -Output $customResponse`;
     case EditorLanguage.csharp:
       return `// Add the required libraries
 #r "Newtonsoft.Json"
@@ -64,28 +66,37 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Workflows.Scripting;
-using Newtonsoft.Json.Linq; 
-      
+using Newtonsoft.Json.Linq;
+
 /// <summary>
 /// Executes the inline csharp code.
 /// </summary>
 /// <param name="context">The workflow context.</param>
-/// <remarks> This is the entry-point to your code. The function signature should remain unchanged.</remarks> 
+/// <remarks> This is the entry-point to your code. The function signature should remain unchanged.</remarks>
 public static async Task<Results> Run(WorkflowContext context, ILogger log)
 {
-  var triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs; 
+  var triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs;
 
-  log.LogInformation("Outputting results.");
+  ////the following dereferences the 'name' property from trigger payload.
+  var name = triggerOutputs?["body"]?["name"]?.ToString();
 
-  return new Results 
-  { 
-    Outputs = triggerOutputs 
-  }; 
+  ////the following can be used to get the action outputs from a prior action
+  //var actionOutputs = (await context.GetActionResults("Compose").ConfigureAwait(false)).Outputs;
+
+  ////these logs will show-up in Application Insight traces table
+  //log.LogInformation("Outputting results.");
+
+  //var name = null;
+
+  return new Results
+  {
+    Message = !string.IsNullOrEmpty(name) ? $"Hello {name} from CSharp action" : "Hello from CSharp action."
+  };
 }
 
-public class Results 
-{ 
-  public JToken Outputs {get; set;} 
+public class Results
+{
+  public string Message {get; set;}
 }`;
     default:
       return '';
