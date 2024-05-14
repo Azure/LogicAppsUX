@@ -1,4 +1,48 @@
 # Logic Apps Designer
+## [4.16.0](https://github.com/Azure/LogicAppsUX/compare/v4.15.0...v4.16.0) (2024-05-14)
+
+
+### Features
+
+* **designer-ui:** Utilize Fluent components for HTML toolbar buttons & popovers ([#4823](https://github.com/Azure/LogicAppsUX/issues/4823)) ([25c4354](https://github.com/Azure/LogicAppsUX/commit/25c43544dab150e0f9653484683bf53ded83e388))
+* **designer:** Add rule execute action in operation manifests ([#4822](https://github.com/Azure/LogicAppsUX/issues/4822)) ([54dbb35](https://github.com/Azure/LogicAppsUX/commit/54dbb35cfaaea3166ecdf1235c91bc81e781601b))
+* **Template:** Parameters Panel ([#4815](https://github.com/Azure/LogicAppsUX/issues/4815)) ([1911f55](https://github.com/Azure/LogicAppsUX/commit/1911f557b2aae0712c3cbea63d79d1345be85869))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Disabling context menu as it causes app to crash ([#4821](https://github.com/Azure/LogicAppsUX/issues/4821)) ([6b21a68](https://github.com/Azure/LogicAppsUX/commit/6b21a68ac1243e0e583f81d5da2811a46c3dfd13))
+* **designer:** fix actions and triggers title not showing in dark theme ([#4826](https://github.com/Azure/LogicAppsUX/issues/4826)) ([ffbb6e1](https://github.com/Azure/LogicAppsUX/commit/ffbb6e123147c3ca2c38b54b39d3abe42f3c3f0c))
+* **Designer:** Migrate some UI to Fluent v9 components ([#4837](https://github.com/Azure/LogicAppsUX/issues/4837)) ([3cede0b](https://github.com/Azure/LogicAppsUX/commit/3cede0be0d2b21ff2ca078ddc8d751ed150d2547))
+
+## [4.15.0](https://github.com/Azure/LogicAppsUX/compare/v4.14.0...v4.15.0) (2024-05-09)
+
+
+### Features
+
+* **designer:** Adding options to switch between Local Time and UTC for monitoring view ([#4775](https://github.com/Azure/LogicAppsUX/issues/4775)) ([1580602](https://github.com/Azure/LogicAppsUX/commit/1580602ddaa9662c44111e4f0b1d1c033c7acb20)), closes [#4635](https://github.com/Azure/LogicAppsUX/issues/4635)
+* **Template:** Add Panel Structure for Create/QuickView ([#4761](https://github.com/Azure/LogicAppsUX/issues/4761)) ([c69528b](https://github.com/Azure/LogicAppsUX/commit/c69528b4a7ca1955fe7cb155bc517039c5c94e1c))
+* **vscode:** Add initial setup for unit testing with vitest in extension code ([#4804](https://github.com/Azure/LogicAppsUX/issues/4804)) ([e5bc077](https://github.com/Azure/LogicAppsUX/commit/e5bc077dc55ae3b7675e4bfa97569a5294f6800c))
+
+
+### Bug Fixes
+
+* **designer-ui:** [A11Y] Auto-focus color picker in HTML toolbar ([#4813](https://github.com/Azure/LogicAppsUX/issues/4813)) ([721181e](https://github.com/Azure/LogicAppsUX/commit/721181e57b4a348fab917e7a69a1ed3ea0582c9e))
+* **designer-ui:** [a11y] Prevent sticky search header from hiding action buttons in side panel ([#4811](https://github.com/Azure/LogicAppsUX/issues/4811)) ([753037e](https://github.com/Azure/LogicAppsUX/commit/753037e27060f2bae19eba1b7ea6137d11359c76))
+* **designer-ui:** Prevent field placeholder from being used as title on HTML toolbar ([#4812](https://github.com/Azure/LogicAppsUX/issues/4812)) ([cbe47f6](https://github.com/Azure/LogicAppsUX/commit/cbe47f6c4637869ba98e0fdf14564fe2188c99cc))
+* **designer:** Adding many groups to a Condition action requires awkward scroll ([#4806](https://github.com/Azure/LogicAppsUX/issues/4806)) ([eece1df](https://github.com/Azure/LogicAppsUX/commit/eece1df5ffea271fab5a78c0780b1d9174b560b8))
+* **designer:** Combobox to check if string is also empty before using custom editor ([#4818](https://github.com/Azure/LogicAppsUX/issues/4818)) ([949deb6](https://github.com/Azure/LogicAppsUX/commit/949deb6fca8ee43515f4acabd5bdf596d740754c))
+* **designer:** fix aria-label accessibility issue in textbox ([#4810](https://github.com/Azure/LogicAppsUX/issues/4810)) ([6db46d4](https://github.com/Azure/LogicAppsUX/commit/6db46d4ce3f4877360ce1e3a7efd7a1068ff0a56))
+* **designer:** Fix required screen announcement for required recurrence fields ([#4763](https://github.com/Azure/LogicAppsUX/issues/4763)) ([eade1a6](https://github.com/Azure/LogicAppsUX/commit/eade1a6a59a733b5ad295fb5d7944c76459e7ad0))
+* **designer:** Fixing Customcode tokenpicker action value ([#4767](https://github.com/Azure/LogicAppsUX/issues/4767)) ([c34f1eb](https://github.com/Azure/LogicAppsUX/commit/c34f1eb983dbd930c6693de7f44a75926884caa2))
+* **designer:** make searchTerm placeholder harder to translate so it's not accidently translated ([#4764](https://github.com/Azure/LogicAppsUX/issues/4764)) ([5be58f9](https://github.com/Azure/LogicAppsUX/commit/5be58f924ac1eccb4228f51f1fc3da6cd8428686))
+* **Designer:** Only show dropdown for array editor when there are options ([#4783](https://github.com/Azure/LogicAppsUX/issues/4783)) ([01d4e87](https://github.com/Azure/LogicAppsUX/commit/01d4e8786538726768262c423b403cdfa3c67236))
+* **designer:** Remove tokens from a node whena  node is deleted ([#4773](https://github.com/Azure/LogicAppsUX/issues/4773)) ([0f960c9](https://github.com/Azure/LogicAppsUX/commit/0f960c99fb5a337eb9ca71e72550ae202b8b34db))
+* **Designer:** Revert - Updated HTML Editor to support newline characters ([#4807](https://github.com/Azure/LogicAppsUX/issues/4807)) ([4d2a984](https://github.com/Azure/LogicAppsUX/commit/4d2a984e42d0fde0eb6ea1046263a4727f226ca2)), closes [#4635](https://github.com/Azure/LogicAppsUX/issues/4635)
+* **Designer:** Trigger deletion should also remove dependant tokens through the workflow ([#4788](https://github.com/Azure/LogicAppsUX/issues/4788)) ([dfdf7b8](https://github.com/Azure/LogicAppsUX/commit/dfdf7b872ce1e47c44e6b7d26040752b0ee328a0))
+* **vscode:** fix turbo dependency for vscode build setup ([#4772](https://github.com/Azure/LogicAppsUX/issues/4772)) ([edb20ee](https://github.com/Azure/LogicAppsUX/commit/edb20ee9ced7537b836db69114dc9307c14b2294))
+* **vscode:** Implement project validation for opening and creating data maps. ([#4809](https://github.com/Azure/LogicAppsUX/issues/4809)) ([37d247d](https://github.com/Azure/LogicAppsUX/commit/37d247da0dec7a2cfc0cadfa6c70b84ee6cba072))
+
 ## [4.14.0](https://github.com/Azure/LogicAppsUX/compare/v4.13.0...v4.14.0) (2024-05-02)
 
 

@@ -1,5 +1,5 @@
-import { Text, useTheme } from '@fluentui/react';
-import { Divider, Tooltip } from '@fluentui/react-components';
+import { useTheme } from '@fluentui/react';
+import { Divider, Tooltip, Text } from '@fluentui/react-components';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
 import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
