@@ -6,12 +6,13 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
-import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
+import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, TextField } from '@fluentui/react';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { LargeText, XLargeText } from '@microsoft/designer-ui';
 
 export const Summary: React.FC = () => {
   const intl = useIntl();
@@ -119,20 +120,14 @@ export const Summary: React.FC = () => {
 
   const detailsList = useMemo(() => {
     const emptyText = (
-      <Text variant="large" block className="msla-export-summary-detail-list-empty">
-        {intlText.NO_DETAILS}
-      </Text>
+      <LargeText text={intlText.NO_DETAILS} className="msla-export-summary-detail-list-empty" style={{ display: 'block' }} />
     );
     const noDetails = exportDetails.length === 0 && !isSummaryLoading ? emptyText : null;
 
     return (
       <>
-        <Text variant="xLarge" block>
-          {intlText.AFTER_EXPORT}
-        </Text>
-        <Text variant="large" block>
-          {intlText.ADDITIONAL_STEPS}
-        </Text>
+        <XLargeText text={intlText.AFTER_EXPORT} style={{ display: 'block' }} />
+        <LargeText text={intlText.ADDITIONAL_STEPS} style={{ display: 'block' }} />
         <div className="msla-export-summary-detail-list">
           <ShimmeredDetailsList
             items={exportDetails}
@@ -160,12 +155,8 @@ export const Summary: React.FC = () => {
 
   return (
     <div className="msla-export-summary">
-      <Text variant="xLarge" block>
-        {intlText.COMPLETE_EXPORT_TITLE}
-      </Text>
-      <Text variant="large" block>
-        {intlText.SELECT_LOCATION}
-      </Text>
+      <XLargeText text={intlText.COMPLETE_EXPORT_TITLE} style={{ display: 'block' }} />
+      <LargeText text={intlText.SELECT_LOCATION} style={{ display: 'block' }} />
       {packageWarning}
       <div className="msla-export-summary-file-location">
         {locationText}

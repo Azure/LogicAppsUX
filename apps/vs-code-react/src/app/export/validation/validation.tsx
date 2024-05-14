@@ -6,11 +6,12 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
-import { MessageBar, MessageBarType, Text } from '@fluentui/react';
+import { MessageBar, MessageBarType } from '@fluentui/react';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { LargeText, XLargeText } from '@microsoft/designer-ui';
 
 export const Validation: React.FC = () => {
   const vscode = useContext(VSCodeContext);
@@ -84,12 +85,8 @@ export const Validation: React.FC = () => {
 
   return (
     <div className="msla-export-validation">
-      <Text variant="xLarge" block>
-        {intlText.REVIEW_TITLE}
-      </Text>
-      <Text variant="large" block>
-        {intlText.REVIEW_DESCRIPTION}
-      </Text>
+      <XLargeText text={intlText.REVIEW_TITLE} style={{ display: 'block' }} />
+      <LargeText text={intlText.REVIEW_DESCRIPTION} style={{ display: 'block' }} />
       <div className="msla-export-validation-list">
         {isError ? validationError : null}
         <ReviewList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />

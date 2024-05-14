@@ -17,13 +17,14 @@ import {
   updateSelectedItems,
 } from './helper';
 import { SelectedList } from './selectedList';
-import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
+import { Separator, ShimmeredDetailsList, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { LargeText, XLargeText } from '@microsoft/designer-ui';
 
 export const WorkflowsSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
@@ -157,9 +158,7 @@ export const WorkflowsSelection: React.FC = () => {
 
   const workflowsList = useMemo(() => {
     const emptyText = (
-      <Text variant="large" block className="msla-export-workflows-panel-list-workflows-empty">
-        {intlText.NO_WORKFLOWS}
-      </Text>
+      <LargeText text={intlText.NO_WORKFLOWS} style={{ display: 'block' }} className="msla-export-workflows-panel-list-workflows-empty" />
     );
 
     const noWorkflows = renderWorkflows !== null && !renderWorkflows.length && !isWorkflowsLoading ? emptyText : null;
@@ -292,12 +291,8 @@ export const WorkflowsSelection: React.FC = () => {
     <div className="msla-export-workflows">
       <div className="msla-export-workflows-panel">
         <div className="msla-export-workflows-panel-list">
-          <Text variant="xLarge" block>
-            {intlText.SELECT_TITLE}
-          </Text>
-          <Text variant="large" block>
-            {intlText.SELECT_DESCRIPTION}
-          </Text>
+          <XLargeText style={{ display: 'block' }} text={intlText.SELECT_TITLE} />
+          <LargeText style={{ display: 'block' }} text={intlText.SELECT_DESCRIPTION} />
           {limitInfo}
           {filters}
           {workflowsList}

@@ -1,9 +1,10 @@
 import type { INamingRules } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import { isNameValid } from './helper';
-import { Callout, Link, PrimaryButton, Text, TextField } from '@fluentui/react';
+import { Callout, Link, PrimaryButton, TextField } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
+import { MediumText } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
@@ -101,9 +102,7 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
           target={`.${linkClassName}`}
           onDismiss={toggleIsCalloutVisible}
         >
-          <Text variant="medium" block>
-            {intlText.RESOURCE_GROUP_DESCRIPTION}
-          </Text>
+          <MediumText text={intlText.RESOURCE_GROUP_DESCRIPTION} style={{ display: 'block' }} />
           <TextField
             required
             label={intlText.NAME}

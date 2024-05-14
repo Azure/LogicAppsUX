@@ -1,6 +1,7 @@
 import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
-import { Text, List, Icon, Spinner, SpinnerSize } from '@fluentui/react';
+import { List, Icon, Spinner, SpinnerSize } from '@fluentui/react';
+import { MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -29,16 +30,14 @@ export const Status: React.FC = () => {
     return (
       <div key={`index-${finalStatus}`} className="msla-export-status--item">
         {icon}
-        <Text style={{ marginLeft: '5px' }}>{status}</Text>
+        <MediumText text={status ?? ''} style={{ marginLeft: '5px' }} />
       </div>
     );
   };
 
   return (
     <div className="msla-export-status">
-      <Text variant="xLarge" block>
-        {intlText.EXPORT_STATUS_TITLE}
-      </Text>
+      <XLargeText text={intlText.EXPORT_STATUS_TITLE} style={{ display: 'block' }} />
       <List items={statuses} onRenderCell={renderStatus} />
       <FinalStatusGadget finalStatus={finalStatus} />
     </div>
@@ -70,7 +69,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
       return (
         <div className="msla-export-status--item">
           <Icon iconName={'SkypeCheck'} />
-          <Text style={{ marginLeft: '5px' }}>{exportNextStepsPath}</Text>
+          <MediumText text={exportNextStepsPath} style={{ marginLeft: '5px' }} />
         </div>
       );
     default:

@@ -1,9 +1,9 @@
+import { LargeText, XLargeText } from '@microsoft/designer-ui';
 import { AdvancedOptionsTypes } from '../../../run-service';
 import { updateSelectedAdvanceOptions } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
-import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -96,12 +96,8 @@ export const AdvancedOptions: React.FC = () => {
 
   return (
     <div className="msla-export-workflows-advanced-options">
-      <Text className="msla-export-workflows-advanced-options-title" variant="xLarge" block>
-        {intlText.ADVANCED_OPTIONS}
-      </Text>
-      <Text variant="large" block>
-        {intlText.EXPORT_CONNECTION}
-      </Text>
+      <XLargeText text={intlText.ADVANCED_OPTIONS} className="msla-export-workflows-advanced-options-title" style={{ display: 'block' }} />
+      <LargeText text={intlText.EXPORT_CONNECTION} style={{ display: 'block' }} />
       <SearchableDropdown
         label={intlText.EXPORT_CONNECTION_DESCRIPTION}
         placeholder={AdvancedOptionsTypes.off}
