@@ -188,7 +188,7 @@ export function CodeEditor({
           )
         : null}
       {customCodeEditor && showMessageBar ? (
-        <MessageBar intent={'info'} className="msla-custom-code-editor-message-bar" layout="auto">
+        <MessageBar intent={'info'} className="msla-custom-code-editor-message-bar" layout="multiline">
           <MessageBarBody>
             {messageBarText}{' '}
             <a href={'https://aka.ms/logicapp-scripting'} target="_blank" rel="noreferrer" style={{ display: 'inline' }}>
@@ -196,8 +196,14 @@ export function CodeEditor({
             </a>
           </MessageBarBody>
           <MessageBarActions
-            containerAction={<Button aria-label={closeButtonAriaLabel} appearance="transparent" icon={<DismissRegular />} />}
-            onClick={() => setShowMessageBar(false)}
+            containerAction={
+              <Button
+                aria-label={closeButtonAriaLabel}
+                appearance="transparent"
+                icon={<DismissRegular />}
+                onClick={() => setShowMessageBar(false)}
+              />
+            }
           />
         </MessageBar>
       ) : null}
