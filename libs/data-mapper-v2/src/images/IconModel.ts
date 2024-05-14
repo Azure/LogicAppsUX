@@ -4,4 +4,5 @@ export interface IconProps extends React.SVGAttributes<SVGElement> {
   filled?: boolean;
   title?: string;
   displayName?: string;
+  height?: string;
 }

@@ -1,4 +1,4 @@
-import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
+import { CollectionRegular, StringCategory20Regular } from '../images/FunctionIcons/CategoryIcons';
 import type { IconProps } from '../images/IconModel';
 import {
   AddSubtractCircle20Filled,
@@ -25,7 +25,7 @@ export const customBranding: FunctionGroupBranding = {
 export const collectionBranding: FunctionGroupBranding = {
   displayName: 'Collection',
   colorTokenName: 'colorFnCategoryCollection',
-  icon: <Collection20Regular />,
+  icon: <CollectionRegular />,
 };
 
 export const dateTimeBranding: FunctionGroupBranding = {

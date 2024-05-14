@@ -86,12 +86,7 @@ export const DropDown = ({
       trapFocus={true}
     >
       <PopoverTrigger disableButtonEnhancement={true}>
-        <ToolbarButton
-          disabled={disabled}
-          aria-label={buttonAriaLabel || buttonLabel}
-          className={buttonClassName}
-          ref={buttonRef}
-        >
+        <ToolbarButton disabled={disabled} aria-label={buttonAriaLabel || buttonLabel} className={buttonClassName} ref={buttonRef}>
           {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
           {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
         </ToolbarButton>
@@ -104,8 +99,8 @@ export const DropDown = ({
           }
         }}
       >
-          {children}
-          <Button onClick={handleClose}>Close</Button>
+        {children}
+        <Button onClick={handleClose}>Close</Button>
       </PopoverSurface>
     </Popover>
   );
