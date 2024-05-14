@@ -31,7 +31,7 @@ const FunctionListHeader = ({ category, functions }: FunctionListHeaderProps) =>
   });
 
   return (
-    <TreeItem className={styles.headerCell} itemType="branch">
+    <TreeItem key={category} value={category} className={styles.headerCell} itemType="branch">
       <TreeItemLayout className={styles.headerCell}>
         <Text className={styles.headerText}>{categoryName}</Text>
       </TreeItemLayout>

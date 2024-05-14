@@ -6,6 +6,7 @@ export const useStyles = makeStyles({
   },
   functionTree: {
     backgroundColor: '#E8F3FE',
+    width: '210px',
   },
   functionTreeItem: {
     backgroundColor: '#E8F3FE',

@@ -5,9 +5,11 @@ import { hasOnlyCustomInputType } from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
-import { Tree, SearchBox } from '@fluentui/react-components';
+import type { TreeItemValue, TreeOpenChangeData, TreeOpenChangeEvent } from '@fluentui/react-components';
+import { Tree } from '@fluentui/react-components';
+import { SearchBox } from '@fluentui/react-search';
 import Fuse from 'fuse.js';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useStyles } from './styles';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -31,6 +33,11 @@ export interface FunctionDataTreeItem extends FunctionData {
 export const FunctionList = () => {
   const styles = useStyles();
   const intl = useIntl();
+
+  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory));
+  const handleOpenChange = (event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
+    setOpenItems(data.openItems);
+  };
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
   const inlineFunctionInputOutputKeys = useSelector(
@@ -66,7 +73,7 @@ export const FunctionList = () => {
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {
-          const categoryItem = { isExpanded: false } as FunctionDataTreeItem;
+          const categoryItem = { isExpanded: true } as FunctionDataTreeItem;
           categoryItem.children = [];
           categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
 
@@ -97,6 +104,7 @@ export const FunctionList = () => {
           // they only show when they have Functions that match the search
           if (searchTerm) {
             functionCategoryDictionary[functionData.category].isExpanded = true;
+            setOpenItems([...openItems, functionData.category]);
           }
         });
 
@@ -141,7 +149,7 @@ export const FunctionList = () => {
         />
       </span>
 
-      <Tree appearance="transparent" className={styles.functionTree}>
+      <Tree appearance="transparent" className={styles.functionTree} onOpenChange={handleOpenChange} openItems={openItems}>
         {treeItems}
       </Tree>
     </>
