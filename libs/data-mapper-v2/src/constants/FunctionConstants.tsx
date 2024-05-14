@@ -1,4 +1,4 @@
-import { CollectionRegular, StringCategory20Regular } from '../images/CategoryIcons';
+import { CollectionRegular, StringCategory20Regular } from '../images/FunctionIcons/CategoryIcons';
 import type { IconProps } from '../images/IconModel';
 import {
   AddSubtractCircle20Filled,

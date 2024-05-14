@@ -333,28 +333,7 @@ export const dataMapSlice = createSlice({
         let fnReactFlowKey: string;
         let fnData: FunctionData;
 
-        // Default - just provide the FunctionData and the key will be handled under the hood
-        // if (!('newReactFlowKey' in action.payload)) {
-        //   fnData = { ...action.payload, isNewNode: true };
-        //   fnReactFlowKey = createReactFlowFunctionKey(fnData);
-        //   newState.functionNodes[fnReactFlowKey] = {
-        //     functionData: fnData,
-        //     functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
-        //   };
-        // } else {
-        //   // Alternative - specify the key you want to use (needed for adding inline Functions)
-        //   fnData = action.payload.functionData;
-        //   fnReactFlowKey = action.payload.newReactFlowKey;
-        //   newState.functionNodes[fnReactFlowKey] = {
-        //     functionData: fnData,
-        //     functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
-        //   };
-        // }
-
-        // Create connection entry to instantiate default connection inputs
-        //createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
-
-        //updateFunctionNodeLocations(newState, fnReactFlowKey);
+        // PLEASE SEE FN IN V1, THERE IS A LOT WE CAN REUSE
 
         doDataMapOperation(state, newState, 'Add function node');
       }

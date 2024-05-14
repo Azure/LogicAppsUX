@@ -1,5 +1,5 @@
 //import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
-import { CollectionRegular, StringCategory20Regular } from '../images/CategoryIcons';
+import { CollectionRegular, StringCategory20Regular } from '../images/FunctionIcons/CategoryIcons';
 import {
   Any16Filled,
   Any16Regular,
@@ -13,7 +13,7 @@ import {
   Integer16Regular,
   String16Filled,
   String16Regular,
-} from '../images/DataType16Icons';
+} from '../images/FunctionIcons/DataType16Icons';
 import {
   Any24Filled,
   Any24Regular,
@@ -27,7 +27,7 @@ import {
   Integer24Regular,
   String24Filled,
   String24Regular,
-} from '../images/DataType24Icons';
+} from '../images/FunctionIcons/DataType24Icons';
 import {
   AbsoluteValue32Regular,
   AngleIcon,
@@ -49,7 +49,7 @@ import {
   TenPowerX32Regular,
   XDivide132Regular,
   XPowerY32Regular,
-} from '../images/FunctionIcons';
+} from '../images/FunctionIcons/FunctionIcons';
 import { FunctionCategory } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
 import { FontIcon } from '@fluentui/react';

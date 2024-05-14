@@ -1,20 +1,9 @@
 import type { FunctionCategory } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
-import { makeStyles, shorthands, Text, tokens, Tree, TreeItem, TreeItemLayout, typographyStyles } from '@fluentui/react-components';
+import { Text, Tree, TreeItem, TreeItemLayout } from '@fluentui/react-components';
 import type { FunctionDataTreeItem } from './FunctionList';
 import FunctionListItem from './FunctionListItem';
-
-const useStyles = makeStyles({
-  headerText: {
-    ...typographyStyles.caption1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    paddingLeft: tokens.spacingHorizontalXS,
-    fontSize: '13px',
-    marginTop: '8px',
-    marginBottom: '8px',
-  },
-  headerCell: {},
-});
+import { useStyles } from './styles';
 
 interface FunctionListHeaderProps {
   category: FunctionCategory;
@@ -31,8 +20,8 @@ const FunctionListHeader = ({ category, functions }: FunctionListHeaderProps) =>
   });
 
   return (
-    <TreeItem key={category} value={category} className={styles.headerCell} itemType="branch">
-      <TreeItemLayout className={styles.headerCell}>
+    <TreeItem key={category} value={category} itemType="branch">
+      <TreeItemLayout>
         <Text className={styles.headerText}>{categoryName}</Text>
       </TreeItemLayout>
       <Tree>{functionItems}</Tree>

@@ -1,4 +1,4 @@
-import { StringCategory20Regular } from '../../images/CategoryIcons';
+import { StringCategory20Regular } from '../../images/FunctionIcons/CategoryIcons';
 import { FunctionCategory } from '../../models/Function';
 import { iconForFunctionCategory } from '../Icon.Utils';
 import { WrenchRegular } from '@fluentui/react-icons';

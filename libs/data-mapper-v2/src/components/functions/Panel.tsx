@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import { Button, InlineDrawer } from '@fluentui/react-components';
 import { Text } from '@fluentui/react';
 import { FunctionList } from '../functionList/FunctionList';
-import { FunctionsSVG } from '../functionList/styles';
+import { FunctionsSVG } from 'images/icons';
 
 type PanelProps = {};
 
