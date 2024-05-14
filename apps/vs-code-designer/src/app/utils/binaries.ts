@@ -34,6 +34,7 @@ import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
 import request = require('request');
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Download and Extracts dependency zip.
@@ -154,20 +155,32 @@ export async function getLatestFunctionCoreToolsVersion(context: IActionContext,
   return DependencyVersion.funcCoreTools;
 }
 
+/**
+ * Retrieves the latest version of .NET SDK.
+ * @param {IActionContext} context - The action context.
+ * @param {string} majorVersion - The major version of .NET SDK to retrieve. (optional)
+ * @returns A promise that resolves to the latest version of .NET SDK.
+ * @throws An error if there is an issue retrieving the latest .NET SDK version.
+ */
 export async function getLatestDotNetVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.dotNetMajorVersion = majorVersion;
 
   if (majorVersion) {
-    await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
+    return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
-        response.forEach((releaseInfo: IGitHubReleaseInfo) => {
+        let latestVersion: string | null;
+        for (const releaseInfo of response) {
           const releaseVersion: string | null = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
-          if (checkMajorVersion(releaseVersion, majorVersion)) {
-            return releaseVersion;
+          if (
+            checkMajorVersion(releaseVersion, majorVersion) &&
+            (isNullOrUndefined(latestVersion) || semver.gt(releaseVersion, latestVersion))
+          ) {
+            latestVersion = releaseVersion;
           }
-        });
+        }
+        return latestVersion;
       })
       .catch((error) => {
         throw Error(localize('errorNewestDotNetVersion', `Error getting latest .NET SDK version: ${error}`));
@@ -299,6 +312,12 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
   }
 }
 
+/**
+ * Checks if the major version of a given version string matches the specified major version.
+ * @param {string} version - The version string to check.
+ * @param {string} majorVersion - The major version to compare against.
+ * @returns A boolean indicating whether the major version matches.
+ */
 function checkMajorVersion(version: string, majorVersion: string): boolean {
   return semver.major(version) === Number(majorVersion);
 }
