@@ -154,7 +154,12 @@ export async function getDynamicSchema(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
-  const emptySchema = { ...parameter?.schema };
+  const emptySchema = {
+    title: parameter?.schema?.title,
+    description: parameter?.schema?.description,
+    summary: parameter?.schema?.summary,
+    name: parameter?.schema?.name,
+  };
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
