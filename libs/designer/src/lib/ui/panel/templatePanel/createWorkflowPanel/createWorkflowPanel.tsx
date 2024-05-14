@@ -2,10 +2,11 @@ import { useIntl } from 'react-intl';
 import type { RootState } from '../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { DisplayConnections } from '../../../templates/connections/displayConnections';
+import { DisplayParameters } from '../../../templates/parameters/displayParameters';
 
 export const CreateWorkflowPanel = () => {
   const intl = useIntl();
-  const { connections } = useSelector((state: RootState) => state.template);
+  const { parameters, connections } = useSelector((state: RootState) => state.template);
 
   const intlText = {
     CREATE_NEW_WORKFLOW: intl.formatMessage({
@@ -30,6 +31,7 @@ export const CreateWorkflowPanel = () => {
       </div>
 
       {connections ? <DisplayConnections connections={connections} /> : <>PLACEHOLDER: no connections to be made</>}
+      {parameters ? <DisplayParameters /> : <>PLACEHOLDER: no parameters</>}
     </>
   );
 };

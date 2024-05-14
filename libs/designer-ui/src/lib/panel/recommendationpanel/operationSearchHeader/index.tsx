@@ -1,7 +1,6 @@
 import { DesignerSearchBox } from '../../../searchbox';
 import { Checkbox } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { Dropdown } from '@fluentui/react/lib/Dropdown';
+import { Dropdown, Label, Option } from '@fluentui/react-components';
 import type { OperationRuntimeCategory } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService, SearchService } from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
@@ -54,6 +53,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   const runtimeFilters = (SearchService().getRuntimeCategories?.() ?? getDefaultRuntimeCategories(intl)).map((category) => ({
     key: `runtime-${category.key}`,
     text: category.text,
+    value: category.key,
   }));
 
   const actionTypeFilters = isTriggerNode
@@ -61,16 +61,19 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         {
           key: 'actionType-triggers',
           text: intl.formatMessage({ defaultMessage: 'Triggers', id: 'piaRy6', description: 'Filter by Triggers category of connectors' }),
+          value: 'triggers',
         },
       ]
     : [
         {
           key: 'actionType-triggers',
           text: intl.formatMessage({ defaultMessage: 'Triggers', id: 'piaRy6', description: 'Filter by Triggers category of connectors' }),
+          value: 'triggers',
         },
         {
           key: 'actionType-actions',
           text: intl.formatMessage({ defaultMessage: 'Actions', id: 'bG9rjv', description: 'Filter by Actions category of connectors' }),
+          value: 'actions',
         },
       ];
 
@@ -80,15 +83,16 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     description: 'Label for the checkbox to group results by connector',
   });
 
-  const onChange = (_event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
-    if (item) {
-      const [k, v] = (item.key as string).split('-');
-      let newFilters: Record<string, string>;
-      if (item.selected) {
-        newFilters = { ...filters, [k]: v };
+  const onOptionSelect = (
+    data: { optionValue: string | undefined; optionText: string | undefined; selectedOptions: string[] },
+    filterProperty: string
+  ) => {
+    if (data.optionValue) {
+      const newFilters = { ...filters };
+      if (filters?.[filterProperty] === data.optionValue) {
+        delete newFilters[filterProperty];
       } else {
-        newFilters = { ...filters };
-        delete newFilters[k];
+        newFilters[filterProperty] = data.optionValue;
       }
       setFilters?.(newFilters);
       LoggerService().log({
@@ -106,33 +110,55 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       {displayRuntimeInfo || displayActionType ? (
         <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
           {displayRuntimeInfo && runtimeFilters.length > 0 ? (
-            <Dropdown
-              label={intl.formatMessage({ defaultMessage: 'Runtime', id: 'g5A6Bn', description: 'Filter by label' })}
-              placeholder={intl.formatMessage({
-                defaultMessage: 'Select a runtime',
-                id: 'uc3ytS',
-                description: 'Select a runtime placeholder',
-              })}
-              selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-              onChange={onChange}
-              multiSelect
-              options={runtimeFilters}
-            />
+            <div>
+              <Label>{intl.formatMessage({ defaultMessage: 'Runtime', id: 'g5A6Bn', description: 'Filter by label' })} </Label>
+              <Dropdown
+                placeholder={
+                  filters?.['runtime']
+                    ? runtimeFilters?.find((data) => data.value === filters['runtime'])?.text
+                    : intl.formatMessage({
+                        defaultMessage: 'Select a runtime',
+                        id: 'uc3ytS',
+                        description: 'Select a runtime placeholder',
+                      })
+                }
+                onOptionSelect={(_e, data) => onOptionSelect(data, 'runtime')}
+                multiselect={true}
+                selectedOptions={filters?.['runtime'] ? [filters['runtime']] : []}
+              >
+                {runtimeFilters.map((item) => (
+                  <Option key={item.key} text={item.text} value={item.value}>
+                    {item.text}
+                  </Option>
+                ))}
+              </Dropdown>
+            </div>
           ) : null}
           {displayActionType ? (
-            <Dropdown
-              label={intl.formatMessage({ defaultMessage: 'Action Type', id: 'TRpSCQ', description: 'Filter by label' })}
-              placeholder={intl.formatMessage({
-                defaultMessage: 'Select an action type',
-                id: 'lsKVU6',
-                description: 'Select an action type placeholder',
-              })}
-              selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-              onChange={onChange}
-              multiSelect
-              options={actionTypeFilters}
-              disabled={isTriggerNode}
-            />
+            <div>
+              <Label> {intl.formatMessage({ defaultMessage: 'Action Type', id: 'TRpSCQ', description: 'Filter by label' })}</Label>
+              <Dropdown
+                placeholder={
+                  filters?.['actionType']
+                    ? actionTypeFilters?.find((data) => data.value === filters['actionType'])?.text
+                    : intl.formatMessage({
+                        defaultMessage: 'Select an action type',
+                        id: 'lsKVU6',
+                        description: 'Select an action type placeholder',
+                      })
+                }
+                onOptionSelect={(_e, data) => onOptionSelect(data, 'actionType')}
+                disabled={isTriggerNode}
+                multiselect={true}
+                selectedOptions={filters?.['actionType'] ? [filters['actionType']] : []}
+              >
+                {actionTypeFilters.map((item) => (
+                  <Option key={item.key} text={item.text} value={item.value}>
+                    {item.text}
+                  </Option>
+                ))}
+              </Dropdown>
+            </div>
           ) : null}
         </div>
       ) : null}

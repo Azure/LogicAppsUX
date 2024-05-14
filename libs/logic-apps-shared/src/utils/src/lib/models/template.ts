@@ -26,6 +26,10 @@ export interface Parameter {
   required?: boolean;
 }
 
+export interface ParameterDefinition extends Parameter {
+  value?: any;
+}
+
 export interface Connection {
   id: string;
 }

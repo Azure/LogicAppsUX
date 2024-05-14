@@ -6,12 +6,13 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
 import { NewResourceGroup } from './newResourceGroup';
-import { Checkbox, Text } from '@fluentui/react';
+import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { LargeText } from '@microsoft/designer-ui';
 
 export const ManagedConnections: React.FC = () => {
   const intl = useIntl();
@@ -150,9 +151,7 @@ export const ManagedConnections: React.FC = () => {
 
   return (
     <div className="msla-export-summary-connections">
-      <Text variant="large" block>
-        {intlText.MANAGED_CONNECTIONS}
-      </Text>
+      <LargeText text={intlText.MANAGED_CONNECTIONS} style={{ display: 'block' }} />
       <Checkbox
         label={intlText.DEPLOY_MANAGED_CONNECTIONS}
         checked={isConnectionsChecked}
