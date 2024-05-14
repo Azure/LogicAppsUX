@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [4.17.0](https://github.com/Azure/LogicAppsUX/compare/v4.16.0...v4.17.0) (2024-05-14)
+
+
+### Features
+
+* **vscode:** Introduce .NET 8 for custom code workspaces ([#4834](https://github.com/Azure/LogicAppsUX/issues/4834)) ([ea27f18](https://github.com/Azure/LogicAppsUX/commit/ea27f182231036afe299f84108d601fa154dbf0d))
+
+
+### Bug Fixes
+
+* **designer:** Custom code fixes and updates ([#4847](https://github.com/Azure/LogicAppsUX/issues/4847)) ([1d5d702](https://github.com/Azure/LogicAppsUX/commit/1d5d702a5e209b482739ef52c93da1d198b063aa))
+* **designer:** Forgotten code to Custom code fixes and updates ([#4849](https://github.com/Azure/LogicAppsUX/issues/4849)) ([fe70e8b](https://github.com/Azure/LogicAppsUX/commit/fe70e8bfe4303d9581be029a04f472172193ccf8))
+* **vscode:** Move text components to fluent v9 ([#4845](https://github.com/Azure/LogicAppsUX/issues/4845)) ([3040289](https://github.com/Azure/LogicAppsUX/commit/304028933c8cdc1007a5e6b2aaef4ef590b8b19f))
+
 ## [4.16.0](https://github.com/Azure/LogicAppsUX/compare/v4.15.0...v4.16.0) (2024-05-14)
 
 
