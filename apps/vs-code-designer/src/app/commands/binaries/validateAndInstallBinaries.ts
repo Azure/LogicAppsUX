@@ -93,7 +93,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             validateDotNetIsLatest,
             '.NET SDK',
             dependencyTimeout,
-            'https://dotnet.microsoft.com/en-us/download/dotnet',
+            'https://dotnet.microsoft.com/en-us/download/dotnet/6.0',
             dependenciesVersions?.dotnet
           );
           await setDotNetCommand(context);
