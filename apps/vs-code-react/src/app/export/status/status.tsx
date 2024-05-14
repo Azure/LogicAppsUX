@@ -1,6 +1,7 @@
 import { Status as FinalStatus } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
 import { Text, List, Icon, Spinner, SpinnerSize } from '@fluentui/react';
+import { XLargeText } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -36,9 +37,7 @@ export const Status: React.FC = () => {
 
   return (
     <div className="msla-export-status">
-      <Text variant="xLarge" block>
-        {intlText.EXPORT_STATUS_TITLE}
-      </Text>
+      <XLargeText text={intlText.EXPORT_STATUS_TITLE} style={{ display: 'block' }} />
       <List items={statuses} onRenderCell={renderStatus} />
       <FinalStatusGadget finalStatus={finalStatus} />
     </div>
