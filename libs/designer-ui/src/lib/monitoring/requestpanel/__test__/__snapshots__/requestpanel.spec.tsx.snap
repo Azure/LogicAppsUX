@@ -80,7 +80,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -195,7 +195,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -212,7 +212,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -226,7 +226,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -243,7 +243,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -307,7 +307,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -324,7 +324,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -338,7 +338,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -355,7 +355,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -369,7 +369,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -386,7 +386,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -450,7 +450,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -467,7 +467,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -481,7 +481,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -498,7 +498,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -512,7 +512,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -529,7 +529,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -656,7 +656,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -771,7 +771,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -788,7 +788,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -802,7 +802,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -819,7 +819,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -883,7 +883,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -900,7 +900,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -914,7 +914,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -931,7 +931,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -945,7 +945,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -962,7 +962,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1026,7 +1026,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1043,7 +1043,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -1057,7 +1057,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1074,7 +1074,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1088,7 +1088,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1105,7 +1105,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1186,7 +1186,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Method'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1203,7 +1203,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1217,7 +1217,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Method' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1234,7 +1234,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1298,7 +1298,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               >
                 <button
                   aria-label="Select all text in 'URI'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1315,7 +1315,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1329,7 +1329,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'URI' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1346,7 +1346,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1408,7 +1408,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-130"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1425,7 +1425,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-148 ms-DetailsHeader root-132"
+                      className="ms-FocusZone css-147 ms-DetailsHeader root-131"
                       data-automationid="DetailsHeader"
                       data-focuszone-id="FocusZone78"
                       data-tabster="{"uncontrolled": {}}"
@@ -1438,7 +1438,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-149"
+                        className="ms-DetailsHeader-cell is-actionable root-148"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1452,16 +1452,16 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-157"
+                          className="cellTooltip-156"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-155"
+                            className="ms-DetailsHeader-cellTitle cellTitle-154"
                             id="header77-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-156"
+                              className="ms-DetailsHeader-cellName cellName-155"
                               id="header77-$key-name"
                             >
                               Key
@@ -1471,7 +1471,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-139 cellSizerStart-140"
+                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerStart-139"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -1482,7 +1482,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-149"
+                        className="ms-DetailsHeader-cell is-actionable root-148"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -1496,16 +1496,16 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-157"
+                          className="cellTooltip-156"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-155"
+                            className="ms-DetailsHeader-cellTitle cellTitle-154"
                             id="header77-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-156"
+                              className="ms-DetailsHeader-cellName cellName-155"
                               id="header77-$value-name"
                             >
                               Value
@@ -1515,7 +1515,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-139 cellSizerEnd-141"
+                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerEnd-140"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -1543,7 +1543,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-148 focusZone-131"
+                        className="ms-FocusZone css-147 focusZone-130"
                         data-focuszone-id="FocusZone79"
                         data-tabster="{"uncontrolled": {}}"
                         onBlur={[Function]}
@@ -1653,7 +1653,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -1768,7 +1768,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1785,7 +1785,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1799,7 +1799,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1816,7 +1816,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1880,7 +1880,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1897,7 +1897,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -1911,7 +1911,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1928,7 +1928,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1942,7 +1942,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1959,7 +1959,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2023,7 +2023,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2040,7 +2040,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2054,7 +2054,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2071,7 +2071,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2085,7 +2085,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2102,7 +2102,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2183,7 +2183,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Status code'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2200,7 +2200,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2214,7 +2214,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Status code' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2231,7 +2231,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2293,7 +2293,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-130"
+                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -2310,7 +2310,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <div
                       aria-label="Headers"
-                      className="ms-FocusZone css-148 ms-DetailsHeader root-132"
+                      className="ms-FocusZone css-147 ms-DetailsHeader root-131"
                       data-automationid="DetailsHeader"
                       data-focuszone-id="FocusZone152"
                       data-tabster="{"uncontrolled": {}}"
@@ -2323,7 +2323,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       <div
                         aria-label="Key"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-149"
+                        className="ms-DetailsHeader-cell is-actionable root-148"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2337,16 +2337,16 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-157"
+                          className="cellTooltip-156"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-155"
+                            className="ms-DetailsHeader-cellTitle cellTitle-154"
                             id="header151-$key"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-156"
+                              className="ms-DetailsHeader-cellName cellName-155"
                               id="header151-$key-name"
                             >
                               Key
@@ -2356,7 +2356,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-139 cellSizerStart-140"
+                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerStart-139"
                         data-is-focusable={false}
                         data-sizer-index={0}
                         onBlur={[Function]}
@@ -2367,7 +2367,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       <div
                         aria-label="Value"
                         aria-sort="none"
-                        className="ms-DetailsHeader-cell is-actionable root-149"
+                        className="ms-DetailsHeader-cell is-actionable root-148"
                         data-automationid="ColumnsHeaderColumn"
                         data-is-draggable={false}
                         data-is-focusable="true"
@@ -2381,16 +2381,16 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         }
                       >
                         <span
-                          className="cellTooltip-157"
+                          className="cellTooltip-156"
                         >
                           <span
-                            className="ms-DetailsHeader-cellTitle cellTitle-155"
+                            className="ms-DetailsHeader-cellTitle cellTitle-154"
                             id="header151-$value"
                             onClick={[Function]}
                             onContextMenu={[Function]}
                           >
                             <span
-                              className="ms-DetailsHeader-cellName cellName-156"
+                              className="ms-DetailsHeader-cellName cellName-155"
                               id="header151-$value-name"
                             >
                               Value
@@ -2400,7 +2400,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       </div>
                       <div
                         aria-hidden={true}
-                        className="ms-DetailsHeader-cellSizer cellSizer-139 cellSizerEnd-141"
+                        className="ms-DetailsHeader-cellSizer cellSizer-138 cellSizerEnd-140"
                         data-is-focusable={false}
                         data-sizer-index={1}
                         onBlur={[Function]}
@@ -2428,7 +2428,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                       role="presentation"
                     >
                       <div
-                        className="ms-FocusZone css-148 focusZone-131"
+                        className="ms-FocusZone css-147 focusZone-130"
                         data-focuszone-id="FocusZone153"
                         data-tabster="{"uncontrolled": {}}"
                         onBlur={[Function]}
@@ -2475,7 +2475,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               >
                 <button
                   aria-label="Select all text in 'Body'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2492,7 +2492,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2506,7 +2506,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Body' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2523,7 +2523,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2650,7 +2650,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -2765,7 +2765,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2782,7 +2782,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2796,7 +2796,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2813,7 +2813,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2877,7 +2877,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2894,7 +2894,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -2908,7 +2908,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2925,7 +2925,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2939,7 +2939,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2956,7 +2956,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3020,7 +3020,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3037,7 +3037,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3051,7 +3051,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3068,7 +3068,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3082,7 +3082,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3099,7 +3099,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3257,7 +3257,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -3372,7 +3372,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
               >
                 <button
                   aria-label="Select all text in 'Duration'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3389,7 +3389,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3403,7 +3403,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3420,7 +3420,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3484,7 +3484,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
               >
                 <button
                   aria-label="Switch 'Start time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3501,7 +3501,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3515,7 +3515,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Select all text in 'Start time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3532,7 +3532,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3546,7 +3546,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3563,7 +3563,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3627,7 +3627,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
               >
                 <button
                   aria-label="Switch 'End time' to the UTC time format"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3644,7 +3644,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
                       data-icon-name="DateTime"
                       style={
                         {
@@ -3658,7 +3658,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Select all text in 'End time'"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3675,7 +3675,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3689,7 +3689,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3706,7 +3706,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
