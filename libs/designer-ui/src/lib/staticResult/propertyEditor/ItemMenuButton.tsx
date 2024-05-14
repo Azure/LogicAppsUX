@@ -16,6 +16,7 @@ const menuButtonStyles: IButtonStyles = {
     border: 'none',
     minWidth: '40px',
     width: '40px',
+    backgroundColor: 'transparent',
   },
 };
 

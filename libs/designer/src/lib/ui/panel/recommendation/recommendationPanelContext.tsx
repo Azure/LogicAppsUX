@@ -14,11 +14,11 @@ import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { Link, Icon, Text } from '@fluentui/react';
+import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
-import { OperationSearchHeader } from '@microsoft/designer-ui';
+import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
@@ -210,7 +210,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <>
       <div className="msla-app-action-header">
-        <Text variant="xLarge">{headingText}</Text>
+        <XLargeText text={headingText} />
         <Button appearance="subtle" aria-label={closeButtonAriaLabel} onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
