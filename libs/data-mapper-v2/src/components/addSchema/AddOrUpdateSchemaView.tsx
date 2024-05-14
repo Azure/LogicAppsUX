@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { SchemaTree } from './tree/SchemaTree';
+import { mergeClasses } from '@fluentui/react-components';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
@@ -102,7 +103,13 @@ export const AddOrUpdateSchemaView = ({
   );
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={mergeClasses(
+        styles.drawerRoot,
+        selectedSchemaFile ? styles.fileSelectedDrawer : '',
+        schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer
+      )}
+    >
       <div className={styles.headerWrapper}>
         <Text className={styles.header}>
           {equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION}

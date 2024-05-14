@@ -3,7 +3,7 @@ import mockTree from '../mock-test-file';
 import { Tree, TreeItem, TreeItemLayout, mergeClasses, type TreeItemOpenChangeData } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useEffect, useState, useMemo } from 'react';
-import { ConnectorBox } from './ConnectorBox';
+import { TreeNode } from './TreeNode';
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
@@ -25,37 +25,24 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     const openKeys: Record<string, boolean> = {};
-    const openKeysByDefault = (root: SchemaNodeExtended) => {
+
+    const setDefaultState = (root: SchemaNodeExtended) => {
       if (root.children.length > 0) {
         openKeys[root.key] = true;
       }
+
       for (const child of root.children) {
-        openKeysByDefault(child);
+        setDefaultState(child);
       }
     };
 
-    openKeysByDefault(mockData.schemaTreeRoot);
+    setDefaultState(mockData.schemaTreeRoot);
     setOpenKeys(openKeys);
-  }, []);
+  }, [mockData]);
 
   const displaySchemaTree = (root: SchemaNodeExtended) => {
     if (root.children.length === 0) {
-      return (
-        <TreeItem itemType="leaf" key={root.key}>
-          <TreeItemLayout className={isLeftDirection ? '' : styles.rightTreeItemLayout}>
-            <ConnectorBox
-              isLeftDirection={isLeftDirection}
-              id={`box-${root.key}`}
-              text={root.name}
-              addConnection={(start: string, end: string) => {
-                console.log(start, end);
-              }}
-              isHovered={false}
-              isAdded={false}
-            />
-          </TreeItemLayout>
-        </TreeItem>
-      );
+      return <TreeNode data={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />;
     }
 
     return (

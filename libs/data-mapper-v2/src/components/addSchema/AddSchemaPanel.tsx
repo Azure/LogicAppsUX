@@ -225,15 +225,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
 
   return (
     <div className={styles.root}>
-      <InlineDrawer
-        open={!!currentPanelView}
-        size="small"
-        className={mergeClasses(
-          styles.uberDrawer,
-          selectedSchemaFile ? styles.fileSelectedDrawer : styles.defaultDrawer,
-          schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer
-        )}
-      >
+      <InlineDrawer open={!!currentPanelView} size="small" className={mergeClasses(styles.drawerWrapper)}>
         <AddOrUpdateSchemaView
           schemaType={schemaType}
           selectedSchema={selectedSchema?.name}
