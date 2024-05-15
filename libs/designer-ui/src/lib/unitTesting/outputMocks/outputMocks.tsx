@@ -1,6 +1,6 @@
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
-import { type ChangeHandler } from '../../editor/base';
-import { type EventHandler } from '../../eventhandler';
+import type { ChangeHandler } from '../../editor/base';
+import type { EventHandler } from '../../eventhandler';
 import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
 import './outputMocks.less';

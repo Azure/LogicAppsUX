@@ -1,5 +1,5 @@
 import type { RootState } from '../../store';
-import { type OperationMetadataState } from '../operation/operationMetadataSlice';
+import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
 import type { OutputMock, UnitTestState } from './unitTestInterfaces';
 import { getRecordEntry, type AssertionDefintion, ConnectionType } from '@microsoft/logic-apps-shared';
@@ -45,6 +45,7 @@ export const useIsMockSupported = (nodeId: string, isTrigger: boolean) => {
       const type = (getRecordEntry(state.operationInfo, nodeId)?.type ?? '').toLowerCase();
       return (
         isTrigger ||
+        type === 'http' ||
         type === ConnectionType.ServiceProvider ||
         type === ConnectionType.Function ||
         type === ConnectionType.ApiManagement ||
