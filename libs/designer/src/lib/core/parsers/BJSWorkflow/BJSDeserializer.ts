@@ -155,8 +155,10 @@ export const deserializeUnitTestDefinition = (
   const mockActions: Record<string, OutputMock> = actionsKeys.reduce((acc, key) => {
     const action = definition.actions && definition.actions[key];
     const type = action?.type?.toLowerCase();
-    const supportedAction = type === 'http';
-    type === ConnectionType.ServiceProvider ||
+    const supportedAction =
+      type === 'http' ||
+      type === 'invokefunction' ||
+      type === ConnectionType.ServiceProvider ||
       type === ConnectionType.Function ||
       type === ConnectionType.ApiManagement ||
       type === ConnectionType.ApiConnection;

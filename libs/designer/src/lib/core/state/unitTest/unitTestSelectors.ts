@@ -46,6 +46,7 @@ export const useIsMockSupported = (nodeId: string, isTrigger: boolean) => {
       return (
         isTrigger ||
         type === 'http' ||
+        type === 'invokefunction' ||
         type === ConnectionType.ServiceProvider ||
         type === ConnectionType.Function ||
         type === ConnectionType.ApiManagement ||
