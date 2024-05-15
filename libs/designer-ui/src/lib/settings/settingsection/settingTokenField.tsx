@@ -62,7 +62,7 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const labelId = useId('msla-editor-label');
+  const labelId = useId(props.label);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
@@ -129,10 +129,14 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={dropdownOptions?.map((option: any, index: number) => ({
-            key: index.toString(),
-            ...option,
-          }))}
+          options={
+            dropdownOptions.length > 0
+              ? dropdownOptions.map((option: any, index: number) => ({
+                  key: index.toString(),
+                  ...option,
+                }))
+              : undefined
+          }
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -323,6 +327,7 @@ export const TokenField = ({
     case constants.PARAMETER.EDITOR.HTML:
       return (
         <HTMLEditor
+          labelId={labelId}
           initialValue={value}
           placeholder={placeholder}
           basePlugins={{ tokens: showTokens }}

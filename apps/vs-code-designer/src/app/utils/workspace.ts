@@ -5,9 +5,8 @@
 import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import { NoWorkspaceError } from './errors';
 import { isPathEqual, isSubpath } from './fs';
-import { tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { promptOpenProject, tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
@@ -55,33 +54,14 @@ export const getWorkspacePath = (workflowFilePath: string): string => {
 /**
  * Gets workspace folder of project.
  * @param {IActionContext} context - Command context.
+ * @param {string} message - The message to display to the user.
  * @returns {Promise<WorkspaceFolder>} Returns either the new project workspace, the already open workspace or the selected workspace.
  */
-export async function getWorkspaceFolder(context: IActionContext): Promise<vscode.WorkspaceFolder> {
+export async function getWorkspaceFolder(context: IActionContext, message?: string): Promise<vscode.WorkspaceFolder> {
+  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
   let folder: vscode.WorkspaceFolder | undefined;
-
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    const message: string = localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
-    const newProject: vscode.MessageItem = { title: localize('createNewProject', 'Create new project') };
-    const openExistingProject: vscode.MessageItem = { title: localize('openExistingProject', 'Open existing project') };
-    const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newProject, openExistingProject);
-
-    if (result === newProject) {
-      vscode.commands.executeCommand('azureLogicAppsStandard.createNewProject');
-      context.telemetry.properties.noWorkspaceResult = 'createNewProject';
-    } else {
-      const uri: vscode.Uri[] = await context.ui.showOpenDialog({
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        openLabel: localize('open', 'Open'),
-      });
-      vscode.commands.executeCommand('vscode.openFolder', uri[0]);
-      context.telemetry.properties.noWorkspaceResult = 'openExistingProject';
-    }
-
-    context.errorHandling.suppressDisplay = true;
-    throw new NoWorkspaceError();
+    await promptOpenProject(context, promptMessage);
   }
   if (vscode.workspace.workspaceFolders.length === 1) {
     folder = vscode.workspace.workspaceFolders[0];
