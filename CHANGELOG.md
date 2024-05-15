@@ -1,4 +1,34 @@
 # Logic Apps Designer
+## [4.17.0](https://github.com/Azure/LogicAppsUX/compare/v4.16.0...v4.17.0) (2024-05-14)
+
+
+### Features
+
+* **vscode:** Introduce .NET 8 for custom code workspaces ([#4834](https://github.com/Azure/LogicAppsUX/issues/4834)) ([ea27f18](https://github.com/Azure/LogicAppsUX/commit/ea27f182231036afe299f84108d601fa154dbf0d))
+
+
+### Bug Fixes
+
+* **designer:** Custom code fixes and updates ([#4847](https://github.com/Azure/LogicAppsUX/issues/4847)) ([1d5d702](https://github.com/Azure/LogicAppsUX/commit/1d5d702a5e209b482739ef52c93da1d198b063aa))
+* **designer:** Forgotten code to Custom code fixes and updates ([#4849](https://github.com/Azure/LogicAppsUX/issues/4849)) ([fe70e8b](https://github.com/Azure/LogicAppsUX/commit/fe70e8bfe4303d9581be029a04f472172193ccf8))
+* **vscode:** Move text components to fluent v9 ([#4845](https://github.com/Azure/LogicAppsUX/issues/4845)) ([3040289](https://github.com/Azure/LogicAppsUX/commit/304028933c8cdc1007a5e6b2aaef4ef590b8b19f))
+
+## [4.16.0](https://github.com/Azure/LogicAppsUX/compare/v4.15.0...v4.16.0) (2024-05-14)
+
+
+### Features
+
+* **designer-ui:** Utilize Fluent components for HTML toolbar buttons & popovers ([#4823](https://github.com/Azure/LogicAppsUX/issues/4823)) ([25c4354](https://github.com/Azure/LogicAppsUX/commit/25c43544dab150e0f9653484683bf53ded83e388))
+* **designer:** Add rule execute action in operation manifests ([#4822](https://github.com/Azure/LogicAppsUX/issues/4822)) ([54dbb35](https://github.com/Azure/LogicAppsUX/commit/54dbb35cfaaea3166ecdf1235c91bc81e781601b))
+* **Template:** Parameters Panel ([#4815](https://github.com/Azure/LogicAppsUX/issues/4815)) ([1911f55](https://github.com/Azure/LogicAppsUX/commit/1911f557b2aae0712c3cbea63d79d1345be85869))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Disabling context menu as it causes app to crash ([#4821](https://github.com/Azure/LogicAppsUX/issues/4821)) ([6b21a68](https://github.com/Azure/LogicAppsUX/commit/6b21a68ac1243e0e583f81d5da2811a46c3dfd13))
+* **designer:** fix actions and triggers title not showing in dark theme ([#4826](https://github.com/Azure/LogicAppsUX/issues/4826)) ([ffbb6e1](https://github.com/Azure/LogicAppsUX/commit/ffbb6e123147c3ca2c38b54b39d3abe42f3c3f0c))
+* **Designer:** Migrate some UI to Fluent v9 components ([#4837](https://github.com/Azure/LogicAppsUX/issues/4837)) ([3cede0b](https://github.com/Azure/LogicAppsUX/commit/3cede0be0d2b21ff2ca078ddc8d751ed150d2547))
+
 ## [4.15.0](https://github.com/Azure/LogicAppsUX/compare/v4.14.0...v4.15.0) (2024-05-09)
 
 
