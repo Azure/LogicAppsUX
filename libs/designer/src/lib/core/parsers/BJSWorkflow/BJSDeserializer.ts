@@ -156,6 +156,8 @@ export const deserializeUnitTestDefinition = (
     const action = definition.actions && definition.actions[key];
     const type = action?.type?.toLowerCase();
     const supportedAction =
+      type === 'http' ||
+      type === 'invokefunction' ||
       type === ConnectionType.ServiceProvider ||
       type === ConnectionType.Function ||
       type === ConnectionType.ApiManagement ||
