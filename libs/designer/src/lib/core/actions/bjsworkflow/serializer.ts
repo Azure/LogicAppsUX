@@ -1109,12 +1109,9 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
  * @returns The parsed outputs in a more structured format.
  */
 const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any[]> => {
+  console.log('charlie', outputs);
   return Object.entries(outputs).reduce((acc: Record<string, any[]>, [key, value]) => {
-    const parsedValueSegment = value.reduce((accumulator: any[], valueObject) => {
-      // Explicitly define the type of the accumulator array
-      return accumulator.concat({ type: valueObject.type, value: valueObject.value });
-    }, []);
-    return Object.assign({}, acc, { [key]: parsedValueSegment });
+    return Object.assign({}, acc, { [key]: value[0].value });
   }, {});
 };
 
