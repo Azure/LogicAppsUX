@@ -511,10 +511,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
             '$for(/ns0:Root/Looping/Employee)': {
               Person: {
                 Name: 'TelephoneNumber',
-                Info: {  // 3 infos
-                  first: "a",
-                  last: 'b'
-                }
               },
             },
           },
@@ -581,7 +577,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
       });
 
-      it('creates a looping  connection', () => {
+      it('creates a looping conditional connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalLooping: {
             '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {

@@ -23,7 +23,6 @@ export const mapNodeParams = {
   for: '$for',
   if: '$if',
   value: '$value',
-  backout: '../'
 };
 
 export const reservedMapNodeParamsArray: string[] = [mapNodeParams.for, mapNodeParams.if, mapNodeParams.value];

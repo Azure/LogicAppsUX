@@ -88,8 +88,7 @@ export class MapDefinitionDeserializer {
   };
 
   private _parseDefinitionToConnection = (
-    // danielle why do we do this at this level?
-    sourceNodeObject: string | object,
+    sourceNodeObject: string | object | any,
     targetKey: string,
     targetArrayDepth: number,
     connections: ConnectionDictionary
@@ -104,6 +103,7 @@ export class MapDefinitionDeserializer {
     }
     if (typeof sourceNodeObject === 'string') {
       this._createConnections(sourceNodeObject, targetKey, targetArrayDepth, connections);
+
       return;
     }
 
@@ -252,7 +252,6 @@ export class MapDefinitionDeserializer {
       : sourceNodeString;
     const sourceEndOfFunctionName = amendedSourceKey.indexOf('(');
 
-    // danielle this is for direct access
     let mockDirectAccessFnKey = '';
     [amendedSourceKey, mockDirectAccessFnKey] = amendSourceKeyForDirectAccessIfNeeded(amendedSourceKey);
 
@@ -486,7 +485,6 @@ const getLoopTargetNode = (targetKeyPath: string[], ind: number, parentNode: Sch
       possibleNodes.push(getLoopTargetNode(targetKeyPath, ind + 1, child));
     }
     if (child.name === '<ArrayItem>') {
-      // danielle could there be multiple of these? yes so
       possibleNodes.push(getLoopTargetNode(targetKeyPath, ind, child));
     }
   });

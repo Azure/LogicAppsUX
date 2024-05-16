@@ -1,7 +1,6 @@
 import { FunctionCategory } from '../../models';
 import type { FunctionData } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
-import type { ParseFunc } from '../DataMap.Utils';
 import {
   ReservedToken,
   Separators,
@@ -16,8 +15,6 @@ import {
   splitKeyIntoChildren,
   isValidToMakeMapDefinition,
   amendSourceKeyForDirectAccessIfNeeded,
-  separateFunctions,
-  createTargetOrFunctionRefactor,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -884,7 +881,7 @@ describe('utils/DataMap', () => {
 
   describe('separateIntoTokens', () => {
     it('separates a loop and sequence target', () => {
-      const result = separateFunctions('/$for(reverse(/ns0:Root/Looping/Employee))');
+      const result = separateIntoTokens('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
       expect(result[0]).toEqual('/ns0:Root/Looping/');
       expect(result[1]).toEqual(Separators.Dollar);
       expect(result[2]).toEqual(ReservedToken.for);
@@ -931,8 +928,8 @@ describe('utils/DataMap', () => {
       expect(result[8]).toEqual(Separators.CloseParenthesis);
     });
 
-    it('separates a nested function with a custom value', () => {
-      const result = separateIntoTokens('int(concat(/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName, "customString"))');
+    it('separates a loop and sequence target', () => {
+      const result = separateIntoTokens('int(concat(/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName,"customString"))');
       expect(result[0]).toEqual('int');
       expect(result[1]).toEqual(Separators.OpenParenthesis);
       expect(result[2]).toEqual('concat');
@@ -946,100 +943,19 @@ describe('utils/DataMap', () => {
       expect(result[10]).toEqual(Separators.CloseParenthesis);
     });
 
-    it('separates a custom value with a comma', () => {
-      const result = separateIntoTokens('int(concat("customString ," ,/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
+    it('separates a loop and sequence target', () => {
+      const result = separateIntoTokens('int(concat("customString",/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
       expect(result[0]).toEqual('int');
       expect(result[1]).toEqual(Separators.OpenParenthesis);
       expect(result[2]).toEqual('concat');
       expect(result[3]).toEqual(Separators.OpenParenthesis);
-      expect(result[4]).toEqual('"customString ,"');
+      expect(result[4]).toEqual('"customString"');
       expect(result[5]).toEqual(Separators.Comma);
       expect(result[6]).toEqual('/ns0:PersonOrigin/FirstName');
       expect(result[7]).toEqual(Separators.Comma);
       expect(result[8]).toEqual('/ns0:PersonOrigin/LastName');
       expect(result[9]).toEqual(Separators.CloseParenthesis);
       expect(result[10]).toEqual(Separators.CloseParenthesis);
-    });
-  });
-
-  describe('separateFunctions', () => {
-    it('separates an if-else function', () => {
-      const result = separateFunctions('if-then-else("a", /ns0:Root/DirectTranslation/EmployeeName, "Custom")');
-      expect(result[0]).toEqual('if-then-else');
-      expect(result[1]).toEqual(Separators.OpenParenthesis);
-      expect(result[2]).toEqual('"a"');
-      expect(result[5]).toEqual(Separators.Comma);
-      expect(result[6]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
-      expect(result[7]).toEqual(Separators.Comma);
-      expect(result[9]).toEqual('"Custom"');
-      expect(result[10]).toEqual(Separators.CloseParenthesis);
-    });
-  })
-
-  describe('createTargetOrFunctionRefactor', () => {
-    it('creates objects for nested functions', () => {
-      const tokens = [
-        'concat',
-        '(',
-        'count',
-        '(',
-        '/ns0:Root/DirectTranslation/EmployeeName',
-        ')',
-        ',',
-        'count',
-        '(',
-        '/ns0:Root/DirectTranslation/EmployeeID',
-        ')',
-        ')',
-      ];
-      const functions = createTargetOrFunctionRefactor(tokens);
-
-      const concat = functions.term as ParseFunc;
-      expect(concat.name).toEqual('concat');
-
-      const count1 = concat.inputs[0] as ParseFunc;
-      expect(count1.name).toEqual('count');
-      expect(count1.inputs[0]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
-
-      const count2 = concat.inputs[1] as ParseFunc;
-      expect(count2.name).toEqual('count');
-      expect(count2.inputs[0]).toEqual('/ns0:Root/DirectTranslation/EmployeeID');
-    });
-
-    it('creates objects for multi-nested functions', () => {
-      const tokens = [
-        '$if',
-        '(',
-        'is-greater-than',
-        '(',
-        'multiply',
-        '(',
-        '/ns0:Root/ConditionalMapping/ItemPrice',
-        ',',
-        '/ns0:Root/ConditionalMapping/ItemQuantity',
-        ')',
-        ',',
-        '200',
-        ')',
-        ')',
-      ];
-      const functions = createTargetOrFunctionRefactor(tokens);
-
-      const ifFunc = functions.term as ParseFunc;
-      expect(ifFunc.name).toEqual('$if');
-
-      const isGreaterThan = ifFunc.inputs[0] as ParseFunc;
-      expect(isGreaterThan.name).toEqual('is-greater-than');
-
-      const multiply = isGreaterThan.inputs[0] as ParseFunc;
-      expect(multiply.name).toEqual('multiply');
-      const price = multiply.inputs[0] as string;
-      expect(price).toEqual('/ns0:Root/ConditionalMapping/ItemPrice');
-      const quantity = multiply.inputs[1] as string;
-      expect(quantity).toEqual('/ns0:Root/ConditionalMapping/ItemQuantity');
-
-      const twoHundred = isGreaterThan.inputs[1] as string;
-      expect(twoHundred).toEqual('200');
     });
   });
 

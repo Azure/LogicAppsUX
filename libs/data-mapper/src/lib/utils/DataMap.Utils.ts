@@ -436,76 +436,7 @@ export const ReservedToken = {
 } as const;
 export type ReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
 
-export const DReservedToken = {
-  for: '$for',
-  if: '$if',
-  backout: '../',
-} as const;
-export type DReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
-
-export const dReservedToken: string[] = [DReservedToken.for, DReservedToken.if, DReservedToken.backout]; // danielle maybe ideally we separate evertything out, so we don't need to change these functions if the definition changes
-
-export const DSeparators = {
-  OpenParenthesis: '(',
-  CloseParenthesis: ')',
-  Comma: ',',
-  quote: '"',
-} as const;
-export type DSeparators = (typeof Separators)[keyof typeof Separators];
-
-export const Dseparators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, DSeparators.quote];
-
 export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
-
-export const separateFunctions = (targetKey: string): string[] => {
-  const tokens: string[] = [];
-
-  let i = 0;
-  let currentToken = '';
-  while (i < targetKey.length) {
-    const currentChar = targetKey[i];
-    if (currentChar === ' ') { // ignore whitespace
-      i++;
-      continue;
-    }
-
-    if (Dseparators.includes(currentChar)) {
-      if (currentChar === DSeparators.quote) {
-        const endOfQuote = targetKey.substring(i + 1).indexOf(DSeparators.quote) + 2 + i;
-        tokens.push(targetKey.substring(i, endOfQuote));
-        i = endOfQuote;
-        continue;
-      }
-      if (!currentToken) {
-        // if it is a Separator
-        tokens.push(currentChar);
-        i++;
-        continue;
-      } else {
-        // if it is a function or identifier token
-        tokens.push(currentToken);
-        currentToken = '';
-        tokens.push(currentChar.trim());
-        i++;
-        continue;
-      }
-    }
-
-    currentToken = currentToken + currentChar;
-    if (dReservedToken.includes(currentToken)) {
-      tokens.push(currentToken.trim());
-      currentToken = '';
-      i++;
-      continue;
-    }
-
-    if (i === targetKey.length - 1) {
-      tokens.push(currentToken.trim());
-    }
-    i++;
-  }
-  return tokens;
-};
 
 export const lexThisThing = (targetKey: string): string[] => {
   const tokens: string[] = [];
@@ -514,18 +445,8 @@ export const lexThisThing = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
-    if (currentChar === ' ') {
-      i++;
-      continue;
-    }
 
-    if (Dseparators.includes(currentChar)) {
-      if (currentChar === DSeparators.quote) {
-        const endOfQuote = targetKey.substring(i + 1).indexOf(DSeparators.quote) + 2 + i;
-        tokens.push(targetKey.substring(i, endOfQuote));
-        i = endOfQuote;
-        continue;
-      }
+    if (separators.includes(currentChar)) {
       if (!currentToken) {
         // if it is a Separator
         tokens.push(currentChar);
@@ -556,18 +477,14 @@ export const lexThisThing = (targetKey: string): string[] => {
   return tokens;
 };
 
-export interface ParseFunc {
-  type: 'Function'
+interface ParseFunc {
   name: string;
-  inputs: FunctionCreationMetadata[];
+  inputs: FunctionInput[];
 }
 
-export type FunctionCreationMetadata = ParseFunc | SingleValueMetadata;
+type FunctionInput = string | ParseFunc;
 
-export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
-  if (tokens.length === 1) {
-    return { term: tokens[0], nextIndex: 2 };
-  }
+const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
   // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
     const func: ParseFunc = { name: tokens[0], inputs: [] };
@@ -588,77 +505,6 @@ export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreati
   return { term: tokens[0], nextIndex: 2 };
 };
 
-type SingleValueMetadata = {
-  type: 'SingleValueMetadata',
-  specialCharacters?: 'index' | 'customValue' | 'directAccess' | 'loopCurrentNodeDot',
-  value: string,
-}
-
-const isTokenCustomValue = (value: string): boolean => {
-  return value.startsWith('"') || !Number.isNaN(parseInt(value));
-};
-
-const currentLoopNodeDot = '.';
-
-export const getSingleValueMetadata = (token: string) => {
-  const metadata: SingleValueMetadata = {
-    value: token,
-  };
-  if (token.startsWith(Separators.Dollar)) {
-    metadata.type = 'index';
-  } else if (token === currentLoopNodeDot) {
-    metadata.type = 'loopCurrentNodeDot';
-  } else if (isTokenCustomValue(token)) {
-    metadata.type = 'customValue';
-  } else if (token.includes('[')) {
-    metadata.type = 'directAccess';
-    // danielle also include separated values here
-  } // if it is a loop with backout
-  return metadata;
-}
-
-// danielle how do we handle this? /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration'
-export const createSchemaNodeOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
-  if (tokens.length === 1) {
-    const singleValue = getSingleValueMetadata(tokens[0]);
-    return { term: singleValue, nextIndex: 2 };
-  }
-  // determine if token is a function
-  if (tokens[1] === Separators.OpenParenthesis) {
-    const func: ParseFunc = { type: 'Function', name: tokens[0], inputs: [] };
-    if (tokens[0].includes('/')) {
-      return { term: tokens[0], nextIndex: 2 };
-    }
-    let i = 2; // start of the function inputs
-    let parenCount = 1;
-    let start = 2;
-    while (i < tokens.length && parenCount !== 0) {
-      if (tokens[i] === Separators.OpenParenthesis) {
-        parenCount++;
-      } else if (tokens[i] === Separators.CloseParenthesis && parenCount === 1) {
-        if (i === start) {
-          // function with no inputs
-          return { term: func, nextIndex: i + 1 };
-        }
-        func.inputs.push(createSchemaNodeOrFunction(tokens.slice(start, i)).term);
-        start = i + 2;
-        parenCount--;
-      } else if (tokens[i] === Separators.CloseParenthesis) {
-        parenCount--;
-      } else if (tokens[i] !== Separators.Comma) {
-        //func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
-      } else if (tokens[i] === Separators.Comma && parenCount === 1) {
-        func.inputs.push(createSchemaNodeOrFunction(tokens.slice(start, i)).term);
-        start = i + 1;
-      }
-      i++;
-    }
-    return { term: func, nextIndex: i + 1 };
-  }
-  const singleValue = getSingleValueMetadata(tokens[0]);
-  return { term: singleValue, nextIndex: 2 };
-};
-
 export const removeSequenceFunction = (tokens: string[]): string => {
   let i = 0;
   const length = tokens.length;
@@ -677,7 +523,7 @@ export const removeSequenceFunction = (tokens: string[]): string => {
   return result;
 };
 
-const getInput = (term: FunctionCreationMetadata) => {
+const getInput = (term: FunctionInput) => {
   let currentTerm = term;
   while (typeof currentTerm !== 'string') {
     currentTerm = currentTerm.inputs[0];
