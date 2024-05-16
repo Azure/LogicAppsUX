@@ -149,7 +149,6 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
         const utcstr = intl.formatDate(item.startTime, { ...dateOptions, timeZone: 'UTC' });
         return <span>{useUTC ? utcstr : str}</span>;
       }
-      // return
 
       default:
         return item[column?.fieldName as keyof RunDisplayItem];
