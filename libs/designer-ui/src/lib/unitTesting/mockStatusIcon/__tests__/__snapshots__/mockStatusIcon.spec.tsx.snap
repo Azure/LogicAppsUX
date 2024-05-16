@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/unitTesting/mockStatusIcon should render the completed status. 1`] = `
+exports[`ui/unitTesting/mockStatusIcon > should render the completed status. 1`] = `
 <div
   aria-label="Completed"
   className="msla-mock-status-icon"
@@ -26,7 +26,7 @@ exports[`ui/unitTesting/mockStatusIcon should render the completed status. 1`] =
 </div>
 `;
 
-exports[`ui/unitTesting/mockStatusIcon should render the empty status when no completed property is send. 1`] = `
+exports[`ui/unitTesting/mockStatusIcon > should render the empty status when no completed property is send. 1`] = `
 <div
   aria-label="Empty"
   className="msla-mock-status-icon"
@@ -52,7 +52,7 @@ exports[`ui/unitTesting/mockStatusIcon should render the empty status when no co
 </div>
 `;
 
-exports[`ui/unitTesting/mockStatusIcon should render the empty status. 1`] = `
+exports[`ui/unitTesting/mockStatusIcon > should render the empty status. 1`] = `
 <div
   aria-label="Empty"
   className="msla-mock-status-icon"

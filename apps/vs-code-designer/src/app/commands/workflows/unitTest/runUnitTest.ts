@@ -12,6 +12,7 @@ import * as cp from 'child_process';
 import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
+import { activateAzurite } from '../../../utils/azurite/activateAzurite';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -25,6 +26,8 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
       location: vscode.ProgressLocation.Notification,
       title: localize('azureFunctions.runUnitTest', 'Running Unit Test...'),
     };
+
+    await activateAzurite(context);
 
     return await vscode.window.withProgress(options, async () => {
       try {

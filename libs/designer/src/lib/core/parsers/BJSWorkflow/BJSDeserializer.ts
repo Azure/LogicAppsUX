@@ -5,7 +5,6 @@ import type { Workflow } from '../../../common/models/workflow';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
-import { toConditionViewModel } from '../../utils/parameters/helper';
 import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import {
@@ -23,6 +22,7 @@ import {
   getRecordEntry,
   guid,
   ConnectionType,
+  isObject,
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
 import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
@@ -125,14 +125,39 @@ export const Deserialize = (
  * @returns The parsed value segment.
  */
 const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
-  return Object.keys(mockOutputs).reduce((acc, key) => {
+  const flattenOutputs = flattenObject(mockOutputs);
+  return Object.keys(flattenOutputs).reduce((acc, key) => {
     const id = guid();
-    if (isValueSegment({ id, ...mockOutputs[key][0] })) {
-      return Object.assign({}, acc, { [key]: [{ id, ...mockOutputs[key][0] }] });
+    if (isValueSegment({ id, ...flattenOutputs[key][0] })) {
+      return Object.assign({}, acc, { [key]: [{ id, ...flattenOutputs[key] }] });
     }
-    const value = typeof mockOutputs[key].value === 'object' ? JSON.stringify(mockOutputs[key].value) : mockOutputs[key].value;
+    const value = isObject(flattenOutputs[key]) ? JSON.stringify(flattenOutputs[key]) : flattenOutputs[key];
     return Object.assign({}, acc, { [key]: [createLiteralValueSegment(value)] });
   }, {});
+};
+
+/**
+ * Flattens a nested object into a dot-separated key-value object.
+ * @param {Record<string, any>} obj - The nested object to flatten.
+ * @param {string} prefix - The prefix to use for the keys.
+ * @returns The flattened object with dot-separated keys.
+ */
+const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
+  const flattenedObject: Record<string, any> = {};
+
+  for (const key in obj) {
+    const value = obj[key];
+    const prefixedKey = prefix ? `${prefix}.${key}` : key;
+
+    if (isObject(value) && !Array.isArray(value) && value !== null) {
+      const nestedObject = flattenObject(value, prefixedKey);
+      Object.assign(flattenedObject, nestedObject);
+    } else {
+      flattenedObject[prefixedKey] = value;
+    }
+  }
+
+  return flattenedObject;
 };
 
 /**
@@ -157,6 +182,8 @@ export const deserializeUnitTestDefinition = (
     const action = definition.actions && definition.actions[key];
     const type = action?.type?.toLowerCase();
     const supportedAction =
+      type === 'http' ||
+      type === 'invokefunction' ||
       type === ConnectionType.ServiceProvider ||
       type === ConnectionType.Function ||
       type === ConnectionType.ApiManagement ||
@@ -210,7 +237,7 @@ export const deserializeUnitTestDefinition = (
   // deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
     const { name, description, expression } = assertion;
-    return { name, description, expression: toConditionViewModel(expression) };
+    return { name, description, expression: expression };
   });
 
   return { mockResults, assertions: assertions };

@@ -1,11 +1,10 @@
-import type { ValueSegment } from '../../editor';
 import { isHighContrastBlack } from '../../utils';
 import {
   type AssertionUpdateHandler,
   type AssertionDeleteHandler,
   type AssertionAddHandler,
   Assertion,
-  type GetAssertionTokenPickerHandler,
+  type GetConditionExpressionHandler,
 } from './assertion';
 import { List, Text, useTheme } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
@@ -23,9 +22,7 @@ export interface AssertionsProps {
   onAssertionAdd: AssertionAddHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   onAssertionDelete: AssertionDeleteHandler;
-  getTokenPicker: GetAssertionTokenPickerHandler;
-  tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString: (value: string) => ValueSegment[];
+  getConditionExpression: GetConditionExpressionHandler;
   validationErrors?: Record<string, Record<string, string | undefined>>;
 }
 
@@ -35,9 +32,7 @@ export function Assertions({
   onAssertionAdd,
   onAssertionUpdate,
   onAssertionDelete,
-  getTokenPicker,
-  tokenMapping,
-  loadParameterValueFromString,
+  getConditionExpression,
   validationErrors,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
@@ -65,7 +60,7 @@ export function Assertions({
   const handleAddAssertion = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAssertionAdd) {
       event.stopPropagation();
-      onAssertionAdd({ name: headingTitle, description: '', expression: {} });
+      onAssertionAdd({ name: headingTitle, description: '', expression: '' });
     }
   };
 
@@ -77,12 +72,11 @@ export function Assertions({
     return (
       <Assertion
         key={item.id}
+        id={item.id}
         assertion={item}
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
-        getTokenPicker={getTokenPicker}
-        tokenMapping={tokenMapping}
-        loadParameterValueFromString={loadParameterValueFromString}
+        getConditionExpression={getConditionExpression}
         validationErrors={parameterErrors}
         isInverted={isInverted}
       />

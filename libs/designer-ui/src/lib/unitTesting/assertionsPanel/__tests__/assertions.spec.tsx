@@ -1,20 +1,22 @@
 import { Assertions, type AssertionsProps } from '../assertions';
 import { initializeIcons } from '@fluentui/react';
+// biome-ignore lint/correctness/noUnusedImports: actually is used
+import React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 describe('ui/unitTesting/assertionsPanel/assertions', () => {
-  let minimal: AssertionsProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: AssertionsProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
       assertions: [],
-      onAssertionAdd: jest.fn(),
-      onDismiss: jest.fn(),
-      onAssertionDelete: jest.fn(),
-      onAssertionUpdate: jest.fn(),
-      getTokenPicker: jest.fn(),
-      tokenMapping: {},
-      loadParameterValueFromString: jest.fn(),
+      onAssertionAdd: vi.fn(),
+      onDismiss: vi.fn(),
+      onAssertionDelete: vi.fn(),
+      onAssertionUpdate: vi.fn(),
+      getConditionExpression: vi.fn(),
       validationErrors: {},
     };
     renderer = ReactShallowRenderer.createRenderer();
@@ -35,24 +37,14 @@ describe('ui/unitTesting/assertionsPanel/assertions', () => {
       {
         name: 'test-assertion',
         description: 'test-description',
-        expression: {
-          items: {
-            type: 'group',
-            items: [],
-          },
-        },
+        expression: '@equals(1, 1)',
         id: 'test-id',
         isEditable: true,
       },
       {
         name: 'test-assertion-2',
         description: '',
-        expression: {
-          items: {
-            type: 'group',
-            items: [],
-          },
-        },
+        expression: '@equals(1, 2)',
         id: 'test-id-2',
         isEditable: true,
       },

@@ -1,3 +1,4 @@
+import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
 import { EditorLanguage, clamp } from '@microsoft/logic-apps-shared';
@@ -22,6 +23,8 @@ export interface ExpressionEditorProps {
   onBlur?: EventHandler<ExpressionEditorEvent>;
   setIsDragging: (isDragging: boolean) => void;
   setExpressionEditorError: (error: string) => void;
+  onFocus?: () => void;
+  onContentChanged?(e: EditorContentChangedEventArgs): void;
 }
 
 export function ExpressionEditor({
@@ -33,8 +36,10 @@ export function ExpressionEditor({
   currentHeight,
   setCurrentHeight,
   onBlur,
+  onFocus,
   setIsDragging,
   setExpressionEditorError,
+  onContentChanged,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
@@ -76,7 +81,8 @@ export function ExpressionEditor({
         overviewRulerBorder={false}
         contextMenu={false}
         onBlur={handleBlur}
-        onContentChanged={handleChangeEvent}
+        onFocus={onFocus}
+        onContentChanged={onContentChanged ?? handleChangeEvent}
         width={'100%'}
         wordWrap="bounded"
         wordWrapColumn={200}

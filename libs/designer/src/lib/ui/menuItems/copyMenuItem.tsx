@@ -61,7 +61,13 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
   );
 
   return (
-    <MenuItem key={titleText} icon={<CopyIcon />} secondaryContent={showKey ? copyKeyboardText : undefined} onClick={onCopyClick}>
+    <MenuItem
+      key={titleText}
+      icon={<CopyIcon />}
+      secondaryContent={showKey ? copyKeyboardText : undefined}
+      onClick={onCopyClick}
+      data-automation-id={'msla-copy-menu-option'}
+    >
       {titleText}
     </MenuItem>
   );

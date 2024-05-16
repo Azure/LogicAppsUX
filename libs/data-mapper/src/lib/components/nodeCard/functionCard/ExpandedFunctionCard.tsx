@@ -1,6 +1,6 @@
 import { expandedFunctionCardMaxWidth } from '../../../constants/NodeConstants';
 import { customTokens } from '../../../core';
-import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
+// import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import { generateInputHandleId } from '../../../utils/Connection.Utils';
 import { hasOnlyCustomInputType } from '../../../utils/Function.Utils';
@@ -13,10 +13,10 @@ import { inputsValid, useFunctionCardStyles } from './FunctionCard';
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, Divider, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
+import { useCardContextMenu } from '@microsoft/designer-ui';
+//import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 
@@ -24,7 +24,6 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, functionBranding, dataTestId } = props.data;
   const reactFlowId = props.id;
 
-  const dispatch = useDispatch();
   const classes = useFunctionCardStyles();
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
@@ -45,10 +44,10 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
   const contextMenu = useCardContextMenu();
 
-  const handleDeleteClick = () => {
-    dispatch(setSelectedItem(reactFlowId));
-    dispatch(deleteCurrentlySelectedItem());
-  };
+  // const handleDeleteClick = () => {
+  //   dispatch(setSelectedItem(reactFlowId));
+  //   dispatch(deleteCurrentlySelectedItem());
+  // };
 
   const handleHeaderOnClick = () => {
     // Require a function to already be selected to be able to collapse
@@ -226,13 +225,13 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
         ) : null}
       </div>
 
-      <CardContextMenu
+      {/* <CardContextMenu
         title={'Delete'}
         contextMenuLocation={contextMenu.location}
         menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
         open={contextMenu.isShowing}
         setOpen={contextMenu.setIsShowing}
-      />
+      /> */}
     </div>
   );
 };

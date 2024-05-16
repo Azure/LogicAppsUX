@@ -35,6 +35,7 @@ describe('lib/monitoring/valuespanel/valuelink', () => {
           },
           root: {
             border: 'none',
+            marginRight: '8px',
           },
           rootHovered: {
             border: 'none',

@@ -1,7 +1,5 @@
 import { TrafficLightDot } from '../../card/images/dynamicsvgs/trafficlightsvgs';
-import type { ValueSegment } from '../../editor';
 import type { EventHandler } from '../../eventhandler';
-import type { TokenPickerMode } from '../../tokenpicker';
 import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
@@ -16,7 +14,7 @@ export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
-  expression: Record<string, any>;
+  expression: string;
   isEditable: boolean;
 }
 
@@ -27,38 +25,36 @@ export interface AssertionDeleteEvent {
 export interface AssertionAddEvent {
   name: string;
   description: string;
-  expression: Record<string, any>;
+  expression: string;
 }
 
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
 export type AssertionUpdateHandler = EventHandler<AssertionUpdateEvent>;
 export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
-export type GetAssertionTokenPickerHandler = (
+export type GetConditionExpressionHandler = (
   editorId: string,
   labelId: string,
+  initialValue: string,
   type: string,
-  tokenPickerMode?: TokenPickerMode,
-  tokenClickedCallback?: (token: ValueSegment) => void
+  onChange: (value: string) => void
 ) => JSX.Element;
 
 export interface AssertionProps {
+  id: string;
   assertion: AssertionDefintion;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
-  getTokenPicker: GetAssertionTokenPickerHandler;
-  tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString: (value: string) => ValueSegment[];
-  validationErrors?: Record<string, string | undefined>;
+  getConditionExpression: GetConditionExpressionHandler;
   isInverted: boolean;
+  validationErrors?: Record<string, string | undefined>;
 }
 
 export function Assertion({
+  id,
   assertion,
   onAssertionDelete,
-  getTokenPicker,
+  getConditionExpression,
   onAssertionUpdate,
-  tokenMapping,
-  loadParameterValueFromString,
   validationErrors,
   isInverted,
 }: AssertionProps): JSX.Element {
@@ -107,6 +103,7 @@ export function Assertion({
       </div>
       <div className="msla-workflow-assertion-content">
         <AssertionField
+          id={id}
           name={name}
           description={description}
           expression={expression}
@@ -115,10 +112,8 @@ export function Assertion({
           setExpression={setExpression}
           isEditable={isEditable}
           isExpanded={expanded}
-          getTokenPicker={getTokenPicker}
+          getConditionExpression={getConditionExpression}
           handleUpdate={handleUpdate}
-          tokenMapping={tokenMapping}
-          loadParameterValueFromString={loadParameterValueFromString}
           validationErrors={validationErrors}
         />
       </div>

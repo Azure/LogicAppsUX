@@ -1,5 +1,5 @@
-import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Text } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox } from '@fluentui/react';
+import { Spinner, Text } from '@fluentui/react-components';
 import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';

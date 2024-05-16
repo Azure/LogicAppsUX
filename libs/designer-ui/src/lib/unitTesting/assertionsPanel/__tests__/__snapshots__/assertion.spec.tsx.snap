@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/unitTesting/assertionsPanel/assertion should render the component as editable with light theme. 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertion > should render the component as editable with light theme. 1`] = `
 <div
   className="msla-workflow-assertion"
 >
@@ -66,7 +66,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -85,7 +85,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -109,24 +109,24 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-109"
         htmlFor="test-name-name"
       >
         Assertion name
       </label>
       <div
-        className="ms-TextField root-129"
+        className="ms-TextField root-111"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-130"
+            className="ms-TextField-fieldGroup fieldGroup-112"
           >
             <input
               aria-invalid={false}
               aria-label="Assertion name"
-              className="ms-TextField-field field-131"
+              className="ms-TextField-field field-113"
               data-testid="test-name-name"
               disabled={false}
               id="test-name-name"
@@ -146,24 +146,24 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-140"
+        className="ms-Label root-122"
         htmlFor="test-name-description"
       >
         Description
       </label>
       <div
-        className="ms-TextField ms-TextField--multiline root-129"
+        className="ms-TextField ms-TextField--multiline root-111"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-141"
+            className="ms-TextField-fieldGroup fieldGroup-123"
           >
             <textarea
               aria-invalid={false}
               aria-label="Description"
-              className="ms-TextField-field field-142"
+              className="ms-TextField-field field-124"
               data-testid="test-name-description"
               disabled={false}
               id="test-name-description"
@@ -182,389 +182,20 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-condition"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-109"
         htmlFor="test-name-expression"
       >
         Condition expression
       </label>
       <div
         className="msla-assertion-condition-editor"
-      >
-        <div
-          className="msla-querybuilder-container"
-        >
-          <div
-            className="msla-querybuilder-description"
-            tabIndex={0}
-          >
-            <span>
-              Provide the values to compare and select the operator to use.
-            </span>
-          </div>
-          <div
-            className="msla-querybuilder-group-container firstGroup"
-          >
-            <div
-              className="msla-querybuilder-group-content firstGroup"
-            >
-              <div
-                className="msla-querybuilder-row-section"
-              >
-                <div
-                  className="msla-querybuilder-group-dropdown-container"
-                >
-                  <div
-                    className="msla-dropdown-editor-container"
-                  >
-                    <div
-                      className="ms-Dropdown-container root-144"
-                    >
-                      <div
-                        aria-disabled={false}
-                        aria-expanded="false"
-                        aria-haspopup="listbox"
-                        className="ms-Dropdown dropdown-145"
-                        data-is-focusable={true}
-                        data-ktp-target={true}
-                        id="Dropdown10"
-                        onBlur={[Function]}
-                        onChange={[Function]}
-                        onClick={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        role="combobox"
-                        tabIndex={0}
-                      >
-                        <span
-                          aria-invalid={false}
-                          className="ms-Dropdown-title title-193"
-                          id="Dropdown10-option"
-                        >
-                          AND
-                        </span>
-                        <span
-                          className="ms-Dropdown-caretDownWrapper caretDownWrapper-147"
-                        >
-                          <i
-                            aria-hidden={true}
-                            className="ms-Dropdown-caretDown caretDown-165"
-                            data-icon-name="ChevronDown"
-                          >
-                            
-                          </i>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="msla-querybuilder-row-container showBorder"
-                >
-                  <div
-                    className="msla-querybuilder-row-gutter-hook"
-                  />
-                  <div
-                    className="msla-querybuilder-row-checkbox msla-checkbox"
-                  >
-                    <div
-                      className="ms-Checkbox is-enabled msla-checkbox-label root-166"
-                    >
-                      <input
-                        aria-disabled={false}
-                        checked={false}
-                        className="input-167"
-                        data-ktp-execute-target={true}
-                        disabled={false}
-                        id="checkbox-11"
-                        onChange={[Function]}
-                        type="checkbox"
-                      />
-                      <label
-                        className="ms-Checkbox-label label-168"
-                        htmlFor="checkbox-11"
-                      >
-                        <div
-                          className="ms-Checkbox-checkbox checkbox-169"
-                          data-ktp-target={true}
-                        >
-                          <i
-                            aria-hidden={true}
-                            className="ms-Checkbox-checkmark checkmark-172"
-                            data-icon-name="CheckMark"
-                          >
-                            
-                          </i>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                  <div
-                    className="msla-querybuilder-row-content"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "width": "100%",
-                        }
-                      }
-                    >
-                      <div
-                        className="msla-querybuilder-row-value-input"
-                        id="msla-tokenpicker-callout-location12"
-                        title="Choose a value"
-                      >
-                        <div
-                          aria-describedby="msla-described-by-message13"
-                          className="editor-input"
-                          contentEditable={true}
-                          role="textbox"
-                          spellCheck={true}
-                        />
-                        <span
-                          className="editor-placeholder"
-                        >
-                          Choose a value
-                        </span>
-                        <span
-                          hidden={true}
-                          id="msla-described-by-message13"
-                        >
-                          Add dynamic data or expressions by inserting a /
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      className="msla-querybuilder-row-dropdown-container"
-                    >
-                      <div
-                        className="msla-dropdown-editor-container"
-                      >
-                        <div
-                          className="ms-Dropdown-container root-173"
-                        >
-                          <div
-                            aria-disabled={true}
-                            aria-expanded="false"
-                            aria-haspopup="listbox"
-                            className="ms-Dropdown is-disabled dropdown-174"
-                            data-is-focusable={false}
-                            data-ktp-target={true}
-                            id="Dropdown14"
-                            onBlur={[Function]}
-                            onChange={[Function]}
-                            onClick={[Function]}
-                            onFocus={[Function]}
-                            onKeyDown={[Function]}
-                            onKeyUp={[Function]}
-                            onMouseDown={[Function]}
-                            role="combobox"
-                            tabIndex={-1}
-                          >
-                            <span
-                              aria-invalid={false}
-                              className="ms-Dropdown-title title-194"
-                              id="Dropdown14-option"
-                            >
-                              is equal to
-                            </span>
-                            <span
-                              className="ms-Dropdown-caretDownWrapper caretDownWrapper-176"
-                            >
-                              <i
-                                aria-hidden={true}
-                                className="ms-Dropdown-caretDown caretDown-178"
-                                data-icon-name="ChevronDown"
-                              >
-                                
-                              </i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "width": "100%",
-                        }
-                      }
-                    >
-                      <div
-                        className="msla-querybuilder-row-value-input"
-                        id="msla-tokenpicker-callout-location15"
-                        title="Choose a value"
-                      >
-                        <div
-                          aria-autocomplete="none"
-                          aria-describedby="msla-described-by-message16"
-                          aria-readonly={true}
-                          className="editor-input readonly"
-                          contentEditable={false}
-                          role="textbox"
-                          spellCheck={true}
-                        />
-                        <span
-                          className="editor-placeholder"
-                        >
-                          Choose a value
-                        </span>
-                        <span
-                          hidden={true}
-                          id="msla-described-by-message16"
-                        >
-                          Add dynamic data or expressions by inserting a /
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="ms-OverflowSet msla-querybuilder-row-more root-179"
-                    role="group"
-                  >
-                    <div
-                      className="ms-OverflowSet-overflowButton overflowButton-181"
-                    >
-                      <div
-                        className="ms-TooltipHost root-182"
-                        onBlurCapture={[Function]}
-                        onFocusCapture={[Function]}
-                        onKeyDown={[Function]}
-                        onMouseEnter={[Function]}
-                        onMouseLeave={[Function]}
-                        role="none"
-                      >
-                        <button
-                          aria-controls={null}
-                          aria-expanded={false}
-                          aria-haspopup={true}
-                          aria-label="More commands"
-                          className="ms-Button ms-Button--icon ms-Button--hasMenu root-183"
-                          data-is-focusable={true}
-                          onClick={[Function]}
-                          onKeyDown={[Function]}
-                          onKeyPress={[Function]}
-                          onKeyUp={[Function]}
-                          onMouseDown={[Function]}
-                          onMouseUp={[Function]}
-                          type="button"
-                        >
-                          <span
-                            className="ms-Button-flexContainer flexContainer-184"
-                            data-automationid="splitbuttonprimary"
-                          >
-                            <i
-                              aria-hidden={true}
-                              className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
-                              data-icon-name="More"
-                              style={
-                                Object {
-                                  "fontFamily": "\\"FabricMDL2Icons\\"",
-                                }
-                              }
-                            >
-                              
-                            </i>
-                          </span>
-                        </button>
-                        <div
-                          hidden={true}
-                          id="tooltip17"
-                          style={
-                            Object {
-                              "border": 0,
-                              "height": 1,
-                              "margin": -1,
-                              "overflow": "hidden",
-                              "padding": 0,
-                              "position": "absolute",
-                              "whiteSpace": "nowrap",
-                              "width": 1,
-                            }
-                          }
-                        >
-                          More commands
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="msla-querybuilder-row-add-container"
-                >
-                  <div
-                    className="msla-querybuilder-row-gutter-hook"
-                  />
-                  <button
-                    aria-controls={null}
-                    aria-expanded={false}
-                    aria-haspopup={true}
-                    className="ms-Button ms-Button--default ms-Button--hasMenu root-191"
-                    data-is-focusable={true}
-                    onClick={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyPress={[Function]}
-                    onKeyUp={[Function]}
-                    onMouseDown={[Function]}
-                    onMouseUp={[Function]}
-                    type="button"
-                  >
-                    <span
-                      className="ms-Button-flexContainer flexContainer-184"
-                      data-automationid="splitbuttonprimary"
-                    >
-                      <i
-                        aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-icon icon-186"
-                        data-icon-name="Add"
-                        style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
-                          }
-                        }
-                      >
-                        
-                      </i>
-                      <span
-                        className="ms-Button-textContainer textContainer-185"
-                      >
-                        <span
-                          className="ms-Button-label label-192"
-                          id="id__21"
-                        >
-                          New item
-                        </span>
-                      </span>
-                      <i
-                        aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
-                        data-icon-name="ChevronDown"
-                        style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
-                          }
-                        }
-                      >
-                        
-                      </i>
-                    </span>
-                  </button>
-                </div>
-              </div>
-              <div
-                className="msla-querybuilder-group-controlbar"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      />
     </div>
   </div>
 </div>
 `;
 
-exports[`ui/unitTesting/assertionsPanel/assertion should render the component as no editable with dark theme. 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertion > should render the component as no editable with dark theme. 1`] = `
 <div
   className="msla-workflow-assertion"
 >
@@ -630,7 +261,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -649,7 +280,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -676,7 +307,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-field"
     >
       <span
-        className="msla-assertion-field-read-only css-195"
+        className="msla-assertion-field-read-only css-126"
       >
         test-description
       </span>
@@ -692,7 +323,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
 </div>
 `;
 
-exports[`ui/unitTesting/assertionsPanel/assertion should render the component with validation errors and error traffic light dot 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertion > should render the component with validation errors and error traffic light dot 1`] = `
 <div
   className="msla-workflow-assertion"
 >
@@ -775,7 +406,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -794,7 +425,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -818,25 +449,25 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-109"
         htmlFor="-name"
       >
         Assertion name
       </label>
       <div
-        className="ms-TextField root-129"
+        className="ms-TextField root-111"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-196"
+            className="ms-TextField-fieldGroup fieldGroup-127"
           >
             <input
-              aria-describedby="TextFieldDescription25"
+              aria-describedby="TextFieldDescription11"
               aria-invalid={true}
               aria-label="Assertion name"
-              className="ms-TextField-field field-131"
+              className="ms-TextField-field field-113"
               data-testid="-name"
               disabled={false}
               id="-name"
@@ -851,7 +482,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
           </div>
         </div>
         <span
-          id="TextFieldDescription25"
+          id="TextFieldDescription11"
         >
           <div
             role="alert"
@@ -863,24 +494,24 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-140"
+        className="ms-Label root-122"
         htmlFor="-description"
       >
         Description
       </label>
       <div
-        className="ms-TextField ms-TextField--multiline root-129"
+        className="ms-TextField ms-TextField--multiline root-111"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-141"
+            className="ms-TextField-fieldGroup fieldGroup-123"
           >
             <textarea
               aria-invalid={false}
               aria-label="Description"
-              className="ms-TextField-field field-142"
+              className="ms-TextField-field field-124"
               data-testid="-description"
               disabled={false}
               id="-description"
@@ -899,7 +530,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       className="msla-assertion-condition"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-109"
         htmlFor="-expression"
       >
         Condition expression
@@ -907,372 +538,6 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       <div
         className="msla-assertion-condition-editor"
       >
-        <div
-          className="msla-querybuilder-container"
-        >
-          <div
-            className="msla-querybuilder-description"
-            tabIndex={0}
-          >
-            <span>
-              Provide the values to compare and select the operator to use.
-            </span>
-          </div>
-          <div
-            className="msla-querybuilder-group-container firstGroup"
-          >
-            <div
-              className="msla-querybuilder-group-content firstGroup"
-            >
-              <div
-                className="msla-querybuilder-row-section"
-              >
-                <div
-                  className="msla-querybuilder-group-dropdown-container"
-                >
-                  <div
-                    className="msla-dropdown-editor-container"
-                  >
-                    <div
-                      className="ms-Dropdown-container root-144"
-                    >
-                      <div
-                        aria-disabled={false}
-                        aria-expanded="false"
-                        aria-haspopup="listbox"
-                        className="ms-Dropdown dropdown-145"
-                        data-is-focusable={true}
-                        data-ktp-target={true}
-                        id="Dropdown34"
-                        onBlur={[Function]}
-                        onChange={[Function]}
-                        onClick={[Function]}
-                        onFocus={[Function]}
-                        onKeyDown={[Function]}
-                        onKeyUp={[Function]}
-                        onMouseDown={[Function]}
-                        role="combobox"
-                        tabIndex={0}
-                      >
-                        <span
-                          aria-invalid={false}
-                          className="ms-Dropdown-title title-193"
-                          id="Dropdown34-option"
-                        >
-                          AND
-                        </span>
-                        <span
-                          className="ms-Dropdown-caretDownWrapper caretDownWrapper-147"
-                        >
-                          <i
-                            aria-hidden={true}
-                            className="ms-Dropdown-caretDown caretDown-165"
-                            data-icon-name="ChevronDown"
-                          >
-                            
-                          </i>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="msla-querybuilder-row-container showBorder"
-                >
-                  <div
-                    className="msla-querybuilder-row-gutter-hook"
-                  />
-                  <div
-                    className="msla-querybuilder-row-checkbox msla-checkbox"
-                  >
-                    <div
-                      className="ms-Checkbox is-enabled msla-checkbox-label root-166"
-                    >
-                      <input
-                        aria-disabled={false}
-                        checked={false}
-                        className="input-167"
-                        data-ktp-execute-target={true}
-                        disabled={false}
-                        id="checkbox-35"
-                        onChange={[Function]}
-                        type="checkbox"
-                      />
-                      <label
-                        className="ms-Checkbox-label label-168"
-                        htmlFor="checkbox-35"
-                      >
-                        <div
-                          className="ms-Checkbox-checkbox checkbox-169"
-                          data-ktp-target={true}
-                        >
-                          <i
-                            aria-hidden={true}
-                            className="ms-Checkbox-checkmark checkmark-172"
-                            data-icon-name="CheckMark"
-                          >
-                            
-                          </i>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                  <div
-                    className="msla-querybuilder-row-content"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "width": "100%",
-                        }
-                      }
-                    >
-                      <div
-                        className="msla-querybuilder-row-value-input"
-                        id="msla-tokenpicker-callout-location36"
-                        title="Choose a value"
-                      >
-                        <div
-                          aria-describedby="msla-described-by-message37"
-                          className="editor-input"
-                          contentEditable={true}
-                          role="textbox"
-                          spellCheck={true}
-                        />
-                        <span
-                          className="editor-placeholder"
-                        >
-                          Choose a value
-                        </span>
-                        <span
-                          hidden={true}
-                          id="msla-described-by-message37"
-                        >
-                          Add dynamic data or expressions by inserting a /
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      className="msla-querybuilder-row-dropdown-container"
-                    >
-                      <div
-                        className="msla-dropdown-editor-container"
-                      >
-                        <div
-                          className="ms-Dropdown-container root-173"
-                        >
-                          <div
-                            aria-disabled={true}
-                            aria-expanded="false"
-                            aria-haspopup="listbox"
-                            className="ms-Dropdown is-disabled dropdown-174"
-                            data-is-focusable={false}
-                            data-ktp-target={true}
-                            id="Dropdown38"
-                            onBlur={[Function]}
-                            onChange={[Function]}
-                            onClick={[Function]}
-                            onFocus={[Function]}
-                            onKeyDown={[Function]}
-                            onKeyUp={[Function]}
-                            onMouseDown={[Function]}
-                            role="combobox"
-                            tabIndex={-1}
-                          >
-                            <span
-                              aria-invalid={false}
-                              className="ms-Dropdown-title title-194"
-                              id="Dropdown38-option"
-                            >
-                              is equal to
-                            </span>
-                            <span
-                              className="ms-Dropdown-caretDownWrapper caretDownWrapper-176"
-                            >
-                              <i
-                                aria-hidden={true}
-                                className="ms-Dropdown-caretDown caretDown-178"
-                                data-icon-name="ChevronDown"
-                              >
-                                
-                              </i>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "width": "100%",
-                        }
-                      }
-                    >
-                      <div
-                        className="msla-querybuilder-row-value-input"
-                        id="msla-tokenpicker-callout-location39"
-                        title="Choose a value"
-                      >
-                        <div
-                          aria-describedby="msla-described-by-message40"
-                          className="editor-input"
-                          contentEditable={true}
-                          role="textbox"
-                          spellCheck={true}
-                        />
-                        <span
-                          className="editor-placeholder"
-                        >
-                          Choose a value
-                        </span>
-                        <span
-                          hidden={true}
-                          id="msla-described-by-message40"
-                        >
-                          Add dynamic data or expressions by inserting a /
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="ms-OverflowSet msla-querybuilder-row-more root-179"
-                    role="group"
-                  >
-                    <div
-                      className="ms-OverflowSet-overflowButton overflowButton-181"
-                    >
-                      <div
-                        className="ms-TooltipHost root-182"
-                        onBlurCapture={[Function]}
-                        onFocusCapture={[Function]}
-                        onKeyDown={[Function]}
-                        onMouseEnter={[Function]}
-                        onMouseLeave={[Function]}
-                        role="none"
-                      >
-                        <button
-                          aria-controls={null}
-                          aria-expanded={false}
-                          aria-haspopup={true}
-                          aria-label="More commands"
-                          className="ms-Button ms-Button--icon ms-Button--hasMenu root-183"
-                          data-is-focusable={true}
-                          onClick={[Function]}
-                          onKeyDown={[Function]}
-                          onKeyPress={[Function]}
-                          onKeyUp={[Function]}
-                          onMouseDown={[Function]}
-                          onMouseUp={[Function]}
-                          type="button"
-                        >
-                          <span
-                            className="ms-Button-flexContainer flexContainer-184"
-                            data-automationid="splitbuttonprimary"
-                          >
-                            <i
-                              aria-hidden={true}
-                              className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
-                              data-icon-name="More"
-                              style={
-                                Object {
-                                  "fontFamily": "\\"FabricMDL2Icons\\"",
-                                }
-                              }
-                            >
-                              
-                            </i>
-                          </span>
-                        </button>
-                        <div
-                          hidden={true}
-                          id="tooltip41"
-                          style={
-                            Object {
-                              "border": 0,
-                              "height": 1,
-                              "margin": -1,
-                              "overflow": "hidden",
-                              "padding": 0,
-                              "position": "absolute",
-                              "whiteSpace": "nowrap",
-                              "width": 1,
-                            }
-                          }
-                        >
-                          More commands
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="msla-querybuilder-row-add-container"
-                >
-                  <div
-                    className="msla-querybuilder-row-gutter-hook"
-                  />
-                  <button
-                    aria-controls={null}
-                    aria-expanded={false}
-                    aria-haspopup={true}
-                    className="ms-Button ms-Button--default ms-Button--hasMenu root-191"
-                    data-is-focusable={true}
-                    onClick={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyPress={[Function]}
-                    onKeyUp={[Function]}
-                    onMouseDown={[Function]}
-                    onMouseUp={[Function]}
-                    type="button"
-                  >
-                    <span
-                      className="ms-Button-flexContainer flexContainer-184"
-                      data-automationid="splitbuttonprimary"
-                    >
-                      <i
-                        aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-icon icon-186"
-                        data-icon-name="Add"
-                        style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
-                          }
-                        }
-                      >
-                        
-                      </i>
-                      <span
-                        className="ms-Button-textContainer textContainer-185"
-                      >
-                        <span
-                          className="ms-Button-label label-192"
-                          id="id__45"
-                        >
-                          New item
-                        </span>
-                      </span>
-                      <i
-                        aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
-                        data-icon-name="ChevronDown"
-                        style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
-                          }
-                        }
-                      >
-                        
-                      </i>
-                    </span>
-                  </button>
-                </div>
-              </div>
-              <div
-                className="msla-querybuilder-group-controlbar"
-              />
-            </div>
-          </div>
-        </div>
         <span
           className="msla-input-parameter-error"
           role="alert"
