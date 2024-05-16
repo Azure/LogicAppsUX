@@ -1108,11 +1108,41 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
  * @param {Record<string, ValueSegment[]>} outputs - The outputs of the workflow.
  * @returns The parsed outputs in a more structured format.
  */
-const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any[]> => {
-  console.log('charlie', outputs);
-  return Object.entries(outputs).reduce((acc: Record<string, any[]>, [key, value]) => {
+const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
+  const ouputValues = Object.entries(outputs).reduce((acc: Record<string, any[]>, [key, value]) => {
     return Object.assign({}, acc, { [key]: value[0].value });
   }, {});
+  return unifyOutputs(ouputValues);
+};
+
+/**
+ * Unifies the outputs by converting a dot-separated key-value object into a nested object.
+ * @param {Record<string, any>} outputs - The dot-separated key-value object to unify.
+ * @returns The unified object with nested properties.
+ */
+const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
+  const unifiedOutputs: Record<string, any> = {};
+
+  for (const key in outputs) {
+    const value = outputs[key];
+    const segments = key.split('.');
+    let currentObject = unifiedOutputs;
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+
+      if (!currentObject[segment]) {
+        currentObject[segment] = {};
+      }
+
+      if (i === segments.length - 1) {
+        currentObject[segment] = value;
+      }
+
+      currentObject = currentObject[segment];
+    }
+  }
+
+  return unifiedOutputs;
 };
 
 /**
