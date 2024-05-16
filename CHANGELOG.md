@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.18.0](https://github.com/Azure/LogicAppsUX/compare/v4.17.0...v4.18.0) (2024-05-16)
+
+
+### Features
+
+* **Data Mapper V2:** Starting on functions panel ([#4835](https://github.com/Azure/LogicAppsUX/issues/4835)) ([4a401a7](https://github.com/Azure/LogicAppsUX/commit/4a401a758397c1fffc6c5ff6e2dd53304686188b))
+* **vscode:** Revert Introduce .NET 8 for custom code workspaces ([#834](https://github.com/Azure/LogicAppsUX/issues/834)) ([#4850](https://github.com/Azure/LogicAppsUX/issues/4850)) ([f21c153](https://github.com/Azure/LogicAppsUX/commit/f21c1534494f7d9d5a0e3a7de1378d875e54e6c0)), closes [#4834](https://github.com/Azure/LogicAppsUX/issues/4834)
+
 ## [4.17.0](https://github.com/Azure/LogicAppsUX/compare/v4.16.0...v4.17.0) (2024-05-14)
 
 
