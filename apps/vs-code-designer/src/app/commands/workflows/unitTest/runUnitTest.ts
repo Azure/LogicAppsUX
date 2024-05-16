@@ -50,27 +50,56 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         const workflowName = path.basename(path.dirname(unitTestPath));
         const unitTestName = getUnitTestName(path.basename(unitTestPath));
         const bundleVersionNumber = await getLatestBundleVersion(defaultExtensionBundlePathValue);
-
         const pathToExe = path.join(
           defaultExtensionBundlePathValue,
           bundleVersionNumber,
           'UnitTestExecutor',
           'Microsoft.Azure.Workflows.UnitTestExecutor.exe'
         );
-        const res = cp.spawn(pathToExe, [
-          '-PathToRootFolder',
-          path.dirname(testDirectory),
-          '-logicAppName',
-          logicAppName,
-          '-workflowName',
-          workflowName,
-          '-unitTestName',
-          unitTestName,
-        ]);
 
-        for await (const chunk of res.stdout) {
-          vscode.window.showInformationMessage(`${chunk}`);
-        }
+        const { cmdOutput, cmdOutputIncludingStderr } = await new Promise<{cmdOutput: string, cmdOutputIncludingStderr: string}>((resolve, reject) => {
+          let cmdOutput = '';
+          let cmdOutputIncludingStderr = '';
+          const childProc: cp.ChildProcess = cp.spawn(pathToExe, [
+            '-PathToRootFolder',
+            path.dirname(testDirectory),
+            '-logicAppName',
+            logicAppName,
+            '-workflowName',
+            workflowName,
+            '-unitTestName',
+            unitTestName,
+          ]);
+
+          childProc.stdout.on('data', (data: string | Buffer) => {
+            data = data.toString();
+            cmdOutput = cmdOutput.concat(data);
+            cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+            ext.outputChannel.append(data);
+          });
+
+          childProc.stderr.on('data', (data: string | Buffer) => {
+            data = data.toString();
+            cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+            ext.outputChannel.append(data);
+          });
+      
+          childProc.on('error', reject);
+          childProc.on('close', (code: number) => {
+            if (code === 0) {
+              resolve({
+                cmdOutput,
+                cmdOutputIncludingStderr,
+              });
+            } else {
+              reject(new Error(`Process exited with code ${code}\n${cmdOutputIncludingStderr}`));
+            }
+          
+          });
+
+        });
+
+        console.log(cmdOutput,cmdOutputIncludingStderr)
 
         const testResult = {
           isSuccessful: start % 2 === 0,
@@ -82,7 +111,6 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           unitTestPath,
           results: testResult,
         });
-
         return testResult;
       } catch (error) {
         vscode.window.showErrorMessage(`${localize('runFailure', 'Error Running Unit Test.')} ${error.message}`, localize('OK', 'OK'));
