@@ -57,7 +57,7 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
     const testResultsDirectory = path.join(testsDirectory, testResultsDirectoryName, projectName, `${unitTestName}.unit-test`);
     const hasTestResults = await fse.pathExists(testResultsDirectory);
 
-    if (ext.testRuns.has(unitTestNode.fsPath) || hasTestResults) {
+    if (hasTestResults) {
       const testResult: UnitTestResult = (await pickUnitTestResult(context, testResultsDirectory)).data;
       await openResultsWebview(workflowName, unitTestName, path.join(workspacePath, projectName, workflowFileName), testResult);
     } else {
