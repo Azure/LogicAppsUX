@@ -6,10 +6,11 @@ import {
   Assertion,
   type GetConditionExpressionHandler,
 } from './assertion';
-import { List, Text, useTheme } from '@fluentui/react';
+import { List, useTheme } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/logic-apps-shared';
+import { XLargeText } from '../../text';
 import { useIntl } from 'react-intl';
 
 type OnClickHandler = () => void;
@@ -88,7 +89,7 @@ export function Assertions({
   return (
     <div className="msla-workflow-assertions">
       <div className="msla-workflow-assertions-heading">
-        <Text variant="xLarge">{titleText}</Text>
+        <XLargeText text={titleText} />
         <Button appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
       {assertions.length > 0 ? <List items={assertions} onRenderCell={renderAssertion} /> : null}

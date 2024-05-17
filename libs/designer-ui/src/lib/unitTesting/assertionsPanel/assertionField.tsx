@@ -1,8 +1,9 @@
 import constants from '../../constants';
 import type { GetConditionExpressionHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
-import { Label, Text, TextField } from '@fluentui/react';
+import { Label, TextField } from '@fluentui/react';
 import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { MediumText } from '../../text';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -175,9 +176,9 @@ export const AssertionField = ({
             autoAdjustHeight
           />
         ) : isEmptyString(description) ? (
-          <Text className="msla-assertion-field-read-only assertion-field-no-content">{noDescription}</Text>
+          <MediumText text={noDescription} className="msla-assertion-field-read-only assertion-field-no-content" />
         ) : (
-          <Text className="msla-assertion-field-read-only">{description}</Text>
+          <MediumText text={description} className="msla-assertion-field-read-only" />
         )}
       </div>
       <div className="msla-assertion-condition">
