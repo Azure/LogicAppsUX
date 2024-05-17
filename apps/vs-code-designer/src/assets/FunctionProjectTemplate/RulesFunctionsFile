@@ -9,8 +9,9 @@ namespace <%= namespace %>
     using System.Threading.Tasks;
     using Microsoft.Azure.Functions.Extensions.Workflows;
     using Microsoft.Azure.WebJobs;
-    using Microsoft.Azure.Workflows.RuleEngine
+    using Microsoft.Azure.Workflows.RuleEngine;
     using Microsoft.Extensions.Logging;
+    using System.Xml;
 
     /// <summary>
     /// Represents the <%= methodName %> flow invoked function.
@@ -33,54 +34,60 @@ namespace <%= namespace %>
         /// <param name="purchaseAmount">purchase amount, value used to create .NET fact </param>
         /// <param name="zipCode">zip code value used to create .NET fact .</param>
         [FunctionName("<%= methodName %>")]
-        public Task<RuleExectionOutput> RunRules([WorkflowActionTrigger] string ruleSetName, string documentType, string inputXml, int purchaseAmount, string zipCode)
+        public Task<RuleExecutionResult> RunRules(
+            [WorkflowActionTrigger] string ruleSetName, 
+            string documentType, 
+            string inputXml, 
+            int purchaseAmount, 
+            string zipCode)
         {
-            /* *** Summary of steps below ***
-             * Step1: Get the rule set to Execute 
-             * Step2: Check if the rule set was retrived successfully
-             * Step3: create the rule engine object
-             * Step4: Create TypedXmlDocument facts for all xml document facts
-             * Step5: Initialize .NET facts
-             * Step6: Execute rule engine
-             * Step7: Retrieve relevant updates facts and send them back
+            /***** Summary of steps below *****
+             * 1. Get the rule set to Execute 
+             * 2. Check if the rule set was retrieved successfully
+             * 3. create the rule engine object
+             * 4. Create TypedXmlDocument facts for all xml document facts
+             * 5. Initialize .NET facts
+             * 6. Execute rule engine
+             * 7. Retrieve relevant updates facts and send them back
              */
+            
             try
             {
-                // Step1: Get the ruleset based on ruleset name
-                IRuleExplorer ruleExplorer = new FileStoreRuleExplorer();
-                // This API picks latest version of rule set
+                // Get the ruleset based on ruleset name
+                var ruleExplorer = new FileStoreRuleExplorer();
                 var ruleSet = ruleExplorer.GetRuleSet(ruleSetName);
-           
-                // Step2 : check ruleset
+
+                // Check if ruleset exists
                 if(ruleSet == null)
                 {
                     // Log an error in finding the rule set
-                    this.logger.LogCritical("Ruleset instance for " +  ruleSetName + " was null");
-                    throw new Exception("Ruleset instance for " +  ruleSetName + " was null.");
+                    this.logger.LogCritical($"RuleSet instance for '{ruleSetName}' was not found(null)");
+                    throw new Exception($"RuleSet instance for '{ruleSetName}' was not found.");
                 }             
 
-                // Step3: Create rule engine instance
+                // Create rule engine instance
                 var ruleEngine = new RuleEngine(ruleSet: ruleSet);
 
-                // Step4: Create a typedXml Fact(s) from input xml(s)
+                // Create a typedXml Fact(s) from input xml(s)
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(inputXml);
-                TypedXmlDocument typedXmlDocument = new TypedXmlDocument(documentType, doc);
+                var typedXmlDocument = new TypedXmlDocument(documentType, doc);
 
-                // Step5: Initialize the .Net facts
-                // BreSampleClassLibrary.CurrentPurchase currentPurchase = new BreSampleClassLibrary.CurrentPurchase(purchaseAmount, zipCode);
+                // Initialize .NET facts
+                var currentPurchase = new Purchase(purchaseAmount, zipCode);
 
-                // Step6: provide the facts to rule engine and run it
+                // Provide facts to rule engine and run it
                 ruleEngine.Execute(new object[] { typedXmlDocument, currentPurchase });
 
-                // Step7: Send the relevant results(facts) back
-                XmlDocument updatedDoc = typedXmlDocument.Document as XmlDocument;
-                RuleExectionOutput ruleExectionOutput = new RuleExectionOutput()
+                // Send the relevant results(facts) back
+                var updatedDoc = typedXmlDocument.Document as XmlDocument;
+                var ruleExectionOutput = new RuleExecutionResult()
                 {
-                    xmlDoc = updatedDoc.OuterXml,
-                    purchaseAmountPostTax = currentPurchase.purchaseAmount;
+                    XmlDoc = updatedDoc.OuterXml,
+                    PurchaseAmountPostTax = currentPurchase.PurchaseAmount + currentPurchase.GetSalesTax()
                 };
-                return Task.FromResult(ruleRunOutput);
+
+                return Task.FromResult(ruleExectionOutput);
             }
             catch(RuleEngineException ruleEngineException)
             {
@@ -91,54 +98,55 @@ namespace <%= namespace %>
         }
 
         /// <summary>
-        /// Output of the run rule
+        /// Results of the rule execution
         /// </summary>
-        public class RuleExectionOutput
+        public class RuleExecutionResult
         {
             /// <summary>
             /// rules updated xml document
             /// </summary>
-            public string xmlDoc { get; set;}
+            public string XmlDoc { get; set;}
 
             /// <summary>
-            /// other facts 
+            /// Purchase amount post tax
             /// </summary>
-            int purchaseAmountPostTax;
+            public int PurchaseAmountPostTax { get; set;};
         }
 
         /// <summary>
-        /// Example : Current purchase .NET fact class
+        /// Example : purchase .NET fact class
         /// This can be added as an assembly in csproj, please refer UserAssembly example in csproj
         /// </summary>
-        public class CurrentPurchase
+        public class Purchase
         {
             /// <summary>
             /// Purchase amount
             /// </summary>
-            public int purchaseAmount;
-
-            private string zipCode;
+            public int PurchaseAmount {get; set;}
 
             /// <summary>
-            /// Constructor for CurrentPurchase
+            /// Zip code
             /// </summary>
-            public CurrentPurchase(int currentPurchase, string zipCode)
+            public string ZipCode {get; set;}
+
+            /// <summary>
+            /// tax rate
+            /// </summary>
+            public float TaxRate {get; set;}
+
+            /// <summary>
+            /// Constructor for Purchase
+            /// </summary>
+            public Purchase(int purchaseAmount, string zipCode)
             {
-                purchaseAmount = currentPurchase;
-                this.zipCode = zipCode;
+                this.PurchaseAmount = purchaseAmount;
+                this.ZipCode = zipCode;
             }
 
             /// <summary>
             /// Business logic to calculate sales tax
             /// </summary>
-            public int calculateSalesTax()
-            {
-                if (zipCode.StartsWith("9"))
-                {
-                    return purchaseAmount / 10;
-                }
-                return 0;
-            }
+            public int GetSalesTax() => (int)((PurchaseAmount*TaxRate)/100);
         }
     }
 }

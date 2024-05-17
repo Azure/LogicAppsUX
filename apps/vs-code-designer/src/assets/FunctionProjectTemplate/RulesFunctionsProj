@@ -18,15 +18,15 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
   </ItemGroup>
 
-<!-- UserAssembly: Please add any use net472 assemblies here, these can be referred to create rule facts 
-   place the assemblies as a part of the function project, See the example below for reference  -->
-<!---
-<ItemGroup>
-	  <Reference Include="your_assembly_name">
-	    <HintPath>your_assembly_realtive_path\your_assembly_name.dll</HintPath>
-	  </Reference>
-</ItemGroup>
--->
+  <!-- UserAssembly: Please add any .NET compatible assemblies here, these can be referred to create rule facts.
+    Place assemblies as a part of the function project, see the example below for your reference  -->
+  <!--
+  <ItemGroup>
+      <Reference Include="your_assembly_name">
+        <HintPath>your_assembly_realtive_path\your_assembly_name.dll</HintPath>
+      </Reference>
+  </ItemGroup>
+  -->
 
 <Target Name="Task" AfterTargets="Compile">
     <ItemGroup>
