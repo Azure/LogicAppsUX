@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultExtensionBundlePathValue, runUnitTestEvent, testsDirectoryName } from '../../../../constants';
+import { defaultExtensionBundlePathValue, runUnitTestEvent, testResultsDirectoryName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { getUnitTestName, pickUnitTest, type UnitTestResult } from '../../../utils/unitTests';
+import { getLatestUnitTest, getTestsDirectory, getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
@@ -13,6 +13,7 @@ import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 import { activateAzurite } from '../../../utils/azurite/activateAzurite';
+import { UnitTestExecutionResult, UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -20,7 +21,7 @@ import { activateAzurite } from '../../../utils/azurite/activateAzurite';
  * @param {vscode.Uri | vscode.TestItem} node - The URI or TestItem representing the node to run the unit test for.
  * @returns A Promise that resolves to the UnitTestResult object.
  */
-export async function runUnitTest(context: IActionContext, node: vscode.Uri | vscode.TestItem): Promise<UnitTestResult> {
+export async function runUnitTest(context: IActionContext, node: vscode.Uri | vscode.TestItem): Promise<UnitTestExecutionResult> {
   return await callWithTelemetryAndErrorHandling(runUnitTestEvent, async () => {
     const options: vscode.ProgressOptions = {
       location: vscode.ProgressLocation.Notification,
@@ -32,13 +33,14 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
     return await vscode.window.withProgress(options, async () => {
       try {
         let unitTestPath: string;
+        const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath)
+
         if (node && node instanceof vscode.Uri) {
           unitTestPath = node.fsPath;
         } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
           unitTestPath = node.uri.fsPath;
         } else if (isMultiRootWorkspace()) {
-          const workspacePath = path.dirname(vscode.workspace.workspaceFolders[0].uri.fsPath);
-          const unitTest = await pickUnitTest(context, path.join(workspacePath, testsDirectoryName));
+          const unitTest = await pickUnitTest(context, testsDirectory.fsPath);
           unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
         } else {
           throw new Error(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
@@ -103,11 +105,13 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         ext.outputChannel.appendLine(cmdOutputIncludingStderr);
         context.telemetry.properties.unitTestCommandOut = cmdOutput;
         context.telemetry.properties.cmdOutputIncludingStderr = cmdOutput;
-
-
+        context.telemetry.properties.sucessUnitTest = 'true';
+            
+        const projectName = path.relative(testsDirectory.fsPath, path.dirname(unitTestPath));
+        const testResultsDirectory = path.join(testsDirectory.fsPath, testResultsDirectoryName, projectName, `${unitTestName}.unit-test`);
+        const latestUnitTest: UnitTestResult = await getLatestUnitTest(testResultsDirectory);
         const testResult = {
-          isSuccessful: start % 2 === 0,
-          assertions: [],
+          isSuccessful: latestUnitTest.Results.OverallStatus,
           duration,
         };
 
@@ -119,6 +123,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
       } catch (error) {
         vscode.window.showErrorMessage(`${localize('runFailure', 'Error Running Unit Test.')} ${error.message}`, localize('OK', 'OK'));
         context.telemetry.properties.errorMessage = error.message;
+        context.telemetry.properties.sucessUnitTest = 'false';
         throw error;
       }
     });

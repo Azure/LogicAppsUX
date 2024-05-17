@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
@@ -10,11 +11,6 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-export interface UnitTestResult {
-  isSuccessful: boolean;
-  assertions: any[];
-  duration?: number;
-}
 
 /**
  * Saves the unit test definition for a workflow.
@@ -79,7 +75,7 @@ export const getUnitTestName = (filePath: string) => {
  * @param {string} projectPath - The path of the project.
  * @returns The tests directory as a `vscode.Uri` object.
  */
-const getTestsDirectory = (projectPath: string) => {
+export const getTestsDirectory = (projectPath: string) => {
   const workspacePath = path.dirname(projectPath);
   const testsDirectory = vscode.Uri.file(path.join(workspacePath, testsDirectoryName));
   return testsDirectory;
@@ -211,3 +207,27 @@ const getUnitTestPick = async (projectPath: string) => {
   picks.sort((a, b) => a.label.localeCompare(b.label));
   return picks;
 };
+
+export const pickUnitTestResult = async (context: IActionContext, testResultsDirectory: string) => {
+  const placeHolder: string = localize('selectUnitTest', 'Select unit result');
+  return await context.ui.showQuickPick(getUnitTestResultPick(testResultsDirectory), { placeHolder });
+};
+
+const getUnitTestResultsList = async (testResultsDirectory: string) => {
+  const listOfUnitTestResults = await fse.readdir(testResultsDirectory);
+  const list =  listOfUnitTestResults.map((unitTestResult) => {
+    return { label: unitTestResult, data: fse.readJsonSync(path.join(testResultsDirectory, unitTestResult)) };
+  });
+  list.sort((a, b) => a.label.localeCompare(b.label));
+  return list;
+}
+
+const getUnitTestResultPick = async (testResultsDirectory: string) => {
+  const picks: IAzureQuickPickItem<UnitTestResult>[] = await getUnitTestResultsList(testResultsDirectory);
+  return picks;
+};
+
+export const getLatestUnitTest = async (testResultsDirectory: string): Promise<UnitTestResult> => {
+  const unitTestList = await getUnitTestResultsList(testResultsDirectory);
+  return unitTestList.pop().data;
+}

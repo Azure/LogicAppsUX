@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
+import { getTestsDirectory, getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
@@ -22,17 +22,18 @@ export async function editUnitTest(context: IAzureConnectorsContext, node: vscod
   if (isMultiRootWorkspace()) {
     let unitTestNode: vscode.Uri;
     const workspacePath = path.dirname(vscode.workspace.workspaceFolders[0].uri.fsPath);
+    const testsDirectory = path.join(workspacePath, testsDirectoryName);
 
     if (node && node instanceof vscode.Uri) {
       unitTestNode = getWorkflowNode(node) as vscode.Uri;
     } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
       unitTestNode = node.uri;
     } else {
-      const unitTest = await pickUnitTest(context, path.join(workspacePath, testsDirectoryName));
+      const unitTest = await pickUnitTest(context,testsDirectory);
       unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
     }
 
-    const projectName = path.relative(path.join(workspacePath, testsDirectoryName), path.dirname(unitTestNode.fsPath));
+    const projectName = path.relative(testsDirectory, path.dirname(unitTestNode.fsPath));
     const workflowPath = path.join(workspacePath, projectName, workflowFileName);
     const workflowNode = vscode.Uri.file(workflowPath);
     const unitTestDefinition = JSON.parse(readFileSync(unitTestNode.fsPath, 'utf8'));

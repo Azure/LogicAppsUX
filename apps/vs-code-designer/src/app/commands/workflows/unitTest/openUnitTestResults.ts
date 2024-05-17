@@ -9,7 +9,7 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
-import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
+import { getUnitTestName, pickUnitTest, pickUnitTestResult } from '../../../utils/unitTests';
 import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import * as path from 'path';
@@ -53,7 +53,7 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
 
     const unitTestName = getUnitTestName(unitTestNode.fsPath);
     const workflowName = path.basename(path.dirname(unitTestNode.fsPath));
-    const projectName = path.relative(path.join(workspacePath, testsDirectoryName), path.dirname(unitTestNode.fsPath));
+    const projectName = path.relative(testsDirectory, path.dirname(unitTestNode.fsPath));
     const testResultsDirectory = path.join(testsDirectory, testResultsDirectoryName, projectName, `${unitTestName}.unit-test`);
     const hasTestResults = await fse.pathExists(testResultsDirectory);
 
@@ -69,21 +69,6 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
     window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
 }
-
-export const pickUnitTestResult = async (context: IActionContext, testResultsDirectory: string) => {
-  const placeHolder: string = localize('selectUnitTest', 'Select unit result');
-  return await context.ui.showQuickPick(getUnitTestResultPick(testResultsDirectory), { placeHolder });
-};
-
-const getUnitTestResultPick = async (testResultsDirectory: string) => {
-  const listOfUnitTestResults = await fse.readdir(testResultsDirectory);
-  const picks: IAzureQuickPickItem<UnitTestResult>[] = listOfUnitTestResults.map((unitTestResult) => {
-    return { label: unitTestResult, data: fse.readJsonSync(path.join(testResultsDirectory, unitTestResult)) };
-  });
-
-  picks.sort((a, b) => a.label.localeCompare(b.label));
-  return picks;
-};
 
 /**
  * Opens the unit test results in a webview.
