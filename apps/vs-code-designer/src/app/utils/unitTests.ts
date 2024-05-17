@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
+import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
@@ -10,7 +10,6 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
-
 
 /**
  * Saves the unit test definition for a workflow.
@@ -208,26 +207,47 @@ const getUnitTestPick = async (projectPath: string) => {
   return picks;
 };
 
+/**
+ * Picks a unit test result from the provided test results directory.
+ * @param {IActionContext} context - The action context.
+ * @param {string} testResultsDirectory - The directory containing the unit test results.
+ * @returns A promise that resolves to the selected unit test result.
+ */
 export const pickUnitTestResult = async (context: IActionContext, testResultsDirectory: string) => {
   const placeHolder: string = localize('selectUnitTest', 'Select unit result');
   return await context.ui.showQuickPick(getUnitTestResultPick(testResultsDirectory), { placeHolder });
 };
 
+/**
+ * Retrieves a list of unit test results from the specified directory.
+ * @param {string} testResultsDirectory - The directory where the unit test results are stored.
+ * @returns A Promise that resolves to an array of objects containing the label and data of each unit test result.
+ */
 const getUnitTestResultsList = async (testResultsDirectory: string) => {
   const listOfUnitTestResults = await fse.readdir(testResultsDirectory);
-  const list =  listOfUnitTestResults.map((unitTestResult) => {
+  const list = listOfUnitTestResults.map((unitTestResult) => {
     return { label: unitTestResult, data: fse.readJsonSync(path.join(testResultsDirectory, unitTestResult)) };
   });
   list.sort((a, b) => a.label.localeCompare(b.label));
   return list;
-}
+};
 
+/**
+ * Retrieves the unit test result pick from the specified test results directory.
+ * @param {string} testResultsDirectory The directory where the unit test results are stored.
+ * @returns A promise that resolves to an array of `IAzureQuickPickItem<UnitTestResult>`.
+ */
 const getUnitTestResultPick = async (testResultsDirectory: string) => {
   const picks: IAzureQuickPickItem<UnitTestResult>[] = await getUnitTestResultsList(testResultsDirectory);
   return picks;
 };
 
+/**
+ * Retrieves the latest unit test result from the specified directory.
+ * @param {string} testResultsDirectory - The directory where the unit test results are stored.
+ * @returns A Promise that resolves to the latest unit test result.
+ */
 export const getLatestUnitTest = async (testResultsDirectory: string): Promise<UnitTestResult> => {
   const unitTestList = await getUnitTestResultsList(testResultsDirectory);
   return unitTestList.pop().data;
-}
+};

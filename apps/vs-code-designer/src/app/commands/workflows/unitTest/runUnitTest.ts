@@ -13,7 +13,7 @@ import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 import { activateAzurite } from '../../../utils/azurite/activateAzurite';
-import { UnitTestExecutionResult, UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
+import type { UnitTestExecutionResult, UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -33,7 +33,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
     return await vscode.window.withProgress(options, async () => {
       try {
         let unitTestPath: string;
-        const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath)
+        const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
 
         if (node && node instanceof vscode.Uri) {
           unitTestPath = node.fsPath;
@@ -62,51 +62,51 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           'Microsoft.Azure.Workflows.UnitTestExecutor.exe'
         );
 
-        const { cmdOutput, cmdOutputIncludingStderr } = await new Promise<{cmdOutput: string, cmdOutputIncludingStderr: string}>((resolve, reject) => {
-          let cmdOutput = '';
-          let cmdOutputIncludingStderr = '';
-          const childProc: cp.ChildProcess = cp.spawn(pathToExe, [
-            '-PathToRootFolder',
-            path.dirname(testDirectory),
-            '-logicAppName',
-            logicAppName,
-            '-workflowName',
-            workflowName,
-            '-unitTestName',
-            unitTestName,
-          ]);
+        const { cmdOutput, cmdOutputIncludingStderr } = await new Promise<{ cmdOutput: string; cmdOutputIncludingStderr: string }>(
+          (resolve, reject) => {
+            let cmdOutput = '';
+            let cmdOutputIncludingStderr = '';
+            const childProc: cp.ChildProcess = cp.spawn(pathToExe, [
+              '-PathToRootFolder',
+              path.dirname(testDirectory),
+              '-logicAppName',
+              logicAppName,
+              '-workflowName',
+              workflowName,
+              '-unitTestName',
+              unitTestName,
+            ]);
 
-          childProc.stdout.on('data', (data: string | Buffer) => {
-            data = data.toString();
-            cmdOutput = cmdOutput.concat(data);
-          });
+            childProc.stdout.on('data', (data: string | Buffer) => {
+              data = data.toString();
+              cmdOutput = cmdOutput.concat(data);
+            });
 
-          childProc.stderr.on('data', (data: string | Buffer) => {
-            data = data.toString();
-            cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
-          });
-      
-          childProc.on('error', reject);
-          childProc.on('close', (code: number) => {
-            if (code === 0) {
-              resolve({
-                cmdOutput,
-                cmdOutputIncludingStderr,
-              });
-            } else {
-              reject(new Error(`Process exited with code ${code}\n${cmdOutputIncludingStderr}`));
-            }
-          
-          });
+            childProc.stderr.on('data', (data: string | Buffer) => {
+              data = data.toString();
+              cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+            });
 
-        });
+            childProc.on('error', reject);
+            childProc.on('close', (code: number) => {
+              if (code === 0) {
+                resolve({
+                  cmdOutput,
+                  cmdOutputIncludingStderr,
+                });
+              } else {
+                reject(new Error(`Process exited with code ${code}\n${cmdOutputIncludingStderr}`));
+              }
+            });
+          }
+        );
 
-        ext.outputChannel.appendLine(cmdOutput)
+        ext.outputChannel.appendLine(cmdOutput);
         ext.outputChannel.appendLine(cmdOutputIncludingStderr);
         context.telemetry.properties.unitTestCommandOut = cmdOutput;
         context.telemetry.properties.cmdOutputIncludingStderr = cmdOutput;
         context.telemetry.properties.sucessUnitTest = 'true';
-            
+
         const projectName = path.relative(testsDirectory.fsPath, path.dirname(unitTestPath));
         const testResultsDirectory = path.join(testsDirectory.fsPath, testResultsDirectoryName, projectName, `${unitTestName}.unit-test`);
         const latestUnitTest: UnitTestResult = await getLatestUnitTest(testResultsDirectory);

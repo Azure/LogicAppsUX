@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
-import { getTestsDirectory, getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
+import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
@@ -29,7 +29,7 @@ export async function editUnitTest(context: IAzureConnectorsContext, node: vscod
     } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
       unitTestNode = node.uri;
     } else {
-      const unitTest = await pickUnitTest(context,testsDirectory);
+      const unitTest = await pickUnitTest(context, testsDirectory);
       unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
     }
 

@@ -26,7 +26,6 @@ import {
   workspace,
 } from 'vscode';
 import * as fse from 'fs-extra';
-import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 
 /**
  * Opens the unit test results for a given context and node.
