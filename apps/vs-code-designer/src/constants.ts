@@ -23,6 +23,7 @@ export const unitTestsFileName = '.unit-test.json';
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
+export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';

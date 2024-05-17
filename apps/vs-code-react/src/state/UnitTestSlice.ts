@@ -1,9 +1,11 @@
+import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface UnitTestState {
   hostVersion?: string;
   unitTestName?: string;
+  testResults?: UnitTestResult[];
 }
 
 export interface InitializeUnitTestPayload {
@@ -11,11 +13,13 @@ export interface InitializeUnitTestPayload {
   unitTestName: string;
   unitTestDescription: string;
   project: string;
+  testResults: UnitTestResult[];
 }
 
 const initialState: UnitTestState = {
   hostVersion: '',
   unitTestName: '',
+  testResults: [],
 };
 
 export const unitTestSlice = createSlice({
@@ -25,6 +29,7 @@ export const unitTestSlice = createSlice({
     initializeUnitTest: (state: UnitTestState, action: PayloadAction<InitializeUnitTestPayload>) => {
       state.hostVersion = action.payload.hostVersion;
       state.unitTestName = action.payload.unitTestName;
+      state.testResults = action.payload.testResults;
     },
   },
 });

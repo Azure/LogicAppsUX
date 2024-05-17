@@ -44,7 +44,7 @@ import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
-import { type IAzureConnectorsContext } from './workflows/azureConnectorWizard';
+import type { IAzureConnectorsContext } from './workflows/azureConnectorWizard';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';

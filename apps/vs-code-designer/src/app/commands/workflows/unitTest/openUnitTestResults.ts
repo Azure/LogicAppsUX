@@ -2,15 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
-import { testsDirectoryName, workflowFileName } from '../../../../constants';
+import { testsDirectoryName, testResultsDirectoryName, workflowFileName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
+import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import * as path from 'path';
 import {
@@ -25,6 +25,7 @@ import {
   ProgressLocation,
   workspace,
 } from 'vscode';
+import * as fse from 'fs-extra';
 
 /**
  * Opens the unit test results for a given context and node.
@@ -35,27 +36,40 @@ import {
  * @returns A Promise that resolves when the unit test results are opened.
  */
 export async function openUnitTestResults(context: IAzureConnectorsContext, node: Uri | TestItem): Promise<void> {
-  let unitTestNode: Uri;
-  const workspaceFolder = await getWorkspaceFolder(context);
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  if (isMultiRootWorkspace()) {
+    let unitTestNode: Uri;
+    const workspacePath = path.dirname(workspace.workspaceFolders[0].uri.fsPath);
+    const testsDirectory = path.join(workspacePath, testsDirectoryName);
 
-  if (node && node instanceof Uri) {
-    unitTestNode = getWorkflowNode(node) as Uri;
-  } else if (node && !(node instanceof Uri) && node.uri instanceof Uri) {
-    unitTestNode = node.uri;
-  } else {
-    const unitTest = await pickUnitTest(context, path.join(projectPath, testsDirectoryName));
-    unitTestNode = Uri.file(unitTest.data) as Uri;
-  }
-  const unitTestName = getUnitTestName(unitTestNode.fsPath);
+    if (node && node instanceof Uri) {
+      unitTestNode = getWorkflowNode(node) as Uri;
+    } else if (node && !(node instanceof Uri) && node.uri instanceof Uri) {
+      unitTestNode = node.uri;
+    } else {
+      const unitTest = await pickUnitTest(context, testsDirectory);
+      unitTestNode = Uri.file(unitTest.data) as Uri;
+    }
 
-  if (ext.testRuns.has(unitTestNode.fsPath)) {
+    const unitTestName = getUnitTestName(unitTestNode.fsPath);
     const workflowName = path.basename(path.dirname(unitTestNode.fsPath));
-    await openResultsWebview(workflowName, unitTestName, projectPath);
+    const projectName = path.relative(path.join(workspacePath, testsDirectoryName), path.dirname(unitTestNode.fsPath));
+    const testResultsDirectory = path.join(testsDirectory, testResultsDirectoryName, projectName, `${unitTestName}.unit-test`);
+    const hasTestResults = await fse.pathExists(testResultsDirectory);
+
+    if (ext.testRuns.has(unitTestNode.fsPath) || hasTestResults) {
+      const testFiles = await fse.readdir(testResultsDirectory);
+      const testResults: UnitTestResult[] = [];
+      for (const testFile of testFiles) {
+        testResults.push(await fse.readJson(path.join(testResultsDirectory, testFile)));
+      }
+      await openResultsWebview(workflowName, unitTestName, testsDirectory, testResults);
+    } else {
+      window.showInformationMessage(
+        localize('noRunForUnitTest', 'There are no runs for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
+      );
+    }
   } else {
-    window.showInformationMessage(
-      localize('noRunForUnitTest', 'There is no run for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
-    );
+    window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
 }
 
@@ -64,7 +78,12 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
  * @param {string} workflowName - The name of the workflow.
  * @returns A promise that resolves when the unit test results are opened.
  */
-export async function openResultsWebview(workflowName: string, unitTestName: string, projectPath: string): Promise<void> {
+export async function openResultsWebview(
+  workflowName: string,
+  unitTestName: string,
+  projectPath: string,
+  testResults: UnitTestResult[]
+): Promise<void> {
   const panelName = `${workflowName} - ${unitTestName} - ${localize('unitTestResult', 'Unit test results')}`;
   const panelGroupKey = ext.webViewKey.unitTest;
   const existingPanel: WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
@@ -106,6 +125,7 @@ export async function openResultsWebview(workflowName: string, unitTestName: str
               data: {
                 project: ProjectName.unitTest,
                 unitTestName,
+                testResults,
                 hostVersion: ext.extensionVersion,
               },
             });
