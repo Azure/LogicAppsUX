@@ -14,7 +14,7 @@ export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
-  expression: string;
+  assertionString: string;
   isEditable: boolean;
 }
 
@@ -62,7 +62,7 @@ export function Assertion({
   const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
-  const [expression, setExpression] = useState(assertion.expression);
+  const [expression, setExpression] = useState(assertion.assertionString);
 
   const themeName = isInverted ? 'dark' : 'light';
 

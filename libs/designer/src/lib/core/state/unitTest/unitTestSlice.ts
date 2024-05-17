@@ -38,9 +38,9 @@ export const initialUnitTestState: UnitTestState = {
 
 const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
   return assertions.reduce((acc, assertion) => {
-    const { name, description, expression } = assertion;
+    const { name, description, assertionString } = assertion;
     const id = guid();
-    return Object.assign(acc, { [id]: { id, name, description, expression, isEditable: false } });
+    return Object.assign(acc, { [id]: { id, name, description, assertionString, isEditable: false } });
   }, {});
 };
 
@@ -155,16 +155,16 @@ export const unitTestSlice = createSlice({
     },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
-      const { name, id, description, expression } = assertionToUpdate;
+      const { name, id, description, assertionString } = assertionToUpdate;
       const validationErrors = {
         name: validateAssertion(id, { name }, 'name', state.assertions),
-        expression: validateAssertion(id, { expression }, 'expression', state.assertions),
+        expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
       };
       state.assertions[id] = {
         ...state.assertions[id],
         name,
         description,
-        expression,
+        assertionString,
       };
       const newErrorObj = {
         ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),

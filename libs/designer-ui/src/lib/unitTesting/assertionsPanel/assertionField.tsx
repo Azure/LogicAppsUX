@@ -112,17 +112,17 @@ export const AssertionField = ({
 
   const onDescriptionChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setDescription(newValue ?? '');
-    handleUpdate({ name, description: newValue ?? '', expression });
+    handleUpdate({ name, description: newValue ?? '', assertionString: expression });
   };
 
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue ?? '');
-    handleUpdate({ name: newValue ?? '', description, expression });
+    handleUpdate({ name: newValue ?? '', description, assertionString: expression });
   };
 
   const onExpressionChange = (conditionExpression: string): void => {
     setExpression(conditionExpression);
-    handleUpdate({ name, description, expression: conditionExpression });
+    handleUpdate({ name, description, assertionString: conditionExpression });
   };
 
   const conditionExpression = getConditionExpression(
