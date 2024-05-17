@@ -77,14 +77,11 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           childProc.stdout.on('data', (data: string | Buffer) => {
             data = data.toString();
             cmdOutput = cmdOutput.concat(data);
-            cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
-            ext.outputChannel.append(data);
           });
 
           childProc.stderr.on('data', (data: string | Buffer) => {
             data = data.toString();
             cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
-            ext.outputChannel.append(data);
           });
       
           childProc.on('error', reject);
@@ -102,7 +99,11 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
 
         });
 
-        console.log(cmdOutput,cmdOutputIncludingStderr)
+        ext.outputChannel.appendLine(cmdOutput)
+        ext.outputChannel.appendLine(cmdOutputIncludingStderr);
+        context.telemetry.properties.unitTestCommandOut = cmdOutput;
+        context.telemetry.properties.cmdOutputIncludingStderr = cmdOutput;
+
 
         const testResult = {
           isSuccessful: start % 2 === 0,
