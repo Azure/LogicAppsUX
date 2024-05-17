@@ -25,7 +25,10 @@
             ]
         },
         "vscode-designer#build:extension": {
-            "cache": false
+            "cache": false,
+            "dependsOn": [
+                "build"
+            ]
         },
         "vscode-react#build:extension": {
             "cache": false,
@@ -60,7 +63,7 @@
         "vscode:designer:pack": {
             "cache": false,
             "dependsOn": [
-                "build"
+                "vscode-react#build:extension"
             ]
         }
     }
