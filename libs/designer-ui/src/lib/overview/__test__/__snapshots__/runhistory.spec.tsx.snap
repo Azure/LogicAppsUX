@@ -126,12 +126,10 @@ exports[`lib/overview/runhistory > renders 1`] = `
             role="button"
           />
           <div
-            aria-labelledby="header1-startTime-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
             data-automationid="ColumnsHeaderColumn"
             data-is-draggable={false}
-            data-is-focusable="true"
             data-item-key="startTime"
             draggable={false}
             role="columnheader"
@@ -145,16 +143,19 @@ exports[`lib/overview/runhistory > renders 1`] = `
               className="cellTooltip-137"
             >
               <span
+                aria-labelledby="header1-startTime-name"
                 className="ms-DetailsHeader-cellTitle cellTitle-135"
+                data-is-focusable="true"
                 id="header1-startTime"
                 onClick={[Function]}
                 onContextMenu={[Function]}
+                role="button"
               >
                 <span
                   className="ms-DetailsHeader-cellName cellName-136"
                   id="header1-startTime-name"
                 >
-                  Start time
+                  Start time (Local time)
                 </span>
               </span>
             </span>
@@ -425,12 +426,10 @@ exports[`lib/overview/runhistory > renders a shimmered details list 1`] = `
             role="button"
           />
           <div
-            aria-labelledby="header5-startTime-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
             data-automationid="ColumnsHeaderColumn"
             data-is-draggable={false}
-            data-is-focusable="true"
             data-item-key="startTime"
             draggable={false}
             role="columnheader"
@@ -444,16 +443,19 @@ exports[`lib/overview/runhistory > renders a shimmered details list 1`] = `
               className="cellTooltip-137"
             >
               <span
+                aria-labelledby="header5-startTime-name"
                 className="ms-DetailsHeader-cellTitle cellTitle-135"
+                data-is-focusable="true"
                 id="header5-startTime"
                 onClick={[Function]}
                 onContextMenu={[Function]}
+                role="button"
               >
                 <span
                   className="ms-DetailsHeader-cellName cellName-136"
                   id="header5-startTime-name"
                 >
-                  Start time
+                  Start time (Local time)
                 </span>
               </span>
             </span>
@@ -2802,12 +2804,10 @@ exports[`lib/overview/runhistory > renders with items 1`] = `
             role="button"
           />
           <div
-            aria-labelledby="header9-startTime-name"
             aria-sort="none"
             className="ms-DetailsHeader-cell is-actionable root-129"
             data-automationid="ColumnsHeaderColumn"
             data-is-draggable={false}
-            data-is-focusable="true"
             data-item-key="startTime"
             draggable={false}
             role="columnheader"
@@ -2821,16 +2821,19 @@ exports[`lib/overview/runhistory > renders with items 1`] = `
               className="cellTooltip-137"
             >
               <span
+                aria-labelledby="header9-startTime-name"
                 className="ms-DetailsHeader-cellTitle cellTitle-135"
+                data-is-focusable="true"
                 id="header9-startTime"
                 onClick={[Function]}
                 onContextMenu={[Function]}
+                role="button"
               >
                 <span
                   className="ms-DetailsHeader-cellName cellName-136"
                   id="header9-startTime-name"
                 >
-                  Start time
+                  Start time (Local time)
                 </span>
               </span>
             </span>
@@ -3042,7 +3045,9 @@ exports[`lib/overview/runhistory > renders with items 1`] = `
                             }
                           }
                         >
-                          2/4/2022, 5:58:19 PM
+                          <span>
+                            2/4/2022, 12:58:19 PM
+                          </span>
                         </div>
                         <div
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
