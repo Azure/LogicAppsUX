@@ -11,3 +11,8 @@ export interface UnitTestResult {
     OverallStatus: boolean;
   };
 }
+
+export interface UnitTestExecutionResult {
+  isSuccessful: boolean;
+  duration?: number;
+}

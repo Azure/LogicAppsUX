@@ -1,12 +1,11 @@
 import type { AssertionDefintion } from '@microsoft/logic-apps-shared';
-import { aggregate, getIntl, getPropertyValue, guid, isNullOrEmpty, labelCase } from '@microsoft/logic-apps-shared';
+import { aggregate, getIntl, getPropertyValue, guid, labelCase } from '@microsoft/logic-apps-shared';
 import { Constants } from '../../..';
 import { getTriggerNodeId } from '../../../core';
 import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice';
 import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
 import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
-import { updateTokenMetadataInAssertions } from '../../../core/utils/assertions';
 import {
   VariableBrandColor,
   VariableIcon,
@@ -28,7 +27,7 @@ import {
   ValueSegmentType,
   ConditionExpression,
 } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const getVariableTokens = (variables: Record<string, VariableDeclaration[]>): OutputToken[] => {
@@ -182,11 +181,10 @@ const getConditionExpression = (
 
 export const AssertionsPanel = (props: CommonPanelProps) => {
   const workflowAssertions = useAssertions();
-  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>({});
+  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>(workflowAssertions);
   const assertionsValidationErrors = useAssertionsValidationErrors();
 
   const dispatch = useDispatch<AppDispatch>();
-  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const tokens = useTokens();
   const onClose = () => {
@@ -202,8 +200,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
-    const { name, description, id, expression, isEditable } = event;
-    const assertionToUpdate = { name: name, description: description, id: id, expression: expression, isEditable: isEditable };
+    const { name, description, id, assertionString, isEditable } = event;
+    const assertionToUpdate = { name, description, id, assertionString, isEditable: isEditable };
     dispatch(updateAssertion({ assertionToUpdate }));
 
     const newAssertions = { ...assertions };
@@ -220,35 +218,12 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         name: event.name,
         isEditable: true,
         description: event.description,
-        expression: event.expression,
+        assertionString: event.assertionString,
       },
     };
     setAssertions(newAssertions);
     dispatch(updateAssertions({ assertions: newAssertions }));
   };
-
-  useEffect(() => {
-    if (!isNullOrEmpty(tokenMapping)) {
-      setAssertions(updateTokenMetadataInAssertions(tokenMapping, workflowAssertions));
-    }
-  }, [tokenMapping, workflowAssertions]);
-
-  useEffect(() => {
-    const callback = async () => {
-      const mapping: Record<string, ValueSegment> = {};
-      for (const group of [...tokens.outputTokensWithValues, ...tokens.variableTokens]) {
-        for (const token of group.tokens) {
-          if (!token.value) {
-            continue;
-          }
-          mapping[token.value] = await getValueSegmentFromToken(token);
-        }
-      }
-      setTokenMapping(mapping);
-    };
-
-    callback();
-  }, [tokens]);
 
   const getConditionExpressionHandler = useCallback(
     (editorId: string, labelId: string, initialValue: string, type: string, onChange: (value: string) => void) => {

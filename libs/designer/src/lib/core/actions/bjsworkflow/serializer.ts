@@ -1097,9 +1097,9 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
 
 const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
   return Object.values(assertions).map((assertion) => {
-    const { name, description, expression } = assertion;
+    const { name, description, assertionString } = assertion;
 
-    return { name, description, expression: expression ?? '' };
+    return { name, description, assertionString: assertionString ?? '' };
   });
 };
 

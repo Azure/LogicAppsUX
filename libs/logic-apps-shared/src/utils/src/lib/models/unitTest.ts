@@ -8,7 +8,7 @@ export interface OperationMock {
 export interface Assertion {
   name: string;
   description: string;
-  expression: string;
+  assertionString: string;
 }
 
 export interface UnitTestDefinition {

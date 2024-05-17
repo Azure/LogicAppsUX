@@ -236,8 +236,8 @@ export const deserializeUnitTestDefinition = (
 
   // deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
-    const { name, description, expression } = assertion;
-    return { name, description, expression: expression };
+    const { name, description, assertionString } = assertion;
+    return { name, description, assertionString: assertionString };
   });
 
   return { mockResults, assertions: assertions };
