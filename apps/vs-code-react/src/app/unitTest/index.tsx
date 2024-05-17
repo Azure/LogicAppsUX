@@ -2,7 +2,7 @@ import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './unitTest.less';
 import { Link } from '@fluentui/react';
-import { XXLargeText } from '@microsoft/designer-ui';
+import { LargeText, MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
@@ -47,7 +47,17 @@ export const UnitTestResults: React.FC = () => {
         <XXLargeText text={unitTestName ?? ''} style={{ marginLeft: '10px' }} />
       </div>
       {AssertionResults.map((result: AssertionResults, index) => (
-        <div key={index}>{result.Status ? <CheckmarkCircleFilled fontSize={20} /> : <DismissCircleFilled fontSize={20} />}</div>
+        <div key={index} className="msla-unit-test-results-assertion">
+          {result.Status ? <CheckmarkCircleFilled fontSize={30} /> : <DismissCircleFilled fontSize={30} />}
+          <div>
+            <div className="msla-unit-test-results-assertion-content-header">
+              <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px' }} />
+              <XLargeText text={'-'} style={{ margin: '0 10px' }} />
+              <MediumText text={result.Description ?? ''} />
+            </div>
+            <LargeText text={result.AssertionString} style={{ margin: '10px', display: 'block' }} />
+          </div>
+        </div>
       ))}
       <Link style={{ margin: '20px' }} onClick={handleViewWorkflow}>
         {intlText.VIEW_WORKFLOW}
