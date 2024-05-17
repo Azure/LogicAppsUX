@@ -1,3 +1,4 @@
+import { useTheme } from '@fluentui/react';
 import { SearchBox } from '@fluentui/react/lib/SearchBox';
 import { getIntl } from '@microsoft/logic-apps-shared';
 
@@ -8,6 +9,7 @@ export interface SearchBoxProps {
 
 export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
   const { searchCallback, searchTerm = '' } = props;
+  const { isInverted } = useTheme();
 
   const intl = getIntl();
   const placeholder = intl.formatMessage({
@@ -18,6 +20,7 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
 
   return (
     <SearchBox
+      styles={{ root: { backgroundColor: 'transparent' }, field: { color: isInverted ? 'white' : 'black' } }}
       autoFocus
       ariaLabel={placeholder}
       placeholder={placeholder}
