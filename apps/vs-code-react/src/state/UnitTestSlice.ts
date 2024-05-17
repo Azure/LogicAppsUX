@@ -5,7 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface UnitTestState {
   hostVersion?: string;
   unitTestName?: string;
-  testResults?: UnitTestResult[];
+  testResults?: UnitTestResult;
 }
 
 export interface InitializeUnitTestPayload {
@@ -13,13 +13,13 @@ export interface InitializeUnitTestPayload {
   unitTestName: string;
   unitTestDescription: string;
   project: string;
-  testResults: UnitTestResult[];
+  testResults: UnitTestResult;
 }
 
 const initialState: UnitTestState = {
   hostVersion: '',
   unitTestName: '',
-  testResults: [],
+  testResults: undefined,
 };
 
 export const unitTestSlice = createSlice({

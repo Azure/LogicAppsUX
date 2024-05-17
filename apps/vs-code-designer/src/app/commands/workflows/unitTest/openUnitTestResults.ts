@@ -26,6 +26,7 @@ import {
   workspace,
 } from 'vscode';
 import * as fse from 'fs-extra';
+import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 
 /**
  * Opens the unit test results for a given context and node.
@@ -57,12 +58,8 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
     const hasTestResults = await fse.pathExists(testResultsDirectory);
 
     if (ext.testRuns.has(unitTestNode.fsPath) || hasTestResults) {
-      const testFiles = await fse.readdir(testResultsDirectory);
-      const testResults: UnitTestResult[] = [];
-      for (const testFile of testFiles) {
-        testResults.push(await fse.readJson(path.join(testResultsDirectory, testFile)));
-      }
-      await openResultsWebview(workflowName, unitTestName, testsDirectory, testResults);
+      const testResult: UnitTestResult = (await pickUnitTestResult(context, testResultsDirectory)).data;
+      await openResultsWebview(workflowName, unitTestName, testsDirectory, testResult);
     } else {
       window.showInformationMessage(
         localize('noRunForUnitTest', 'There are no runs for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
@@ -73,6 +70,21 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
   }
 }
 
+export const pickUnitTestResult = async (context: IActionContext, testResultsDirectory: string) => {
+  const placeHolder: string = localize('selectUnitTest', 'Select unit result');
+  return await context.ui.showQuickPick(getUnitTestResultPick(testResultsDirectory), { placeHolder });
+};
+
+const getUnitTestResultPick = async (testResultsDirectory: string) => {
+  const listOfUnitTestResults = await fse.readdir(testResultsDirectory);
+  const picks: IAzureQuickPickItem<UnitTestResult>[] = listOfUnitTestResults.map((unitTestResult) => {
+    return { label: unitTestResult, data: fse.readJsonSync(path.join(testResultsDirectory, unitTestResult)) };
+  });
+
+  picks.sort((a, b) => a.label.localeCompare(b.label));
+  return picks;
+};
+
 /**
  * Opens the unit test results in a webview panel.
  * @param {string} workflowName - The name of the workflow.
@@ -82,7 +94,7 @@ export async function openResultsWebview(
   workflowName: string,
   unitTestName: string,
   projectPath: string,
-  testResults: UnitTestResult[]
+  testResult: UnitTestResult
 ): Promise<void> {
   const panelName = `${workflowName} - ${unitTestName} - ${localize('unitTestResult', 'Unit test results')}`;
   const panelGroupKey = ext.webViewKey.unitTest;
@@ -125,7 +137,7 @@ export async function openResultsWebview(
               data: {
                 project: ProjectName.unitTest,
                 unitTestName,
-                testResults,
+                testResult,
                 hostVersion: ext.extensionVersion,
               },
             });
