@@ -2,7 +2,7 @@ import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './unitTest.less';
 import { Link } from '@fluentui/react';
-import { LargeText, MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
+import { MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
@@ -16,8 +16,6 @@ export const UnitTestResults: React.FC = () => {
   const { unitTestName, testResult } = unitTestState;
 
   const { AssertionResults = [] } = testResult?.Results ?? {};
-
-  console.log('charlie AssertionResults', AssertionResults);
 
   const intl = useIntl();
 
@@ -48,14 +46,11 @@ export const UnitTestResults: React.FC = () => {
       </div>
       {AssertionResults.map((result: AssertionResults, index) => (
         <div key={index} className="msla-unit-test-results-assertion">
-          {result.Status ? <CheckmarkCircleFilled fontSize={30} /> : <DismissCircleFilled fontSize={30} />}
+          {result.Status ? <CheckmarkCircleFilled fontSize={25} /> : <DismissCircleFilled fontSize={25} />}
           <div>
-            <div className="msla-unit-test-results-assertion-content-header">
-              <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px' }} />
-              <XLargeText text={'-'} style={{ margin: '0 10px' }} />
-              <MediumText text={result.Description ?? ''} />
-            </div>
-            <LargeText text={result.AssertionString} style={{ margin: '10px', display: 'block' }} />
+            <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px', display: 'block' }} />
+            <MediumText text={result.Description ?? ''} style={{ margin: '10px', display: 'block' }} />
+            <MediumText text={result.AssertionString} style={{ margin: '10px', display: 'block' }} />
           </div>
         </div>
       ))}
