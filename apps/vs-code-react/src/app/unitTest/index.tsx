@@ -1,22 +1,21 @@
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './unitTest.less';
-import { FontIcon, Link, Text, mergeStyles } from '@fluentui/react';
+import { Link } from '@fluentui/react';
+import { MediumText, XLargeText, XXLargeText } from '@microsoft/designer-ui';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
-
-const iconClass = mergeStyles({
-  fontSize: 40,
-  height: 40,
-  width: 40,
-});
+import { CheckmarkCircleFilled, CloudBeakerRegular, DismissCircleFilled } from '@fluentui/react-icons';
+import type { AssertionResults } from '@microsoft/vscode-extension-logic-apps';
 
 export const UnitTestResults: React.FC = () => {
   const unitTestState = useSelector((state: RootState) => state.unitTest);
   const vscode = useContext(VSCodeContext);
-  const { unitTestName } = unitTestState;
+  const { unitTestName, testResult } = unitTestState;
+
+  const { AssertionResults = [] } = testResult?.Results ?? {};
 
   const intl = useIntl();
 
@@ -42,13 +41,23 @@ export const UnitTestResults: React.FC = () => {
   return (
     <div className="msla-unit-test-results">
       <div className="msla-unit-test-results-header">
-        <FontIcon aria-label={intlText.TEST_ICON} iconName="TestPlan" className={iconClass} />
-        <Text variant="xxLarge" style={{ marginLeft: '10px' }}>
-          {unitTestName}
-        </Text>
+        <CloudBeakerRegular aria-label={intlText.TEST_ICON} fontSize={40} />
+        <XXLargeText text={unitTestName ?? ''} style={{ marginLeft: '10px' }} />
+      </div>
+      <div className="msla-unit-test-results-assertions-list">
+        {AssertionResults.map((result: AssertionResults, index) => (
+          <div key={index} className="msla-unit-test-results-assertions-list-item">
+            {result.Status ? <CheckmarkCircleFilled fontSize={25} /> : <DismissCircleFilled fontSize={25} />}
+            <div>
+              <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px', display: 'block' }} />
+              <MediumText text={result.Description ?? ''} style={{ margin: '10px', display: 'block' }} />
+              <MediumText text={result.AssertionString} style={{ margin: '10px', display: 'block' }} />
+            </div>
+          </div>
+        ))}
       </div>
 
-      <Link style={{ margin: '20px' }} onClick={handleViewWorkflow}>
+      <Link className="msla-unit-test-results-button" onClick={handleViewWorkflow}>
         {intlText.VIEW_WORKFLOW}
       </Link>
     </div>
