@@ -60,7 +60,7 @@ export function Assertions({
   const handleAddAssertion = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAssertionAdd) {
       event.stopPropagation();
-      onAssertionAdd({ name: headingTitle, description: '', expression: '' });
+      onAssertionAdd({ name: headingTitle, description: '', assertionString: '' });
     }
   };
 

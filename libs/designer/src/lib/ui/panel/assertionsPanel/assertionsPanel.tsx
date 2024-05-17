@@ -202,8 +202,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
-    const { name, description, id, expression, isEditable } = event;
-    const assertionToUpdate = { name: name, description: description, id: id, expression: expression, isEditable: isEditable };
+    const { name, description, id, assertionString, isEditable } = event;
+    const assertionToUpdate = { name, description, id, assertionString, isEditable: isEditable };
     dispatch(updateAssertion({ assertionToUpdate }));
 
     const newAssertions = { ...assertions };
@@ -220,7 +220,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         name: event.name,
         isEditable: true,
         description: event.description,
-        expression: event.expression,
+        assertionString: event.assertionString,
       },
     };
     setAssertions(newAssertions);

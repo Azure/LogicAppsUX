@@ -25,7 +25,7 @@ export interface AssertionDeleteEvent {
 export interface AssertionAddEvent {
   name: string;
   description: string;
-  expression: string;
+  assertionString: string;
 }
 
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
