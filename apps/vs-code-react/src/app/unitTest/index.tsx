@@ -44,17 +44,20 @@ export const UnitTestResults: React.FC = () => {
         <CloudBeakerRegular aria-label={intlText.TEST_ICON} fontSize={40} />
         <XXLargeText text={unitTestName ?? ''} style={{ marginLeft: '10px' }} />
       </div>
-      {AssertionResults.map((result: AssertionResults, index) => (
-        <div key={index} className="msla-unit-test-results-assertion">
-          {result.Status ? <CheckmarkCircleFilled fontSize={25} /> : <DismissCircleFilled fontSize={25} />}
-          <div>
-            <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px', display: 'block' }} />
-            <MediumText text={result.Description ?? ''} style={{ margin: '10px', display: 'block' }} />
-            <MediumText text={result.AssertionString} style={{ margin: '10px', display: 'block' }} />
+      <div className="msla-unit-test-results-assertions-list">
+        {AssertionResults.map((result: AssertionResults, index) => (
+          <div key={index} className="msla-unit-test-results-assertions-list-item">
+            {result.Status ? <CheckmarkCircleFilled fontSize={25} /> : <DismissCircleFilled fontSize={25} />}
+            <div>
+              <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px', display: 'block' }} />
+              <MediumText text={result.Description ?? ''} style={{ margin: '10px', display: 'block' }} />
+              <MediumText text={result.AssertionString} style={{ margin: '10px', display: 'block' }} />
+            </div>
           </div>
-        </div>
-      ))}
-      <Link style={{ margin: '20px' }} onClick={handleViewWorkflow}>
+        ))}
+      </div>
+
+      <Link className="msla-unit-test-results-button" onClick={handleViewWorkflow}>
         {intlText.VIEW_WORKFLOW}
       </Link>
     </div>
