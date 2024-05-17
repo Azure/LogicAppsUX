@@ -226,7 +226,7 @@ export const pickUnitTestResult = async (context: IActionContext, testResultsDir
 const getUnitTestResultsList = async (testResultsDirectory: string) => {
   const listOfUnitTestResults = await fse.readdir(testResultsDirectory);
   const list = listOfUnitTestResults.map((unitTestResult) => {
-    return { label: unitTestResult, data: fse.readJsonSync(path.join(testResultsDirectory, unitTestResult)) };
+    return { label: unitTestResult.split('.')[0], data: fse.readJsonSync(path.join(testResultsDirectory, unitTestResult)) };
   });
   list.sort((a, b) => a.label.localeCompare(b.label));
   return list;
@@ -247,7 +247,7 @@ const getUnitTestResultPick = async (testResultsDirectory: string) => {
  * @param {string} testResultsDirectory - The directory where the unit test results are stored.
  * @returns A Promise that resolves to the latest unit test result.
  */
-export const getLatestUnitTest = async (testResultsDirectory: string): Promise<UnitTestResult> => {
+export const getLatestUnitTest = async (testResultsDirectory: string): Promise<{ label: string; data: UnitTestResult; }> => {
   const unitTestList = await getUnitTestResultsList(testResultsDirectory);
-  return unitTestList.pop().data;
+  return unitTestList.pop();
 };

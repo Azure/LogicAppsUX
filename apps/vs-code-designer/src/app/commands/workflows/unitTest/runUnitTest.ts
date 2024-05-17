@@ -13,7 +13,7 @@ import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 import { activateAzurite } from '../../../utils/azurite/activateAzurite';
-import type { UnitTestExecutionResult, UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
+import type { UnitTestExecutionResult } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -30,7 +30,12 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
 
     await activateAzurite(context);
 
-    return await vscode.window.withProgress(options, async () => {
+    return await vscode.window.withProgress(options, async (progress, token) => {
+      token.onCancellationRequested(() => {
+        // Handle cancellation logic
+        context.telemetry.properties.canceledRun = 'true';
+        ext.outputChannel.appendLine(localize('canceledRunUnitTest', 'Run unit test was canceled'))
+      });
       try {
         let unitTestPath: string;
         const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
@@ -100,6 +105,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
             });
           }
         );
+        progress.report({ increment: 100});
 
         ext.outputChannel.appendLine(cmdOutput);
         ext.outputChannel.appendLine(cmdOutputIncludingStderr);
@@ -109,11 +115,12 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
 
         const projectName = path.relative(testsDirectory.fsPath, path.dirname(unitTestPath));
         const testResultsDirectory = path.join(testsDirectory.fsPath, testResultsDirectoryName, projectName, `${unitTestName}.unit-test`);
-        const latestUnitTest: UnitTestResult = await getLatestUnitTest(testResultsDirectory);
+        const latestUnitTest = await getLatestUnitTest(testResultsDirectory);
         const testResult = {
-          isSuccessful: latestUnitTest.Results.OverallStatus,
+          isSuccessful: latestUnitTest.data.Results.OverallStatus,
           duration,
         };
+        vscode.window.showInformationMessage(localize('unitTestExecuted', 'Unit test results "{0}" was created.', latestUnitTest.label));
 
         ext.testRuns.set(unitTestPath, {
           unitTestPath,
