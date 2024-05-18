@@ -16,6 +16,21 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
   // Hide the step count in the wizard UI
   public hideStepCount = true;
 
+  private csFileName = {
+    [ProjectType.customCode]: 'FunctionsFile',
+    [ProjectType.rulesEngine]: 'RulesFunctionsFile',
+  };
+
+  private templateFileName = {
+    [ProjectType.customCode]: 'FunctionsProj',
+    [ProjectType.rulesEngine]: 'RulesFunctionsProj',
+  };
+
+  private templateFolderName = {
+    [ProjectType.customCode]: 'FunctionProjectTemplate',
+    [ProjectType.rulesEngine]: 'RuleSetProjectTemplate',
+  };
+
   /**
    * Prompts the user to set up an Azure Function project.
    * @param context The project wizard context.
@@ -31,8 +46,13 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Define the type of project in the workspace
     const projectType = context.projectType;
 
+    const projectPath = context.projectPath;
+
     // Create the .cs file inside the functions folder
     await this.createCsFile(functionFolderPath, methodName, namespace, projectType);
+
+    // Create the .xml and .cs files inside the rules and functions folders
+    await this.createRulesFiles(projectPath, functionFolderPath, methodName, projectType);
 
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName, projectType);
@@ -43,11 +63,10 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
   }
 
   /**
-   * Determines whether the user should be prompted to set up an Azure Function project.
-   * @param context The project wizard context.
-   * @returns True if the user has not yet set up an Azure Function project, false otherwise.
+   * Determines whether the prompt should be displayed.
+   * @returns {boolean} True if the prompt should be displayed, false otherwise.
    */
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 
@@ -59,11 +78,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param projectType - The workspace projet type.
    */
   private async createCsFile(functionFolderPath: string, methodName: string, namespace: string, projectType: ProjectType): Promise<void> {
-    const csFileName = {
-      [ProjectType.customCode]: 'FunctionsFile',
-      [ProjectType.rulesEngine]: 'RulesFunctionsFile',
-    };
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', csFileName[projectType]);
+    const templatePath = path.join(__dirname, 'assets', this.templateFolderName[projectType], this.csFileName[projectType]);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
@@ -79,15 +94,38 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param projectType - The workspace projet type.
    */
   private async createCsprojFile(functionFolderPath: string, methodName: string, projectType: ProjectType): Promise<void> {
-    const templateFileName = {
-      [ProjectType.customCode]: 'FunctionsProj',
-      [ProjectType.rulesEngine]: 'RulesFunctionsProj',
-    };
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFileName[projectType]);
+    const templatePath = path.join(__dirname, 'assets', this.templateFolderName[projectType], this.templateFileName[projectType]);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     const csprojFileContent = templateContent.replace(/<%= methodName %>/g, methodName);
     await fs.writeFile(csprojFilePath, csprojFileContent);
+  }
+
+  /**
+   * Creates the rules files for the project.
+   * @param projectPath - The path of the project.
+   * @param functionFolderPath - The path of the function folder.
+   * @param methodName - The name of the method.
+   * @param projectType - The type of the project.
+   * @returns A promise that resolves when the rules files are created.
+   */
+  private async createRulesFiles(
+    projectPath: string,
+    functionFolderPath: string,
+    methodName: string,
+    projectType: ProjectType
+  ): Promise<void> {
+    if (projectType === ProjectType.rulesEngine) {
+      const xmlTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
+      const xmlRuleSetPath = path.join(projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
+      const xmlTemplateContent = await fs.readFile(xmlTemplatePath, 'utf-8');
+      const xmlFileContent = xmlTemplateContent.replace(/<%= methodName %>/g, methodName);
+      await fs.writeFile(xmlRuleSetPath, xmlFileContent);
+
+      const csTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'ContosoPurchase');
+      const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
+      await fs.copyFile(csTemplatePath, csRuleSetPath);
+    }
   }
 }
