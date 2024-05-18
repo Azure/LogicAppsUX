@@ -24,7 +24,7 @@ import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { latestGAVersion, OpenBehavior, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type {
   ICreateFunctionOptions,
   IFunctionWizardContext,
@@ -97,9 +97,25 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
+  await createRulesFiles(context as IFunctionWizardContext);
   await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+}
+
+/**
+ * Copies the rules files to the project directory if the project type is rulesEngine.
+ * @param {IFunctionWizardContext} context - The function wizard context.
+ * @returns A promise that resolves when the files are copied successfully.
+ */
+async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
+  if (context.projectType === ProjectType.rulesEngine) {
+    const xmlTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
+    const xmlRuleSetPath = path.join(context.projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
+    const xmlTemplateContent = await fse.readFile(xmlTemplatePath, 'utf-8');
+    const xmlFileContent = xmlTemplateContent.replace(/<%= methodName %>/g, context.methodName);
+    await fse.writeFile(xmlRuleSetPath, xmlFileContent);
+  }
 }
 
 async function createLibFolder(context: IFunctionWizardContext): Promise<void> {

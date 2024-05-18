@@ -46,13 +46,11 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Define the type of project in the workspace
     const projectType = context.projectType;
 
-    const projectPath = context.projectPath;
-
     // Create the .cs file inside the functions folder
     await this.createCsFile(functionFolderPath, methodName, namespace, projectType);
 
-    // Create the .xml and .cs files inside the rules and functions folders
-    await this.createRulesFiles(projectPath, functionFolderPath, methodName, projectType);
+    // Create the .cs files inside the functions folders for rule code projects
+    await this.createRulesFiles(functionFolderPath, projectType);
 
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName, projectType);
@@ -104,25 +102,12 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
 
   /**
    * Creates the rules files for the project.
-   * @param projectPath - The path of the project.
-   * @param functionFolderPath - The path of the function folder.
-   * @param methodName - The name of the method.
-   * @param projectType - The type of the project.
+   * @param {string} functionFolderPath - The path of the function folder.
+   * @param {string} projectType - The type of the project.
    * @returns A promise that resolves when the rules files are created.
    */
-  private async createRulesFiles(
-    projectPath: string,
-    functionFolderPath: string,
-    methodName: string,
-    projectType: ProjectType
-  ): Promise<void> {
+  private async createRulesFiles(functionFolderPath: string, projectType: ProjectType): Promise<void> {
     if (projectType === ProjectType.rulesEngine) {
-      const xmlTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
-      const xmlRuleSetPath = path.join(projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
-      const xmlTemplateContent = await fs.readFile(xmlTemplatePath, 'utf-8');
-      const xmlFileContent = xmlTemplateContent.replace(/<%= methodName %>/g, methodName);
-      await fs.writeFile(xmlRuleSetPath, xmlFileContent);
-
       const csTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'ContosoPurchase');
       const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
       await fs.copyFile(csTemplatePath, csRuleSetPath);
