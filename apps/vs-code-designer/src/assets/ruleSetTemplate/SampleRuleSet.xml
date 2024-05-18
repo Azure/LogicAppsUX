@@ -4,10 +4,9 @@
     <version major="1" minor="0" description="" modifiedby="FAREAST\jaah" date="2024-05-16T05:47:09.0799765Z" />
     <configuration />
     <bindings>
-      <class ref="Purchase" class="ruleFunc+Purchase" instance="0" instances="16" selectivity="1">
-        <assembly>fn, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</assembly>
-        <!--C:\Users\jaah\OneDrive - Microsoft\Desktop\lsw\Function\bin\Debug\net472\fn.dll-->
-        <namespace>nspace</namespace>
+      <class ref="ContosoPurchase" class="ContosoPurchase" instance="0" instances="16" selectivity="1">
+        <assembly><%= methodName %>, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</assembly>
+        <namespace>ContosoNamespace</namespace>
       </class>
       <xmldocument ref="xml_33" doctype="SchemaUser" instances="16" selectivity="1" instance="0">
         <selector>/*[local-name()='Root' and namespace-uri()='http://BizTalk_Server_Project1.SchemaUser']/*[local-name()='UserDetails' and namespace-uri()='']</selector>
@@ -63,7 +62,7 @@
           <lhs>
             <function>
               <classmember member="get_PurchaseAmount" sideeffects="true">
-                <classref ref="Purchase" />
+                <classref ref="ContosoPurchase" />
               </classmember>
             </function>
           </lhs>
@@ -150,7 +149,7 @@
             <lhs>
               <function>
                 <classmember member="get_ZipCode" sideeffects="true">
-                  <classref ref="Purchase" />
+                  <classref ref="ContosoPurchase" />
                 </classmember>
               </function>
             </lhs>
@@ -165,7 +164,7 @@
       <then>
         <function>
           <classmember member="set_TaxRate" sideeffects="true">
-            <classref ref="Purchase" />
+            <classref ref="ContosoPurchase" />
             <argument>
               <constant>
                 <float>20</float>
@@ -182,7 +181,7 @@
           <lhs>
             <function>
               <classmember member="get_ZipCode" sideeffects="true">
-                <classref ref="Purchase" />
+                <classref ref="ContosoPurchase" />
               </classmember>
             </function>
           </lhs>
@@ -196,7 +195,7 @@
       <then>
         <function>
           <classmember member="set_TaxRate" sideeffects="true">
-            <classref ref="Purchase" />
+            <classref ref="ContosoPurchase" />
             <argument>
               <constant>
                 <float>10</float>
