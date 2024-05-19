@@ -1,12 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasToolbox';
-// import type { NotificationData } from '../../components/notification/Notification';
-// import {
-//   deletedNotificationAutoHideDuration,
-//   errorNotificationAutoHideDuration,
-//   NotificationTypes,
-// } from '../../components/notification/Notification';
-//import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import {
@@ -16,21 +8,9 @@ import {
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
 } from '../../utils/Connection.Utils';
-import {
-  //addParentConnectionForRepeatingElementsNested,
-  getParentId,
-} from '../../utils/DataMap.Utils';
+import { getParentId } from '../../utils/DataMap.Utils';
 import { getConnectedSourceSchema, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
-// import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
-// import {
-//   addReactFlowPrefix,
-//   addSourceReactFlowPrefix,
-//   addTargetReactFlowPrefix,
-//   createReactFlowFunctionKey,
-//   getSourceIdFromReactFlowConnectionId,
-//   getSplitIdsFromReactFlowConnectionId,
-// } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { FunctionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
@@ -44,9 +24,7 @@ export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
   isDirty: boolean;
-  // notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
-  // canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
 }
 
 export interface DataMapOperationState {
@@ -61,7 +39,6 @@ export interface DataMapOperationState {
   currentTargetSchemaNode?: SchemaNodeExtended;
   functionNodes: FunctionDictionary;
   selectedItemKey?: string;
-  // selectedItemKeyParts?: ReactFlowIdParts;
   selectedItemConnectedNodes: ConnectionUnit[];
   xsltFilename: string;
   xsltContent: string;
@@ -93,7 +70,6 @@ const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
   isDirty: false,
-  // canvasToolboxTabToDisplay: '',
 };
 
 export interface InitialSchemaAction {

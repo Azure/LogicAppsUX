@@ -17,7 +17,6 @@ import type {
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 
 export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExtended => {
-  console.log(schema);
   const extendedSchema: SchemaExtended = {
     ...schema,
     schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
