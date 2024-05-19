@@ -1,5 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
@@ -330,94 +330,6 @@ export const getSourceKeyOfLastLoop = (targetKey: string): string => {
   return forArgs.split(',')[0]; // Filter out index variable if any
 };
 
-export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
-  let constructedSourceKey = sourceKey;
-  const srcKeyWithinFor = getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey));
-
-  // Deserialize dot accessors as their parent loop's source node
-  if (constructedSourceKey === '.') {
-    return srcKeyWithinFor;
-  }
-  let idxOfDotAccess = constructedSourceKey.indexOf('.');
-  while (idxOfDotAccess > -1) {
-    const preChar = constructedSourceKey[idxOfDotAccess - 1];
-    const postChar = constructedSourceKey[idxOfDotAccess + 1];
-
-    // Make sure the input is just '.'
-    let newStartIdx = idxOfDotAccess + 1;
-    if ((preChar === '(' || preChar === ' ') && (postChar === ')' || postChar === ',')) {
-      constructedSourceKey =
-        constructedSourceKey.substring(0, idxOfDotAccess) + srcKeyWithinFor + constructedSourceKey.substring(idxOfDotAccess + 1);
-      newStartIdx += srcKeyWithinFor.length;
-    }
-
-    idxOfDotAccess = constructedSourceKey.indexOf('.', newStartIdx);
-  }
-
-  const relativeSrcKeyArr = sourceKey
-    .split(', ')
-    .map((keyChunk) => {
-      let modifiedKeyChunk = keyChunk;
-
-      // Functions with no inputs
-      if (modifiedKeyChunk.includes('()')) {
-        return '';
-      }
-
-      // Will only ever be one or zero '(' after splitting on commas
-      const openParenIdx = modifiedKeyChunk.lastIndexOf('(');
-      if (openParenIdx >= 0) {
-        modifiedKeyChunk = modifiedKeyChunk.substring(openParenIdx + 1);
-      }
-
-      // Should only ever be one or zero ')' after ruling out substrings w/ functions w/ no inputs
-      modifiedKeyChunk = modifiedKeyChunk.replaceAll(')', '');
-
-      return modifiedKeyChunk;
-    })
-    .filter((keyChunk) => keyChunk !== '');
-
-  if (relativeSrcKeyArr.length > 0) {
-    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
-      if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        let fullyQualifiedSourceKey = '';
-
-        const srcTokens = lexThisThing(relativeKeyMatch);
-        let backoutCount = 0;
-
-        if (srcTokens.some((token) => token === ReservedToken.backout)) {
-          fullyQualifiedSourceKey = srcKeyWithinFor;
-          srcTokens.forEach((token) => {
-            if (token === ReservedToken.backout) {
-              backoutCount++;
-            }
-          });
-          const relativeKeyNoBackouts = relativeKeyMatch.substring(backoutCount * 3);
-          while (backoutCount > 0) {
-            const lastElem = fullyQualifiedSourceKey.lastIndexOf('/');
-            fullyQualifiedSourceKey = fullyQualifiedSourceKey.substring(0, lastElem);
-            backoutCount--;
-          }
-          fullyQualifiedSourceKey += `/${relativeKeyNoBackouts}`;
-        } else {
-          // Replace './' to deal with relative attribute paths
-          fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
-        }
-        const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
-
-        constructedSourceKey = isValidSrcNode
-          ? constructedSourceKey.replace(relativeKeyMatch, fullyQualifiedSourceKey)
-          : constructedSourceKey;
-      }
-    });
-  } else {
-    const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${sourceKey}`;
-    constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
-  }
-
-  return constructedSourceKey;
-};
-
 export const Separators = {
   OpenParenthesis: '(',
   CloseParenthesis: ')',
@@ -464,57 +376,8 @@ export const separateFunctions = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
-    if (currentChar === ' ') { // ignore whitespace
-      i++;
-      continue;
-    }
-
-    if (Dseparators.includes(currentChar)) {
-      if (currentChar === DSeparators.quote) {
-        const endOfQuote = targetKey.substring(i + 1).indexOf(DSeparators.quote) + 2 + i;
-        tokens.push(targetKey.substring(i, endOfQuote));
-        i = endOfQuote;
-        continue;
-      }
-      if (!currentToken) {
-        // if it is a Separator
-        tokens.push(currentChar);
-        i++;
-        continue;
-      } else {
-        // if it is a function or identifier token
-        tokens.push(currentToken);
-        currentToken = '';
-        tokens.push(currentChar.trim());
-        i++;
-        continue;
-      }
-    }
-
-    currentToken = currentToken + currentChar;
-    if (dReservedToken.includes(currentToken)) {
-      tokens.push(currentToken.trim());
-      currentToken = '';
-      i++;
-      continue;
-    }
-
-    if (i === targetKey.length - 1) {
-      tokens.push(currentToken.trim());
-    }
-    i++;
-  }
-  return tokens;
-};
-
-export const lexThisThing = (targetKey: string): string[] => {
-  const tokens: string[] = [];
-
-  let i = 0;
-  let currentToken = '';
-  while (i < targetKey.length) {
-    const currentChar = targetKey[i];
     if (currentChar === ' ') {
+      // ignore whitespace
       i++;
       continue;
     }
@@ -535,21 +398,21 @@ export const lexThisThing = (targetKey: string): string[] => {
       // if it is a function or identifier token
       tokens.push(currentToken);
       currentToken = '';
-      tokens.push(currentChar);
+      tokens.push(currentChar.trim());
       i++;
       continue;
     }
 
     currentToken = currentToken + currentChar;
-    if (reservedToken.includes(currentToken)) {
-      tokens.push(currentToken);
+    if (dReservedToken.includes(currentToken)) {
+      tokens.push(currentToken.trim());
       currentToken = '';
       i++;
       continue;
     }
 
     if (i === targetKey.length - 1) {
-      tokens.push(currentToken);
+      tokens.push(currentToken.trim());
     }
     i++;
   }
@@ -557,7 +420,7 @@ export const lexThisThing = (targetKey: string): string[] => {
 };
 
 export interface ParseFunc {
-  type: 'Function'
+  type: 'Function';
   name: string;
   inputs: FunctionCreationMetadata[];
 }
@@ -565,13 +428,13 @@ export interface ParseFunc {
 export type FunctionCreationMetadata = ParseFunc | SingleValueMetadata;
 
 export type SingleValueMetadata = {
-  type: 'SingleValueMetadata',
-  specialCharacters?: 'index' | 'customValue' | 'directAccess' | 'loopCurrentNodeDot',
-  value: string,
-}
+  type: 'SingleValueMetadata';
+  specialCharacters?: 'index' | 'customValue' | 'directAccess' | 'loopCurrentNodeDot';
+  value: string;
+};
 
 const isTokenCustomValue = (value: string): boolean => {
-  return value.startsWith('"') || !Number.isNaN(parseInt(value));
+  return value.startsWith('"') || !Number.isNaN(Number.parseInt(value));
 };
 
 const currentLoopNodeDot = '.';
@@ -592,7 +455,7 @@ export const getSingleValueMetadata = (token: string) => {
     // danielle also include separated values here
   } // if it is a loop with backout
   return metadata;
-}
+};
 
 // danielle how do we handle this? /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration'
 export const createSchemaNodeOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
