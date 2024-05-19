@@ -2,8 +2,10 @@ import { ConnectionParameterRow } from '../connectionParameterRow';
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
-import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/logic-apps-shared';
-import { ConnectionParameterTypes } from '@microsoft/logic-apps-shared';
+import type { ConnectionParameter, ConnectionParameterAllowedValue, ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
+import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
+import constants from '../../../../../common/constants';
 
 export interface ConnectionParameterProps {
   parameterKey: string;
@@ -16,6 +18,7 @@ export interface ConnectionParameterProps {
   selectSubscriptionCallback?: (subscriptionId: string) => void;
   availableGateways?: any[];
   availableSubscriptions?: any[];
+  identity?: ManagedIdentity;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {
@@ -30,6 +33,7 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     selectSubscriptionCallback,
     availableGateways,
     availableSubscriptions,
+    identity,
   } = props;
 
   const data = parameter?.uiDefinition;
@@ -54,16 +58,29 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
     );
   }
 
+  // Managed Identity picker
+  else if (equals(constraints?.editor, 'identitypicker')) {
+    const onManagedIdentityChange = (_: any, option?: IDropdownOption<any>) => {
+      const identitySelected = option?.key.toString() !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? option?.key.toString() : undefined;
+      setValue(identitySelected);
+    };
+    inputComponent = <LegacyManagedIdentityDropdown identity={identity} onChange={onManagedIdentityChange} disabled={isLoading} />;
+  }
+
   // Boolean parameter
   else if (parameter?.type === ConnectionParameterTypes.bool) {
-    if (value === undefined) setValue(false);
+    if (value === undefined) {
+      setValue(false);
+    }
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
     const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.value === value);
-    if (selectedKey === -1) setValue(constraints?.allowedValues?.[0].value);
+    if (selectedKey === -1) {
+      setValue(constraints?.allowedValues?.[0].value);
+    }
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}

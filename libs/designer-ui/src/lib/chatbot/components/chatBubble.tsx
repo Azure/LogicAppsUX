@@ -4,7 +4,7 @@ import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import { useConst } from '@fluentui/react-hooks';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export const ChatEntryReaction = {

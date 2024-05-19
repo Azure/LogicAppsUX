@@ -83,9 +83,7 @@ async function deploy(
 
   let node: SlotTreeItem;
 
-  if (!expectedContextValue) {
-    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
-  } else {
+  if (expectedContextValue) {
     node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
       ext.rgApi.pickAppResource(
         { ...context, suppressCreatePick: false },
@@ -95,6 +93,8 @@ async function deploy(
         }
       )
     );
+  } else {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
   }
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
@@ -201,13 +201,11 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   if (!site) {
     if (isAdvance) {
       return await createLogicAppAdvanced(context, sub);
-    } else {
-      return await createLogicApp(context, sub);
     }
-  } else {
-    const resourceTree = new LogicAppResourceTree(sub.subscription, site);
-    return new SlotTreeItem(sub, resourceTree);
+    return await createLogicApp(context, sub);
   }
+  const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+  return new SlotTreeItem(sub, resourceTree);
 }
 
 async function getLogicAppsPicks(
@@ -309,7 +307,7 @@ async function getProjectPathToDeploy(
 
     fse.mkdirSync(deployProjectPath);
 
-    await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true, recursive: true });
+    await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true });
 
     for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
       try {

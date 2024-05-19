@@ -36,8 +36,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<AppServiceWiz
     const { suppressCreate, useConsumptionPlan } = wizardContext;
     if (!useConsumptionPlan) {
       return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 }

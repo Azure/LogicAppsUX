@@ -38,7 +38,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Method"
+              aria-label="Select all text in 'Method'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -47,6 +47,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Method'"
               type="button"
             >
               <span
@@ -77,6 +78,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Method' to the clipboard"
               type="button"
             >
               <span
@@ -111,7 +113,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -148,7 +150,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in URI"
+              aria-label="Select all text in 'URI'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -157,6 +159,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'URI'"
               type="button"
             >
               <span
@@ -187,6 +190,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'URI' to the clipboard"
               type="button"
             >
               <span
@@ -221,7 +225,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -229,27 +233,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               <span
                 className="token plain"
               >
-                https
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token comment"
-                style={
-                  {
-                    "color": "rgb(0, 128, 0)",
-                  }
-                }
-              >
-                //httpbin.org/get
+                https://httpbin.org/get
               </span>
             </div>
           </pre>
@@ -478,7 +462,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Method"
+              aria-label="Select all text in 'Method'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -487,6 +471,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Method'"
               type="button"
             >
               <span
@@ -517,6 +502,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Method' to the clipboard"
               type="button"
             >
               <span
@@ -551,7 +537,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -588,7 +574,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in URI"
+              aria-label="Select all text in 'URI'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -597,6 +583,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'URI'"
               type="button"
             >
               <span
@@ -627,6 +614,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'URI' to the clipboard"
               type="button"
             >
               <span
@@ -661,7 +649,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -669,27 +657,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               <span
                 className="token plain"
               >
-                https
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token comment"
-                style={
-                  {
-                    "color": "rgb(0, 128, 0)",
-                  }
-                }
-              >
-                //httpbin.org/post
+                https://httpbin.org/post
               </span>
             </div>
           </pre>
@@ -898,7 +866,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Body"
+              aria-label="Select all text in 'Body'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -907,6 +875,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Body'"
               type="button"
             >
               <span
@@ -937,6 +906,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Body' to the clipboard"
               type="button"
             >
               <span
@@ -971,30 +941,22 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
             >
               <span
-                className="token punctuation"
-                style={
-                  {
-                    "color": "rgb(4, 81, 165)",
-                  }
-                }
+                className="token plain"
               >
                 {
               </span>
-              <span
-                className="token plain"
-              />
             </div>
             <div
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -1002,61 +964,20 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               <span
                 className="token plain"
               >
-                  
+                  "hello": "world!"
               </span>
-              <span
-                className="token property"
-              >
-                "hello"
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token plain"
-              >
-                 
-              </span>
-              <span
-                className="token string"
-                style={
-                  {
-                    "color": "rgb(163, 21, 21)",
-                  }
-                }
-              >
-                "world!"
-              </span>
-              <span
-                className="token plain"
-              />
             </div>
             <div
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
             >
               <span
                 className="token plain"
-              />
-              <span
-                className="token punctuation"
-                style={
-                  {
-                    "color": "rgb(4, 81, 165)",
-                  }
-                }
               >
                 }
               </span>
@@ -1107,7 +1028,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Method"
+              aria-label="Select all text in 'Method'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -1116,6 +1037,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Method'"
               type="button"
             >
               <span
@@ -1146,6 +1068,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Method' to the clipboard"
               type="button"
             >
               <span
@@ -1180,7 +1103,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -1217,7 +1140,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in URI"
+              aria-label="Select all text in 'URI'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -1226,6 +1149,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'URI'"
               type="button"
             >
               <span
@@ -1256,6 +1180,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'URI' to the clipboard"
               type="button"
             >
               <span
@@ -1290,7 +1215,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
+                  "backgroundColor": undefined,
                   "color": "#000000",
                 }
               }
@@ -1298,27 +1223,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               <span
                 className="token plain"
               >
-                https
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token comment"
-                style={
-                  {
-                    "color": "rgb(0, 128, 0)",
-                  }
-                }
-              >
-                //httpbin.org/post
+                https://httpbin.org/post
               </span>
             </div>
           </pre>

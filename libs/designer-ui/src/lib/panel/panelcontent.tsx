@@ -84,7 +84,9 @@ const OverflowMenu = (props: OverflowMenuProps) => {
 
   const onItemClick = (tabId: string) => onTabSelect?.(tabId);
 
-  if (!isOverflowing) return null;
+  if (!isOverflowing) {
+    return null;
+  }
 
   return (
     <Menu>

@@ -73,12 +73,13 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     description: 'Text to show when the connection is loading',
   });
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <div className="connection-display">
         <Spinner size={'extra-tiny'} label={loadingText} labelPosition={'after'} />
       </div>
     );
+  }
 
   const connectionErrorText = intl.formatMessage({
     defaultMessage: 'Invalid connection',
@@ -91,7 +92,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
       <div className="connection-info">
         <LinkMultiple16Regular />
         <Label className="label">{connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName}</Label>
-        {!readOnly ? (
+        {readOnly ? null : (
           <Button
             id="change-connection-button"
             size="small"
@@ -101,7 +102,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
           >
             {openChangeConnectionText}
           </Button>
-        ) : null}
+        )}
       </div>
       {props.hasError ? (
         <div className="connection-info-error">

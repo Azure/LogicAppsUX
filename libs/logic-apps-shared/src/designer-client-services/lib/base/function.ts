@@ -18,9 +18,11 @@ export class BaseFunctionService implements IFunctionService {
     const { apiVersion, subscriptionId, httpClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required for workflow app');
     }
   }
@@ -84,9 +86,13 @@ export class BaseFunctionService implements IFunctionService {
 
   public async getOperationSchema(functionAppId: string, operationId: string, isInput: boolean): Promise<any> {
     const swagger = await this.fetchFunctionAppSwagger(functionAppId);
-    if (!operationId) return Promise.resolve();
+    if (!operationId) {
+      return Promise.resolve();
+    }
     const operation = swagger.getOperationByOperationId(operationId);
-    if (!operation) throw new Error('Operation not found');
+    if (!operation) {
+      throw new Error('Operation not found');
+    }
 
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
@@ -116,12 +122,20 @@ export class BaseFunctionService implements IFunctionService {
       const { responses } = rawOperation;
       let response: any = {};
 
-      if (responses[ResponseCodes.$200]) response = responses[ResponseCodes.$200];
-      else if (responses[ResponseCodes.$201]) response = responses[ResponseCodes.$201];
-      else if (responses[ResponseCodes.$default]) response = responses[ResponseCodes.$default];
+      if (responses[ResponseCodes.$200]) {
+        response = responses[ResponseCodes.$200];
+      } else if (responses[ResponseCodes.$201]) {
+        response = responses[ResponseCodes.$201];
+      } else if (responses[ResponseCodes.$default]) {
+        response = responses[ResponseCodes.$default];
+      }
 
-      if (response.schema) schema.properties['body'] = response.schema;
-      if (response.headers) schema.properties['headers'] = response.headers;
+      if (response.schema) {
+        schema.properties['body'] = response.schema;
+      }
+      if (response.headers) {
+        schema.properties['headers'] = response.headers;
+      }
     }
 
     return schema;
@@ -134,9 +148,13 @@ export class BaseFunctionService implements IFunctionService {
       case 'header':
       case 'query': {
         const property = $in === 'header' ? 'headers' : 'queries';
-        if (!schemaProperties[property]) schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+        if (!schemaProperties[property]) {
+          schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+        }
         schemaProperties[property].properties[name] = parameter;
-        if (required) schemaProperties[property].required.push(name);
+        if (required) {
+          schemaProperties[property].required.push(name);
+        }
         break;
       }
       case 'path': {
@@ -149,9 +167,11 @@ export class BaseFunctionService implements IFunctionService {
 
         schemaProperties[pathProperty].properties[name] = {
           ...parameter,
-          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `operationDetails.uri` },
+          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: 'operationDetails.uri' },
         };
-        if (required) schemaProperties[pathProperty].required.push(name);
+        if (required) {
+          schemaProperties[pathProperty].required.push(name);
+        }
         break;
       }
       default: {

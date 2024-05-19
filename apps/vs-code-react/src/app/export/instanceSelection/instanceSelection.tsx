@@ -5,13 +5,14 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
-import { Text, DropdownMenuItemType } from '@fluentui/react';
+import { DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { LargeText, XLargeText } from '@microsoft/designer-ui';
 
 export const InstanceSelection: React.FC = () => {
   const vscode = useContext(VSCodeContext);
@@ -106,8 +107,8 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getRegions(selectedSubscription);
   };
 
-  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<Array<ISubscription>>(
-    QueryKeys.subscriptionData,
+  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<ISubscription[]>(
+    [QueryKeys.subscriptionData],
     loadSubscriptions,
     {
       refetchOnWindowFocus: false,
@@ -120,7 +121,7 @@ export const InstanceSelection: React.FC = () => {
     data: regionData,
     isLoading: isRegionLoading,
     refetch: refetchRegion,
-  } = useQuery<Array<IRegion>>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
+  } = useQuery<IRegion[]>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,
@@ -130,7 +131,7 @@ export const InstanceSelection: React.FC = () => {
     data: iseList,
     isLoading: isIseLoading,
     refetch: refetchIse,
-  } = useQuery<Array<IIse>>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
+  } = useQuery<IIse[]>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,
@@ -213,12 +214,8 @@ export const InstanceSelection: React.FC = () => {
 
   return (
     <div className="msla-export-instance-panel">
-      <Text variant="xLarge" block>
-        {intlText.SELECT_TITLE}
-      </Text>
-      <Text variant="large" block>
-        {intlText.SELECT_DESCRIPTION}
-      </Text>
+      <XLargeText text={intlText.SELECT_TITLE} style={{ display: 'block' }} />
+      <LargeText text={intlText.SELECT_DESCRIPTION} style={{ display: 'block' }} />
       <SearchableDropdown
         label={intlText.SELECTION_SUBSCRIPTION}
         options={subscriptions}

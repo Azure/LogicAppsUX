@@ -33,13 +33,12 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
         id: '3eeli7',
         description: 'Source schema dropdown placeholder',
       });
-    } else {
-      return intl.formatMessage({
-        defaultMessage: 'Select a target schema',
-        id: 'XkBxv5',
-        description: 'Target schema dropdown placeholder',
-      });
     }
+    return intl.formatMessage({
+      defaultMessage: 'Select a target schema',
+      id: 'XkBxv5',
+      description: 'Target schema dropdown placeholder',
+    });
   }, [intl, props.schemaType]);
 
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);

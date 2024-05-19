@@ -19,10 +19,10 @@ export interface Color {
 export const hex2rgb = (hex: string): RGB => {
   const rbgArr = (
     hex
-      .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b)
+      .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`)
       .substring(1)
       .match(/.{2}/g) || []
-  ).map((x) => parseInt(x, 16));
+  ).map((x) => Number.parseInt(x, 16));
 
   return {
     blue: rbgArr[2],
@@ -71,7 +71,7 @@ export const hsv2rgb = ({ hue, saturation, value }: HSV): RGB => {
 };
 
 export const rgb2hex = ({ blue, green, red }: RGB): string => {
-  return '#' + [red, green, blue].map((x) => x.toString(16).padStart(2, '0')).join('');
+  return `#${[red, green, blue].map((x) => x.toString(16).padStart(2, '0')).join('')}`;
 };
 
 export function transformColor<M extends keyof Color, C extends Color[M]>(format: M, color: C): Color {
@@ -114,14 +114,16 @@ export const toHex = (value: string): string => {
     ctx.fillStyle = value;
 
     return ctx.fillStyle;
-  } else if (currValue.length === 4 || currValue.length === 5) {
+  }
+  if (currValue.length === 4 || currValue.length === 5) {
     currValue = value
       .split('')
       .map((v, i) => (i ? v + v : '#'))
       .join('');
 
     return currValue;
-  } else if (currValue.length === 7 || currValue.length === 9) {
+  }
+  if (currValue.length === 7 || currValue.length === 9) {
     return currValue;
   }
 

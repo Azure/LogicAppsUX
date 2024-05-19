@@ -52,7 +52,8 @@ export class JsonSplitter {
       const ch = json.charAt(result);
       if (ch === '"') {
         return result;
-      } else if (ch === '\\') {
+      }
+      if (ch === '\\') {
         result += 2;
       } else {
         result++;

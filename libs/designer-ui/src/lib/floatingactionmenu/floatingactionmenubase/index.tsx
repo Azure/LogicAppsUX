@@ -4,7 +4,7 @@ import { Icon, KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { ValidationErrorCode, ValidationException } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export type FloatingActionMenuItem = {
@@ -108,22 +108,21 @@ export const FloatingActionMenuBase = (props: PropsWithChildren<FloatingActionMe
           <span className="msla-vertical-menu-item-label">{menuItem.label}</span>
         </div>
       );
-    } else {
-      return (
-        <div key={menuItem.type} className="msla-floating-action-menu-item-horizontal-container">
-          <div
-            role="button"
-            aria-label={menuItem.label}
-            tabIndex={0}
-            className="msla-menu-item-logo"
-            style={itemStyle}
-            onClick={() => handleMenuItemSelected(menuItem)}
-            onKeyDown={(e: React.KeyboardEvent<HTMLElement>): void => handleMenuItemSelectedOnKeyDown(e, menuItem)}
-          />
-          <span className="msla-horizontal-menu-item-label">{menuItem.label}</span>
-        </div>
-      );
     }
+    return (
+      <div key={menuItem.type} className="msla-floating-action-menu-item-horizontal-container">
+        <div
+          role="button"
+          aria-label={menuItem.label}
+          tabIndex={0}
+          className="msla-menu-item-logo"
+          style={itemStyle}
+          onClick={() => handleMenuItemSelected(menuItem)}
+          onKeyDown={(e: React.KeyboardEvent<HTMLElement>): void => handleMenuItemSelectedOnKeyDown(e, menuItem)}
+        />
+        <span className="msla-horizontal-menu-item-label">{menuItem.label}</span>
+      </div>
+    );
   };
 
   const renderMenuItems = (): JSX.Element => {

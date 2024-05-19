@@ -1,8 +1,5 @@
-/* eslint-disable no-case-declarations */
-import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
-import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
-import { validateType } from '../../utils/validation';
+import { validateParameterValueWithSwaggerType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
@@ -37,7 +34,7 @@ export const validateParameter = (
   const intl = getIntl();
 
   switch (keyToValidate?.toLowerCase()) {
-    case 'name':
+    case 'name': {
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
@@ -58,13 +55,16 @@ export const validateParameter = (
             description: 'Error message when the workflow parameter name already exists.',
           })
         : undefined;
+    }
 
     case 'value':
-    case 'defaultvalue':
+    case 'defaultvalue': {
       const valueToValidate = equals(keyToValidate, 'value') ? data.value : data.defaultValue;
       const { type } = data;
       if (valueToValidate === '' || valueToValidate === undefined) {
-        if (!required) return undefined;
+        if (!required) {
+          return undefined;
+        }
         return intl.formatMessage({
           defaultMessage: 'Must provide value for parameter.',
           id: 'VL9wOu',
@@ -72,42 +72,8 @@ export const validateParameter = (
         });
       }
 
-      const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
-      let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
-
-      if (error) return error;
-
-      switch (swaggerType) {
-        case Constants.SWAGGER.TYPE.ARRAY:
-          // eslint-disable-next-line no-case-declarations
-          let isInvalid = false;
-          try {
-            isInvalid = !Array.isArray(JSON.parse(valueToValidate));
-          } catch {
-            isInvalid = true;
-          }
-
-          error = isInvalid
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
-            : undefined;
-          break;
-
-        case Constants.SWAGGER.TYPE.OBJECT:
-        case Constants.SWAGGER.TYPE.BOOLEAN:
-          try {
-            JSON.parse(valueToValidate);
-          } catch {
-            error =
-              swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-                ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
-                : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
-          }
-          break;
-
-        default:
-          break;
-      }
-      return error;
+      return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
+    }
 
     default:
       return undefined;
@@ -163,9 +129,15 @@ export const workflowParametersSlice = createSlice({
         ...(getRecordEntry(state.validationErrors, id) ?? {}),
         ...validationErrors,
       };
-      if (!newErrorObj.name) delete newErrorObj.name;
-      if (!newErrorObj.value) delete newErrorObj.value;
-      if (!newErrorObj.defaultValue) delete newErrorObj.defaultValue;
+      if (!newErrorObj.name) {
+        delete newErrorObj.name;
+      }
+      if (!newErrorObj.value) {
+        delete newErrorObj.value;
+      }
+      if (!newErrorObj.defaultValue) {
+        delete newErrorObj.defaultValue;
+      }
       if (Object.keys(newErrorObj).length === 0) {
         delete state.validationErrors[id];
       } else {

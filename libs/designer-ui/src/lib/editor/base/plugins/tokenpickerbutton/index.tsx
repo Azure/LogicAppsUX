@@ -133,7 +133,7 @@ export const TokenPickerButton = ({
           onMouseDown={(e) => e.preventDefault()}
           style={{ boxShadow: Depths.depth4 }}
         >
-          {!hideDynamicContent ? (
+          {hideDynamicContent ? null : (
             <TooltipHost content={dynamicContentButtonText}>
               <IconButton
                 iconProps={dynamicContentIconProps}
@@ -151,8 +151,8 @@ export const TokenPickerButton = ({
                 }}
               />
             </TooltipHost>
-          ) : null}
-          {!hideExpression ? (
+          )}
+          {hideExpression ? null : (
             <TooltipHost content={expressionButtonText} directionalHint={DirectionalHint.bottomCenter}>
               <IconButton
                 iconProps={expressionButtonProps}
@@ -170,7 +170,7 @@ export const TokenPickerButton = ({
                 }}
               />
             </TooltipHost>
-          ) : null}
+          )}
         </div>
       ) : null}
       <OnChangePlugin onChange={onChange} />

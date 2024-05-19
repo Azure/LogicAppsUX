@@ -15,12 +15,11 @@ export const getRecurrenceValue = (value: ValueSegment[]): Recurrence => {
 export const getIntervalValue = (value: string | undefined): number | undefined => {
   if (!value) {
     return undefined;
-  } else {
-    try {
-      return parseInt(value);
-    } catch {
-      return 0;
-    }
+  }
+  try {
+    return Number.parseInt(value);
+  } catch {
+    return 0;
   }
 };
 

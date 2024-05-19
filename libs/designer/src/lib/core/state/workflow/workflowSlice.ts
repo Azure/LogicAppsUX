@@ -9,6 +9,8 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
+import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
+import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
@@ -33,7 +35,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
-import * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
+import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
@@ -81,7 +83,9 @@ export const workflowSlice = createSlice({
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
       const nodeOperation = getRecordEntry(state.operations, nodeId);
-      if (!nodeOperation) return;
+      if (!nodeOperation) {
+        return;
+      }
       nodeOperation.description = description;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
@@ -89,7 +93,9 @@ export const workflowSlice = createSlice({
         return; // log exception
       }
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
-      if (!graph) throw new Error('graph not set');
+      if (!graph) {
+        throw new Error('graph not set');
+      }
 
       if (action.payload.isTrigger) {
         deleteWorkflowNode(constants.NODE.TYPE.PLACEHOLDER_TRIGGER, graph);
@@ -145,7 +151,9 @@ export const workflowSlice = createSlice({
       action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
-      if (!graph) throw new Error('graph not set');
+      if (!graph) {
+        throw new Error('graph not set');
+      }
 
       addNodeToWorkflow(
         {
@@ -158,17 +166,31 @@ export const workflowSlice = createSlice({
         state
       );
     },
+    pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state);
+    },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
         console.error('graph not set');
         return; // log exception
       }
       const oldGraph = getWorkflowNodeFromGraphState(state, action.payload.oldGraphId);
-      if (!oldGraph) throw new Error('graph not set');
+      if (!oldGraph) {
+        throw new Error('graph not set');
+      }
       const newGraph = getWorkflowNodeFromGraphState(state, action.payload.newGraphId);
-      if (!newGraph) throw new Error('graph not set');
+      if (!newGraph) {
+        throw new Error('graph not set');
+      }
       const currentNode = getWorkflowNodeFromGraphState(state, action.payload.nodeId);
-      if (!currentNode) throw new Error('node not set');
+      if (!currentNode) {
+        throw new Error('node not set');
+      }
 
       moveNodeInWorkflow(currentNode, oldGraph, newGraph, action.payload.relationshipIds, state.nodesMetadata, state);
 
@@ -186,7 +208,9 @@ export const workflowSlice = createSlice({
       const { nodeId, isTrigger } = action.payload;
       const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const graph = getWorkflowNodeFromGraphState(state, graphId);
-      if (!graph) throw new Error('graph not set');
+      if (!graph) {
+        throw new Error('graph not set');
+      }
 
       if (isTrigger) {
         const placeholderNode = {
@@ -241,15 +265,15 @@ export const workflowSlice = createSlice({
         return;
       }
       const stack: WorkflowNode[] = [state.graph];
-      const dimensionChangesById = dimensionChanges.reduce<Record<string, NodeDimensionChange>>((acc, val) => {
+
+      const dimensionChangesById: Record<string, NodeDimensionChange> = {};
+      for (const val of dimensionChanges) {
         if (val.type !== 'dimensions') {
-          return acc;
+          continue;
         }
-        return {
-          ...acc,
-          [val.id]: val,
-        };
-      }, {});
+        dimensionChangesById[val.id] = val as NodeDimensionChange;
+      }
+
       while (stack.length) {
         const node = stack.shift();
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
@@ -265,8 +289,11 @@ export const workflowSlice = createSlice({
       state.collapsedGraphIds = action.payload;
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
-      if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) delete state.collapsedGraphIds[action.payload];
-      else state.collapsedGraphIds[action.payload] = true;
+      if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
+        delete state.collapsedGraphIds[action.payload];
+      } else {
+        state.collapsedGraphIds[action.payload] = true;
+      }
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -278,13 +305,17 @@ export const workflowSlice = createSlice({
     setRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
-      if (!nodeMetadata) return;
+      if (!nodeMetadata) {
+        return;
+      }
       nodeMetadata.runIndex = page;
     },
     setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
       const { nodeId, runData } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
-      if (!nodeMetadata) return;
+      if (!nodeMetadata) {
+        return;
+      }
       const nodeRunData = {
         ...nodeMetadata.runData,
         ...runData,
@@ -301,7 +332,9 @@ export const workflowSlice = createSlice({
       const { caseId, nodeId } = action.payload;
       const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const node = getWorkflowNodeFromGraphState(state, graphId);
-      if (!node) throw new Error('node not set');
+      if (!node) {
+        throw new Error('node not set');
+      }
       addSwitchCaseToWorkflow(caseId, node, state.nodesMetadata, state);
 
       LoggerService().log({
@@ -320,18 +353,24 @@ export const workflowSlice = createSlice({
       });
     },
     buildEdgeIdsBySource: (state: WorkflowState) => {
-      if (!state.graph) return;
+      if (!state.graph) {
+        return;
+      }
 
       const output: Record<string, string[]> = {};
       const traverseGraph = (graph: WorkflowNode) => {
         const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
         if (edges) {
           edges.forEach((edge) => {
-            if (!getRecordEntry(output, edge.source)) output[edge.source] = [];
+            if (!getRecordEntry(output, edge.source)) {
+              output[edge.source] = [];
+            }
             getRecordEntry(output, edge.source)?.push(edge.target);
           });
         }
-        if (graph.children) graph.children.forEach((child) => traverseGraph(child));
+        if (graph.children) {
+          graph.children.forEach((child) => traverseGraph(child));
+        }
       };
       traverseGraph(state.graph);
       state.edgeIdsBySource = output;
@@ -365,7 +404,9 @@ export const workflowSlice = createSlice({
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
-      if (!parentOperation || !childOperation) return;
+      if (!parentOperation || !childOperation) {
+        return;
+      }
       childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 
       const graphPath: string[] = [];
@@ -391,8 +432,12 @@ export const workflowSlice = createSlice({
       action: PayloadAction<{ childOperation: string; parentOperation: string; statuses: string[] }>
     ) => {
       const childOperation = getRecordEntry(state.operations, action.payload.childOperation) as LogicAppsV2.ActionDefinition;
-      if (!childOperation) return;
-      if (!childOperation.runAfter) childOperation.runAfter = {};
+      if (!childOperation) {
+        return;
+      }
+      if (!childOperation.runAfter) {
+        childOperation.runAfter = {};
+      }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
@@ -443,6 +488,7 @@ export const workflowSlice = createSlice({
         deleteSwitchCase,
         addSwitchCase,
         addImplicitForeachNode,
+        pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
         removeEdgeFromRunAfter,
@@ -468,6 +514,7 @@ export const {
   addNode,
   addImplicitForeachNode,
   pasteNode,
+  pasteScopeNode,
   moveNode,
   deleteNode,
   deleteSwitchCase,

@@ -51,12 +51,14 @@ export class JwtTokenHelper {
       switch (tempString.length % 4) {
         case 0:
           break;
-        case 2:
+        case 2: {
           tempString += '==';
           break;
-        case 3:
+        }
+        case 3: {
           tempString += '=';
           break;
+        }
         default:
           throw new Error('Malformed base64url string!');
       }

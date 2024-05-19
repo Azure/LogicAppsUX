@@ -12,7 +12,7 @@ import { ProjectResource } from '@microsoft/vscode-extension-logic-apps';
 import type { Parameter, IParametersFileContent } from '@microsoft/vscode-extension-logic-apps';
 
 export class ParameterTreeItem extends AzExtTreeItem {
-  public readonly parent: ParametersTreeItem;
+  public declare readonly parent: ParametersTreeItem;
   public readonly name: string;
   public readonly content: Parameter;
 

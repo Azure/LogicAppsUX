@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { isCustomCode } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
@@ -34,14 +35,17 @@ import type { RepetitionContext } from '../../utils/parameters/helper';
 import {
   flattenAndUpdateViewModel,
   getAllInputParameters,
+  getParameterFromName,
   shouldIncludeSelfForRepetitionReference,
   updateDynamicDataInNode,
+  updateScopePasteTokenMetadata,
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import type { PasteScopeParams } from './copypaste';
 import {
   getCustomSwaggerIfNeeded,
   getInputParametersFromManifest,
@@ -66,7 +70,6 @@ import {
   aggregate,
   equals,
   getRecordEntry,
-  getFileExtensionNameFromOperationId,
   parseErrorMessage,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
@@ -94,6 +97,11 @@ export interface OperationMetadata {
   brandColor: string;
 }
 
+export interface PasteScopeAdditionalParams extends PasteScopeParams {
+  existingOutputTokens: Record<string, NodeTokens>;
+  rootTriggerId: string;
+}
+
 export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
@@ -101,7 +109,8 @@ export const initializeOperationMetadata = async (
   customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  pasteParams?: PasteScopeAdditionalParams
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
 
@@ -112,7 +121,9 @@ export const initializeOperationMetadata = async (
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
+    if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+      continue;
+    }
     const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
     if (isTrigger) {
@@ -131,7 +142,7 @@ export const initializeOperationMetadata = async (
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
   const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
-  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos, pasteParams);
 
   const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
   if (triggerNodeManifest) {
@@ -215,7 +226,9 @@ export const initializeOperationDetailsForManifest = async (
     const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
 
-    if (!operationInfo) return;
+    if (!operationInfo) {
+      return;
+    }
     const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
@@ -244,9 +257,10 @@ export const initializeOperationDetailsForManifest = async (
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
     }
 
+    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     // Populate Customcode with values gotten from file system
-    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
-      updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs, customCode);
+    if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
+      updateCustomCodeInInputs(customCodeParameter, customCode);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -347,46 +361,62 @@ const updateTokenMetadataInParameters = (
   workflowParameters: Record<string, WorkflowParameter>,
   nodesMetadata: NodesMetadata,
   triggerNodeId: string,
-  repetitionInfos: Record<string, RepetitionContext>
+  repetitionInfos: Record<string, RepetitionContext>,
+  pasteParams?: PasteScopeAdditionalParams
 ) => {
   const nodesData = map(nodes, 'id');
-  const actionNodes = nodes
-    .map((node) => node.id)
-    .filter((nodeId) => nodeId !== triggerNodeId)
-    .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
+  const actionNodesArray = nodes.map((node) => node.id).filter((nodeId) => nodeId !== triggerNodeId);
+  const actionNodes: Record<string, string> = {};
+  for (const id of actionNodesArray) {
+    actionNodes[id] = id;
+  }
 
   for (const nodeData of nodes) {
     const { id, nodeInputs } = nodeData;
     const allParameters = getAllInputParameters(nodeInputs);
     const repetitionInfo = getRecordEntry(repetitionInfos, id) ?? { repetitionReferences: [] };
     for (const parameter of allParameters) {
-      const segments = parameter.value;
-
+      const { value: segments, editorViewModel, type } = parameter;
+      let error = '';
+      let hasToken = false;
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
+          let updatedSegment = segment;
+
           if (isTokenValueSegment(segment)) {
+            if (pasteParams) {
+              const { updatedTokenSegment, tokenError } = updateScopePasteTokenMetadata(segment, pasteParams);
+              updatedSegment = updatedTokenSegment;
+              error = tokenError;
+              hasToken = true;
+            }
             return updateTokenMetadata(
-              segment,
+              updatedSegment,
               repetitionInfo,
               actionNodes,
-              triggerNodeId,
+              pasteParams ? pasteParams.rootTriggerId : triggerNodeId,
               nodesData,
               operations,
               workflowParameters,
               nodesMetadata,
-              parameter.type
+              type
             );
           }
-
-          return segment;
+          return updatedSegment;
         });
       }
-
-      const viewModel = parameter.editorViewModel;
-      if (viewModel) {
+      if (pasteParams) {
+        if (hasToken) {
+          parameter.preservedValue = undefined;
+        }
+        if (error) {
+          parameter.validationErrors = [error];
+        }
+      }
+      if (editorViewModel) {
         flattenAndUpdateViewModel(
           repetitionInfo,
-          viewModel,
+          editorViewModel,
           actionNodes,
           triggerNodeId,
           nodesData,
@@ -404,29 +434,27 @@ const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
-  nodesMetadata: NodesMetadata
+  nodesMetadata: NodesMetadata,
+  existingOutputTokens: string[] = []
 ): Record<string, NodeTokens> => {
-  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-  const nodesWithData = allNodesData.reduce(
-    (actionNodes: Record<string, NodeDataWithOperationMetadata>, nodeData: NodeDataWithOperationMetadata) => ({
-      ...actionNodes,
-      [nodeData.id]: nodeData,
-    }),
-    {}
-  );
-  const operationInfos = allNodesData.reduce(
-    (result: Record<string, NodeOperation>, nodeData: NodeDataWithOperationMetadata) => ({
-      ...result,
-      [nodeData.id]: nodeData.operationInfo as NodeOperation,
-    }),
-    {}
-  );
+  const nodeMap: Record<string, string> = {};
+  for (const id of Object.keys(operations)) {
+    nodeMap[id] = id;
+  }
+  const nodesWithData: Record<string, NodeDataWithOperationMetadata> = {};
+  for (const nodeData of allNodesData) {
+    nodesWithData[nodeData.id] = nodeData;
+  }
+  const operationInfos: Record<string, NodeOperation> = {};
+  for (const nodeData of allNodesData) {
+    operationInfos[nodeData.id] = nodeData.operationInfo as NodeOperation;
+  }
 
   const result: Record<string, NodeTokens> = {};
 
   for (const operationId of Object.keys(operations)) {
     const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, operationInfos, nodeMap);
-    const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
+    const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds: [...upstreamNodeIds, ...existingOutputTokens] };
 
     try {
       const nodeData = nodesWithData[operationId];
@@ -488,20 +516,15 @@ const initializeRepetitionInfos = async (
   nodesMetadata: NodesMetadata
 ): Promise<Record<string, RepetitionContext>> => {
   const promises: Promise<{ id: string; repetition: RepetitionContext }>[] = [];
-  const { operationInfos, inputs, settings } = nodesData.reduce(
-    (
-      result: { operationInfos: Record<string, NodeOperation>; inputs: Record<string, NodeInputs>; settings: Record<string, any> },
-      currentNode: NodeDataWithOperationMetadata
-    ) => {
-      const { id, nodeInputs, operationInfo, settings } = currentNode;
-      result.operationInfos[id] = operationInfo as NodeOperation;
-      result.inputs[id] = nodeInputs;
-      result.settings[id] = settings;
-
-      return result;
-    },
-    { operationInfos: {}, inputs: {}, settings: {} }
-  );
+  const operationInfos: Record<string, any> = {};
+  const inputs: Record<string, any> = {};
+  const settings: Record<string, any> = {};
+  for (const nodeData of nodesData) {
+    const { id, nodeInputs, operationInfo, settings: _settings } = nodeData;
+    operationInfos[id] = operationInfo as NodeOperation;
+    inputs[id] = nodeInputs;
+    settings[id] = _settings;
+  }
 
   const splitOn = settings[triggerNodeId]
     ? settings[triggerNodeId].splitOn?.value?.enabled
@@ -521,16 +544,18 @@ const initializeRepetitionInfos = async (
   }
 
   const allRepetitions = (await Promise.all(promises)).filter((data) => !!data);
-  return allRepetitions.reduce(
-    (result: Record<string, RepetitionContext>, { id, repetition }: { id: string; repetition: RepetitionContext }) => ({
-      ...result,
-      [id]: repetition,
-    }),
-    {}
-  );
+  const mappedRepitions: Record<string, RepetitionContext> = {};
+  for (const { id, repetition } of allRepetitions) {
+    mappedRepitions[id] = repetition;
+  }
+  return mappedRepitions;
 };
 
-export const initializeDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
+export const initializeDynamicDataInNodes = async (
+  getState: () => RootState,
+  dispatch: Dispatch,
+  operationsToInitialize?: string[]
+): Promise<void> => {
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
@@ -540,14 +565,23 @@ export const initializeDynamicDataInNodes = async (getState: () => RootState, di
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
-    if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
-    if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) continue;
+    if (operationsToInitialize && !operationsToInitialize.includes(nodeId)) {
+      continue;
+    }
+    if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+      continue;
+    }
+    if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) {
+      continue;
+    }
 
     const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
     const nodeDependencies = getRecordEntry(dependencies, nodeId);
     const nodeInputs = getRecordEntry(inputParameters, nodeId);
     const nodeSettings = getRecordEntry(settings, nodeId);
-    if (!nodeOperationInfo || !nodeDependencies || !nodeInputs || !nodeSettings) continue;
+    if (!nodeOperationInfo || !nodeDependencies || !nodeInputs || !nodeSettings) {
+      continue;
+    }
 
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const connectionReference = getConnectionReference(connections, nodeId);
@@ -600,6 +634,12 @@ const updateDynamicDataForValidConnection = async (
       operation
     );
   } else {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'OperationDeserializer:UpdateDynamicData',
+      message: 'Invalid connection message shown on the card.',
+    });
+
     const intl = getIntl();
     dispatch(
       updateErrorDetails({

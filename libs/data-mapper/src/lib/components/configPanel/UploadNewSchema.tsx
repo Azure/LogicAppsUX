@@ -37,10 +37,10 @@ export const UploadNewSchema = (props: UploadNewSchemaProps) => {
     const schemaFile = event.currentTarget.files[0] as FileWithVsCodePath;
     if (!schemaFile.path) {
       console.log('Path property is missing from file (should only occur in browser/standalone)');
-    } else if (!props.schemaType) {
-      console.error('Missing schemaType');
-    } else {
+    } else if (props.schemaType) {
       props.setSelectedSchemaFile({ name: schemaFile.name, path: schemaFile.path, type: props.schemaType });
+    } else {
+      console.error('Missing schemaType');
     }
   };
 

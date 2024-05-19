@@ -23,7 +23,9 @@ export const moveNodeInWorkflow = (
 ) => {
   const nodeId = currentNode.id;
 
-  if (!oldWorkflowGraph.id) throw new Error('Workflow graph is missing an id');
+  if (!oldWorkflowGraph.id) {
+    throw new Error('Workflow graph is missing an id');
+  }
 
   const { parentId, childId } = relationshipIds;
 
@@ -49,7 +51,9 @@ export const moveNodeInWorkflow = (
     const childIds = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
     childIds.forEach((childId) => {
       const childMetadata = getRecordEntry(nodesMetadata, childId);
-      if (childMetadata) childMetadata.isRoot = true;
+      if (childMetadata) {
+        childMetadata.isRoot = true;
+      }
       delete (getRecordEntry(state.operations, childId) as any)?.runAfter;
     });
   }
@@ -95,7 +99,9 @@ export const moveNodeInWorkflow = (
   const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
 
   nodesMetadata[nodeId] = { ...getRecordEntry(nodesMetadata, nodeId), graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
-  if (getRecordEntry(nodesMetadata, nodeId)?.isRoot === false) delete nodesMetadata[nodeId].isRoot;
+  if (getRecordEntry(nodesMetadata, nodeId)?.isRoot === false) {
+    delete nodesMetadata[nodeId].isRoot;
+  }
 
   const parentMetadata = getRecordEntry(nodesMetadata, parentId);
   const isAfterTrigger = (parentMetadata?.isRoot && newGraphId === 'root') ?? false;
@@ -122,7 +128,9 @@ export const moveNodeInWorkflow = (
     addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
   }
 
-  if (isNewRoot && (getRecordEntry(state.operations, nodeId) as any)) delete (getRecordEntry(state.operations, nodeId) as any)?.runAfter;
+  if (isNewRoot && (getRecordEntry(state.operations, nodeId) as any)) {
+    delete (getRecordEntry(state.operations, nodeId) as any)?.runAfter;
+  }
   applyIsRootNode(state, newWorkflowGraph, nodesMetadata);
 
   state.isDirty = true;

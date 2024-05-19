@@ -386,9 +386,11 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
 
   if (nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH) {
     return TokenType.ITEM;
-  } else if (key === Constants.UNTIL_CURRENT_ITERATION_INDEX_KEY) {
+  }
+  if (key === Constants.UNTIL_CURRENT_ITERATION_INDEX_KEY) {
     return TokenType.ITERATIONINDEX;
-  } else if (token.outputInfo?.functionName) {
+  }
+  if (token.outputInfo?.functionName) {
     return equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS) ? TokenType.PARAMETER : TokenType.VARIABLE;
   }
   return TokenType.OUTPUTS;

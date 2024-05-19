@@ -4,8 +4,8 @@ import { useIntl } from 'react-intl';
 
 const useStyles = makeStyles({
   placeholderContainer: {
-    width: `240px`,
-    height: `300px`,
+    width: '240px',
+    height: '300px',
     ...shorthands.border(tokens.strokeWidthThick, 'dashed', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
   },

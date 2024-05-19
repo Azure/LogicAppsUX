@@ -45,20 +45,18 @@ export function getEnum(parameter: SchemaObject, required: boolean | undefined):
     const customEnum: EnumObject[] = parameter[Constants.ExtensionProperties.CustomEnum];
     if (customEnum) {
       return customEnum;
-    } else {
-      const editorOptions = parameter[Constants.ExtensionProperties.EditorOptions];
-      if (editorOptions && editorOptions.items) {
-        return editorOptions.items.map((item: any) => ({
-          displayName: item.title,
-          value: item.value,
-        }));
-      } else {
-        return parameter.enum.map((item) => ({
-          displayName: !isNullOrUndefined(item) ? item.toString() : '',
-          value: item,
-        }));
-      }
     }
+    const editorOptions = parameter[Constants.ExtensionProperties.EditorOptions];
+    if (editorOptions && editorOptions.items) {
+      return editorOptions.items.map((item: any) => ({
+        displayName: item.title,
+        value: item.value,
+      }));
+    }
+    return parameter.enum.map((item) => ({
+      displayName: isNullOrUndefined(item) ? '' : item.toString(),
+      value: item,
+    }));
   }
 
   if (parameter.type === Constants.Types.Boolean) {
@@ -164,7 +162,8 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
         required,
       },
     };
-  } else if (schema.type === 'object') {
+  }
+  if (schema.type === 'object') {
     const properties = schema.properties || {};
     const keys = Object.keys(properties).filter((key) => {
       const property = properties[key];
@@ -193,9 +192,15 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
 }
 
 export function getEditorForParameter(parameter: SchemaObject, dynamicValues: ParameterDynamicValues | undefined): string | undefined {
-  if (!dynamicValues) return parameter[Constants.ExtensionProperties.Editor];
-  if (parameter?.type === Constants.Types.Array) return parameter[Constants.ExtensionProperties.Editor]; // If the parameter is in an array, break out so we render the array editor
-  if (isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)) return 'filepicker';
+  if (!dynamicValues) {
+    return parameter[Constants.ExtensionProperties.Editor];
+  }
+  if (parameter?.type === Constants.Types.Array) {
+    return parameter[Constants.ExtensionProperties.Editor]; // If the parameter is in an array, break out so we render the array editor
+  }
+  if (isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)) {
+    return 'filepicker';
+  }
   return 'combobox';
 }
 
@@ -289,10 +294,10 @@ export function getKnownTitles(name: string): string {
         id: 'BJNUxN',
         description: 'Display name for relative path parameters in trigger outputs',
       });
-    default:
-      // eslint-disable-next-line no-case-declarations
+    default: {
       const segments = parseEx(name);
       return segments.length ? String(segments[segments.length - 1].value) : '';
+    }
   }
 }
 
@@ -308,11 +313,12 @@ export function getKnownTitlesFromKey(key: string): string | undefined {
       return getKnownTitles(OutputKeys.PathParameters);
     case '$.statuscode':
       return getKnownTitles(OutputKeys.StatusCode);
-    default:
+    default: {
       if (key.startsWith('$.x-ms-')) {
         return replaceXmsTitle(key);
       }
       return undefined;
+    }
   }
 }
 

@@ -1,6 +1,6 @@
-import { defineProject } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import packageJson from './package.json'
+import { defineProject } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import packageJson from './package.json';
 
 export default defineProject({
   plugins: [react()],
@@ -10,15 +10,14 @@ export default defineProject({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'json'] },
+    globalSetup: './test-globals.ts',
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
     restoreMocks: true,
     alias: [
       {
         find: /^monaco-editor$/,
-        replacement:
-          __dirname + "/node_modules/monaco-editor/esm/vs/editor/editor.api",
+        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
       },
     ],
-
   },
-})
+});

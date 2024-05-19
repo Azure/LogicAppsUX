@@ -74,6 +74,7 @@ export interface ConnectionParameterUIDefinitionBase {
     location?: string;
     propertyPath?: string[];
     hideInUI?: string;
+    editor?: string;
     default?: any;
     dependentParameter?: {
       parameter: string;

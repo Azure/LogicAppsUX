@@ -188,7 +188,7 @@ export async function getConnectionsAndSettingsToUpdate(
     const reference = connectionReferences[referenceKey];
 
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
-      accessToken = !accessToken ? await getAuthorizationToken(/* credentials */ undefined, azureTenantId) : accessToken;
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
         reference,
@@ -260,7 +260,8 @@ export function resolveSettingsInConnection(
             value = settings[settingKey];
           }
 
-          return { ...result, [parameterKey]: value };
+          result[parameterKey] = value;
+          return result;
         }, {}),
       }
     : connectionInfo;

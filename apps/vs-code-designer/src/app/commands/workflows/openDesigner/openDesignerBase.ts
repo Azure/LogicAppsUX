@@ -11,7 +11,7 @@ import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Pa
 import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
-export interface IDesingerOptions {
+export interface IDesignerOptions {
   references?: any;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
@@ -77,7 +77,7 @@ export abstract class OpenDesignerBase {
     this.panel.webview.postMessage(msg);
   }
 
-  protected async getWebviewContent(options: IDesingerOptions): Promise<string> {
+  protected async getWebviewContent(options: IDesignerOptions): Promise<string> {
     const { parametersData, localSettings, artifacts, azureDetails } = options;
     let { connectionsData } = options;
 
@@ -115,12 +115,12 @@ export abstract class OpenDesignerBase {
       const canHavekeyWord = i + 12 <= stringLength;
 
       if (interpolationString[i] === '@' && canHavekeyWord && this.haveKeyWord(interpolationString.substring(i, i + 12))) {
-        resolvedString += interpolationString[i] + '{';
+        resolvedString += `${interpolationString[i]}{`;
         const closeTagIndex = interpolationString.indexOf(')', i);
-        interpolationString =
-          interpolationString.substring(0, closeTagIndex + 1) +
-          '}' +
-          interpolationString.substring(closeTagIndex + 1, interpolationString.length);
+        interpolationString = `${interpolationString.substring(0, closeTagIndex + 1)}}${interpolationString.substring(
+          closeTagIndex + 1,
+          interpolationString.length
+        )}`;
         stringLength = interpolationString.length;
       } else {
         resolvedString += interpolationString[i];

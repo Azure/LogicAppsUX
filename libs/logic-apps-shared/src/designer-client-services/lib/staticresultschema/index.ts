@@ -38,7 +38,7 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
     parser?: SwaggerParser | ManifestParser
   ): Promise<StaticResultRootSchemaType | undefined> {
     switch (connectorId.toLowerCase()) {
-      case httpConnectorId.toLowerCase():
+      case httpConnectorId.toLowerCase(): {
         switch (operationId.toLowerCase()) {
           case httpaction:
           case httpswaggeraction:
@@ -48,8 +48,9 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
             break;
         }
         break;
+      }
 
-      case flatFileConnectorId.toLowerCase():
+      case flatFileConnectorId.toLowerCase(): {
         switch (operationId.toLowerCase()) {
           case flatfiledecoding:
             return Promise.resolve(FlatFileDecodingStaticResultSchema);
@@ -59,10 +60,11 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
             break;
         }
         break;
+      }
 
       case apiManagementConnectorId.toLowerCase():
         return Promise.resolve(HttpStaticResultSchema);
-      case dataOperationConnectorId.toLowerCase():
+      case dataOperationConnectorId.toLowerCase(): {
         switch (operationId.toLowerCase()) {
           case parsejson:
             return Promise.resolve(ParseJsonStaticResultSchema);
@@ -74,7 +76,8 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
         }
 
         break;
-      default:
+      }
+      default: {
         if (
           (isSharedManagedConnectorId(connectorId) ||
             isSharedManagedConnectorIdFromPApps(connectorId) ||
@@ -86,6 +89,7 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
         }
 
         break;
+      }
     }
     return Promise.resolve(undefined);
   }

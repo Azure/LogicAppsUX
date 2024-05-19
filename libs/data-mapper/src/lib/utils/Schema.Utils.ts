@@ -39,7 +39,7 @@ export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExte
 };
 
 export const getFileNameAndPath = (fullPath: string): [string, string] => {
-  const normalizedPath = fullPath.replaceAll(`\\`, '/');
+  const normalizedPath = fullPath.replaceAll('\\', '/');
   const lastIndexOfSlash = normalizedPath.lastIndexOf('/');
   const fileName = lastIndexOfSlash !== -1 ? normalizedPath.slice(lastIndexOfSlash + 1, normalizedPath.length + 1) : normalizedPath;
   const filePath = normalizedPath.slice(0, lastIndexOfSlash + 1);
@@ -194,6 +194,7 @@ export const searchSchemaTreeFromRoot = (
     includeScore: true,
     minMatchCharLength: 2,
     includeMatches: true,
+    ignoreLocation: true,
     threshold: 0.4,
     keys: ['qName'],
   };

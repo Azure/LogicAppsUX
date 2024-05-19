@@ -14,19 +14,20 @@ import underlineLight from '../icons/light/type-underline.svg';
 import { DropdownColorPicker } from './DropdownColorPicker';
 import { getSelectedNode, sanitizeUrl } from './helper/functions';
 import { useTheme } from '@fluentui/react';
+import { ToolbarButton } from '@fluentui/react-components';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
+import { $getSelectionStyleValueForProperty, $patchStyleText } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
 import { isApple } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import {
-  COMMAND_PRIORITY_NORMAL,
-  KEY_MODIFIER_COMMAND,
-  COMMAND_PRIORITY_CRITICAL,
-  SELECTION_CHANGE_COMMAND,
   $getSelection,
   $isRangeSelection,
+  COMMAND_PRIORITY_CRITICAL,
+  COMMAND_PRIORITY_NORMAL,
   FORMAT_TEXT_COMMAND,
+  KEY_MODIFIER_COMMAND,
+  SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -140,10 +141,10 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   );
 
   const insertLink = useCallback(() => {
-    if (!isLink) {
-      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
-    } else {
+    if (isLink) {
       activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    } else {
+      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
     }
   }, [activeEditor, isLink]);
 
@@ -214,55 +215,52 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
     id: 'tUCptx',
     description: 'label to insert link',
   });
+  const backgroundColorTitle = intl.formatMessage({
+    defaultMessage: 'Background Color',
+    id: 'r7ZizR',
+    description: 'label to set background color',
+  });
+  const textColorTitle = intl.formatMessage({
+    defaultMessage: 'Text Color',
+    id: 'ZVB4NL',
+    description: 'label to set text color',
+  });
 
   return (
     <>
-      <button
+      <ToolbarButton
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
-        className={'toolbar-item spaced ' + (isBold ? 'active' : '')}
+        className={`toolbar-item spaced ${isBold ? 'active' : ''}`}
         title={isApple() ? boldTitleMac : boldTitleNonMac}
         aria-label={isApple() ? boldTitleMacAriaLabel : boldTitleNonMacAriaLabel}
         disabled={readonly}
-      >
-        <img className={'format'} src={isInverted ? boldDark : boldLight} alt={'bold icon'} />
-      </button>
-      <button
+        icon={<img className={'format'} src={isInverted ? boldDark : boldLight} alt={'bold icon'} />}
+      />
+      <ToolbarButton
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
-        className={'toolbar-item spaced ' + (isItalic ? 'active' : '')}
+        className={`toolbar-item spaced ${isItalic ? 'active' : ''}`}
         title={isApple() ? italicTitleMac : italicTitleNonMac}
         aria-label={isApple() ? italicTitleMacAriaLabel : italicTitleNonMacAriaLabel}
         disabled={readonly}
-      >
-        <img className={'format'} src={isInverted ? italicDark : italicLight} alt={'italic icon'} />
-      </button>
-      <button
+        icon={<img className={'format'} src={isInverted ? italicDark : italicLight} alt={'italic icon'} />}
+      />
+      <ToolbarButton
         onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
-        className={'toolbar-item spaced ' + (isUnderline ? 'active' : '')}
+        className={`toolbar-item spaced ${isUnderline ? 'active' : ''}`}
         title={isApple() ? underlineTitleMac : underlineTitleNonMac}
         aria-label={isApple() ? underlineTitleMacAriaLabel : underlineTitleNonMacAriaLabel}
         disabled={readonly}
-      >
-        <img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />
-      </button>
-      <button
-        onMouseDown={(e) => e.preventDefault()}
-        disabled={readonly}
-        onClick={insertLink}
-        className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
-        aria-label={insertLinkLabel}
-        title={insertLinkLabel}
-      >
-        <img className={'format'} src={isInverted ? linkDark : linkLight} alt={'link icon'} />
-      </button>
+        icon={<img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />}
+      />
       <DropdownColorPicker
         editor={activeEditor}
         disabled={readonly}
@@ -271,7 +269,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         buttonIconSrc={isInverted ? fontColorSvgDark : fontColorSvgLight}
         color={fontColor}
         onChange={onFontColorSelect}
-        title="text color"
+        title={textColorTitle}
       />
       <DropdownColorPicker
         editor={activeEditor}
@@ -281,7 +279,16 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         buttonIconSrc={isInverted ? paintBucketSvgDark : paintBucketSvgLight}
         color={bgColor}
         onChange={onBgColorSelect}
-        title="background color"
+        title={backgroundColorTitle}
+      />
+      <ToolbarButton
+        onMouseDown={(e) => e.preventDefault()}
+        disabled={readonly}
+        onClick={insertLink}
+        className={`toolbar-item spaced ${isLink ? 'active' : ''}`}
+        aria-label={insertLinkLabel}
+        title={insertLinkLabel}
+        icon={<img className={'format'} src={isInverted ? linkDark : linkLight} alt={'link icon'} />}
       />
     </>
   );

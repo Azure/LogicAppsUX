@@ -1,4 +1,4 @@
-import { type AppDispatch } from '../../../../core';
+import type { AppDispatch } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
@@ -39,12 +39,16 @@ export const SelectConnection = () => {
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
   useEffect(() => {
-    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) createConnectionCallback();
+    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+      createConnectionCallback();
+    }
   }, [connectionQuery.isError, connectionQuery.isLoading, connections, createConnectionCallback]);
 
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
-      if (!connection) return;
+      if (!connection) {
+        return;
+      }
       for (const nodeId of selectedNodeIds) {
         dispatch(
           updateNodeConnection({
@@ -102,15 +106,17 @@ export const SelectConnection = () => {
     description: 'Aria label description for cancel button',
   });
 
-  if (connectionQuery.isLoading)
+  if (connectionQuery.isLoading) {
     return (
       <div className="msla-loading-container">
         <Spinner size={'large'} label={loadingText} />
       </div>
     );
+  }
 
-  if (connectionQuery.isError)
+  if (connectionQuery.isError) {
     return <MessageBar messageBarType={MessageBarType.error}>{JSON.stringify(connectionQuery.error)}</MessageBar>;
+  }
 
   return (
     <div className="msla-edit-connection-container">

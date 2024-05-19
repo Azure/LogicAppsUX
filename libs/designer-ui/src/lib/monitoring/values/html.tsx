@@ -16,7 +16,7 @@ export const HtmlValue: React.FC<ValueProps> = (props) => {
       </label>
       <div aria-labelledby={id} className="msla-trace-value-text msla-trace-value-html-table">
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: This is needed in this case but we should investigate other ways of doing it */}
-        <table dangerouslySetInnerHTML={{ __html }} tabIndex={0}></table>
+        <table dangerouslySetInnerHTML={{ __html }} tabIndex={0} />
       </div>
     </section>
   );

@@ -8,6 +8,7 @@ import {
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
+  extensionCommand,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -18,7 +19,7 @@ import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import { writeFileSync } from 'fs';
@@ -106,7 +107,7 @@ class ExportEngine {
         this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
         ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
         const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
-        vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
+        vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, { forceNewWindow: true });
         return;
       }
 
@@ -133,7 +134,7 @@ class ExportEngine {
       this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
       ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
       const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
-      vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
+      vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri, { forceNewWindow: true });
     } catch (error) {
       this.addStatus(localize('exportFailed', 'Export failed. {0}', error?.message ?? ''));
       this.setFinalStatus(this.finalStatus.Failed);
@@ -347,7 +348,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
+  let interval: NodeJS.Timeout;
 
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {

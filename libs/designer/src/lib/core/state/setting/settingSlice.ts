@@ -21,13 +21,20 @@ export const settingsSlice = createSlice({
   initialState,
   reducers: {
     setValidationError: (state: SettingsState, action: PayloadAction<{ nodeId: string; errors: ValidationError[] }>) => {
-      if (!action?.payload) return;
+      if (!action?.payload) {
+        return;
+      }
       const { nodeId, errors } = action.payload;
-      if (errors.length === 0) delete state.validationErrors[nodeId];
-      else state.validationErrors[nodeId] = errors;
+      if (errors.length === 0) {
+        delete state.validationErrors[nodeId];
+      } else {
+        state.validationErrors[nodeId] = errors;
+      }
     },
     setExpandedSections: (state: SettingsState, action: PayloadAction<SettingSectionName>) => {
-      if (!action || !action.payload) return;
+      if (!action || !action.payload) {
+        return;
+      }
       const { payload: sectionName } = action;
       if (state.expandedSections.includes(sectionName)) {
         state.expandedSections = state.expandedSections.filter((cv) => cv !== sectionName);

@@ -5,7 +5,7 @@ import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
 import { useOutsideClick } from '@microsoft/logic-apps-shared';
-import type { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical';
+import type { BaseSelection, LexicalEditor } from 'lexical';
 import {
   $getSelection,
   $isRangeSelection,
@@ -17,7 +17,7 @@ import {
 } from 'lexical';
 import type { Dispatch } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import * as React from 'react';
+import type * as React from 'react';
 import { createPortal } from 'react-dom';
 
 const buttonStyles: Partial<IButtonStyles> = {
@@ -50,7 +50,7 @@ function FloatingLinkEditor({
   const [linkUrl, setLinkUrl] = useState('');
   const [editedLinkUrl, setEditedLinkUrl] = useState('');
   const [isEditMode, setEditMode] = useState(false);
-  const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null);
+  const [lastSelection, setLastSelection] = useState<BaseSelection | null>(null);
   const [showFloatingLink, setShowFloatingLink] = useState(isMainEditorFocused);
 
   useEffect(() => {

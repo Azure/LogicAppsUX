@@ -42,7 +42,9 @@ export function areSwaggerOperationPathsMatching(path1: string, path2: string): 
 }
 
 export function isFunctionContainer(kind: any): boolean {
-  if (typeof kind !== 'string') return false;
+  if (typeof kind !== 'string') {
+    return false;
+  }
 
   const kinds = kind.split(',');
   return (

@@ -3,7 +3,7 @@ import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
 import type { IDropdownOption } from '@fluentui/react';
-import { type OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -69,7 +69,7 @@ export const StaticResultProperties = ({
           />
         </div>
       </div>
-      <div className={!isRoot ? 'msla-static-result-properties-inner' : undefined}>
+      <div className={isRoot ? undefined : 'msla-static-result-properties-inner'}>
         {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
           return showProperty && propertiesSchema[propertyName] ? (
             <StaticResultProperty

@@ -78,7 +78,7 @@ export async function getLocalSettingsJson(
   localSettingsPath: string,
   allowOverwrite = false
 ): Promise<ILocalSettingsJson> {
-  if (await fse.pathExists(localSettingsPath)) {
+  if (fse.existsSync(localSettingsPath)) {
     const data: string = (await fse.readFile(localSettingsPath)).toString();
     const localSettingsUri: Uri = Uri.file(localSettingsPath);
 
@@ -144,7 +144,8 @@ export async function setLocalAppSetting(
   settings.Values = settings.Values || {};
   if (settings.Values[key] === value) {
     return;
-  } else if (settings.Values[key]) {
+  }
+  if (settings.Values[key]) {
     if (behavior === MismatchBehavior.Prompt) {
       const message: string = localize('SettingAlreadyExists', "Local app setting '{0}' already exists. Overwrite?", key);
       if (

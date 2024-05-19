@@ -66,9 +66,9 @@ export async function verifyVersionAndLanguage(
   const localWorkerRuntime: WorkerRuntime | undefined = getFunctionsWorkerRuntime(localLanguage);
 
   if (
-    azureWorkerRuntime != WorkerRuntime.Node &&
-    azureWorkerRuntime != WorkerRuntime.Dotnet &&
-    azureWorkerRuntime != WorkerRuntime.DotnetIsolated
+    azureWorkerRuntime !== WorkerRuntime.Node &&
+    azureWorkerRuntime !== WorkerRuntime.Dotnet &&
+    azureWorkerRuntime !== WorkerRuntime.DotnetIsolated
   ) {
     throw new Error(
       localize(

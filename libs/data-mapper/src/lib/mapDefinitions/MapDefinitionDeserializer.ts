@@ -95,13 +95,13 @@ export class MapDefinitionDeserializer {
   ) => {
     if (Array.isArray(sourceNodeObject)) {
       // TODO Support for multiple array entries
-      for (let index = 0; index < sourceNodeObject.length; index++) {
-        const element = sourceNodeObject[index];
+      for (const element of sourceNodeObject) {
         this._parseDefinitionToConnection(element, targetKey, targetArrayDepth + 1, connections);
       }
 
       return;
-    } else if (typeof sourceNodeObject === 'string') {
+    }
+    if (typeof sourceNodeObject === 'string') {
       this._createConnections(sourceNodeObject, targetKey, targetArrayDepth, connections);
 
       return;
@@ -366,8 +366,8 @@ export class MapDefinitionDeserializer {
 
         const targetTokens = lexThisThing(targetKey);
         let lookForSequence = false;
-        for (let i = 0; i < targetTokens.length; i++) {
-          if (targetTokens[i] === ReservedToken.for) {
+        for (const token of targetTokens) {
+          if (token === ReservedToken.for) {
             lookForSequence = true;
           }
           if (lookForSequence && targetKey !== sequencesRemovedTargetKey) {

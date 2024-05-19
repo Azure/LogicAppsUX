@@ -296,7 +296,8 @@ function getSignaturesInfo(expressionInfo: ExpressionInfo): SignatureHelpResult 
         activeParameter,
       },
     };
-  } else if (signatureWithVariableParameters.length === 1) {
+  }
+  if (signatureWithVariableParameters.length === 1) {
     const staticSignatures = signaturesWithFixedParameters.map(mapSignature);
     const variableSignatures = generateSignaturesForVariableParameters(
       templateFunction.name,

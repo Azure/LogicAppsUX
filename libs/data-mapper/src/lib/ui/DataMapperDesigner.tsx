@@ -306,9 +306,8 @@ export const DataMapperDesigner = ({
 
     if (isPropPaneExpanded) {
       return centerViewHeight - getExpandedPropPaneTotalHeight();
-    } else {
-      return centerViewHeight - getCollapsedPropPaneTotalHeight();
     }
+    return centerViewHeight - getCollapsedPropPaneTotalHeight();
   };
 
   const openMapChecker = () => {
@@ -350,17 +349,19 @@ export const DataMapperDesigner = ({
                         backgroundColor: tokens.colorNeutralBackground4,
                       }}
                     >
-                      {!currentTargetSchemaNode ? (
-                        <MapOverview />
-                      ) : showGlobalView ? (
-                        <GlobalView />
+                      {currentTargetSchemaNode ? (
+                        showGlobalView ? (
+                          <GlobalView />
+                        ) : (
+                          <ReactFlowWrapper
+                            canvasBlockHeight={getCanvasAreaHeight()}
+                            canvasBlockWidth={centerViewWidth}
+                            useExpandedFunctionCards={useExpandedFunctionCards}
+                            openMapChecker={openMapChecker}
+                          />
+                        )
                       ) : (
-                        <ReactFlowWrapper
-                          canvasBlockHeight={getCanvasAreaHeight()}
-                          canvasBlockWidth={centerViewWidth}
-                          useExpandedFunctionCards={useExpandedFunctionCards}
-                          openMapChecker={openMapChecker}
-                        />
+                        <MapOverview />
                       )}
                     </div>
 

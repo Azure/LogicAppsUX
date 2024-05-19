@@ -1,6 +1,7 @@
 import type { SettingProps } from './';
 import { Checkbox } from '@fluentui/react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 type StatusChangeHandler = (selections: MultiSelectOption[]) => void;
 

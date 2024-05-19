@@ -50,17 +50,15 @@ async function sendAndParseResponse(client: ServiceClient, options: RequestPrepa
         ? parseError(response.parsedBody || response.bodyAsText).message
         : localize('unexpectedStatusCode', 'Unexpected status code: {0}', response.status);
       throw new RestError(errorMessage, undefined, response.status, /*request*/ undefined, response, response.bodyAsText);
-    } else {
-      return response;
     }
+    return response;
   } catch (error) {
     if (isTimeoutError(error)) {
       throw new Error(
         localize('timeoutFeed', 'Request timed out. Modify setting "{0}.{1}" if you want to extend the timeout.', ext.prefix, timeoutKey)
       );
-    } else {
-      throw error;
     }
+    throw error;
   }
 }
 
@@ -83,9 +81,8 @@ export async function sendRequestWithExtTimeout(
       throw new Error(
         localize('timeoutFeed', 'Request timed out. Modify setting "{0}.{1}" if you want to extend the timeout.', ext.prefix, timeoutKey)
       );
-    } else {
-      throw new Error(localize('sendRequestError', `${options.url} request failed with error: ${error}`));
     }
+    throw new Error(localize('sendRequestError', `${options.url} request failed with error: ${error}`));
   }
 }
 

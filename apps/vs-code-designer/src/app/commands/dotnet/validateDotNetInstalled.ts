@@ -15,15 +15,14 @@ import type { MessageItem } from 'vscode';
 /**
  * Checks if dotnet 6 is installed, and installs it if needed.
  * @param {IActionContext} context - Workflow file path.
- * @param {string} message - Message for warning.
  * @param {string} fsPath - Workspace file system path.
  * @returns {Promise<boolean>} Returns true if it is installed or was sucessfully installed, otherwise returns false.
  */
-export async function validateDotNetIsInstalled(context: IActionContext, message: string, fsPath: string): Promise<boolean> {
+export async function validateDotNetIsInstalled(context: IActionContext, fsPath: string): Promise<boolean> {
   let input: MessageItem | undefined;
   let installed = false;
   const install: MessageItem = { title: localize('install', 'Install') };
-
+  const message: string = localize('installDotnetSDK', 'You must have the .NET SDK installed. Would you like to install it now?');
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 

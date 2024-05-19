@@ -96,23 +96,24 @@ export const getUpstreamNodeIds = (
 export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
   if (currentNode.id === nodeId) {
     return currentNode;
-  } else {
-    let result;
-    for (const child of currentNode.children ?? []) {
-      result = getNode(nodeId, child as WorkflowNode);
-
-      if (result) {
-        return result;
-      }
-    }
-
-    return result;
   }
+  let result: WorkflowNode | undefined;
+  for (const child of currentNode.children ?? []) {
+    result = getNode(nodeId, child as WorkflowNode);
+
+    if (result) {
+      return result;
+    }
+  }
+
+  return result;
 };
 
 export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
   const nodeMetadata = getRecordEntry(nodesMetadata, nodeId);
-  if (!nodeMetadata) return undefined;
+  if (!nodeMetadata) {
+    return undefined;
+  }
   return getNode(nodeMetadata.graphId, node);
 };
 

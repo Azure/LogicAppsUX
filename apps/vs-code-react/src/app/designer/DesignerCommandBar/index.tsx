@@ -13,14 +13,12 @@ import {
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
-import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMutation } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -33,24 +31,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
+  const designerState = DesignerStore.getState();
 
-  const isMonitoringView = useSelector(
-    createSelector(
-      (state: RootState) => state.designerOptions,
-      (state: any) => state.isMonitoringView
-    )
-  );
-
+  const isMonitoringView = designerState.designerOptions.isMonitoringView;
   const designerIsDirty = useIsDesignerDirty();
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
 
-    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+    const validationErrorsList: Record<string, boolean> = {};
+    const arr = Object.entries(designerState.operations.inputParameters);
+    for (const [id, nodeInputs] of arr) {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
@@ -60,8 +54,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           return validationErrors.length;
         });
       });
-      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
-    }, {});
+      if (hasValidationErrors) {
+        validationErrorsList[id] = hasValidationErrors;
+      }
+    }
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
@@ -120,13 +116,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
   });
 
-  const allInputErrors = useSelector((state: RootState) => {
-    return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
-        parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
-      )
-    );
-  });
+  const allInputErrors = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
+    Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
+      parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
+    )
+  );
 
   const haveInputErrors = allInputErrors.length > 0;
   const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
@@ -143,7 +137,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
-  const desingerItems: ICommandBarItemProps[] = [
+  const designerItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
       disabled: isSaveDisabled,
@@ -218,7 +212,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   return (
     <CommandBar
-      items={isMonitoringView ? monitoringViewItems : desingerItems}
+      items={isMonitoringView ? monitoringViewItems : designerItems}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
         root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },

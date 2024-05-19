@@ -14,11 +14,11 @@ import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { Link, Icon, Text } from '@fluentui/react';
+import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
-import { OperationSearchHeader } from '@microsoft/designer-ui';
+import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
@@ -70,8 +70,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   useDebouncedEffect(
     () => {
       // if preload is complete, no need to actively search
-      if (!isLoadingOperations) return;
-      if (searchedTerms.includes(searchTerm)) return;
+      if (!isLoadingOperations) {
+        return;
+      }
+      if (searchedTerms.includes(searchTerm)) {
+        return;
+      }
       // We are still preloading, perform active search
       const activeSearchResults =
         SearchService().getActiveSearchOperations?.(searchTerm, filters['actionType'], filters['runtime']) ??
@@ -95,7 +99,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   // effect to set the current list of operations by group
   useEffect(() => {
-    if (!selectedOperationGroupId) return;
+    if (!selectedOperationGroupId) {
+      return;
+    }
 
     const searchOperation = SearchService().getOperationsByConnector?.bind(SearchService());
 
@@ -154,7 +160,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         : Promise.resolve((allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id)));
 
       searchResultPromise.then((operation) => {
-        if (!operation) return;
+        if (!operation) {
+          return;
+        }
         dispatch(selectOperationId(operation.id));
         setSelectedOperation(operation);
         dispatch(selectOperationGroupId(''));
@@ -202,7 +210,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <>
       <div className="msla-app-action-header">
-        <Text variant="xLarge">{headingText}</Text>
+        <XLargeText text={headingText} />
         <Button appearance="subtle" aria-label={closeButtonAriaLabel} onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (

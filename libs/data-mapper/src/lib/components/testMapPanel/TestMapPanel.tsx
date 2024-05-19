@@ -224,21 +224,23 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
     return (
       <Stack horizontal={false} tokens={{ childrenGap: '8px' }}>
         <StackItem>
-          {!fileXslt ? (
+          {fileXslt ? (
+            isMismatchedXslt ? (
+              <Text
+                variant={'mediumPlus'}
+                style={{
+                  color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/,
+                }}
+              >
+                {mismatchedXsltLoc}
+              </Text>
+            ) : (
+              <Text variant={'mediumPlus'}>{/*Space holding*/}</Text>
+            )
+          ) : (
             <Text variant={'mediumPlus'} style={{ color: '#d13438' /*tokens.colorPaletteRedBackground3*/ }}>
               {noXsltLoc}
             </Text>
-          ) : isMismatchedXslt ? (
-            <Text
-              variant={'mediumPlus'}
-              style={{
-                color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/,
-              }}
-            >
-              {mismatchedXsltLoc}
-            </Text>
-          ) : (
-            <Text variant={'mediumPlus'}>{/*Space holding*/}</Text>
           )}
         </StackItem>
         <StackItem>

@@ -85,7 +85,9 @@ export function TokenPickerFooter({
 
   const insertToken = (tokenProps: TokenNodeProps) => {
     const { brandColor, icon, title, description, value, data } = tokenProps;
-    if (!editor) return;
+    if (!editor) {
+      return;
+    }
     editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
     editor?.dispatchCommand(INSERT_TOKEN_NODE, {
       brandColor,

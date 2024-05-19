@@ -22,10 +22,10 @@ export const InitializationTimer = () => {
 
   return (
     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-      {!isInitialized ? (
-        <Spinner size="extra-tiny" />
-      ) : (
+      {isInitialized ? (
         <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} fontSize={'16px'} />
+      ) : (
+        <Spinner size="extra-tiny" />
       )}
       <Text>{timeText}</Text>
     </div>

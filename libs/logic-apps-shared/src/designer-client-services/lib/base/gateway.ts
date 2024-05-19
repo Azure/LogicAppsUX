@@ -19,7 +19,8 @@ export class BaseGatewayService implements IGatewayService {
     const { baseUrl, apiVersions } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersions) {
+    }
+    if (!apiVersions) {
       throw new ArgumentException('apiVersions required');
     }
   }

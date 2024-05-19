@@ -35,35 +35,71 @@ export const getFileExtensionName = (language: EditorLanguage): string => {
   }
 };
 
-export const getFileExtensionNameFromOperationId = (operationId: string): string => {
-  switch (operationId) {
-    case 'csharpscriptcode':
-      return '.csx';
-    case 'powershellcode':
-      return '.ps1';
-    default:
-      return '.txt';
-  }
-};
-
-export const mapFileExtensionToAppFileName = (fileExtension: string) => {
-  switch (fileExtension) {
-    case '.ps1':
-      return 'requirements.psd1';
-    default:
-      return '';
-  }
-};
-
-export const getAppFiles = (files: VFSObject[]): Record<string, boolean> => {
-  const appFiles: Record<string, boolean> = {};
-  appFiles['.ps1'] = !!files.find((file) => file.name === 'requirements.psd1');
-  return appFiles;
-};
-
 export const getAppFileForFileExtension = (fileExtension: string): string => {
   if (fileExtension === '.ps1') {
     return "# This file enables modules to be automatically managed by the Functions service.\r\n# See https://aka.ms/functionsmanageddependency for additional information.\r\n#\r\n@{\r\n    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. Uncomment the next line and replace the MAJOR_VERSION, e.g., 'Az' = '5.*'\r\n     'Az' = '10.*'\r\n}";
   }
   return '';
+};
+
+export const generateDefaultCustomCodeValue = (language: EditorLanguage): string => {
+  switch (language) {
+    case EditorLanguage.powershell:
+      return `# Use these cmdlets to retrieve outputs from prior steps
+# oldActionOutput = Get-ActionOutput -ActionName <name of old action>
+# oldTriggerOutput = Get-TriggerOutput
+
+$customResponse =  [PSCustomObject]@{
+Message = "Hello world!"
+}
+
+# Use Write-Host/ Write-Output/Write-Debug to log messages to application insights
+# Write-Host/Write-Output/Write-Debug and 'returns' will not return an output to the workflow
+# Write-Host "Sending to application insight logs"
+
+# Use Push-WorkflowOutput to push outputs forward to subsequent actions
+Push-WorkflowOutput -Output $customResponse`;
+    case EditorLanguage.csharp:
+      return `// Add the required libraries
+#r "Newtonsoft.Json"
+#r "Microsoft.Azure.Workflows.Scripting"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Workflows.Scripting;
+using Newtonsoft.Json.Linq;
+
+/// <summary>
+/// Executes the inline csharp code.
+/// </summary>
+/// <param name="context">The workflow context.</param>
+/// <remarks> This is the entry-point to your code. The function signature should remain unchanged.</remarks>
+public static async Task<Results> Run(WorkflowContext context, ILogger log)
+{
+  var triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs;
+
+  ////the following dereferences the 'name' property from trigger payload.
+  var name = triggerOutputs?["body"]?["name"]?.ToString();
+
+  ////the following can be used to get the action outputs from a prior action
+  //var actionOutputs = (await context.GetActionResults("Compose").ConfigureAwait(false)).Outputs;
+
+  ////these logs will show-up in Application Insight traces table
+  //log.LogInformation("Outputting results.");
+
+  //var name = null;
+
+  return new Results
+  {
+    Message = !string.IsNullOrEmpty(name) ? $"Hello {name} from CSharp action" : "Hello from CSharp action."
+  };
+}
+
+public class Results
+{
+  public string Message {get; set;}
+}`;
+    default:
+      return '';
+  }
 };

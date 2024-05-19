@@ -1,32 +1,46 @@
-/* eslint-disable no-param-reassign */
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, type MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
+import { getWorkspaceFolder } from '../../utils/workspace';
+import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 
-export const createNewDataMapCmd = (context: IActionContext) => {
-  window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDataMapName) => {
-    if (!newDataMapName) {
-      context.telemetry.properties.result = 'Canceled';
+export const createNewDataMapCmd = async (context: IActionContext) => {
+  if (isNullOrUndefined(ext.logicAppWorkspace)) {
+    const workspaceFolder = await getWorkspaceFolder(
+      context,
+      localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
+    );
+    const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspaceFolder.uri.fsPath);
+    if (!projectPath) {
       return;
     }
-
-    context.telemetry.properties.result = 'Succeeded';
-
-    DataMapperExt.openDataMapperPanel(newDataMapName, context);
-  });
+    ext.logicAppWorkspace = projectPath;
+  }
+  DataMapperExt.openDataMapperPanel(context);
 };
 
 export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
+  if (isNullOrUndefined(ext.logicAppWorkspace)) {
+    const workspaceFolder = await getWorkspaceFolder(
+      context,
+      localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
+    );
+    const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspaceFolder.uri.fsPath);
+    if (!projectPath) {
+      return;
+    }
+    ext.logicAppWorkspace = projectPath;
+  }
 
   // Handle if Uri isn't provided/defined (cmd pallette or btn)
   if (!mapDefinitionPath) {
@@ -75,14 +89,6 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     const fileContents = await fs.readFile(mapDefinitionPath, 'utf-8');
     mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
   }
-
-  /*   const mapDefinition = yaml.load(
-      fileContents
-    ) as {
-      $sourceSchema: string;
-      $targetSchema: string;
-      [key: string]: any;
-    }; */
 
   if (
     !mapDefinition.$sourceSchema ||
@@ -165,7 +171,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   const dataMapName = path.basename(mapDefinitionPath, path.extname(mapDefinitionPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
   // Set map definition data to be loaded once webview sends webviewLoaded msg
-  DataMapperExt.openDataMapperPanel(dataMapName, context, {
+  DataMapperExt.openDataMapperPanel(context, dataMapName, {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),

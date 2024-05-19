@@ -86,7 +86,9 @@ function WrappedStaticResultProperty({
   }, [currProperties]);
 
   const getEnumValues = (): IDropdownOption[] => {
-    if (!schema.enum) return [];
+    if (!schema.enum) {
+      return [];
+    }
     return schema.enum.map((value) => {
       return {
         key: value,
@@ -120,7 +122,7 @@ function WrappedStaticResultProperty({
   });
 
   const validateInteger = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: any) => {
-    if (isNaN(newValue)) {
+    if (Number.isNaN(newValue)) {
       setInputValue(inputValue ?? '');
       setErrorMessage(
         intl.formatMessage({
@@ -147,7 +149,7 @@ function WrappedStaticResultProperty({
 
   const renderItems = (): JSX.Element => {
     switch (schema.type) {
-      case constants.SWAGGER.TYPE.STRING:
+      case constants.SWAGGER.TYPE.STRING: {
         if (schema.enum) {
           return (
             <Dropdown
@@ -161,24 +163,24 @@ function WrappedStaticResultProperty({
               placeholder={dropdownPlaceHolder}
             />
           );
-        } else {
-          return (
-            <TextField
-              className="msla-static-result-property-textField"
-              styles={textFieldStyles}
-              onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
-              value={inputValue}
-              placeholder={textFieldPlaceHolder}
-              onChange={(_e, newVal) => {
-                setInputValue(newVal ?? '');
-              }}
-              onBlur={updateParentProps}
-              multiline
-              autoAdjustHeight
-              rows={1}
-            />
-          );
         }
+        return (
+          <TextField
+            className="msla-static-result-property-textField"
+            styles={textFieldStyles}
+            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            value={inputValue}
+            placeholder={textFieldPlaceHolder}
+            onChange={(_e, newVal) => {
+              setInputValue(newVal ?? '');
+            }}
+            onBlur={updateParentProps}
+            multiline
+            autoAdjustHeight
+            rows={1}
+          />
+        );
+      }
       case constants.SWAGGER.TYPE.INTEGER:
         return (
           <TextField
@@ -193,7 +195,7 @@ function WrappedStaticResultProperty({
           />
         );
       case constants.SWAGGER.TYPE.ARRAY:
-      case constants.SWAGGER.TYPE.OBJECT:
+      case constants.SWAGGER.TYPE.OBJECT: {
         if (schema.items) {
           return (
             <>
@@ -201,26 +203,27 @@ function WrappedStaticResultProperty({
               <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
-        } else if (schema.additionalProperties) {
+        }
+        if (schema.additionalProperties) {
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
               <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
-        } else {
-          return (
-            <div className="msla-static-result-property-inner">
-              <StaticResult
-                propertiesSchema={schema.properties}
-                title={schema?.title ?? ''}
-                required={schema.required}
-                propertyValues={currProperties}
-                setPropertyValues={setCurrProperties}
-              />
-            </div>
-          );
         }
+        return (
+          <div className="msla-static-result-property-inner">
+            <StaticResult
+              propertiesSchema={schema.properties}
+              title={schema?.title ?? ''}
+              required={schema.required}
+              propertyValues={currProperties}
+              setPropertyValues={setCurrProperties}
+            />
+          </div>
+        );
+      }
       default:
         return (
           <TextField

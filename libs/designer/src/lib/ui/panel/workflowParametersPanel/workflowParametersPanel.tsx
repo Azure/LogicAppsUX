@@ -1,5 +1,7 @@
+import type { AppDispatch } from '../../../core/state/templates/store';
+import { deleteWorkflowParameter } from '../../../core/actions/bjsworkflow/delete';
 import { useLegacyWorkflowParameters, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { addParameter, deleteParameter, updateParameter } from '../../../core/state/workflowparameters/workflowparametersSlice';
+import { addParameter, updateParameter } from '../../../core/state/workflowparameters/workflowparametersSlice';
 import {
   useWorkflowParameters,
   useWorkflowParameterValidationErrors,
@@ -9,14 +11,14 @@ import { WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
 
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const useLegacy = useLegacyWorkflowParameters();
   const workflowParameters = useWorkflowParameters();
   const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
 
   const onWorkflowParameterAdd = () => dispatch(addParameter());
-  const onDeleteWorkflowParameter = (event: { id: string }) => dispatch(deleteParameter(event.id));
+  const onDeleteWorkflowParameter = (event: { id: string }) => dispatch(deleteWorkflowParameter(event.id));
   const onUpdateParameter = (event: WorkflowParameterUpdateEvent) => dispatch(updateParameter(event));
 
   return (

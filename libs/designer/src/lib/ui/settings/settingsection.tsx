@@ -8,7 +8,6 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { useTheme } from '@fluentui/react';
 import { Button, Divider, Tooltip } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -21,7 +20,6 @@ import {
 } from '@fluentui/react-icons';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
-  isHighContrastBlack,
   MultiSelectSetting,
   MultiAddExpressionEditor,
   ExpressionsEditor,
@@ -186,9 +184,13 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
       {expanded && showSeparator ? <Divider className="msla-setting-section-divider" /> : null}
     </>
   );
-  if (!showHeading) return internalSettings;
+  if (!showHeading) {
+    return internalSettings;
+  }
   const handleSectionClick = (sectionName?: SettingSectionName): void => {
-    if (onHeaderClick && sectionName) onHeaderClick(sectionName);
+    if (onHeaderClick && sectionName) {
+      onHeaderClick(sectionName);
+    }
   };
 
   return (
@@ -271,8 +273,10 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
   const renderSetting = (setting: Settings, i: number) => {
     const { settingType, settingProp, visible = true } = setting;
     const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
-    if (!readOnly) settingProp.readOnly = isReadOnly;
-    const errorMessage = validationErrors?.reduce((acc: string, message: any) => acc + message + ' ', '');
+    if (!readOnly) {
+      settingProp.readOnly = isReadOnly;
+    }
+    const errorMessage = validationErrors?.reduce((acc: string, message: any) => `${acc + message} `, '');
 
     const getClassName = (): string => (settingType === 'MultiAddExpressionEditor' ? 'msla-setting-section-expression-field' : '');
     const renderSetting = (): JSX.Element | null => {

@@ -940,7 +940,7 @@ export interface WorkflowRunAction {
   };
   repetitionCount?: number;
   iterationCount?: number;
-  repetitionIndexes?: Array<Record<string, any>>;
+  repetitionIndexes?: Record<string, any>[];
   duration?: string;
 }
 

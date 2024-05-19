@@ -1,5 +1,6 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { Icon, IconButton, Text, TextField, TooltipHost } from '@fluentui/react';
+import { Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import React, { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -78,7 +79,8 @@ export const Pager: React.FC<PagerProps> = ({
 
   let failedMax = 0;
   let failedMin = 0;
-  let onClickNext: PageChangeEventHandler | undefined, onClickPrevious: PageChangeEventHandler | undefined;
+  let onClickNext: PageChangeEventHandler | undefined;
+  let onClickPrevious: PageChangeEventHandler | undefined;
 
   if (failedIterationProps) {
     ({ max: failedMax, min: failedMin, onClickNext, onClickPrevious } = failedIterationProps);
@@ -86,7 +88,7 @@ export const Pager: React.FC<PagerProps> = ({
 
   const changeValue = useCallback(
     (newValue: string, changeHandler = onChange, minimum = min, maximum = max): void => {
-      const value = parseInt(newValue, 10);
+      const value = Number.parseInt(newValue, 10);
       if (value < minimum) {
         setCurrent(minimum);
         changeHandler && changeHandler({ value });

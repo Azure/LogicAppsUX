@@ -18,8 +18,7 @@ export class ScriptWorkflowNameStep extends WorkflowNameStepBase<IScriptWorkflow
   protected async validateFunctionNameCore(context: IScriptWorkflowWizardContext, name: string): Promise<string | undefined> {
     if (await fse.pathExists(path.join(context.projectPath, name))) {
       return localize('existingFolderError', 'A folder with the name "{0}" already exists.', name);
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 }

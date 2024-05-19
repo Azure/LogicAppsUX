@@ -8,7 +8,8 @@ import { Response } from './response';
 import { SecureDataSection } from './securedatasection';
 import type { RequestHistory } from './types';
 import { equals } from '@microsoft/logic-apps-shared';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RequestPanelProps {

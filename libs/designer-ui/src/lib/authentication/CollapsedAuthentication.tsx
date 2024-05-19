@@ -9,7 +9,7 @@ import { getChildrenNodes, isTokenValueSegment } from '../editor/base/utils/help
 import { serializeAuthentication, validateAuthenticationString } from './util';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { $getRoot, type EditorState } from 'lexical';
-import { type Dispatch, type SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
 interface CollapsedAuthenticationProps {

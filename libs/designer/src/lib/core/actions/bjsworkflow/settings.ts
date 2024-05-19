@@ -27,6 +27,7 @@ import {
   ValidationException,
 } from '@microsoft/logic-apps-shared';
 
+// biome-ignore lint/suspicious/noConfusingVoidType: Needed for library compatibility
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
 /**
@@ -243,9 +244,8 @@ const isAsynchronousSupported = (isTrigger: boolean, nodeType: string, manifest?
       !!operationOptionSetting.options &&
       operationOptionSetting.options.indexOf(OperationOptions.Asynchronous) > -1
     );
-  } else {
-    return equals(nodeType, Constants.NODE.TYPE.RESPONSE);
   }
+  return equals(nodeType, Constants.NODE.TYPE.RESPONSE);
 };
 
 const getSplitOnConfiguration = (definition?: LogicAppsV2.TriggerDefinition): SplitOnConfiguration | undefined => {
@@ -262,9 +262,8 @@ const isCorrelationSupported = (isTrigger: boolean, manifest?: OperationManifest
       | OperationManifestSetting<CorrelationSettings>
       | undefined;
     return isSettingSupportedFromOperationManifest(correlationSetting, isTrigger);
-  } else {
-    return isTrigger;
   }
+  return isTrigger;
 };
 
 const isDisableAsyncPatternSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
@@ -275,10 +274,9 @@ const isDisableAsyncPatternSupported = (isTrigger: boolean, nodeType: string, ma
     return isSettingSupportedFromOperationManifest(operationOptionsSetting, isTrigger) && operationOptionsSetting?.options
       ? operationOptionsSetting.options.indexOf(OperationOptions.DisableAsyncPattern) > -1
       : false;
-  } else {
-    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
-    return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
+  const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
+  return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
 
 const getDisableAsyncPattern = (definition?: LogicAppsV2.OperationDefinition): boolean => {
@@ -307,11 +305,10 @@ const isDisableAutomaticDecompressionSupported = (isTrigger: boolean, nodeType: 
     return isSettingSupportedFromOperationManifest(operationOptionsSetting, isTrigger) && operationOptionsSetting?.options
       ? operationOptionsSetting.options.indexOf(OperationOptions.DisableAutomaticDecompression) > -1
       : false;
-  } else {
-    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
-
-    return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
+  const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
+
+  return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
 
 const getSuppressWorkflowHeaders = (
@@ -333,11 +330,10 @@ const isSuppressWorkflowHeadersSupported = (isTrigger: boolean, nodeType: string
     return isSettingSupportedFromOperationManifest(operationOptionsSetting, isTrigger) && operationOptionsSetting?.options
       ? operationOptionsSetting.options.indexOf(OperationOptions.SuppressWorkflowHeaders) > -1
       : false;
-  } else {
-    const supportedTypes = [Constants.NODE.TYPE.HTTP];
-
-    return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
+  const supportedTypes = [Constants.NODE.TYPE.HTTP];
+
+  return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
 
 const getSuppressWorkflowHeadersOnResponse = (definition?: LogicAppsV2.OperationDefinition): boolean | undefined => {
@@ -356,9 +352,8 @@ const isSuppressWorkflowHeadersOnResponseSupported = (isTrigger: boolean, manife
         ? operationOptionsSetting.options.indexOf(OperationOptions.SuppressWorkflowHeadersOnResponse) > -1
         : false)
     );
-  } else {
-    return false;
   }
+  return false;
 };
 
 const getRequestSchemaValidation = (definition?: LogicAppsV2.OperationDefinition): boolean | undefined => {
@@ -414,43 +409,40 @@ const getConcurrency = (
     }
 
     return typeof concurrencyRepetitions === 'number' ? { enabled: true, value: concurrencyRepetitions } : { enabled: false };
-  } else {
-    if (isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, operationOptions)) {
-      return {
-        enabled: true,
-        value: 1,
-      };
-    }
-
-    let concurrencyRuns: number | undefined;
-    if (definition) {
-      concurrencyRuns = getObjectPropertyValue(getRuntimeConfiguration(definition), [
-        Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
-        Constants.SETTINGS.PROPERTY_NAMES.RUNS,
-      ]);
-    }
-
-    return typeof concurrencyRuns === 'number' ? { enabled: true, value: concurrencyRuns } : { enabled: false };
   }
+  if (isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, operationOptions)) {
+    return {
+      enabled: true,
+      value: 1,
+    };
+  }
+
+  let concurrencyRuns: number | undefined;
+  if (definition) {
+    concurrencyRuns = getObjectPropertyValue(getRuntimeConfiguration(definition), [
+      Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
+      Constants.SETTINGS.PROPERTY_NAMES.RUNS,
+    ]);
+  }
+
+  return typeof concurrencyRuns === 'number' ? { enabled: true, value: concurrencyRuns } : { enabled: false };
 };
 
 const isConcurrencySupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const concurrencySetting = getOperationSettingFromManifest(manifest, 'concurrency') as OperationManifestSetting<void> | undefined;
     return isSettingSupportedFromOperationManifest(concurrencySetting, isTrigger);
-  } else {
-    if (isTrigger) {
-      const supportedTypes = [
-        Constants.NODE.TYPE.API_CONNECTION,
-        Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
-        Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
-        Constants.NODE.TYPE.HTTP,
-      ];
-      return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
-    } else {
-      return false;
-    }
   }
+  if (isTrigger) {
+    const supportedTypes = [
+      Constants.NODE.TYPE.API_CONNECTION,
+      Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+      Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
+      Constants.NODE.TYPE.HTTP,
+    ];
+    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
+  }
+  return false;
 };
 
 const getRetryPolicy = (
@@ -471,7 +463,8 @@ const getRetryPolicy = (
         return {
           type: Constants.RETRY_POLICY_TYPE.DEFAULT,
         };
-      } else if (typeof retryPolicy !== 'string') {
+      }
+      if (typeof retryPolicy !== 'string') {
         return {
           type: retryPolicy.type as string,
           count: retryPolicy.count,
@@ -479,28 +472,26 @@ const getRetryPolicy = (
           minimumInterval: retryPolicy.minimumInterval,
           maximumInterval: retryPolicy.maximumInterval,
         };
-      } else {
-        throw new Error('Cannot determine retry policy since it is assigned at run-time with an expression');
       }
+      throw new Error('Cannot determine retry policy since it is assigned at run-time with an expression');
     }
 
     return undefined;
-  } else {
-    return {
-      type: Constants.RETRY_POLICY_TYPE.DEFAULT,
-    };
   }
+  return {
+    type: Constants.RETRY_POLICY_TYPE.DEFAULT,
+  };
 };
 
 const isRetryPolicySupported = (isTrigger: boolean, operationType: string, manifest?: OperationManifest): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
-      getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
-      isTrigger
-    )
+        getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
+        isTrigger
+      )
     : [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP].indexOf(
-      operationType.toLowerCase()
-    ) > -1;
+        operationType.toLowerCase()
+      ) > -1;
 };
 
 const getSequential = (definition?: LogicAppsV2.OperationDefinition): boolean => {
@@ -539,43 +530,43 @@ export const getSplitOnValue = (
 ): string | undefined => {
   if (definition && definition.splitOn !== Constants.SETTINGS.SPLITON.AUTOLOAD) {
     return definition.splitOn;
-  } else {
-    if (manifest) {
-      if (equals(manifest.properties.trigger, Constants.BATCH_TRIGGER)) {
-        // TODO (3727460) - Consume top level required fields when available here.
-        const { alias, propertyName, required } = getSplitOnArrayAliasMetadata(manifest.properties.outputs, /* propertyRequired */ true);
-        const propertyPath = alias || propertyName;
-        if (propertyPath) {
-          return `@${Constants.TRIGGER_OUTPUTS_OUTPUT}${required ? '' : '?'}[${convertToStringLiteral(propertyPath)}]`;
-        }
-      }
-
-      return undefined;
-    } else if (swagger && operationId) {
-      const swaggerOperations = swagger.getOperations();
-      if (!swaggerOperations) {
-        return undefined;
-      }
-
-      const outputMetadata = equals(swaggerOperations[operationId]?.triggerType, Constants.BATCH_TRIGGER)
-        ? swagger.getOutputMetadata(operationId)
-        : undefined;
-      if (outputMetadata) {
-        const { array } = outputMetadata;
-
-        // NOTE: Array will be null when we don't support the scenario even if it is batching trigger.
-        // Eg. If there are peer properties to array property.
-        if (array) {
-          const { collectionPath, required } = array;
-          return collectionPath
-            ? `@${getTokenExpressionValue({ name: collectionPath, required, tokenType: TokenType.OUTPUTS } as any)}`
-            : `@${Constants.TRIGGER_BODY_OUTPUT}`;
-        }
+  }
+  if (manifest) {
+    if (equals(manifest.properties.trigger, Constants.BATCH_TRIGGER)) {
+      // TODO (3727460) - Consume top level required fields when available here.
+      const { alias, propertyName, required } = getSplitOnArrayAliasMetadata(manifest.properties.outputs, /* propertyRequired */ true);
+      const propertyPath = alias || propertyName;
+      if (propertyPath) {
+        return `@${Constants.TRIGGER_OUTPUTS_OUTPUT}${required ? '' : '?'}[${convertToStringLiteral(propertyPath)}]`;
       }
     }
 
     return undefined;
   }
+  if (swagger && operationId) {
+    const swaggerOperations = swagger.getOperations();
+    if (!swaggerOperations) {
+      return undefined;
+    }
+
+    const outputMetadata = equals(swaggerOperations[operationId]?.triggerType, Constants.BATCH_TRIGGER)
+      ? swagger.getOutputMetadata(operationId)
+      : undefined;
+    if (outputMetadata) {
+      const { array } = outputMetadata;
+
+      // NOTE: Array will be null when we don't support the scenario even if it is batching trigger.
+      // Eg. If there are peer properties to array property.
+      if (array) {
+        const { collectionPath, required } = array;
+        return collectionPath
+          ? `@${getTokenExpressionValue({ name: collectionPath, required, tokenType: TokenType.OUTPUTS } as any)}`
+          : `@${Constants.TRIGGER_BODY_OUTPUT}`;
+      }
+    }
+  }
+
+  return undefined;
 };
 
 const isSplitOnSupported = (
@@ -588,7 +579,9 @@ const isSplitOnSupported = (
   workflowKind?: WorkflowKind,
   forceEnableSplitOn?: boolean
 ): boolean => {
-  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) return false;
+  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) {
+    return false;
+  }
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
   return isTrigger && (getSplitOnOptions(nodeOutputs, !!manifest).length > 0 || existingSplitOn.enabled);
 };
@@ -601,9 +594,9 @@ const getTimeout = (
 ): string | undefined => {
   const isTimeoutable = manifest
     ? isSettingSupportedFromOperationManifest(
-      getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
-      isTrigger
-    )
+        getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
+        isTrigger
+      )
     : isTimeoutableAction(nodeType);
 
   if (isTimeoutable) {
@@ -622,9 +615,9 @@ const isTimeoutableAction = (operationType: string): boolean => {
 const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
-      getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
-      isTrigger
-    )
+        getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
+        isTrigger
+      )
     : isTimeoutableAction(nodeType);
 };
 
@@ -671,18 +664,17 @@ const isPagingSupported = (
   if (manifest) {
     const pagingSetting = getOperationSettingFromManifest(manifest, 'paging') as OperationManifestSetting<void> | undefined;
     return isSettingSupportedFromOperationManifest(pagingSetting, isTrigger);
-  } else {
-    if (isTrigger) {
-      return false;
-    }
-    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
-    const isSupportedType = supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
-    if (!isSupportedType || !swagger || !operationId) {
-      return false;
-    }
-
-    return !!swagger.getOperationByOperationId(operationId)?.supportsPaging;
   }
+  if (isTrigger) {
+    return false;
+  }
+  const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
+  const isSupportedType = supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
+  if (!isSupportedType || !swagger || !operationId) {
+    return false;
+  }
+
+  return !!swagger.getOperationByOperationId(operationId)?.supportsPaging;
 };
 
 const getUploadChunk = (
@@ -706,23 +698,22 @@ const getUploadChunk = (
         Constants.SETTINGS.PROPERTY_NAMES.UPLOAD_CHUNK_SIZE,
       ]),
     };
-  } else {
-    if (isTrigger || workflowKind === WorkflowKind.STATELESS) {
-      return undefined;
-    }
-
-    let isChunkTransferSupported = false;
-    if (manifest) {
-      const chunkingSetting = getOperationSettingFromManifest(manifest, 'chunking') as
-        | OperationManifestSetting<UploadChunkMetadata>
-        | undefined;
-      isChunkTransferSupported = isSettingSupportedFromOperationManifest(chunkingSetting, isTrigger);
-    } else if (equals(nodeType, Constants.NODE.TYPE.API_CONNECTION) && swagger && operationId) {
-      isChunkTransferSupported = !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
-    }
-
-    return isChunkTransferSupported ? { transferMode: Constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined;
   }
+  if (isTrigger || workflowKind === WorkflowKind.STATELESS) {
+    return undefined;
+  }
+
+  let isChunkTransferSupported = false;
+  if (manifest) {
+    const chunkingSetting = getOperationSettingFromManifest(manifest, 'chunking') as
+      | OperationManifestSetting<UploadChunkMetadata>
+      | undefined;
+    isChunkTransferSupported = isSettingSupportedFromOperationManifest(chunkingSetting, isTrigger);
+  } else if (equals(nodeType, Constants.NODE.TYPE.API_CONNECTION) && swagger && operationId) {
+    isChunkTransferSupported = !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
+  }
+
+  return isChunkTransferSupported ? { transferMode: Constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined;
 };
 
 export const isChunkedTransferModeSupported = (
@@ -737,30 +728,29 @@ export const isChunkedTransferModeSupported = (
       | OperationManifestSetting<UploadChunkMetadata>
       | undefined;
     return isSettingSupportedFromOperationManifest(chunkingSetting, isTrigger);
-  } else {
-    if (isTrigger || !swagger || !operationId) {
+  }
+  if (isTrigger || !swagger || !operationId) {
+    return false;
+  }
+
+  switch (nodeType.toLowerCase()) {
+    case Constants.NODE.TYPE.API_CONNECTION:
+      return !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
+
+    case Constants.NODE.TYPE.HTTP:
+      return true;
+
+    default:
       return false;
-    }
-
-    switch (nodeType.toLowerCase()) {
-      case Constants.NODE.TYPE.API_CONNECTION:
-        return !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
-
-      case Constants.NODE.TYPE.HTTP:
-        return true;
-
-      default:
-        return false;
-    }
   }
 };
 
 const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): number | undefined => {
   return definition
     ? getObjectPropertyValue(getRuntimeConfiguration(definition), [
-      Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER,
-      Constants.SETTINGS.PROPERTY_NAMES.DOWNLOAD_CHUNK_SIZE,
-    ])
+        Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER,
+        Constants.SETTINGS.PROPERTY_NAMES.DOWNLOAD_CHUNK_SIZE,
+      ])
     : undefined;
 };
 
@@ -797,16 +787,15 @@ const isInputsPropertySupportedInSecureDataSetting = (nodeType: string, manifest
       return manifest.properties.inputs !== undefined;
     }
     return false;
-  } else {
-    // TODO add else if to check if node is branch node and return false if so
-    const supportedTypes = [
-      Constants.NODE.TYPE.API_CONNECTION,
-      Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
-      Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
-      Constants.NODE.TYPE.HTTP,
-    ];
-    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
+  // TODO add else if to check if node is branch node and return false if so
+  const supportedTypes = [
+    Constants.NODE.TYPE.API_CONNECTION,
+    Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
+    Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+    Constants.NODE.TYPE.HTTP,
+  ];
+  return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
 
 const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifest?: OperationManifest): boolean => {
@@ -819,16 +808,15 @@ const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifes
       return (options === undefined || options.outputsMode === undefined) && manifest.properties.outputs !== undefined;
     }
     return false;
-  } else {
-    // TODO add else if to check if node is branch node and return false if so
-    const supportedTypes = [
-      Constants.NODE.TYPE.API_CONNECTION,
-      Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
-      Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
-      Constants.NODE.TYPE.HTTP,
-    ];
-    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
+  // TODO add else if to check if node is branch node and return false if so
+  const supportedTypes = [
+    Constants.NODE.TYPE.API_CONNECTION,
+    Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
+    Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+    Constants.NODE.TYPE.HTTP,
+  ];
+  return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
 
 const getSecureOutputsSetting = (definition?: LogicAppsV2.OperationDefinition): boolean => {

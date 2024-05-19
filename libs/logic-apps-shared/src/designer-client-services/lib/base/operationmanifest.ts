@@ -75,6 +75,7 @@ const swiftdecode = 'swiftdecode';
 const swiftencode = 'swiftencode';
 const swiftmtdecode = 'swiftmtdecode';
 const swiftmtencode = 'swiftmtencode';
+const ruleexecute = 'ruleexecute';
 const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
@@ -196,6 +197,7 @@ export const supportedBaseManifestTypes = [
   swiftencode,
   swiftmtdecode,
   swiftmtencode,
+  ruleexecute,
   terminate,
   until,
   wait,
@@ -222,9 +224,11 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     const { apiVersion, baseUrl, httpClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required');
     }
   }
@@ -292,6 +296,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case swiftencode:
     case swiftmtdecode:
     case swiftmtencode:
+    case ruleexecute:
     case table:
     case terminate:
     case until:
@@ -344,24 +349,24 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
           throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
       }
 
-    case http:
+    case http: {
       if (equals(definition?.metadata?.swaggerSource, 'website')) {
         return {
           connectorId: appServiceConnectorId,
           operationId: isTrigger ? appservicetrigger : appservice,
         };
-      } else {
-        return {
-          connectorId: httpConnectorId,
-          operationId: definition?.metadata?.apiDefinitionUrl
-            ? isTrigger
-              ? httpswaggertrigger
-              : httpswaggeraction
-            : isTrigger
-              ? httptrigger
-              : httpaction,
-        };
       }
+      return {
+        connectorId: httpConnectorId,
+        operationId: definition?.metadata?.apiDefinitionUrl
+          ? isTrigger
+            ? httpswaggertrigger
+            : httpswaggeraction
+          : isTrigger
+            ? httptrigger
+            : httpaction,
+      };
+    }
     case httpwebhook:
       return { connectorId: httpConnectorId, operationId: isTrigger ? httpwebhooktrigger : httpwebhookaction };
     case liquid:
@@ -396,8 +401,15 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             connectorId: 'connectionProviders/request',
             operationId: request,
           };
-        default:
+        default: {
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/request',
+              operationId: request,
+            };
+          }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
+        }
       }
     case response:
       switch (kind) {
@@ -406,8 +418,15 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             connectorId: 'connectionProviders/request',
             operationId: response,
           };
-        default:
+        default: {
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/request',
+              operationId: response,
+            };
+          }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for response type`);
+        }
       }
     case table:
       switch (definition.inputs?.format?.toLowerCase()) {
@@ -609,6 +628,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [swiftmtencode]: {
     connectorId: 'connectionProviders/swiftOperations',
     operationId: 'swiftMTEncode',
+  },
+  [ruleexecute]: {
+    connectorId: 'connectionProviders/ruleEngineOperations',
+    operationId: 'ruleExecute',
   },
   [terminate]: {
     connectorId: controlConnectorId,

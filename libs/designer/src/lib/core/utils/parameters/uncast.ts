@@ -85,9 +85,8 @@ export class UncastingUtility {
       const nextResult = this._uncastOnce(result[0].expression);
       if (nextResult === null) {
         return result;
-      } else {
-        result = nextResult;
       }
+      result = nextResult;
     }
 
     return result;
@@ -143,13 +142,15 @@ export class UncastingUtility {
         let format: string;
         switch (value.toUpperCase()) {
           case 'DATA:APPLICATION/OCTET-STREAM;BASE64,':
-          case 'DATA:;BASE64,':
+          case 'DATA:;BASE64,': {
             format = 'byte';
             break;
+          }
           case 'DATA:APPLICATION/OCTET-STREAM,':
-          case 'DATA:,':
+          case 'DATA:,': {
             format = '';
             break;
+          }
           default:
             return null;
         }

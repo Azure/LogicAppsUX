@@ -1,8 +1,9 @@
 import { isEnterKey, isSpaceKey } from '../utils';
 import type { NodeMessage } from './errorsPanel.types';
 import { MessageLevel } from './errorsPanel.types';
-import { Text, Icon } from '@fluentui/react';
+import { Icon } from '@fluentui/react';
 import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
+import { MediumText } from '../text';
 import { useIntl } from 'react-intl';
 
 interface NodeErrorCardProps {
@@ -66,7 +67,9 @@ const ErrorSubsection = (props: ErrorSubsectionProps) => {
 
   // create new messages array with no empty values
   const filteredMessages = messages?.filter((m: NodeMessage) => m.content);
-  if (!filteredMessages?.length) return null;
+  if (!filteredMessages?.length) {
+    return null;
+  }
 
   return (
     <div className="msla-error-card-subsection">
@@ -74,9 +77,7 @@ const ErrorSubsection = (props: ErrorSubsectionProps) => {
       {messages.map((m: NodeMessage) => (
         <div key={m.content}>
           <div className={level === MessageLevel.Warning ? 'msla-warning-dot' : 'msla-error-dot'} />
-          <Text key={m.content} variant="medium">
-            {m.content}
-          </Text>
+          <MediumText key={m.content} text={m.content} />
           {m.onRenderDetails?.()}
         </div>
       ))}

@@ -31,9 +31,8 @@ export class AzureStorageAccountStep extends AzureWizardPromptStep<IFunctionAppW
       return {
         promptSteps: [new SQLStringNameStep()],
       };
-    } else {
-      wizardContext.storageType = StorageOptions.AzureStorage;
-      return undefined;
     }
+    wizardContext.storageType = StorageOptions.AzureStorage;
+    return undefined;
   }
 }

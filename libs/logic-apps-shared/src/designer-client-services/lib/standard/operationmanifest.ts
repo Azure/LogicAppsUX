@@ -7,7 +7,8 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
     if (isBuiltInOperation(definition)) {
       return getBuiltInOperationInfo(definition, isTrigger);
-    } else if (isServiceProviderOperation(definition.type)) {
+    }
+    if (isServiceProviderOperation(definition.type)) {
       return {
         connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
         operationId: definition.inputs.serviceProviderConfiguration.operationId,
@@ -24,7 +25,9 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
-    if (supportedManifest) return supportedManifest;
+    if (supportedManifest) {
+      return supportedManifest;
+    }
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const connectorName = connectorId.split('/').slice(-1)[0];

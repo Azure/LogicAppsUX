@@ -53,7 +53,9 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   });
 
   if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE']) {
-    if (readOnly) return null;
+    if (readOnly) {
+      return null;
+    }
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
         <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} />
@@ -146,7 +148,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         ) : null}
       </div>
     );
-  } else if (data.size === 'small') {
+  }
+  if (data.size === 'small') {
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <div
@@ -165,5 +168,6 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         </div>
       </div>
     );
-  } else return null;
+  }
+  return null;
 };

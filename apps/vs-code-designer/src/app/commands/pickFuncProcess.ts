@@ -296,7 +296,7 @@ function isRunning(pid: number): boolean {
 function getPickProcessTimeout(context: IActionContext): number {
   const pickProcessTimeoutValue: number | undefined = getWorkspaceSetting<number>(pickProcessTimeoutSetting);
   const timeoutInSeconds = Number(pickProcessTimeoutValue);
-  if (isNaN(timeoutInSeconds)) {
+  if (Number.isNaN(timeoutInSeconds)) {
     throw new Error(
       localize(
         'invalidSettingValue',

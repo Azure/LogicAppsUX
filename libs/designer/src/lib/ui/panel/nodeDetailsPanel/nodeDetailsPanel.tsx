@@ -10,7 +10,7 @@ import {
   validateParameter,
 } from '../../../core';
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
-import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
@@ -34,7 +34,8 @@ import {
   splitFileName,
 } from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
@@ -65,6 +66,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const nodeMetaData = useNodeMetadata(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
   const errorInfo = useOperationErrorInfo(selectedNode);
+
+  const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -120,7 +123,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
       const [, fileExtension] = splitFileName(newFileName);
       const oldFileName = replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension;
-      if (newFileName === oldFileName) return;
+      if (newFileName === oldFileName) {
+        return;
+      }
       // update the view model with the latest file name
       dispatch(
         updateParameterEditorViewModel({
@@ -151,20 +156,24 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
   };
 
-  const togglePanel = (): void => (!collapsed ? collapse() : expand());
+  const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
   const opQuery = useOperationQuery(selectedNode);
 
   const isLoading = useMemo(() => {
-    if (nodeMetaData?.subgraphType) return false;
+    if (nodeMetaData?.subgraphType) {
+      return false;
+    }
     return opQuery.isLoading;
   }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
 
   const runInstance = useRunInstance();
 
   const resubmitClick = useCallback(() => {
-    if (!runInstance) return;
+    if (!runInstance) {
+      return;
+    }
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [selectedNode]);
     dispatch(clearPanel());
   }, [dispatch, runInstance, selectedNode]);
@@ -193,6 +202,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       errorMessage={errorInfo?.message}
       isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
+      suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       headerMenuItems={headerMenuItems}
       showCommentBox={showCommentBox}
       tabs={panelTabs}

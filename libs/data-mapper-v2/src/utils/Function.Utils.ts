@@ -89,24 +89,23 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection,
 
   if (isCustomValue(firstInput)) {
     return firstInput;
-  } else if (isConnectionUnit(firstInput)) {
+  }
+  if (isConnectionUnit(firstInput)) {
     const node = firstInput.node;
     if (isSchemaNodeExtended(node)) {
       return calculateIndexValue(node);
-    } else {
-      // Function, try moving back the chain to find the source
-      return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
     }
-  } else {
-    LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
-      message: `Didn't find inputNode to make index value`,
-      data: {
-        connection: currentConnection,
-      },
-    });
-
-    return '';
+    // Function, try moving back the chain to find the source
+    return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
   }
+  LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
+    message: `Didn't find inputNode to make index value`,
+    data: {
+      connection: currentConnection,
+    },
+  });
+
+  return '';
 };
 
 export const calculateIndexValue = (currentNode: SchemaNodeExtended): string => {
@@ -142,7 +141,7 @@ export const functionsForLocation = (functions: FunctionDictionary, targetKey: s
 
 export const getFunctionLocationsForAllFunctions = (
   dataMapConnections: ConnectionDictionary,
-  flattenedTargetSchema: SchemaNodeDictionary
+  _flattenedTargetSchema: SchemaNodeDictionary
 ): FunctionDictionary => {
   const functionNodes: FunctionDictionary = {};
   for (const connectionKey in dataMapConnections) {
@@ -203,9 +202,8 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
 
           if (functionInputHasInputs(input.reactFlowKey, connections)) {
             return `${input.node.functionName}(...)`;
-          } else {
-            return `${input.node.functionName}()`;
           }
+          return `${input.node.functionName}()`;
         }
 
         // Source schema node

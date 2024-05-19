@@ -10,7 +10,9 @@ export const getAzureResourceRecursive = async (httpClient: IHttpClient, uri: st
     try {
       const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
       value.push(...newValue);
-      if (nextLink) return await requestPage(nextLink, value);
+      if (nextLink) {
+        return await requestPage(nextLink, value);
+      }
       return value;
     } catch (error) {
       return value;

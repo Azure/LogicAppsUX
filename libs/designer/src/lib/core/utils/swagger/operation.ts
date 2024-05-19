@@ -71,14 +71,12 @@ export const initializeOperationDetailsForSwagger = async (
   try {
     const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation as LogicAppsV2.ApiConnectionAction, references);
-
     if (operationInfo) {
       const { connectorId, operationId } = operationInfo;
 
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
       const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
-
       const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, parsedSwagger);
       schemaService.then((schema) => {
         if (schema) {
@@ -253,10 +251,8 @@ export const getOutputParametersFromSwagger = (
   let originalOutputs: Record<string, OutputInfo> | undefined;
   if (isTrigger) {
     originalOutputs = Object.values(operationOutputs).reduce((result: Record<string, OutputInfo>, output: OutputParameter) => {
-      return {
-        ...result,
-        [output.key]: toOutputInfo(output),
-      };
+      result[output.key] = toOutputInfo(output);
+      return result;
     }, {});
   }
   const updatedOutputs = updateOutputsForBatchingTrigger(operationOutputs, splitOnValue);
@@ -297,7 +293,7 @@ const getOperationInfo = async (
   switch (type.toLowerCase()) {
     case Constants.NODE.TYPE.API_CONNECTION:
     case Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION:
-    case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK:
+    case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK: {
       const reference = references[getLegacyConnectionReferenceKey(operation) ?? ''];
       if (!reference || !reference.api || !reference.api.id) {
         throw new Error(`Incomplete information for operation '${nodeId}'`);
@@ -320,6 +316,7 @@ const getOperationInfo = async (
       }
 
       return { connectorId, operationId };
+    }
 
     default:
       throw new Error(`Operation type '${type}' does not support swagger`);
@@ -463,10 +460,9 @@ function parsePathnameFromUri(uri: string): string {
   if (isTemplateExpression(uri)) {
     const { pathname } = parsePathnameAndQueryKeyFromUri(uri.replace(/\]\?\[/g, ']%3F[').replace(/\)\?\[/g, ')%3F['));
     return pathname.replace(/\]%3F\[/g, ']?[').replace(/\)%3F\[/g, ')?[');
-  } else {
-    const { pathname } = parsePathnameAndQueryKeyFromUri(uri);
-    return pathname;
   }
+  const { pathname } = parsePathnameAndQueryKeyFromUri(uri);
+  return pathname;
 }
 
 /**

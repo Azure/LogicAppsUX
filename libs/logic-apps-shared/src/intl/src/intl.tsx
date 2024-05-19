@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import type { IntlShape } from 'react-intl';
 import { createIntl, createIntlCache, useIntl } from 'react-intl';
 

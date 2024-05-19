@@ -70,7 +70,7 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
   ext.outputChannel.appendLog(localize('downloadedSettings', 'Successfully downloaded settings.'), { resourceName: client.fullName });
   const openFile: string = localize('openFile', 'Open File');
 
-  void vscode.window
+  vscode.window
     .showInformationMessage(
       localize('downloadedSettingsFrom', 'Successfully downloaded settings from "{0}".', client.fullName),
       openFile,

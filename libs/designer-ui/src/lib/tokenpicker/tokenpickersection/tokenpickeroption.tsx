@@ -54,7 +54,7 @@ export const TokenPickerOptions = ({
     let tokens: Token[];
     if (searchQuery) {
       const query = searchQuery.trim();
-      const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.2 });
+      const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.4, ignoreLocation: true });
       tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
     }
@@ -190,7 +190,7 @@ export const TokenPickerOptions = ({
               </div>
             ) : null}
             <span>{section.label}</span>
-            {!showSeeMoreOrLessButton ? null : (
+            {showSeeMoreOrLessButton ? (
               <button
                 className="msla-token-picker-section-header-button"
                 onClick={handleMoreLess}
@@ -198,10 +198,10 @@ export const TokenPickerOptions = ({
               >
                 <span>{moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>
-            )}
+            ) : null}
           </div>
           <ul className="msla-token-picker-section-options" aria-label={section.label}>
-            {getReducedTokenList(!searchQuery ? section.tokens : filteredTokens, {
+            {getReducedTokenList(searchQuery ? filteredTokens : section.tokens, {
               hasSearchQuery: !!searchQuery,
               maxRowsShown,
               showAllOptions: !moreOptions,

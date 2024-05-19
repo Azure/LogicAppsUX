@@ -40,9 +40,8 @@ export async function getDotnetBuildFile(context: IActionContext, projectPath: s
     const xmlString: string = fs.readFileSync(buildFileUri.fsPath, 'utf8').toString();
     const xmlObject: Record<string, any> | undefined = await getXMLString(xmlString, { explicitArray: false });
     return JSON.stringify(xmlObject);
-  } else {
-    throw new Error(localize('dotnetProjectFileNotFound', 'Dotnet project file could not be found.'));
   }
+  throw new Error(localize('dotnetProjectFileNotFound', 'Dotnet project file could not be found.'));
 }
 
 export function addFolderToBuildPath(xmlBuildFile: Record<string, any>, folderName: string): Record<string, any> {
@@ -115,7 +114,7 @@ export function suppressJavaScriptBuildWarnings(xmlBuildFile: Record<string, any
 
 export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dotnetVersion: string): Record<string, any> {
   for (const item of xmlBuildFile['Project']['ItemGroup']) {
-    if ('PackageReference' in item && item['PackageReference']['$']['Include'] == 'Microsoft.NET.Sdk.Functions') {
+    if ('PackageReference' in item && item['PackageReference']['$']['Include'] === 'Microsoft.NET.Sdk.Functions') {
       const packageVersion = dotnetVersion === DotnetVersion.net6 ? '4.1.3' : '3.0.13';
       item['PackageReference']['$']['Version'] = packageVersion;
       break;

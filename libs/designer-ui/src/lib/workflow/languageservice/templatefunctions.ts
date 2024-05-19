@@ -1487,7 +1487,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_CONCAT,
         signatures: [
           {
-            definition: `concat(text_1: string)`,
+            definition: 'concat(text_1: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_CONCAT,
             parameters: [
               {
@@ -1497,7 +1497,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `concat(text_1: string, ...)`,
+            definition: 'concat(text_1: string, ...)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_CONCAT,
             parameters: [
               {
@@ -1522,7 +1522,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_SUBSTRING,
         signatures: [
           {
-            definition: `substring(text: string, startIndex: integer, length?: integer)`,
+            definition: 'substring(text: string, startIndex: integer, length?: integer)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_SUBSTRING,
             parameters: [
               {
@@ -1548,7 +1548,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_SLICE,
         signatures: [
           {
-            definition: `slice(text: string, startIndex: integer, endIndex?: integer)`,
+            definition: 'slice(text: string, startIndex: integer, endIndex?: integer)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_SLICE,
             parameters: [
               {
@@ -1574,7 +1574,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_REPLACE,
         signatures: [
           {
-            definition: `replace(text: string, oldText: string, newText: string)`,
+            definition: 'replace(text: string, oldText: string, newText: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_REPLACE,
             parameters: [
               {
@@ -1600,12 +1600,12 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_GUID,
         signatures: [
           {
-            definition: `guid()`,
+            definition: 'guid()',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_GUID,
             parameters: [],
           },
           {
-            definition: `guid(format: string)`,
+            definition: 'guid(format: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_GUID,
             parameters: [
               {
@@ -1623,7 +1623,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_TOLOWER,
         signatures: [
           {
-            definition: `toLower(text: string)`,
+            definition: 'toLower(text: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_TOLOWER,
             parameters: [
               {
@@ -1641,7 +1641,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_TOUPPER,
         signatures: [
           {
-            definition: `toUpper(text: string)`,
+            definition: 'toUpper(text: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_TOUPPER,
             parameters: [
               {
@@ -1659,7 +1659,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_INDEXOF,
         signatures: [
           {
-            definition: `indexOf(text: string, searchText: string)`,
+            definition: 'indexOf(text: string, searchText: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_INDEXOF,
             parameters: [
               {
@@ -1681,7 +1681,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_NTHINDEXOF,
         signatures: [
           {
-            definition: `nthIndexOf(text: string, searchText: string, occurrence: number)`,
+            definition: 'nthIndexOf(text: string, searchText: string, occurrence: number)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_NTHINDEXOF,
             parameters: [
               {
@@ -1707,7 +1707,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_LASTINDEXOF,
         signatures: [
           {
-            definition: `lastIndexOf(text: string, searchText: string)`,
+            definition: 'lastIndexOf(text: string, searchText: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_LASTINDEXOF,
             parameters: [
               {
@@ -1729,7 +1729,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_STARTSWITH,
         signatures: [
           {
-            definition: `startsWith(text: string, searchText: string)`,
+            definition: 'startsWith(text: string, searchText: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_STARTSWITH,
             parameters: [
               {
@@ -1751,7 +1751,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_ENDSWITH,
         signatures: [
           {
-            definition: `endsWith(text: string, searchText: string)`,
+            definition: 'endsWith(text: string, searchText: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_ENDSWITH,
             parameters: [
               {
@@ -1773,7 +1773,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_SPLIT,
         signatures: [
           {
-            definition: `split(text: string, separator: string)`,
+            definition: 'split(text: string, separator: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_SPLIT,
             parameters: [
               {
@@ -1795,7 +1795,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_TRIM,
         signatures: [
           {
-            definition: `trim(text: string)`,
+            definition: 'trim(text: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_TRIM,
             parameters: [
               {
@@ -1845,7 +1845,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_CONTAINS,
         signatures: [
           {
-            definition: `contains(collection: array|string, value: string)`,
+            definition: 'contains(collection: array|string, value: string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_CONTAINS,
             parameters: [
               {
@@ -1867,7 +1867,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_LENGTH,
         signatures: [
           {
-            definition: `length(collection: array|string)`,
+            definition: 'length(collection: array|string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_LENGTH,
             parameters: [
               {
@@ -1885,7 +1885,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
         signatures: [
           {
-            definition: `sort(collection: array)`,
+            definition: 'sort(collection: array)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
             parameters: [
               {
@@ -1895,7 +1895,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `sort(colection: array, sortBy: string)`,
+            definition: 'sort(colection: array, sortBy: string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_SORT,
             parameters: [
               {
@@ -1916,7 +1916,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_REVERSE,
         signatures: [
           {
-            definition: `reverse(collection: array)`,
+            definition: 'reverse(collection: array)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_REVERSE,
             parameters: [
               {
@@ -1933,7 +1933,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_EMPTY,
         signatures: [
           {
-            definition: `empty(collection: object|array|string)`,
+            definition: 'empty(collection: object|array|string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_EMPTY,
             parameters: [
               {
@@ -1951,7 +1951,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_INTERSECTION,
         signatures: [
           {
-            definition: `intersection(collection_1: object|array, collection_2: object|array)`,
+            definition: 'intersection(collection_1: object|array, collection_2: object|array)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_INTERSECTION_INFO,
             parameters: [
               {
@@ -1965,7 +1965,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `intersection(collection_1: object|array, collection_2: object|array, ...)`,
+            definition: 'intersection(collection_1: object|array, collection_2: object|array, ...)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_INTERSECTION_INFO,
             parameters: [
               {
@@ -1993,7 +1993,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_UNION,
         signatures: [
           {
-            definition: `union(collection_1: object|array, collection_2: object|array)`,
+            definition: 'union(collection_1: object|array, collection_2: object|array)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_UNION_INFO,
             parameters: [
               {
@@ -2007,7 +2007,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `union(collection_1: object|array, collection_2: object|array, ...)`,
+            definition: 'union(collection_1: object|array, collection_2: object|array, ...)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_UNION_INFO,
             parameters: [
               {
@@ -2035,7 +2035,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_FIRST,
         signatures: [
           {
-            definition: `first(collection: array|string)`,
+            definition: 'first(collection: array|string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_FIRST,
             parameters: [
               {
@@ -2053,7 +2053,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_LAST,
         signatures: [
           {
-            definition: `last(collection: array|string)`,
+            definition: 'last(collection: array|string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_LAST,
             parameters: [
               {
@@ -2071,7 +2071,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_TAKE,
         signatures: [
           {
-            definition: `take(collection: array|string, count: integer)`,
+            definition: 'take(collection: array|string, count: integer)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_TAKE,
             parameters: [
               {
@@ -2093,7 +2093,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_SKIP,
         signatures: [
           {
-            definition: `skip(collection: array, count: integer)`,
+            definition: 'skip(collection: array, count: integer)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_SKIP,
             parameters: [
               {
@@ -2115,7 +2115,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_JOIN,
         signatures: [
           {
-            definition: `join(collection: array, delimiter: string)`,
+            definition: 'join(collection: array, delimiter: string)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_JOIN,
             parameters: [
               {
@@ -2137,7 +2137,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_COLLECTION_CHUNK,
         signatures: [
           {
-            definition: `chunk(collection: array|string, length: int)`,
+            definition: 'chunk(collection: array|string, length: int)',
             documentation: Resources.TOKEN_FUNCTION_COLLECTION_CHUNK,
             parameters: [
               {
@@ -2165,7 +2165,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_IF,
         signatures: [
           {
-            definition: `if(expression: boolean, valueIfTrue: any, valueIfFalse: any)`,
+            definition: 'if(expression: boolean, valueIfTrue: any, valueIfFalse: any)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_IF,
             parameters: [
               {
@@ -2191,7 +2191,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_EQUALS,
         signatures: [
           {
-            definition: `equals(object1: any, object2: any)`,
+            definition: 'equals(object1: any, object2: any)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_EQUALS,
             parameters: [
               {
@@ -2213,7 +2213,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_AND,
         signatures: [
           {
-            definition: `and(expression1: boolean, expression2: boolean)`,
+            definition: 'and(expression1: boolean, expression2: boolean)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_AND,
             parameters: [
               {
@@ -2235,7 +2235,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_OR,
         signatures: [
           {
-            definition: `or(expression1: boolean, expression2: boolean)`,
+            definition: 'or(expression1: boolean, expression2: boolean)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_OR,
             parameters: [
               {
@@ -2257,7 +2257,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_NOT,
         signatures: [
           {
-            definition: `not(expression: boolean)`,
+            definition: 'not(expression: boolean)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_NOT,
             parameters: [
               {
@@ -2275,7 +2275,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_LESS,
         signatures: [
           {
-            definition: `less(value: integer|float|string, compareTo: integer|float|string)`,
+            definition: 'less(value: integer|float|string, compareTo: integer|float|string)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_LESS,
             parameters: [
               {
@@ -2297,7 +2297,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_LESSOREQUALS,
         signatures: [
           {
-            definition: `lessOrEquals(value: integer|float|string, compareTo: integer|float|string)`,
+            definition: 'lessOrEquals(value: integer|float|string, compareTo: integer|float|string)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_LESSOREQUALS,
             parameters: [
               {
@@ -2319,7 +2319,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_GREATER,
         signatures: [
           {
-            definition: `greater(value: integer|float|string, compareTo: integer|float|string)`,
+            definition: 'greater(value: integer|float|string, compareTo: integer|float|string)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_GREATER,
             parameters: [
               {
@@ -2341,7 +2341,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_GREATEROREQUALS,
         signatures: [
           {
-            definition: `greaterOrEquals(value: integer|float|string, compareTo: integer|float|string)`,
+            definition: 'greaterOrEquals(value: integer|float|string, compareTo: integer|float|string)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_GREATEROREQUALS,
             parameters: [
               {
@@ -2363,7 +2363,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_ISINT,
         signatures: [
           {
-            definition: `isInt(value: string)`,
+            definition: 'isInt(value: string)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_ISINT,
             parameters: [
               {
@@ -2381,7 +2381,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_LOGICAL_ISFLOAT,
         signatures: [
           {
-            definition: `isFloat(value: string, locale?: string)`,
+            definition: 'isFloat(value: string, locale?: string)',
             documentation: Resources.TOKEN_FUNCTION_LOGICAL_ISFLOAT,
             parameters: [
               {
@@ -2409,7 +2409,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_JSON,
         signatures: [
           {
-            definition: `json(value: string)`,
+            definition: 'json(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_JSON,
             parameters: [
               {
@@ -2427,7 +2427,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_XML,
         signatures: [
           {
-            definition: `xml(value: string)`,
+            definition: 'xml(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_XML,
             parameters: [
               {
@@ -2445,7 +2445,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_INT,
         signatures: [
           {
-            definition: `int(value: string)`,
+            definition: 'int(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_INT,
             parameters: [
               {
@@ -2463,7 +2463,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_STRING,
         signatures: [
           {
-            definition: `string(value: any)`,
+            definition: 'string(value: any)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_STRING,
             parameters: [
               {
@@ -2481,7 +2481,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_FLOAT,
         signatures: [
           {
-            definition: `float(value: string)`,
+            definition: 'float(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_FLOAT,
             parameters: [
               {
@@ -2499,7 +2499,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_BOOL,
         signatures: [
           {
-            definition: `bool(value: any)`,
+            definition: 'bool(value: any)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_BOOL,
             parameters: [
               {
@@ -2517,7 +2517,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_BASE64,
         signatures: [
           {
-            definition: `base64(value: string)`,
+            definition: 'base64(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_BASE64,
             parameters: [
               {
@@ -2535,7 +2535,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_BASE64TOBINARY,
         signatures: [
           {
-            definition: `base64ToBinary(value: string)`,
+            definition: 'base64ToBinary(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_BASE64TOBINARY,
             parameters: [
               {
@@ -2553,7 +2553,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_BASE64TOSTRING,
         signatures: [
           {
-            definition: `base64ToString(value: string)`,
+            definition: 'base64ToString(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_BASE64TOSTRING,
             parameters: [
               {
@@ -2571,7 +2571,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_BINARY,
         signatures: [
           {
-            definition: `binary(value: string)`,
+            definition: 'binary(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_BINARY,
             parameters: [
               {
@@ -2589,7 +2589,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_DATAURITOBINARY,
         signatures: [
           {
-            definition: `dataUriToBinary(value: string)`,
+            definition: 'dataUriToBinary(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_DATAURITOBINARY,
             parameters: [
               {
@@ -2607,7 +2607,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_DATAURITOSTRING,
         signatures: [
           {
-            definition: `dataUriToString(value: string)`,
+            definition: 'dataUriToString(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_DATAURITOSTRING,
             parameters: [
               {
@@ -2625,7 +2625,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_DATAURI,
         signatures: [
           {
-            definition: `dataUri(value: string)`,
+            definition: 'dataUri(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_DATAURI,
             parameters: [
               {
@@ -2643,7 +2643,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_DECODEBASE64,
         signatures: [
           {
-            definition: `decodeBase64(value: string)`,
+            definition: 'decodeBase64(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_DECODEBASE64,
             parameters: [
               {
@@ -2661,7 +2661,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_UTF8LENGTH,
         signatures: [
           {
-            definition: `utf8Length(value: string)`,
+            definition: 'utf8Length(value: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_UTF8LENGTH,
             parameters: [
               {
@@ -2679,7 +2679,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_UTF16LENGTH,
         signatures: [
           {
-            definition: `utf16Length(value: string)`,
+            definition: 'utf16Length(value: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_UTF16LENGTH,
             parameters: [
               {
@@ -2697,7 +2697,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_ENCODEURICOMPONENT,
         signatures: [
           {
-            definition: `encodeUriComponent(value: string)`,
+            definition: 'encodeUriComponent(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_ENCODEURICOMPONENT,
             parameters: [
               {
@@ -2715,7 +2715,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_DECODEURICOMPONENT,
         signatures: [
           {
-            definition: `decodeUriComponent(value: string)`,
+            definition: 'decodeUriComponent(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_DECODEURICOMPONENT,
             parameters: [
               {
@@ -2733,7 +2733,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_DECODEDATAURI,
         signatures: [
           {
-            definition: `decodeDataUri(value: string)`,
+            definition: 'decodeDataUri(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_DECODEDATAURI,
             parameters: [
               {
@@ -2751,7 +2751,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_URICOMPONENT,
         signatures: [
           {
-            definition: `uriComponent(value: string)`,
+            definition: 'uriComponent(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_URICOMPONENT,
             parameters: [
               {
@@ -2769,7 +2769,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_URICOMPONENTTOBINARY,
         signatures: [
           {
-            definition: `uriComponentToBinary(value: string)`,
+            definition: 'uriComponentToBinary(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_URICOMPONENTTOBINARY,
             parameters: [
               {
@@ -2787,7 +2787,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_URICOMPONENTTOSTRING,
         signatures: [
           {
-            definition: `uriComponentToString(value: string)`,
+            definition: 'uriComponentToString(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_URICOMPONENTTOSTRING,
             parameters: [
               {
@@ -2805,7 +2805,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_ARRAY,
         signatures: [
           {
-            definition: `array(value: string)`,
+            definition: 'array(value: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_ARRAY,
             parameters: [
               {
@@ -2823,7 +2823,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_CREATEARRAY,
         signatures: [
           {
-            definition: `createArray(object_1: any)`,
+            definition: 'createArray(object_1: any)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_CREATEARRAY,
             parameters: [
               {
@@ -2833,7 +2833,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `createArray(object_1: any, ...)`,
+            definition: 'createArray(object_1: any, ...)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_CREATEARRAY,
             parameters: [
               {
@@ -2858,7 +2858,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_TRIGGERFORMDATAVALUE,
         signatures: [
           {
-            definition: `triggerFormDataValue(key: string)`,
+            definition: 'triggerFormDataValue(key: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_TRIGGERFORMDATAVALUE,
             parameters: [
               {
@@ -2876,7 +2876,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_TRIGGERFORMDATAMULTIVALUES,
         signatures: [
           {
-            definition: `triggerFormDataMultiValues(key: string)`,
+            definition: 'triggerFormDataMultiValues(key: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_TRIGGERFORMDATAMULTIVALUES,
             parameters: [
               {
@@ -2894,7 +2894,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_TRIGGERMULTIPARTBODY,
         signatures: [
           {
-            definition: `triggerMultipartBody(index: number)`,
+            definition: 'triggerMultipartBody(index: number)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_TRIGGERMULTIPARTBODY,
             parameters: [
               {
@@ -2912,7 +2912,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_FORMDATAVALUE,
         signatures: [
           {
-            definition: `formDataValue(actionName: string, key: string)`,
+            definition: 'formDataValue(actionName: string, key: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_FORMDATAVALUE,
             parameters: [
               {
@@ -2934,7 +2934,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_FORMDATAMULTIVALUES,
         signatures: [
           {
-            definition: `formDataMultiValues(actionName: string, key: string)`,
+            definition: 'formDataMultiValues(actionName: string, key: string)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_FORMDATAMULTIVALUES,
             parameters: [
               {
@@ -2956,7 +2956,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_CONVERSION_MULTIPARTBODY,
         signatures: [
           {
-            definition: `multipartBody(actionName: string, index: number)`,
+            definition: 'multipartBody(actionName: string, index: number)',
             documentation: Resources.TOKEN_FUNCTION_CONVERSION_MULTIPARTBODY,
             parameters: [
               {
@@ -3002,7 +3002,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_MIN,
         signatures: [
           {
-            definition: `min(value_1: array|number)`,
+            definition: 'min(value_1: array|number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_MIN,
             parameters: [
               {
@@ -3012,7 +3012,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `min(value_1: array|number, ...)`,
+            definition: 'min(value_1: array|number, ...)',
             documentation: Resources.TOKEN_FUNCTION_MATH_MIN,
             parameters: [
               {
@@ -3036,7 +3036,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_MAX,
         signatures: [
           {
-            definition: `max(value_1: array|number)`,
+            definition: 'max(value_1: array|number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_MAX,
             parameters: [
               {
@@ -3046,7 +3046,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `max(value_1: array|number, ...)`,
+            definition: 'max(value_1: array|number, ...)',
             documentation: Resources.TOKEN_FUNCTION_MATH_MAX,
             parameters: [
               {
@@ -3070,7 +3070,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_RAND,
         signatures: [
           {
-            definition: `rand(minValue: integer, maxValue: integer)`,
+            definition: 'rand(minValue: integer, maxValue: integer)',
             documentation: Resources.TOKEN_FUNCTION_MATH_RAND,
             parameters: [
               {
@@ -3092,7 +3092,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_ADD,
         signatures: [
           {
-            definition: `add(summand_1: number, summand_2: number)`,
+            definition: 'add(summand_1: number, summand_2: number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_ADD,
             parameters: [
               {
@@ -3114,7 +3114,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_SUB,
         signatures: [
           {
-            definition: `sub(minuend: number, subtrahend: number)`,
+            definition: 'sub(minuend: number, subtrahend: number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_SUB,
             parameters: [
               {
@@ -3136,7 +3136,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_MUL,
         signatures: [
           {
-            definition: `mul(multiplicand_1: number, multiplicand_2: number)`,
+            definition: 'mul(multiplicand_1: number, multiplicand_2: number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_MUL,
             parameters: [
               {
@@ -3158,7 +3158,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_DIV,
         signatures: [
           {
-            definition: `div(dividend: number, divisor: number)`,
+            definition: 'div(dividend: number, divisor: number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_DIV,
             parameters: [
               {
@@ -3180,7 +3180,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_MOD,
         signatures: [
           {
-            definition: `mod(dividend: number, divisor: number)`,
+            definition: 'mod(dividend: number, divisor: number)',
             documentation: Resources.TOKEN_FUNCTION_MATH_MOD,
             parameters: [
               {
@@ -3202,7 +3202,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MATH_RANGE,
         signatures: [
           {
-            definition: `range(startIndex: integer, count: integer)`,
+            definition: 'range(startIndex: integer, count: integer)',
             documentation: Resources.TOKEN_FUNCTION_MATH_RANGE,
             parameters: [
               {
@@ -3243,7 +3243,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_GETFUTURETIME,
         signatures: [
           {
-            definition: `getFutureTime(interval: integer, timeUnit: string, format?: string)`,
+            definition: 'getFutureTime(interval: integer, timeUnit: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_GETFUTURETIME,
             parameters: [
               {
@@ -3269,7 +3269,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_GETPASTTIME,
         signatures: [
           {
-            definition: `getPastTime(interval: integer, timeUnit: string, format?: string)`,
+            definition: 'getPastTime(interval: integer, timeUnit: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_GETPASTTIME,
             parameters: [
               {
@@ -3295,7 +3295,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_ADDTOTIME,
         signatures: [
           {
-            definition: `addToTime(timestamp: string, interval: integer, timeUnit: string, format?: string)`,
+            definition: 'addToTime(timestamp: string, interval: integer, timeUnit: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_ADDTOTIME,
             parameters: [
               {
@@ -3325,7 +3325,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_SUBTRACTFROMTIME,
         signatures: [
           {
-            definition: `subtractFromTime(timestamp: string, interval: integer, timeUnit: string, format?: string)`,
+            definition: 'subtractFromTime(timestamp: string, interval: integer, timeUnit: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_SUBTRACTFROMTIME,
             parameters: [
               {
@@ -3355,7 +3355,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_ADDSECONDS,
         signatures: [
           {
-            definition: `addSeconds(timestamp: string, seconds: integer, format?: string)`,
+            definition: 'addSeconds(timestamp: string, seconds: integer, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_ADDSECONDS,
             parameters: [
               {
@@ -3381,7 +3381,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_ADDMINUTES,
         signatures: [
           {
-            definition: `addMinutes(timestamp: string, minutes: integer, format?: string)`,
+            definition: 'addMinutes(timestamp: string, minutes: integer, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_ADDMINUTES,
             parameters: [
               {
@@ -3407,7 +3407,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_ADDHOURS,
         signatures: [
           {
-            definition: `addHours(timestamp: string, hours: integer, format?: string)`,
+            definition: 'addHours(timestamp: string, hours: integer, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_ADDHOURS,
             parameters: [
               {
@@ -3433,7 +3433,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_ADDDAYS,
         signatures: [
           {
-            definition: `addDays(timestamp: string, days: integer, format?: string)`,
+            definition: 'addDays(timestamp: string, days: integer, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_ADDDAYS,
             parameters: [
               {
@@ -3459,7 +3459,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
         signatures: [
           {
-            definition: `dateDifference(startTimestamp: string, endTimestamp: string)`,
+            definition: 'dateDifference(startTimestamp: string, endTimestamp: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_DATEDIFFERENCE,
             parameters: [
               {
@@ -3481,7 +3481,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_CONVERTTIMEZONE,
         signatures: [
           {
-            definition: `convertTimeZone(timestamp: string, sourceTimeZone: string, destinationTimeZone: string, format?: string)`,
+            definition: 'convertTimeZone(timestamp: string, sourceTimeZone: string, destinationTimeZone: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_CONVERTTIMEZONE,
             parameters: [
               {
@@ -3511,7 +3511,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_CONVERTTOUTC,
         signatures: [
           {
-            definition: `convertToUtc(timestamp: string, sourceTimeZone: string, format?: string)`,
+            definition: 'convertToUtc(timestamp: string, sourceTimeZone: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_CONVERTTOUTC,
             parameters: [
               {
@@ -3537,7 +3537,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_CONVERTFROMUTC,
         signatures: [
           {
-            definition: `convertFromUtc(timestamp: string, destinationTimeZone: string, format?: string)`,
+            definition: 'convertFromUtc(timestamp: string, destinationTimeZone: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_CONVERTFROMUTC,
             parameters: [
               {
@@ -3563,7 +3563,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_FORMATDATETIME,
         signatures: [
           {
-            definition: `formatDateTime(timestamp: string, format?: string, locale?: string)`,
+            definition: 'formatDateTime(timestamp: string, format?: string, locale?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_FORMATDATETIME,
             parameters: [
               {
@@ -3589,7 +3589,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_PARSEDATETIME,
         signatures: [
           {
-            definition: `parseDateTime(dateString: string, locale?: string, format?: string))`,
+            definition: 'parseDateTime(dateString: string, locale?: string, format?: string))',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_PARSEDATETIME,
             parameters: [
               {
@@ -3615,7 +3615,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_STARTOFHOUR,
         signatures: [
           {
-            definition: `startOfHour(timestamp: string, format?: string)`,
+            definition: 'startOfHour(timestamp: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_STARTOFHOUR,
             parameters: [
               {
@@ -3637,7 +3637,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_STARTOFDAY,
         signatures: [
           {
-            definition: `startOfDay(timestamp: string, format?: string)`,
+            definition: 'startOfDay(timestamp: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_STARTOFDAY,
             parameters: [
               {
@@ -3659,7 +3659,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_STARTOFMONTH,
         signatures: [
           {
-            definition: `startOfMonth(timestamp: string, format?: string)`,
+            definition: 'startOfMonth(timestamp: string, format?: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_STARTOFMONTH,
             parameters: [
               {
@@ -3681,7 +3681,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_DAYOFWEEK,
         signatures: [
           {
-            definition: `dayOfWeek(timestamp: string)`,
+            definition: 'dayOfWeek(timestamp: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_DAYOFWEEK,
             parameters: [
               {
@@ -3699,7 +3699,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_DAYOFMONTH,
         signatures: [
           {
-            definition: `dayOfMonth(timestamp: string)`,
+            definition: 'dayOfMonth(timestamp: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_DAYOFMONTH,
             parameters: [
               {
@@ -3717,7 +3717,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_DAYOFYEAR,
         signatures: [
           {
-            definition: `dayOfYear(timestamp: string)`,
+            definition: 'dayOfYear(timestamp: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_DAYOFYEAR,
             parameters: [
               {
@@ -3735,7 +3735,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_DATETIME_TICKS,
         signatures: [
           {
-            definition: `ticks(timestamp: string)`,
+            definition: 'ticks(timestamp: string)',
             documentation: Resources.TOKEN_FUNCTION_DATETIME_TICKS,
             parameters: [
               {
@@ -3962,7 +3962,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_WORKFLOW_LISTCALLBACKURL,
         signatures: [
           {
-            definition: `listCallbackUrl()`,
+            definition: 'listCallbackUrl()',
             documentation: Resources.TOKEN_FUNCTION_WORKFLOW_LISTCALLBACKURL_DETAIL,
             parameters: [],
           },
@@ -3975,7 +3975,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_WORKFLOW_WORKFLOW,
         signatures: [
           {
-            definition: `workflow()`,
+            definition: 'workflow()',
             documentation: Resources.TOKEN_FUNCTION_WORKFLOW_WORKFLOW,
             parameters: [],
           },
@@ -3994,7 +3994,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_URIHOST,
         signatures: [
           {
-            definition: `uriHost(uri: string)`,
+            definition: 'uriHost(uri: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_URIHOST,
             parameters: [
               {
@@ -4012,7 +4012,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_URIPATH,
         signatures: [
           {
-            definition: `uriPath(uri: string)`,
+            definition: 'uriPath(uri: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_URIPATH,
             parameters: [
               {
@@ -4030,7 +4030,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_URIPATHANDQUERY,
         signatures: [
           {
-            definition: `uriPathAndQuery(uri: string)`,
+            definition: 'uriPathAndQuery(uri: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_URIPATHANDQUERY,
             parameters: [
               {
@@ -4048,7 +4048,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_URIPORT,
         signatures: [
           {
-            definition: `uriPort(uri: string)`,
+            definition: 'uriPort(uri: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_URIPORT,
             parameters: [
               {
@@ -4066,7 +4066,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_URISCHEME,
         signatures: [
           {
-            definition: `uriScheme(uri: string)`,
+            definition: 'uriScheme(uri: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_URISCHEME,
             parameters: [
               {
@@ -4084,7 +4084,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_FUNCTION_URIQUERY,
         signatures: [
           {
-            definition: `uriQuery(uri: string)`,
+            definition: 'uriQuery(uri: string)',
             documentation: Resources.TOKEN_FUNCTION_FUNCTION_URIQUERY,
             parameters: [
               {
@@ -4108,7 +4108,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MANIPULATION_COALESCE,
         signatures: [
           {
-            definition: `coalesce(object_1: any)`,
+            definition: 'coalesce(object_1: any)',
             documentation: Resources.TOKEN_FUNCTION_MANIPULATION_COALESCE,
             parameters: [
               {
@@ -4119,7 +4119,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
             ],
           },
           {
-            definition: `coalesce(object_1: any, ...)`,
+            definition: 'coalesce(object_1: any, ...)',
             documentation: Resources.TOKEN_FUNCTION_MANIPULATION_COALESCE,
             parameters: [
               {
@@ -4226,7 +4226,7 @@ export const FunctionGroupDefinitions: FunctionGroupDefinition[] = [
         description: Resources.TOKEN_FUNCTION_MANIPULATION_XPATH,
         signatures: [
           {
-            definition: `xpath(xml: any, xpath: any)`,
+            definition: 'xpath(xml: any, xpath: any)',
             documentation: Resources.TOKEN_FUNCTION_MANIPULATION_XPATH,
             parameters: [
               {

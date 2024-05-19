@@ -59,7 +59,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
   return (
     <div id={id} className="msla-op-group-header">
       <Image className="msla-op-group-image" alt={title} src={imgSrc} imageFit={ImageFit.contain} />
-      <div className={css(`msla-op-group-info`, !descriptionExpanded && 'limited')}>
+      <div className={css('msla-op-group-info', !descriptionExpanded && 'limited')}>
         <div className="msla-op-group-title-row">
           <span className="msla-op-group-title">{title}</span>
           {docsUrl ? (

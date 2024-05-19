@@ -25,22 +25,23 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const pathOptions = useSelector((state: RootState) => state.function.customXsltFilePaths);
-  const inputConnection = !connection
-    ? undefined
-    : Object.values(connection.inputs).length > 1
+  const inputConnection = connection
+    ? Object.values(connection.inputs).length > 1
       ? connection.inputs[index][0]
-      : connection.inputs[0][index];
+      : connection.inputs[0][index]
+    : undefined;
 
   let inputBox: JSX.Element;
 
   switch (input.inputEntryType) {
-    case InputFormat.TextBox:
+    case InputFormat.TextBox: {
       inputBox = (
         <div key={index} style={{ marginTop: 8 }}>
-          <InputTextbox input={input} loadedInputValue={getInputValue(inputConnection)} functionNode={functionData}></InputTextbox>{' '}
+          <InputTextbox input={input} loadedInputValue={getInputValue(inputConnection)} functionNode={functionData} />{' '}
         </div>
       );
       break;
+    }
     case InputFormat.FilePicker: {
       const customXsltPath = 'DataMapper/Extensions/InlineXslt';
 
@@ -79,7 +80,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
           allPathOptions={pathOptions}
           placeholder={placeholder}
           setSelectedPath={(item: string | undefined) => {
-            if (item && selectedItemKey && pathOptions.find((path) => path === item))
+            if (item && selectedItemKey && pathOptions.find((path) => path === item)) {
               dispatch(
                 setConnectionInput({
                   targetNode: functionData,
@@ -88,6 +89,7 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
                   input: addQuotesToString(item),
                 })
               );
+            }
           }}
           relativePathMessage={''}
           errorMessage=""

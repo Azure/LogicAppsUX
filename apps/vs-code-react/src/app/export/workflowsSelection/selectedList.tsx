@@ -1,7 +1,8 @@
 import type { WorkflowsList } from '../../../run-service';
 import type { RootState } from '../../../state/store';
-import { IconButton, Shimmer, Text } from '@fluentui/react';
+import { IconButton, Shimmer } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
+import { LargeText, MediumText, XLargeText } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -41,15 +42,13 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
         return (
           <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
             {deselectButton}
-            <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
-              {name + ' '}
-            </Text>
+            <LargeText
+              text={`${name} `}
+              style={{ display: 'block', whiteSpace: 'nowrap' }}
+              className="msla-export-workflows-panel-selected-list-item-text"
+            />
             <div className="msla-export-workflows-panel-selected-list-item-subtext">
-              (
-              <Text variant="medium" nowrap block>
-                {resourceGroup}
-              </Text>
-              )
+              <MediumText text={resourceGroup} style={{ display: 'block', whiteSpace: 'nowrap' }} />
             </div>
           </div>
         );
@@ -61,9 +60,7 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
 
   return (
     <div className="msla-export-workflows-panel-selected">
-      <Text variant="xLarge" block className="msla-export-workflows-panel-selected-title">
-        {intlText.SELECTED_APPS}
-      </Text>
+      <XLargeText text={intlText.SELECTED_APPS} style={{ display: 'block' }} className="msla-export-workflows-panel-selected-title" />
       <div className="msla-export-workflows-panel-selected-list">{renderItems}</div>
     </div>
   );

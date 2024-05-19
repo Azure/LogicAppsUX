@@ -8,7 +8,7 @@ import { FloatingActionMenuBase } from '../floatingactionmenubase';
 import { createDynamicallyAddedParameterProperties, deserialize, getEmptySchemaValueSegmentForInitialization, serialize } from './helper';
 import { TextField } from '@fluentui/react';
 import { safeSetObjectPropertyValue } from '@microsoft/logic-apps-shared';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 type DynamicallyAddedParameterInputsPropertiesBase = {
@@ -51,7 +51,7 @@ export type DynamicallyAddedParameterInputsModel = DynamicallyAddedParameterProp
 };
 
 export interface FloatingActionMenuInputsProps {
-  supportedTypes: Array<string>;
+  supportedTypes: string[];
   useStaticInputs: boolean | undefined;
   initialValue: ValueSegment[];
   isRequestApiConnectionTrigger?: boolean;

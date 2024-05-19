@@ -1,3 +1,4 @@
+import type { IComboBoxOption } from '@fluentui/react';
 import constants from '../../../constants';
 import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
@@ -175,4 +176,21 @@ export const removeQuotes = (s: string): string => {
     return s.slice(1, -1);
   }
   return s;
+};
+
+export const getDropdownOptionsFromOptions = (editorOptions: any) => {
+  let dropdownOptions: IComboBoxOption[] = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+  if (!Array.isArray(dropdownOptions)) {
+    Object.values(dropdownOptions).forEach((value) => {
+      if (Array.isArray(value)) {
+        dropdownOptions = value.map((option) => {
+          return {
+            key: option,
+            text: option,
+          };
+        });
+      }
+    });
+  }
+  return dropdownOptions;
 };

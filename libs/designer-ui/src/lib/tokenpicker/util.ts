@@ -9,10 +9,10 @@ export function getExpressionTokenTitle(expression: Expression): string {
     case ExpressionType.NumberLiteral:
     case ExpressionType.StringLiteral:
       return (expression as ExpressionLiteral).value;
-    case ExpressionType.Function:
-      // eslint-disable-next-line no-case-declarations
+    case ExpressionType.Function: {
       const functionExpression = expression as ExpressionFunction;
       return `${functionExpression.name}(${functionExpression.arguments.length > 0 ? '...' : ''})`;
+    }
     default:
       throw new UnsupportedException(`Unsupported expression type ${expression.type}.`);
   }
@@ -25,10 +25,10 @@ export function getExpressionOutput(expression: Expression, outputTokenMap: Reco
     case ExpressionType.NumberLiteral:
     case ExpressionType.StringLiteral:
       return undefined;
-    case ExpressionType.Function:
-      // eslint-disable-next-line no-case-declarations
+    case ExpressionType.Function: {
       const functionExpression = expression as ExpressionFunction;
       return outputTokenMap[functionExpression.expression] ?? undefined;
+    }
     default:
       throw new UnsupportedException(`Unsupported expression type ${expression.type}.`);
   }

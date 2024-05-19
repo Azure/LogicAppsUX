@@ -9,35 +9,19 @@
 //import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
-import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
-import { findLast } from '../../utils/Array.Utils';
 import {
   applyConnectionValue,
-  bringInParentSourceNodesForRepeating,
-  collectSourceNodesForConnectionChain,
-  collectTargetNodesForConnectionChain,
-  createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
-  getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
-  getTargetSchemaNodeConnections,
   isConnectionUnit,
-  nodeHasSpecificInputEventually,
 } from '../../utils/Connection.Utils';
 import {
-  //addAncestorNodesToCanvas,
-  addNodeToCanvasIfDoesNotExist,
   //addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import {
-  functionsForLocation,
-  getConnectedSourceSchema,
-  getFunctionLocationsForAllFunctions,
-  isFunctionData,
-} from '../../utils/Function.Utils';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
+import { LogService } from '../../utils/Logging.Utils';
 // import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 // import {
 //   addReactFlowPrefix,
@@ -48,14 +32,7 @@ import { LogCategory, LogService } from '../../utils/Logging.Utils';
 //   getSplitIdsFromReactFlowConnectionId,
 // } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
-import type {
-  FunctionMetadata,
-  FunctionPositionMetadata,
-  MapMetadata,
-  SchemaExtended,
-  SchemaNodeDictionary,
-  SchemaNodeExtended,
-} from '@microsoft/logic-apps-shared';
+import type { FunctionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -346,42 +323,21 @@ export const dataMapSlice = createSlice({
     //   }
     // },
 
-    // addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
-    //   if (state.curDataMapOperation.currentTargetSchemaNode) {
-    //     const newState: DataMapOperationState = {
-    //       ...state.curDataMapOperation,
-    //       functionNodes: { ...state.curDataMapOperation.functionNodes },
-    //     };
+    addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
+      if (state.curDataMapOperation.currentTargetSchemaNode) {
+        const newState: DataMapOperationState = {
+          ...state.curDataMapOperation,
+          functionNodes: { ...state.curDataMapOperation.functionNodes },
+        };
 
-    //     let fnReactFlowKey: string;
-    //     let fnData: FunctionData;
+        let fnReactFlowKey: string;
+        let fnData: FunctionData;
 
-    //     // Default - just provide the FunctionData and the key will be handled under the hood
-    //     if (!('newReactFlowKey' in action.payload)) {
-    //       fnData = { ...action.payload, isNewNode: true };
-    //       fnReactFlowKey = createReactFlowFunctionKey(fnData);
-    //       newState.functionNodes[fnReactFlowKey] = {
-    //         functionData: fnData,
-    //         functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
-    //       };
-    //     } else {
-    //       // Alternative - specify the key you want to use (needed for adding inline Functions)
-    //       fnData = action.payload.functionData;
-    //       fnReactFlowKey = action.payload.newReactFlowKey;
-    //       newState.functionNodes[fnReactFlowKey] = {
-    //         functionData: fnData,
-    //         functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
-    //       };
-    //     }
+        // PLEASE SEE FN IN V1, THERE IS A LOT WE CAN REUSE
 
-    //     // Create connection entry to instantiate default connection inputs
-    //     createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
-
-    //     updateFunctionNodeLocations(newState, fnReactFlowKey);
-
-    //     doDataMapOperation(state, newState, 'Add function node');
-    //   }
-    // },
+        doDataMapOperation(state, newState, 'Add function node');
+      }
+    },
 
     // deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string; port?: string }>) => {
     //   const newState = { ...state.curDataMapOperation };
@@ -582,7 +538,7 @@ export const {
   // removeSourceSchemaNodes,
   // setCurrentTargetSchemaNode,
   // setSelectedItem,
-  // addFunctionNode,
+  addFunctionNode,
   // makeConnection,
   // setConnectionInput,
   // saveDataMap,
@@ -681,7 +637,7 @@ export const deleteConnectionFromConnections = (
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
   const parentId = getParentId(inputKey);
-  if (parentId.endsWith(SchemaType.Source + '-')) {
+  if (parentId.endsWith(`${SchemaType.Source}-`)) {
     return;
   }
 

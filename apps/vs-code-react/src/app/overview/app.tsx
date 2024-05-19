@@ -8,7 +8,7 @@ import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo } from 'react';
-import { useInfiniteQuery, useMutation } from 'react-query';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
 import { useIntl } from 'react-intl';
@@ -62,7 +62,7 @@ export const OverviewApp = () => {
   };
 
   const { data, error, isLoading, fetchNextPage, hasNextPage, refetch, isRefetching } = useInfiniteQuery<Runs>(
-    QueryKeys.runsData,
+    [QueryKeys.runsData],
     loadRuns,
     {
       getNextPageParam: (lastPage) => lastPage.nextLink,
@@ -75,7 +75,7 @@ export const OverviewApp = () => {
   const runItems = useMemo(
     () =>
       data?.pages?.reduce<RunDisplayItem[]>((acc, val) => {
-        return [...acc, ...val.runs.map(mapToRunItem)];
+        return acc.concat(val.runs.map(mapToRunItem));
       }, []),
     [data?.pages]
   );

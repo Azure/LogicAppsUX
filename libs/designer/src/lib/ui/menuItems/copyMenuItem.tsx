@@ -9,11 +9,12 @@ const CopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
 export interface CopyMenuItemProps {
   onClick: (e: unknown) => void;
   isTrigger?: boolean;
+  isScope?: boolean;
   showKey?: boolean;
 }
 
 export const CopyMenuItem = (props: CopyMenuItemProps) => {
-  const { onClick, isTrigger = false, showKey = false } = props;
+  const { onClick, isTrigger = false, showKey = false, isScope = false } = props;
 
   const intl = useIntl();
 
@@ -27,6 +28,11 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
     id: 'oRxmXb',
     description: 'Copy Trigger text',
   });
+  const copyScope = intl.formatMessage({
+    defaultMessage: 'Copy Entire Action',
+    description: 'Copy Scope text',
+    id: 'kDIgbw',
+  });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',
     id: 'snJFUi',
@@ -39,23 +45,29 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
   });
   const copyKeyboardText = isApple() ? copyKeyboardTextMac : copyKeyboardTextWin;
 
-  const titleText = isTrigger ? copyTrigger : copyAction;
+  const titleText = isScope ? copyScope : isTrigger ? copyTrigger : copyAction;
 
   const onCopyClick = useCallback<CopyMenuItemProps['onClick']>(
     (e) => {
       onClick(e);
       LoggerService().log({
         area: 'CopyMenuItem:onCopyClick',
-        args: [isTrigger ? 'trigger' : 'action'],
+        args: [isScope ? 'scope' : isTrigger ? 'trigger' : 'action'],
         level: LogEntryLevel.Verbose,
         message: 'Action copied.',
       });
     },
-    [isTrigger, onClick]
+    [isScope, isTrigger, onClick]
   );
 
   return (
-    <MenuItem key={titleText} icon={<CopyIcon />} secondaryContent={showKey ? copyKeyboardText : undefined} onClick={onCopyClick}>
+    <MenuItem
+      key={titleText}
+      icon={<CopyIcon />}
+      secondaryContent={showKey ? copyKeyboardText : undefined}
+      onClick={onCopyClick}
+      data-automation-id={'msla-copy-menu-option'}
+    >
       {titleText}
     </MenuItem>
   );

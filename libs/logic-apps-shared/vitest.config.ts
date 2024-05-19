@@ -11,7 +11,7 @@ export default defineProject({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'json'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
     typecheck: { enabled: true },
     restoreMocks: true,
   },

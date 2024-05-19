@@ -10,9 +10,9 @@ export function useTokenTypeaheadTriggerMatch(
 ): TriggerFn {
   return useCallback(
     (text: string) => {
-      const validChars = '[^' + trigger + PUNCTUATION + '\\s]';
+      const validChars = `[^${trigger}${PUNCTUATION}\\s]`;
       // eslint-disable-next-line no-useless-concat
-      const TypeaheadTriggerRegex = new RegExp('(' + '[' + trigger + ']' + '((?:' + validChars + '){0,' + maxLength + '})' + ')$');
+      const TypeaheadTriggerRegex = new RegExp(`([${trigger}]((?:${validChars}){0,${maxLength}}))$`);
       const match = TypeaheadTriggerRegex.exec(text);
       if (match !== null) {
         const maybeLeadingWhitespace = match[1];

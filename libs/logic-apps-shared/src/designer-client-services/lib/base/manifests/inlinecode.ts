@@ -6,7 +6,7 @@ export const inlineCSharpManifest = {
   properties: {
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
     brandColor: '#ba5d00',
-    description: `Execute C Sharp Code`,
+    description: 'Execute C Sharp Code',
     summary: 'Execute C Sharp Code',
 
     environmentBadge: coreBadge,

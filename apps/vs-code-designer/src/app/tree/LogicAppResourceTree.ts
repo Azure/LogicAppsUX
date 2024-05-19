@@ -110,7 +110,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
 
   public static createLogicAppResourceTree(context: IActionContext, subscription: ISubscriptionContext, site: Site): LogicAppResourceTree {
     const resource = new LogicAppResourceTree(subscription, site);
-    void resource.site.createClient(context).then(async (client) => (resource.data.siteConfig = await client.getSiteConfig()));
+    resource.site.createClient(context).then(async (client) => (resource.data.siteConfig = await client.getSiteConfig()));
     return resource;
   }
 
@@ -185,10 +185,8 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public async getHostJson(context: IActionContext): Promise<IParsedHostJson> {
     let result: IParsedHostJson | undefined = this._cachedHostJson;
     if (!result) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let data: any;
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data = JSON.parse((await getFile(context, this.site, 'site/wwwroot/host.json')).data);
       } catch {
         // ignore and use default
@@ -386,12 +384,11 @@ function matchContextValue(expectedContextValue: RegExp | string, matches: (stri
       }
       return expectedContextValue.test(match);
     });
-  } else {
-    return matches.some((match) => {
-      if (match instanceof RegExp) {
-        return match.test(expectedContextValue);
-      }
-      return expectedContextValue === match;
-    });
   }
+  return matches.some((match) => {
+    if (match instanceof RegExp) {
+      return match.test(expectedContextValue);
+    }
+    return expectedContextValue === match;
+  });
 }

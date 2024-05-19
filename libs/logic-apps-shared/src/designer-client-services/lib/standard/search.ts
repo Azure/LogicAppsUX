@@ -29,7 +29,8 @@ export class StandardSearchService extends BaseSearchService {
 
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
+    }
+    if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
     }
   }
@@ -61,13 +62,17 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
-    if (this._isDev) return Promise.resolve([]);
+    if (this._isDev) {
+      return Promise.resolve([]);
+    }
 
     try {
       const {
         apiHubServiceDetails: { apiVersion, subscriptionId, location },
       } = this.options;
-      if (this._isDev) return Promise.resolve([]);
+      if (this._isDev) {
+        return Promise.resolve([]);
+      }
 
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
@@ -91,7 +96,9 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<{ nextlink?: string; value: Connector[] }> {
-    if (this._isDev) return Promise.resolve({ value: [] });
+    if (this._isDev) {
+      return Promise.resolve({ value: [] });
+    }
 
     try {
       const {
@@ -132,7 +139,9 @@ export class StandardSearchService extends BaseSearchService {
 }
 
 function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connector, showStateful: boolean): boolean {
-  if (operation.properties.capabilities === undefined) return true;
+  if (operation.properties.capabilities === undefined) {
+    return true;
+  }
   return showStateful
     ? operation.properties.capabilities.includes('Stateful') || !operation.properties.capabilities.includes('Stateless')
     : operation.properties.capabilities.includes('Stateless') || !operation.properties.capabilities.includes('Stateful');

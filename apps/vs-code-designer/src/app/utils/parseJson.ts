@@ -22,9 +22,8 @@ export function parseJson<T extends object>(data: string): T {
     throw new Error(
       localize('jsonParseError', '{0} near line "{1}", column "{2}"', jsonc.printParseErrorCode(errors[0].error), line, column)
     );
-  } else {
-    return result;
   }
+  return result;
 }
 
 /**

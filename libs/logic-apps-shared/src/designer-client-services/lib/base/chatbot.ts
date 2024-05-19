@@ -15,9 +15,11 @@ export class BaseChatbotService implements IChatbotService {
     const { baseUrl, subscriptionId, apiVersion } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
-    } else if (!apiVersion) {
+    }
+    if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
     }
   }

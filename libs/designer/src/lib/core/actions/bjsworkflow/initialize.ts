@@ -18,7 +18,7 @@ import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedMan
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
-  getCustomCodeFileName,
+  getCustomCodeFileNameFromParameter,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -47,6 +47,7 @@ import type {
   OutputParameter,
   SchemaProperty,
   SwaggerParser,
+  EditorLanguage,
 } from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
@@ -75,9 +76,13 @@ import {
   unmap,
   UnsupportedException,
   isNullOrEmpty,
+  generateDefaultCustomCodeValue,
+  getFileExtensionName,
+  replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -88,17 +93,12 @@ export interface ServiceOptions {
 }
 
 export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
-  dispatch(
-    initializeParameters(
-      Object.keys(parameters).reduce(
-        (result: Record<string, WorkflowParameterDefinition>, currentKey: string) => ({
-          ...result,
-          [currentKey]: { name: currentKey, isEditable: false, ...parameters[currentKey] },
-        }),
-        {}
-      )
-    )
-  );
+  const parametersObj: Record<string, WorkflowParameterDefinition> = {};
+  for (const [key, param] of Object.entries(parameters)) {
+    parametersObj[key] = { name: key, isEditable: false, ...param };
+  }
+
+  dispatch(initializeParameters(parametersObj));
 };
 
 export const getInputParametersFromManifest = (
@@ -210,12 +210,11 @@ export const getOutputParametersFromManifest = (
       undefined /* data */,
       true /* selectAllOneOfSchemas */
     );
-    originalOutputs = Object.values(originalOperationOutputs).reduce((result: Record<string, OutputInfo>, output: SchemaProperty) => {
-      return {
-        ...result,
-        [output.key]: toOutputInfo(output),
-      };
-    }, {});
+
+    originalOutputs = {};
+    for (const output of Object.values(originalOperationOutputs)) {
+      originalOutputs[output.key] = toOutputInfo(output);
+    }
 
     manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
@@ -452,22 +451,39 @@ export const updateCallbackUrlInInputs = async (
   return;
 };
 
-export const updateCustomCodeInInputs = async (
-  nodeId: string,
-  fileExtension: string,
-  nodeInputs: NodeInputs,
-  customCode: CustomCodeFileNameMapping
-) => {
-  if (isNullOrEmpty(customCode)) return;
-  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
-  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
+export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeId: string, dispatch: Dispatch) => {
+  const language: EditorLanguage = parameter?.editorOptions?.language;
+  if (parameter) {
+    const fileData = generateDefaultCustomCodeValue(language);
+    if (fileData) {
+      parameter.editorViewModel = {
+        customCodeData: { fileData },
+      };
+      parameter.value = [createLiteralValueSegment(replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language))];
+      dispatch(
+        addOrUpdateCustomCode({
+          nodeId,
+          fileData,
+          fileExtension: getFileExtensionName(language),
+          fileName: replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language),
+        })
+      );
+    }
+  }
+};
+
+export const updateCustomCodeInInputs = async (parameter: ParameterInfo, customCode: CustomCodeFileNameMapping) => {
+  if (isNullOrEmpty(customCode)) {
+    return;
+  }
+  const language: EditorLanguage = parameter?.editorOptions?.language;
+  const fileName = getCustomCodeFileNameFromParameter(parameter);
   try {
     const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
-    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
 
     if (parameter && customCodeValue) {
       parameter.editorViewModel = {
-        customCodeData: { fileData: customCodeValue, fileExtension, fileName },
+        customCodeData: { fileData: customCodeValue, fileExtension: getFileExtensionName(language), fileName },
       };
     }
   } catch (error) {
@@ -485,10 +501,10 @@ export const updateCustomCodeInInputs = async (
 export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {
   const allOperations = state.workflow.operations;
   const payload: UpdateUpstreamNodesPayload = {};
-  const nodeMap = Object.keys(allOperations).reduce(
-    (actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }),
-    {}
-  );
+  const nodeMap: Record<string, string> = {};
+  for (const id of Object.keys(allOperations)) {
+    nodeMap[id] = id;
+  }
 
   for (const nodeId of Object.keys(allOperations)) {
     if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
@@ -502,7 +518,6 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
       );
     }
   }
-
   dispatch(updateUpstreamNodes(payload));
 };
 
@@ -532,12 +547,14 @@ const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails
   const { name, operationId, parameters } = serviceDetails;
   let service: any;
   switch (name) {
-    case CustomSwaggerServiceNames.Function:
+    case CustomSwaggerServiceNames.Function: {
       service = FunctionService();
       break;
-    case CustomSwaggerServiceNames.ApiManagement:
+    }
+    case CustomSwaggerServiceNames.ApiManagement: {
       service = ApiManagementService();
       break;
+    }
     default:
       throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
   }

@@ -163,26 +163,24 @@ function _decodeSegment(segment: string): Segment {
   if (_isIndexSegment(segment)) {
     return {
       type: SegmentType.Index,
-      value: segment === WildIndexSegment ? undefined : parseInt(segment.substring(1, segment.length - 1), 10),
-    };
-  } else {
-    _codeBook.forEach((entry) => {
-      segment = _replaceCharacter(segment, entry[1], entry[0]);
-    });
-    const literalSegment = _replaceCharacter(segment, _encodedEscapeCharacter, _escapeCharacter);
-    return {
-      type: SegmentType.Property,
-      value: literalSegment,
+      value: segment === WildIndexSegment ? undefined : Number.parseInt(segment.substring(1, segment.length - 1), 10),
     };
   }
+  _codeBook.forEach((entry) => {
+    segment = _replaceCharacter(segment, entry[1], entry[0]);
+  });
+  const literalSegment = _replaceCharacter(segment, _encodedEscapeCharacter, _escapeCharacter);
+  return {
+    type: SegmentType.Property,
+    value: literalSegment,
+  };
 }
 
 function _encodeSegment(segment: Segment): string {
   if (segment.type === SegmentType.Property) {
     return encodePropertySegment(segment.value as string);
-  } else {
-    return segment.value !== undefined ? `[${segment.value}]` : WildIndexSegment;
   }
+  return segment.value !== undefined ? `[${segment.value}]` : WildIndexSegment;
 }
 
 function _isWildIndexSegment(segment: string): boolean {

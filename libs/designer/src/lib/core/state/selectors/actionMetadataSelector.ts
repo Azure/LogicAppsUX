@@ -8,7 +8,8 @@ import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRec
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 
 interface QueryResult {
@@ -18,7 +19,9 @@ interface QueryResult {
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
-  if (result.isLoading || !result.isFetched || result.isPlaceholderData) return false;
+  if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
+    return false;
+  }
   const manifest = result.data;
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
 };
@@ -35,7 +38,7 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
       nodeId && connectionId
         ? {
             isLoading,
-            result: !isLoading ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
+            result: isLoading ? '' : connection?.properties?.displayName ?? connectionId.split('/').at(-1),
           }
         : {
             isLoading: false,
@@ -73,10 +76,12 @@ export const useOperationManifest = (
   return useQuery(
     ['manifest', { connectorId }, { operationId }],
     () => {
-      if (!operationInfo || !connectorId || !operationId) return;
+      if (!operationInfo || !connectorId || !operationId) {
+        return null;
+      }
       return operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
         ? operationManifestService.getOperationManifest(connectorId, operationId)
-        : undefined;
+        : null;
     },
     {
       enabled: !!connectorId && !!operationId && enabled,
@@ -199,7 +204,8 @@ const useNodeAttributeOrSwagger = (
   propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const res = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const { data: connectorData } = res;
   const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
   const { swagger } = connectorData ?? {};
   if (swagger) {

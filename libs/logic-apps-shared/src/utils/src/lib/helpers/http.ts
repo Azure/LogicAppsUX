@@ -10,7 +10,9 @@ export const HTTP_METHODS = {
 export const parseErrorMessage = (error: any, defaultErrorMessage?: string): string => {
   try {
     let message = error?.message ?? error?.Message ?? error?.error?.message ?? error?.content?.message ?? undefined;
-    if (message) return message;
+    if (message) {
+      return message;
+    }
 
     // Response text needs to be parsed to get internal error message
     if (error?.responseText) {

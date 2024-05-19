@@ -36,10 +36,10 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
  */
 // Your existing function for creating the Azure Wizard
 export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizard<IAzureScriptWizard> {
-  if (!isMultiRootWorkspace) {
-    wizardContext.isValidWorkspace = false;
-  } else {
+  if (isMultiRootWorkspace) {
     wizardContext.isValidWorkspace = true;
+  } else {
+    wizardContext.isValidWorkspace = false;
   }
 
   // Create the Azure Wizard with the modified steps
@@ -75,10 +75,10 @@ export class SourceControlPathListStep extends AzureWizardExecuteStep<IAzureScri
     const workspaceFileUri = vscode.workspace.workspaceFile;
     let rootDir = context.customWorkspaceFolderPath;
     //change the root directory if unable to locate workspace file
-    if (!workspaceFileUri) {
-      rootDir = context.folderPath;
-    } else {
+    if (workspaceFileUri) {
       rootDir = path.dirname(workspaceFileUri.fsPath);
+    } else {
+      rootDir = context.folderPath;
     }
 
     const selectedPath = await this.createDeploymentFolder(rootDir);

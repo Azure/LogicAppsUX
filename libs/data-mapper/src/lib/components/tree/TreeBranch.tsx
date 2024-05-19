@@ -5,7 +5,8 @@ import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, ChevronDown12Regular, ChevronDown12Filled, ChevronRight12Regular, ChevronRight12Filled } from '@fluentui/react-icons';
 import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import React, { useMemo } from 'react';
+import type React from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 const defaultChildPadding = 16;

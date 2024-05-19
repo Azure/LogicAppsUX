@@ -1,7 +1,8 @@
 import { TokenPickerMode } from '../../../tokenpicker';
 import { useTokenTypeaheadTriggerMatch } from '../utils/tokenTypeaheadMatcher';
 import type { hideButtonOptions } from './tokenpickerbutton';
-import { Icon, Text, css, useTheme } from '@fluentui/react';
+import { Icon, css, useTheme } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import type { TextNode } from 'lexical';
@@ -13,13 +14,13 @@ import { useIntl } from 'react-intl';
 
 class TokenOption extends MenuOption {
   title: string;
-  keywords: Array<string>;
+  keywords: string[];
   icon: (selected: boolean, inverted: boolean) => ReactNode;
   constructor(
     title: string,
     key: string,
     options: {
-      keywords?: Array<string>;
+      keywords?: string[];
       icon: (selected: boolean, inverted: boolean) => ReactNode;
     }
   ) {
@@ -56,7 +57,7 @@ function TokenMenuItem({
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
-      id={'typeahead-item-' + index}
+      id={`typeahead-item-${index}`}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >

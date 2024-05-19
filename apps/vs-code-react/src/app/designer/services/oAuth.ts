@@ -103,10 +103,11 @@ class OAuthPopup {
 
     switch (data.command) {
       // When the extension receives the result from redirect url it will post a 'CompleteOauthLogin' message with data.
-      case ExtensionCommand.completeOauthLogin:
+      case ExtensionCommand.completeOauthLogin: {
         this._msg = data.value;
         this.close();
         break;
+      }
 
       default:
         break;
@@ -189,10 +190,9 @@ export class BaseOAuthService implements IOAuthService {
 
       if (response?.value[0]?.link) {
         return response.value[0].link;
-      } else {
-        // TODO: Add error handling
-        throw new Error('Error fetching consent URL');
       }
+      // TODO: Add error handling
+      throw new Error('Error fetching consent URL');
     } catch (error) {
       // TODO: Add error handling
       throw new Error(error as any);

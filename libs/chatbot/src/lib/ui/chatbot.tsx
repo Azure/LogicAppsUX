@@ -217,7 +217,9 @@ export const Chatbot = ({
   const onSubmitInputQuery = useCallback(
     async (input: string) => {
       const query = input.trim();
-      if (!query) return;
+      if (!query) {
+        return;
+      }
       const date = new Date();
       setConversation((current) => [
         {

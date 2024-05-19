@@ -51,19 +51,18 @@ const initialState: DataMapLoadingState = {
   mapMetadata: mockMetadata,
 };
 
-export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {
+export const loadDataMap = createAsyncThunk('loadDataMap', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
 
   // TODO ARM loading
   if (currentState.dataMapDataLoader.loadingMethod === LoadingMethod.Arm) {
     return null;
-  } else {
-    try {
-      const mapDefinition = loadMapDefinition(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '');
-      return mapDefinition;
-    } catch {
-      return null;
-    }
+  }
+  try {
+    const mapDefinition = loadMapDefinition(currentState.dataMapDataLoader.rawDefinition?.data?.mapDefinitionString ?? '');
+    return mapDefinition;
+  } catch {
+    return null;
   }
 });
 

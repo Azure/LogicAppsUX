@@ -129,7 +129,9 @@ export const initializeShownProperties = (
 };
 
 export const formatShownProperties = (propertiesSchema: Record<string, boolean>): ValueSegment[] => {
-  if (!propertiesSchema) return [];
+  if (!propertiesSchema) {
+    return [];
+  }
   const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(propertiesSchema).filter(([, value]) => value));
   return [createLiteralValueSegment(Object.keys(filteredProperties).toString())];
 };
@@ -153,7 +155,9 @@ export const initializeCheckedDropdown = (
   propertyValue: OpenAPIV2.SchemaObject | string,
   propertyType: SchemaPropertyValueType
 ): Record<string, boolean> => {
-  if (propertyType === SchemaPropertyValueType.STRING) return {};
+  if (propertyType === SchemaPropertyValueType.STRING) {
+    return {};
+  }
   const returnDropdown: Record<string, boolean> = {};
 
   Object.keys(propertyValue).forEach((propertyValueKey) => {
@@ -166,7 +170,9 @@ export const initializePropertyValueText = (
   propertyValue: OpenAPIV2.SchemaObject | string,
   propertyType: SchemaPropertyValueType
 ): string => {
-  if (propertyType === SchemaPropertyValueType.OBJECT) return '';
+  if (propertyType === SchemaPropertyValueType.OBJECT) {
+    return '';
+  }
   return propertyValue as string;
 };
 

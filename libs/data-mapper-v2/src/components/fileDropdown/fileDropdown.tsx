@@ -77,7 +77,9 @@ export const FileDropdown: React.FC<FileDropdownProps> = (props: FileDropdownPro
         placeholder={props.placeholder}
         onChange={updateOptions}
         onOptionSelect={(e, data) => {
-          if (data.optionText) onOptionSelect(data.optionText);
+          if (data.optionText) {
+            onOptionSelect(data.optionText);
+          }
         }}
         freeform={true}
         autoComplete="on"

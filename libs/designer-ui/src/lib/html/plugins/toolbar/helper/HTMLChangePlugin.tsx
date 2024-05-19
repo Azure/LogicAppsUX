@@ -19,7 +19,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-interface HTMLChangePluginProps {
+export interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
   setIsSwitchFromPlaintextBlocked: (value: boolean) => void;
   setIsValuePlaintext: (isValuePlaintext: boolean) => void;
@@ -76,11 +76,11 @@ export const convertEditorState = (
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
+      // biome-ignore lint/style/useForOf: Node List isn't iterable
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
         const attributes = Array.from(element.attributes);
-        for (let j = 0; j < attributes.length; j++) {
-          const attribute = attributes[j];
+        for (const attribute of attributes) {
           if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
             element.removeAttribute(attribute.name);
             continue;
@@ -95,7 +95,6 @@ export const convertEditorState = (
           if (attribute.name === 'style') {
             const newAttributeValue = cleanStyleAttribute(attribute.value);
             newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
-            continue;
           }
         }
       }
@@ -110,9 +109,8 @@ export const convertEditorState = (
       const noTokenSpansString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
         if (nodeMap.get(idValue)) {
           return idValue;
-        } else {
-          return match;
         }
+        return match;
       });
       const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
       resolve(valueSegments);

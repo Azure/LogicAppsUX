@@ -153,6 +153,7 @@ export const extensionCommand = {
   dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
+  vscodeOpenFolder: 'vscode.openFolder',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
@@ -171,6 +172,7 @@ export const gitCommand = 'git';
 
 // Project settings
 export const projectLanguageSetting = 'projectLanguage';
+export const dataMapperVersionSetting = 'dataMapperVersion';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
@@ -227,6 +229,7 @@ export const defaultExtensionBundlePathValue = path.join(
   'ExtensionBundles',
   extensionBundleId
 );
+export const defaultDataMapperVersion = 1;
 
 // Fallback Dependency Versions
 export const DependencyVersion = {

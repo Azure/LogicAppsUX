@@ -59,21 +59,19 @@ export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) =
         id: 'jQjteB',
         description: 'label to inform to add a source schema to be used',
       });
-    } else {
-      return intl.formatMessage({
-        defaultMessage: 'Add a target schema',
-        id: 'IXy91L',
-        description: 'label to inform to add a target schema to be used',
-      });
     }
+    return intl.formatMessage({
+      defaultMessage: 'Add a target schema',
+      id: 'IXy91L',
+      description: 'label to inform to add a target schema to be used',
+    });
   }, [intl, schemaType]);
 
   const [cardOnRestSvg, cardOnHoverSvg] = useMemo(() => {
     if (currentTheme === 'dark') {
       return [CardOnRestDark, CardOnHoverDark];
-    } else {
-      return [CardOnRest, CardOnHover];
     }
+    return [CardOnRest, CardOnHover];
   }, [currentTheme]);
 
   const onClickSchemaCard = () => {

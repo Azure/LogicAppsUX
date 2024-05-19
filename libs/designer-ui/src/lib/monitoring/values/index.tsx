@@ -14,21 +14,27 @@ export const Value: React.FC<ValueProps> = (props) => {
 
   if (!visible) {
     return null;
-  } else if (isXml(value) || format === 'xml') {
-    return <XmlValue {...props} />;
-  } else if (isContentLink(value)) {
-    return <BodyLinkValue {...props} />;
-  } else if (typeof value === 'number') {
-    return <NumberValue {...props} />;
-  } else if (format === 'date-time') {
-    return <DateTimeValue {...props} />;
-  } else if (format === 'decimal') {
-    return <DecimalValue {...props} />;
-  } else if (format === 'html') {
-    return <HtmlValue {...props} />;
-  } else if (format === 'key-value-pairs') {
-    return <KeyValuePairs {...props} />;
-  } else {
-    return <RawValue {...props} />;
   }
+  if (isXml(value) || format === 'xml') {
+    return <XmlValue {...props} />;
+  }
+  if (isContentLink(value)) {
+    return <BodyLinkValue {...props} />;
+  }
+  if (typeof value === 'number') {
+    return <NumberValue {...props} />;
+  }
+  if (format === 'date-time') {
+    return <DateTimeValue {...props} />;
+  }
+  if (format === 'decimal') {
+    return <DecimalValue {...props} />;
+  }
+  if (format === 'html') {
+    return <HtmlValue {...props} />;
+  }
+  if (format === 'key-value-pairs') {
+    return <KeyValuePairs {...props} />;
+  }
+  return <RawValue {...props} />;
 };

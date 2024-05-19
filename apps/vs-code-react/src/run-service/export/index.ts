@@ -12,7 +12,7 @@ import type {
 import { getValidationPayload, getExportUri } from './helper';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
-import { type WebviewApi } from 'vscode-webview';
+import type { WebviewApi } from 'vscode-webview';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -78,12 +78,11 @@ export class ApiService implements IApiService {
         const location = properties?.location;
 
         return {
-          query:
-            `resources | where type =~ 'Microsoft.Logic/workflows' and isnotnull(properties) and ` +
-            (selectedIse
+          query: `resources | where type =~ 'Microsoft.Logic/workflows' and isnotnull(properties) and ${
+            selectedIse
               ? `properties.integrationServiceEnvironment.id =~ '${selectedIse}'`
-              : `isnull(properties.integrationServiceEnvironment) and location =~ '${location}'`) +
-            ' | project id, name, resourceGroup | sort by (tolower(tostring(name))) asc',
+              : `isnull(properties.integrationServiceEnvironment) and location =~ '${location}'`
+          } | project id, name, resourceGroup | sort by (tolower(tostring(name))) asc`,
           subscriptions: [subscriptionId],
           options: {
             $top: 1000,
@@ -151,7 +150,7 @@ export class ApiService implements IApiService {
    * Retrieves the list of subscriptions.
    * @returns {Promise<Array<ISubscription>>}  A promise that resolves to an array of subscriptions.
    */
-  async getSubscriptions(): Promise<Array<ISubscription>> {
+  async getSubscriptions(): Promise<ISubscription[]> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.subscriptions);
     const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
@@ -173,7 +172,7 @@ export class ApiService implements IApiService {
    * @param {string} selectedSubscription - The ID of the selected subscription.
    * @returns {Promise<Array<IIse>>}A promise that resolves to an array of IIse objects.
    */
-  async getIse(selectedSubscription: string): Promise<Array<IIse>> {
+  async getIse(selectedSubscription: string): Promise<IIse[]> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.ise, { selectedSubscription: selectedSubscription });
     const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
@@ -248,7 +247,7 @@ export class ApiService implements IApiService {
   }
 
   async validateWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
@@ -279,7 +278,7 @@ export class ApiService implements IApiService {
   }
 
   async exportWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]

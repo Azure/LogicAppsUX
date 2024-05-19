@@ -17,9 +17,8 @@ export function getFsPathFromTask(task: Task): string | undefined {
   if (typeof task.scope === 'object') {
     const workspaceFolder: Partial<WorkspaceFolder> = task.scope;
     return workspaceFolder.uri?.fsPath;
-  } else {
-    return undefined;
   }
+  return undefined;
 }
 
 /**
@@ -32,11 +31,10 @@ export function isTaskScopeEqual(task1: Task, task2: Task): boolean {
   if (task1.scope === task2.scope) {
     // handles the case where the scopes are not associated with a path
     return true;
-  } else {
-    const task1Path: string | undefined = getFsPathFromTask(task1);
-    const task2Path: string | undefined = getFsPathFromTask(task2);
-    return !!task1Path && !!task2Path && isPathEqual(task1Path, task2Path);
   }
+  const task1Path: string | undefined = getFsPathFromTask(task1);
+  const task2Path: string | undefined = getFsPathFromTask(task2);
+  return !!task1Path && !!task2Path && isPathEqual(task1Path, task2Path);
 }
 
 /**

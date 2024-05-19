@@ -94,15 +94,15 @@ export class ExpressionScanner {
 
     if (equals(ch, '+') || equals(ch, '-') || isNumeric(ch)) {
       return this._processAndGetTokenForNumber(currentPos);
-    } else if (this._isSupportedIdentifierCharacter(ch)) {
+    }
+    if (this._isSupportedIdentifierCharacter(ch)) {
       const token = this._processAndGetTokenForIdentifier(currentPos);
       if (token.value.startsWith('"') && token.value.endsWith('"')) {
         throw new ScannerException(ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES, ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES);
       }
       return token;
-    } else {
-      throw new ScannerException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
     }
+    throw new ScannerException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
   }
 
   private _processAndGetTokenForNumber(currentPos: number): ExpressionToken {
@@ -173,8 +173,8 @@ export class ExpressionScanner {
   }
 
   private _checkAndReturnValidToken(currentPos: number): ExpressionToken | undefined {
-    let tokenType;
-    let tokenValue;
+    let tokenType: ExpressionTokenType | undefined;
+    let tokenValue: string | undefined;
     switch (this._expression.charAt(currentPos)) {
       case ExpressionConstants.TokenValue.dot: {
         tokenType = ExpressionTokenType.Dot;
@@ -209,11 +209,6 @@ export class ExpressionScanner {
       case ExpressionConstants.TokenValue.questionMark: {
         tokenType = ExpressionTokenType.QuestionMark;
         tokenValue = ExpressionConstants.TokenValue.questionMark;
-        break;
-      }
-      default: {
-        tokenType = undefined;
-        tokenValue = undefined;
         break;
       }
     }

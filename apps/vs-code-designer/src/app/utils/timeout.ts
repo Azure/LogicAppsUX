@@ -37,19 +37,18 @@ export async function timeout(
       DialogResponses.no
     );
 
-    if (result == DialogResponses.yes) {
+    if (result === DialogResponses.yes) {
       ext.outputChannel.appendLog(`Retrying: ${asyncFunc.name}`);
       return await timeout(asyncFunc, dependencyName, timeoutMs, helpLink, ...params);
-    } else {
-      vscode.window.showErrorMessage(
-        localize(
-          'timeoutError',
-          `${dependencyName} timed out after ${
-            timeoutMs / 1000
-          } seconds. Please click [here](${helpLink}) to manually install the dependency.`
-        )
-      );
     }
+    vscode.window.showErrorMessage(
+      localize(
+        'timeoutError',
+        `${dependencyName} timed out after ${
+          timeoutMs / 1000
+        } seconds. Please click [here](${helpLink}) to manually install the dependency.`
+      )
+    );
   }
 }
 

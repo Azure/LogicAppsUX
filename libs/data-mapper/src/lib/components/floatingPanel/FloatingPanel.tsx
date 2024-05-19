@@ -50,7 +50,7 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
 
   const innerStyle: React.CSSProperties = useMemo(
     () => ({
-      display: !isOpen ? 'none' : undefined,
+      display: isOpen ? undefined : 'none',
       position: 'absolute',
       zIndex: panelOrdering ? floatingPanelZIndex + panelOrdering : floatingPanelZIndex,
       boxShadow: tokens.shadow4,

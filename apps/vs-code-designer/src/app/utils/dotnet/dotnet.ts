@@ -101,9 +101,8 @@ async function getPropertyInProjFile(projFile: ProjectFile, property: string): P
   const matches: RegExpMatchArray | null = (await projFile.getContents()).match(regExp);
   if (!matches) {
     throw new Error(localize('failedToFindProp', 'Failed to find "{0}" in project file "{1}".', property, projFile.name));
-  } else {
-    return matches[1];
   }
+  return matches[1];
 }
 
 /**
@@ -133,18 +132,22 @@ export async function getTemplateKeyFromProjFile(
   let targetFramework: string;
 
   switch (version) {
-    case FuncVersion.v4:
+    case FuncVersion.v4: {
       targetFramework = DotnetVersion.net6;
       break;
-    case FuncVersion.v3:
+    }
+    case FuncVersion.v3: {
       targetFramework = DotnetVersion.net3;
       break;
-    case FuncVersion.v2:
+    }
+    case FuncVersion.v2: {
       targetFramework = DotnetVersion.net2;
       break;
-    case FuncVersion.v1:
+    }
+    case FuncVersion.v1: {
       targetFramework = DotnetVersion.net48;
       break;
+    }
   }
 
   if (projectPath && (await AzExtFsExtra.pathExists(projectPath))) {
@@ -231,7 +234,7 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
   if (binariesExist) {
     // Explicit executable for tasks.json
     command =
-      process.platform == Platform.windows
+      process.platform === Platform.windows
         ? path.join(dotNetBinariesPath, `${ext.dotNetCliPath}.exe`)
         : path.join(dotNetBinariesPath, `${ext.dotNetCliPath}`);
     const newPath = `${dotNetBinariesPath}${path.delimiter}\${env:PATH}`;

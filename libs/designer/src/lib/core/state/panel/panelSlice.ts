@@ -58,9 +58,13 @@ export const panelSlice = createSlice({
       state.selectedNodes = action.payload;
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
-      if (!action) return;
+      if (!action) {
+        return;
+      }
       clearPanel();
-      if (state.collapsed) state.collapsed = false;
+      if (state.collapsed) {
+        state.collapsed = false;
+      }
       state.selectedNodes = [action.payload];
       state.currentPanelMode = 'Operation';
       state.selectedTabId = undefined;

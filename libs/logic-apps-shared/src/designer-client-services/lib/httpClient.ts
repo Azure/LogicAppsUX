@@ -1,15 +1,7 @@
-interface BatchHttpMethods {
-  GET: void;
-  HEAD: void;
-  POST: void;
-  PUT: void;
-  DELETE: void;
-  PATCH: void;
-}
 /**
  * Http methods for batch ajax calls
  */
-type BatchHttpMethod = keyof BatchHttpMethods;
+type BatchHttpMethod = 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export interface HttpRequestOptions<ContentType> {
   uri: string;

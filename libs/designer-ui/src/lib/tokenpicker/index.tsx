@@ -1,3 +1,4 @@
+// biome-ignore lint/correctness/noUnusedImports: actually is used
 import type { editor } from 'monaco-editor';
 import type { ValueSegment } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
@@ -31,12 +32,6 @@ export type { Token as OutputToken } from './models/token';
 const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
-
-const calloutStyles: Partial<ICalloutContentStyles> = {
-  calloutMain: {
-    overflow: 'visible',
-  },
-};
 
 export type SearchTextChangedEventHandler = (e: string) => void;
 
@@ -153,6 +148,12 @@ export function TokenPicker({
     description: 'Placeholder text to search token picker',
   });
 
+  const calloutStyles: Partial<ICalloutContentStyles> = {
+    calloutMain: {
+      overflow: 'visible',
+    },
+  };
+
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -197,7 +198,7 @@ export function TokenPicker({
               ? {
                   height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
                   width: Math.max(
-                    windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40),
+                    windowDimensions.width - (Number.parseInt(PanelSize.Medium, 10) + 40),
                     Math.min(windowDimensions.width - 16, 400)
                   ),
                 }

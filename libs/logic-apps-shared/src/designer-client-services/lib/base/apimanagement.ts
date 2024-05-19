@@ -1,11 +1,12 @@
+import { getIntl } from '../../../intl/src';
 import { ResponseCodes, SwaggerParser } from '../../../parsers';
-import { ArgumentException, equals, unmap } from '../../../utils/src';
+import { ArgumentException, equals, includes, unmap } from '../../../utils/src';
 import type { IApiManagementService } from '../apimanagement';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 
 export interface ApiManagementServiceOptions {
   apiVersion: string;
@@ -23,13 +24,17 @@ export class BaseApiManagementService implements IApiManagementService {
     const { apiVersion, baseUrl, subscriptionId, httpClient, queryClient } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
+    }
+    if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required for api management service');
-    } else if (!queryClient) {
+    }
+    if (!queryClient) {
       throw new ArgumentException('queryClient required for api management service');
     }
   }
@@ -164,23 +169,12 @@ export class BaseApiManagementService implements IApiManagementService {
     const { in: $in, name, required, schema } = parameter;
     switch ($in) {
       case 'header':
-      case 'query':
-        // eslint-disable-next-line no-case-declarations
+      case 'query': {
         const property = $in === 'header' ? 'headers' : 'queries';
-        if (!schemaProperties[property]) {
-          schemaProperties[property] = { type: 'object', properties: {}, required: [] };
-        }
-
-        schemaProperties[property].properties[name] = parameter;
-        if (required) {
-          schemaProperties[property].required.push(name);
-          if (!finalSchema.required.includes(property)) {
-            finalSchema.required.push(property);
-          }
-        }
+        this._setScalarParameterInSchema(finalSchema, property, parameter);
         break;
-      case 'path':
-        // eslint-disable-next-line no-case-declarations
+      }
+      case 'path': {
         const pathProperty = 'pathTemplate';
         if (!schemaProperties[pathProperty].properties.parameters) {
           schemaProperties[pathProperty].properties.parameters = { type: 'object', properties: {}, required: [] };
@@ -192,10 +186,76 @@ export class BaseApiManagementService implements IApiManagementService {
           schemaProperties[pathProperty].properties.parameters.required.push(name);
         }
         break;
-      default:
+      }
+      case 'formData': {
+        const formDataParameter = {
+          ...parameter,
+          'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}` } },
+        };
+        if (parameter.type === 'file') {
+          if (!includes(name, '"') && !includes(name, '@')) {
+            const intl = getIntl();
+            const properties: Record<string, any> = {
+              $content: {
+                ...parameter,
+                type: undefined,
+                'x-ms-summary': intl.formatMessage(
+                  { defaultMessage: '{fileContent} (content)', id: 'Rj/V1x', description: 'Title for file name parameter' },
+                  { fileContent: parameter['x-ms-summary'] ?? name }
+                ),
+                'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$content` } },
+                name: undefined,
+              },
+            };
+            if (parameter.format !== 'contentonly') {
+              properties['$filename'] = {
+                ...parameter,
+                type: 'string',
+                'x-ms-summary': intl.formatMessage(
+                  { defaultMessage: '{fileName} (file name)', id: 'UYRIS/', description: 'Title for file name parameter' },
+                  { fileName: parameter['x-ms-summary'] ?? name }
+                ),
+                'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$filename` } },
+                name: undefined,
+              };
+            }
+
+            this._setScalarParameterInSchema(finalSchema, $in, {
+              ...formDataParameter,
+              type: 'object',
+              properties,
+              required: required ? ['$content'] : [],
+            });
+          }
+
+          break;
+        }
+
+        this._setScalarParameterInSchema(finalSchema, $in, formDataParameter);
+        break;
+      }
+      default: {
         // eslint-disable-next-line no-param-reassign
         finalSchema.properties[$in] = schema;
         break;
+      }
+    }
+  }
+
+  private _setScalarParameterInSchema(finalSchema: any, property: any, parameter: any) {
+    const schemaProperties = finalSchema.properties;
+    const { name, required } = parameter;
+
+    if (!schemaProperties[property]) {
+      schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+    }
+
+    schemaProperties[property].properties[name] = parameter;
+    if (required) {
+      schemaProperties[property].required.push(name);
+      if (!finalSchema.required.includes(property)) {
+        finalSchema.required.push(property);
+      }
     }
   }
 }

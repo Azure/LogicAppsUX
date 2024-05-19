@@ -17,7 +17,7 @@ export const serializeDictionary = (
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodesWithTokenInterpolation($getRoot(), nodeMap);
-    let jsonEditor;
+    let jsonEditor: any;
     try {
       jsonEditor = JSON.parse(editorString);
       const returnItems: DictionaryEditorItemProps[] = [];

@@ -4,9 +4,10 @@ import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameters', () => {
-  let minimal: WorkflowParametersProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: WorkflowParametersProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
@@ -53,7 +54,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
     });
     expect(header.props.className).toBe('msla-workflow-parameters-heading');
     const [headerTextSection]: any[] = React.Children.toArray(header.props.children);
-    const headerText = headerTextSection.props.children;
+    const headerText = headerTextSection.props.text;
     expect(headerText).toBe(headerTitle);
 
     expect(messageBar).toBeDefined();

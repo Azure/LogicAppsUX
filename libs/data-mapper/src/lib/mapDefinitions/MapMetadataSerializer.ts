@@ -24,7 +24,7 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
 export const convertConnectionShorthandToId = (connectionArr: ConnectionAndOrder[]): string => {
   let ans = '';
   connectionArr.forEach((obj) => {
-    ans = ans + `${obj.inputOrder}-${obj.name},`;
+    ans = `${ans}${obj.inputOrder}-${obj.name},`;
   });
   return ans;
 };

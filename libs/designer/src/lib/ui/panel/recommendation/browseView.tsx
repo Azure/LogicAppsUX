@@ -6,9 +6,17 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
-  if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) return false;
-  else if (runtimeFilter === 'custom' && !isCustomConnector(connector)) return false;
-  else if (runtimeFilter === 'shared') if (isBuiltInConnector(connector) || isCustomConnector(connector)) return false;
+  if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
+    return false;
+  }
+  if (runtimeFilter === 'custom' && !isCustomConnector(connector)) {
+    return false;
+  }
+  if (runtimeFilter === 'shared') {
+    if (isBuiltInConnector(connector) || isCustomConnector(connector)) {
+      return false;
+    }
+  }
   return true;
 };
 
@@ -36,7 +44,9 @@ export const BrowseView = (props: BrowseViewProps) => {
     (connector: Connector): boolean => {
       if (filters['runtime']) {
         const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
-        if (!filterMethod(connector, filters['runtime'])) return false;
+        if (!filterMethod(connector, filters['runtime'])) {
+          return false;
+        }
       }
 
       if (filters['actionType'] && (allApiIdsWithActions.data.length > 0 || allApiIdsWithTriggers.data.length > 0)) {
@@ -46,8 +56,12 @@ export const BrowseView = (props: BrowseViewProps) => {
         const supportsActions = (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connectorId);
         const supportsTriggers =
           (ignoreCapabilities || capabilities.includes('triggers')) && allApiIdsWithTriggers.data.includes(connectorId);
-        if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) return false;
-        else if (filters['actionType'].toLowerCase() === 'actions' && !supportsActions) return false;
+        if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) {
+          return false;
+        }
+        if (filters['actionType'].toLowerCase() === 'actions' && !supportsActions) {
+          return false;
+        }
       }
 
       return true;

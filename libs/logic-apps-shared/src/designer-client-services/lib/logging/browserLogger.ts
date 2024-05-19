@@ -58,7 +58,7 @@ export class BrowserReporter {
     const badge = `%c${[tag, type].filter(Boolean).join(':')}`;
 
     // Log to the console
-    const timestamp = '[' + new Date().toLocaleTimeString() + '] ';
+    const timestamp = `[${new Date().toLocaleTimeString()}] `;
     consoleLogFn(badge, style, timestamp, logObj.message, logObj);
   }
 }

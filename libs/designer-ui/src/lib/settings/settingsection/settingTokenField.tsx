@@ -10,7 +10,7 @@ import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
-import { createLiteralValueSegment } from '../../editor/base/utils/helper';
+import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
@@ -62,9 +62,10 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const labelId = useId('msla-editor-label');
+  const labelId = useId(props.label);
   const hideLabel =
-    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
+    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
+    equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
   return (
     <>
       {!hideLabel && (
@@ -107,7 +108,7 @@ export const TokenField = ({
   getTokenPicker,
   suppressCastingForSerialize,
 }: TokenFieldProps) => {
-  const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+  const dropdownOptions = getDropdownOptionsFromOptions(editorOptions);
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
 
   switch (editor?.toLowerCase()) {
@@ -127,10 +128,14 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={(editorOptions?.options?.value ?? editorOptions?.options)?.map((option: any, index: number) => ({
-            key: index.toString(),
-            ...option,
-          }))}
+          options={
+            dropdownOptions.length > 0
+              ? dropdownOptions.map((option: any, index: number) => ({
+                  key: index.toString(),
+                  ...option,
+                }))
+              : undefined
+          }
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -157,7 +162,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
-    case constants.PARAMETER.EDITOR.CODE:
+    case constants.PARAMETER.EDITOR.CODE: {
       const customCodeEditor = isCustomCode(editor, editorOptions?.language);
       let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
       if (typeof customCodeData !== 'string') {
@@ -179,7 +184,7 @@ export const TokenField = ({
           nodeTitle={nodeTitle}
         />
       );
-
+    }
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox
@@ -188,7 +193,7 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({
+          options={dropdownOptions?.map((option: any, index: number) => ({
             key: index.toString(),
             ...option,
             displayName: typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName),
@@ -321,6 +326,7 @@ export const TokenField = ({
     case constants.PARAMETER.EDITOR.HTML:
       return (
         <HTMLEditor
+          labelId={labelId}
           initialValue={value}
           placeholder={placeholder}
           basePlugins={{ tokens: showTokens }}

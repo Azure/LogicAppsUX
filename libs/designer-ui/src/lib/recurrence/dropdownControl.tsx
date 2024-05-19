@@ -80,11 +80,9 @@ export const DropdownControl = ({
         : selectedOptions.filter((key: string) => key !== option?.key);
       setSelectedOptions(newKeys);
       onChange(newKeys);
-    } else {
-      if (option) {
-        setSelectedOption(option.key as string);
-        onChange(option.key as string);
-      }
+    } else if (option) {
+      setSelectedOption(option.key as string);
+      onChange(option.key as string);
     }
   };
 
@@ -103,6 +101,7 @@ export const DropdownControl = ({
         disabled={readOnly}
         ariaLabel={label}
         options={options}
+        required={required}
         className={css('msla-authentication-dropdown')}
         multiSelect={isMultiSelect}
         onChange={handleOptionSelect}

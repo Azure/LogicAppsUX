@@ -144,8 +144,8 @@ export const StaticResultContainer = ({
   const isLabelDisabled = (): boolean => {
     return (
       // disable label if no change
-      (JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled) ||
       // disable if there is an error
+      (JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled) ||
       (!!errorMessage && showStaticResults)
     );
   };

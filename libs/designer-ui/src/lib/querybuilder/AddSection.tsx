@@ -59,8 +59,8 @@ export const AddSection = ({ readonly, handleUpdateParent, index, addEmptyRow }:
         onClick: () => handleAddGroup(),
       },
     ],
-    directionalHintFixed: true,
   };
+
   return (
     <div className="msla-querybuilder-row-add-container">
       <div className="msla-querybuilder-row-gutter-hook" />
