@@ -21,4 +21,14 @@ export const useStyles = makeStyles({
   rightTreeItemLayout: {
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
   },
+  handleWrapper: {
+    backgroundColor: 'white',
+    width: '14px',
+    height: '14px',
+    ...shorthands.border('1px', 'solid', '#ddd'),
+  },
+  handleConnected: {
+    backgroundColor: '#C6DEEE',
+    ...shorthands.border('1px', 'solid', '#C6DEEE'),
+  },
 });

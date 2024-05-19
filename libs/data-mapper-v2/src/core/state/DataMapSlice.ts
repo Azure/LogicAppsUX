@@ -68,10 +68,8 @@ export interface DataMapOperationState {
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
   loadedMapMetadata?: MapMetadata;
-  sourceNodes: Node[];
-  targetNodes: Node[];
-  sourceEdges: Edge[];
-  targetEdges: Edge[];
+  nodes: Node[];
+  edges: Edge[];
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -87,10 +85,8 @@ const emptyPristineState: DataMapOperationState = {
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
-  sourceNodes: [],
-  targetNodes: [],
-  sourceEdges: [],
-  targetEdges: [],
+  nodes: [],
+  edges: [],
 };
 
 const initialState: DataMapState = {
@@ -114,7 +110,6 @@ export interface InitialDataMapAction {
 
 export interface ReactFlowNodeAction {
   node: Node;
-  isSourceNode: boolean;
   removeNode?: boolean;
 }
 
@@ -214,31 +209,44 @@ export const dataMapSlice = createSlice({
     },
     updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
       const currentState = state.curDataMapOperation;
-      const { sourceNodes, targetNodes } = currentState;
-      const isSourceNode = action.payload.isSourceNode;
-
-      const updateNodes = (nodes: Node[]) => {
-        const newNode = action.payload.node;
-        const oldNode = nodes.find((node) => node.id === newNode.id);
-        if (action.payload.removeNode) {
-          return oldNode ? nodes.filter((node) => node.id !== newNode.id) : nodes;
-        }
-        if (oldNode) {
-          return nodes.map((node) => {
-            if (node.id === newNode.id) {
-              return newNode;
-            }
-            return node;
-          });
-        }
-        nodes.push(newNode);
-        return nodes;
-      };
+      const { nodes } = currentState;
+      const newNode = action.payload.node;
+      const oldNode = nodes.find((node) => node.id === newNode.id);
+      let updatedNodes = [];
+      if (action.payload.removeNode) {
+        updatedNodes = oldNode ? nodes.filter((node) => node.id !== newNode.id) : nodes;
+      } else if (oldNode) {
+        updatedNodes = nodes.map((node) => {
+          if (node.id === newNode.id) {
+            return newNode;
+          }
+          return node;
+        });
+      } else {
+        updatedNodes = [...nodes, newNode];
+      }
 
       const newState = {
         ...currentState,
-        sourceNodes: isSourceNode ? updateNodes([...sourceNodes]) : sourceNodes,
-        targetNodes: isSourceNode ? targetNodes : updateNodes([...targetNodes]),
+        nodes: updatedNodes,
+      };
+
+      state.curDataMapOperation = newState;
+    },
+    updateReactFlowEdges: (state, action: PayloadAction<Edge[]>) => {
+      const currentState = state.curDataMapOperation;
+      const newState = {
+        ...currentState,
+        edges: action.payload,
+      };
+
+      state.curDataMapOperation = newState;
+    },
+    updateReactFlowNodes: (state, action: PayloadAction<Node[]>) => {
+      const currentState = state.curDataMapOperation;
+      const newState = {
+        ...currentState,
+        nodes: action.payload,
       };
 
       state.curDataMapOperation = newState;
@@ -269,6 +277,8 @@ export const {
   changeSourceSchema,
   changeTargetSchema,
   updateReactFlowNode,
+  updateReactFlowEdges,
+  updateReactFlowNodes,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

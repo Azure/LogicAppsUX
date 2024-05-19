@@ -1,15 +1,18 @@
-import { Text, TreeItem, TreeItemLayout, type TreeItemOpenChangeEvent, type TreeItemOpenChangeData } from '@fluentui/react-components';
-import { useStyles } from './styles';
-import { useEffect, useRef, useCallback, useContext } from 'react';
+import { TreeItem, type TreeItemOpenChangeEvent, type TreeItemOpenChangeData, TreeItemLayout } from '@fluentui/react-components';
+import { useEffect, useRef, useCallback, useContext, useMemo } from 'react';
 import useIsInViewport from './UseInViewport.hook';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/Store';
 import { updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dataMapSchema';
 import { DataMapperDesignerContext } from '../../../ui/DataMapperDesigner';
+import { useStyles } from './styles';
 
 export type SchemaNodeReactFlowDataProps = SchemaNodeExtended & {
   isLeftDirection: boolean;
+  connectionX: number;
+  id: string;
+  isConnected?: boolean;
 };
 
 export type TreeNodeProps = {
@@ -22,47 +25,57 @@ export type TreeNodeProps = {
 };
 
 export const TreeNode = (props: TreeNodeProps) => {
-  const { text, isLeftDirection, id, data } = props;
-  const styles = useStyles();
-  const ref = useRef<HTMLDivElement | null>(null);
-  const isInViewPort = useIsInViewport(ref);
+  const { isLeftDirection, id, data } = props;
+  const parentRef = useRef<HTMLDivElement | null>(null);
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const isInViewPort = useIsInViewport(divRef);
   const dispatch = useDispatch<AppDispatch>();
+  const styles = useStyles();
   const dataMapperContext = useContext(DataMapperDesignerContext);
 
+  const nodeId = useMemo(() => `reactflow_${isLeftDirection ? 'source' : 'target'}_${id}`, [id, isLeftDirection]);
+
   const addNodeToFlow = useCallback(() => {
-    if (ref?.current && dataMapperContext.canvasRef?.current) {
-      const rect = ref.current.getBoundingClientRect();
+    if (divRef?.current && dataMapperContext.canvasRef?.current && parentRef.current) {
+      const divRect = divRef.current.getBoundingClientRect();
+      const parentRect = parentRef.current.getBoundingClientRect();
       const canvasRect = dataMapperContext.canvasRef.current.getBoundingClientRect();
       dispatch(
         updateReactFlowNode({
           node: {
-            id: `${id}-${isLeftDirection ? 'source' : 'target'}`,
-            data: { ...data, isLeftDirection: isLeftDirection },
+            id: nodeId,
+            selectable: true,
+            data: {
+              ...data,
+              isLeftDirection: isLeftDirection,
+              connectionX: isLeftDirection ? parentRect.right : parentRect.left,
+              id: nodeId,
+            },
             type: 'schemaNode',
             position: {
-              x: isLeftDirection ? -10 : canvasRect.right - canvasRect.left - 10,
-              y: rect.y - canvasRect.y,
+              x: divRect.x - canvasRect.left,
+              y: divRect.y - canvasRect.y - 10,
             },
           },
-          isSourceNode: isLeftDirection,
         })
       );
     }
-  }, [isLeftDirection, ref, id, data, dispatch, dataMapperContext.canvasRef]);
+  }, [isLeftDirection, divRef, parentRef, nodeId, data, dispatch, dataMapperContext.canvasRef]);
 
   const removeNodeFromFlow = useCallback(() => {
     dispatch(
       updateReactFlowNode({
         node: {
-          id: `${id}-${isLeftDirection ? 'source' : 'target'}`,
+          id: nodeId,
+          selectable: true,
+          hidden: true,
           data: data,
           position: { x: 0, y: 0 },
         },
-        isSourceNode: isLeftDirection,
         removeNode: true,
       })
     );
-  }, [isLeftDirection, id, data, dispatch]);
+  }, [nodeId, data, dispatch]);
 
   const onOpenChange = useCallback(
     (_event: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
@@ -79,12 +92,12 @@ export const TreeNode = (props: TreeNodeProps) => {
   );
 
   useEffect(() => {
-    if (!ref?.current || !isInViewPort) {
+    if (!divRef?.current || !dataMapperContext.canvasRef?.current || !parentRef.current || !isInViewPort) {
       removeNodeFromFlow();
     } else {
       addNodeToFlow();
     }
-  }, [ref, isInViewPort, addNodeToFlow, removeNodeFromFlow]);
+  }, [divRef, parentRef, isInViewPort, addNodeToFlow, removeNodeFromFlow, dataMapperContext.canvasRef]);
   return (
     <TreeItem
       itemType="leaf"
@@ -92,9 +105,10 @@ export const TreeNode = (props: TreeNodeProps) => {
       onOpenChange={(event: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
         onOpenChange(event, data);
       }}
+      ref={parentRef}
     >
-      <TreeItemLayout className={isLeftDirection ? '' : styles.rightTreeItemLayout} ref={ref}>
-        <Text>{text}</Text>
+      <TreeItemLayout className={isLeftDirection ? '' : styles.rightTreeItemLayout}>
+        <div ref={divRef} />
       </TreeItemLayout>
     </TreeItem>
   );
