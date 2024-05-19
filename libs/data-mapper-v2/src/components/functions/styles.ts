@@ -5,6 +5,10 @@ export const useStyles = makeStyles({
     height: '20px',
     width: '20px',
   },
+  chevronButton: {
+    paddingLeft: '0px',
+    paddingRight: '0px',
+  },
   functionsChevronIcon: {
     alignSelf: 'center',
   },
@@ -24,8 +28,8 @@ export const useStyles = makeStyles({
   drawerHeaderWrapper: {
     display: 'flex',
     width: '100%',
-    marginTop: '20px',
-    marginBottom: '10px',
+    marginTop: '15px',
+    marginBottom: '5px',
   },
   collapsedDrawerBodyWrapper: {
     display: 'flex',
@@ -35,14 +39,11 @@ export const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    marginLeft: '10px',
   },
   drawerHeader: {
-    paddingLeft: '20px',
     fontWeight: 'initial',
     fontSize: '20px',
-  },
-  functionSearchBox: {
-    width: '85%',
   },
   drawerHeaderIcon: {
     alignSelf: 'center',
@@ -53,6 +54,7 @@ export const useStyles = makeStyles({
   functionList: {
     justifyContent: 'center',
     display: 'flex',
+    flexDirection: 'column',
     width: '100%',
   },
 });

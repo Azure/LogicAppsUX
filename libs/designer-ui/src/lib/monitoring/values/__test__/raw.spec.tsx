@@ -2,6 +2,7 @@ import renderer from 'react-test-renderer';
 import { RawValue } from '../raw';
 import type { ValueProps } from '../types';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import React from 'react';
 describe('ui/monitoring/values/_raw', () => {
   let props: ValueProps;
 

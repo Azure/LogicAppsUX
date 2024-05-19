@@ -206,7 +206,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const openTokenPickerAction: editor.IActionDescriptor = {
       id: 'open-tokenpicker',
       label: 'Open TokenPicker',
-      keybindings: [512 | 85],
+      keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.Slash],
       run: (): void | Promise<void> => {
         openTokenPicker?.();
       },
