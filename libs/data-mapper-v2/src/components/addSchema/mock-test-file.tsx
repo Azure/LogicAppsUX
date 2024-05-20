@@ -13,6 +13,7 @@ const mockTree: SchemaExtended = {
   schemaTreeRoot: {
     key: '/ns0:Root',
     name: 'Root',
+    parentKey: '',
     type: 'Complex',
     properties: 'None',
     children: [

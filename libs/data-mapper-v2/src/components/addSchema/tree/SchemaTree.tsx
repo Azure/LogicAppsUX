@@ -50,7 +50,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         <TreeItemLayout className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}>
           {root.name}
         </TreeItemLayout>
-        <Tree>
+        <Tree aria-label="sub-tree">
           {root.children.map((child: SchemaNodeExtended, index: number) => (
             <span key={`tree-${child.key}-${index}`}>{displaySchemaTree(child)}</span>
           ))}

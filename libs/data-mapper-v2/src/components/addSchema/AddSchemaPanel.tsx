@@ -5,9 +5,7 @@ import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../c
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
-import type { SchemaFile } from './AddOrUpdateSchemaView';
-import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
-//import { DefaultConfigView } from './DefaultConfigView';
+import { AddOrUpdateSchemaView, UploadSchemaTypes, type SchemaFile } from './AddOrUpdateSchemaView';
 import { DefaultButton, PrimaryButton } from '@fluentui/react';
 import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';

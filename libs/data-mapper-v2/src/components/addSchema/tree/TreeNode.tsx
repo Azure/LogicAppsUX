@@ -3,10 +3,10 @@ import { useEffect, useRef, useCallback, useContext, useMemo } from 'react';
 import useIsInViewport from './UseInViewport.hook';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/Store';
-import { updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dataMapSchema';
 import { DataMapperDesignerContext } from '../../../ui/DataMapperDesigner';
 import { useStyles } from './styles';
+import { updateReactFlowNode } from '../../../core/state/DataMapSlice';
 
 export type SchemaNodeReactFlowDataProps = SchemaNodeExtended & {
   isLeftDirection: boolean;
@@ -26,7 +26,6 @@ export type TreeNodeProps = {
 
 export const TreeNode = (props: TreeNodeProps) => {
   const { isLeftDirection, id, data } = props;
-  const parentRef = useRef<HTMLDivElement | null>(null);
   const divRef = useRef<HTMLDivElement | null>(null);
   const isInViewPort = useIsInViewport(divRef);
   const dispatch = useDispatch<AppDispatch>();
@@ -36,9 +35,8 @@ export const TreeNode = (props: TreeNodeProps) => {
   const nodeId = useMemo(() => `reactflow_${isLeftDirection ? 'source' : 'target'}_${id}`, [id, isLeftDirection]);
 
   const addNodeToFlow = useCallback(() => {
-    if (divRef?.current && dataMapperContext.canvasRef?.current && parentRef.current) {
+    if (divRef?.current && dataMapperContext.canvasRef?.current) {
       const divRect = divRef.current.getBoundingClientRect();
-      const parentRect = parentRef.current.getBoundingClientRect();
       const canvasRect = dataMapperContext.canvasRef.current.getBoundingClientRect();
       dispatch(
         updateReactFlowNode({
@@ -48,7 +46,7 @@ export const TreeNode = (props: TreeNodeProps) => {
             data: {
               ...data,
               isLeftDirection: isLeftDirection,
-              connectionX: isLeftDirection ? parentRect.right : parentRect.left,
+              connectionX: isLeftDirection ? canvasRect.left : canvasRect.right,
               id: nodeId,
             },
             type: 'schemaNode',
@@ -60,7 +58,7 @@ export const TreeNode = (props: TreeNodeProps) => {
         })
       );
     }
-  }, [isLeftDirection, divRef, parentRef, nodeId, data, dispatch, dataMapperContext.canvasRef]);
+  }, [isLeftDirection, divRef, nodeId, data, dispatch, dataMapperContext.canvasRef]);
 
   const removeNodeFromFlow = useCallback(() => {
     dispatch(
@@ -92,12 +90,12 @@ export const TreeNode = (props: TreeNodeProps) => {
   );
 
   useEffect(() => {
-    if (!divRef?.current || !dataMapperContext.canvasRef?.current || !parentRef.current || !isInViewPort) {
+    if (!divRef?.current || !dataMapperContext.canvasRef?.current || !isInViewPort) {
       removeNodeFromFlow();
     } else {
       addNodeToFlow();
     }
-  }, [divRef, parentRef, isInViewPort, addNodeToFlow, removeNodeFromFlow, dataMapperContext.canvasRef]);
+  }, [divRef, isInViewPort, addNodeToFlow, removeNodeFromFlow, dataMapperContext.canvasRef]);
   return (
     <TreeItem
       itemType="leaf"
@@ -105,7 +103,6 @@ export const TreeNode = (props: TreeNodeProps) => {
       onOpenChange={(event: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
         onOpenChange(event, data);
       }}
-      ref={parentRef}
     >
       <TreeItemLayout className={isLeftDirection ? '' : styles.rightTreeItemLayout}>
         <div ref={divRef} />
