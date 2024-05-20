@@ -15,7 +15,7 @@ import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import { updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 
-export interface DataMapperDesignerProps {
+interface DataMapperDesignerProps {
   saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
   saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
@@ -24,7 +24,7 @@ export interface DataMapperDesignerProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export type DataMapperDesignerContextProps = {
+type DataMapperDesignerContextProps = {
   canvasRef?: React.MutableRefObject<HTMLDivElement | null>;
 };
 

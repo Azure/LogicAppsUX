@@ -1,1 +1,4 @@
-export * from './DataMapperDesigner';
+export {
+  DataMapperDesignerContext,
+  DataMapperDesigner,
+} from './DataMapperDesigner';
