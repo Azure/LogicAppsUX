@@ -3445,8 +3445,25 @@ export function parameterValueToString(
 
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
   }
-
   const shouldInterpolate = value.length > 1;
+
+  return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo.suppressCasting);
+}
+
+/**
+ * Casts the value segments after casting based on the provided parameters.
+ * @param {ValueSegment[]} segmentsAfterCasting - The value segments after casting.
+ * @param {boolean} shouldInterpolate - A boolean indicating whether interpolation should be performed.
+ * @param {string} parameterType - The type of the parameter.
+ * @param {boolean} suppressCasting - Optional. A boolean indicating whether casting should be suppressed.
+ * @returns The concatenated expression value.
+ */
+export const castValueSegments = (
+  segmentsAfterCasting: ValueSegment[],
+  shouldInterpolate: boolean,
+  parameterType: string,
+  suppressCasting?: boolean
+) => {
   return segmentsAfterCasting
     .map((segment) => {
       let expressionValue = segment.value;
@@ -3457,9 +3474,9 @@ export function parameterValueToString(
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
           expressionValue =
-            !remappedParameterInfo.suppressCasting &&
-            parameterType === 'string' &&
-            segment.token?.type !== 'string' &&
+            !suppressCasting &&
+            parameterType === constants.SWAGGER.TYPE.STRING &&
+            segment.token?.type !== constants.SWAGGER.TYPE.STRING &&
             !shouldUseLiteralValues(segment.token?.expression)
               ? `@{${expressionValue}}`
               : `@${expressionValue}`;
@@ -3469,7 +3486,7 @@ export function parameterValueToString(
       return expressionValue;
     })
     .join('');
-}
+};
 
 export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
   return (expression?.type as ExpressionType) === ExpressionType.NullLiteral;

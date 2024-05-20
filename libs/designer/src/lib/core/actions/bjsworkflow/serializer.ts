@@ -11,6 +11,7 @@ import type { WorkflowParameterDefinition } from '../../state/workflowparameters
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
+  castValueSegments,
   encodePathValue,
   getAndEscapeSegment,
   getEncodeValue,
@@ -57,7 +58,7 @@ import {
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
+import { TokenType, UIConstants } from '@microsoft/designer-ui';
 import type {
   Segment,
   LocationSwapMap,
@@ -71,6 +72,7 @@ import type {
   UnitTestDefinition,
 } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
+import { createTokenValueSegment } from '../../../core';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -1098,8 +1100,14 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
 const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
   return Object.values(assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
+    const assertionValueSegment = createTokenValueSegment(
+      { title: assertionString, key: assertionString, tokenType: TokenType.FX, type: Constants.SWAGGER.TYPE.STRING },
+      assertionString,
+      TokenType.FX
+    );
+    const castAsertionString = castValueSegments([assertionValueSegment], false, Constants.SWAGGER.TYPE.STRING, false);
 
-    return { name, description, assertionString: assertionString ?? '' };
+    return { name, description, assertionString: castAsertionString };
   });
 };
 
