@@ -1,7 +1,16 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
-  wrapper: {
+  drawerWrapper: {
+    display: 'flex',
+  },
+  drawerRoot: {
+    backgroundColor: '#fff',
+    maxWidth: '480px',
+    minWidth: '319px',
+    height: '100%',
+  },
+  defaultDrawerwrapper: {
     width: '100%',
   },
   headerWrapper: {
@@ -27,16 +36,12 @@ export const useStyles = makeStyles({
   },
   selectSchemaWrapper: {
     paddingLeft: '20px',
-    width: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
   root: {
     display: 'flex',
     height: '100vh',
-  },
-  drawer: {
-    backgroundColor: '#fff',
   },
   fileSelectedDrawer: {
     backgroundColor: '#F6FAFE',
@@ -51,9 +56,10 @@ export const useStyles = makeStyles({
     width: '85%',
     alignSelf: 'center',
   },
-  searchBoxWrapper: {
+  treeWrapper: {
     display: 'flex',
     width: '100%',
     justifyContent: 'center',
+    flexDirection: 'column',
   },
 });

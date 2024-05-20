@@ -1,6 +1,6 @@
-import { defineProject } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import packageJson from './package.json'
+import { defineProject } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import packageJson from './package.json';
 
 export default defineProject({
   plugins: [react()],
@@ -15,4 +15,4 @@ export default defineProject({
     typecheck: { enabled: true },
     restoreMocks: true,
   },
-})
+});

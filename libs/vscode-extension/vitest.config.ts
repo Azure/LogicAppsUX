@@ -1,6 +1,6 @@
-import { defineProject } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import packageJson from './package.json'
+import { defineProject } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import packageJson from './package.json';
 
 export default defineProject({
   plugins: [react()],
@@ -12,6 +12,5 @@ export default defineProject({
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
     restoreMocks: true,
-
   },
-})
+});

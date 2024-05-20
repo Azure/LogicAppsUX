@@ -1,4 +1,5 @@
 import { makeStaticStyles, makeStyles, tokens, shorthands } from '@fluentui/react-components';
+import type { CSSProperties } from 'react';
 
 export const useStyles = makeStyles({
   dataMapperShell: {
@@ -9,6 +10,14 @@ export const useStyles = makeStyles({
   },
   canvasWrapper: {
     height: '100%',
+    display: 'flex',
+    backgroundColor: tokens.colorNeutralBackground4,
+    ...shorthands.flex(1, 1, '1px'),
+  },
+  reactFlow: {
+    height: '100%',
+    backgroundColor: tokens.colorNeutralBackground4,
+    ...shorthands.overflow('visible'),
   },
   dataMapperFunctionPanel: {
     backgroundColor: '#E8F3FE',
@@ -17,6 +26,11 @@ export const useStyles = makeStyles({
     ...shorthands.borderRight('1px', 'solid', '#ddd'),
   },
 });
+
+export const reactFlowStyle: CSSProperties = {
+  height: '100%',
+  backgroundColor: tokens.colorNeutralBackground4,
+};
 
 export const useStaticStyles = makeStaticStyles({
   // Firefox who's trying to early-adopt a WIP CSS standard (as of 11/2/2022)
@@ -41,6 +55,10 @@ export const useStaticStyles = makeStaticStyles({
   },
   '.react-flow svg': {
     overflow: 'visible !important',
+  },
+  '.react-flow': {
+    overflow: 'visible !important',
+    zIndex: '99 !important',
   },
   '.react-flow__minimap': {
     borderRadius: tokens.borderRadiusMedium,
