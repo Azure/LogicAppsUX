@@ -14,6 +14,12 @@ Ensure you have the following installed on your system:
 - Node.js v18 or higher
 - PNPM 
 
+### Node Version Manager (NVM) Installation (Recommended)
+
+Check here for Windows setup and installation guide: [NVM for Windows installation](https://github.com/coreybutler/nvm-windows)
+
+Check here for MacOS and Linux setup and installation guide: [NVM for MacOS and Linux installation](https://github.com/nvm-sh/nvm)
+
 ### Pnpm CLI Installation (Recommended)
 
 Check here for system specific ways to install: [Pnpm installation](https://pnpm.io/installation)
