@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { useEffect, useMemo, useRef, createContext, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,6 +14,7 @@ import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import { updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import { DataMapperWrappedContext } from '../core';
 
 interface DataMapperDesignerProps {
   saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
@@ -23,12 +24,6 @@ interface DataMapperDesignerProps {
   readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
-
-type DataMapperDesignerContextProps = {
-  canvasRef?: React.MutableRefObject<HTMLDivElement | null>;
-};
-
-export const DataMapperDesignerContext = createContext<DataMapperDesignerContextProps>({});
 
 export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
@@ -140,7 +135,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
-        <DataMapperDesignerContext.Provider value={{ canvasRef: ref }}>
+        <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
           <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
           <div className={styles.dataMapperShell}>
             <FunctionPanel />
@@ -188,7 +183,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
               schemaType={SchemaType.Target}
             />
           </div>
-        </DataMapperDesignerContext.Provider>
+        </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>
     </DndProvider>
   );
