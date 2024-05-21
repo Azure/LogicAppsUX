@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.13.10](https://github.com/Azure/LogicAppsUX/compare/v4.13.9...v4.13.10) (2024-05-21)
+
+
+### Bug Fixes
+
+* **designer:** Fixing Customcode tokenpicker action value ([#4767](https://github.com/Azure/LogicAppsUX/issues/4767)) ([#4874](https://github.com/Azure/LogicAppsUX/issues/4874)) ([021f442](https://github.com/Azure/LogicAppsUX/commit/021f4428ac300a4e30dfb04c17b7bc4e705f47a6))
+
 ### [4.13.9](https://github.com/Azure/LogicAppsUX/compare/v4.13.8...v4.13.9) (2024-05-20)
 
 
