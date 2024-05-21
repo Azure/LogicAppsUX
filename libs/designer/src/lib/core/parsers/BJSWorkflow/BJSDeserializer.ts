@@ -174,37 +174,6 @@ export const deserializeUnitTestDefinition = (
   assertions: Assertion[];
   mockResults: Record<string, OutputMock>;
 } | null => {
-  unitTestDefinition = {
-    triggerMocks: {
-      When_a_HTTP_request_is_received: {
-        properties: {
-          status: 'Succeeded',
-        },
-        outputs: {},
-      },
-    },
-    actionMocks: {
-      Create_or_update_a_resource_group: {
-        properties: {
-          status: 'Succeeded',
-        },
-        outputs: {},
-      },
-      HTTP: {
-        properties: {
-          status: 'Succeeded',
-        },
-        outputs: {},
-      },
-    },
-    assertions: [
-      {
-        name: 'New assertion',
-        description: '',
-        assertionString: "@equals('2','2')",
-      },
-    ],
-  };
   const { definition } = workflowDefinition;
   const actionsKeys = Object.keys(definition.actions ?? {});
   const triggersKeys = Object.keys(definition.triggers ?? {});
