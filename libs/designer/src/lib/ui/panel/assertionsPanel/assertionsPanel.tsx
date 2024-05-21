@@ -157,7 +157,8 @@ const getConditionExpression = (
   type: string,
   tokenGroup: TokenGroup[],
   expressionGroup: TokenGroup[],
-  onChange: (value: string) => void
+  onChange: (value: string) => void,
+  isReadOnly: boolean
 ): JSX.Element => {
   const supportedTypes: string[] = getPropertyValue(Constants.TOKENS, type);
   const filteredTokens = tokenGroup.map((group) => ({
@@ -175,6 +176,7 @@ const getConditionExpression = (
       expressionGroup={expressionGroup}
       getValueSegmentFromToken={(token: OutputToken) => Promise.resolve(getValueSegmentFromToken(token))}
       onChange={onChange}
+      isReadOnly={isReadOnly}
     />
   );
 };
@@ -226,7 +228,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const getConditionExpressionHandler = useCallback(
-    (editorId: string, labelId: string, initialValue: string, type: string, onChange: (value: string) => void) => {
+    (editorId: string, labelId: string, initialValue: string, type: string, onChange: (value: string) => void, isReadOnly: boolean) => {
       return getConditionExpression(
         editorId,
         labelId,
@@ -234,7 +236,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         type,
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
-        onChange
+        onChange,
+        isReadOnly
       );
     },
     [tokens]

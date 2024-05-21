@@ -23,9 +23,10 @@ import {
   guid,
   ConnectionType,
   isObject,
+  ExpressionParser,
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
-import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
+import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -237,7 +238,8 @@ export const deserializeUnitTestDefinition = (
   // deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
-    return { name, description, assertionString: assertionString };
+    const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
+    return { name, description, assertionString: uncastAssertionString.expression };
   });
 
   return { mockResults, assertions: assertions };

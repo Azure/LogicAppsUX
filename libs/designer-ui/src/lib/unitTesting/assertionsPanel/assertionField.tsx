@@ -131,7 +131,8 @@ export const AssertionField = ({
     parameterDetails.expression,
     expression,
     constants.SWAGGER.TYPE.ANY,
-    onExpressionChange
+    onExpressionChange,
+    !isEditable
   );
 
   return (

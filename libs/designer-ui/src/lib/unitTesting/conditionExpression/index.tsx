@@ -22,6 +22,7 @@ export interface ConditionExpressionProps {
   filteredTokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   onChange: (value: string) => void;
+  isReadOnly: boolean;
 }
 
 export function ConditionExpression({
@@ -33,6 +34,7 @@ export function ConditionExpression({
   expressionGroup,
   getValueSegmentFromToken,
   onChange,
+  isReadOnly,
 }: ConditionExpressionProps): JSX.Element {
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
@@ -115,8 +117,6 @@ export function ConditionExpression({
     onChange(e.value ?? '');
   };
 
-  // Pending things to do
-  // 2.- z-index
   return (
     <>
       <div
@@ -138,9 +138,10 @@ export function ConditionExpression({
           hideUTFExpressions={false}
           onFocus={handleFocusExpression}
           onContentChanged={onContentChanged}
+          isReadOnly={isReadOnly}
         />
       </div>
-      {isCalloutVisible && (
+      {isCalloutVisible && !isReadOnly && (
         <Callout
           role="dialog"
           ariaLabelledBy={labelId}
