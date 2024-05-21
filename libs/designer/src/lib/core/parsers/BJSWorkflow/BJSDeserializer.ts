@@ -23,9 +23,10 @@ import {
   guid,
   ConnectionType,
   isObject,
+  ExpressionParser,
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
-import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
+import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -173,6 +174,37 @@ export const deserializeUnitTestDefinition = (
   assertions: Assertion[];
   mockResults: Record<string, OutputMock>;
 } | null => {
+  unitTestDefinition = {
+    triggerMocks: {
+      When_a_HTTP_request_is_received: {
+        properties: {
+          status: 'Succeeded',
+        },
+        outputs: {},
+      },
+    },
+    actionMocks: {
+      Create_or_update_a_resource_group: {
+        properties: {
+          status: 'Succeeded',
+        },
+        outputs: {},
+      },
+      HTTP: {
+        properties: {
+          status: 'Succeeded',
+        },
+        outputs: {},
+      },
+    },
+    assertions: [
+      {
+        name: 'New assertion',
+        description: '',
+        assertionString: "@equals('2','2')",
+      },
+    ],
+  };
   const { definition } = workflowDefinition;
   const actionsKeys = Object.keys(definition.actions ?? {});
   const triggersKeys = Object.keys(definition.triggers ?? {});
@@ -237,7 +269,8 @@ export const deserializeUnitTestDefinition = (
   // deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
-    return { name, description, assertionString: assertionString };
+    const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
+    return { name, description, assertionString: uncastAssertionString.expression };
   });
 
   return { mockResults, assertions: assertions };

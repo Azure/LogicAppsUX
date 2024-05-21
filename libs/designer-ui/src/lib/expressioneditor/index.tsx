@@ -25,6 +25,7 @@ export interface ExpressionEditorProps {
   setExpressionEditorError: (error: string) => void;
   onFocus?: () => void;
   onContentChanged?(e: EditorContentChangedEventArgs): void;
+  isReadOnly?: boolean;
 }
 
 export function ExpressionEditor({
@@ -40,6 +41,7 @@ export function ExpressionEditor({
   setIsDragging,
   setExpressionEditorError,
   onContentChanged,
+  isReadOnly = false,
 }: ExpressionEditorProps): JSX.Element {
   const [mouseDownLocation, setMouseDownLocation] = useState(0);
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
@@ -89,6 +91,7 @@ export function ExpressionEditor({
         automaticLayout={true}
         data-automation-id="msla-expression-editor"
         height={`${currentHeight}px`}
+        readOnly={isReadOnly}
       />
       <div
         className="msla-expression-editor-expand"

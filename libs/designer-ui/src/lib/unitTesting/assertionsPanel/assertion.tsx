@@ -36,7 +36,8 @@ export type GetConditionExpressionHandler = (
   labelId: string,
   initialValue: string,
   type: string,
-  onChange: (value: string) => void
+  onChange: (value: string) => void,
+  isReadOnly: boolean
 ) => JSX.Element;
 
 export interface AssertionProps {
