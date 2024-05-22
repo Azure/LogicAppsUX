@@ -145,6 +145,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.cloudToLocal",
+        "title": "Cloud to local...",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.exportLogicApp",
         "title": "Export logic app...",
         "category": "Azure Logic Apps",
@@ -390,8 +395,12 @@
           "group": "2_deploy@1"
         },
         {
+          "command": "azureLogicAppsStandard.cloudToLocal",
+          "group": "3_import@1"
+        },
+        {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "group": "3_export@1"
+          "group": "4_export@1"
         }
       ],
       "view/title": [
@@ -980,6 +989,7 @@
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
+    "onCommand:azureLogicAppsStandard.cloudToLocal",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",
