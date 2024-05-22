@@ -29,6 +29,10 @@ export interface UpdateAssertionsPayload {
   assertions: Record<string, AssertionDefintion>;
 }
 
+export interface DeleteAssertionsPayload {
+  assertionId: string;
+}
+
 export interface UpdateAssertionPayload {
   assertionToUpdate: AssertionDefintion;
 }

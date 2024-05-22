@@ -9,6 +9,7 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { CheckmarkCircleFilled, CloudBeakerRegular, DismissCircleFilled } from '@fluentui/react-icons';
 import type { AssertionResults } from '@microsoft/vscode-extension-logic-apps';
+import { tokens } from '@fluentui/react-components';
 
 export const UnitTestResults: React.FC = () => {
   const unitTestState = useSelector((state: RootState) => state.unitTest);
@@ -47,7 +48,11 @@ export const UnitTestResults: React.FC = () => {
       <div className="msla-unit-test-results-assertions-list">
         {AssertionResults.map((result: AssertionResults, index) => (
           <div key={index} className="msla-unit-test-results-assertions-list-item">
-            {result.Status ? <CheckmarkCircleFilled fontSize={25} /> : <DismissCircleFilled fontSize={25} />}
+            {result.Status ? (
+              <CheckmarkCircleFilled color={tokens.colorPaletteGreenBackground3} fontSize={25} />
+            ) : (
+              <DismissCircleFilled color={tokens.colorPaletteRedBackground3} fontSize={25} />
+            )}
             <div>
               <XLargeText text={result.Name ?? ''} style={{ marginLeft: '10px', display: 'block' }} />
               <MediumText text={result.Description ?? ''} style={{ margin: '10px', display: 'block' }} />

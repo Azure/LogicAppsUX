@@ -4,7 +4,7 @@ import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
-import { RUN_AFTER_COLORS, type Assertion as AssertionType, type AssertionDefintion } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_COLORS, type AssertionDefintion } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -34,9 +34,9 @@ export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
 export type GetConditionExpressionHandler = (
   editorId: string,
   labelId: string,
+  assertionId: string,
   initialValue: string,
   type: string,
-  onChange: (value: string) => void,
   isReadOnly: boolean
 ) => JSX.Element;
 
@@ -60,16 +60,11 @@ export function Assertion({
   isInverted,
 }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(assertion.isEditable);
-  const [isEditable, setIsEditable] = useState(assertion.isEditable);
-  const [name, setName] = useState(assertion.name);
-  const [description, setDescription] = useState(assertion.description);
-  const [expression, setExpression] = useState(assertion.assertionString);
 
   const themeName = isInverted ? 'dark' : 'light';
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (): void => {
-    setIsEditable(true);
-    setExpanded(true);
+    onAssertionUpdate({ ...assertion, isEditable: true });
   };
 
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (): void => {
@@ -80,8 +75,8 @@ export function Assertion({
     setExpanded(!expanded);
   };
 
-  const handleUpdate = (newAssertion: AssertionType) => {
-    onAssertionUpdate({ ...newAssertion, id: assertion.id, isEditable: isEditable });
+  const handleUpdate = (newAssertion: AssertionDefintion) => {
+    onAssertionUpdate({ ...newAssertion });
   };
 
   return (
@@ -89,32 +84,26 @@ export function Assertion({
       <div className="msla-workflow-assertion-header">
         <Button
           appearance="subtle"
-          data-testid={`${name}-assertion-heading-button`}
+          data-testid={`${assertion.name}-assertion-heading-button`}
           onClick={handleToggleExpand}
           icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
         >
-          {name}
+          {assertion.name}
         </Button>
         {Object.values(validationErrors ?? {}).filter((x) => !!x).length > 0 ? (
           <span className="msla-assertion-error-dot">
             <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
           </span>
         ) : null}
-        <AssertionButtons isExpanded={expanded} isEditable={isEditable} onEdit={handleEdit} onDelete={handleDelete} />
+        <AssertionButtons isExpanded={expanded} isEditable={assertion.isEditable} onEdit={handleEdit} onDelete={handleDelete} />
       </div>
       <div className="msla-workflow-assertion-content">
         <AssertionField
           id={id}
-          name={name}
-          description={description}
-          expression={expression}
-          setName={setName}
-          setDescription={setDescription}
-          setExpression={setExpression}
-          isEditable={isEditable}
+          assertion={assertion}
+          handleUpdate={handleUpdate}
           isExpanded={expanded}
           getConditionExpression={getConditionExpression}
-          handleUpdate={handleUpdate}
           validationErrors={validationErrors}
         />
       </div>

@@ -4,7 +4,7 @@ import { Constants } from '../../..';
 import { getTriggerNodeId } from '../../../core';
 import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice';
 import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
-import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
+import { updateAssertions, updateAssertion, deleteAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
 import {
   VariableBrandColor,
@@ -198,12 +198,12 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     const newAssertions = { ...assertions };
     delete newAssertions[id];
     setAssertions(newAssertions);
-    dispatch(updateAssertions({ assertions: newAssertions }));
+    dispatch(deleteAssertion({ assertionId: id }));
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
     const { name, description, id, assertionString, isEditable } = event;
-    const assertionToUpdate = { name, description, id, assertionString, isEditable: isEditable };
+    const assertionToUpdate = { name, description, id, assertionString, isEditable };
     dispatch(updateAssertion({ assertionToUpdate }));
 
     const newAssertions = { ...assertions };
@@ -228,7 +228,15 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const getConditionExpressionHandler = useCallback(
-    (editorId: string, labelId: string, initialValue: string, type: string, onChange: (value: string) => void, isReadOnly: boolean) => {
+    (editorId: string, labelId: string, assertionId: string, initialValue: string, type: string, isReadOnly: boolean) => {
+      const onExpressionAssertionUpdate = (assertionId: string, assertionString: string) => {
+        const newAssertions = { ...assertions };
+        const assertionToUpdate = { ...newAssertions[assertionId], assertionString };
+        dispatch(updateAssertion({ assertionToUpdate }));
+        newAssertions[assertionId] = assertionToUpdate;
+        setAssertions(newAssertions);
+      };
+
       return getConditionExpression(
         editorId,
         labelId,
@@ -236,11 +244,13 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         type,
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
-        onChange,
+        (value) => {
+          onExpressionAssertionUpdate(assertionId, value);
+        },
         isReadOnly
       );
     },
-    [tokens]
+    [assertions, dispatch, tokens.expressionTokens, tokens.outputTokensWithValues, tokens.variableTokens]
   );
 
   return (

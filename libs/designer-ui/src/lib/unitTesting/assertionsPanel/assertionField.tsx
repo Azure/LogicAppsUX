@@ -2,7 +2,7 @@ import constants from '../../constants';
 import type { GetConditionExpressionHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, TextField } from '@fluentui/react';
-import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { type AssertionDefintion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { MediumText } from '../../text';
 import { useIntl } from 'react-intl';
 
@@ -39,28 +39,16 @@ export interface ParameterFieldDetails {
 
 export interface AssertionFieldProps {
   id: string;
-  name: string;
-  description: string;
-  expression: string;
-  setName: React.Dispatch<React.SetStateAction<string>>;
-  setDescription: React.Dispatch<React.SetStateAction<string>>;
-  setExpression: React.Dispatch<React.SetStateAction<string>>;
-  isEditable: boolean;
+  assertion: AssertionDefintion;
   isExpanded: boolean;
   getConditionExpression: GetConditionExpressionHandler;
-  handleUpdate: (newAssertion: Assertion) => void;
+  handleUpdate: (newAssertion: AssertionDefintion) => void;
   validationErrors?: Record<string, string | undefined>;
 }
 
 export const AssertionField = ({
   id,
-  name,
-  description,
-  setName,
-  setDescription,
-  setExpression,
-  expression,
-  isEditable,
+  assertion,
   isExpanded,
   getConditionExpression,
   handleUpdate,
@@ -69,10 +57,10 @@ export const AssertionField = ({
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
-    description: `${name}-${DESCRIPTION_KEY}`,
-    name: `${name}-${NAME_KEY}`,
+    description: `${assertion.name}-${DESCRIPTION_KEY}`,
+    name: `${assertion.name}-${NAME_KEY}`,
     expressionKey: `${id}-${EXPRESSION_KEY}`,
-    expression: `${name}-${EXPRESSION_KEY}`,
+    expression: `${assertion.name}-${EXPRESSION_KEY}`,
   };
 
   const nameTitle = intl.formatMessage({
@@ -112,27 +100,20 @@ export const AssertionField = ({
   });
 
   const onDescriptionChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    setDescription(newValue ?? '');
-    handleUpdate({ name, description: newValue ?? '', assertionString: expression });
+    handleUpdate({ ...assertion, description: newValue ?? '' });
   };
 
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    setName(newValue ?? '');
-    handleUpdate({ name: newValue ?? '', description, assertionString: expression });
-  };
-
-  const onExpressionChange = (conditionExpression: string): void => {
-    setExpression(conditionExpression);
-    handleUpdate({ name, description, assertionString: conditionExpression });
+    handleUpdate({ ...assertion, name: newValue ?? '' });
   };
 
   const conditionExpression = getConditionExpression(
     parameterDetails.expressionKey,
     parameterDetails.expression,
-    expression,
+    assertion.id,
+    assertion.assertionString,
     constants.SWAGGER.TYPE.ANY,
-    onExpressionChange,
-    !isEditable
+    !assertion.isEditable
   );
 
   return (
@@ -151,9 +132,9 @@ export const AssertionField = ({
             ariaLabel={nameTitle}
             placeholder={namePlaceholder}
             errorMessage={validationErrors && validationErrors[NAME_KEY]}
-            value={name}
+            value={assertion.name}
             onChange={onNameChange}
-            disabled={!isEditable}
+            disabled={!assertion.isEditable}
           />
         ) : null}
       </div>
@@ -170,16 +151,16 @@ export const AssertionField = ({
             id={parameterDetails.description}
             ariaLabel={descriptionTitle}
             placeholder={descriptionPlaceholder}
-            value={description}
+            value={assertion.description}
             onChange={onDescriptionChange}
-            disabled={!isEditable}
+            disabled={!assertion.isEditable}
             multiline
             autoAdjustHeight
           />
-        ) : isEmptyString(description) ? (
+        ) : isEmptyString(assertion.description) ? (
           <MediumText text={noDescription} className="msla-assertion-field-read-only assertion-field-no-content" />
         ) : (
-          <MediumText text={description} className="msla-assertion-field-read-only" />
+          <MediumText text={assertion.description} className="msla-assertion-field-read-only" />
         )}
       </div>
       <div className="msla-assertion-condition">
