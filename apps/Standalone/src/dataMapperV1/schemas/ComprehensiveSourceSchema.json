@@ -122,7 +122,17 @@
                 "children": []
               }
             ]
+          },
+          {
+            "key": "/ns0:SourceSchemaRoot/Conditionals/SourceProperty2",
+            "name": "SourceProperty2",
+            "qName": "SourceProperty2",
+            "parentKey": "/ns0:SourceSchemaRoot/Conditionals",
+            "type": "String",
+            "properties": "None",
+            "children": []
           }
+
         ]
       },
       {

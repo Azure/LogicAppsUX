@@ -76,7 +76,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
   const isLightMode = theme === ThemeType.Light;
 
   return (
-    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ flex: '0 1 1px' }}>
         <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
           <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
