@@ -96,7 +96,7 @@ export function ConditionExpression({
       maxHeight: '470px !important',
     },
     calloutMain: {
-      overflow: 'visible',
+      overflow: 'hidden',
     },
   };
 
