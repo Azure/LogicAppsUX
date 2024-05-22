@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: actually is used
 import type { editor } from 'monaco-editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
