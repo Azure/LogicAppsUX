@@ -109,7 +109,7 @@ export const DesignerCommandBar = ({
     const definition = await serializeUnitTestDefinition(designerState);
 
     console.log(definition);
-    alert('Check console for unit test serialization');
+    // alert('Check console for unit test serialization');
   });
 
   const designerIsDirty = useIsDesignerDirty();
