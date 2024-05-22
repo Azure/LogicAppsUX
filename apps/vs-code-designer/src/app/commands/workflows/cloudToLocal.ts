@@ -1,5 +1,5 @@
 // Used cloudToLocal.ts as a template to create this file
-// This file is used to import a Logic App from Azure
+// This file is used to import a Logic App from Azure to the local workspace
 // Still need to implement the rest of the imports
 import * as fs from 'fs';
 import { getAccountCredentials } from '../../utils/credentials';
@@ -8,16 +8,14 @@ import { LogicManagementClient } from '@azure/arm-logic';
 import * as path from 'path';
 import AdmZip = require('adm-zip');
 
-// ... existing imports ...
-
 async function isStateful(logicApp: any): Promise<boolean> {
-  // Implement your logic to check if the Logic App is stateful
+  // Need to check if the Logic App is stateful
   // This is a placeholder implementation
   return logicApp.stateful || false;
 }
 
 async function handleParameterizedConnections(logicApp: any): Promise<any> {
-  // Implement your logic to handle parameterized connections
+  // Need to handle parameterized connections
   // This is a placeholder implementation
   if (logicApp.parameterized) {
     logicApp.auth = 'raw key';
@@ -26,7 +24,7 @@ async function handleParameterizedConnections(logicApp: any): Promise<any> {
 }
 
 async function createNewWorkspace(): Promise<string> {
-  // Implement your logic to create a new workspace
+  // Need to create a new workspace
   // This is a placeholder implementation
   const workspacePath = './newWorkspace';
   if (!fs.existsSync(workspacePath)) {
@@ -51,7 +49,7 @@ async function copyZipToWorkspace(zipPath: string, workspacePath: string): Promi
 }
 
 async function createImportButton(): Promise<void> {
-  // Implement your logic to create a button on the frontend of the workspace
+  // Information after clicking button
   // This is a placeholder implementation
   window.showInformationMessage('Import zip into new Workspace', 'Import').then((selection) => {
     if (selection === 'Import') {
