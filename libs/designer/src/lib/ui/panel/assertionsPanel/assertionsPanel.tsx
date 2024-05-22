@@ -4,7 +4,7 @@ import { Constants } from '../../..';
 import { getTriggerNodeId } from '../../../core';
 import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice';
 import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
-import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
+import { updateAssertions, updateAssertion, deleteAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
 import {
   VariableBrandColor,
@@ -198,7 +198,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     const newAssertions = { ...assertions };
     delete newAssertions[id];
     setAssertions(newAssertions);
-    dispatch(updateAssertions({ assertions: newAssertions }));
+    dispatch(deleteAssertion({ assertionId: id }));
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {

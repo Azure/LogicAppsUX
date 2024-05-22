@@ -6,6 +6,7 @@ import type {
   InitDefintionPayload,
   UnitTestState,
   updateMockResultPayload,
+  DeleteAssertionsPayload,
 } from './unitTestInterfaces';
 import { ActionResults } from '@microsoft/designer-ui';
 import {
@@ -153,6 +154,13 @@ export const unitTestSlice = createSlice({
       const { assertions } = action.payload;
       state.assertions = assertions;
     },
+    deleteAssertion: (state: UnitTestState, action: PayloadAction<DeleteAssertionsPayload>) => {
+      const { assertionId } = action.payload;
+      delete state.assertions[assertionId];
+      if (state.validationErrors.assertions[assertionId]) {
+        delete state.validationErrors.assertions[assertionId];
+      }
+    },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
       const { name, id, description, assertionString } = assertionToUpdate;
@@ -185,6 +193,7 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateMock, updateActionResult } = unitTestSlice.actions;
+export const { updateAssertions, deleteAssertion, updateAssertion, initUnitTestDefinition, updateMock, updateActionResult } =
+  unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

@@ -123,6 +123,7 @@ export const AssertionField = ({
 
   const onExpressionChange = (conditionExpression: string): void => {
     setExpression(conditionExpression);
+    console.log('charlie', name);
     handleUpdate({ name, description, assertionString: conditionExpression });
   };
 
