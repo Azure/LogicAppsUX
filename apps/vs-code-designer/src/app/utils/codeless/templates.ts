@@ -55,7 +55,7 @@ export const getFunctionWorkflowTemplate = (methodName: string, isStateful: bool
     definition: {
       $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
       actions: {
-        Call_a_local_function_in_this_logic_app: {
+        Call_a_local_rules_function_in_this_logic_app: {
           type: 'InvokeFunction',
           inputs: {
             functionName: `${methodName}`,
@@ -63,7 +63,7 @@ export const getFunctionWorkflowTemplate = (methodName: string, isStateful: bool
               ruleSetName: 'SampleRuleSet',
               documentType: 'SchemaUser',
               inputXml:
-                '<ns0:Root xmlns:ns0=\\"http://BizTalk_Server_Project1.SchemaUser\\">\\n  <UserDetails>\\n    <Age>70</Age>\\n    <Name>UserName</Name>\\n    <zipCode>98053</zipCode>\\n  </UserDetails>\\n  <Status>\\n    <Gold>false</Gold>\\n    <Discount>0</Discount>\\n  </Status>\\n</ns0:Root>',
+                '<ns0:Root xmlns:ns0="http://BizTalk_Server_Project1.SchemaUser">\n  <UserDetails>\n    <Age>70</Age>\n    <Name>UserName</Name>\n    <zipCode>98053</zipCode>\n  </UserDetails>\n  <Status>\n    <Gold>false</Gold>\n    <Discount>0</Discount>\n  </Status>\n</ns0:Root>',
               purchaseAmount: 1100,
               zipCode: 98052,
             },
@@ -75,10 +75,10 @@ export const getFunctionWorkflowTemplate = (methodName: string, isStateful: bool
           kind: 'http',
           inputs: {
             statusCode: 200,
-            body: "@body('Call_a_local_function_in_this_logic_app')",
+            body: "@body('Call_a_local_rules_function_in_this_logic_app')",
           },
           runAfter: {
-            Call_a_local_function_in_this_logic_app: ['Succeeded'],
+            Call_a_local_rules_function_in_this_logic_app: ['Succeeded'],
           },
         },
       },
