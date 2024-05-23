@@ -59,11 +59,11 @@ export const MockResultsTab = () => {
   );
 
   const outputs: OutputsField[] = filteredOutputs.map((output: OutputInfo) => {
-    const { key: id, title: label, type, name } = output;
+    const { key: id, title: label, type } = output;
     const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
-    const value = mocks?.output[name] ?? [];
+    const value = mocks?.output[id] ?? [];
     const valueViewModel = { ...editorViewModel, uncastedValue: value };
-    const validationErrors = mocksValidationErrors[`${nodeName}-${name}`] ?? {};
+    const validationErrors = mocksValidationErrors[`${nodeName}-${id}`] ?? {};
 
     return {
       id,
@@ -81,7 +81,7 @@ export const MockResultsTab = () => {
       tokenMapping: {},
       validationErrors,
       suppressCastingForSerialize: false,
-      onValueChange: (newState: ChangeState) => onMockUpdate(name, newState, type),
+      onValueChange: (newState: ChangeState) => onMockUpdate(id, newState, type),
     };
   });
 

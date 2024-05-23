@@ -3,14 +3,28 @@ import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { TokenPickerMode, getWindowDimensions } from '../../tokenpicker';
-import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
-import { Callout, DirectionalHint, SearchBox } from '@fluentui/react';
+import type { IButtonStyles, ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
+import { Callout, DirectionalHint, SearchBox, IconButton } from '@fluentui/react';
 import { TokenPickerPivot } from '../../tokenpicker/tokenpickerpivot';
 import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
 import type { EditorContentChangedEventArgs } from '../../editor/monaco';
+import constants from '../../constants';
+
+const buttonStyles: IButtonStyles = {
+  root: {
+    height: '24px',
+  },
+  rootHovered: {
+    backgroundColor: 'transparent',
+  },
+  rootPressed: {
+    backgroundColor: 'transparent',
+    color: constants.BRAND_COLOR_LIGHT,
+  },
+};
 
 export interface ConditionExpressionProps {
   editorId: string;
@@ -55,6 +69,12 @@ export function ConditionExpression({
     description: 'Placeholder text to search token picker',
   });
 
+  const closeMessage = intl.formatMessage({
+    defaultMessage: 'Close',
+    id: 'Zg3IjD',
+    description: 'Close token picker',
+  });
+
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
       setSelectedKey(item.props.itemKey as TokenPickerMode);
@@ -93,10 +113,9 @@ export function ConditionExpression({
     root: {
       width: '500px',
       maxWidth: '500px',
-      maxHeight: '470px !important',
     },
     calloutMain: {
-      overflow: 'visible',
+      overflow: 'hidden',
     },
   };
 
@@ -114,6 +133,10 @@ export function ConditionExpression({
 
   const onContentChanged = (e: EditorContentChangedEventArgs): void => {
     onChange(e.value ?? '');
+  };
+
+  const handleCloseTokenPicker = () => {
+    setIsCalloutVisible(false);
   };
 
   return (
@@ -158,6 +181,17 @@ export function ConditionExpression({
           }}
           styles={calloutStyles}
         >
+          <div className="msla-token-picker-header">
+            <div className="msla-token-picker-header-close" data-automation-id="msla-token-picker-header-close">
+              <IconButton
+                iconProps={{ iconName: 'Cancel' }}
+                title={closeMessage}
+                ariaLabel={closeMessage}
+                onClick={handleCloseTokenPicker}
+                styles={buttonStyles}
+              />
+            </div>
+          </div>
           <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={false} />
           <div className="msla-token-picker-search-container">
             <SearchBox

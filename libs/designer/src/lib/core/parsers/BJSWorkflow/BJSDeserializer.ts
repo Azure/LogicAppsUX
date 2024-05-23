@@ -24,6 +24,7 @@ import {
   ConnectionType,
   isObject,
   ExpressionParser,
+  isEmptyString,
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
 import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
@@ -132,33 +133,36 @@ const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
     if (isValueSegment({ id, ...flattenOutputs[key][0] })) {
       return Object.assign({}, acc, { [key]: [{ id, ...flattenOutputs[key] }] });
     }
-    const value = isObject(flattenOutputs[key]) ? JSON.stringify(flattenOutputs[key]) : flattenOutputs[key];
+    const value =
+      isObject(flattenOutputs[key]) || Array.isArray(flattenOutputs[key]) ? JSON.stringify(flattenOutputs[key]) : flattenOutputs[key];
     return Object.assign({}, acc, { [key]: [createLiteralValueSegment(value)] });
   }, {});
 };
 
 /**
- * Flattens a nested object into a dot-separated key-value object.
- * @param {Record<string, any>} obj - The nested object to flatten.
- * @param {string} prefix - The prefix to use for the keys.
- * @returns The flattened object with dot-separated keys.
+ * Flattens a nested object into a single-level object.
+ * @param {Record<string, any>} obj - The object to flatten.
+ * @param {string} prefix - The prefix to use for the flattened keys.
+ * @param {Record<string,any>} result - The resulting flattened object.
+ * @returns The flattened object.
  */
-const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, any> => {
-  const flattenedObject: Record<string, any> = {};
-
+const flattenObject = (obj: Record<string, any>, prefix = '', result: Record<string, any> = {}): Record<string, any> => {
   for (const key in obj) {
-    const value = obj[key];
-    const prefixedKey = prefix ? `${prefix}.${key}` : key;
+    if (obj[key]) {
+      let newKey = prefix ? `${prefix}.${key}` : key;
 
-    if (isObject(value) && !Array.isArray(value) && value !== null) {
-      const nestedObject = flattenObject(value, prefixedKey);
-      Object.assign(flattenedObject, nestedObject);
-    } else {
-      flattenedObject[prefixedKey] = value;
+      if (isEmptyString(prefix)) {
+        newKey = `${key}.$`;
+      }
+
+      if (isObject(obj[key]) && obj[key] !== null) {
+        flattenObject(obj[key], newKey, result);
+      } else {
+        result[newKey] = obj[key];
+      }
     }
   }
-
-  return flattenedObject;
+  return result;
 };
 
 /**

@@ -1086,6 +1086,11 @@ const getSplitOn = (
   };
 };
 
+/**
+ * Serializes the unit test definition based on the provided root state.
+ * @param {RootState} rootState The root state object containing the unit test data.
+ * @returns A promise that resolves to the serialized unit test definition.
+ */
 export const serializeUnitTestDefinition = async (rootState: RootState): Promise<UnitTestDefinition> => {
   const { mockResults, assertions } = rootState.unitTest;
   const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
@@ -1097,6 +1102,11 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
   };
 };
 
+/**
+ * Retrieves an array of Assertion objects based on the provided Assertion definitions.
+ * @param {Record<string, AssertionDefintion>} assertions - The Assertion definitions.
+ * @returns An array of Assertion objects.
+ */
 const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
   return Object.values(assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
@@ -1129,28 +1139,25 @@ const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string
  * @returns The unified object with nested properties.
  */
 const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
-  const unifiedOutputs: Record<string, any> = {};
+  const result: Record<string, any> = {};
 
-  for (const key in outputs) {
-    const value = outputs[key];
-    const segments = key.split('.');
-    let currentObject = unifiedOutputs;
-    for (let i = 0; i < segments.length; i++) {
-      const segment = segments[i];
+  Object.keys(outputs).forEach((key) => {
+    const parts = key.split('.').filter((part) => part !== '$');
+    let currentLevel = result;
 
-      if (!currentObject[segment]) {
-        currentObject[segment] = {};
+    parts.forEach((part, index) => {
+      if (index === parts.length - 1) {
+        currentLevel[part] = outputs[key];
+      } else {
+        if (!currentLevel[part]) {
+          currentLevel[part] = {};
+        }
+        currentLevel = currentLevel[part];
       }
+    });
+  });
 
-      if (i === segments.length - 1) {
-        currentObject[segment] = value;
-      }
-
-      currentObject = currentObject[segment];
-    }
-  }
-
-  return unifiedOutputs;
+  return result;
 };
 
 /**
