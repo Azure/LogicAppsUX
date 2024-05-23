@@ -120,6 +120,7 @@ export const DropdownColorPicker = ({
           className="color-picker-saturation"
           style={{ backgroundColor: `hsl(${selfColor.hsv.hue}, 100%, 50%)` }}
           onChange={onMoveSaturation}
+          value={saturationPosition}
         >
           <div
             className="color-picker-saturation_cursor"
@@ -130,7 +131,11 @@ export const DropdownColorPicker = ({
             }}
           />
         </MoveWrapper>
-        <MoveWrapper className="color-picker-hue" onChange={onMoveHue}>
+        <MoveWrapper
+          className="color-picker-hue"
+          onChange={onMoveHue}
+          value={{ ...huePosition, y: 0 }}
+        >
           <div
             className="color-picker-hue_cursor"
             style={{

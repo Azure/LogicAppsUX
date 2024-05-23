@@ -2,19 +2,31 @@ import type { Position } from './util';
 import { useRef } from 'react';
 
 interface MoveWrapperProps {
-  className?: string;
-  style?: React.CSSProperties;
-  onChange: (position: Position) => void;
   children: JSX.Element;
+  className?: string;
+  onChange: (position: Position) => void;
+  style?: React.CSSProperties;
+  value: Position;
 }
 
-export const MoveWrapper = ({ className, style, onChange, children }: MoveWrapperProps) => {
+const keyMoveMap: Record<string, Position> = {
+  ArrowLeft: { x: -1, y: 0 },
+  ArrowRight: { x: 1, y: 0 },
+  ArrowUp: { x: 0, y: -1 },
+  ArrowDown: { x: 0, y: 1 },
+};
+
+export const MoveWrapper = ({ children, className, onChange, style, value }: MoveWrapperProps) => {
   const divRef = useRef<HTMLDivElement>(null);
 
+  const getBoundingClientRect = (): DOMRect | undefined => {
+    return divRef.current?.getBoundingClientRect();
+  }
+
   const move = (e: React.MouseEvent | MouseEvent): void => {
-    if (divRef.current) {
-      const { current: div } = divRef;
-      const { width, height, left, top, right } = div.getBoundingClientRect();
+    const rect = getBoundingClientRect();
+    if (rect) {
+      const { width, height, left, top, right } = rect;
 
       if (e.clientX <= right && e.clientX >= left) {
         const x = clamp(e.clientX - left, width, 0);
@@ -47,8 +59,26 @@ export const MoveWrapper = ({ className, style, onChange, children }: MoveWrappe
     document.addEventListener('mouseup', onMouseUp, false);
   };
 
+  const onKeyDown = (e: React.KeyboardEvent): void => {
+    const { key } = e;
+    const rect = getBoundingClientRect();
+
+    if (rect && key in keyMoveMap) {
+      const { width, height } = rect;
+      const multiplier = e.shiftKey ? 10 : 1;
+      const offset = keyMoveMap[key];
+
+      onChange({
+        x: clamp(value.x + (multiplier * offset.x), width, 0),
+        y: clamp(value.y + (multiplier * offset.y), height, 0),
+      });
+
+      e.preventDefault();
+    }
+  }
+
   return (
-    <div ref={divRef} className={className} style={style} onMouseDown={onMouseDown}>
+    <div ref={divRef} className={className} style={style} tabIndex={0} onMouseDown={onMouseDown} onKeyDown={onKeyDown}>
       {children}
     </div>
   );
