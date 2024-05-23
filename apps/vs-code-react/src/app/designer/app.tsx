@@ -143,16 +143,18 @@ export const DesignerApp = () => {
       }
     } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
       const updateTestDefinition = async () => {
-        const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services, false);
-        dispatch(
-          updateUnitTestDefinition({
-            unitTestDefinition: {
-              triggerMocks: triggerMocks,
-              actionMocks: actionMocks,
-              assertions: [],
-            },
-          })
-        );
+        if (!isNullOrUndefined(runData)) {
+          const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services, false);
+          dispatch(
+            updateUnitTestDefinition({
+              unitTestDefinition: {
+                triggerMocks: triggerMocks,
+                actionMocks: actionMocks,
+                assertions: [],
+              },
+            })
+          );
+        }
       };
       updateTestDefinition();
     }
