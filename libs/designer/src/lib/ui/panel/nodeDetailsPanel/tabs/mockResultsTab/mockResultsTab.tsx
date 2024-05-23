@@ -85,8 +85,6 @@ export const MockResultsTab = () => {
     };
   });
 
-  console.log('charlie', outputs);
-
   return (
     <OutputMocks
       isMockSupported={isMockSupported}

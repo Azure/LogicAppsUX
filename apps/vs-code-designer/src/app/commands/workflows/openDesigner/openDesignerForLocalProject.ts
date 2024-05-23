@@ -182,7 +182,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             runId: this.runId,
           },
         });
-        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        if (!this.isUnitTest) {
+          await this.validateWorkflow(this.panelMetadata.workflowContent);
+        }
         break;
       }
       case ExtensionCommand.save: {

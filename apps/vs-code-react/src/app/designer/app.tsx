@@ -143,8 +143,7 @@ export const DesignerApp = () => {
       }
     } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
       const updateTestDefinition = async () => {
-        const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services);
-
+        const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services, false);
         dispatch(
           updateUnitTestDefinition({
             unitTestDefinition: {
