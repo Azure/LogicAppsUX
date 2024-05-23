@@ -92,7 +92,6 @@ export const DropdownColorPicker = ({
   }, [exposedColor, selfColor, setExposedColor]);
 
   useEffect(() => {
-    console.log(exposedColor);
     onChange(exposedColor.hex);
   }, [exposedColor, onChange]);
 
