@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [4.21.0](https://github.com/Azure/LogicAppsUX/compare/v4.20.0...v4.21.0) (2024-05-23)
+
+
+### Features
+
+* **Data Mapper:** Refactoring deserialization for v2 ([#4800](https://github.com/Azure/LogicAppsUX/issues/4800)) ([395385b](https://github.com/Azure/LogicAppsUX/commit/395385b8b2b031208ed6c07ebf552e6c39ffe2d4))
+
+## [4.20.0](https://github.com/Azure/LogicAppsUX/compare/v4.19.0...v4.20.0) (2024-05-21)
+
+
+### Bug Fixes
+
+* **designer-ui:** Prevent padding on HTML toolbar from creating scrollbar ([#4870](https://github.com/Azure/LogicAppsUX/issues/4870)) ([f095b42](https://github.com/Azure/LogicAppsUX/commit/f095b42402d72fa2328da91159f2d2e7de820a72))
+
 ## [4.19.0](https://github.com/Azure/LogicAppsUX/compare/v4.18.0...v4.19.0) (2024-05-20)
 
 
