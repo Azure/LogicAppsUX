@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.21.0](https://github.com/Azure/LogicAppsUX/compare/v4.20.0...v4.21.0) (2024-05-23)
+
+
+### Features
+
+* **Data Mapper:** Refactoring deserialization for v2 ([#4800](https://github.com/Azure/LogicAppsUX/issues/4800)) ([395385b](https://github.com/Azure/LogicAppsUX/commit/395385b8b2b031208ed6c07ebf552e6c39ffe2d4))
+
 ## [4.20.0](https://github.com/Azure/LogicAppsUX/compare/v4.19.0...v4.20.0) (2024-05-21)
 
 
