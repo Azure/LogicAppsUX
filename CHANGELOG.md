@@ -1,4 +1,32 @@
 # Logic Apps Designer
+## [4.21.0](https://github.com/Azure/LogicAppsUX/compare/v4.20.0...v4.21.0) (2024-05-23)
+
+
+### Features
+
+* **Data Mapper:** Refactoring deserialization for v2 ([#4800](https://github.com/Azure/LogicAppsUX/issues/4800)) ([395385b](https://github.com/Azure/LogicAppsUX/commit/395385b8b2b031208ed6c07ebf552e6c39ffe2d4))
+
+## [4.20.0](https://github.com/Azure/LogicAppsUX/compare/v4.19.0...v4.20.0) (2024-05-21)
+
+
+### Bug Fixes
+
+* **designer-ui:** Prevent padding on HTML toolbar from creating scrollbar ([#4870](https://github.com/Azure/LogicAppsUX/issues/4870)) ([f095b42](https://github.com/Azure/LogicAppsUX/commit/f095b42402d72fa2328da91159f2d2e7de820a72))
+
+## [4.19.0](https://github.com/Azure/LogicAppsUX/compare/v4.18.0...v4.19.0) (2024-05-20)
+
+
+### Features
+
+* **Data Mapper V2:** Creating initial Nodes/Edges with connection ([#4865](https://github.com/Azure/LogicAppsUX/issues/4865)) ([1653c0b](https://github.com/Azure/LogicAppsUX/commit/1653c0b96c81d9d81d29330a12575578011bc78f))
+* **vscode:** Show local time and UTC in overview ([#4855](https://github.com/Azure/LogicAppsUX/issues/4855)) ([3cc8511](https://github.com/Azure/LogicAppsUX/commit/3cc851188130d04da789093ce7417d8aa61e15f1))
+
+
+### Bug Fixes
+
+* **Designer:** More customcode boilerplate code... ([#4858](https://github.com/Azure/LogicAppsUX/issues/4858)) ([bc26405](https://github.com/Azure/LogicAppsUX/commit/bc264055458b00c5605f4287732d51ca85dc61d2))
+* **vscode:** Update command to build all projects for extension ([#4852](https://github.com/Azure/LogicAppsUX/issues/4852)) ([797a4e2](https://github.com/Azure/LogicAppsUX/commit/797a4e2ad4ea44748545906f96b2708df241a741))
+
 ## [4.18.0](https://github.com/Azure/LogicAppsUX/compare/v4.17.0...v4.18.0) (2024-05-16)
 
 
