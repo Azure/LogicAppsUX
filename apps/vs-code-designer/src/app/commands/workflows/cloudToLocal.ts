@@ -1,6 +1,6 @@
 // Used cloudToLocal.ts as a template to create this file
 // This file is used to import a Logic App from Azure to the local workspace
-// Still need to implement the rest of the imports
+// Still need to implement the rest of the import
 import * as fs from 'fs';
 import { getAccountCredentials } from '../../utils/credentials';
 import type { TokenCredential } from '@azure/core-auth';
