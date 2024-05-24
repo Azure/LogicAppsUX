@@ -127,7 +127,7 @@ export const Deserialize = (
  * @returns The parsed value segment.
  */
 const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
-  const flattenOutputs = flattenObject(mockOutputs);
+  const flattenOutputs = flattenObject({ outputs: mockOutputs });
   return Object.keys(flattenOutputs).reduce((acc, key) => {
     const id = guid();
     if (isValueSegment({ id, ...flattenOutputs[key][0] })) {
@@ -178,6 +178,73 @@ export const deserializeUnitTestDefinition = (
   assertions: Assertion[];
   mockResults: Record<string, OutputMock>;
 } | null => {
+  unitTestDefinition = {
+    triggerMocks: {
+      When_a_HTTP_request_is_received: {
+        properties: {
+          status: 'Succeeded',
+        },
+        outputs: {
+          body: 'sdas',
+          headers: '{"TES":"dasdas"}',
+          relativePathParameters: '{"TES":"dasdas"}',
+          queries: '{"TES":"dasdas"}',
+        },
+      },
+    },
+    actionMocks: {
+      Send_an_HTTP_request_to_SharePoint: {
+        properties: {
+          status: 'Succeeded',
+        },
+      },
+      Get_messages_from_a_queue: {
+        properties: {
+          status: 'Succeeded',
+        },
+      },
+      List_all_containers: {
+        properties: {
+          status: 'Succeeded',
+        },
+      },
+      Check_whether_blob_exists: {
+        properties: {
+          status: 'Succeeded',
+        },
+      },
+      Read_blob_content: {
+        properties: {
+          status: 'Succeeded',
+        },
+      },
+      Send_message: {
+        properties: {
+          status: 'Succeeded',
+        },
+      },
+      List_secrets: {
+        properties: {
+          status: 'Succeeded',
+        },
+        outputs: {
+          body: '[\n    {\n        "name": "dsasda",\n        "contentType": "sdasd",\n        "isEnabled": "asdasd",\n        "createdTime": "as"\n    }\n]',
+        },
+      },
+      List_all_containers_1: {
+        properties: {
+          status: 'Succeeded',
+        },
+        outputs: {
+          body: {
+            containers: '[\n    {\n        "name": "dasdas",\n        "eTag": "sadas",\n        "lastModifiedTime": "dsada"\n    }\n]',
+            pageMarker: '{"TES":"dasdas"}',
+          },
+        },
+      },
+    },
+    assertions: [],
+  };
   const { definition } = workflowDefinition;
   const actionsKeys = Object.keys(definition.actions ?? {});
   const triggersKeys = Object.keys(definition.triggers ?? {});
