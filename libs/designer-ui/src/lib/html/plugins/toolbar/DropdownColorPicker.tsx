@@ -9,6 +9,7 @@ import { transformColor } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import constants from '../../../constants';
+import { useDebouncedState } from '@react-hookz/web';
 
 interface DropdownColorPickerProps {
   disabled?: boolean;
@@ -17,7 +18,7 @@ interface DropdownColorPickerProps {
   buttonIconSrc?: string;
   buttonLabel?: string;
   color: string;
-  onChange?: (color: string) => void;
+  onChange: (color: string) => void;
   title?: string;
   editor: LexicalEditor;
 }
@@ -34,6 +35,7 @@ export const DropdownColorPicker = ({
   const { isInverted } = useTheme();
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
   const [inputColor, setInputColor] = useState(color);
+  const [exposedColor, setExposedColor] = useDebouncedState(selfColor, 300);
   const innerDivRef = useRef(null);
 
   const arrowNavigationAttributes = useArrowNavigationGroup({ axis: 'horizontal', circular: true });
@@ -81,11 +83,17 @@ export const DropdownColorPicker = ({
 
   useEffect(() => {
     // Check if the dropdown is actually active
-    if (innerDivRef.current !== null && onChange) {
-      onChange(selfColor.hex);
+    if (innerDivRef.current !== null) {
+      if (exposedColor.hex !== selfColor.hex) {
+        setExposedColor(selfColor);
+      }
       setInputColor(selfColor.hex);
     }
-  }, [selfColor, onChange]);
+  }, [exposedColor, selfColor, setExposedColor]);
+
+  useEffect(() => {
+    onChange(exposedColor.hex);
+  }, [exposedColor, onChange]);
 
   useEffect(() => {
     if (color === undefined) {
@@ -120,6 +128,7 @@ export const DropdownColorPicker = ({
           className="color-picker-saturation"
           style={{ backgroundColor: `hsl(${selfColor.hsv.hue}, 100%, 50%)` }}
           onChange={onMoveSaturation}
+          value={saturationPosition}
         >
           <div
             className="color-picker-saturation_cursor"
@@ -130,7 +139,7 @@ export const DropdownColorPicker = ({
             }}
           />
         </MoveWrapper>
-        <MoveWrapper className="color-picker-hue" onChange={onMoveHue}>
+        <MoveWrapper className="color-picker-hue" onChange={onMoveHue} value={{ ...huePosition, y: 0 }}>
           <div
             className="color-picker-hue_cursor"
             style={{
