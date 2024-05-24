@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.13.11](https://github.com/Azure/LogicAppsUX/compare/v4.13.10...v4.13.11) (2024-05-24)
+
+
+### Bug Fixes
+
+* **designer:** Cherry picking accessibility changes to have required read on required parameter fields ([#4891](https://github.com/Azure/LogicAppsUX/issues/4891)) ([e34fbaa](https://github.com/Azure/LogicAppsUX/commit/e34fbaa664bbd10fe83c90650af74ee56b8eaf5a)), closes [#4763](https://github.com/Azure/LogicAppsUX/issues/4763)
+
 ### [4.13.10](https://github.com/Azure/LogicAppsUX/compare/v4.13.9...v4.13.10) (2024-05-21)
 
 
