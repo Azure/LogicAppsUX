@@ -12,9 +12,11 @@ import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
+import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
 
-const baseUrl = 'https://management.azure.com';
+const baseUrl = 'https://brazilus.management.azure.com';
 const standardApiVersion = '2020-06-01';
+const hybridApiVersion = '2024-02-02-preview';
 const consumptionApiVersion = '2019-05-01';
 
 export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
@@ -22,10 +24,13 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
     ['workflowArtifactsStandard', workflowId],
     async () => {
       const artifacts = [Artifact.ConnectionsFile, Artifact.ParametersFile];
-      const uri = `${baseUrl}${validateResourceId(workflowId)}?api-version=${standardApiVersion}&$expand=${artifacts.join(',')}`;
+      const uri = `${baseUrl}${validateResourceId(workflowId)}?api-version=${
+        HybridAppUtility.isHybridLogicApp(workflowId) ? hybridApiVersion : standardApiVersion
+      }&$expand=${artifacts.join(',')}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
+          'if-match': '*',
         },
       });
 

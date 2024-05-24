@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { loadToken } from '../../../environments/environment';
 import { SettingsBox } from '../../components/settings_box';
-import { useIsConsumption, useIsLocal, useResourcePath } from '../../state/workflowLoadingSelectors';
+import { useHostingPlan, useIsLocal, useResourcePath } from '../../state/workflowLoadingSelectors';
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
 import { LocalDesigner } from '../LocalDesigner/localDesigner';
@@ -15,7 +15,7 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 export const DesignerWrapper = () => {
   const resourcePath = useResourcePath();
   const isLocal = useIsLocal();
-  const isConsumption = useIsConsumption();
+  const hostingPlan = useHostingPlan();
 
   return (
     <ReactQueryProvider>
@@ -24,8 +24,10 @@ export const DesignerWrapper = () => {
         {isLocal ? (
           <LocalDesigner />
         ) : resourcePath ? (
-          isConsumption ? (
+          hostingPlan === 'consumption' ? (
             <LogicAppsDesignerConsumption />
+          ) : hostingPlan === 'standard' ? (
+            <LogicAppsDesignerStandard />
           ) : (
             <LogicAppsDesignerStandard />
           )

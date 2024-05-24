@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
-import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
+import { useHostingPlan } from '../../designer/state/workflowLoadingSelectors';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -34,7 +34,7 @@ export const DevToolbox = () => {
     [dispatch]
   );
 
-  const isConsumption = useIsConsumption();
+  const isConsumption = useHostingPlan() === 'consumption';
 
   return (
     <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
