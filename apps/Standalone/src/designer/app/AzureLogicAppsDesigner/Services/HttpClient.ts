@@ -6,8 +6,8 @@ import axiosRetry from 'axios-retry';
 export class HttpClient implements IHttpClient {
   private _extraHeaders: Record<string, any>;
 
-  constructor() {
-    this._extraHeaders = getExtraHeaders();
+  constructor(language?: string) {
+    this._extraHeaders = getExtraHeaders(language);
     axiosRetry(axios, { retries: 3 });
   }
 
@@ -109,9 +109,10 @@ export function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
 }
 
-export function getExtraHeaders(): Record<string, string> {
+export function getExtraHeaders(language?: string): Record<string, string> {
   return {
     'x-ms-user-agent': 'LogicAppsDesigner/(host localdesigner)',
+    ...(language ? { 'Accept-Language': language } : {}),
   };
 }
 

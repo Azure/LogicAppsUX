@@ -61,7 +61,6 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
-const httpClient = new HttpClient();
 
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
@@ -171,10 +170,11 @@ const DesignerEditor = () => {
         objectId,
         canonicalLocation,
         queryClient,
-        dispatch
+        dispatch,
+        language
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -371,7 +371,8 @@ const getDesignerServices = (
   objectId: string | undefined,
   location: string,
   queryClient: QueryClient,
-  dispatch: AppDispatch
+  dispatch: AppDispatch,
+  language?: string
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -380,6 +381,8 @@ const getDesignerServices = (
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
   const appName = siteResourceId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
+
+  const httpClient = new HttpClient(language);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
   const armServiceParams = {

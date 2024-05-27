@@ -49,7 +49,6 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
-const httpClient = new HttpClient();
 
 const DesignerEditorConsumption = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -114,9 +113,9 @@ const DesignerEditorConsumption = () => {
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = React.useMemo(
-    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, undefined, queryClient),
+    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, undefined, queryClient, language),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, designerID]
+    [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
   );
 
   const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
@@ -278,11 +277,14 @@ const getDesignerServices = (
   objectId: string | undefined,
   location: string,
   loggerService?: any,
-  queryClient?: any
+  queryClient?: any,
+  language = 'en'
 ): any => {
   const baseUrl = 'https://management.azure.com';
   const workflowName = workflowId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
+
+  const httpClient = new HttpClient(language);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
