@@ -10,7 +10,7 @@ export class HybridAppUtility {
     return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
   }
 
-  public static async postProxy(uri: string, data: object | null, headers: object, params: object | null): Promise<VFSObject[]> {
+  public static async getProxy(uri: string, data: object | null, headers: object, params: object | null): Promise<VFSObject[]> {
     const appName = uri.split('hostruntime')[0].split('/');
     appName.pop();
 
@@ -28,6 +28,44 @@ export class HybridAppUtility {
         }
       )
     ).data;
+  }
+
+  public static async postProxy(uri: string, data: object | null, headers: object, params: object | null): Promise<VFSObject[]> {
+    const appName = uri.split('hostruntime')[0].split('/');
+    appName.pop();
+
+    return (
+      await axios.post<VFSObject[]>(
+        `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+        data,
+        {
+          headers: {
+            ...headers,
+            'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/?relativePath=1`,
+            'x-ms-logicapps-proxy-method': 'POST',
+          },
+          params,
+        }
+      )
+    ).data;
+  }
+
+  public static async postProxyResponse(uri: string, data: object | null, headers: object, params: object | null) {
+    const appName = uri.split('hostruntime')[0].split('/');
+    appName.pop();
+
+    return await axios.post<VFSObject[]>(
+      `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      data,
+      {
+        headers: {
+          ...headers,
+          'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/?relativePath=1`,
+          'x-ms-logicapps-proxy-method': 'POST',
+        },
+        params,
+      }
+    );
   }
 
   public static isHybridLogicApp(uri: string) {

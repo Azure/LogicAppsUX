@@ -54,7 +54,25 @@ export class StandardSearchService extends BaseSearchService {
       'api-version': apiVersion,
       workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
     };
-    const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
+
+    let response = null;
+    if (this.isHybridLogicApp(uri)) {
+      response = await httpClient.post<AzureOperationsFetchResponse, null>({
+        uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
+          'management.azure.com',
+          'brazilus.management.azure.com'
+        ),
+        headers: {
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operations/?workflowKind=${
+            showStatefulOperations ? 'Stateful' : 'Stateless'
+          }`,
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+      });
+    } else {
+      response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
+    }
+
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
@@ -119,6 +137,22 @@ export class StandardSearchService extends BaseSearchService {
     }
   }
 
+  public isHybridLogicApp(uri: string): boolean {
+    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+  }
+
+  public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
+    if (!appId) {
+      throw new Error(`Invalid value for appId: '${appId}'`);
+    }
+
+    if (appId.endsWith('/')) {
+      appId = appId.substring(0, appId.length - 1);
+    }
+
+    return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
+  }
+
   // TODO - Need to add extra filtering for trigger/action
   public async getBuiltInConnectors(): Promise<Connector[]> {
     const filterConnector = (connector: Connector) => filterStateful(connector, !!this.options.showStatefulOperations);
@@ -130,7 +164,23 @@ export class StandardSearchService extends BaseSearchService {
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
     };
-    const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+
+    let response = null;
+    if (this.isHybridLogicApp(uri)) {
+      response = await httpClient.post<{ value: Connector[] }, null>({
+        uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
+          'management.azure.com',
+          'brazilus.management.azure.com'
+        ),
+        headers: {
+          'x-ms-logicapps-proxy-path': '/runtime/webhooks/workflow/api/management/operationGroups/',
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+      });
+    } else {
+      response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+    }
+
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiConnectors = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 

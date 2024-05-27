@@ -23,6 +23,22 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
+  public isHybridLogicApp(uri: string): boolean {
+    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+  }
+
+  public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
+    if (!appId) {
+      throw new Error(`Invalid value for appId: '${appId}'`);
+    }
+
+    if (appId.endsWith('/')) {
+      appId = appId.substring(0, appId.length - 1);
+    }
+
+    return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
+  }
+
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) {
@@ -38,10 +54,24 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     };
 
     try {
-      const response = await httpClient.get<any>({
-        uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
-        queryParameters,
-      });
+      let response = null;
+      if (this.isHybridLogicApp(baseUrl)) {
+        response = await httpClient.post<any, null>({
+          uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
+            'management.azure.com',
+            'brazilus.management.azure.com'
+          ),
+          headers: {
+            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorName}/operations/${operationName}?$expand=properties/manifest`,
+            'x-ms-logicapps-proxy-method': 'GET',
+          },
+        });
+      } else {
+        response = await httpClient.get<any>({
+          uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
+          queryParameters,
+        });
+      }
 
       const {
         properties: { brandColor, description, iconUri, manifest, operationType, api },

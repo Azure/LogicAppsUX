@@ -204,16 +204,27 @@ export const listCallbackUrl = async (
 ): Promise<CallbackInfo> => {
   let callbackInfo: any;
   if (triggerName) {
-    const result = await axios.post(
-      `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
-      null,
-      {
-        headers: {
+    if (HybridAppUtility.isHybridLogicApp(workflowId)) {
+      callbackInfo = HybridAppUtility.postProxy(
+        `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl/`,
+        null,
+        {
           Authorization: `Bearer ${environment.armToken}`,
         },
-      }
-    );
-    callbackInfo = result.data;
+        null
+      );
+    } else {
+      const result = await axios.post(
+        `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        }
+      );
+      callbackInfo = result.data;
+    }
   } else {
     callbackInfo = {
       basePath: '',
@@ -237,11 +248,13 @@ export const listCallbackUrl = async (
   };
 };
 
-export const useWorkflowApp = (siteResourceId: string, isConsumption = false) => {
+export const useWorkflowApp = (siteResourceId: string, hostingPlan: string) => {
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}?api-version=${isConsumption ? '2016-10-01' : '2018-11-01'}`;
+      const uri = `${baseUrl}${siteResourceId}?api-version=${
+        hostingPlan === 'consumption' ? '2016-10-01' : hostingPlan === 'standard' ? '2018-11-01' : '2023-11-02-preview'
+      }`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -262,14 +275,43 @@ export const useAppSettings = (siteResourceId: string) => {
   return useQuery(
     ['appSettings', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
-      const response = await axios.post(uri, null, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      });
+      // const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
+      // const response = await axios.post(uri, null, {
+      //   headers: {
+      //     Authorization: `Bearer ${environment.armToken}`,
+      //   },
+      // });
 
-      return response.data;
+      return {
+        id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/siddharth-imp/providers/Microsoft.Web/sites/sid-sap-testbox/config/appsettings',
+        name: 'appsettings',
+        type: 'Microsoft.Web/sites/config',
+        location: 'Australia East',
+        tags: {
+          'hidden-link: /app-insights-resource-id':
+            '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/siddharth-imp/providers/microsoft.insights/components/sid-sap-testbox202301171055',
+          'hidden-link: /app-insights-instrumentation-key': '4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd',
+          'hidden-link: /app-insights-conn-string':
+            'InstrumentationKey=4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd;IngestionEndpoint=https://australiaeast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://australiaeast.livediagnostics.monitor.azure.com/;ApplicationId=b5aacd44-42d1-4707-b075-ab7ff0527ae6',
+        },
+        properties: {
+          APP_KIND: 'workflowApp',
+          APPINSIGHTS_INSTRUMENTATIONKEY: '4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd',
+          APPLICATIONINSIGHTS_CONNECTION_STRING:
+            'InstrumentationKey=4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd;IngestionEndpoint=https://australiaeast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://australiaeast.livediagnostics.monitor.azure.com/',
+          AzureFunctionsJobHost__extensionBundle__id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
+          AzureFunctionsJobHost__extensionBundle__version: '[1.66.19]',
+          AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
+          FUNCTIONS_EXTENSION_VERSION: '~4',
+          FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://cdnforlogicappsv2.blob.core.windows.net/logicapps-sap',
+          FUNCTIONS_WORKER_RUNTIME: 'node',
+          sap_password: '',
+          sap_sncPartnerName: '',
+          WEBSITE_CONTENTSHARE: 'sid-sap-testboxbf8a',
+          WEBSITE_NODE_DEFAULT_VERSION: '~14',
+          'Workflows.ui-test.FlowState': 'Enabled',
+        },
+      };
     },
     {
       refetchOnMount: false,
@@ -476,18 +518,30 @@ const validateWorkflow = async (
     requestPayload.properties.appsettings = { Values: settings };
   }
 
-  const response = await axios.post(
-    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
-      isConsumption ? consumptionApiVersion : standardApiVersion
-    }`,
-    requestPayload,
-    {
-      headers: {
-        'Content-Type': 'application/json',
+  let response = null;
+  if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+    response = await HybridAppUtility.postProxyResponse(
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate`,
+      requestPayload,
+      {
         Authorization: `Bearer ${environment.armToken}`,
       },
-    }
-  );
+      null
+    );
+  } else {
+    response = await axios.post(
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
+        isConsumption ? consumptionApiVersion : standardApiVersion
+      }`,
+      requestPayload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+  }
 
   if (response.status !== 200) {
     return Promise.reject(response);

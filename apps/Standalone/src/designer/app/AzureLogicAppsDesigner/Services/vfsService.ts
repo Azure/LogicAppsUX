@@ -10,7 +10,7 @@ const params = {
 
 export const fetchFilesFromFolder = async (uri: string): Promise<VFSObject[]> => {
   if (HybridAppUtility.isHybridLogicApp(uri)) {
-    return await HybridAppUtility.postProxy(
+    return await HybridAppUtility.getProxy(
       uri,
       null,
       {

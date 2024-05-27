@@ -59,6 +59,7 @@ import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -89,7 +90,7 @@ const DesignerEditor = () => {
   const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
-  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
+  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());

@@ -132,12 +132,43 @@ export class StandardConnectionService extends BaseConnectionService implements 
     this._vVersion = 'V2';
   }
 
+  public isHybridLogicApp(uri: string): boolean {
+    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+  }
+
+  public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
+    if (!appId) {
+      throw new Error(`Invalid value for appId: '${appId}'`);
+    }
+
+    if (appId.endsWith('/')) {
+      appId = appId.substring(0, appId.length - 1);
+    }
+
+    return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
+  }
+
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this._options;
-      const response = await httpClient.get<Connector>({
-        uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
-      });
+
+      let response = null;
+      if (this.isHybridLogicApp(baseUrl)) {
+        response = await httpClient.post<any, null>({
+          uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
+            'management.azure.com',
+            'brazilus.management.azure.com'
+          ),
+          headers: {
+            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId.split('/').at(-1)}/`,
+            'x-ms-logicapps-proxy-method': 'GET',
+          },
+        });
+      } else {
+        response = await httpClient.get<Connector>({
+          uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
+        });
+      }
 
       return response;
     }
