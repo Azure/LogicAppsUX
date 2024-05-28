@@ -4,6 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface WorkflowState {
   workflowName?: string;
   isConsumption: boolean;
+  subscriptionId?: string;
+  location?: string;
 }
 
 const initialState: WorkflowState = {
@@ -24,7 +26,13 @@ export const workflowSlice = createSlice({
       state.isConsumption = action.payload;
       state.workflowName = undefined;
     },
+    setSubscriptionId: (state, action: PayloadAction<string>) => {
+      state.subscriptionId = action.payload;
+    },
+    setLocation: (state, action: PayloadAction<string>) => {
+      state.location = action.payload;
+    },
   },
 });
 
-export const { setWorkflowName, clearWorkflowDetails, setConsumption } = workflowSlice.actions;
+export const { setWorkflowName, clearWorkflowDetails, setConsumption, setSubscriptionId, setLocation } = workflowSlice.actions;
