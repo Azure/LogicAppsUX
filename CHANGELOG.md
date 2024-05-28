@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [4.22.0](https://github.com/Azure/LogicAppsUX/compare/v4.21.0...v4.22.0) (2024-05-28)
+
+
+### Bug Fixes
+
+* **designer-ui:** Allow color picker sliders to be accessed by keyboard ([#4884](https://github.com/Azure/LogicAppsUX/issues/4884)) ([98fb4bc](https://github.com/Azure/LogicAppsUX/commit/98fb4bceec324d5b5e119844fe3f79758bfcf417))
+* **designer:** `updateExistingInputTokenTitles` is not invoked when dynamic outputs load ([#4880](https://github.com/Azure/LogicAppsUX/issues/4880)) ([8704aad](https://github.com/Azure/LogicAppsUX/commit/8704aad9d7c727c8f8eafc08817c7412f1ea7ec5))
+* **Designer:** Fixed search locale not respecting portal language settings ([#4898](https://github.com/Azure/LogicAppsUX/issues/4898)) ([65fe629](https://github.com/Azure/LogicAppsUX/commit/65fe62962588d0e55d8d64d167d81fc584fac0a4))
+
 ## [4.21.0](https://github.com/Azure/LogicAppsUX/compare/v4.20.0...v4.21.0) (2024-05-23)
 
 
