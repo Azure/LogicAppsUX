@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ReactQueryProvider, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -8,8 +8,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import { saveWorkflowStandard, useWorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
+import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
+import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -19,6 +21,11 @@ export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
   const navigate = useNavigate();
+
+  const { data: workflowAppData } = useWorkflowApp(appId ?? '');
+  const { subscriptionId } = new ArmParser(appId ?? '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  console.log('canonicalLocation', canonicalLocation, 'subscriptionId', subscriptionId);
 
   const createWorkflowCall = async (
     workflowName: string,
@@ -76,15 +83,18 @@ export const TemplatesStandaloneDesigner = () => {
   };
 
   return (
-    <ReactQueryProvider>
-      <LoadWhenArmTokenIsLoaded>
-        <DevToolbox />
-        <TemplatesDesignerProvider locale="en-US" theme={theme}>
-          <TemplatesDataProvider isConsumption={isConsumption} workflowName={existingWorkflowName}>
-            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
-          </TemplatesDataProvider>
-        </TemplatesDesignerProvider>
-      </LoadWhenArmTokenIsLoaded>
-    </ReactQueryProvider>
+    <LoadWhenArmTokenIsLoaded>
+      <DevToolbox />
+      <TemplatesDesignerProvider locale="en-US" theme={theme}>
+        <TemplatesDataProvider
+          isConsumption={isConsumption}
+          workflowName={existingWorkflowName}
+          subscriptionId={subscriptionId}
+          location={canonicalLocation}
+        >
+          <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+        </TemplatesDataProvider>
+      </TemplatesDesignerProvider>
+    </LoadWhenArmTokenIsLoaded>
   );
 };
