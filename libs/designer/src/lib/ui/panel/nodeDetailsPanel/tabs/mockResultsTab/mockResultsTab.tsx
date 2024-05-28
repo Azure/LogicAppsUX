@@ -4,7 +4,12 @@ import { Constants } from '../../../../../../../src/lib';
 import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/utils/variables';
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
-import { useMocksValidationErrors, useIsMockSupported, useMocksByOperation } from '../../../../../core/state/unitTest/unitTestSelectors';
+import {
+  useMocksValidationErrors,
+  useIsMockSupported,
+  useMocksByOperation,
+  useNodeType,
+} from '../../../../../core/state/unitTest/unitTestSelectors';
 import { updateActionResult, updateMock } from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -19,10 +24,12 @@ import {
 } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { getFilteredOutputs } from './helper';
 
 export const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const nodeType = useNodeType(nodeId);
   const isMockSupported = useIsMockSupported(nodeId, isTrigger);
   const nodeName = isTrigger ? `&${nodeId}` : nodeId;
   const rawOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
@@ -30,15 +37,7 @@ export const MockResultsTab = () => {
   const mocks = useMocksByOperation(nodeName);
   const mocksValidationErrors = useMocksValidationErrors();
 
-  const filteredOutputs: OutputInfo[] = Object.values(rawOutputs.outputs)
-    .filter((output: OutputInfo) => {
-      return !output.isInsideArray;
-    })
-    .filter((output: OutputInfo, _index: number, outputArray: OutputInfo[]) => {
-      const hasChildren = outputArray.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
-      return !hasChildren;
-    });
-
+  const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
       const { value, viewModel } = newState;

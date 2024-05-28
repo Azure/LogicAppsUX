@@ -127,7 +127,7 @@ export const Deserialize = (
  * @returns The parsed value segment.
  */
 const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
-  const flattenOutputs = flattenObject(mockOutputs);
+  const flattenOutputs = flattenObject({ outputs: mockOutputs });
   return Object.keys(flattenOutputs).reduce((acc, key) => {
     const id = guid();
     if (isValueSegment({ id, ...flattenOutputs[key][0] })) {
