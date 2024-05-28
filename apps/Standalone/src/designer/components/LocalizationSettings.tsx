@@ -18,7 +18,7 @@ export const LocalizationSettings = () => {
           text: 'English',
         },
         {
-          key: 'zh',
+          key: 'zh-hant',
           text: 'Chinese',
         },
         {

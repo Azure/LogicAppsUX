@@ -170,11 +170,12 @@ const DesignerEditor = () => {
         tenantId,
         objectId,
         canonicalLocation,
+        language,
         queryClient,
         dispatch
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -370,6 +371,7 @@ const getDesignerServices = (
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
+  locale: string | undefined,
   queryClient: QueryClient,
   dispatch: AppDispatch
 ): any => {
@@ -520,6 +522,7 @@ const getDesignerServices = (
     },
     showStatefulOperations: isStateful,
     isDev: false,
+    locale,
   });
 
   const oAuthService = new StandaloneOAuthService({
