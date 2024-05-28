@@ -114,9 +114,9 @@ const DesignerEditorConsumption = () => {
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = React.useMemo(
-    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, undefined, queryClient),
+    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, designerID]
+    [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
   );
 
   const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
@@ -278,6 +278,7 @@ const getDesignerServices = (
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
+  locale: string | undefined,
   loggerService?: any,
   queryClient?: any
 ): any => {
@@ -407,6 +408,7 @@ const getDesignerServices = (
       location,
     },
     isDev: false,
+    locale,
   });
 
   const oAuthService = new StandaloneOAuthService({
