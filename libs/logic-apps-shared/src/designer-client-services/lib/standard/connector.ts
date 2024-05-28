@@ -64,12 +64,46 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
+    let response = null;
+    if (this.isHybridLogicApp(uri)) {
+      response = await httpClient.post({
+        uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
+          'management.azure.com',
+          'brazilus.management.azure.com'
+        ),
+        headers: {
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
+            .split('/')
+            .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
+          'x-ms-logicapps-proxy-method': 'POST',
+        },
+        content: { parameters: invokeParameters, configuration },
+      });
+    } else {
+      response = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content: { parameters: invokeParameters, configuration },
+      });
+    }
+
     return this._getResponseFromDynamicApi(response, uri);
+  }
+
+  public isHybridLogicApp(uri: string): boolean {
+    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+  }
+
+  public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
+    if (!appId) {
+      throw new Error(`Invalid value for appId: '${appId}'`);
+    }
+
+    if (appId.endsWith('/')) {
+      appId = appId.substring(0, appId.length - 1);
+    }
+
+    return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
   }
 
   async getDynamicSchema(
@@ -101,11 +135,30 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
+
+    let response = null;
+    if (this.isHybridLogicApp(uri)) {
+      response = await httpClient.post({
+        uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
+          'management.azure.com',
+          'brazilus.management.azure.com'
+        ),
+        headers: {
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
+            .split('/')
+            .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+        content: { parameters: invokeParameters, configuration },
+      });
+    } else {
+      response = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content: { parameters: invokeParameters, configuration },
+      });
+    }
+
     return this._getResponseFromDynamicApi(response, uri);
   }
 
