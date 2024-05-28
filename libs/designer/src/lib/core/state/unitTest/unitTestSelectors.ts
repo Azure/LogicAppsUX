@@ -55,6 +55,18 @@ export const useIsMockSupported = (nodeId: string, isTrigger: boolean) => {
     })
   );
 };
+/**
+ * Custom hook that returns the node type for a given node ID.
+ * @param {string} nodeId The ID of the node.
+ * @returns The node type.
+ */
+export const useNodeType = (nodeId: string) => {
+  return useSelector(
+    createSelector(getOperationsState, (state: OperationMetadataState) => {
+      return (getRecordEntry(state.operationInfo, nodeId)?.type ?? '').toLowerCase();
+    })
+  );
+};
 
 /**
  * Custom hook that returns the assertions from the unit test state.
