@@ -284,6 +284,8 @@ export const operationMetadataSlice = createSlice({
       if (outputParameters) {
         outputParameters.outputs = { ...outputParameters.outputs, ...outputs };
       }
+
+      updateExistingInputTokenTitles(state, action.payload);
     },
     clearDynamicIO: (state, action: PayloadAction<ClearDynamicIOPayload>) => {
       const { nodeId, nodeIds: _nodeIds, inputs = true, outputs = true } = action.payload;
@@ -540,33 +542,33 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
-    // updateExistingInputTokenTitles
-    builder.addCase(addDynamicOutputs, (state, action) => {
-      const { outputs } = action.payload;
+  },
+});
 
-      const tokenTitles: Record<string, string> = {};
-      for (const outputValue of Object.values(outputs)) {
-        tokenTitles[outputValue.key] = getTokenTitle(outputValue);
-      }
+const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
+  const { outputs } = actionPayload;
 
-      Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-        Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-          parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-            parameter.value.forEach((segment, segmentIndex) => {
-              if (isTokenValueSegment(segment) && segment.token?.key) {
-                const normalizedKey = normalizeKey(segment.token.key);
-                if (normalizedKey in tokenTitles) {
-                  state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                    createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
-                }
-              }
-            });
-          });
+  const tokenTitles: Record<string, string> = {};
+  for (const outputValue of Object.values(outputs)) {
+    tokenTitles[outputValue.key] = getTokenTitle(outputValue);
+  }
+
+  Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
+    Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
+      parameterGroup.parameters.forEach((parameter, parameterIndex) => {
+        parameter.value.forEach((segment, segmentIndex) => {
+          if (isTokenValueSegment(segment) && segment.token?.key) {
+            const normalizedKey = normalizeKey(segment.token.key);
+            if (normalizedKey in tokenTitles) {
+              state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
+                createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+            }
+          }
         });
       });
     });
-  },
-});
+  });
+};
 
 // Action creators are generated for each case reducer function
 export const {
