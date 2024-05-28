@@ -1127,10 +1127,13 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
  * @returns The parsed outputs in a more structured format.
  */
 const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
-  const ouputValues = Object.entries(outputs).reduce((acc: Record<string, any[]>, [key, value]) => {
-    return Object.assign({}, acc, { [key]: value[0].value });
-  }, {});
-  return unifyOutputs(ouputValues);
+  const outputValues: Record<string, any> = {};
+  for (const [key, value] of Object.entries(outputs)) {
+    if (value[0]) {
+      outputValues[key] = value[0].value;
+    }
+  }
+  return unifyOutputs(outputValues);
 };
 
 /**

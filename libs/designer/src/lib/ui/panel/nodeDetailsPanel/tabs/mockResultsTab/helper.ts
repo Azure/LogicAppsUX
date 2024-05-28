@@ -8,15 +8,20 @@ import { ConnectionType, type OutputInfo } from '@microsoft/logic-apps-shared';
  */
 export const getFilteredOutputs = (outputs: Record<string, OutputInfo>, type: string): OutputInfo[] => {
   const supported = type === 'http' || type === ConnectionType.ServiceProvider || type === ConnectionType.ApiConnection;
+  const addPrefix = type === ConnectionType.ApiConnection;
 
-  const filteredOutputs = Object.values(outputs)
-    .filter((output: OutputInfo) => {
-      return !output.isInsideArray;
-    })
+  let filteredOutputs = Object.values(outputs)
+    .filter((output: OutputInfo) => !output.isInsideArray)
     .filter((output: OutputInfo, _index: number, outputArray: OutputInfo[]) => {
-      const hasChildren = outputArray.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
+      const hasChildren = outputArray.some((o: OutputInfo) => o.key !== output.key && o.key.includes(output.key));
       return !hasChildren;
     });
+
+  if (addPrefix) {
+    filteredOutputs = filteredOutputs.map((output: OutputInfo) => {
+      return { ...output, key: `outputs.$.${output.key.replace('.$', '')}` };
+    });
+  }
 
   const outputsHasStatusCode = filteredOutputs.some((item) => item.key.includes('statusCode'));
 

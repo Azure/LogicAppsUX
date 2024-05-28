@@ -38,7 +38,6 @@ export const MockResultsTab = () => {
   const mocksValidationErrors = useMocksValidationErrors();
 
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
-
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
       const { value, viewModel } = newState;
