@@ -1,5 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
@@ -10,7 +10,14 @@ import {
   indexPseudoFunction,
   indexPseudoFunctionKey,
 } from '../models/Function';
-import { flattenInputs, isCustomValue, nodeHasSourceNodeEventually } from './Connection.Utils';
+import { findLast } from './Array.Utils';
+import {
+  applyConnectionValue,
+  flattenInputs,
+  isCustomValue,
+  nodeHasSourceNodeEventually,
+  nodeHasSpecificInputEventually,
+} from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -19,12 +26,10 @@ import {
   isFunctionData,
   isIfAndGuid,
 } from './Function.Utils';
-//import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
+import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { isAGuid } from '@microsoft/logic-apps-shared';
-
-// danielle remove unused after deserialization refactor
+import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
@@ -325,94 +330,6 @@ export const getSourceKeyOfLastLoop = (targetKey: string): string => {
   return forArgs.split(',')[0]; // Filter out index variable if any
 };
 
-export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sourceSchemaFlattened: SchemaNodeDictionary): string => {
-  let constructedSourceKey = sourceKey;
-  const srcKeyWithinFor = getSourceKeyOfLastLoop(qualifyLoopRelativeSourceKeys(targetKey));
-
-  // Deserialize dot accessors as their parent loop's source node
-  if (constructedSourceKey === '.') {
-    return srcKeyWithinFor;
-  }
-  let idxOfDotAccess = constructedSourceKey.indexOf('.');
-  while (idxOfDotAccess > -1) {
-    const preChar = constructedSourceKey[idxOfDotAccess - 1];
-    const postChar = constructedSourceKey[idxOfDotAccess + 1];
-
-    // Make sure the input is just '.'
-    let newStartIdx = idxOfDotAccess + 1;
-    if ((preChar === '(' || preChar === ' ') && (postChar === ')' || postChar === ',')) {
-      constructedSourceKey =
-        constructedSourceKey.substring(0, idxOfDotAccess) + srcKeyWithinFor + constructedSourceKey.substring(idxOfDotAccess + 1);
-      newStartIdx += srcKeyWithinFor.length;
-    }
-
-    idxOfDotAccess = constructedSourceKey.indexOf('.', newStartIdx);
-  }
-
-  const relativeSrcKeyArr = sourceKey
-    .split(', ')
-    .map((keyChunk) => {
-      let modifiedKeyChunk = keyChunk;
-
-      // Functions with no inputs
-      if (modifiedKeyChunk.includes('()')) {
-        return '';
-      }
-
-      // Will only ever be one or zero '(' after splitting on commas
-      const openParenIdx = modifiedKeyChunk.lastIndexOf('(');
-      if (openParenIdx >= 0) {
-        modifiedKeyChunk = modifiedKeyChunk.substring(openParenIdx + 1);
-      }
-
-      // Should only ever be one or zero ')' after ruling out substrings w/ functions w/ no inputs
-      modifiedKeyChunk = modifiedKeyChunk.replaceAll(')', '');
-
-      return modifiedKeyChunk;
-    })
-    .filter((keyChunk) => keyChunk !== '');
-
-  if (relativeSrcKeyArr.length > 0) {
-    relativeSrcKeyArr.forEach((relativeKeyMatch) => {
-      if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        let fullyQualifiedSourceKey = '';
-
-        const srcTokens = lexThisThing(relativeKeyMatch);
-        let backoutCount = 0;
-
-        if (srcTokens.some((token) => token === ReservedToken.backout)) {
-          fullyQualifiedSourceKey = srcKeyWithinFor;
-          srcTokens.forEach((token) => {
-            if (token === ReservedToken.backout) {
-              backoutCount++;
-            }
-          });
-          const relativeKeyNoBackouts = relativeKeyMatch.substring(backoutCount * 3);
-          while (backoutCount > 0) {
-            const lastElem = fullyQualifiedSourceKey.lastIndexOf('/');
-            fullyQualifiedSourceKey = fullyQualifiedSourceKey.substring(0, lastElem);
-            backoutCount--;
-          }
-          fullyQualifiedSourceKey += `/${relativeKeyNoBackouts}`;
-        } else {
-          // Replace './' to deal with relative attribute paths
-          fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
-        }
-        const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
-
-        constructedSourceKey = isValidSrcNode
-          ? constructedSourceKey.replace(relativeKeyMatch, fullyQualifiedSourceKey)
-          : constructedSourceKey;
-      }
-    });
-  } else {
-    const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${sourceKey}`;
-    constructedSourceKey = sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`] ? fullyQualifiedSourceKey : sourceKey;
-  }
-
-  return constructedSourceKey;
-};
-
 export const Separators = {
   OpenParenthesis: '(',
   CloseParenthesis: ')',
@@ -431,17 +348,47 @@ export const ReservedToken = {
 } as const;
 export type ReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
 
+export const DReservedToken = {
+  for: '$for',
+  if: '$if',
+  backout: '../',
+} as const;
+export type DReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
+
+export const dReservedToken: string[] = [DReservedToken.for, DReservedToken.if, DReservedToken.backout]; // danielle maybe ideally we separate evertything out, so we don't need to change these functions if the definition changes
+
+export const DSeparators = {
+  OpenParenthesis: '(',
+  CloseParenthesis: ')',
+  Comma: ',',
+  quote: '"',
+} as const;
+export type DSeparators = (typeof Separators)[keyof typeof Separators];
+
+export const Dseparators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, DSeparators.quote];
+
 export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
 
-export const lexThisThing = (targetKey: string): string[] => {
+export const separateFunctions = (targetKey: string): string[] => {
   const tokens: string[] = [];
 
   let i = 0;
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
+    if (currentChar === ' ') {
+      // ignore whitespace
+      i++;
+      continue;
+    }
 
-    if (separators.includes(currentChar)) {
+    if (Dseparators.includes(currentChar)) {
+      if (currentChar === DSeparators.quote) {
+        const endOfQuote = targetKey.substring(i + 1).indexOf(DSeparators.quote) + 2 + i;
+        tokens.push(targetKey.substring(i, endOfQuote));
+        i = endOfQuote;
+        continue;
+      }
       if (!currentToken) {
         // if it is a Separator
         tokens.push(currentChar);
@@ -451,79 +398,106 @@ export const lexThisThing = (targetKey: string): string[] => {
       // if it is a function or identifier token
       tokens.push(currentToken);
       currentToken = '';
-      tokens.push(currentChar);
+      tokens.push(currentChar.trim());
       i++;
       continue;
     }
 
     currentToken = currentToken + currentChar;
-    if (reservedToken.includes(currentToken)) {
-      tokens.push(currentToken);
+    if (dReservedToken.includes(currentToken)) {
+      tokens.push(currentToken.trim());
       currentToken = '';
       i++;
       continue;
     }
 
     if (i === targetKey.length - 1) {
-      tokens.push(currentToken);
+      tokens.push(currentToken.trim());
     }
     i++;
   }
   return tokens;
 };
 
-interface ParseFunc {
+export interface ParseFunc {
+  type: 'Function';
   name: string;
-  inputs: FunctionInput[];
+  inputs: FunctionCreationMetadata[];
 }
 
-type FunctionInput = string | ParseFunc;
+export type FunctionCreationMetadata = ParseFunc | SingleValueMetadata;
 
-const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
+export type SingleValueMetadata = {
+  type: 'SingleValueMetadata';
+  specialCharacters?: 'index' | 'customValue' | 'directAccess' | 'loopCurrentNodeDot';
+  value: string;
+};
+
+const isTokenCustomValue = (value: string): boolean => {
+  return value.startsWith('"') || !Number.isNaN(Number.parseInt(value));
+};
+
+const currentLoopNodeDot = '.';
+
+export const getSingleValueMetadata = (token: string) => {
+  const metadata: SingleValueMetadata = {
+    type: 'SingleValueMetadata',
+    value: token,
+  };
+  if (token.startsWith(Separators.Dollar)) {
+    metadata.specialCharacters = 'index';
+  } else if (token === currentLoopNodeDot) {
+    metadata.specialCharacters = 'loopCurrentNodeDot';
+  } else if (isTokenCustomValue(token)) {
+    metadata.specialCharacters = 'customValue';
+  } else if (token.includes('[')) {
+    metadata.specialCharacters = 'directAccess';
+    // danielle also include separated values here
+  } // if it is a loop with backout
+  return metadata;
+};
+
+// danielle how do we handle this? /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration'
+export const createSchemaNodeOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
+  if (tokens.length === 1) {
+    const singleValue = getSingleValueMetadata(tokens[0]);
+    return { term: singleValue, nextIndex: 2 };
+  }
   // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
-    const func: ParseFunc = { name: tokens[0], inputs: [] };
+    const func: ParseFunc = { type: 'Function', name: tokens[0], inputs: [] };
+    if (tokens[0].includes('/')) {
+      const singleValue = getSingleValueMetadata(tokens[0]);
+      return { term: singleValue, nextIndex: 2 };
+    }
     let i = 2; // start of the function inputs
     let parenCount = 1;
+    let start = 2;
     while (i < tokens.length && parenCount !== 0) {
       if (tokens[i] === Separators.OpenParenthesis) {
         parenCount++;
+      } else if (tokens[i] === Separators.CloseParenthesis && parenCount === 1) {
+        if (i === start) {
+          // function with no inputs
+          return { term: func, nextIndex: i + 1 };
+        }
+        func.inputs.push(createSchemaNodeOrFunction(tokens.slice(start, i)).term);
+        start = i + 2;
+        parenCount--;
       } else if (tokens[i] === Separators.CloseParenthesis) {
         parenCount--;
       } else if (tokens[i] !== Separators.Comma) {
-        func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
+        //func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
+      } else if (tokens[i] === Separators.Comma && parenCount === 1) {
+        func.inputs.push(createSchemaNodeOrFunction(tokens.slice(start, i)).term);
+        start = i + 1;
       }
       i++;
     }
     return { term: func, nextIndex: i + 1 };
   }
-  return { term: tokens[0], nextIndex: 2 };
-};
-
-export const removeSequenceFunction = (tokens: string[]): string => {
-  let i = 0;
-  const length = tokens.length;
-  let result = '';
-  while (i < length) {
-    if (tokens[i] === ReservedToken.for) {
-      const idk = createTargetOrFunction(tokens.slice(i + 2));
-      const src = getInput(idk.term);
-      result += `for(${src}`;
-      i += idk.nextIndex;
-    } else {
-      result += tokens[i];
-    }
-    i++;
-  }
-  return result;
-};
-
-const getInput = (term: FunctionInput) => {
-  let currentTerm = term;
-  while (typeof currentTerm !== 'string') {
-    currentTerm = currentTerm.inputs[0];
-  }
-  return currentTerm;
+  const singleValue = getSingleValueMetadata(tokens[0]);
+  return { term: singleValue, nextIndex: 2 };
 };
 
 export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
@@ -541,7 +515,7 @@ export const qualifyLoopRelativeSourceKeys = (targetKey: string): string => {
   srcKeys.forEach((srcKey) => {
     if (!srcKey.includes(curSrcParentKey) && srcKey !== '*') {
       const fullyQualifiedSrcKey = `${curSrcParentKey}/${srcKey}`;
-      qualifiedTargetKey = qualifiedTargetKey.replace(srcKey, fullyQualifiedSrcKey);
+      qualifiedTargetKey = qualifiedTargetKey.replace(`(${srcKey}`, `(${fullyQualifiedSrcKey}`);
 
       curSrcParentKey = fullyQualifiedSrcKey;
     } else if (srcKey === '*') {
@@ -583,65 +557,65 @@ export const getTargetValueWithoutLoopsSchemaSpecific = (targetKey: string, isJs
   return result;
 };
 
-// export const addParentConnectionForRepeatingElementsNested = (
-//   sourceNode: SchemaNodeExtended,
-//   targetNode: SchemaNodeExtended,
-//   flattenedSourceSchema: SchemaNodeDictionary,
-//   flattenedTargetSchema: SchemaNodeDictionary,
-//   dataMapConnections: ConnectionDictionary
-// ): boolean => {
-//   if (sourceNode.parentKey) {
-//     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
-//     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+export const addParentConnectionForRepeatingElementsNested = (
+  sourceNode: SchemaNodeExtended,
+  targetNode: SchemaNodeExtended,
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  dataMapConnections: ConnectionDictionary
+): boolean => {
+  if (sourceNode.parentKey) {
+    const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
+    const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-//     if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
-//       const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
-//       const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
-//       if (!firstRepeatingSourceNode) {
-//         return false;
-//       }
+    if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+      const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+      const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
+      if (!firstRepeatingSourceNode) {
+        return false;
+      }
 
-//       const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
-//       const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
+      const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+      const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
 
-//       const parentsAlreadyConnected = nodeHasSpecificInputEventually(
-//         prefixedSourceKey,
-//         dataMapConnections[prefixedTargetKey],
-//         dataMapConnections,
-//         true
-//       );
+      const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+        prefixedSourceKey,
+        dataMapConnections[prefixedTargetKey],
+        dataMapConnections,
+        true
+      );
 
-//       if (!parentsAlreadyConnected) {
-//         applyConnectionValue(dataMapConnections, {
-//           targetNode: firstRepeatingTargetNode,
-//           targetNodeReactFlowKey: prefixedTargetKey,
-//           findInputSlot: true,
-//           input: {
-//             reactFlowKey: prefixedSourceKey,
-//             node: firstRepeatingSourceNode,
-//           },
-//         });
-//       }
+      if (!parentsAlreadyConnected) {
+        applyConnectionValue(dataMapConnections, {
+          targetNode: firstRepeatingTargetNode,
+          targetNodeReactFlowKey: prefixedTargetKey,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: prefixedSourceKey,
+            node: firstRepeatingSourceNode,
+          },
+        });
+      }
 
-//       let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
-//       if (!findLast(nextTargetNode.pathToRoot, (pathItem) => pathItem.repeating)) {
-//         nextTargetNode = firstRepeatingTargetNode;
-//       }
+      let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
+      if (!findLast(nextTargetNode.pathToRoot, (pathItem) => pathItem.repeating)) {
+        nextTargetNode = firstRepeatingTargetNode;
+      }
 
-//       const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
-//         flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
-//         nextTargetNode,
-//         flattenedSourceSchema,
-//         flattenedTargetSchema,
-//         dataMapConnections
-//       );
+      const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
+        flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
+        nextTargetNode,
+        flattenedSourceSchema,
+        flattenedTargetSchema,
+        dataMapConnections
+      );
 
-//       return !parentsAlreadyConnected ? true : wasNewArrayConnectionAdded;
-//     }
-//   }
+      return parentsAlreadyConnected ? wasNewArrayConnectionAdded : true;
+    }
+  }
 
-//   return false;
-// };
+  return false;
+};
 
 export const addNodeToCanvasIfDoesNotExist = (newNode: SchemaNodeExtended, currentCanvasNodes: SchemaNodeExtended[]) => {
   const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === newNode.key);
@@ -650,33 +624,33 @@ export const addNodeToCanvasIfDoesNotExist = (newNode: SchemaNodeExtended, curre
   }
 };
 
-// export const addAncestorNodesToCanvas = (
-//   payloadNode: SchemaNodeExtended,
-//   currentSourceSchemaNodes: SchemaNodeExtended[],
-//   flattenedSourceSchema: SchemaNodeDictionary
-// ) => {
-//   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
-//     (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
-//   );
+export const addAncestorNodesToCanvas = (
+  payloadNode: SchemaNodeExtended,
+  currentSourceSchemaNodes: SchemaNodeExtended[],
+  flattenedSourceSchema: SchemaNodeDictionary
+) => {
+  const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
+    (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
+  );
 
-//   if (grandparentNodesOnCanvas.length > 0) {
-//     grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
-//     const highestAncestor = grandparentNodesOnCanvas[0];
-//     payloadNode.pathToRoot.forEach((ancestorNode) => {
-//       if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
-//         addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes);
-//       }
-//     });
-//   } else {
-//     const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
-//     const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
-//     const parentNodeToAdd =
-//       firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
-//     if (parentNodeToAdd) {
-//       addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes);
-//     }
-//   }
-// };
+  if (grandparentNodesOnCanvas.length > 0) {
+    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
+    const highestAncestor = grandparentNodesOnCanvas[0];
+    payloadNode.pathToRoot.forEach((ancestorNode) => {
+      if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
+        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes);
+      }
+    });
+  } else {
+    const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+    const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+    const parentNodeToAdd =
+      firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+    if (parentNodeToAdd) {
+      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes);
+    }
+  }
+};
 
 // TODO JSON deserialization with the array type
 export const flattenMapDefinitionValues = (node: MapDefinitionEntry | MapDefinitionEntry[]): string[] => {
