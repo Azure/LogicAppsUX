@@ -7,6 +7,7 @@ export const RequiredMarkerSide = {
 } as const;
 export type RequiredMarkerSide = (typeof RequiredMarkerSide)[keyof typeof RequiredMarkerSide];
 export interface LabelProps {
+  children?: JSX.Element;
   className?: string;
   htmlFor?: string;
   id?: string;
@@ -22,6 +23,7 @@ interface RequiredParameterMarkerProps {
 }
 
 export const Label: React.FC<LabelProps> = ({
+  children,
   className,
   htmlFor,
   id,
@@ -37,6 +39,7 @@ export const Label: React.FC<LabelProps> = ({
       {requiredMarkerSide === RequiredMarkerSide.RIGHT ? (
         <RequiredParameterMarker isRequiredField={isRequiredField} isRight={true} />
       ) : null}
+      {children ? children : null}
     </FluentLabel>
   );
 };
