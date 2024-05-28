@@ -38,7 +38,6 @@ export const MockResultsTab = () => {
   const mocksValidationErrors = useMocksValidationErrors();
 
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
-  console.log('charlie', filteredOutputs);
 
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
