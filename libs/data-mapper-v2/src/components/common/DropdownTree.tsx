@@ -2,14 +2,14 @@ import { Tree, TreeItem, TreeItemLayout, Text } from '@fluentui/react-components
 import { SearchBox } from '@fluentui/react';
 import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import type { ITreeItem } from 'models/Tree';
+import type { IFileSysTreeItem } from 'models/Tree';
 import useStyles from './styles';
 import { useState, useMemo, useCallback } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 
 interface DropdownTreeProps {
-  items: ITreeItem[];
-  onItemSelect: (item: ITreeItem) => void;
+  items: IFileSysTreeItem[];
+  onItemSelect: (item: IFileSysTreeItem) => void;
 }
 
 export const DropdownTree = (props: DropdownTreeProps) => {
@@ -31,19 +31,19 @@ export const DropdownTree = (props: DropdownTreeProps) => {
     description: 'Search from file list',
   });
 
-  const onFileNameSelect = (item: ITreeItem) => {
+  const onFileNameSelect = (item: IFileSysTreeItem) => {
     props.onItemSelect(item);
     setShowDropdownTree(false);
     console.log(item.name);
   };
 
-  const filterDropdownItem = useCallback((item: ITreeItem, value: string): ITreeItem | undefined => {
+  const filterDropdownItem = useCallback((item: IFileSysTreeItem, value: string): IFileSysTreeItem | undefined => {
     if (isEmptyString(value) || item.name.includes(value)) {
       return item;
     }
 
     if (item.type === 'directory') {
-      const children = item.children.map((child) => filterDropdownItem(child, value)).filter((child) => child !== undefined) as ITreeItem[];
+      const children = item.children.map((child) => filterDropdownItem(child, value)).filter((child) => child !== undefined) as IFileSysTreeItem[];
 
       if (children.length === 0) {
         return undefined;
@@ -58,13 +58,13 @@ export const DropdownTree = (props: DropdownTreeProps) => {
   }, []);
 
   const filteredItems = useMemo(
-    () => props.items.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as ITreeItem[],
+    () => props.items.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
     [props.items, searchValue, filterDropdownItem]
   );
 
-  const displayTree = (item: ITreeItem): JSX.Element => {
+  const displayTree = (item: IFileSysTreeItem): JSX.Element => {
     if (item.type === 'directory') {
-      const childElements = item.children.map((child: ITreeItem) => displayTree(child));
+      const childElements = item.children.map((child: IFileSysTreeItem) => displayTree(child));
       return (
         <TreeItem itemType="branch">
           <TreeItemLayout>{item.name}</TreeItemLayout>
@@ -104,7 +104,7 @@ export const DropdownTree = (props: DropdownTreeProps) => {
         <div className={styles.dropdownInputValue}>
           <SearchBox placeholder={search} onChange={onSearchValueChange} />
           <Tree className={styles.treeWrapper} aria-label="tree">
-            {filteredItems.map((item: ITreeItem, index: number) => (
+            {filteredItems.map((item: IFileSysTreeItem, index: number) => (
               <span key={`tree-${index}`}>{displayTree(item)}</span>
             ))}
           </Tree>

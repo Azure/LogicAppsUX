@@ -1,9 +1,11 @@
 import { DropdownTree } from '../common/DropdownTree';
-import type { ITreeFile, ITreeItem } from 'models/Tree';
+import type { ITreeFile, IFileSysTreeItem } from 'models/Tree';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
+import { RootState } from '../../core/state/Store';
+import { useSelector } from 'react-redux';
 
-const mockFileItems: ITreeItem[] = [
+const mockFileItems: IFileSysTreeItem[] = [
   {
     name: 'Child1.xsd',
     type: 'file',
@@ -34,10 +36,11 @@ export type SelectExistingSchemaProps = {
 };
 
 export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   return (
     <DropdownTree
       items={mockFileItems}
-      onItemSelect={(item: ITreeItem) => {
+      onItemSelect={(item: IFileSysTreeItem) => {
         props.setSelectedSchema({
           name: item.name ?? '',
           path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',

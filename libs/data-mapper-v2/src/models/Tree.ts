@@ -1,9 +1,9 @@
-export type ITreeItem = ITreeDirectory | ITreeFile;
+export type IFileSysTreeItem = ITreeDirectory | ITreeFile;
 
 export interface ITreeDirectory {
   name: string;
   type: 'directory';
-  children: ITreeItem[];
+  children: IFileSysTreeItem[];
 }
 
 export interface ITreeFile {
