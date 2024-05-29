@@ -165,6 +165,7 @@ export function ConditionExpression({
       </div>
       {isCalloutVisible && !isReadOnly && (
         <Callout
+          className="msla-condition-expression-callout"
           role="dialog"
           ariaLabelledBy={labelId}
           target={`#condition-expression-${editorId}`}
