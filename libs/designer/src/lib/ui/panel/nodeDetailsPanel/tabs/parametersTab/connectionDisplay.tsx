@@ -2,11 +2,12 @@ import { openPanel } from '../../../../../core';
 import { useIsOperationMissingConnection } from '../../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { Badge, Button, Label, Spinner } from '@fluentui/react-components';
+import { Badge, Button, Spinner } from '@fluentui/react-components';
 import { LinkMultiple16Regular, ErrorCircle16Filled } from '@fluentui/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { Label } from '@microsoft/designer-ui';
 
 interface ConnectionDisplayProps {
   connectionName: string | undefined;
@@ -91,7 +92,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     <div className="connection-display">
       <div className="connection-info">
         <LinkMultiple16Regular />
-        <Label className="label">{connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName}</Label>
+        <Label className="label" text={connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName} />
         {readOnly ? null : (
           <Button
             id="change-connection-button"
