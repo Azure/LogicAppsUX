@@ -1,8 +1,9 @@
 import { SearchableDropdown } from '../searchabledropdown';
 import type { SearchableDropdownProps } from '../searchabledropdown';
-import { Stack, Label } from '@fluentui/react';
+import { Stack } from '@fluentui/react';
 import { Button, Tooltip } from '@fluentui/react-components';
 import type { FC } from 'react';
+import { Label } from '../label';
 
 export interface SearchableDropdownWithAddAllProps extends SearchableDropdownProps {
   addAllButtonText?: string;
@@ -45,11 +46,7 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
 
   return (
     <>
-      {label && (
-        <Label id={labelId} className="msla-searchable-dropdown-label">
-          {label}
-        </Label>
-      )}
+      {label && <Label id={labelId} className="msla-searchable-dropdown-label" text={label} />}
       <Stack horizontal tokens={{ childrenGap: '8px' }}>
         <SearchableDropdown {...searchableDropdownProps} labelId={labelId} className="msla-searchable-dropdown-with-buttons" />
         {renderButton(handleShowAll, addAllButtonText, addAllButtonTooltip, !(addAllButtonEnabled ?? true), 'msla-add-all-button')}

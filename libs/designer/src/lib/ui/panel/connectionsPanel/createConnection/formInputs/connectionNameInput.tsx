@@ -1,5 +1,6 @@
-import { Label, TextField } from '@fluentui/react';
+import { TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import { Label } from '@microsoft/designer-ui';
 
 export interface ConnectionNameInputProps {
   isLoading: boolean;
@@ -22,9 +23,13 @@ const ConnectionNameInput = ({ isLoading, value, onChange }: ConnectionNameInput
 
   return (
     <div className="param-row">
-      <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
-        {inputConnectionDisplayNameLabel}
-      </Label>
+      <Label
+        className="label"
+        isRequiredField={true}
+        text={inputConnectionDisplayNameLabel}
+        htmlFor={'connection-display-name-input'}
+        disabled={isLoading}
+      />
       <TextField
         id={'connection-display-name-input'}
         className="connection-parameter-input"
