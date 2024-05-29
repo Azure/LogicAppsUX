@@ -16,6 +16,8 @@ const useStyles = makeStyles({
   toolbar: {
     backgroundColor: '#F6FAFE',
     justifyContent: 'space-between',
+    minHeight: '40px',
+    maxHeight: '50px',
     ...shorthands.borderBottom('1px', 'solid', '#ddd'),
   },
   button: {

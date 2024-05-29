@@ -76,8 +76,15 @@ export const DataMapperStandaloneDesignerV2 = () => {
   const isLightMode = theme === ThemeType.Light;
 
   return (
-    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: '0 1 1px' }}>
+    <div
+      style={{
+        flex: '1 1 1px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+      }}
+    >
+      <div style={{ flex: '0 1 1px', height: '30vh%' }}>
         <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
           <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
@@ -89,7 +96,15 @@ export const DataMapperStandaloneDesignerV2 = () => {
         </ThemeProvider>
       </div>
 
-      <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          flex: '1 1 1px',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '70vh',
+          overflow: 'hidden',
+        }}
+      >
         <DataMapperDesignerProviderV2 locale="en-US" theme={theme} options={{}}>
           <DataMapDataProviderV2
             xsltFilename={xsltFilename}

@@ -1,9 +1,9 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, CoordinateExtent, Node, Edge } from 'reactflow';
+import type { Connection, Node, Edge } from 'reactflow';
 import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
@@ -29,7 +29,17 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);
+  const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
   const dispatch = useDispatch<AppDispatch>();
+
+  const updateCanvasBounds = useCallback(() => {
+    if (ref?.current) {
+      console.log(ref.current.getBoundingClientRect());
+      setCanvasBounds(ref.current.getBoundingClientRect());
+    }
+  }, [ref]);
+
+  const resizeObserver = useMemo(() => new ResizeObserver((_) => updateCanvasBounds()), [updateCanvasBounds]);
 
   const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
@@ -48,20 +58,6 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
     }),
     []
   );
-
-  const reactFlowExtent = useMemo(() => {
-    if (ref?.current) {
-      const rect = ref.current.getBoundingClientRect();
-      if (rect) {
-        return [
-          [0, 0],
-          [rect.width, rect.height],
-        ] as CoordinateExtent;
-      }
-    }
-
-    return undefined;
-  }, [ref]);
 
   const dispatchEdgesAndNodes = useCallback(
     (updatedEdges: Edge[], updatedNodes: Node[]) => {
@@ -123,6 +119,17 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
     [edges]
   );
 
+  useEffect(() => {
+    if (ref?.current) {
+      resizeObserver.observe(ref.current);
+      updateCanvasBounds();
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [ref, resizeObserver, updateCanvasBounds]);
+
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
@@ -135,7 +142,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
-        <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
+        <DataMapperWrappedContext.Provider value={{ canvasBounds: canvasBounds }}>
           <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
           <div className={styles.dataMapperShell}>
             <FunctionPanel />
@@ -174,7 +181,14 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
                 onConnect={onEdgeConnect}
                 onEdgeUpdate={onEdgeUpdate}
                 connectionLineComponent={ConnectionLine}
-                translateExtent={reactFlowExtent}
+                translateExtent={
+                  canvasBounds
+                    ? [
+                        [0, 0],
+                        [canvasBounds.right, canvasBounds.bottom],
+                      ]
+                    : undefined
+                }
               />
             </div>
             <AddSchemaDrawer

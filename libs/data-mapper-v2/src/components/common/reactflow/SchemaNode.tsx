@@ -2,7 +2,7 @@ import { Handle, Position, useUpdateNodeInternals, type NodeProps } from 'reactf
 import type { SchemaNodeReactFlowDataProps } from 'components/addSchema/tree/TreeNode';
 import { Text, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 
 const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -10,12 +10,16 @@ const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
   const { data } = props;
   const { name, isLeftDirection, connectionX, id, isConnected } = data;
   const styles = useStyles();
+  const rect = divRef.current?.getBoundingClientRect();
+
+  const right = useMemo(() => (rect ? connectionX - rect.right + 10 : undefined), [rect, connectionX]);
+  const left = useMemo(() => (rect ? rect.left - connectionX + 10 : undefined), [rect, connectionX]);
 
   useEffect(() => {
-    if (divRef.current) {
+    if (right && left && rect) {
       updateNodeInternals(id);
     }
-  }, [divRef, id, updateNodeInternals]);
+  }, [right, left, rect, id, updateNodeInternals]);
   return (
     <div className="nodrag" ref={divRef}>
       <Text>{name}</Text>
@@ -25,13 +29,7 @@ const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
           position={Position.Right}
           className={mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
           isConnectable={true}
-          style={
-            divRef.current
-              ? {
-                  right: `-${connectionX - divRef.current.getBoundingClientRect().right + 10}px`,
-                }
-              : undefined
-          }
+          style={{ right: right ? `-${right}px` : undefined }}
         />
       ) : (
         <Handle
@@ -39,13 +37,7 @@ const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
           position={Position.Left}
           className={mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
           isConnectable={true}
-          style={
-            divRef.current
-              ? {
-                  left: `-${divRef.current.getBoundingClientRect().left - connectionX + 10}px`,
-                }
-              : undefined
-          }
+          style={{ left: left ? `-${left}px` : undefined }}
         />
       )}
     </div>

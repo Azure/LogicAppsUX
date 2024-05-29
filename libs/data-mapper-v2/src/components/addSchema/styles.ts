@@ -41,7 +41,7 @@ export const useStyles = makeStyles({
   },
   root: {
     display: 'flex',
-    height: '100vh',
+    height: '100%',
   },
   fileSelectedDrawer: {
     backgroundColor: '#F6FAFE',
