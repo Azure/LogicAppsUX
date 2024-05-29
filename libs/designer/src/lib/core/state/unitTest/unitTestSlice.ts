@@ -7,6 +7,7 @@ import type {
   UnitTestState,
   updateMockResultPayload,
   DeleteAssertionsPayload,
+  UpdateAssertioExpressionPayload,
 } from './unitTestInterfaces';
 import { ActionResults } from '@microsoft/designer-ui';
 import {
@@ -161,6 +162,29 @@ export const unitTestSlice = createSlice({
         delete state.validationErrors.assertions[assertionId];
       }
     },
+    updateAssertionExpression: (state: UnitTestState, action: PayloadAction<UpdateAssertioExpressionPayload>) => {
+      const { id, assertionString } = action.payload;
+      const validationErrors = {
+        expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
+      };
+      state.assertions[id] = {
+        ...state.assertions[id],
+        assertionString,
+      };
+
+      const newErrorObj = {
+        ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),
+        ...validationErrors,
+      };
+      if (!newErrorObj.expression) {
+        delete newErrorObj.expression;
+      }
+      if (Object.keys(newErrorObj).length === 0) {
+        delete state.validationErrors.assertions[id];
+      } else {
+        state.validationErrors.assertions[id] = newErrorObj;
+      }
+    },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
       const { name, id, description, assertionString } = assertionToUpdate;
@@ -193,7 +217,14 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { updateAssertions, deleteAssertion, updateAssertion, initUnitTestDefinition, updateMock, updateActionResult } =
-  unitTestSlice.actions;
+export const {
+  updateAssertions,
+  deleteAssertion,
+  updateAssertion,
+  updateAssertionExpression,
+  initUnitTestDefinition,
+  updateMock,
+  updateActionResult,
+} = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

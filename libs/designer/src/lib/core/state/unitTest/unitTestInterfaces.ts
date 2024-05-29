@@ -37,6 +37,11 @@ export interface UpdateAssertionPayload {
   assertionToUpdate: AssertionDefintion;
 }
 
+export interface UpdateAssertioExpressionPayload {
+  id: string;
+  assertionString: string;
+}
+
 export interface UnitTestState {
   mockResults: Record<string, OutputMock>;
   assertions: Record<string, AssertionDefintion>;
