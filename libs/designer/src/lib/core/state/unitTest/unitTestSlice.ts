@@ -1,6 +1,6 @@
 import { validateParameter } from '../workflowparameters/workflowparametersSlice';
 import type {
-  UpdateAssertionsPayload,
+  AddAssertionPayload,
   UpdateAssertionPayload,
   updateMockPayload,
   InitDefintionPayload,
@@ -54,7 +54,7 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
  * @param  {Record<string, AssertionDefintion>} allDefinitions - The record of all assertion definitions.
  * @returns A string with an error message if the assertion is invalid, otherwise undefined.
  */
-export const validateAssertion = (
+const validateAssertion = (
   id: string,
   data: { name?: string; expression?: string },
   keyToValidate: string,
@@ -100,6 +100,36 @@ export const validateAssertion = (
 
     default: {
       return undefined;
+    }
+  }
+};
+
+/**
+ * Checks the assertions for errors and updates the validation errors in the state.
+ * @param {UnitTestState} state - The current state of the unit test.
+ */
+const checkAssertionsErrors = (state: UnitTestState) => {
+  for (const assertion of Object.values(state.assertions)) {
+    const { name, id, assertionString } = assertion;
+
+    const validationErrors = {
+      name: validateAssertion(id, { name }, 'name', state.assertions),
+      expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
+    };
+    const newErrorObj = {
+      ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),
+      ...validationErrors,
+    };
+    if (!newErrorObj.name) {
+      delete newErrorObj.name;
+    }
+    if (!newErrorObj.expression) {
+      delete newErrorObj.expression;
+    }
+    if (Object.keys(newErrorObj).length === 0) {
+      delete state.validationErrors.assertions[id];
+    } else {
+      state.validationErrors.assertions[id] = newErrorObj;
     }
   }
 };
@@ -151,9 +181,11 @@ export const unitTestSlice = createSlice({
         state.mockResults[operationName].output = {};
       }
     },
-    updateAssertions: (state: UnitTestState, action: PayloadAction<UpdateAssertionsPayload>) => {
-      const { assertions } = action.payload;
-      state.assertions = assertions;
+    addAssertion: (state: UnitTestState, action: PayloadAction<AddAssertionPayload>) => {
+      const { assertion } = action.payload;
+      const { id } = assertion;
+      state.assertions[id] = assertion;
+      checkAssertionsErrors(state);
     },
     deleteAssertion: (state: UnitTestState, action: PayloadAction<DeleteAssertionsPayload>) => {
       const { assertionId } = action.payload;
@@ -164,61 +196,28 @@ export const unitTestSlice = createSlice({
     },
     updateAssertionExpression: (state: UnitTestState, action: PayloadAction<UpdateAssertioExpressionPayload>) => {
       const { id, assertionString } = action.payload;
-      const validationErrors = {
-        expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
-      };
       state.assertions[id] = {
         ...state.assertions[id],
         assertionString,
       };
-
-      const newErrorObj = {
-        ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),
-        ...validationErrors,
-      };
-      if (!newErrorObj.expression) {
-        delete newErrorObj.expression;
-      }
-      if (Object.keys(newErrorObj).length === 0) {
-        delete state.validationErrors.assertions[id];
-      } else {
-        state.validationErrors.assertions[id] = newErrorObj;
-      }
+      checkAssertionsErrors(state);
     },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
       const { name, id, description, assertionString } = assertionToUpdate;
-      const validationErrors = {
-        name: validateAssertion(id, { name }, 'name', state.assertions),
-        expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
-      };
       state.assertions[id] = {
         ...state.assertions[id],
         name,
         description,
         assertionString,
       };
-      const newErrorObj = {
-        ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),
-        ...validationErrors,
-      };
-      if (!newErrorObj.name) {
-        delete newErrorObj.name;
-      }
-      if (!newErrorObj.expression) {
-        delete newErrorObj.expression;
-      }
-      if (Object.keys(newErrorObj).length === 0) {
-        delete state.validationErrors.assertions[id];
-      } else {
-        state.validationErrors.assertions[id] = newErrorObj;
-      }
+      checkAssertionsErrors(state);
     },
   },
 });
 
 export const {
-  updateAssertions,
+  addAssertion,
   deleteAssertion,
   updateAssertion,
   updateAssertionExpression,

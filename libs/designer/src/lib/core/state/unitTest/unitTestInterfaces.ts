@@ -25,8 +25,8 @@ export interface InitDefintionPayload {
   mockResults: Record<string, OutputMock>;
 }
 
-export interface UpdateAssertionsPayload {
-  assertions: Record<string, AssertionDefintion>;
+export interface AddAssertionPayload {
+  assertion: AssertionDefintion;
 }
 
 export interface DeleteAssertionsPayload {
