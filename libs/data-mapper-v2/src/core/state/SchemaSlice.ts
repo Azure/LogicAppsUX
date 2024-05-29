@@ -3,22 +3,22 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { IFileSysTreeItem } from '../../models/Tree';
 
 export interface SchemaState {
-  availableSchemas: IFileSysTreeItem | undefined;
+  availableSchemas: IFileSysTreeItem[];
 }
 
 export const initialSchemaState: SchemaState = {
-  availableSchemas: undefined,
+  availableSchemas: [],
 };
 
 export const schemaSlice = createSlice({
   name: 'schema',
   initialState: initialSchemaState,
   reducers: {
-    setAvailableSchemas: (state, action: PayloadAction<IFileSysTreeItem | undefined>) => {
+    setAvailableSchemas: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       if (action.payload) {
         state.availableSchemas = action.payload;
       } else {
-        state.availableSchemas = undefined;
+        state.availableSchemas = [];
       }
     },
   },

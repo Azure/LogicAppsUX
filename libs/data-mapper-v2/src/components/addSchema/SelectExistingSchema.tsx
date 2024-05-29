@@ -2,32 +2,8 @@ import { DropdownTree } from '../common/DropdownTree';
 import type { ITreeFile, IFileSysTreeItem } from 'models/Tree';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
-import { RootState } from '../../core/state/Store';
+import type { RootState } from '../../core/state/Store';
 import { useSelector } from 'react-redux';
-
-const mockFileItems: IFileSysTreeItem[] = [
-  {
-    name: 'Child1.xsd',
-    type: 'file',
-    fullPath: '/Artifacts/Schemas/Child1.xsd',
-  },
-  {
-    name: 'Folder',
-    type: 'directory',
-    children: [
-      {
-        name: 'Abc.json',
-        type: 'file',
-        fullPath: '/Artifacts/Schemas/Folder/Abc.json',
-      },
-    ],
-  },
-  {
-    name: 'sourceSchema.json',
-    type: 'file',
-    fullPath: '/Artifacts/Schemas/sourceSchema.json',
-  },
-];
 
 export type SelectExistingSchemaProps = {
   schemaType?: SchemaType;

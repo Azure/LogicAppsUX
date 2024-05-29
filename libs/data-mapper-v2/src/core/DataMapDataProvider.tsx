@@ -1,6 +1,6 @@
 //import { MapDefinitionDeserializer } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
-import { IFileSysTreeItem } from '../models/Tree';
+import type { IFileSysTreeItem } from '../models/Tree';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
