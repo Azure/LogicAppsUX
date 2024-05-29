@@ -7,11 +7,12 @@ import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { Stack } from '@fluentui/react';
-import { Label, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { Label } from '@microsoft/designer-ui';
 
 const gridColumnSpan1 = '1 / span 1';
 const gridColumnSpan2 = '2 / span 2';
@@ -102,17 +103,17 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   return (
     <div>
       <div className={styles.nodeInfoGridContainer}>
-        <Label style={{ gridColumn: gridColumnSpan1 }}>{nameLoc}</Label>
+        <Label style={{ gridColumn: gridColumnSpan1 }} text={nameLoc} />
         <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan2 }}>
           {currentNode?.name}
         </Text>
 
-        <Label style={{ gridColumn: gridColumnSpan1 }}>{fullPathLoc}</Label>
+        <Label style={{ gridColumn: gridColumnSpan1 }} text={fullPathLoc} />
         <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan2 }}>
           {currentNode?.key}
         </Text>
 
-        <Label style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Label>
+        <Label style={{ gridColumn: gridColumnSpan1 }} text={dataTypeLoc} />
         <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
           <DataTypeIcon style={{ marginRight: '5px', color: tokens.colorNeutralForeground1 }} />
           <Text className={styles.bodyText}>{currentNode?.type}</Text>
@@ -120,9 +121,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
         {isTargetSchemaNode && (
           <>
-            <Label id="label-for-target-node-input-dropdown" htmlFor="dropdown" style={{ gridColumn: gridColumnSpan1 }}>
-              {inputLoc}
-            </Label>
+            <Label id="label-for-target-node-input-dropdown" text={inputLoc} htmlFor="dropdown" style={{ gridColumn: gridColumnSpan1 }} />
             <InputDropdown
               id="target-node-input-dropdown"
               labelId="label-for-target-node-input-dropdown"

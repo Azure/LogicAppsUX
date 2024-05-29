@@ -1,4 +1,5 @@
-import { css, Label as FluentLabel } from '@fluentui/react';
+import { css, Label as FluentLabel, type ILabelStyleProps, type ILabelStyles, type IStyleFunctionOrObject } from '@fluentui/react';
+import type { ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 export const RequiredMarkerSide = {
@@ -7,7 +8,7 @@ export const RequiredMarkerSide = {
 } as const;
 export type RequiredMarkerSide = (typeof RequiredMarkerSide)[keyof typeof RequiredMarkerSide];
 export interface LabelProps {
-  children?: JSX.Element;
+  children?: ReactNode;
   className?: string;
   htmlFor?: string;
   id?: string;
@@ -15,6 +16,9 @@ export interface LabelProps {
   text: string;
   tooltip?: string;
   requiredMarkerSide?: RequiredMarkerSide;
+  style?: React.CSSProperties;
+  styles?: IStyleFunctionOrObject<ILabelStyleProps, ILabelStyles>;
+  disabled?: boolean;
 }
 
 interface RequiredParameterMarkerProps {
@@ -30,10 +34,21 @@ export const Label: React.FC<LabelProps> = ({
   isRequiredField = false,
   text,
   tooltip,
-  requiredMarkerSide = RequiredMarkerSide.LEFT,
+  requiredMarkerSide = RequiredMarkerSide.RIGHT,
+  style,
+  styles,
+  disabled,
 }) => {
   return (
-    <FluentLabel className={css(className, 'msla-label')} htmlFor={htmlFor} id={id} title={tooltip || text}>
+    <FluentLabel
+      className={css(className, 'msla-label')}
+      htmlFor={htmlFor}
+      id={id}
+      title={tooltip || text}
+      disabled={disabled}
+      style={style}
+      styles={styles}
+    >
       {requiredMarkerSide === RequiredMarkerSide.LEFT ? <RequiredParameterMarker isRequiredField={isRequiredField} /> : null}
       {text}
       {requiredMarkerSide === RequiredMarkerSide.RIGHT ? (

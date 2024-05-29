@@ -1,4 +1,5 @@
-import { Icon, Label, TooltipHost } from '@fluentui/react';
+import { Icon, TooltipHost } from '@fluentui/react';
+import { Label } from '@microsoft/designer-ui';
 
 interface ConnectionParameterRowParameterRowSelfProps {
   parameterKey: string;
@@ -20,8 +21,7 @@ export const ConnectionParameterRow = ({
   children,
 }: ConnectionParameterRowProps) => (
   <div key={parameterKey} className="param-row">
-    <Label className="label" required={required} htmlFor={parameterKey} disabled={disabled}>
-      {displayName ?? parameterKey}
+    <Label className="label" isRequiredField={required} text={displayName ?? parameterKey} htmlFor={parameterKey} disabled={disabled}>
       {tooltip && (
         <TooltipHost content={tooltip}>
           <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />

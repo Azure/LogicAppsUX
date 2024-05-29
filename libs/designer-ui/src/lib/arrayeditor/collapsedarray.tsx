@@ -3,7 +3,7 @@ import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
-import { Label } from '../label';
+import { Label, RequiredMarkerSide } from '../label';
 import type { LabelProps } from '../label';
 import { CollapsedArrayValidation } from './plugins/CollapsedArrayValidation';
 import { useIntl } from 'react-intl';
@@ -43,7 +43,7 @@ export const CollapsedArray = ({
     return (
       <div className="msla-input-parameter-label">
         <div className="msla-array-editor-label">
-          <Label text={text} isRequiredField={isRequiredField} />
+          <Label text={text} isRequiredField={isRequiredField} requiredMarkerSide={RequiredMarkerSide.LEFT} />
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 import renderer from 'react-test-renderer';
-import { Label } from '../../label';
+import { Label, RequiredMarkerSide } from '../../label';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/label', () => {
   it('should construct', () => {
@@ -30,14 +30,16 @@ describe('lib/label', () => {
 
   describe('isRequiredField', () => {
     it('should render the required parameter marker if set', () => {
-      const tree = renderer.create(<Label isRequiredField text="label text" />).toJSON();
+      const tree = renderer.create(<Label isRequiredField text="label text" requiredMarkerSide={RequiredMarkerSide.LEFT} />).toJSON();
       expect(tree).toMatchSnapshot();
     });
   });
 
   describe('tooltip', () => {
     it('should set the "title" attribute if tooltip is set', () => {
-      const tree = renderer.create(<Label isRequiredField text="label text" tooltip="title" />).toJSON();
+      const tree = renderer
+        .create(<Label isRequiredField text="label text" tooltip="title" requiredMarkerSide={RequiredMarkerSide.LEFT} />)
+        .toJSON();
       expect(tree).toMatchSnapshot();
     });
   });

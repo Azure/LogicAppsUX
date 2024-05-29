@@ -28,7 +28,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label, RequiredMarkerSide } from '../../label';
+import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -71,7 +71,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
     <>
       {!hideLabel && (
         <div className="msla-input-parameter-label">
-          <Label id={labelId} isRequiredField={props.required} text={props.label} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
+          <Label id={labelId} isRequiredField={props.required} text={props.label} />
         </div>
       )}
       <div key={props.id}>

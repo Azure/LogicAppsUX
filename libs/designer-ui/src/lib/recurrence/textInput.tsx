@@ -1,7 +1,8 @@
 import type { ITextFieldStyles } from '@fluentui/react';
-import { Label, TextField } from '@fluentui/react';
+import { TextField } from '@fluentui/react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import { Label } from '../label';
 
 interface BaseTextProps {
   label: string;
@@ -55,9 +56,7 @@ export const TextInput = ({
   return (
     <div className={className}>
       <div className="msla-input-parameter-label">
-        <Label className={'msla-label'} required={required}>
-          {label}
-        </Label>
+        <Label text={label} isRequiredField={required} />
       </div>
       <TextField
         ariaLabel={label}
@@ -130,9 +129,7 @@ export const MinuteTextInput = ({
   return (
     <div className={className}>
       <div className="msla-input-parameter-label">
-        <Label className={'msla-label'} required={required}>
-          {label}
-        </Label>
+        <Label text={label} isRequiredField={required} />
       </div>
       <TextField
         ariaLabel={label}

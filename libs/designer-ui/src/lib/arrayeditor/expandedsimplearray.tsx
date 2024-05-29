@@ -2,7 +2,7 @@ import type { ComboboxItem, SimpleArrayItem, TokenPickerButtonEditorProps, Value
 import { Combobox, StringEditor } from '..';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
-import { Label } from '../label';
+import { Label, RequiredMarkerSide } from '../label';
 import type { LabelProps } from '../label';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
@@ -136,7 +136,7 @@ export const ExpandedSimpleArray = ({
 const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
-      <Label text={`${labelName} - ${index + 1}`} isRequiredField={isRequired ?? false} />
+      <Label text={`${labelName} - ${index + 1}`} isRequiredField={isRequired ?? false} requiredMarkerSide={RequiredMarkerSide.LEFT} />
     </div>
   );
 };

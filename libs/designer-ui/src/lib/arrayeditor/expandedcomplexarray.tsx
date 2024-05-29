@@ -5,7 +5,8 @@ import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { ItemMenuButton } from './expandedsimplearray';
 import { hideComplexArray, type ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
-import { Label, css, DefaultButton } from '@fluentui/react';
+import { css, DefaultButton } from '@fluentui/react';
+import { Label } from '../label';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -91,7 +92,7 @@ export const ExpandedComplexArray = ({
     const { title } = schemaItem;
     return (
       <div className="msla-array-editor-label">
-        <Label required={isRequired ?? false}> {`${title} - ${index + 1}`}</Label>
+        <Label isRequiredField={isRequired ?? false} text={`${title} - ${index + 1}`} />
       </div>
     );
   };
@@ -117,7 +118,7 @@ export const ExpandedComplexArray = ({
                 <div key={schemaItem.key + i}>
                   {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items && !hideComplexArray(schemaItem.items) ? (
                     <div>
-                      <Label> {schemaItem.title} </Label>
+                      <Label text={schemaItem.title} />
                       <ExpandedComplexArray
                         {...props}
                         dimensionalSchema={schemaItem.items}
