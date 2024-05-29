@@ -4,20 +4,26 @@ import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import type { IFileSysTreeItem } from 'models/Tree';
 import useStyles from './styles';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 
 interface DropdownTreeProps {
   items: IFileSysTreeItem[];
   onItemSelect: (item: IFileSysTreeItem) => void;
+  onDropdownOpenClose: () => void;
 }
 
-export const DropdownTree = (props: DropdownTreeProps) => {
+export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: DropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   const intl = useIntl();
   const styles = useStyles();
+
+  useEffect(() => {
+    // update items when the tree is closed and reopened
+    onDropdownOpenClose();
+  }, [showDropdownTree, onDropdownOpenClose])
 
   const selectSchema = intl.formatMessage({
     defaultMessage: 'Select schema',
@@ -32,7 +38,7 @@ export const DropdownTree = (props: DropdownTreeProps) => {
   });
 
   const onFileNameSelect = (item: IFileSysTreeItem) => {
-    props.onItemSelect(item);
+    onItemSelect(item);
     setShowDropdownTree(false);
     console.log(item.name);
   };
@@ -58,8 +64,8 @@ export const DropdownTree = (props: DropdownTreeProps) => {
   }, []);
 
   const filteredItems = useMemo(
-    () => props.items.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
-    [props.items, searchValue, filterDropdownItem]
+    () => items.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
+    [items, searchValue, filterDropdownItem]
   );
 
   const displayTree = (item: IFileSysTreeItem): JSX.Element => {

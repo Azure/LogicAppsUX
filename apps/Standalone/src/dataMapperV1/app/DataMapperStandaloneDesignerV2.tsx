@@ -118,7 +118,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} />
+            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} readCurrentSchemaOptions={() => null}/>
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>

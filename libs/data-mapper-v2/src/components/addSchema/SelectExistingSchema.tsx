@@ -9,13 +9,15 @@ export type SelectExistingSchemaProps = {
   schemaType?: SchemaType;
   errorMessage: string;
   setSelectedSchema: (item: SchemaFile) => void;
+  getUpdatedSchemaFiles: () => void;
 };
 
 export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+
   return (
     <DropdownTree
-      items={mockFileItems}
+      items={availableSchemaList}
       onItemSelect={(item: IFileSysTreeItem) => {
         props.setSelectedSchema({
           name: item.name ?? '',
@@ -23,6 +25,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
           type: props.schemaType ?? SchemaType.Source,
         });
       }}
+      onDropdownOpenClose={props.getUpdatedSchemaFiles}
     />
   );
 };
