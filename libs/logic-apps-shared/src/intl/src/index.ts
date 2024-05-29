@@ -1,2 +1,2 @@
-export * from './intl';
-export * from './IntlProvider';
+export { getIntl } from './intl';
+export { IntlProvider } from './IntlProvider';

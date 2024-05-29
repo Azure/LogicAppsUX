@@ -52,7 +52,12 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
           <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
               <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
-                <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
+                <IntlProvider
+                  locale={locale}
+                  defaultLocale={locale}
+                  stringOverrides={options.hostOptions.stringOverrides}
+                  onError={onError}
+                >
                   <ReduxReset id={id} />
                   {children}
                 </IntlProvider>
