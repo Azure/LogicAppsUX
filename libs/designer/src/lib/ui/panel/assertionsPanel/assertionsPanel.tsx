@@ -1,10 +1,9 @@
-import type { AssertionDefintion } from '@microsoft/logic-apps-shared';
 import { aggregate, getIntl, getPropertyValue, guid, labelCase } from '@microsoft/logic-apps-shared';
 import { Constants } from '../../..';
 import { getTriggerNodeId } from '../../../core';
 import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice';
 import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
-import { updateAssertions, updateAssertion, deleteAssertion } from '../../../core/state/unitTest/unitTestSlice';
+import { addAssertion, updateAssertion, deleteAssertion, updateAssertionExpression } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
 import {
   VariableBrandColor,
@@ -27,7 +26,7 @@ import {
   ValueSegmentType,
   ConditionExpression,
 } from '@microsoft/designer-ui';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const getVariableTokens = (variables: Record<string, VariableDeclaration[]>): OutputToken[] => {
@@ -182,8 +181,7 @@ const getConditionExpression = (
 };
 
 export const AssertionsPanel = (props: CommonPanelProps) => {
-  const workflowAssertions = useAssertions();
-  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>(workflowAssertions);
+  const assertions = useAssertions();
   const assertionsValidationErrors = useAssertionsValidationErrors();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -195,9 +193,6 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
 
   const onAssertionDelete = (event: AssertionDeleteEvent) => {
     const { id } = event;
-    const newAssertions = { ...assertions };
-    delete newAssertions[id];
-    setAssertions(newAssertions);
     dispatch(deleteAssertion({ assertionId: id }));
   };
 
@@ -205,38 +200,22 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     const { name, description, id, assertionString, isEditable } = event;
     const assertionToUpdate = { name, description, id, assertionString, isEditable };
     dispatch(updateAssertion({ assertionToUpdate }));
-
-    const newAssertions = { ...assertions };
-    newAssertions[id] = assertionToUpdate;
-    setAssertions(newAssertions);
   };
 
   const onAssertionAdd = (event: AssertionAddEvent) => {
     const id = guid();
-    const newAssertions = {
-      ...assertions,
-      [id]: {
-        id: id,
-        name: event.name,
-        isEditable: true,
-        description: event.description,
-        assertionString: event.assertionString,
-      },
+    const newAssertion = {
+      id: id,
+      name: event.name,
+      isEditable: true,
+      description: event.description,
+      assertionString: event.assertionString,
     };
-    setAssertions(newAssertions);
-    dispatch(updateAssertions({ assertions: newAssertions }));
+    dispatch(addAssertion({ assertion: newAssertion }));
   };
 
   const getConditionExpressionHandler = useCallback(
     (editorId: string, labelId: string, assertionId: string, initialValue: string, type: string, isReadOnly: boolean) => {
-      const onExpressionAssertionUpdate = (assertionId: string, assertionString: string) => {
-        const newAssertions = { ...assertions };
-        const assertionToUpdate = { ...newAssertions[assertionId], assertionString };
-        dispatch(updateAssertion({ assertionToUpdate }));
-        newAssertions[assertionId] = assertionToUpdate;
-        setAssertions(newAssertions);
-      };
-
       return getConditionExpression(
         editorId,
         labelId,
@@ -245,12 +224,12 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
         (value) => {
-          onExpressionAssertionUpdate(assertionId, value);
+          dispatch(updateAssertionExpression({ id: assertionId, assertionString: value }));
         },
         isReadOnly
       );
     },
-    [assertions, dispatch, tokens.expressionTokens, tokens.outputTokensWithValues, tokens.variableTokens]
+    [dispatch, tokens.expressionTokens, tokens.outputTokensWithValues, tokens.variableTokens]
   );
 
   return (

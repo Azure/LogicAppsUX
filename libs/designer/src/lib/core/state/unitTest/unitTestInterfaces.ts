@@ -25,8 +25,8 @@ export interface InitDefintionPayload {
   mockResults: Record<string, OutputMock>;
 }
 
-export interface UpdateAssertionsPayload {
-  assertions: Record<string, AssertionDefintion>;
+export interface AddAssertionPayload {
+  assertion: AssertionDefintion;
 }
 
 export interface DeleteAssertionsPayload {
@@ -35,6 +35,11 @@ export interface DeleteAssertionsPayload {
 
 export interface UpdateAssertionPayload {
   assertionToUpdate: AssertionDefintion;
+}
+
+export interface UpdateAssertioExpressionPayload {
+  id: string;
+  assertionString: string;
 }
 
 export interface UnitTestState {
