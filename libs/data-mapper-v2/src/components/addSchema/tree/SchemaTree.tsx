@@ -1,9 +1,9 @@
-import type { SchemaExtended} from '@microsoft/logic-apps-shared';
-import { SchemaType, equals, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { SchemaExtended, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { Tree, TreeItem, TreeItemLayout, mergeClasses, type TreeItemOpenChangeData } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useEffect, useState, useMemo } from 'react';
 import { TreeNode } from './TreeNode';
+import { useIntl } from 'react-intl';
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
@@ -15,6 +15,13 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const { schemaType } = props;
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
   const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
+  const intl = useIntl();
+
+  const treeAriaLabel = intl.formatMessage({
+    defaultMessage: 'Schema tree',
+    id: 't2Xi1/',
+    description: 'tree showing schema nodes',
+  });
 
   const onOpenTreeItem = (_event: any, data: TreeItemOpenChangeData) => {
     setOpenKeys((prev) => ({
@@ -62,7 +69,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   return props.schema.schemaTreeRoot ? (
     <Tree
       className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
-      aria-label="tree"
+      aria-label={treeAriaLabel}
     >
       {displaySchemaTree(props.schema.schemaTreeRoot)}
     </Tree>
