@@ -14,6 +14,7 @@ import { ChevronRight12Regular, Document28Regular, Folder28Regular } from '@flue
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useIntl } from 'react-intl';
+import { FilePickerPopoverHeader } from './filepickerPopoverHeader';
 
 export interface FilePickerProps {
   currentPathSegments: FilePickerBreadcrumb[];
@@ -83,18 +84,7 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
 
   return (
     <MenuPopover className="msla-filepicker-body">
-      <Breadcrumb>
-        {currentPathSegments.map((segment, index) => (
-          <>
-            {index > 0 ? <BreadcrumbDivider key={`FilePicker.breadcrumbDivider.${segment.key}`} /> : null}
-            <BreadcrumbItem key={`FilePicker.breadcrumb.${segment.key}`}>
-              <BreadcrumbButton current={index === currentPathSegments.length - 1} onClick={segment.onSelect}>
-                {segment.text}
-              </BreadcrumbButton>
-            </BreadcrumbItem>
-          </>
-        ))}
-      </Breadcrumb>
+      <FilePickerPopoverHeader currentPathSegments={currentPathSegments} />
       {listContent}
     </MenuPopover>
   );
