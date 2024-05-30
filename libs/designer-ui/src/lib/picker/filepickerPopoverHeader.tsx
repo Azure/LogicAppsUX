@@ -11,12 +11,15 @@ import {
   MenuList,
   MenuPopover,
   MenuTrigger,
+  Overflow,
   OverflowDivider,
+  OverflowItem,
   partitionBreadcrumbItems,
   Tooltip,
+  useOverflowMenu,
 } from '@fluentui/react-components';
 import { MoreHorizontalRegular } from '@fluentui/react-icons';
-import type React from 'react';
+import React from 'react';
 
 interface FilePickerPopoverHeaderProps {
   currentPathSegments: FilePickerBreadcrumb[];
@@ -34,66 +37,43 @@ const OverflowGroupDivider: React.FC<{
   );
 };
 
-const OverflowMenu: React.FC<{
-  overflowItems: readonly FilePickerBreadcrumb[] | undefined;
-}> = (props) => {
-  const { overflowItems } = props;
-
-  if (!overflowItems?.length) {
-    return null;
-  }
-
-  return (
-    <>
-      <Menu>
-        <MenuTrigger disableButtonEnhancement>
-          <Tooltip content={'More'} relationship="label" withArrow={true}>
-            <Button appearance="subtle" aria-label={`${overflowItems.length} more items`} icon={<MoreHorizontalRegular />} role="button" />
-          </Tooltip>
-        </MenuTrigger>
-        <MenuPopover>
-          <MenuList>
-            {overflowItems.map((item) => (
-              <MenuItem id={item.key} key={item.key} onClick={item.onSelect} persistOnClick={true}>
-                {item.text}
-              </MenuItem>
-            ))}
-          </MenuList>
-        </MenuPopover>
-      </Menu>
-      <BreadcrumbDivider />
-    </>
-  );
-};
-
 const FilePickerPopoverHeaderItem: React.FC<{ index: number; item: FilePickerBreadcrumb; isLast: boolean }> = (props) => {
   const { index, item, isLast } = props;
 
+  const itemId = item.key;
+  const groupId = index;
+
   return (
-    <BreadcrumbItem>
-      <BreadcrumbItem key={`FilePicker.breadcrumb.${item.key}`}>
-        <BreadcrumbButton current={isLast} onClick={item.onSelect}>
-          {item.text}
-        </BreadcrumbButton>
-      </BreadcrumbItem>
-      {isLast ? null : <OverflowGroupDivider groupId={index} />}
-    </BreadcrumbItem>
+    <React.Fragment key={`FilePicker.breadcrumb.${itemId}`}>
+      <OverflowItem groupId={`${groupId}`} id={itemId} priority={index === 0 ? 999 : index}>
+        <BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbButton current={isLast} onClick={item.onSelect}>
+              {item.text}
+            </BreadcrumbButton>
+          </BreadcrumbItem>
+        </BreadcrumbItem>
+      </OverflowItem>
+      {isLast ? null : <OverflowGroupDivider groupId={groupId} />}
+    </React.Fragment>
   );
 };
 
-export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (props) => {
+const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (props) => {
   const { currentPathSegments } = props;
+
+  const { isOverflowing, overflowCount, ref } = useOverflowMenu<HTMLButtonElement>();
 
   const { startDisplayedItems, overflowItems, endDisplayedItems }: PartitionBreadcrumbItems<FilePickerBreadcrumb> =
     partitionBreadcrumbItems({
       items: currentPathSegments,
-      maxDisplayedItems: 3,
+      maxDisplayedItems: currentPathSegments.length - (isOverflowing ? overflowCount : 0),
     });
 
   const endDisplayedItemsStartIndex = startDisplayedItems.length + (overflowItems?.length ?? 0);
 
   return (
-    <Breadcrumb>
+    <>
       {startDisplayedItems.map((segment, index) => (
         <FilePickerPopoverHeaderItem
           key={`FilePicker.breadcrumb.${segment.key}`}
@@ -102,7 +82,33 @@ export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (
           isLast={index === currentPathSegments.length - 1}
         />
       ))}
-      <OverflowMenu overflowItems={overflowItems} />
+      {overflowItems ? (
+        <>
+          <Menu>
+            <MenuTrigger disableButtonEnhancement={true}>
+              <Tooltip content={'More' /* TODO */} relationship="label" withArrow={true}>
+                <Button
+                  appearance="subtle"
+                  aria-label={`${overflowItems?.length} more items` /* TODO */}
+                  icon={<MoreHorizontalRegular />}
+                  ref={ref}
+                  role="button"
+                />
+              </Tooltip>
+            </MenuTrigger>
+            <MenuPopover>
+              <MenuList>
+                {overflowItems?.map((item) => (
+                  <MenuItem id={item.key} key={item.key} onClick={item.onSelect} persistOnClick={true}>
+                    {item.text}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </MenuPopover>
+          </Menu>
+          <BreadcrumbDivider />
+        </>
+      ) : null}
       {endDisplayedItems?.map((segment, index) => (
         <FilePickerPopoverHeaderItem
           key={`FilePicker.breadcrumb.${segment.key}`}
@@ -111,6 +117,16 @@ export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (
           isLast={endDisplayedItemsStartIndex + index === currentPathSegments.length - 1}
         />
       ))}
-    </Breadcrumb>
+    </>
+  );
+};
+
+export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (props) => {
+  return (
+    <Overflow minimumVisible={2}>
+      <Breadcrumb>
+        <FilePickerPopoverBreadcrumbs {...props} />
+      </Breadcrumb>
+    </Overflow>
   );
 };

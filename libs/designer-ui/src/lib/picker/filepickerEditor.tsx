@@ -76,7 +76,7 @@ export const FilePickerEditor = ({
     setTitleSegments([
       ...titleSegments,
       {
-        key: displayValue,
+        key: selectedItem.value?.Id || displayValue,
         onSelect: () => onFolderNavigated(selectedItem),
         text: displayValue,
       },
