@@ -4,10 +4,10 @@ import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbut
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
 import { FilePickerPopover } from './filepickerPopover';
-import { PickerItemType } from './pickerItem';
 import { EditorValueChange } from './plugins/EditorValueChange';
 import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { FilePickerBreadcrumb } from './types';
+import { PickerItemType } from './types';
 import { Button, Menu, MenuTrigger, Tooltip } from '@fluentui/react-components';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';

@@ -1,4 +1,3 @@
-import type React from 'react';
 import type { FilePickerBreadcrumb } from './types';
 import type { PartitionBreadcrumbItems } from '@fluentui/react-components';
 import {
@@ -6,9 +5,18 @@ import {
   BreadcrumbButton,
   BreadcrumbDivider,
   BreadcrumbItem,
+  Button,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
   OverflowDivider,
   partitionBreadcrumbItems,
+  Tooltip,
 } from '@fluentui/react-components';
+import { MoreHorizontalRegular } from '@fluentui/react-icons';
+import type React from 'react';
 
 interface FilePickerPopoverHeaderProps {
   currentPathSegments: FilePickerBreadcrumb[];
@@ -23,6 +31,38 @@ const OverflowGroupDivider: React.FC<{
     <OverflowDivider groupId={`${groupId}`}>
       <BreadcrumbDivider data-group={groupId} />
     </OverflowDivider>
+  );
+};
+
+const OverflowMenu: React.FC<{
+  overflowItems: readonly FilePickerBreadcrumb[] | undefined;
+}> = (props) => {
+  const { overflowItems } = props;
+
+  if (!overflowItems?.length) {
+    return null;
+  }
+
+  return (
+    <>
+      <Menu>
+        <MenuTrigger disableButtonEnhancement>
+          <Tooltip content={'More'} relationship="label" withArrow={true}>
+            <Button appearance="subtle" aria-label={`${overflowItems.length} more items`} icon={<MoreHorizontalRegular />} role="button" />
+          </Tooltip>
+        </MenuTrigger>
+        <MenuPopover>
+          <MenuList>
+            {overflowItems.map((item) => (
+              <MenuItem id={item.key} key={item.key} onClick={item.onSelect} persistOnClick={true}>
+                {item.text}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </MenuPopover>
+      </Menu>
+      <BreadcrumbDivider />
+    </>
   );
 };
 
@@ -62,7 +102,7 @@ export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (
           isLast={index === currentPathSegments.length - 1}
         />
       ))}
-      {overflowItems?.length ? '... >' : null}
+      <OverflowMenu overflowItems={overflowItems} />
       {endDisplayedItems?.map((segment, index) => (
         <FilePickerPopoverHeaderItem
           key={`FilePicker.breadcrumb.${segment.key}`}

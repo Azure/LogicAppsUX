@@ -1,20 +1,10 @@
+import { FilePickerPopoverHeader } from './filepickerPopoverHeader';
+import { FilePickerPopoverItem } from './filepickerPopoverItem';
 import type { FilePickerBreadcrumb } from './types';
-import {
-  Breadcrumb,
-  BreadcrumbButton,
-  BreadcrumbDivider,
-  BreadcrumbItem,
-  MenuItem,
-  MenuList,
-  MenuPopover,
-  MenuSplitGroup,
-  Spinner,
-} from '@fluentui/react-components';
-import { ChevronRight12Regular, Document28Regular, Folder28Regular } from '@fluentui/react-icons';
+import { MenuList, MenuPopover, Spinner } from '@fluentui/react-components';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useIntl } from 'react-intl';
-import { FilePickerPopoverHeader } from './filepickerPopoverHeader';
 
 export interface FilePickerProps {
   currentPathSegments: FilePickerBreadcrumb[];
@@ -57,27 +47,14 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
   } else {
     listContent = (
       <MenuList className="msla-filepicker-item-list">
-        {files.map((file) =>
-          file.isParent ? (
-            <MenuSplitGroup className="msla-filepicker-item-split" key={`FilePicker.folder.${file.value.Id}`}>
-              <MenuItem className="msla-filepicker-item" icon={<Folder28Regular />} onClick={() => handleItemSelected(file)}>
-                {file.displayName}
-              </MenuItem>
-              <MenuItem className="msla-filepicker-item-split-chevron" onClick={() => handleFolderNavigation(file)} persistOnClick={true}>
-                <ChevronRight12Regular />
-              </MenuItem>
-            </MenuSplitGroup>
-          ) : (
-            <MenuItem
-              className="msla-filepicker-item"
-              icon={<Document28Regular />}
-              key={`FilePicker.item.${file.value.Id}`}
-              onClick={() => handleItemSelected(file)}
-            >
-              {file.displayName}
-            </MenuItem>
-          )
-        )}
+        {files.map((file) => (
+          <FilePickerPopoverItem
+            file={file}
+            handleFolderNavigation={handleFolderNavigation}
+            handleItemSelected={handleItemSelected}
+            key={`FilePickerPopover.item.${file.value.Id}`}
+          />
+        ))}
       </MenuList>
     );
   }
