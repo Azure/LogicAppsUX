@@ -13,13 +13,13 @@ export interface INl2fInputBoxProps {
   isMultiline?: boolean;
   maxQueryLength?: number;
   showCharCount?: boolean;
+  textFieldRef?: RefObject<ITextField>;
+  role?: string;
+  styles?: Partial<IChatInputStyles>;
   onQueryChange: (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
   onBlur?: (ev: FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onRenderPrefix?: () => JSX.Element;
-  textFieldRef?: RefObject<ITextField>;
-  role?: string;
-  styles?: Partial<IChatInputStyles>;
   onSubmitInputQuery: (input: string) => Promise<void>;
 }
 
@@ -57,6 +57,7 @@ export const Nl2fInputBox: FC<INl2fInputBoxProps> = ({
     <div>
       <div className={rootClassName}>
         <TextField
+          value={query}
           componentRef={textFieldRef}
           placeholder={placeholder}
           multiline={isMultiline}
@@ -85,7 +86,7 @@ export const Nl2fInputBox: FC<INl2fInputBoxProps> = ({
           onClick={() => onSubmitInputQuery(query)}
           title={createExpressionButton}
           aria-label={createExpressionButton}
-          disabled={disabled}
+          disabled={disabled || !query}
         >
           <span>{createExpressionButton}</span>
         </Button>

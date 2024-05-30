@@ -17,6 +17,8 @@ import {
   ConsumptionConnectionService,
   StandardCustomCodeService,
   ResourceIdentityType,
+  // Uncomment to use dummy version of copilot expression assistant
+  // BaseCopilotService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -56,6 +58,9 @@ const operationManifestServiceStandard = new StandardOperationManifestService({
   baseUrl: '/url',
   httpClient,
 });
+
+// Uncomment to use dummy version of copilot expression assistant
+// const baseCopilotService = new BaseCopilotService({isDev: true});
 
 const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
   apiVersion: '2018-11-01',
@@ -174,6 +179,8 @@ export const LocalDesigner = () => {
       connectionService: isConsumption ? connectionServiceConsumption : connectionServiceStandard,
       operationManifestService: isConsumption ? operationManifestServiceConsumption : operationManifestServiceStandard,
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
+      // Uncomment to use dummy version of copilot expression assistant
+      // copilotService: baseCopilotService,
       oAuthService,
       gatewayService,
       functionService,

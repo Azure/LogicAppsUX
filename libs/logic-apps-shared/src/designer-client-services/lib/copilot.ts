@@ -1,8 +1,16 @@
-import type { AxiosResponse } from 'axios';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
+export interface Nl2fSuggestedExpression {
+  suggestedExpression: string;
+  explanation?: string;
+}
+export interface Nl2fExpressionResult {
+  suggestions?: Nl2fSuggestedExpression[];
+  errorMessage?: string;
+}
+
 export interface ICopilotService {
-  getNl2fExpression: (query: string, signal: AbortSignal) => Promise<AxiosResponse<any>>;
+  getNl2fExpressions: (query: string, originalExpression?: string, signal?: AbortSignal) => Promise<Nl2fExpressionResult>;
 }
 
 let service: ICopilotService;
@@ -17,4 +25,8 @@ export const CopilotService = (): ICopilotService => {
   }
 
   return service;
+};
+
+export const isCopilotServiceEnabled = (): boolean => {
+  return !!service;
 };

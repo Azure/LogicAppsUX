@@ -22,6 +22,7 @@ import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
 import copilotLogo from './images/copilotLogo.svg';
 import { Nl2fExpressionAssistant } from './nl2fExpressionAssistant';
+import { isCopilotServiceEnabled } from '@microsoft/logic-apps-shared';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
@@ -37,22 +38,22 @@ const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
 
-// TODO: make this a flag that can be set by LAUX OR PPUX
-const isNl2fExpressionEnabled = true;
-
 let calloutStyles: Partial<ICalloutContentStyles> = {
   calloutMain: {
     overflow: 'visible',
   },
 };
 
-calloutStyles = isNl2fExpressionEnabled
+calloutStyles = isCopilotServiceEnabled()
   ? {
       ...calloutStyles,
-      root: {
+      calloutMain: {
         borderRadius: '8px',
       },
       beakCurtain: {
+        borderRadius: '8px',
+      },
+      root: {
         borderRadius: '8px',
       },
     }
@@ -232,14 +233,13 @@ export function TokenPicker({
         ref={containerRef}
       >
         <Nl2fExpressionAssistant
-          setExpressionEditorError={setExpressionEditorError}
           isFullScreen={fullScreen}
-          isExpression={isExpression}
-          isNl2fExpression={isNl2fExpression}
-          setFullScreen={setFullScreen}
           expression={expression}
-          setExpression={setExpression}
+          isFixErrorRequest={expressionEditorError !== ''}
+          setFullScreen={setFullScreen}
           setSelectedMode={setSelectedMode}
+          setExpression={setExpression}
+          setExpressionEditorError={setExpressionEditorError}
         />
       </div>
     </Callout>
@@ -299,7 +299,7 @@ export function TokenPicker({
               <TokenPickerHeader
                 fullScreen={fullScreen}
                 isExpression={isExpression}
-                isNl2fExpression={isNl2fExpression}
+                isNl2fExpression={false}
                 setFullScreen={setFullScreen}
                 pasteLastUsedExpression={pasteLastUsedExpression}
                 setSelectedMode={setSelectedMode}
@@ -321,7 +321,7 @@ export function TokenPicker({
                   hideUTFExpressions={hideUTFExpressions}
                 />
                 <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
-                {isNl2fExpressionEnabled ? (
+                {isCopilotServiceEnabled() ? (
                   <div className="msla_token_picker_nl2fex_button_container">
                     <Button
                       className="msla-token-picker-nl2fex-use-button"

@@ -108,7 +108,7 @@ export function TokenPickerHeader({
   };
 
   const DismissIcon = bundleIcon(ChevronLeft24Filled, ChevronLeft24Regular);
-  const renderNl2fHeader = (
+  const renderNl2fExHeader = (
     <div className="msla-token-picker-nl2f-header">
       <div className="msla-token-picker-nl2f-header-title-container">
         <Tooltip relationship="label" positioning={'before'} content={intlText.returnToExpressionEditor}>
@@ -207,5 +207,5 @@ export function TokenPickerHeader({
     </div>
   );
 
-  return isNl2fExpression ? renderNl2fHeader : renderRegularHeader;
+  return isNl2fExpression ? renderNl2fExHeader : renderRegularHeader;
 }
