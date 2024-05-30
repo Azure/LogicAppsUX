@@ -9,7 +9,7 @@ import type { ContainerApp, ContainerAppsAPIClient } from '@azure/arm-appcontain
 import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import type { AzureSubscription } from '@microsoft/vscode-azureresources-api';
-import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class ContainerAppsStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
@@ -18,12 +18,12 @@ export class ContainerAppsStep extends AzureWizardPromptStep<ILogicAppWizardCont
     const locationName = wizardContext?._location?.displayName ?? undefined;
 
     const containerEnvironment = (await wizardContext.ui.showQuickPick(this.getPicks(client, locationName), { placeHolder })).data;
-    if (!containerEnvironment) {
+    if (containerEnvironment) {
+      wizardContext.containerApp = containerEnvironment;
+    } else {
       wizardContext.containerApp = await createManagedEnvironment({ ...wizardContext }, {
         ...wizardContext,
       } as unknown as AzureSubscription);
-    } else {
-      wizardContext.containerApp = containerEnvironment;
     }
     wizardContext.telemetry.properties.containerApp = wizardContext.containerApp?.name;
   }
