@@ -12,6 +12,7 @@ import { PickerItemType } from './types';
 import { Button, Menu, MenuTrigger, Tooltip } from '@fluentui/react-components';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -60,14 +61,12 @@ export const FilePickerEditor = ({
   const onRootClicked = () => {
     setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
     onFolderNavigation(/* selectedItem */ undefined);
-  };
 
-  const openFolderPicker = () => {
-    if (!showPicker) {
-      setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
-      onFolderNavigation(/* selectedItem */ undefined);
-      setShowPicker(true);
-    }
+    LoggerService().log({
+      area: 'FilePickerEditor:onRootClicked',
+      level: LogEntryLevel.Verbose,
+      message: 'Navigated to root.',
+    });
   };
 
   const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
@@ -81,6 +80,12 @@ export const FilePickerEditor = ({
         text: displayValue,
       },
     ]);
+
+    LoggerService().log({
+      area: 'FilePickerEditor:onFolderNavigated',
+      level: LogEntryLevel.Verbose,
+      message: 'Navigated to folder.', // Folder name is PII; do not include.
+    });
   };
 
   const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
@@ -91,6 +96,13 @@ export const FilePickerEditor = ({
       setSelectedItem(selectedItem.value);
       setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
       setShowPicker(false);
+
+      LoggerService().log({
+        area: 'FilePickerEditor:onFileFolderSelected',
+        args: [`${type}Picker`, selectedItem.isParent ? 'folder' : 'file'],
+        level: LogEntryLevel.Verbose,
+        message: 'File or folder was selected.', // Item name is PII; do not include.
+      });
     }
   };
 
@@ -143,13 +155,24 @@ export const FilePickerEditor = ({
       <Menu
         open={showPicker}
         onOpenChange={(_event, data) => {
+          if (!showPicker && data.open) {
+            setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
+            onFolderNavigation(/* selectedItem */ undefined);
+          }
+
           setShowPicker(data.open);
+
+          LoggerService().log({
+            area: 'FilePickerEditor:openFolderPicker',
+            level: LogEntryLevel.Verbose,
+            message: data.open ? 'Picker opened.' : 'Picker closed.',
+          });
         }}
         positioning="before-top"
       >
         <Tooltip content={openFolderLabel} relationship="label">
           <MenuTrigger disableButtonEnhancement={true}>
-            <Button appearance="subtle" aria-label={openFolderLabel} icon={<Folder28Regular />} onClick={openFolderPicker} />
+            <Button appearance="subtle" aria-label={openFolderLabel} icon={<Folder28Regular />} />
           </MenuTrigger>
         </Tooltip>
         <FilePickerPopover

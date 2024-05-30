@@ -49,11 +49,9 @@ const FilePickerPopoverHeaderItem: React.FC<{ index: number; item: FilePickerBre
     <React.Fragment key={`FilePicker.breadcrumb.${itemId}`}>
       <OverflowItem groupId={`${groupId}`} id={itemId} priority={index === 0 ? MAX_PRIORITY : index}>
         <BreadcrumbItem>
-          <BreadcrumbItem>
-            <BreadcrumbButton current={isLast} onClick={item.onSelect}>
-              {item.text}
-            </BreadcrumbButton>
-          </BreadcrumbItem>
+          <BreadcrumbButton current={isLast} onClick={item.onSelect}>
+            {item.text}
+          </BreadcrumbButton>
         </BreadcrumbItem>
       </OverflowItem>
       {isLast ? null : <OverflowGroupDivider groupId={groupId} />}
