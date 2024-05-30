@@ -65,6 +65,17 @@ export const AzureStandardLogicAppSelector = () => {
         return null;
       }
 
+      if (hostingPlan === 'hybrid') {
+        return HybridAppUtility.getProxy(
+          `https://brazilus.management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs`,
+          null,
+          {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+          null
+        );
+      }
+
       const results = await axios.get<RunList>(
         `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`,
         {

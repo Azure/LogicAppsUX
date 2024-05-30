@@ -148,6 +148,17 @@ export const useRunInstanceStandard = (
   return useQuery(
     ['getRunInstance', appId, workflowName, runId],
     async () => {
+      if (HybridAppUtility.isHybridLogicApp(appId)) {
+        return HybridAppUtility.getProxy(
+          `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+          null,
+          {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+          null
+        );
+      }
+
       const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
         `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
         {

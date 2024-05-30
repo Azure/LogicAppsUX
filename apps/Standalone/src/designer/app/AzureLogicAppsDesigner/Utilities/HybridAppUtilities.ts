@@ -21,7 +21,7 @@ export class HybridAppUtility {
         {
           headers: {
             ...headers,
-            'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/?relativePath=1`,
+            'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}`,
             'x-ms-logicapps-proxy-method': 'GET',
           },
           params,
@@ -41,7 +41,7 @@ export class HybridAppUtility {
         {
           headers: {
             ...headers,
-            'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/?relativePath=1`,
+            'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/`,
             'x-ms-logicapps-proxy-method': 'POST',
           },
           params,
@@ -60,7 +60,7 @@ export class HybridAppUtility {
       {
         headers: {
           ...headers,
-          'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/?relativePath=1`,
+          'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}/`,
           'x-ms-logicapps-proxy-method': 'POST',
         },
         params,
