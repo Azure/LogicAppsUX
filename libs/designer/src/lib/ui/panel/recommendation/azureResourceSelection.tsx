@@ -2,8 +2,7 @@ import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
-import { Text } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, Text } from '@fluentui/react-components';
 import {
   ApiManagementService,
   FunctionService,

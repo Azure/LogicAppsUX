@@ -1,4 +1,79 @@
 # Logic Apps Designer
+## [4.22.0](https://github.com/Azure/LogicAppsUX/compare/v4.21.0...v4.22.0) (2024-05-28)
+
+
+### Bug Fixes
+
+* **designer-ui:** Allow color picker sliders to be accessed by keyboard ([#4884](https://github.com/Azure/LogicAppsUX/issues/4884)) ([98fb4bc](https://github.com/Azure/LogicAppsUX/commit/98fb4bceec324d5b5e119844fe3f79758bfcf417))
+* **designer:** `updateExistingInputTokenTitles` is not invoked when dynamic outputs load ([#4880](https://github.com/Azure/LogicAppsUX/issues/4880)) ([8704aad](https://github.com/Azure/LogicAppsUX/commit/8704aad9d7c727c8f8eafc08817c7412f1ea7ec5))
+* **Designer:** Fixed search locale not respecting portal language settings ([#4898](https://github.com/Azure/LogicAppsUX/issues/4898)) ([65fe629](https://github.com/Azure/LogicAppsUX/commit/65fe62962588d0e55d8d64d167d81fc584fac0a4))
+
+## [4.21.0](https://github.com/Azure/LogicAppsUX/compare/v4.20.0...v4.21.0) (2024-05-23)
+
+
+### Features
+
+* **Data Mapper:** Refactoring deserialization for v2 ([#4800](https://github.com/Azure/LogicAppsUX/issues/4800)) ([395385b](https://github.com/Azure/LogicAppsUX/commit/395385b8b2b031208ed6c07ebf552e6c39ffe2d4))
+
+## [4.20.0](https://github.com/Azure/LogicAppsUX/compare/v4.19.0...v4.20.0) (2024-05-21)
+
+
+### Bug Fixes
+
+* **designer-ui:** Prevent padding on HTML toolbar from creating scrollbar ([#4870](https://github.com/Azure/LogicAppsUX/issues/4870)) ([f095b42](https://github.com/Azure/LogicAppsUX/commit/f095b42402d72fa2328da91159f2d2e7de820a72))
+
+## [4.19.0](https://github.com/Azure/LogicAppsUX/compare/v4.18.0...v4.19.0) (2024-05-20)
+
+
+### Features
+
+* **Data Mapper V2:** Creating initial Nodes/Edges with connection ([#4865](https://github.com/Azure/LogicAppsUX/issues/4865)) ([1653c0b](https://github.com/Azure/LogicAppsUX/commit/1653c0b96c81d9d81d29330a12575578011bc78f))
+* **vscode:** Show local time and UTC in overview ([#4855](https://github.com/Azure/LogicAppsUX/issues/4855)) ([3cc8511](https://github.com/Azure/LogicAppsUX/commit/3cc851188130d04da789093ce7417d8aa61e15f1))
+
+
+### Bug Fixes
+
+* **Designer:** More customcode boilerplate code... ([#4858](https://github.com/Azure/LogicAppsUX/issues/4858)) ([bc26405](https://github.com/Azure/LogicAppsUX/commit/bc264055458b00c5605f4287732d51ca85dc61d2))
+* **vscode:** Update command to build all projects for extension ([#4852](https://github.com/Azure/LogicAppsUX/issues/4852)) ([797a4e2](https://github.com/Azure/LogicAppsUX/commit/797a4e2ad4ea44748545906f96b2708df241a741))
+
+## [4.18.0](https://github.com/Azure/LogicAppsUX/compare/v4.17.0...v4.18.0) (2024-05-16)
+
+
+### Features
+
+* **Data Mapper V2:** Starting on functions panel ([#4835](https://github.com/Azure/LogicAppsUX/issues/4835)) ([4a401a7](https://github.com/Azure/LogicAppsUX/commit/4a401a758397c1fffc6c5ff6e2dd53304686188b))
+* **vscode:** Revert Introduce .NET 8 for custom code workspaces ([#834](https://github.com/Azure/LogicAppsUX/issues/834)) ([#4850](https://github.com/Azure/LogicAppsUX/issues/4850)) ([f21c153](https://github.com/Azure/LogicAppsUX/commit/f21c1534494f7d9d5a0e3a7de1378d875e54e6c0)), closes [#4834](https://github.com/Azure/LogicAppsUX/issues/4834)
+
+## [4.17.0](https://github.com/Azure/LogicAppsUX/compare/v4.16.0...v4.17.0) (2024-05-14)
+
+
+### Features
+
+* **vscode:** Introduce .NET 8 for custom code workspaces ([#4834](https://github.com/Azure/LogicAppsUX/issues/4834)) ([ea27f18](https://github.com/Azure/LogicAppsUX/commit/ea27f182231036afe299f84108d601fa154dbf0d))
+
+
+### Bug Fixes
+
+* **designer:** Custom code fixes and updates ([#4847](https://github.com/Azure/LogicAppsUX/issues/4847)) ([1d5d702](https://github.com/Azure/LogicAppsUX/commit/1d5d702a5e209b482739ef52c93da1d198b063aa))
+* **designer:** Forgotten code to Custom code fixes and updates ([#4849](https://github.com/Azure/LogicAppsUX/issues/4849)) ([fe70e8b](https://github.com/Azure/LogicAppsUX/commit/fe70e8bfe4303d9581be029a04f472172193ccf8))
+* **vscode:** Move text components to fluent v9 ([#4845](https://github.com/Azure/LogicAppsUX/issues/4845)) ([3040289](https://github.com/Azure/LogicAppsUX/commit/304028933c8cdc1007a5e6b2aaef4ef590b8b19f))
+
+## [4.16.0](https://github.com/Azure/LogicAppsUX/compare/v4.15.0...v4.16.0) (2024-05-14)
+
+
+### Features
+
+* **designer-ui:** Utilize Fluent components for HTML toolbar buttons & popovers ([#4823](https://github.com/Azure/LogicAppsUX/issues/4823)) ([25c4354](https://github.com/Azure/LogicAppsUX/commit/25c43544dab150e0f9653484683bf53ded83e388))
+* **designer:** Add rule execute action in operation manifests ([#4822](https://github.com/Azure/LogicAppsUX/issues/4822)) ([54dbb35](https://github.com/Azure/LogicAppsUX/commit/54dbb35cfaaea3166ecdf1235c91bc81e781601b))
+* **Template:** Parameters Panel ([#4815](https://github.com/Azure/LogicAppsUX/issues/4815)) ([1911f55](https://github.com/Azure/LogicAppsUX/commit/1911f557b2aae0712c3cbea63d79d1345be85869))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Disabling context menu as it causes app to crash ([#4821](https://github.com/Azure/LogicAppsUX/issues/4821)) ([6b21a68](https://github.com/Azure/LogicAppsUX/commit/6b21a68ac1243e0e583f81d5da2811a46c3dfd13))
+* **designer:** fix actions and triggers title not showing in dark theme ([#4826](https://github.com/Azure/LogicAppsUX/issues/4826)) ([ffbb6e1](https://github.com/Azure/LogicAppsUX/commit/ffbb6e123147c3ca2c38b54b39d3abe42f3c3f0c))
+* **Designer:** Migrate some UI to Fluent v9 components ([#4837](https://github.com/Azure/LogicAppsUX/issues/4837)) ([3cede0b](https://github.com/Azure/LogicAppsUX/commit/3cede0be0d2b21ff2ca078ddc8d751ed150d2547))
+
 ## [4.15.0](https://github.com/Azure/LogicAppsUX/compare/v4.14.0...v4.15.0) (2024-05-09)
 
 

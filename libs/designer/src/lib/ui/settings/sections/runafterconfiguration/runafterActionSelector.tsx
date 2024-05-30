@@ -3,13 +3,14 @@ import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '.
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
-import { Button, Input, Label, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
+import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { Label } from '@microsoft/designer-ui';
 
 const AddIcon = bundleIcon(Add20Filled, Add20Regular);
 const getSuccessorNodes = (state: RootState, nodeId: string) => {
@@ -40,7 +41,7 @@ const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => 
       tabIndex={1}
       disabled={readOnly}
     >
-      <Label style={{ overflow: 'hidden' }}>{actionName}</Label>
+      <Label style={{ overflow: 'hidden' }} text={actionName} />
     </MenuItemCheckbox>
   );
 };

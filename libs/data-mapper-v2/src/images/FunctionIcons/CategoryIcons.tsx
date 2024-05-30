@@ -1,14 +1,14 @@
-import type { IconProps } from './IconModel';
+import type { FluentIconsProps } from '@fluentui/react-icons';
 import { wrapIcon } from '@fluentui/react-icons';
 import React from 'react';
 
-const Collection20RegularIcon = (props: IconProps) => {
+const CollectionRegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
     Object.assign({}, props, {
-      width: 20,
-      height: 20,
+      width: props.height ?? 10,
+      height: props.height ?? 10,
       viewBox: '0 0 20 20',
       xmlns: 'http://www.w3.org/2000/svg',
       className: className,
@@ -22,15 +22,16 @@ const Collection20RegularIcon = (props: IconProps) => {
   );
 };
 
-export const Collection20Regular = wrapIcon(Collection20RegularIcon, 'Collection20Regular');
+export const CollectionRegular = wrapIcon(CollectionRegularIcon, 'CollectionRegular');
 
-const StringCategory20RegularIcon = (props: IconProps) => {
+const StringCategory20RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
     Object.assign({}, props, {
-      width: 20,
-      height: 20,
+      width: 10,
+      height: 10,
+      fontSize: 10,
       viewBox: '0 0 20 20',
       xmlns: 'http://www.w3.org/2000/svg',
       className: className,

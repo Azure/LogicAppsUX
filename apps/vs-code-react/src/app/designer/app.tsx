@@ -5,7 +5,7 @@ import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
 import { getDesignerServices } from './servicesHelper';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
-import { Spinner, SpinnerSize, Text } from '@fluentui/react';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
@@ -16,6 +16,7 @@ import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { XLargeText } from '@microsoft/designer-ui';
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
@@ -146,11 +147,7 @@ export const DesignerApp = () => {
     setStandardApp(panelMetaData?.standardApp);
   }, [panelMetaData]);
 
-  const errorApp = (
-    <Text className="designer--error" variant="xLarge" block>
-      {intlText.ERROR_APP}{' '}
-    </Text>
-  );
+  const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className="designer--error" style={{ display: 'block' }} />;
 
   const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
 

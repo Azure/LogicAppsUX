@@ -59,12 +59,12 @@ exports[`lib/overview/overviewproperties > renders 1`] = `
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Name:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             name
           </span>
@@ -73,12 +73,12 @@ exports[`lib/overview/overviewproperties > renders 1`] = `
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             State type:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             stateType
           </span>
@@ -87,13 +87,13 @@ exports[`lib/overview/overviewproperties > renders 1`] = `
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Callback URL:
           </span>
           <div>
             <a
-              className="ms-Link root-129"
+              className="ms-Link root-128"
               href="callbackInfo.value"
               onClick={[Function]}
               rel="noopener"
@@ -168,12 +168,12 @@ exports[`lib/overview/overviewproperties > renders the callback URL property 1`]
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Name:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             name
           </span>
@@ -182,12 +182,12 @@ exports[`lib/overview/overviewproperties > renders the callback URL property 1`]
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             State type:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             stateType
           </span>
@@ -196,13 +196,13 @@ exports[`lib/overview/overviewproperties > renders the callback URL property 1`]
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Callback URL:
           </span>
           <div>
             <a
-              className="ms-Link root-129"
+              className="ms-Link root-128"
               href="callbackInfo.value"
               onClick={[Function]}
               rel="noopener"
@@ -277,12 +277,12 @@ exports[`lib/overview/overviewproperties > renders the operation options propert
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Name:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             name
           </span>
@@ -291,12 +291,12 @@ exports[`lib/overview/overviewproperties > renders the operation options propert
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             State type:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             stateType
           </span>
@@ -305,12 +305,12 @@ exports[`lib/overview/overviewproperties > renders the operation options propert
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Operation options:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             operationOptions
           </span>
@@ -319,13 +319,13 @@ exports[`lib/overview/overviewproperties > renders the operation options propert
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Callback URL:
           </span>
           <div>
             <a
-              className="ms-Link root-129"
+              className="ms-Link root-128"
               href="callbackInfo.value"
               onClick={[Function]}
               rel="noopener"
@@ -400,12 +400,12 @@ exports[`lib/overview/overviewproperties > renders the stateless run mode proper
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Name:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             name
           </span>
@@ -414,12 +414,12 @@ exports[`lib/overview/overviewproperties > renders the stateless run mode proper
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             State type:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             stateType
           </span>
@@ -428,12 +428,12 @@ exports[`lib/overview/overviewproperties > renders the stateless run mode proper
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Stateless run mode:
           </span>
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             statelessRunMode
           </span>
@@ -442,13 +442,13 @@ exports[`lib/overview/overviewproperties > renders the stateless run mode proper
           className="ms-Label root-127"
         >
           <span
-            className="css-128"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             Callback URL:
           </span>
           <div>
             <a
-              className="ms-Link root-129"
+              className="ms-Link root-128"
               href="callbackInfo.value"
               onClick={[Function]}
               rel="noopener"

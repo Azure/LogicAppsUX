@@ -5,6 +5,7 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
+    zIndex: 999,
   },
   treeWrapper: {
     marginTop: '10px',

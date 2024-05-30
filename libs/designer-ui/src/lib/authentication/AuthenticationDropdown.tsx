@@ -1,6 +1,7 @@
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
-import { css, Label, FontSizes, Dropdown } from '@fluentui/react';
+import { css, FontSizes, Dropdown } from '@fluentui/react';
+import { Label } from '../label';
 
 const dropdownStyle: Partial<IDropdownStyles> = {
   caretDown: {
@@ -45,9 +46,7 @@ export const AuthenticationDropdown = ({
     <div className="msla-authentication-property">
       {dropdownLabel ? (
         <div className="msla-input-parameter-label">
-          <Label className={'msla-label'} required={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired}>
-            {dropdownLabel}
-          </Label>
+          <Label isRequiredField={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired} text={dropdownLabel} />
         </div>
       ) : null}
 
