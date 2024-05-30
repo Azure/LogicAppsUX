@@ -10,7 +10,7 @@ import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
-import { createLiteralValueSegment } from '../../editor/base/utils/helper';
+import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
@@ -28,7 +28,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label } from '@fluentui/react';
+import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -62,16 +62,16 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const labelId = useId('msla-editor-label');
+  const normalizedLabel = props.label.replace(/ /g, '-');
+  const labelId = useId(normalizedLabel);
   const hideLabel =
-    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
+    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
+    equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
   return (
     <>
       {!hideLabel && (
         <div className="msla-input-parameter-label">
-          <Label id={labelId} className="msla-label" required={props.required}>
-            {props.label}
-          </Label>
+          <Label id={labelId} isRequiredField={props.required} text={props.label} />
         </div>
       )}
       <div key={props.id}>
@@ -107,7 +107,7 @@ export const TokenField = ({
   getTokenPicker,
   suppressCastingForSerialize,
 }: TokenFieldProps) => {
-  const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+  const dropdownOptions = getDropdownOptionsFromOptions(editorOptions);
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
 
   switch (editor?.toLowerCase()) {
@@ -127,10 +127,14 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={(editorOptions?.options?.value ?? editorOptions?.options)?.map((option: any, index: number) => ({
-            key: index.toString(),
-            ...option,
-          }))}
+          options={
+            dropdownOptions.length > 0
+              ? dropdownOptions.map((option: any, index: number) => ({
+                  key: index.toString(),
+                  ...option,
+                }))
+              : undefined
+          }
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -188,7 +192,7 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({
+          options={dropdownOptions?.map((option: any, index: number) => ({
             key: index.toString(),
             ...option,
             displayName: typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName),
@@ -321,6 +325,7 @@ export const TokenField = ({
     case constants.PARAMETER.EDITOR.HTML:
       return (
         <HTMLEditor
+          labelId={labelId}
           initialValue={value}
           placeholder={placeholder}
           basePlugins={{ tokens: showTokens }}

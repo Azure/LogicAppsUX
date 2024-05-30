@@ -28,7 +28,7 @@ import { ProgressLocation, window } from 'vscode';
 
 export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   public readonly name: string;
-  public readonly parent: RemoteWorkflowsTreeItem;
+  public declare readonly parent: RemoteWorkflowsTreeItem;
   public readonly workflowFileContent: IWorkflowFileContent;
   public credentials: ServiceClientCredentials;
 

@@ -12,9 +12,8 @@ import {
   useNumWorkflowParameterErrors,
   useTotalNumErrors,
 } from './errorsTab.hooks';
-import { Text } from '@fluentui/react';
 import type { NodeMessage } from '@microsoft/designer-ui';
-import { MessageLevel } from '@microsoft/designer-ui';
+import { MessageLevel, MediumText } from '@microsoft/designer-ui';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -118,7 +117,7 @@ export const ErrorsTab = () => {
 
       {totalNumErrors === 0 ? (
         <div className="msla-error-panel-no-messages">
-          <Text variant="medium">{noErrorsText}</Text>
+          <MediumText text={noErrorsText} />
         </div>
       ) : null}
     </div>

@@ -10,7 +10,7 @@ import {
   validateParameter,
 } from '../../../core';
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
-import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
@@ -66,6 +66,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const nodeMetaData = useNodeMetadata(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
   const errorInfo = useOperationErrorInfo(selectedNode);
+
+  const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -200,6 +202,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       errorMessage={errorInfo?.message}
       isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
+      suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       headerMenuItems={headerMenuItems}
       showCommentBox={showCommentBox}
       tabs={panelTabs}

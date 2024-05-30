@@ -16,7 +16,7 @@ import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension-logi
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
   public static contextValue = 'azLogicAppsConfigurations';
   public readonly label: string = localize('Configurations', 'Configurations');
-  public readonly parent: SlotTreeItem;
+  public declare readonly parent: SlotTreeItem;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
   public isReadOnly: boolean;
 

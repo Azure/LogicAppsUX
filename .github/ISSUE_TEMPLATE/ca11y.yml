@@ -1,6 +1,6 @@
 name: 'Report an accessibility issue'
 description: Create a report to help us improve Logic Apps
-labels: ['a11y', 'triage']
+labels: ['a11y']
 body:
   - type: textarea
     id: description

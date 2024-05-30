@@ -1,25 +1,20 @@
 import InformationImage from './info.svg';
-import { Text, TooltipHost } from '@fluentui/react';
+import { MediumText, SmallText } from '../text';
+import { Tooltip } from '@fluentui/react-components';
 
 export const InfoDot = (props: any) => {
-  const { alt = '', title, description, style, innerAriaHidden } = props;
+  const { title, description, style, innerAriaHidden } = props;
 
-  const tooltipProps = {
-    onRenderContent: () => (
-      <div className="msla-info-dot-tooltip-content" aria-hidden={innerAriaHidden || 'false'}>
-        <Text block variant="xLarge" style={{ marginBottom: '8px' }}>
-          {title}
-        </Text>
-        <Text block variant="small">
-          {description}
-        </Text>
-      </div>
-    ),
-  };
+  const tooltipContent: JSX.Element = (
+    <div className="msla-info-dot-tooltip-content" aria-hidden={innerAriaHidden || 'false'}>
+      <MediumText style={{ marginBottom: '8px', display: 'block' }} text={title} />
+      <SmallText style={{ display: 'block' }} text={description} />
+    </div>
+  );
 
   return (
-    <TooltipHost tooltipProps={tooltipProps}>
-      <img className="msla-info-dot" alt={alt} src={InformationImage} style={style} tabIndex={0} />
-    </TooltipHost>
+    <Tooltip relationship="description" content={tooltipContent}>
+      <img className="msla-info-dot" alt={description} src={InformationImage} style={style} tabIndex={0} />
+    </Tooltip>
   );
 };

@@ -19,7 +19,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-interface HTMLChangePluginProps {
+export interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
   setIsSwitchFromPlaintextBlocked: (value: boolean) => void;
   setIsValuePlaintext: (isValuePlaintext: boolean) => void;

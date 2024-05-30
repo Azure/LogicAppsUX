@@ -52,9 +52,6 @@ export interface Position {
 export const cleanHtmlString = (html: string): string => {
   let cleanedHtmlString = html;
 
-  // Ensure that all newlines are treated as HTML line breaks.
-  cleanedHtmlString = cleanedHtmlString.replace(/\n/g, '<br>');
-
   // Remove extraneous <span> tags.
   cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
 

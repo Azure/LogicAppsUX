@@ -1,13 +1,15 @@
+import { useTheme } from '@fluentui/react';
 import { TextInput } from './ColorPickerTextInput';
 import { DropDown } from './helper/Dropdown';
 import { MoveWrapper } from './helper/MoveWrapper';
 import { basicColors, COLORPICKER_HEIGHT as HEIGHT, COLORPICKER_WIDTH as WIDTH } from './helper/constants';
 import type { Position } from './helper/util';
-import { Text } from '@fluentui/react';
-import { capitalizeFirstLetter, transformColor } from '@microsoft/logic-apps-shared';
+import { Text, useArrowNavigationGroup } from '@fluentui/react-components';
+import { transformColor } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
-import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import constants from '../../../constants';
+import { useDebouncedState } from '@react-hookz/web';
 
 interface DropdownColorPickerProps {
   disabled?: boolean;
@@ -16,8 +18,7 @@ interface DropdownColorPickerProps {
   buttonIconSrc?: string;
   buttonLabel?: string;
   color: string;
-  children?: ReactNode;
-  onChange?: (color: string) => void;
+  onChange: (color: string) => void;
   title?: string;
   editor: LexicalEditor;
 }
@@ -26,15 +27,18 @@ export const DropdownColorPicker = ({
   editor,
   disabled,
   color,
-  children,
   onChange,
   title,
   buttonIconSrc,
   ...dropdownProps
 }: DropdownColorPickerProps) => {
+  const { isInverted } = useTheme();
   const [selfColor, setSelfColor] = useState(transformColor('hex', color));
   const [inputColor, setInputColor] = useState(color);
+  const [exposedColor, setExposedColor] = useDebouncedState(selfColor, 300);
   const innerDivRef = useRef(null);
+
+  const arrowNavigationAttributes = useArrowNavigationGroup({ axis: 'horizontal', circular: true });
 
   const saturationPosition = useMemo(
     () => ({
@@ -79,11 +83,17 @@ export const DropdownColorPicker = ({
 
   useEffect(() => {
     // Check if the dropdown is actually active
-    if (innerDivRef.current !== null && onChange) {
-      onChange(selfColor.hex);
+    if (innerDivRef.current !== null) {
+      if (exposedColor.hex !== selfColor.hex) {
+        setExposedColor(selfColor);
+      }
       setInputColor(selfColor.hex);
     }
-  }, [selfColor, onChange]);
+  }, [exposedColor, selfColor, setExposedColor]);
+
+  useEffect(() => {
+    onChange(exposedColor.hex);
+  }, [exposedColor, onChange]);
 
   useEffect(() => {
     if (color === undefined) {
@@ -97,9 +107,11 @@ export const DropdownColorPicker = ({
   return (
     <DropDown {...dropdownProps} disabled={disabled} stopCloseOnClickSelf buttonIconSrc={buttonIconSrc} editor={editor}>
       <div className="color-picker-wrapper" style={{ width: WIDTH }} ref={innerDivRef}>
-        <Text className="color-picker-title">{capitalizeFirstLetter(title ?? '')}</Text>
+        <Text className="color-picker-title" style={{ color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.STANDARD_TEXT_COLOR }}>
+          {title}
+        </Text>
         <TextInput label="Hex" onChange={onSetHex} value={inputColor} />
-        <div className="color-picker-basic-color">
+        <div className="color-picker-basic-color" {...arrowNavigationAttributes}>
           {basicColors.map((basicColor) => (
             <button
               className={basicColor === selfColor.hex ? 'default-color-buttons active' : 'default-color-buttons'}
@@ -116,6 +128,7 @@ export const DropdownColorPicker = ({
           className="color-picker-saturation"
           style={{ backgroundColor: `hsl(${selfColor.hsv.hue}, 100%, 50%)` }}
           onChange={onMoveSaturation}
+          value={saturationPosition}
         >
           <div
             className="color-picker-saturation_cursor"
@@ -126,7 +139,7 @@ export const DropdownColorPicker = ({
             }}
           />
         </MoveWrapper>
-        <MoveWrapper className="color-picker-hue" onChange={onMoveHue}>
+        <MoveWrapper className="color-picker-hue" onChange={onMoveHue} value={{ ...huePosition, y: 0 }}>
           <div
             className="color-picker-hue_cursor"
             style={{
@@ -137,7 +150,6 @@ export const DropdownColorPicker = ({
         </MoveWrapper>
         <div className="color-picker-color" style={{ backgroundColor: selfColor.hex }} />
       </div>
-      {children}
     </DropDown>
   );
 };

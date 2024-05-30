@@ -35,7 +35,7 @@ export const escapeString = (s: string): string => {
 };
 
 export const isStringNonPrimitive = (s: string): boolean => {
-  if (typeof s !== 'string') {
+  if (typeof s !== 'string' || s.trim() === '') {
     return false;
   }
   if (s === 'true' || s === 'false' || s === 'null') {
@@ -46,3 +46,5 @@ export const isStringNonPrimitive = (s: string): boolean => {
   }
   return false;
 };
+
+export const createIdCopy = (id: string) => `${id}-copy`;

@@ -18,7 +18,7 @@ import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedMan
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
-  getCustomCodeFileName,
+  getCustomCodeFileNameFromParameter,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -47,6 +47,7 @@ import type {
   OutputParameter,
   SchemaProperty,
   SwaggerParser,
+  EditorLanguage,
 } from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
@@ -75,9 +76,13 @@ import {
   unmap,
   UnsupportedException,
   isNullOrEmpty,
+  generateDefaultCustomCodeValue,
+  getFileExtensionName,
+  replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -446,24 +451,39 @@ export const updateCallbackUrlInInputs = async (
   return;
 };
 
-export const updateCustomCodeInInputs = async (
-  nodeId: string,
-  fileExtension: string,
-  nodeInputs: NodeInputs,
-  customCode: CustomCodeFileNameMapping
-) => {
+export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeId: string, dispatch: Dispatch) => {
+  const language: EditorLanguage = parameter?.editorOptions?.language;
+  if (parameter) {
+    const fileData = generateDefaultCustomCodeValue(language);
+    if (fileData) {
+      parameter.editorViewModel = {
+        customCodeData: { fileData },
+      };
+      parameter.value = [createLiteralValueSegment(replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language))];
+      dispatch(
+        addOrUpdateCustomCode({
+          nodeId,
+          fileData,
+          fileExtension: getFileExtensionName(language),
+          fileName: replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language),
+        })
+      );
+    }
+  }
+};
+
+export const updateCustomCodeInInputs = async (parameter: ParameterInfo, customCode: CustomCodeFileNameMapping) => {
   if (isNullOrEmpty(customCode)) {
     return;
   }
-  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
-  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
+  const language: EditorLanguage = parameter?.editorOptions?.language;
+  const fileName = getCustomCodeFileNameFromParameter(parameter);
   try {
     const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
-    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
 
     if (parameter && customCodeValue) {
       parameter.editorViewModel = {
-        customCodeData: { fileData: customCodeValue, fileExtension, fileName },
+        customCodeData: { fileData: customCodeValue, fileExtension: getFileExtensionName(language), fileName },
       };
     }
   } catch (error) {
@@ -498,7 +518,6 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
       );
     }
   }
-
   dispatch(updateUpstreamNodes(payload));
 };
 

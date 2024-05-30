@@ -8,7 +8,7 @@ import type {
   IEditorProps,
   IRenderDefaultEditorParams,
 } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, isObject } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 export type CustomTokenFieldProps = Omit<TokenFieldProps, 'editor' | 'editorOptions'> & ICustomEditorAndOptions;
@@ -26,7 +26,7 @@ export const CustomTokenField = (props: CustomTokenFieldProps) => {
     renderDefaultEditor,
     disabled: props.readOnly,
   };
-  return <EditorComponent {...customEditorProps} />;
+  return EditorComponent ? <EditorComponent {...customEditorProps} /> : <></>;
 };
 
 function useRenderDefaultEditor(tokenFieldProps: Omit<TokenFieldProps, 'editor' | 'editorOptions' | 'value' | 'onValueChange'>) {
@@ -51,13 +51,15 @@ const customEditorName = 'internal-custom-editor';
 
 export type ICustomEditorAndOptions = { editor: typeof customEditorName; editorOptions: ICustomEditorOptions };
 
-export const isCustomEditor = (props: { editor?: string | undefined; editorOptions?: unknown }): props is ICustomEditorAndOptions => {
+export const isCustomEditor = (props: { editor?: string | undefined; editorOptions?: any }): props is ICustomEditorAndOptions => {
   const { editor, editorOptions } = props;
+
   return (
-    equals(editor, customEditorName) &&
-    typeof editorOptions === 'object' &&
-    !!editorOptions &&
-    typeof (editorOptions as { EditorComponent: unknown }).EditorComponent === 'function'
+    editorOptions?.visibility === 'custom' ||
+    (equals(editor, customEditorName) &&
+      isObject(editorOptions) &&
+      !!editorOptions &&
+      typeof (editorOptions as { EditorComponent: unknown }).EditorComponent === 'function')
   );
 };
 

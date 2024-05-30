@@ -1,5 +1,4 @@
 import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
-import { isUserAssignedIdentitySupportedForInApp } from '../../../../core/utils/connectors/connections';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -9,17 +8,15 @@ import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMult
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
 import type { IDropdownOption } from '@fluentui/react';
-import { MessageBarType, MessageBar, Label } from '@fluentui/react';
+import { MessageBarType, MessageBar } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
   ConnectionService,
   Capabilities,
   ConnectionParameterTypes,
-  ResourceIdentityType,
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
-  equals,
   filterRecord,
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
@@ -37,7 +34,7 @@ import type {
   Subscription,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
+import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -193,15 +190,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
-  const showIdentityPicker = useMemo(
-    () =>
-      isMultiAuth &&
-      isUserAssignedIdentitySupportedForInApp(connectorCapabilities) &&
-      identity?.type?.toLowerCase()?.includes(ResourceIdentityType.USER_ASSIGNED.toLowerCase()) &&
-      equals(connectionParameterSets?.values[selectedParamSetIndex].name, 'ManagedServiceIdentity'),
-    [connectionParameterSets?.values, connectorCapabilities, identity?.type, isMultiAuth, selectedParamSetIndex]
-  );
-
   const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
 
   const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
@@ -340,7 +328,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected || showIdentityPicker ? selectedManagedIdentity : undefined;
+    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -356,7 +344,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     supportsServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
-    showIdentityPicker,
     selectedManagedIdentity,
     createConnectionCallback,
     showNameInput,
@@ -477,7 +464,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return isUsingOAuth ? signInButtonAria : createButtonAria;
   }, [isUsingOAuth, signInButtonAria, createButtonAria]);
 
-  const showConfigParameters = useMemo(() => !resourceSelectorProps, [resourceSelectorProps]);
+  // TODO -This check should be removed because backend has to fix their connection parameters if it should not be shown in UI.
+  const showConfigParameters = useMemo(
+    () => !resourceSelectorProps || (resourceSelectorProps && isMultiAuth),
+    [resourceSelectorProps, isMultiAuth]
+  );
 
   const renderConnectionParameter = (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
     const connectionParameterProps: ConnectionParameterProps = {
@@ -491,6 +482,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       selectSubscriptionCallback,
       availableGateways,
       availableSubscriptions,
+      identity,
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({
@@ -615,9 +607,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Legacy Managed Identity Selection */}
           {legacyManagedIdentitySelected && (
             <div className="param-row">
-              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {legacyManagedIdentityLabelText}
-              </Label>
+              <Label
+                className="label"
+                isRequiredField={true}
+                text={legacyManagedIdentityLabelText}
+                htmlFor={'connection-param-set-select'}
+                disabled={isLoading}
+              />
               <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
             </div>
           )}
@@ -631,16 +627,6 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
             />
-          )}
-
-          {/* Managed Identity Selection for In-App Connectors */}
-          {showIdentityPicker && (
-            <div className="param-row">
-              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {legacyManagedIdentityLabelText}
-              </Label>
-              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
-            </div>
           )}
 
           {/* Connector Parameters */}

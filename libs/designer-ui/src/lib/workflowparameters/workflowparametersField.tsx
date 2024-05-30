@@ -1,18 +1,13 @@
 import Constants from '../constants';
 import type { WorkflowParameterDefinition, WorkflowParameterUpdateHandler } from './workflowparameter';
-import type {
-  IDropdownOption,
-  IDropdownStyles,
-  ILabelStyles,
-  IStyle,
-  ITextFieldProps,
-  ITextFieldStyles,
-  ITextStyles,
-} from '@fluentui/react';
-import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
-import { equals } from '@microsoft/logic-apps-shared';
-import { useState } from 'react';
+import type { IDropdownOption, IDropdownStyles, ILabelStyles, IStyle, ITextFieldProps, ITextFieldStyles } from '@fluentui/react';
+import { Dropdown, FontWeights, getTheme, TextField } from '@fluentui/react';
+import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { type CSSProperties, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { Text } from '@fluentui/react-components';
+import { SmallText } from '../text';
+import { Label } from '../label';
 
 export const labelStyles: Partial<ILabelStyles> = {
   root: {
@@ -50,14 +45,14 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   root: fieldStyles,
 };
 
-const textStyles: Partial<ITextStyles> = {
-  root: {
-    color: getTheme().palette.yellow,
-    fontWeight: FontWeights.bold,
-  },
+const textStyles: CSSProperties = {
+  color: getTheme().palette.yellow,
+  fontWeight: FontWeights.bold,
 };
 
 const NAME_KEY = 'name';
+const TYPE_KEY = 'type';
+const DESCRIPTION_KEY = 'description';
 const VALUE_KEY = 'value';
 const DEFAULT_VALUE_KEY = 'defaultValue';
 
@@ -66,6 +61,7 @@ export interface ParameterFieldDetails {
   value: string;
   defaultValue?: string;
   type: string;
+  description?: string;
 }
 
 export interface WorkflowparameterFieldProps {
@@ -76,7 +72,8 @@ export interface WorkflowparameterFieldProps {
   onChange?: WorkflowParameterUpdateHandler;
   useLegacy?: boolean;
   isReadOnly?: boolean;
-  isEditable?: boolean;
+  isEditable?: boolean | Record<string, boolean>;
+  required?: boolean | Record<string, boolean>;
 }
 
 export const WorkflowparameterField = ({
@@ -86,6 +83,7 @@ export const WorkflowparameterField = ({
   setName,
   onChange,
   isEditable,
+  required = true,
   isReadOnly,
   useLegacy,
 }: WorkflowparameterFieldProps): JSX.Element => {
@@ -98,6 +96,7 @@ export const WorkflowparameterField = ({
   const parameterDetails: ParameterFieldDetails = {
     name: `${definition.id}-${NAME_KEY}`,
     value: `${definition.id}-${VALUE_KEY}`,
+    description: `${definition.id}-${DESCRIPTION_KEY}`,
     defaultValue: `${definition.id}-default-${VALUE_KEY}`,
     type: `${definition.id}-type`,
   };
@@ -188,6 +187,11 @@ export const WorkflowparameterField = ({
     defaultMessage: 'Type',
     id: 'tNoZx2',
     description: 'Parameter Field Type Title',
+  });
+  const descriptionTitle = intl.formatMessage({
+    defaultMessage: 'Description',
+    id: 'UXDOiw',
+    description: 'Parameter Field Description Title',
   });
   const valueTitle = intl.formatMessage({
     defaultMessage: 'Value',
@@ -283,20 +287,19 @@ export const WorkflowparameterField = ({
   };
 
   const onRenderDescription = (props?: ITextFieldProps): JSX.Element => {
-    return (
-      <Text variant="small" styles={textStyles}>
-        {props?.description}
-      </Text>
-    );
+    return <SmallText style={textStyles} text={props?.description ?? ''} />;
   };
 
   return (
     <>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
-          {nameTitle}
-        </Label>
-        {isEditable ? (
+        <Label
+          styles={labelStyles}
+          text={nameTitle}
+          isRequiredField={getFieldBooleanValue(required, NAME_KEY)}
+          htmlFor={parameterDetails.name}
+        />
+        {getFieldBooleanValue(isEditable, NAME_KEY) ? (
           <TextField
             data-testid={parameterDetails.name}
             styles={textFieldStyles}
@@ -313,10 +316,13 @@ export const WorkflowparameterField = ({
         )}
       </div>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
-          {typeTitle}
-        </Label>
-        {isEditable ? (
+        <Label
+          styles={labelStyles}
+          text={typeTitle}
+          isRequiredField={getFieldBooleanValue(required, TYPE_KEY)}
+          htmlFor={parameterDetails.type}
+        />
+        {getFieldBooleanValue(isEditable, TYPE_KEY) ? (
           <Dropdown
             data-testid={parameterDetails.type}
             id={parameterDetails.type}
@@ -331,12 +337,21 @@ export const WorkflowparameterField = ({
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         )}
       </div>
+      {definition?.description && (
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} text={descriptionTitle} isRequiredField={false} htmlFor={parameterDetails.description} />
+          <Text className="msla-workflow-parameter-read-only">{definition.description}</Text>
+        </div>
+      )}
       {useLegacy ? (
         <>
           <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} required={true} htmlFor={parameterDetails.defaultValue}>
-              {defaultValueTitle}
-            </Label>
+            <Label
+              styles={labelStyles}
+              text={defaultValueTitle}
+              isRequiredField={getFieldBooleanValue(required, DEFAULT_VALUE_KEY)}
+              htmlFor={parameterDetails.defaultValue}
+            />
             {isEditable ? (
               <TextField
                 data-testid={parameterDetails.defaultValue}
@@ -356,10 +371,8 @@ export const WorkflowparameterField = ({
             )}
           </div>
           <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-              {actualValueTitle}
-            </Label>
-            {isEditable ? (
+            <Label styles={labelStyles} text={actualValueTitle} htmlFor={parameterDetails.value} />
+            {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
               <TextField
                 data-testid={parameterDetails.value}
                 id={parameterDetails.value}
@@ -376,10 +389,13 @@ export const WorkflowparameterField = ({
         </>
       ) : (
         <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
-            {valueTitle}
-          </Label>
-          {isEditable ? (
+          <Label
+            styles={labelStyles}
+            text={valueTitle}
+            isRequiredField={getFieldBooleanValue(required, VALUE_KEY)}
+            htmlFor={parameterDetails.value}
+          />
+          {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
             <TextField
               data-testid={parameterDetails.value}
               id={parameterDetails.value}
@@ -406,4 +422,8 @@ function isSecureParameter(type?: string): boolean {
 
 function stringifyValue(value: any): string {
   return typeof value !== 'string' ? JSON.stringify(value) : value;
+}
+
+function getFieldBooleanValue(value: boolean | Record<string, boolean> | undefined, fieldKey: string): boolean {
+  return typeof value === 'boolean' ? value : getRecordEntry(value, fieldKey) ?? false;
 }

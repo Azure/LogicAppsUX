@@ -21,8 +21,7 @@ export const TestingPanel: React.FC = () => {
   const { connectorId, operationId } = operationInfo;
   const staticResultSchema = useStaticResultSchema(connectorId, operationId);
   const parameterStaticResult = useParameterStaticResult(selectedNode);
-
-  const name = parameterStaticResult?.name ?? selectedNode + 0;
+  const name = selectedNode + 0;
   const staticResultOptions = parameterStaticResult?.staticResultOptions;
   const properties = useStaticResultProperties(name);
 

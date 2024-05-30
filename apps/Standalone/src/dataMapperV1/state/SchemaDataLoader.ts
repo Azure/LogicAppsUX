@@ -95,7 +95,7 @@ export const schemaDataLoaderSlice = createSlice({
 const loadSchemaFromMock = async (resourcePath: string): Promise<DataMapSchema | undefined> => {
   try {
     const schema: DataMapSchema = await import(`../schemas/${resourcePath.split('.')[0]}.json`);
-    return schema;
+    return (schema as any)?.default ?? schema;
   } catch (ex) {
     console.error(ex);
     return undefined;

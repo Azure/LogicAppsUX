@@ -14,14 +14,30 @@ Ensure you have the following installed on your system:
 - Node.js v18 or higher
 - PNPM 
 
+### Node Version Manager (NVM) Installation (Recommended)
+
+Check here for Windows setup and installation guide: [NVM for Windows installation](https://github.com/coreybutler/nvm-windows)
+
+Check here for MacOS and Linux setup and installation guide: [NVM for MacOS and Linux installation](https://github.com/nvm-sh/nvm)
+
 ### Pnpm CLI Installation (Recommended)
 
-Check here for system specific ways to install:
+Check here for system specific ways to install: [Pnpm installation](https://pnpm.io/installation)
 
 Or you can just install using npm:
 
 ```bash
 npm install -g pnpm
+```
+
+### Turbo Installation
+
+Check here for package manager specific ways to install: [Turbo installation](https://turbo.build/repo/docs/installing)
+
+Or you can just install using pnpm:
+
+```bash
+pnpm install -g turbo
 ```
 
 ## Running the Code
@@ -69,5 +85,5 @@ pnpm turbo run test:lib
 To run E2E tests, execute:
 
 ```bash
-pnpm run test:e2e
+pnpm run test:e2e --grep @mock
 ```

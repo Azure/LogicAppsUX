@@ -5,8 +5,8 @@ import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
-import { List, Text } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { List } from '@fluentui/react';
+import { Spinner, Text } from '@fluentui/react-components';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
@@ -89,12 +89,12 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const noResultsText = intl.formatMessage(
     {
-      defaultMessage: 'No results found for {searchTerm}',
-      id: 'VI7EqG',
+      defaultMessage: 'No results found for {searchTermBeingSearchedFor_DO_NOT_TRANSLATE}',
+      id: '4hlqgK',
       description: 'Text to show when there are no search results',
     },
     {
-      searchTerm: <strong>{`"${searchTerm}"`}</strong>,
+      searchTermBeingSearchedFor_DO_NOT_TRANSLATE: <strong>{`"${searchTerm}"`}</strong>,
     }
   );
 

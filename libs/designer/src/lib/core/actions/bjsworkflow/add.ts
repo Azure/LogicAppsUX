@@ -1,3 +1,4 @@
+import { isCustomCode } from '@microsoft/designer-ui';
 import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
@@ -16,12 +17,12 @@ import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
@@ -29,6 +30,7 @@ import { isConnectionRequiredForOperation, updateNodeConnection } from './connec
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
 } from './initialize';
@@ -44,6 +46,7 @@ import {
   getBrandColorFromConnector,
   getIconUriFromConnector,
   getRecordEntry,
+  isNumber,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connector,
@@ -73,14 +76,9 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
-    let count = 1;
-    let nodeId = actionId;
-    const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
-    while (getRecordEntry(nodesMetadata, nodeId)) {
-      nodeId = `${actionId}_${count}`;
-      count++;
-    }
 
+    const workflowState = (getState() as RootState).workflow;
+    const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
 
     dispatch(addNode(newPayload as any));
@@ -132,6 +130,10 @@ export const initializeOperationDetails = async (
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
+    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
+      initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
+    }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       isTrigger,
@@ -234,7 +236,21 @@ export const initializeOperationDetails = async (
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
-  if (!isConnectionRequired) {
+  if (isConnectionRequired) {
+    try {
+      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired);
+    } catch (e: any) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: e?.message,
+          },
+        })
+      );
+    }
+  } else {
     updateDynamicDataInNode(
       nodeId,
       isTrigger,
@@ -247,25 +263,11 @@ export const initializeOperationDetails = async (
       dispatch,
       getState
     );
-  } else if (connector) {
-    try {
-      await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
-    } catch (e: any) {
-      dispatch(
-        updateErrorDetails({
-          id: nodeId,
-          errorInfo: {
-            level: ErrorLevel.Connection,
-            message: e?.message,
-          },
-        })
-      );
-      dispatch(setIsPanelLoading(false));
-    }
   }
 
-  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
-  schemaService.then((schema) => {
+  dispatch(setIsPanelLoading(false));
+
+  staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest).then((schema) => {
     if (schema) {
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
@@ -280,7 +282,6 @@ export const initializeOperationDetails = async (
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(setIsPanelLoading(false));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -401,4 +402,36 @@ export const getTriggerNodeManifest = async (
     return getOperationManifest({ connectorId, operationId });
   }
   return undefined;
+};
+
+export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: string, idReplacements: Record<string, string> = {}) => {
+  let count = 1;
+  let nodeId = actionId;
+
+  // Note: This is a temporary fix for the issue where the node id is not unique
+  // Because the workflow state isn't always up to date with action name changes unless flow is reloaded after saving
+  // To account for this we use the idReplacements to check for duplicates/changes in the same session
+  // This check should be once the workflow state is properly updated for all action name changes
+  while (getRecordEntry(nodesMetadata, nodeId) || Object.values(idReplacements).includes(nodeId)) {
+    nodeId = `${actionId}_${count}`;
+    count++;
+  }
+  return nodeId;
+};
+
+export const getNonDuplicateId = (existingActionNames: Record<string, string>, actionId: string): string => {
+  let newActionId = actionId.replaceAll(' ', '_');
+  const splitActionId = newActionId.split('_');
+  let nodeId = newActionId;
+  let count = 1;
+  if (isNumber(splitActionId[splitActionId.length - 1])) {
+    splitActionId.pop();
+    newActionId = splitActionId.join('_');
+  }
+
+  while (getRecordEntry(existingActionNames, nodeId)) {
+    nodeId = `${newActionId}_${count}`;
+    count++;
+  }
+  return nodeId;
 };

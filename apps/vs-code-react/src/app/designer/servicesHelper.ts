@@ -25,8 +25,9 @@ import type {
 } from '@microsoft/logic-apps-shared';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
+import { CustomEditorService } from './customEditorService';
 
 export const getDesignerServices = (
   baseUrl: string,
@@ -50,6 +51,7 @@ export const getDesignerServices = (
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
 } => {
@@ -283,6 +285,16 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  const editorService = new CustomEditorService({
+    areCustomEditorsEnabled: true,
+    openRelativeLink: (relativeLink: string) => {
+      return vscode.postMessage({
+        command: ExtensionCommand.openRelativeLink,
+        content: relativeLink,
+      });
+    },
+  });
+
   return {
     connectionService,
     connectorService,
@@ -293,6 +305,7 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    editorService,
     apimService,
     functionService,
   };

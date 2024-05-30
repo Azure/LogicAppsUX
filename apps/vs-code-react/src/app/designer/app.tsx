@@ -5,17 +5,18 @@ import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
 import { getDesignerServices } from './servicesHelper';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
-import { Spinner, SpinnerSize, Text } from '@fluentui/react';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import { isEmptyString, Theme } from '@microsoft/logic-apps-shared';
+import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { XLargeText } from '@microsoft/designer-ui';
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
@@ -103,49 +104,50 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const getRunInstance = () => {
-    if (isMonitoringView && !isEmptyString(runId) && panelMetaData !== null) {
-      return services.runService.getRun(runId);
-    }
-    return;
+    return services.runService.getRun(runId);
   };
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...standardApp,
-        definition: runDefinition.properties.workflow.properties.definition,
-      } as StandardApp;
-      setRunInstance(runDefinition);
-      setStandardApp(standardAppInstance);
-    }
-  };
-
-  const onRunInstanceError = async () => {
-    setRunInstance(null);
-    setStandardApp(undefined);
-  };
-
-  const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
+  const {
+    refetch,
+    isError,
+    isFetching,
+    isLoading,
+    isRefetching,
+    data: runData,
+  } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     initialData: null,
-    onSuccess: onRunInstanceSuccess,
-    onError: onRunInstanceError,
+    enabled: isMonitoringView && !isEmptyString(runId),
   });
 
   useEffect(() => {
-    refetch();
+    if (isMonitoringView) {
+      if (isNullOrUndefined(runData)) {
+        setRunInstance(null);
+        setStandardApp(undefined);
+      } else {
+        const standardAppInstance = {
+          ...standardApp,
+          definition: runData.properties.workflow.properties.definition,
+        } as StandardApp;
+        setRunInstance(runData);
+        setStandardApp(standardAppInstance);
+      }
+    }
+  }, [runData, standardApp, isMonitoringView]);
+
+  useEffect(() => {
+    if (isMonitoringView && !isEmptyString(runId)) {
+      refetch();
+    }
   }, [isMonitoringView, runId, services, refetch]);
 
   useEffect(() => {
     setStandardApp(panelMetaData?.standardApp);
   }, [panelMetaData]);
 
-  const errorApp = (
-    <Text className="designer--error" variant="xLarge" block>
-      {intlText.ERROR_APP}{' '}
-    </Text>
-  );
+  const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className="designer--error" style={{ display: 'block' }} />;
 
   const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
 

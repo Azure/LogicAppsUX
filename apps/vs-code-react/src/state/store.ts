@@ -1,4 +1,5 @@
-import { dataMapSlice } from './DataMapSlice';
+import { dataMapSlice as dataMapSliceV1 } from './DataMapSlice';
+import { dataMapSlice as dataMapSliceV2 } from './DataMapSliceV2';
 import { designerSlice } from './DesignerSlice';
 import { workflowSlice } from './WorkflowSlice';
 import { projectSlice } from './projectSlice';
@@ -9,7 +10,8 @@ export const store = configureStore({
     project: projectSlice.reducer,
     workflow: workflowSlice.reducer,
     designer: designerSlice.reducer,
-    dataMapDataLoader: dataMapSlice.reducer,
+    dataMapDataLoader: dataMapSliceV1.reducer, // Data Mapper V1
+    dataMap: dataMapSliceV2.reducer, // Data Mapper V2
   },
 });
 

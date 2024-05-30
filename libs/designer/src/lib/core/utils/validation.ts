@@ -21,13 +21,14 @@ import {
   startsWith,
 } from '@microsoft/logic-apps-shared';
 import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
+import { convertWorkflowParameterTypeToSwaggerType } from './tokens';
+import type { IntlShape } from 'react-intl';
 
 const regex = {
   datetime:
     /^(\d{4})-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])(?:[\sT])([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d|60))?(\.\d+)?(([Zz])|([+|-]([01]\d|2[0-3])))?$/,
   double: /^(?:[-+])?([0-9]*(\.[0-9]+([eE](?:[-+])[0-9]+)?)?)$/,
-  email:
-    /^([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])$/,
+  email: /.+@.+/,
   integer: /^(?:[-+])?([0-9]+)$/,
   phone: /^(\+)?(?:[0-9]{5,15})$/,
   url: /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))?)(?::\d{2,5})?(?:\/\S*)?$/i,
@@ -513,6 +514,65 @@ function validateStringEmails(parameterValue: string): string {
 
   return '';
 }
+
+export const validateParameterValueWithSwaggerType = (
+  type: string | undefined,
+  valueToValidate: string | undefined,
+  required: boolean,
+  intl: IntlShape
+): string | undefined => {
+  if (valueToValidate === '' || valueToValidate === undefined) {
+    if (!required) {
+      return undefined;
+    }
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for parameter.',
+      id: 'VL9wOu',
+      description: 'Error message when the workflow parameter value is empty.',
+    });
+  }
+
+  const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
+  let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
+
+  if (error) {
+    return error;
+  }
+
+  switch (swaggerType) {
+    case Constants.SWAGGER.TYPE.ARRAY: {
+      let isInvalid = false;
+      try {
+        isInvalid = !Array.isArray(JSON.parse(valueToValidate));
+      } catch {
+        isInvalid = true;
+      }
+
+      error = isInvalid
+        ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
+        : undefined;
+      break;
+    }
+
+    case Constants.SWAGGER.TYPE.OBJECT:
+    case Constants.SWAGGER.TYPE.BOOLEAN: {
+      try {
+        JSON.parse(valueToValidate);
+      } catch {
+        error =
+          swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
+            : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
+      }
+      break;
+    }
+
+    default:
+      break;
+  }
+
+  return error;
+};
 
 function isValidJSONObjectFormat(value: string): boolean {
   const trimmedValue = (value || '').trim();

@@ -22,6 +22,7 @@ import {
 import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { sendRequest } from '../../../utils/requestUtils';
+import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -208,6 +209,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
               errorMessage,
             },
           });
+        }
+        break;
+      }
+
+      case ExtensionCommand.openRelativeLink: {
+        if (msg.content === '/dataMapper') {
+          createNewDataMapCmd(this.context);
         }
         break;
       }

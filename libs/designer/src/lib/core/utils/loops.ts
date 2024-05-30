@@ -314,7 +314,7 @@ const getArrayDetailsForNestedForeach = (
       shouldAddAnyForeach = shouldAdd;
     }
 
-    if (data?.expression) {
+    if (shouldAdd && data?.expression) {
       arrayDetails.push({ parentArrayKey, parentArrayValue: data.expression });
     }
 

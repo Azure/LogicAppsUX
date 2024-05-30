@@ -128,7 +128,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     setCollapsedValue(uncastedValue);
     if (!collapsed) {
       onChange?.({
-        value: castedValue,
+        value: suppressCastingForSerialize ? uncastedValue : castedValue,
         viewModel: { arrayType, itemSchema, uncastedValue },
       });
     }
