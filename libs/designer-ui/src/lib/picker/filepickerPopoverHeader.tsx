@@ -21,6 +21,8 @@ import {
 import { MoreHorizontalRegular } from '@fluentui/react-icons';
 import React from 'react';
 
+const MAX_PRIORITY = 999;
+
 interface FilePickerPopoverHeaderProps {
   currentPathSegments: FilePickerBreadcrumb[];
 }
@@ -45,7 +47,7 @@ const FilePickerPopoverHeaderItem: React.FC<{ index: number; item: FilePickerBre
 
   return (
     <React.Fragment key={`FilePicker.breadcrumb.${itemId}`}>
-      <OverflowItem groupId={`${groupId}`} id={itemId} priority={index === 0 ? 999 : index}>
+      <OverflowItem groupId={`${groupId}`} id={itemId} priority={index === 0 ? MAX_PRIORITY : index}>
         <BreadcrumbItem>
           <BreadcrumbItem>
             <BreadcrumbButton current={isLast} onClick={item.onSelect}>
