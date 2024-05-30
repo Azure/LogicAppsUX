@@ -1,3 +1,4 @@
+import type { FilePickerBreadcrumb } from './types';
 import {
   Breadcrumb,
   BreadcrumbButton,
@@ -13,7 +14,6 @@ import { ChevronRight12Regular, Document28Regular, Folder28Regular } from '@flue
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useIntl } from 'react-intl';
-import type { FilePickerBreadcrumb } from './types';
 
 export interface FilePickerProps {
   currentPathSegments: FilePickerBreadcrumb[];

@@ -1,19 +1,19 @@
+import type { BaseEditorProps, ChangeHandler } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
+import type { ValueSegment } from '../editor/models/parameter';
+import { FilePickerPopover } from './filepickerPopover';
+import { PickerItemType } from './pickerItem';
+import { EditorValueChange } from './plugins/EditorValueChange';
+import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
+import type { FilePickerBreadcrumb } from './types';
 import { Button, Menu, MenuTrigger, Tooltip } from '@fluentui/react-components';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import type { BaseEditorProps, ChangeHandler } from '../editor/base';
-import { EditorWrapper } from '../editor/base/EditorWrapper';
-import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
-import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
-import type { ValueSegment } from '../editor/models/parameter';
-import { FilePickerPopover } from './filepickerpopover';
-import { PickerItemType } from './pickerItem';
-import { EditorValueChange } from './plugins/EditorValueChange';
-import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
-import type { FilePickerBreadcrumb } from './types';
 
 export interface PickerCallbackHandlers {
   getFileSourceName: () => string;
