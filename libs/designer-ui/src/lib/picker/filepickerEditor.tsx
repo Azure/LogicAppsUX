@@ -4,6 +4,7 @@ import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbut
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
 import { FilePickerPopover } from './filepickerPopover';
+import { filterAndSortItems } from './helpers';
 import { EditorValueChange } from './plugins/EditorValueChange';
 import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { FilePickerBreadcrumb } from './types';
@@ -11,7 +12,6 @@ import { PickerItemType } from './types';
 import { Button, Menu, MenuTrigger, Tooltip } from '@fluentui/react-components';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -23,7 +23,7 @@ export interface PickerCallbackHandlers {
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
-  type: string;
+  type: PickerItemType;
   items: TreeDynamicValue[] | undefined;
   displayValue?: string;
   fileFilters?: string[];
@@ -163,30 +163,6 @@ export const FilePickerEditor = ({
       </Menu>
     </div>
   );
-};
-
-const filterAndSortItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: string[]): TreeDynamicValue[] => {
-  if (!items || items.length === 0) {
-    return [];
-  }
-  let returnItems = items;
-  if (type === PickerItemType.FOLDER) {
-    returnItems = items.filter((item) => item.isParent);
-  }
-  if (fileFilters && fileFilters.length > 0) {
-    returnItems = returnItems.filter((item) => {
-      return fileFilters.some((filter) => equals(filter, item.mediaType) || item.isParent);
-    });
-  }
-  return Array.from(returnItems).sort((a, b) => {
-    if (a.isParent && !b.isParent) {
-      return -1;
-    }
-    if (!a.isParent && b.isParent) {
-      return 1;
-    }
-    return a.displayName.localeCompare(b.displayName);
-  });
 };
 
 const getInitialTitleSegments = (sourceName?: string, onRootClicked?: () => void): FilePickerBreadcrumb[] => {
