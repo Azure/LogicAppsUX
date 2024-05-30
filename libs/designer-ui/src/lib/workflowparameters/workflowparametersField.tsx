@@ -1,12 +1,13 @@
 import Constants from '../constants';
 import type { WorkflowParameterDefinition, WorkflowParameterUpdateHandler } from './workflowparameter';
 import type { IDropdownOption, IDropdownStyles, ILabelStyles, IStyle, ITextFieldProps, ITextFieldStyles } from '@fluentui/react';
-import { Dropdown, FontWeights, getTheme, Label, TextField } from '@fluentui/react';
+import { Dropdown, FontWeights, getTheme, TextField } from '@fluentui/react';
 import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { type CSSProperties, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
 import { SmallText } from '../text';
+import { Label } from '../label';
 
 export const labelStyles: Partial<ILabelStyles> = {
   root: {
@@ -292,9 +293,12 @@ export const WorkflowparameterField = ({
   return (
     <>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} required={getFieldBooleanValue(required, NAME_KEY)} htmlFor={parameterDetails.name}>
-          {nameTitle}
-        </Label>
+        <Label
+          styles={labelStyles}
+          text={nameTitle}
+          isRequiredField={getFieldBooleanValue(required, NAME_KEY)}
+          htmlFor={parameterDetails.name}
+        />
         {getFieldBooleanValue(isEditable, NAME_KEY) ? (
           <TextField
             data-testid={parameterDetails.name}
@@ -312,9 +316,12 @@ export const WorkflowparameterField = ({
         )}
       </div>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} required={getFieldBooleanValue(required, TYPE_KEY)} htmlFor={parameterDetails.type}>
-          {typeTitle}
-        </Label>
+        <Label
+          styles={labelStyles}
+          text={typeTitle}
+          isRequiredField={getFieldBooleanValue(required, TYPE_KEY)}
+          htmlFor={parameterDetails.type}
+        />
         {getFieldBooleanValue(isEditable, TYPE_KEY) ? (
           <Dropdown
             data-testid={parameterDetails.type}
@@ -332,9 +339,7 @@ export const WorkflowparameterField = ({
       </div>
       {definition?.description && (
         <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={false} htmlFor={parameterDetails.description}>
-            {descriptionTitle}
-          </Label>
+          <Label styles={labelStyles} text={descriptionTitle} isRequiredField={false} htmlFor={parameterDetails.description} />
           <Text className="msla-workflow-parameter-read-only">{definition.description}</Text>
         </div>
       )}
@@ -343,11 +348,10 @@ export const WorkflowparameterField = ({
           <div className="msla-workflow-parameter-field">
             <Label
               styles={labelStyles}
-              required={getFieldBooleanValue(required, DEFAULT_VALUE_KEY)}
+              text={defaultValueTitle}
+              isRequiredField={getFieldBooleanValue(required, DEFAULT_VALUE_KEY)}
               htmlFor={parameterDetails.defaultValue}
-            >
-              {defaultValueTitle}
-            </Label>
+            />
             {isEditable ? (
               <TextField
                 data-testid={parameterDetails.defaultValue}
@@ -367,9 +371,7 @@ export const WorkflowparameterField = ({
             )}
           </div>
           <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-              {actualValueTitle}
-            </Label>
+            <Label styles={labelStyles} text={actualValueTitle} htmlFor={parameterDetails.value} />
             {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
               <TextField
                 data-testid={parameterDetails.value}
@@ -387,9 +389,12 @@ export const WorkflowparameterField = ({
         </>
       ) : (
         <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={getFieldBooleanValue(required, VALUE_KEY)} htmlFor={parameterDetails.value}>
-            {valueTitle}
-          </Label>
+          <Label
+            styles={labelStyles}
+            text={valueTitle}
+            isRequiredField={getFieldBooleanValue(required, VALUE_KEY)}
+            htmlFor={parameterDetails.value}
+          />
           {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
             <TextField
               data-testid={parameterDetails.value}
