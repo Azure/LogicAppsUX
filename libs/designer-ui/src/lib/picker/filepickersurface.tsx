@@ -1,4 +1,4 @@
-import { Breadcrumb, BreadcrumbButton, BreadcrumbDivider, BreadcrumbItem, Menu, MenuItem, MenuList, MenuPopover, MenuSplitGroup, MenuTrigger, Popover, PopoverSurface, Spinner } from '@fluentui/react-components';
+import { Breadcrumb, BreadcrumbButton, BreadcrumbDivider, BreadcrumbItem, Menu, MenuItem, MenuList, MenuPopover, MenuSplitGroup, MenuTrigger, Popover, PopoverSurface, Spinner, Text } from '@fluentui/react-components';
 import { PickerHeader } from './pickerHeader';
 import { PickerItem } from './pickerItem';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
@@ -26,7 +26,6 @@ export const FilePickerSurface: React.FC<FilePickerProps> = (props) => {
     handleItemSelected,
     loadingFiles,
     onCancel,
-    visible,
   } = props;
 
   const intl = useIntl();
@@ -47,19 +46,19 @@ export const FilePickerSurface: React.FC<FilePickerProps> = (props) => {
 
   if (loadingFiles) {
     listContent = (
-      <div>
+      <div className="msla-filepicker-no-list-content">
         <Spinner label={loadingMessage} />
       </div>
     );
   } else if (files.length === 0) {
     listContent = (
-      <div>
+      <div className="msla-filepicker-no-list-message">
         {noItemsMessage}
       </div>
     );
   } else if (errorDetails?.message) {
     listContent = (
-      <div>
+      <div className="msla-filepicker-no-list-message">
         {errorDetails.message}
       </div>
     );

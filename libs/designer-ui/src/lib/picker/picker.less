@@ -56,12 +56,40 @@ div.msla-filepicker-body {
   max-width: initial;
   width: @pickerWidth;
 
+  .msla-filepicker-content {
+    max-height: @maxPickerHeight;
+  }
+
+  .msla-filepicker-no-list-message {
+    opacity: 0.5;
+    text-align: center;
+  }
+
+  .msla-filepicker-no-list-message,
+  .msla-filepicker-no-list-content {
+    overflow: hidden;
+    padding: 10px;
+  }
+
   div.msla-filepicker-item {
     max-width: initial;
   }
 
   div.msla-filepicker-item-list {
     max-height: @maxPickerHeight;
+    overflow-y: auto;
+  
+    div.msla-filepicker-item-split > .msla-filepicker-item {
+      flex: 1;
+      min-width: 0;
+
+      > span:nth-child(2) {
+        // Refers to the .fui-MenuItem__content element without referencing the class.
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   
     div.msla-filepicker-item-split > .msla-filepicker-item-split-chevron::before {
       height: 100%;
