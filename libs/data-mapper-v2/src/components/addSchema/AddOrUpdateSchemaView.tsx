@@ -32,6 +32,7 @@ export interface AddOrUpdateSchemaViewProps {
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
+  getUpdatedSchemaFiles: () => void;
   errorMessage: string;
   uploadType: UploadSchemaTypes;
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
@@ -42,6 +43,7 @@ export const AddOrUpdateSchemaView = ({
   schemaType,
   selectedSchemaFile,
   setSelectedSchemaFile,
+  getUpdatedSchemaFiles,
   errorMessage,
   uploadType,
   setUploadType,
@@ -143,6 +145,7 @@ export const AddOrUpdateSchemaView = ({
                   setSelectSchemaVisible(false);
                   setSelectedSchemaFile(schema);
                 }}
+                getUpdatedSchemaFiles={getUpdatedSchemaFiles}
               />
             )}
           </div>
