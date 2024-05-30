@@ -16,10 +16,12 @@ import {
   OverflowItem,
   partitionBreadcrumbItems,
   Tooltip,
+  useArrowNavigationGroup,
   useOverflowMenu,
 } from '@fluentui/react-components';
 import { MoreHorizontalRegular } from '@fluentui/react-icons';
 import React from 'react';
+import { useIntl } from 'react-intl';
 
 const MAX_PRIORITY = 999;
 
@@ -62,6 +64,8 @@ const FilePickerPopoverHeaderItem: React.FC<{ index: number; item: FilePickerBre
 const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (props) => {
   const { currentPathSegments } = props;
 
+  const intl = useIntl();
+
   const { isOverflowing, overflowCount, ref } = useOverflowMenu<HTMLButtonElement>();
 
   const { startDisplayedItems, overflowItems, endDisplayedItems }: PartitionBreadcrumbItems<FilePickerBreadcrumb> =
@@ -70,7 +74,36 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
       maxDisplayedItems: currentPathSegments.length - (isOverflowing ? overflowCount : 0),
     });
 
-  const endDisplayedItemsStartIndex = startDisplayedItems.length + (overflowItems?.length ?? 0);
+  const overflowItemsLength = overflowItems?.length ?? 0;
+  const endDisplayedItemsStartIndex = startDisplayedItems.length + overflowItemsLength;
+
+  const moreTooltipMessage = intl.formatMessage({
+    defaultMessage: 'More…',
+    id: 'TDfQzn',
+    description: 'Tooltip text for the "..." menu that the user can click to reveal more items',
+  });
+
+  const moreItemsSingularMessage = intl.formatMessage(
+    {
+      defaultMessage: '{overflowItemsLength} more item',
+      id: 'IlyNs0',
+      description: 'Message to show when exactly 1 item is present in the overflow menu',
+    },
+    {
+      overflowItemsLength,
+    }
+  );
+
+  const moreItemsPluralMessage = intl.formatMessage(
+    {
+      defaultMessage: '{overflowItemsLength} more items',
+      id: 'gaHI0k',
+      description: 'Message to show when 0 or more than 2 items are present in the overflow menu',
+    },
+    {
+      overflowItemsLength,
+    }
+  );
 
   return (
     <>
@@ -86,10 +119,10 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
         <>
           <Menu>
             <MenuTrigger disableButtonEnhancement={true}>
-              <Tooltip content={'More' /* TODO */} relationship="label" withArrow={true}>
+              <Tooltip content={moreTooltipMessage} relationship="label" withArrow={true}>
                 <Button
                   appearance="subtle"
-                  aria-label={`${overflowItems?.length} more items` /* TODO */}
+                  aria-label={overflowItemsLength === 1 ? moreItemsSingularMessage : moreItemsPluralMessage}
                   icon={<MoreHorizontalRegular />}
                   ref={ref}
                   role="button"
@@ -98,7 +131,7 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
             </MenuTrigger>
             <MenuPopover>
               <MenuList>
-                {overflowItems?.map((item) => (
+                {overflowItems.map((item) => (
                   <MenuItem id={item.key} key={item.key} onClick={item.onSelect} persistOnClick={true}>
                     {item.text}
                   </MenuItem>
@@ -122,9 +155,11 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
 };
 
 export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (props) => {
+  const arrowNavigationAttributes = useArrowNavigationGroup({ axis: 'horizontal', circular: false });
+
   return (
     <Overflow minimumVisible={2}>
-      <Breadcrumb>
+      <Breadcrumb {...arrowNavigationAttributes}>
         <FilePickerPopoverBreadcrumbs {...props} />
       </Breadcrumb>
     </Overflow>

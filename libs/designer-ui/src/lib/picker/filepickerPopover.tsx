@@ -36,17 +36,25 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
 
   if (loadingFiles) {
     listContent = (
-      <div className="msla-filepicker-no-list-content">
+      <div aria-label={loadingMessage} className="msla-filepicker-no-list-content">
         <Spinner label={loadingMessage} />
       </div>
     );
   } else if (files.length === 0) {
-    listContent = <div className="msla-filepicker-no-list-message">{noItemsMessage}</div>;
+    listContent = (
+      <div aria-label={noItemsMessage} className="msla-filepicker-no-list-message">
+        {noItemsMessage}
+      </div>
+    );
   } else if (errorDetails?.message) {
-    listContent = <div className="msla-filepicker-no-list-message">{errorDetails.message}</div>;
+    listContent = (
+      <div aria-label={errorDetails.message} className="msla-filepicker-no-list-message">
+        {errorDetails.message}
+      </div>
+    );
   } else {
     listContent = (
-      <MenuList className="msla-filepicker-item-list">
+      <MenuList className="msla-filepicker-item-list" tabIndex={0}>
         {files.map((file) => (
           <FilePickerPopoverItem
             file={file}
