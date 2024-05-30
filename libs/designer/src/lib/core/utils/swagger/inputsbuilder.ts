@@ -264,7 +264,7 @@ function serializeQuery(queryParameters: SerializedParameter[]): Partial<Operati
   return {};
 }
 
-function serializeFormData(formDataParameters: SerializedParameter[]): Partial<OperationInputs> {
+export function serializeFormData(formDataParameters: SerializedParameter[]): Partial<OperationInputs> {
   const formDataValue = groupByFormDataParameterName(formDataParameters);
   const keys = Object.keys(formDataValue);
   const multiparts = keys
@@ -383,7 +383,7 @@ function loadQueryValue(inputsQuery: Record<string, any>, queryInputParameters: 
   );
 }
 
-function loadFormDataValue(inputs: Record<string, any>, formDataInputParameters: InputParameter[]): InputParameter[] {
+export function loadFormDataValue(inputs: Record<string, any>, formDataInputParameters: InputParameter[]): InputParameter[] {
   const bodyInput = getPropertyValue(inputs, PropertyName.BODY);
   const generatedByDesigner = isFormDataGeneratedByDesigner(bodyInput);
   if (formDataInputParameters.length > 0 && !generatedByDesigner) {

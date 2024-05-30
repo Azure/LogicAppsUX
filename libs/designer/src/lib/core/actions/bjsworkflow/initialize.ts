@@ -18,7 +18,7 @@ import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedMan
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
-  getCustomCodeFileName,
+  getCustomCodeFileNameFromParameter,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -451,8 +451,7 @@ export const updateCallbackUrlInInputs = async (
   return;
 };
 
-export const initializeCustomCodeDataInInputs = (inputs: NodeInputs, nodeId: string, dispatch: Dispatch) => {
-  const parameter = getParameterFromName(inputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeId: string, dispatch: Dispatch) => {
   const language: EditorLanguage = parameter?.editorOptions?.language;
   if (parameter) {
     const fileData = generateDefaultCustomCodeValue(language);
@@ -466,31 +465,25 @@ export const initializeCustomCodeDataInInputs = (inputs: NodeInputs, nodeId: str
           nodeId,
           fileData,
           fileExtension: getFileExtensionName(language),
-          fileName: replaceWhiteSpaceWithUnderscore(nodeId),
+          fileName: replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language),
         })
       );
     }
   }
 };
 
-export const updateCustomCodeInInputs = async (
-  nodeId: string,
-  fileExtension: string,
-  nodeInputs: NodeInputs,
-  customCode: CustomCodeFileNameMapping
-) => {
+export const updateCustomCodeInInputs = async (parameter: ParameterInfo, customCode: CustomCodeFileNameMapping) => {
   if (isNullOrEmpty(customCode)) {
     return;
   }
-  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
-  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
+  const language: EditorLanguage = parameter?.editorOptions?.language;
+  const fileName = getCustomCodeFileNameFromParameter(parameter);
   try {
     const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
-    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
 
     if (parameter && customCodeValue) {
       parameter.editorViewModel = {
-        customCodeData: { fileData: customCodeValue, fileExtension, fileName },
+        customCodeData: { fileData: customCodeValue, fileExtension: getFileExtensionName(language), fileName },
       };
     }
   } catch (error) {

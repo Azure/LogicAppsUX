@@ -1,10 +1,11 @@
-import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Text } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { ChoiceGroup, css, List, MessageBar, MessageBarType, SearchBox } from '@fluentui/react';
+import { Spinner, Text } from '@fluentui/react-components';
 import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
+import { Label } from '../label';
 
 export interface AssistedConnectionProps {
   resourceType: string;
@@ -30,6 +31,7 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
   includeScore: true,
   minMatchCharLength: 2,
   includeMatches: true,
+  ignoreLocation: true,
   threshold: 0.4,
   keys: ['text'],
 };
@@ -89,9 +91,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
 
   return (
     <div style={{ width: '100%' }}>
-      <Label className="label" required>
-        {titleText}
-      </Label>
+      <Label className="label" isRequiredField={true} text={titleText} />
       <SearchBox placeholder={searchText} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
       <div className="msla-azure-resources-container">
         <div className="msla-azure-resource-list-header" style={{ gridTemplateColumns }}>

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { getStateHistory, setStateHistory } from './historyHelpers';
 import type { RootState } from './store';
-import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
+import type { ConnectionReferences, WorkflowParameter } from '@microsoft/logic-apps-designer';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -20,6 +20,7 @@ export interface WorkflowLoadingState {
   isConsumption: boolean;
   isLocal: boolean;
   showChatBot?: boolean;
+  parameters: Record<string, WorkflowParameter>;
   showConnectionsPanel?: boolean;
   workflowKind?: string;
   language: string;
@@ -28,6 +29,7 @@ export interface WorkflowLoadingState {
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     forceEnableSplitOn?: boolean; // force enable split on for all actions
+    stringOverrides?: Record<string, string>; // string overrides for localization
   };
   showPerformanceDebug?: boolean;
 }
@@ -35,6 +37,7 @@ export interface WorkflowLoadingState {
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   workflowDefinition: null,
+  parameters: {},
   runInstance: null,
   connections: {},
   resourcePath: '',
@@ -58,6 +61,7 @@ const initialState: WorkflowLoadingState = {
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
+  parameters: Record<string, WorkflowParameter>;
 };
 
 type RunPayload = {
@@ -70,7 +74,8 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const wf = await import(`../../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
-    connectionReferences: {},
+    connectionReferences: wf.connections as ConnectionReferences,
+    parameters: wf.parameters ?? {},
   } as WorkflowPayload;
 });
 
@@ -174,6 +179,9 @@ export const workflowLoadingSlice = createSlice({
     setShowPerformanceDebug: (state, action: PayloadAction<boolean>) => {
       state.showPerformanceDebug = action.payload;
     },
+    setStringOverrides: (state, action: PayloadAction<Record<string, string> | undefined>) => {
+      state.hostOptions.stringOverrides = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -182,9 +190,11 @@ export const workflowLoadingSlice = createSlice({
       }
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
+      state.parameters = action.payload?.parameters ?? {};
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
+      state.parameters = {};
     });
     builder.addCase(loadRun.fulfilled, (state, action: PayloadAction<RunPayload | null>) => {
       if (!action.payload) {
@@ -217,6 +227,7 @@ export const {
   setSuppressDefaultNodeSelect,
   setHostOptions,
   setShowPerformanceDebug,
+  setStringOverrides,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

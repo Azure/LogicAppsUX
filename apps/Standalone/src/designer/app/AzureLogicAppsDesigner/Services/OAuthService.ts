@@ -199,8 +199,6 @@ export class StandaloneOAuthService implements IOAuthService {
         },
       });
 
-      console.log('response', response);
-
       if (response?.value[0]?.link) {
         return response.value[0].link;
       }

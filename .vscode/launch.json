@@ -12,7 +12,7 @@
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
       "outFiles": ["${workspaceFolder}/apps/vs-code-designer/dist/*.js"],
-      "preLaunchTask": "npm: build",
+      "preLaunchTask": "npm: build:extension",
       "env": {
         "DEBUGTELEMETRY": "v"
       }

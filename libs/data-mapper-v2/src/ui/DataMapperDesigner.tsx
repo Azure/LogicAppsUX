@@ -1,232 +1,133 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-//import { CodeView, minCodeViewWidth } from '../components/codeView/CodeView';
-//import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-//import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
-//import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
-//import { WarningModal } from '../components/warningModal/WarningModal';
-//import { saveDataMap, showNotification } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-
-import { Stack } from '@fluentui/react';
-import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useDispatch, useSelector } from 'react-redux';
-import { ReactFlowProvider } from 'reactflow';
+import { useSelector, useDispatch } from 'react-redux';
+import type { Connection, CoordinateExtent, Node, Edge } from 'reactflow';
+import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
+import { Panel as FunctionPanel } from '../components/functions/Panel';
+import SchemaNode from '../components/common/reactflow/SchemaNode';
+import ConnectionLine from '../components/common/reactflow/ConnectionLine';
+import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
+import { updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import { DataMapperWrappedContext } from '../core';
 
-// danielle to strip
-
-const centerViewId = 'centerView';
-
-const useStaticStyles = makeStaticStyles({
-  // Firefox who's trying to early-adopt a WIP CSS standard (as of 11/2/2022)
-  '*': {
-    scrollbarColor: `${tokens.colorScrollbarOverlay} ${tokens.colorNeutralBackground1Hover}`,
-    scrollbarWidth: 'thin',
-  },
-  // Any WebKit browsers (essentially every other browser) - supposedly will eventually deprecate to the above
-  '*::-webkit-scrollbar': {
-    height: '8px',
-    width: '8px',
-  },
-  '*::-webkit-scrollbar-track:active': {
-    backgroundColor: tokens.colorNeutralBackground1Hover,
-    border: `0.5px solid ${tokens.colorNeutralStroke2}`,
-  },
-  '*::-webkit-scrollbar-thumb': {
-    backgroundClip: 'content-box',
-    border: '2px solid transparent',
-    borderRadius: '10000px',
-    backgroundColor: tokens.colorScrollbarOverlay,
-  },
-  '.react-flow svg': {
-    overflow: 'visible !important',
-  },
-  '.react-flow__minimap': {
-    borderRadius: tokens.borderRadiusMedium,
-    overflow: 'hidden',
-    boxShadow: tokens.shadow8,
-    backgroundColor: tokens.colorNeutralBackground1,
-    '& svg': {
-      width: '100%',
-      height: '100%',
-    },
-  },
-  '.react-flow__minimap-mask': {
-    stroke: tokens.colorBrandStroke1,
-    strokeWidth: '6px',
-    strokeLinejoin: 'round',
-    fillOpacity: '0',
-  },
-});
-
-const useStyles = makeStyles({
-  dataMapperShell: {
-    backgroundColor: tokens.colorNeutralBackground4,
-    paddingLeft: '12px',
-    paddingRight: '12px',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    ...shorthands.flex(1, 1, '1px'),
-  },
-  canvasWrapper: {
-    height: '100%',
-  },
-});
-
-export interface DataMapperDesignerProps {
+interface DataMapperDesignerProps {
   saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
   saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
-  // addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
-  readCurrentSchemaOptions?: () => void;
+  readCurrentSchemaOptions: () => void;
   readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
 export const DataMapperDesigner = ({
-  saveMapDefinitionCall,
-  //saveXsltCall,
-  saveDraftStateCall,
-  // addSchemaFromFile,
-  // readCurrentSchemaOptions,
   readCurrentCustomXsltPathOptions,
   setIsMapStateDirty,
+  readCurrentSchemaOptions,
 }: DataMapperDesignerProps) => {
-  const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
   const styles = useStyles();
+  const ref = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
-  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
-  const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
-  const { centerViewHeight, centerViewWidth } = useCenterViewSize();
-  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
-  // const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
-  // const [codeViewExpandedWidth, setCodeViewExpandedWidth] = useState(minCodeViewWidth);
-  const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
+  const nodeTypes = useMemo(
+    () => ({
+      schemaNode: SchemaNode,
+    }),
+    []
+  );
+
+  const edgeTypes = useMemo(
+    () => ({
+      connectedEdge: ConnectedEdge,
+    }),
+    []
+  );
+
+  const reactFlowExtent = useMemo(() => {
+    if (ref?.current) {
+      const rect = ref.current.getBoundingClientRect();
+      if (rect) {
+        return [
+          [0, 0],
+          [rect.width, rect.height],
+        ] as CoordinateExtent;
+      }
+    }
+
+    return undefined;
+  }, [ref]);
+
+  const dispatchEdgesAndNodes = useCallback(
+    (updatedEdges: Edge[], updatedNodes: Node[]) => {
+      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
+
+      const newNodes = [
+        ...updatedNodes.map((node) => ({
+          ...node,
+          data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
+        })),
+      ];
+
+      dispatch(updateReactFlowEdges(updatedEdges));
+
+      dispatch(updateReactFlowNodes(newNodes));
+    },
+    [dispatch]
+  );
+
+  const onEdgeConnect = useCallback(
+    (connection: Connection) => {
+      const newEdges = addEdge(
+        {
+          ...connection,
+          type: 'connectedEdge',
+          updatable: 'target',
+          focusable: true,
+          deletable: true,
+        },
+        edges
+      );
+      dispatchEdgesAndNodes(newEdges, nodes);
+    },
+    [edges, nodes, dispatchEdgesAndNodes]
+  );
+
+  const onEdgeUpdate = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => {
+      const newEdges = addEdge(
+        {
+          ...newConnection,
+          type: 'connectedEdge',
+          updatable: 'target',
+          focusable: true,
+          deletable: true,
+        },
+        edges.filter((edge) => edge.id !== oldEdge.id)
+      );
+
+      dispatchEdgesAndNodes(newEdges, nodes);
+    },
+    [edges, nodes, dispatchEdgesAndNodes]
+  );
+
+  const isValidConnection = useCallback(
+    (connection: Connection) => {
+      return !edges.find((edge) => edge.source === connection.source && edge.target === connection.target);
+    },
+    [edges]
+  );
 
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
-
-  // const dataMapDefinition = useMemo<string>(() => {
-  //   if (sourceSchema && targetSchema) {
-  //     try {
-  //       const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
-
-  //       if (saveDraftStateCall) {
-  //         saveDraftStateCall(newDataMapDefinition);
-  //       }
-
-  //       return newDataMapDefinition;
-  //     } catch (error) {
-  //       let errorMessage = '';
-  //       if (typeof error === 'string') {
-  //         errorMessage = error;
-  //       } else if (error instanceof Error) {
-  //         errorMessage = error.message;
-  //       }
-
-  //       LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
-  //         message: errorMessage,
-  //       });
-
-  //       return '';
-  //     }
-  //   }
-
-  //   return '';
-  // }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, saveDraftStateCall]);
-
-  // const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
-  //   if (addSchemaFromFile) {
-  //     // Will cause DM to ping VS Code to check schema file is in appropriate folder, then we will make getSchema API call
-  //     addSchemaFromFile(schemaFile);
-  //   }
-  // };
-
-  // const onSaveClick = useCallback(() => {
-  //   const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
-
-  //   if (errors.length > 0) {
-  //     dispatch(
-  //       showNotification({
-  //         type: NotificationTypes.MapHasErrorsAtSave,
-  //         msgParam: errors.length,
-  //         autoHideDurationMs: errorNotificationAutoHideDuration,
-  //       })
-  //     );
-  //   }
-
-  //   const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
-
-  //   saveMapDefinitionCall(dataMapDefinition, mapMetadata);
-
-  //   dispatch(
-  //     saveDataMap({
-  //       sourceSchemaExtended: sourceSchema,
-  //       targetSchemaExtended: targetSchema,
-  //     })
-  //   );
-  // }, [
-  //   currentConnections,
-  //   flattenedTargetSchema,
-  //   functions,
-  //   saveMapDefinitionCall,
-  //   dataMapDefinition,
-  //   dispatch,
-  //   sourceSchema,
-  //   targetSchema,
-  // ]);
-
-  // NOTE: We don't have Generate anymore, this may be combined with save?
-  // const onGenerateClick = useCallback(() => {
-  //   const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
-
-  //   if (errors.length > 0) {
-  //     dispatch(
-  //       showNotification({
-  //         type: NotificationTypes.MapHasErrorsAtSave,
-  //         msgParam: errors.length,
-  //         autoHideDurationMs: errorNotificationAutoHideDuration,
-  //       })
-  //     );
-  //   }
-
-  // generateDataMapXslt(dataMapDefinition)
-  //   .then((xsltStr) => {
-  //     saveXsltCall(xsltStr);
-
-  //     LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-  //       message: 'Successfully generated xslt',
-  //     });
-  //   })
-  //   .catch((error: Error) => {
-  //     LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-  //       message: error.message,
-  //     });
-
-  //     dispatch(
-  //       showNotification({
-  //         type: NotificationTypes.GenerateFailed,
-  //         msgBody: error.message,
-  //         autoHideDurationMs: errorNotificationAutoHideDuration,
-  //       })
-  //     );
-  //   });
-  // }, [currentConnections, flattenedTargetSchema, dispatch]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -235,124 +136,59 @@ export const DataMapperDesigner = ({
     }
   }, [isMapStateDirty, setIsMapStateDirty]);
 
-  // const ctrlSPressed = useKeyPress(['Meta+s', 'ctrl+s']);
-  // useEffect(() => {
-  //   if (ctrlSPressed) {
-  //     onSaveClick();
-  //   }
-  // }, [ctrlSPressed, onSaveClick]);
-
-  // const onUndoClick = () => {
-  //   dispatch(ActionCreators.undo());
-  // };
-
-  // const setTestMapPanelOpen = (toOpen: boolean) => {
-  //   setIsTestMapPanelOpen(toOpen);
-
-  //   LogService.log(LogCategory.TestMapPanel, 'openOrCloseTestMapPanel', {
-  //     message: `${toOpen ? 'Opened' : 'Closed'} test map panel`,
-  //   });
-  // };
-
-  // const setCodeViewOpen = (toOpen: boolean) => {
-  //   setIsCodeViewOpen(toOpen);
-
-  //   LogService.log(LogCategory.CodeView, 'openOrCloseCodeView', {
-  //     message: `${toOpen ? 'Opened' : 'Closed'} code view`,
-  //   });
-  // };
-
-  const getCanvasAreaHeight = () => {
-    // PropPane isn't shown when in the other views, so canvas can use full height
-
-    if (isPropPaneExpanded) {
-      return centerViewHeight;
-    }
-    return centerViewHeight;
-  };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
-        <div className={styles.dataMapperShell}>
+        <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
           <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
-          <AddSchemaDrawer
-            onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-            readCurrentSchemaOptions={() => console.log('')}
-            schemaType={SchemaType.Source}
-
-            // onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
-            // readCurrentSchemaOptions={readCurrentSchemaOptions}
-          />
-
-          <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
-            <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
-              <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
-                <div
-                  style={{
-                    height: getCanvasAreaHeight(),
-                    marginBottom: 0,
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  <Stack horizontal style={{ height: '100%' }}>
-                    <div
-                      className={styles.canvasWrapper}
-                      style={{
-                        // width: isCodeViewOpen ? '75%' : '100%',
-                        backgroundColor: tokens.colorNeutralBackground4,
-                      }}
-                    >
-                      {/* <ReactFlowWrapper
-                          canvasBlockHeight={getCanvasAreaHeight()}
-                          canvasBlockWidth={centerViewWidth}
-                          useExpandedFunctionCards={useExpandedFunctionCards}
-                          openMapChecker={openMapChecker}
-                        /> */}
-                    </div>
-                    {/* 
-                    <CodeView
-                      dataMapDefinition={dataMapDefinition}
-                      isCodeViewOpen={isCodeViewOpen}
-                      setIsCodeViewOpen={setCodeViewOpen}
-                      canvasAreaHeight={getCanvasAreaHeight()}
-                      centerViewWidth={centerViewWidth}
-                      contentWidth={codeViewExpandedWidth}
-                      setContentWidth={setCodeViewExpandedWidth}
-                    /> */}
-                  </Stack>
-                </div>
-              </div>
+          <div className={styles.dataMapperShell}>
+            <FunctionPanel />
+            <AddSchemaDrawer
+              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+              readCurrentSchemaOptions={() => console.log('')}
+              schemaType={SchemaType.Source}
+            />
+            <div ref={ref} id="editorView" className={styles.canvasWrapper}>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodesDraggable={false}
+                selectNodesOnDrag={false}
+                onlyRenderVisibleElements={false}
+                zoomOnScroll={false}
+                zoomOnPinch={false}
+                nodesConnectable={true}
+                zoomOnDoubleClick={false}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                preventScrolling={false}
+                minZoom={1}
+                elementsSelectable={false}
+                maxZoom={1}
+                autoPanOnConnect={false}
+                snapToGrid={true}
+                panOnScroll={false}
+                panOnDrag={false}
+                style={reactFlowStyle}
+                proOptions={{
+                  account: 'paid-sponsor',
+                  hideAttribution: true,
+                }}
+                isValidConnection={isValidConnection}
+                onConnect={onEdgeConnect}
+                onEdgeUpdate={onEdgeUpdate}
+                connectionLineComponent={ConnectionLine}
+                translateExtent={reactFlowExtent}
+              />
             </div>
+            <AddSchemaDrawer
+              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+              readCurrentSchemaOptions={readCurrentSchemaOptions}
+              schemaType={SchemaType.Target}
+            />
           </div>
-
-          {/* <TestMapPanel mapDefinition={dataMapDefinition} isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} /> */}
-        </div>
+        </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>
     </DndProvider>
   );
-};
-
-const useCenterViewSize = () => {
-  const [centerViewWidth, setCenterViewWidth] = useState(0);
-  const [centerViewHeight, setCenterViewHeight] = useState(0);
-
-  useEffect(() => {
-    const centerViewElement = document.getElementById(centerViewId);
-
-    const centerViewResizeObserver = new ResizeObserver((entries) => {
-      if (entries.length && entries.length > 0) {
-        setCenterViewHeight(entries[0].contentRect.height);
-        setCenterViewWidth(entries[0].contentRect.width);
-      }
-    });
-
-    if (centerViewElement) {
-      centerViewResizeObserver.observe(centerViewElement);
-    }
-
-    return () => centerViewResizeObserver.disconnect();
-  }, []);
-
-  return { centerViewWidth, centerViewHeight };
 };

@@ -57,7 +57,7 @@ import {
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const apiVersion = '2020-06-01';
@@ -170,11 +170,12 @@ const DesignerEditor = () => {
         tenantId,
         objectId,
         canonicalLocation,
+        language,
         queryClient,
         dispatch
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -370,6 +371,7 @@ const getDesignerServices = (
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
+  locale: string | undefined,
   queryClient: QueryClient,
   dispatch: AppDispatch
 ): any => {
@@ -520,6 +522,7 @@ const getDesignerServices = (
     },
     showStatefulOperations: isStateful,
     isDev: false,
+    locale,
   });
 
   const oAuthService = new StandaloneOAuthService({

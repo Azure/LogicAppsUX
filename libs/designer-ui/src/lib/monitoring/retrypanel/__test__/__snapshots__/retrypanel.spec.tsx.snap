@@ -80,7 +80,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -194,8 +194,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Duration'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -203,6 +203,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -211,7 +212,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -225,7 +226,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -233,6 +234,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -241,7 +243,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -267,7 +269,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -275,7 +277,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -296,7 +298,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -304,8 +306,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Switch 'Start time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -313,6 +315,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
                   type="button"
                 >
                   <span
@@ -321,7 +324,38 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -335,7 +369,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -343,6 +377,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -351,7 +386,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -377,120 +412,158 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
+                    className="token plain"
                   >
-                    2
+                    2/8/2022, 2:52:00 PM (Local Time)
                   </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
                   <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -519,8 +592,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Status'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -528,6 +601,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -536,7 +610,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -550,7 +624,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -558,6 +632,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -566,7 +641,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -592,7 +667,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -629,8 +704,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Client request ID'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -638,6 +713,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -646,7 +722,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -660,7 +736,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -668,6 +744,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -676,7 +753,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -702,626 +779,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    clientRequestId
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>,
-]
-`;
-
-exports[`lib/monitoring/retrypanel > should render 2`] = `
-[
-  <div
-    className="msla-retrypanel-callout-pager"
-  >
-    <div
-      className="msla-pager-v2"
-      onClick={[Function]}
-    >
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Previous"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronLeft"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip32"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Previous
-          </div>
-        </div>
-      </div>
-      <div
-        className="msla-pager-v2--inner"
-      >
-        <span
-          className="css-120"
-        >
-          1 of 1
-        </span>
-      </div>
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Next"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronRight"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip36"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Next
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>,
-  <div
-    className="msla-panel-callout-content"
-  >
-    <div
-      className="msla-trace-inputs-outputs"
-    >
-      <div
-        className="msla-trace-inputs-outputs-header"
-      >
-        <div
-          className="msla-trace-inputs-outputs-header-text"
-        >
-          Retry
-        </div>
-      </div>
-      <div
-        className="msla-trace-values"
-      >
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Duration
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Duration"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    --
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Start time
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Start time"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    2/8/2022, 7:52:00 PM
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Status
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Status"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    code
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Client request ID
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Client request ID"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -1399,7 +858,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           </button>
           <div
             hidden={true}
-            id="tooltip70"
+            id="tooltip88"
             style={
               {
                 "border": 0,
@@ -1421,7 +880,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -1475,7 +934,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           </button>
           <div
             hidden={true}
-            id="tooltip74"
+            id="tooltip92"
             style={
               {
                 "border": 0,
@@ -1535,8 +994,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Duration'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1544,6 +1003,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -1552,7 +1012,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1566,7 +1026,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1574,6 +1034,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1582,7 +1043,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1608,7 +1069,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -1616,7 +1077,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -1637,7 +1098,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -1645,8 +1106,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Switch 'Start time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1654,6 +1115,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
                   type="button"
                 >
                   <span
@@ -1662,7 +1124,38 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1676,7 +1169,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1684,6 +1177,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1692,7 +1186,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1718,120 +1212,158 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
+                    className="token plain"
                   >
-                    2
+                    2/8/2022, 2:52:00 PM (Local Time)
                   </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
                   <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -1860,8 +1392,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Status'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1869,6 +1401,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -1877,7 +1410,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -1891,7 +1424,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1899,6 +1432,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -1907,7 +1441,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -1933,7 +1467,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -1970,8 +1504,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Client request ID'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -1979,6 +1513,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -1987,7 +1522,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2001,7 +1536,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2009,6 +1544,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2017,7 +1553,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2043,7 +1579,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -2080,8 +1616,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Service request ID"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Service request ID'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2089,6 +1625,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Service request ID'"
                   type="button"
                 >
                   <span
@@ -2097,7 +1634,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -2111,7 +1648,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 </button>
                 <button
                   aria-label="Copy the value of 'Service request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -2119,6 +1656,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Service request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -2127,7 +1665,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -2153,736 +1691,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    serviceRequestId
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>,
-]
-`;
-
-exports[`lib/monitoring/retrypanel > should render a service request ID when available 2`] = `
-[
-  <div
-    className="msla-retrypanel-callout-pager"
-  >
-    <div
-      className="msla-pager-v2"
-      onClick={[Function]}
-    >
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Previous"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronLeft"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip178"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Previous
-          </div>
-        </div>
-      </div>
-      <div
-        className="msla-pager-v2--inner"
-      >
-        <span
-          className="css-120"
-        >
-          1 of 1
-        </span>
-      </div>
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Next"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronRight"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip182"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Next
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>,
-  <div
-    className="msla-panel-callout-content"
-  >
-    <div
-      className="msla-trace-inputs-outputs"
-    >
-      <div
-        className="msla-trace-inputs-outputs-header"
-      >
-        <div
-          className="msla-trace-inputs-outputs-header-text"
-        >
-          Retry
-        </div>
-      </div>
-      <div
-        className="msla-trace-values"
-      >
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Duration
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Duration"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    --
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Start time
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Start time"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    2/8/2022, 7:52:00 PM
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Status
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Status"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    code
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Client request ID
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Client request ID"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    clientRequestId
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Service request ID
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Service request ID"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Service request ID"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Service request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -2960,7 +1770,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           </button>
           <div
             hidden={true}
-            id="tooltip32"
+            id="tooltip44"
             style={
               {
                 "border": 0,
@@ -2982,7 +1792,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -3036,7 +1846,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           </button>
           <div
             hidden={true}
-            id="tooltip36"
+            id="tooltip48"
             style={
               {
                 "border": 0,
@@ -3096,8 +1906,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Duration'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3105,6 +1915,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -3113,7 +1924,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -3127,7 +1938,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -3135,6 +1946,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -3143,7 +1955,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -3162,954 +1974,6 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   {
                     "backgroundColor": "#ffffff",
                     "color": "#000000",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": null,
-                      "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    18
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     minutes
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Start time
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Start time"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": null,
-                      "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            End time
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="End time"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in End time"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": null,
-                      "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    10
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Status
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Status"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": null,
-                      "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    code
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Client request ID
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Client request ID"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": null,
-                      "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    clientRequestId
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>,
-]
-`;
-
-exports[`lib/monitoring/retrypanel > should render an end time and duration when available 2`] = `
-[
-  <div
-    className="msla-retrypanel-callout-pager"
-  >
-    <div
-      className="msla-pager-v2"
-      onClick={[Function]}
-    >
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Previous"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronLeft"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip102"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Previous
-          </div>
-        </div>
-      </div>
-      <div
-        className="msla-pager-v2--inner"
-      >
-        <span
-          className="css-120"
-        >
-          1 of 1
-        </span>
-      </div>
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Next"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronRight"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip106"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Next
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>,
-  <div
-    className="msla-panel-callout-content"
-  >
-    <div
-      className="msla-trace-inputs-outputs"
-    >
-      <div
-        className="msla-trace-inputs-outputs-header"
-      >
-        <div
-          className="msla-trace-inputs-outputs-header-text"
-        >
-          Retry
-        </div>
-      </div>
-      <div
-        className="msla-trace-values"
-      >
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Duration
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Duration"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -4118,7 +1982,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -4146,7 +2010,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -4154,8 +2018,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Switch 'Start time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4163,6 +2027,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
                   type="button"
                 >
                   <span
@@ -4171,7 +2036,38 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -4185,7 +2081,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4193,6 +2089,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -4201,7 +2098,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -4218,8 +2115,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -4228,14 +2125,14 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 7:52:00 PM
+                    2/8/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -4256,7 +2153,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
             <div
               aria-label="End time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -4264,8 +2161,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in End time"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4273,6 +2170,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
                   type="button"
                 >
                   <span
@@ -4281,7 +2179,38 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -4295,7 +2224,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'End time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4303,6 +2232,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -4311,7 +2241,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -4328,8 +2258,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -4338,14 +2268,14 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 8:10:00 PM
+                    2/8/2022, 3:10:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -4374,8 +2304,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Status'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4383,6 +2313,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -4391,7 +2322,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -4405,7 +2336,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4413,6 +2344,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -4421,7 +2353,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -4438,8 +2370,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -4448,7 +2380,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -4484,8 +2416,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Client request ID'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4493,6 +2425,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -4501,7 +2434,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -4515,7 +2448,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4523,6 +2456,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -4531,7 +2465,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -4548,8 +2482,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
                   }
                 }
               >
@@ -4558,7 +2492,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   style={
                     {
                       "backgroundColor": undefined,
-                      "color": "#9CDCFE",
+                      "color": "#000000",
                     }
                   }
                 >
@@ -4636,7 +2570,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           </button>
           <div
             hidden={true}
-            id="tooltip108"
+            id="tooltip138"
             style={
               {
                 "border": 0,
@@ -4658,7 +2592,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
         className="msla-pager-v2--inner"
       >
         <span
-          className="css-120"
+          className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
         >
           1 of 1
         </span>
@@ -4712,7 +2646,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           </button>
           <div
             hidden={true}
-            id="tooltip112"
+            id="tooltip142"
             style={
               {
                 "border": 0,
@@ -4735,6 +2669,36 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
   <div
     className="msla-panel-callout-content"
   >
+    <div
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-129"
+    >
+      <div
+        className="ms-MessageBar-content content-130"
+      >
+        <div
+          aria-hidden={true}
+          className="ms-MessageBar-icon iconContainer-131"
+        >
+          <i
+            aria-hidden={true}
+            className="icon-139"
+            data-icon-name="Warning"
+          >
+            
+          </i>
+        </div>
+        <div
+          aria-live="assertive"
+          className="ms-MessageBar-text text-133"
+          id="MessageBar146"
+          role="alert"
+        >
+          <span
+            className="ms-MessageBar-innerText innerText-134"
+          />
+        </div>
+      </div>
+    </div>
     <div
       className="msla-trace-inputs-outputs"
     >
@@ -4772,8 +2736,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Duration'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4781,6 +2745,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Duration'"
                   type="button"
                 >
                   <span
@@ -4789,7 +2754,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -4803,7 +2768,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4811,6 +2776,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Duration' to the clipboard"
                   type="button"
                 >
                   <span
@@ -4819,7 +2785,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -4845,7 +2811,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -4853,7 +2819,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -4874,7 +2840,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
             <div
               aria-label="Start time"
               aria-readonly={true}
-              className="msla-colorizer-wrapper"
+              className="msla-colorizer-wrapper date-time"
               role="textbox"
               tabIndex={0}
             >
@@ -4882,8 +2848,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Switch 'Start time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4891,6 +2857,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Switch 'Start time' to the local time"
                   type="button"
                 >
                   <span
@@ -4899,7 +2866,38 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'Start time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Start time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -4913,7 +2911,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -4921,6 +2919,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Start time' to the clipboard"
                   type="button"
                 >
                   <span
@@ -4929,7 +2928,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -4955,120 +2954,158 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
+                    className="token plain"
                   >
-                    2
+                    2/8/2022, 2:52:00 PM (Local Time)
                   </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-128 ms-Button-icon icon-121"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
                   <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -5097,8 +3134,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Status'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -5106,6 +3143,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Status'"
                   type="button"
                 >
                   <span
@@ -5114,7 +3152,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -5128,7 +3166,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -5136,6 +3174,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Status' to the clipboard"
                   type="button"
                 >
                   <span
@@ -5144,7 +3183,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -5170,7 +3209,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
                     }
                   }
@@ -5207,8 +3246,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="buttons"
               >
                 <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
+                  aria-label="Select all text in 'Client request ID'"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -5216,6 +3255,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Select all text in 'Client request ID'"
                   type="button"
                 >
                   <span
@@ -5224,7 +3264,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
                       data-icon-name="SelectAll"
                       style={
                         {
@@ -5238,7 +3278,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 </button>
                 <button
                   aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
+                  className="ms-Button ms-Button--icon root-120"
                   data-is-focusable={true}
                   onClick={[Function]}
                   onKeyDown={[Function]}
@@ -5246,6 +3286,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
+                  title="Copy the value of 'Client request ID' to the clipboard"
                   type="button"
                 >
                   <span
@@ -5254,7 +3295,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   >
                     <i
                       aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
                       data-icon-name="Copy"
                       style={
                         {
@@ -5280,626 +3321,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
+                      "backgroundColor": undefined,
                       "color": "#000000",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    clientRequestId
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>,
-]
-`;
-
-exports[`lib/monitoring/retrypanel > should render an error when available 2`] = `
-[
-  <div
-    className="msla-retrypanel-callout-pager"
-  >
-    <div
-      className="msla-pager-v2"
-      onClick={[Function]}
-    >
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Previous"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronLeft"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip248"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Previous
-          </div>
-        </div>
-      </div>
-      <div
-        className="msla-pager-v2--inner"
-      >
-        <span
-          className="css-120"
-        >
-          1 of 1
-        </span>
-      </div>
-      <div
-        className="msla-pager-failed-container"
-      >
-        <div
-          className="ms-TooltipHost root-109"
-          onBlurCapture={[Function]}
-          onFocusCapture={[Function]}
-          onKeyDown={[Function]}
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-          role="none"
-        >
-          <button
-            aria-disabled={true}
-            aria-label="Next"
-            className="ms-Button ms-Button--icon is-disabled root-110"
-            data-is-focusable={false}
-            disabled={true}
-            onClick={[Function]}
-            onKeyDown={[Function]}
-            onKeyPress={[Function]}
-            onKeyUp={[Function]}
-            onMouseDown={[Function]}
-            onMouseUp={[Function]}
-            type="button"
-          >
-            <span
-              className="ms-Button-flexContainer flexContainer-111"
-              data-automationid="splitbuttonprimary"
-            >
-              <i
-                aria-hidden={true}
-                className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
-                data-icon-name="ChevronRight"
-                style={
-                  {
-                    "fontFamily": ""FabricMDL2Icons"",
-                  }
-                }
-              >
-                
-              </i>
-              <span
-                className="ms-Button-textContainer textContainer-112"
-              />
-            </span>
-          </button>
-          <div
-            hidden={true}
-            id="tooltip252"
-            style={
-              {
-                "border": 0,
-                "height": 1,
-                "margin": -1,
-                "overflow": "hidden",
-                "padding": 0,
-                "position": "absolute",
-                "whiteSpace": "nowrap",
-                "width": 1,
-              }
-            }
-          >
-            Next
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>,
-  <div
-    className="msla-panel-callout-content"
-  >
-    <div
-      className="msla-trace-inputs-outputs"
-    >
-      <div
-        className="msla-trace-inputs-outputs-header"
-      >
-        <div
-          className="msla-trace-inputs-outputs-header-text"
-        >
-          Retry
-        </div>
-      </div>
-      <div
-        className="msla-trace-values"
-      >
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Duration
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Duration"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Duration"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Duration' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    --
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Start time
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Start time"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Start time"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Start time' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    2/8/2022, 7:52:00 PM
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Status
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Status"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Status"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Status' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
-                    }
-                  }
-                >
-                  <span
-                    className="token plain"
-                  >
-                    code
-                  </span>
-                </div>
-              </pre>
-            </div>
-          </div>
-        </section>
-        <section
-          className="msla-trace-value-label"
-        >
-          <label
-            className="msla-trace-value-display-name"
-          >
-            Client request ID
-          </label>
-          <div
-            className="msla-colorizer-json-body"
-          >
-            <div
-              aria-label="Client request ID"
-              aria-readonly={true}
-              className="msla-colorizer-wrapper"
-              role="textbox"
-              tabIndex={0}
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  aria-label="Select all text in Client request ID"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
-                      data-icon-name="SelectAll"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-1"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-                <button
-                  aria-label="Copy the value of 'Client request ID' to the clipboard"
-                  className="ms-Button ms-Button--icon root-121"
-                  data-is-focusable={true}
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  onKeyPress={[Function]}
-                  onKeyUp={[Function]}
-                  onMouseDown={[Function]}
-                  onMouseUp={[Function]}
-                  type="button"
-                >
-                  <span
-                    className="ms-Button-flexContainer flexContainer-111"
-                    data-automationid="splitbuttonprimary"
-                  >
-                    <i
-                      aria-hidden={true}
-                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
-                      data-icon-name="Copy"
-                      style={
-                        {
-                          "fontFamily": ""FabricMDL2Icons-2"",
-                        }
-                      }
-                    >
-                      
-                    </i>
-                  </span>
-                </button>
-              </div>
-              <pre
-                className="prism-code language-json"
-                style={
-                  {
-                    "backgroundColor": "#1E1E1E",
-                    "color": "#9CDCFE",
-                  }
-                }
-              >
-                <div
-                  className="token-line"
-                  style={
-                    {
-                      "backgroundColor": undefined,
-                      "color": "#9CDCFE",
                     }
                   }
                 >

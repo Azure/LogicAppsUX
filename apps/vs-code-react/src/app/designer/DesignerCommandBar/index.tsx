@@ -13,14 +13,12 @@ import {
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
-import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMutation } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -33,18 +31,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
+  const designerState = DesignerStore.getState();
 
-  const isMonitoringView = useSelector(
-    createSelector(
-      (state: RootState) => state.designerOptions,
-      (state: any) => state.isMonitoringView
-    )
-  );
-
+  const isMonitoringView = designerState.designerOptions.isMonitoringView;
   const designerIsDirty = useIsDesignerDirty();
 
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
       skipValidation: false,
       ignoreNonCriticalErrors: true,
@@ -124,13 +116,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
   });
 
-  const allInputErrors = useSelector((state: RootState) => {
-    return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
-      Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
-        parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
-      )
-    );
-  });
+  const allInputErrors = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
+    Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
+      parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
+    )
+  );
 
   const haveInputErrors = allInputErrors.length > 0;
   const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();

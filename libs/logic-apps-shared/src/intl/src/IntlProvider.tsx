@@ -3,16 +3,20 @@ import type { OnErrorFn } from '@formatjs/intl';
 import type React from 'react';
 import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface IntlProviderProps {
   locale: string;
   defaultLocale: string;
   onError: OnErrorFn;
   children?: React.ReactNode;
+  stringOverrides?: Record<string, string>;
 }
 
-const loadLocaleData = async (locale: string): Promise<Record<string, string> | Record<string, MessageFormatElement[]>> => {
+export const loadLocaleData = async (
+  locale: string,
+  stringOverrides?: Record<string, string>
+): Promise<Record<string, string> | Record<string, MessageFormatElement[]>> => {
   let messages: any = {};
   switch (locale.split('-')[0].toLowerCase()) {
     case 'nl': {
@@ -102,12 +106,12 @@ const loadLocaleData = async (locale: string): Promise<Record<string, string> | 
   }
   //any strings with a key that has symbols gets compiled to be in the default object rather than exported individually as a module
   const defaultMessages = messages.default ?? {};
-  return { ...messages, ...defaultMessages };
+  return { ...messages, ...defaultMessages, ...(stringOverrides ?? {}) };
 };
 
-export const IntlProvider: React.FC<IntlProviderProps> = ({ locale, defaultLocale, children, onError }) => {
-  const { data } = useQuery(['localizationMessages', locale], async () => {
-    const messages = await loadLocaleData(locale);
+export const IntlProvider: React.FC<IntlProviderProps> = ({ locale, defaultLocale, children, stringOverrides, onError }) => {
+  const { data } = useQuery(['localizationMessages', locale, stringOverrides], async () => {
+    const messages = await loadLocaleData(locale, stringOverrides);
     return { ...messages };
   });
 
