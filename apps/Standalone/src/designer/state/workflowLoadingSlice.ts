@@ -30,6 +30,7 @@ export interface WorkflowLoadingState {
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     forceEnableSplitOn?: boolean; // force enable split on for all actions
+    stringOverrides?: Record<string, string>; // string overrides for localization
   };
   showPerformanceDebug?: boolean;
 }
@@ -187,6 +188,9 @@ export const workflowLoadingSlice = createSlice({
     setShowPerformanceDebug: (state, action: PayloadAction<boolean>) => {
       state.showPerformanceDebug = action.payload;
     },
+    setStringOverrides: (state, action: PayloadAction<Record<string, string> | undefined>) => {
+      state.hostOptions.stringOverrides = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -233,6 +237,7 @@ export const {
   setSuppressDefaultNodeSelect,
   setHostOptions,
   setShowPerformanceDebug,
+  setStringOverrides,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

@@ -21,7 +21,7 @@ export const MoveWrapper = ({ children, className, onChange, style, value }: Mov
 
   const getBoundingClientRect = (): DOMRect | undefined => {
     return divRef.current?.getBoundingClientRect();
-  }
+  };
 
   const move = (e: React.MouseEvent | MouseEvent): void => {
     const rect = getBoundingClientRect();
@@ -69,13 +69,13 @@ export const MoveWrapper = ({ children, className, onChange, style, value }: Mov
       const offset = keyMoveMap[key];
 
       onChange({
-        x: clamp(value.x + (multiplier * offset.x), width, 0),
-        y: clamp(value.y + (multiplier * offset.y), height, 0),
+        x: clamp(value.x + multiplier * offset.x, width, 0),
+        y: clamp(value.y + multiplier * offset.y, height, 0),
       });
 
       e.preventDefault();
     }
-  }
+  };
 
   return (
     <div ref={divRef} className={className} style={style} tabIndex={0} onMouseDown={onMouseDown} onKeyDown={onKeyDown}>

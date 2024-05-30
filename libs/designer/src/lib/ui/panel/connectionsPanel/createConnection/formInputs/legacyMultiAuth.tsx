@@ -1,6 +1,7 @@
-import { Dropdown, type IDropdownOption, Label } from '@fluentui/react';
+import { Dropdown, type IDropdownOption } from '@fluentui/react';
 import { useMemo, type FormEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
+import { Label } from '@microsoft/designer-ui';
 
 export const LegacyMultiAuthOptions = {
   oauth: 0,
@@ -95,9 +96,13 @@ const LegacyMultiAuth = ({
 
   return (
     <div className="param-row">
-      <Label className="label" required htmlFor={'legacy-connection-param-set-select'} disabled={isLoading}>
-        {legacyMultiAuthLabelText}
-      </Label>
+      <Label
+        className="label"
+        text={legacyMultiAuthLabelText}
+        isRequiredField={true}
+        htmlFor={'legacy-connection-param-set-select'}
+        disabled={isLoading}
+      />
       <Dropdown
         id="legacy-connection-param-set-select"
         className="connection-parameter-input"

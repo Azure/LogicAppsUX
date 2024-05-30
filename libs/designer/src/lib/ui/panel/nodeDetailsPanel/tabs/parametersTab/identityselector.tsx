@@ -5,7 +5,8 @@ import { setIsWorkflowDirty } from '../../../../../core/state/workflow/workflowS
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../../core/utils/connectors/connections';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
-import { Dropdown, FontSizes, Label } from '@fluentui/react';
+import { Dropdown, FontSizes } from '@fluentui/react';
+import { Label } from '@microsoft/designer-ui';
 import { WorkflowService, isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
@@ -100,7 +101,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   return (
     <div className="identity-selector">
-      <Label className="label">{labelText}</Label>
+      <Label className="label" text={labelText} />
       <Dropdown
         ariaLabel={labelText}
         disabled={readOnly}

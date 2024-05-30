@@ -9,6 +9,7 @@ import {
   useIsUnitTestView,
   useShowPerformanceDebug,
   useSuppressDefaultNodeSelect,
+  useStringOverrides,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -22,6 +23,7 @@ import {
   setUnitTest,
   setShowPerformanceDebug,
   setSuppressDefaultNodeSelect,
+  setStringOverrides,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -37,6 +39,7 @@ const ContextSettings = () => {
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelect();
   const hostOptions = useHostOptions();
   const showPerformanceDebug = useShowPerformanceDebug();
+  const showTestStringOverride = useStringOverrides();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -101,6 +104,22 @@ const ContextSettings = () => {
         label="Show Performance Debug"
         checked={showPerformanceDebug}
         onChange={(_, checked) => dispatch(setShowPerformanceDebug(!!checked))}
+      />
+      <Checkbox
+        label="Test String Override"
+        checked={showTestStringOverride}
+        onChange={(_, checked) => {
+          dispatch(
+            setStringOverrides(
+              checked
+                ? {
+                    g5A6Bn: 'Connector Type',
+                    TRpSCQ: 'Action or Trigger',
+                  }
+                : undefined
+            )
+          );
+        }}
       />
     </div>
   );
