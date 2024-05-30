@@ -1,5 +1,5 @@
+import type { SchemaExtended} from '@microsoft/logic-apps-shared';
 import { SchemaType, equals, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import mockTree from '../mock-test-file';
 import { Tree, TreeItem, TreeItemLayout, mergeClasses, type TreeItemOpenChangeData } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useEffect, useState, useMemo } from 'react';
@@ -7,10 +7,10 @@ import { TreeNode } from './TreeNode';
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
+  schema: SchemaExtended;
 };
 
 export const SchemaTree = (props: SchemaTreeProps) => {
-  const mockData = mockTree;
   const styles = useStyles();
   const { schemaType } = props;
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
@@ -36,9 +36,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       }
     };
 
-    setDefaultState(mockData.schemaTreeRoot);
+    setDefaultState(props.schema.schemaTreeRoot);
     setOpenKeys(openKeys);
-  }, [mockData]);
+  }, [props.schema]);
 
   const displaySchemaTree = (root: SchemaNodeExtended) => {
     if (root.children.length === 0) {
@@ -59,12 +59,12 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     );
   };
 
-  return mockData.schemaTreeRoot ? (
+  return props.schema.schemaTreeRoot ? (
     <Tree
       className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
       aria-label="tree"
     >
-      {displaySchemaTree(mockData.schemaTreeRoot)}
+      {displaySchemaTree(props.schema.schemaTreeRoot)}
     </Tree>
   ) : (
     <></>
