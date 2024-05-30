@@ -9,7 +9,7 @@ import { EditorValueChange } from './plugins/EditorValueChange';
 import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { FilePickerBreadcrumb } from './types';
 import { PickerItemType } from './types';
-import { Button, Menu, MenuTrigger, Tooltip } from '@fluentui/react-components';
+import { Button, Popover, PopoverTrigger, Tooltip } from '@fluentui/react-components';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
@@ -152,7 +152,7 @@ export const FilePickerEditor = ({
         />
         <UpdateEditorFromFilePicker pickerDisplayValue={pickerDisplayValue} />
       </EditorWrapper>
-      <Menu
+      <Popover
         open={showPicker}
         onOpenChange={(_event, data) => {
           if (!showPicker && data.open) {
@@ -169,11 +169,13 @@ export const FilePickerEditor = ({
           });
         }}
         positioning="before-top"
+        trapFocus={true}
+        withArrow={true}
       >
         <Tooltip content={openFolderLabel} relationship="label">
-          <MenuTrigger disableButtonEnhancement={true}>
+          <PopoverTrigger disableButtonEnhancement={true}>
             <Button appearance="subtle" aria-label={openFolderLabel} icon={<Folder28Regular />} />
-          </MenuTrigger>
+          </PopoverTrigger>
         </Tooltip>
         <FilePickerPopover
           currentPathSegments={titleSegments}
@@ -183,7 +185,7 @@ export const FilePickerEditor = ({
           handleItemSelected={onFileFolderSelected}
           loadingFiles={isLoading}
         />
-      </Menu>
+      </Popover>
     </div>
   );
 };

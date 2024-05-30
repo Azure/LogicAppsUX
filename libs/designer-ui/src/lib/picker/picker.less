@@ -54,6 +54,7 @@
 
 div.msla-filepicker-body {
   max-width: initial;
+  padding: 4px;
   width: @pickerWidth;
 
   .msla-filepicker-content {
@@ -73,22 +74,22 @@ div.msla-filepicker-body {
 
   div.msla-filepicker-item {
     max-width: initial;
+
+    > span:nth-child(2) {
+      // Refers to the .fui-MenuItem__content element without referencing the class.
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   div.msla-filepicker-item-list {
     max-height: @maxPickerHeight;
     overflow: hidden auto;
-  
+
     div.msla-filepicker-item-split > .msla-filepicker-item {
       flex: 1;
       min-width: 0;
-
-      > span:nth-child(2) {
-        // Refers to the .fui-MenuItem__content element without referencing the class.
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
     }
   
     div.msla-filepicker-item-split > .msla-filepicker-item-split-chevron::before {

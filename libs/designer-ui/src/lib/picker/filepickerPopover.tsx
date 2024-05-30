@@ -1,7 +1,7 @@
 import { FilePickerPopoverHeader } from './filepickerPopoverHeader';
 import { FilePickerPopoverItem } from './filepickerPopoverItem';
 import type { FilePickerBreadcrumb } from './types';
-import { MenuList, MenuPopover, Spinner } from '@fluentui/react-components';
+import { MenuList, PopoverSurface, Spinner } from '@fluentui/react-components';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useIntl } from 'react-intl';
@@ -54,7 +54,7 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
     );
   } else {
     listContent = (
-      <MenuList className="msla-filepicker-item-list" tabIndex={0}>
+      <MenuList className="msla-filepicker-item-list">
         {files.map((file) => (
           <FilePickerPopoverItem
             file={file}
@@ -68,9 +68,9 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
   }
 
   return (
-    <MenuPopover className="msla-filepicker-body">
+    <PopoverSurface className="msla-filepicker-body">
       <FilePickerPopoverHeader currentPathSegments={currentPathSegments} />
       {listContent}
-    </MenuPopover>
+    </PopoverSurface>
   );
 };

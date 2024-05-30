@@ -18,6 +18,7 @@ import {
   Tooltip,
   useArrowNavigationGroup,
   useOverflowMenu,
+  useRestoreFocusTarget,
 } from '@fluentui/react-components';
 import { MoreHorizontalRegular } from '@fluentui/react-icons';
 import React from 'react';
@@ -44,6 +45,9 @@ const OverflowGroupDivider: React.FC<{
 const FilePickerPopoverHeaderItem: React.FC<{ index: number; item: FilePickerBreadcrumb; isLast: boolean }> = (props) => {
   const { index, item, isLast } = props;
 
+  const firstButtonFocusAttributes = useRestoreFocusTarget();
+  const focusAttributes = index === 0 ? firstButtonFocusAttributes : {};
+
   const itemId = item.key;
   const groupId = index;
 
@@ -51,7 +55,7 @@ const FilePickerPopoverHeaderItem: React.FC<{ index: number; item: FilePickerBre
     <React.Fragment key={`FilePicker.breadcrumb.${itemId}`}>
       <OverflowItem groupId={`${groupId}`} id={itemId} priority={index === 0 ? MAX_PRIORITY : index}>
         <BreadcrumbItem>
-          <BreadcrumbButton current={isLast} onClick={item.onSelect}>
+          <BreadcrumbButton current={isLast} onClick={item.onSelect} {...focusAttributes}>
             {item.text}
           </BreadcrumbButton>
         </BreadcrumbItem>
@@ -155,11 +159,11 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
 };
 
 export const FilePickerPopoverHeader: React.FC<FilePickerPopoverHeaderProps> = (props) => {
-  const arrowNavigationAttributes = useArrowNavigationGroup({ axis: 'horizontal', circular: false });
+  const focusAttributes = useArrowNavigationGroup({ axis: 'horizontal' });
 
   return (
     <Overflow minimumVisible={2}>
-      <Breadcrumb {...arrowNavigationAttributes}>
+      <Breadcrumb {...focusAttributes}>
         <FilePickerPopoverBreadcrumbs {...props} />
       </Breadcrumb>
     </Overflow>
