@@ -1,18 +1,18 @@
 import { Button, Menu, MenuTrigger, Tooltip } from '@fluentui/react-components';
-import type { BaseEditorProps, ChangeHandler } from '../editor/base';
-import { EditorWrapper } from '../editor/base/EditorWrapper';
-import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
-import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
-import type { ValueSegment } from '../editor/models/parameter';
-import { PickerItemType } from './pickerItem';
-import { EditorValueChange } from './plugins/EditorValueChange';
-import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { FilePickerSurface } from './filepickersurface';
+import type { BaseEditorProps, ChangeHandler } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
+import type { ValueSegment } from '../editor/models/parameter';
+import { FilePickerPopover } from './filepickerpopover';
+import { PickerItemType } from './pickerItem';
+import { EditorValueChange } from './plugins/EditorValueChange';
+import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { FilePickerBreadcrumb } from './types';
 
 export interface PickerCallbackHandlers {
@@ -149,22 +149,16 @@ export const FilePickerEditor = ({
       >
         <Tooltip content={openFolderLabel} relationship="label">
           <MenuTrigger disableButtonEnhancement={true}>
-            <Button
-              appearance="subtle"
-              aria-label={openFolderLabel}
-              icon={<Folder28Regular />}
-              onClick={openFolderPicker}
-            />
+            <Button appearance="subtle" aria-label={openFolderLabel} icon={<Folder28Regular />} onClick={openFolderPicker} />
           </MenuTrigger>
         </Tooltip>
-        <FilePickerSurface
+        <FilePickerPopover
           currentPathSegments={titleSegments}
           errorDetails={errorDetails}
           files={filterAndSortItems(items, type, fileFilters)}
           handleFolderNavigation={onFolderNavigated}
           handleItemSelected={onFileFolderSelected}
           loadingFiles={isLoading}
-          onCancel={() => setShowPicker(false)}
         />
       </Menu>
     </div>

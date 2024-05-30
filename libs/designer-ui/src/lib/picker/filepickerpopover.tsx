@@ -1,11 +1,19 @@
-import { Breadcrumb, BreadcrumbButton, BreadcrumbDivider, BreadcrumbItem, Menu, MenuItem, MenuList, MenuPopover, MenuSplitGroup, MenuTrigger, Popover, PopoverSurface, Spinner, Text } from '@fluentui/react-components';
-import { PickerHeader } from './pickerHeader';
-import { PickerItem } from './pickerItem';
+import {
+  Breadcrumb,
+  BreadcrumbButton,
+  BreadcrumbDivider,
+  BreadcrumbItem,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuSplitGroup,
+  Spinner,
+} from '@fluentui/react-components';
+import { ChevronRight12Regular, Document28Regular, Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 import type { FilePickerBreadcrumb } from './types';
-import { ChevronRight12Regular, Document28Regular, Folder28Regular } from '@fluentui/react-icons';
 
 export interface FilePickerProps {
   currentPathSegments: FilePickerBreadcrumb[];
@@ -14,19 +22,10 @@ export interface FilePickerProps {
   handleFolderNavigation: (item: TreeDynamicValue) => void;
   handleItemSelected: (item: TreeDynamicValue) => void;
   loadingFiles?: boolean;
-  onCancel?: () => void;
 }
 
-export const FilePickerSurface: React.FC<FilePickerProps> = (props) => {
-  const {
-    currentPathSegments,
-    errorDetails,
-    files,
-    handleFolderNavigation,
-    handleItemSelected,
-    loadingFiles,
-    onCancel,
-  } = props;
+export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
+  const { currentPathSegments, errorDetails, files, handleFolderNavigation, handleItemSelected, loadingFiles } = props;
 
   const intl = useIntl();
 
@@ -51,38 +50,19 @@ export const FilePickerSurface: React.FC<FilePickerProps> = (props) => {
       </div>
     );
   } else if (files.length === 0) {
-    listContent = (
-      <div className="msla-filepicker-no-list-message">
-        {noItemsMessage}
-      </div>
-    );
+    listContent = <div className="msla-filepicker-no-list-message">{noItemsMessage}</div>;
   } else if (errorDetails?.message) {
-    listContent = (
-      <div className="msla-filepicker-no-list-message">
-        {errorDetails.message}
-      </div>
-    );
+    listContent = <div className="msla-filepicker-no-list-message">{errorDetails.message}</div>;
   } else {
     listContent = (
       <MenuList className="msla-filepicker-item-list">
         {files.map((file) =>
           file.isParent ? (
-            <MenuSplitGroup
-              className="msla-filepicker-item-split"
-              key={`FilePicker.folder.${file.value.Id}`}
-            >
-              <MenuItem
-                className="msla-filepicker-item"
-                icon={<Folder28Regular />}
-                onClick={() => handleItemSelected(file)}
-              >
+            <MenuSplitGroup className="msla-filepicker-item-split" key={`FilePicker.folder.${file.value.Id}`}>
+              <MenuItem className="msla-filepicker-item" icon={<Folder28Regular />} onClick={() => handleItemSelected(file)}>
                 {file.displayName}
               </MenuItem>
-              <MenuItem
-                className="msla-filepicker-item-split-chevron"
-                onClick={() => handleFolderNavigation(file)}
-                persistOnClick={true}
-              >
+              <MenuItem className="msla-filepicker-item-split-chevron" onClick={() => handleFolderNavigation(file)} persistOnClick={true}>
                 <ChevronRight12Regular />
               </MenuItem>
             </MenuSplitGroup>
@@ -106,16 +86,9 @@ export const FilePickerSurface: React.FC<FilePickerProps> = (props) => {
       <Breadcrumb>
         {currentPathSegments.map((segment, index) => (
           <>
-            {index > 0 ? (
-              <BreadcrumbDivider key={`FilePicker.breadcrumbDivider.${segment.key}`} />
-            ) : null}
-            <BreadcrumbItem
-              key={`FilePicker.breadcrumb.${segment.key}`}
-            >
-              <BreadcrumbButton
-                current={index === currentPathSegments.length - 1}
-                onClick={segment.onSelect}
-              >
+            {index > 0 ? <BreadcrumbDivider key={`FilePicker.breadcrumbDivider.${segment.key}`} /> : null}
+            <BreadcrumbItem key={`FilePicker.breadcrumb.${segment.key}`}>
+              <BreadcrumbButton current={index === currentPathSegments.length - 1} onClick={segment.onSelect}>
                 {segment.text}
               </BreadcrumbButton>
             </BreadcrumbItem>
@@ -124,5 +97,5 @@ export const FilePickerSurface: React.FC<FilePickerProps> = (props) => {
       </Breadcrumb>
       {listContent}
     </MenuPopover>
-  )
+  );
 };
