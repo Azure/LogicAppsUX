@@ -15,17 +15,32 @@ import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFuncti
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
 
-const workflowSchemaFilenames = [
-  'Source.xsd',
-  'Target.xsd',
-  'SourceJson.json',
-  'folder/TargetJson.json',
-  'folder 2/file.json',
-  'a/a.json',
-  'a/b.json',
-  'a/b/c.json',
+const mockFileItems: IFileSysTreeItem[] = [
+  {
+    name: 'Child1.xsd',
+    type: 'file',
+    fullPath: '/Artifacts/Schemas/Child1.xsd',
+  },
+  {
+    name: 'Folder',
+    type: 'directory',
+    children: [
+      {
+        name: 'Abc.json',
+        type: 'file',
+        fullPath: '/Artifacts/Schemas/Folder/Abc.json',
+      },
+    ],
+  },
+  {
+    name: 'sourceSchema.json',
+    type: 'file',
+    fullPath: '/Artifacts/Schemas/sourceSchema.json',
+  },
 ];
+
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 
@@ -98,12 +113,12 @@ export const DataMapperStandaloneDesignerV2 = () => {
             dataMapMetadata={mapMetadata}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
-            availableSchemas={workflowSchemaFilenames}
+            availableSchemas={mockFileItems}
             customXsltPaths={customXsltPath}
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} />
+            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} readCurrentSchemaOptions={() => null}/>
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>

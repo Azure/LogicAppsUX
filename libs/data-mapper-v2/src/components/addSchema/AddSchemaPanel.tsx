@@ -23,7 +23,7 @@ const schemaFileQuerySettings = {
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
-  readCurrentSchemaOptions?: () => void;
+  readCurrentSchemaOptions: () => void;
   schemaType: SchemaType;
 }
 
@@ -232,6 +232,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
           errorMessage={errorMessage}
           uploadType={uploadType}
           setUploadType={setUploadType}
+          getUpdatedSchemaFiles={readCurrentSchemaOptions}
         />
       </InlineDrawer>
     </div>

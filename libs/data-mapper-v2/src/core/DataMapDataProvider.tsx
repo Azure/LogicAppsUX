@@ -1,5 +1,6 @@
 //import { MapDefinitionDeserializer } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
+import type { IFileSysTreeItem } from '../models/Tree';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
@@ -20,7 +21,7 @@ export interface DataMapDataProviderProps {
   dataMapMetadata?: MapMetadata;
   sourceSchema?: DataMapSchema;
   targetSchema?: DataMapSchema;
-  availableSchemas?: string[];
+  availableSchemas?: IFileSysTreeItem[];
   customXsltPaths?: string[];
   fetchedFunctions?: FunctionData[];
   theme?: ThemeType;
