@@ -8,7 +8,9 @@ import {
   toArrayViewModelSchema,
   toHybridConditionViewModel,
   getTokenExpressionMethodFromKey,
+  loadDynamicContentForInputsInNode,
 } from '../helper';
+import * as Helper from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
@@ -2832,6 +2834,25 @@ describe('core/utils/parameters/helper', () => {
       expect(result.items.condition).toEqual(GroupDropdownOptions.OR);
       expect(result.items.items.length).toEqual(1);
       expect(result.items.items[0].type).toEqual('row');
+    });
+  });
+
+  describe('loadDynamicContentForInputsInNode', () => {
+    test('should clear dynamic inputs for specific dynamic parameter reference', async () => {
+      const getStateMockFn = vi.fn(() => ({} as any));
+      const dispatchMockFn = vi.fn();
+
+      vi.spyOn(Helper, 'isDynamicDataReadyToLoad').mockReturnValue(false);
+      loadDynamicContentForInputsInNode('nodeId', /* isTrigger */false, {}, { operationId: 'o', connectorId: 'c', type: 'Workflow' }, undefined, dispatchMockFn, getStateMockFn);
+      expect(dispatchMockFn).toHaveBeenCalledWith({
+        type: 'CLEAR_DYNAMIC_INPUTS',
+        payload: {
+          nodeId: 'nodeId',
+          inputs: true,
+          outputs: false,
+          dynamicParameterKeys: []
+        },
+      });
     });
   });
 });

@@ -1973,7 +1973,7 @@ async function loadDynamicData(
   }
 }
 
-async function loadDynamicContentForInputsInNode(
+export async function loadDynamicContentForInputsInNode(
   nodeId: string,
   isTrigger: boolean,
   inputDependencies: Record<string, DependencyInfo>,
