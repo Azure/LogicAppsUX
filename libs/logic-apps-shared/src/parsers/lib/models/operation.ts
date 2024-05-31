@@ -18,6 +18,7 @@ export interface InputParameter extends ParameterBase {
   suppressCasting?: boolean;
   hideInUI?: boolean;
   alternativeKey?: string;
+  dynamicParameterReference?: string;
 }
 
 export interface Annotation {

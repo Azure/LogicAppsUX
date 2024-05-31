@@ -154,7 +154,12 @@ export async function getDynamicSchema(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
-  const emptySchema = { ...parameter?.schema };
+  const emptySchema = {
+    title: parameter?.schema?.title,
+    description: parameter?.schema?.description,
+    summary: parameter?.schema?.summary,
+    name: parameter?.schema?.name,
+  };
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
@@ -280,6 +285,7 @@ export async function getDynamicInputsFromSchema(
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
     ...toInputParameter(schemaProperty),
     isDynamic: true,
+    dynamicParameterReference: dynamicParameter.key,
     in: dynamicParameter.in,
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
@@ -602,7 +608,7 @@ function getManifestBasedInputParameters(
   ) {
     // load unknown inputs not in the schema by key.
     const resultParameters = map(result, 'key');
-    loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys);
+    loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys, dynamicParameter.key);
     result = unmap(resultParameters);
   }
 
@@ -625,7 +631,8 @@ function loadUnknownManifestBasedParameters(
   input: any,
   result: Record<string, InputParameter>,
   seenKeys: Set<string>,
-  knownKeys: Set<string>
+  knownKeys: Set<string>,
+  dynamicParameterReference: string
 ) {
   if (seenKeys.has(keyPrefix)) {
     return;
@@ -646,6 +653,7 @@ function loadUnknownManifestBasedParameters(
         required: false,
         value: input,
         isDynamic: true,
+        dynamicParameterReference,
         isUnknown: true,
       } as ResolvedParameter;
       knownKeys.add(keyPrefix);
@@ -661,7 +669,8 @@ function loadUnknownManifestBasedParameters(
         input[key],
         result,
         seenKeys,
-        knownKeys
+        knownKeys,
+        dynamicParameterReference
       );
     });
   }

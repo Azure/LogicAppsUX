@@ -45,6 +45,7 @@ export interface ParameterDetails {
   format?: string;
   in?: string;
   isDynamic?: boolean;
+  dynamicParameterReference?: string;
   isEditorManagedItem?: boolean; // Note: Flag to indicate whether this parameter is managed by a specific editor
   isUnknown?: boolean; // Whether the parameter is an unknown parameter (inferred to be 'any' type) sourced from the workflow definition
   parentProperty?: any;

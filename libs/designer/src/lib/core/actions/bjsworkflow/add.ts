@@ -25,7 +25,7 @@ import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
-import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
@@ -251,18 +251,7 @@ export const initializeOperationDetails = async (
       );
     }
   } else {
-    updateDynamicDataInNode(
-      nodeId,
-      isTrigger,
-      operationInfo,
-      undefined,
-      initData.nodeDependencies,
-      initData.nodeInputs,
-      initData.settings as Settings,
-      getAllVariables(getState().tokens.variables),
-      dispatch,
-      getState
-    );
+    updateDynamicDataInNode(nodeId, isTrigger, operationInfo, undefined, initData.nodeDependencies, dispatch, getState);
   }
 
   dispatch(setIsPanelLoading(false));

@@ -16,7 +16,7 @@ interface ChildWorkflowServiceOptions extends DynamicCallServiceOptions {
 }
 
 export class ChildWorkflowService {
-  private _workflowsRequestSchema: Record<string, any> = {};
+  private _workflowsRequestSchema: Record<string, any> | undefined;
 
   constructor(private readonly options: ChildWorkflowServiceOptions) {
     const { apiVersion, baseUrl, httpClient, siteResourceId, workflowName } = this.options;
@@ -79,7 +79,7 @@ export class ChildWorkflowService {
   }
 
   public async getLogicAppSwagger(workflowId: string): Promise<Record<string, any>> {
-    if (hasProperty(this._workflowsRequestSchema, workflowId)) {
+    if (hasProperty(this._workflowsRequestSchema ?? {}, workflowId)) {
       return getPropertyValue(this._workflowsRequestSchema, workflowId);
     }
 
@@ -90,6 +90,11 @@ export class ChildWorkflowService {
         queryParameters: { 'api-version': apiVersion },
       });
       const schema = getTriggerSchema(workflowContent.properties?.definition?.triggers ?? {});
+
+      if (this._workflowsRequestSchema === undefined) {
+        this._workflowsRequestSchema = {};
+      }
+
       this._workflowsRequestSchema[workflowId] = schema;
 
       return schema;
