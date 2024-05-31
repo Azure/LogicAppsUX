@@ -1,20 +1,27 @@
-import { SchemaType, equals, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import mockTree from '../mock-test-file';
+import { type SchemaExtended, SchemaType, type SchemaNodeExtended, equals } from '@microsoft/logic-apps-shared';
 import { Tree, TreeItem, TreeItemLayout, mergeClasses, type TreeItemOpenChangeData } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useEffect, useState, useMemo } from 'react';
 import { TreeNode } from './TreeNode';
+import { useIntl } from 'react-intl';
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
+  schema: SchemaExtended;
 };
 
 export const SchemaTree = (props: SchemaTreeProps) => {
-  const mockData = mockTree;
   const styles = useStyles();
   const { schemaType } = props;
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
   const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
+  const intl = useIntl();
+
+  const treeAriaLabel = intl.formatMessage({
+    defaultMessage: 'Schema tree',
+    id: 't2Xi1/',
+    description: 'tree showing schema nodes',
+  });
 
   const onOpenTreeItem = (_event: any, data: TreeItemOpenChangeData) => {
     setOpenKeys((prev) => ({
@@ -36,9 +43,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       }
     };
 
-    setDefaultState(mockData.schemaTreeRoot);
+    setDefaultState(props.schema.schemaTreeRoot);
     setOpenKeys(openKeys);
-  }, [mockData]);
+  }, [props.schema]);
 
   const displaySchemaTree = (root: SchemaNodeExtended) => {
     if (root.children.length === 0) {
@@ -59,12 +66,12 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     );
   };
 
-  return mockData.schemaTreeRoot ? (
+  return props.schema.schemaTreeRoot ? (
     <Tree
       className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
-      aria-label="tree"
+      aria-label={treeAriaLabel}
     >
-      {displaySchemaTree(mockData.schemaTreeRoot)}
+      {displaySchemaTree(props.schema.schemaTreeRoot)}
     </Tree>
   ) : (
     <></>
