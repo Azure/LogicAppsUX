@@ -71,7 +71,7 @@ export const Panel = (_props: PanelProps) => {
             className={styles.chevronButton}
             appearance="transparent"
             aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
-            icon={<ChevronDoubleRightRegular fontSize={18} className={styles.functionsChevronIcon} />}
+            icon={<ChevronDoubleRightRegular fontSize={13} className={styles.functionsChevronIcon} />}
             onClick={() => {
               setExpandFunctionsPanel(true);
             }}

@@ -2,8 +2,9 @@ import { customTokens } from '../../core';
 import type { FunctionData } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { FunctionIcon } from '../functionIcon/FunctionIcon';
-import { Button, Caption1, TreeItem, TreeItemLayout, tokens } from '@fluentui/react-components';
+import { Caption1, TreeItem, TreeItemLayout, tokens } from '@fluentui/react-components';
 import { useStyles } from './styles';
+import { AddRegular } from '@fluentui/react-icons';
 
 interface FunctionListItemProps {
   functionData: FunctionData;
@@ -15,15 +16,15 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
 
   return (
     <TreeItem className={styles.functionTreeItem} itemType="leaf">
-      <TreeItemLayout className={styles.functionTreeItem}>
-        <Button key={functionData.key} alt-text={functionData.displayName} className={styles.listButton}>
+      <TreeItemLayout className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
+        <div key={functionData.key} className={styles.listButton}>
           <div className={styles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
             <FunctionIcon
               functionKey={functionData.key}
               functionName={functionData.functionName}
               categoryName={functionData.category}
               color={tokens.colorNeutralForegroundInverted}
-              iconSize={10}
+              iconSize={8}
             />
           </div>
 
@@ -32,7 +33,7 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
           </Caption1>
 
           <span style={{ marginLeft: 'auto' }} />
-        </Button>
+        </div>
       </TreeItemLayout>
     </TreeItem>
   );

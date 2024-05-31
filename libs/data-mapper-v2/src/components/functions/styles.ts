@@ -8,6 +8,7 @@ export const useStyles = makeStyles({
   chevronButton: {
     paddingLeft: '0px',
     paddingRight: '0px',
+    minWidth: '10px',
   },
   functionsChevronIcon: {
     alignSelf: 'center',
@@ -19,8 +20,9 @@ export const useStyles = makeStyles({
   },
   collapsedDataMapperFunctionPanel: {
     backgroundColor: '#E8F3FE',
-    maxWidth: '60px',
-    minWidth: '50px',
+    maxWidth: '40px',
+    minWidth: '40px',
+    width: '40px',
     ...shorthands.borderRight('1px', 'solid', '#ddd'),
     display: 'flex',
     cursor: 'pointer',

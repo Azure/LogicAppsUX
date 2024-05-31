@@ -1,6 +1,6 @@
 import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 
-const fnIconSize = '12px';
+const fnIconSize = '17px';
 
 export const useStyles = makeStyles({
   headerText: {
@@ -25,13 +25,14 @@ export const useStyles = makeStyles({
   listButton: {
     height: '30px',
     width: '100%',
-    display: 'flex',
     backgroundColor: '#E8F3FE',
     ...shorthands.border('0px'),
     ...shorthands.padding('1px 4px 1px 4px'),
     ':hover': {
       backgroundColor: '#E8F3FE',
     },
+    display: 'flex',
+    alignItems: 'center',
   },
   iconContainer: {
     height: fnIconSize,
@@ -44,7 +45,9 @@ export const useStyles = makeStyles({
     alignItems: 'center',
   },
   functionNameText: {
-    width: '210px',
+    display: 'flex',
+    alignItems: 'center',
+    width: '130px',
     paddingLeft: '4px',
     paddingRight: '4px',
     fontSize: '13px',
@@ -55,5 +58,9 @@ export const useStyles = makeStyles({
     ':hover': {
       backgroundColor: '#E8F3FE',
     },
+  },
+  addIconAside: {
+    paddingLeft: '0px',
+    paddingRight: '4px',
   },
 });
