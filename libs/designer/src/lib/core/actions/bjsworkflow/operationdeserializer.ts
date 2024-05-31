@@ -44,7 +44,7 @@ import {
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
-import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import type { PasteScopeParams } from './copypaste';
 import {
   getCustomSwaggerIfNeeded,
@@ -559,11 +559,9 @@ export const initializeDynamicDataInNodes = async (
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
-    operations: { inputParameters, settings, dependencies, operationInfo, errors },
-    tokens: { variables },
+    operations: { dependencies, operationInfo, errors },
     connections,
   } = rootState;
-  const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     if (operationsToInitialize && !operationsToInitialize.includes(nodeId)) {
       continue;
@@ -577,9 +575,8 @@ export const initializeDynamicDataInNodes = async (
 
     const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
     const nodeDependencies = getRecordEntry(dependencies, nodeId);
-    const nodeInputs = getRecordEntry(inputParameters, nodeId);
-    const nodeSettings = getRecordEntry(settings, nodeId);
-    if (!nodeOperationInfo || !nodeDependencies || !nodeInputs || !nodeSettings) {
+
+    if (!nodeOperationInfo || !nodeDependencies) {
       continue;
     }
 
@@ -592,9 +589,6 @@ export const initializeDynamicDataInNodes = async (
       nodeOperationInfo,
       connectionReference,
       nodeDependencies,
-      nodeInputs,
-      nodeSettings,
-      allVariables,
       dispatch,
       getState,
       operation
@@ -610,9 +604,6 @@ const updateDynamicDataForValidConnection = async (
   operationInfo: NodeOperation,
   reference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
-  nodeInputs: NodeInputs,
-  settings: Settings,
-  variables: any,
   dispatch: Dispatch,
   getState: () => RootState,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
@@ -620,19 +611,7 @@ const updateDynamicDataForValidConnection = async (
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
 
   if (isValidConnection) {
-    updateDynamicDataInNode(
-      nodeId,
-      isTrigger,
-      operationInfo,
-      reference,
-      dependencies,
-      nodeInputs,
-      settings,
-      variables,
-      dispatch,
-      getState,
-      operation
-    );
+    updateDynamicDataInNode(nodeId, isTrigger, operationInfo, reference, dependencies, dispatch, getState, operation);
   } else {
     LoggerService().log({
       level: LogEntryLevel.Warning,
