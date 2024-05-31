@@ -1,4 +1,4 @@
-import type { SchemaExtended, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { type SchemaExtended, SchemaType, type SchemaNodeExtended, equals } from '@microsoft/logic-apps-shared';
 import { Tree, TreeItem, TreeItemLayout, mergeClasses, type TreeItemOpenChangeData } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useEffect, useState, useMemo } from 'react';
