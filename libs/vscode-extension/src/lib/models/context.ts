@@ -22,6 +22,10 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   useContainerApps?: boolean;
   containerApp?: ContainerApp;
   connectedEnvironment?: ConnectedEnvironment;
+  hostName?: string;
+  fileSharePath?: string;
+  userName?: string;
+  passwordFileShare?: string;
   suppressCreate?: boolean;
   fileShareName?: string;
   _location?: Record<string, any>;
