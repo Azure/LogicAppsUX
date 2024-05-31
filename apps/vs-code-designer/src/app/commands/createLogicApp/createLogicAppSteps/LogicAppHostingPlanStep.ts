@@ -51,7 +51,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
       };
       return {
         promptSteps: [
-          new ContainerAppsStep(),
+          new ContainerAppsStep(), // TODO ccastrotrejo: Remove
           new StorageAccountListStep(storageAccountCreateOptions, {
             kind: [StorageAccountKind.BlobStorage],
             performance: [StorageAccountPerformance.Premium],

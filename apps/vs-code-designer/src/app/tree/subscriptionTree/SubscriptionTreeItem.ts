@@ -14,6 +14,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppCreateFileShareStep } from '../../commands/createLogicApp/createLogicAppSteps/FileShare/LogicAppCreateFileShareStep';
+import { ConnectedEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectedEnvironmentStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
@@ -134,6 +135,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new ResourceGroupListStep());
     promptSteps.push(new CustomLocationStorageAccountStep());
+    promptSteps.push(new ConnectedEnvironmentStep());
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,

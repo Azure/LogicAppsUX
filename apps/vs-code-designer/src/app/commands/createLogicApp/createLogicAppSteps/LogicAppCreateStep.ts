@@ -50,8 +50,8 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     context.site = await client.webApps.beginCreateOrUpdateAndWait(rgName, siteName, await this.getNewSite(context));
   }
 
-  public shouldExecute(context: ILogicAppWizardContext): boolean {
-    return !context.site;
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !wizardContext.site;
   }
 
   private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {

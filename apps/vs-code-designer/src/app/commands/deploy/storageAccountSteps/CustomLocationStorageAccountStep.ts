@@ -32,33 +32,35 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
-    const { storageType } = wizardContext;
-    const storageAccountCreateOptions: INewStorageAccountDefaults = {
-      kind: StorageAccountKind.Storage,
-      performance: StorageAccountPerformance.Standard,
-      replication: StorageAccountReplication.LRS,
-    };
+    if (wizardContext.customLocation) {
+      const { storageType } = wizardContext;
+      const storageAccountCreateOptions: INewStorageAccountDefaults = {
+        kind: StorageAccountKind.Storage,
+        performance: StorageAccountPerformance.Standard,
+        replication: StorageAccountReplication.LRS,
+      };
 
-    if (storageType === StorageOptions.AzureStorage) {
-      if (!wizardContext.advancedCreation) {
+      if (storageType === StorageOptions.AzureStorage) {
+        if (!wizardContext.advancedCreation) {
+          return {
+            executeSteps: [new StorageAccountCreateStep(storageAccountCreateOptions), new AppInsightsCreateStep()],
+          };
+        }
         return {
-          executeSteps: [new StorageAccountCreateStep(storageAccountCreateOptions), new AppInsightsCreateStep()],
+          promptSteps: [
+            new StorageAccountListStep(storageAccountCreateOptions, {
+              kind: [StorageAccountKind.BlobStorage],
+              performance: [StorageAccountPerformance.Premium],
+              replication: [StorageAccountReplication.ZRS],
+              learnMoreLink: 'https://aka.ms/Cfqnrc',
+            }),
+            new AppInsightsListStep(),
+          ],
         };
       }
       return {
-        promptSteps: [
-          new StorageAccountListStep(storageAccountCreateOptions, {
-            kind: [StorageAccountKind.BlobStorage],
-            performance: [StorageAccountPerformance.Premium],
-            replication: [StorageAccountReplication.ZRS],
-            learnMoreLink: 'https://aka.ms/Cfqnrc',
-          }),
-          new AppInsightsListStep(),
-        ],
+        promptSteps: [new SQLStringNameStep()],
       };
     }
-    return {
-      promptSteps: [new SQLStringNameStep()],
-    };
   }
 }
