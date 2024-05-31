@@ -1,14 +1,14 @@
 import { SelectExistingSchema } from './SelectExistingSchema';
 import { UploadNewSchema } from './UploadNewSchema';
-import { ChoiceGroup, SearchBox, Text } from '@fluentui/react';
+import { ChoiceGroup, Text } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
-import { SchemaTree } from './tree/SchemaTree';
 import { mergeClasses } from '@fluentui/react-components';
+import { SchemaItemView } from '../schemaView/schemaView';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
@@ -150,10 +150,7 @@ export const AddOrUpdateSchemaView = ({
             )}
           </div>
         ) : (
-          <div className={styles.treeWrapper}>
-            <SearchBox placeholder={stringResources.SEARCH_PROPERTIES} className={styles.searchBox} />
-            <SchemaTree schemaType={schemaType} />
-          </div>
+          <SchemaItemView schemaType={schemaType} />
         )}
       </div>
     </div>
