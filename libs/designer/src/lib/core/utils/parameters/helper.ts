@@ -1973,7 +1973,7 @@ async function loadDynamicData(
   }
 }
 
-export async function loadDynamicContentForInputsInNode(
+export const loadDynamicContentForInputsInNode = async (
   nodeId: string,
   isTrigger: boolean,
   inputDependencies: Record<string, DependencyInfo>,
@@ -1982,7 +1982,7 @@ export async function loadDynamicContentForInputsInNode(
   dispatch: Dispatch,
   getState: () => RootState,
   operationDefinition?: any
-): Promise<void> {
+): Promise<void> => {
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (info.dependencyType === 'ApiSchema') {
@@ -1993,7 +1993,7 @@ export async function loadDynamicContentForInputsInNode(
           outputs: false,
           dynamicParameterKeys: getAllDependentDynamicParameters(
             inputKey,
-            inputDependencies,
+            getState().operations.dependencies[nodeId].inputs,
             getState().operations.inputParameters[nodeId]
           ),
         })
@@ -2100,7 +2100,7 @@ export async function loadDynamicContentForInputsInNode(
       }
     }
   }
-}
+};
 
 function getAllDependentDynamicParameters(
   dynamicParameterReference: string,
@@ -2335,9 +2335,9 @@ export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
   return nodeInputs.dynamicLoadStatus === DynamicLoadStatus.FAILED || nodeInputs.dynamicLoadStatus === DynamicLoadStatus.NOTSTARTED;
 }
 
-export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
+export const isDynamicDataReadyToLoad = ({ dependentParameters }: DependencyInfo): boolean => {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
-}
+};
 
 async function tryGetInputDynamicSchema(
   nodeId: string,

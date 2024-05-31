@@ -2838,19 +2838,523 @@ describe('core/utils/parameters/helper', () => {
   });
 
   describe('loadDynamicContentForInputsInNode', () => {
-    test('should clear dynamic inputs for specific dynamic parameter reference', async () => {
-      const getStateMockFn = vi.fn(() => ({} as any));
+    const nodeId = 'nodeId';
+    const rootState: any = {
+      workflow: {},
+      operations: {
+        operationInfo: { [nodeId]: { operationId: 'opId', connectorId: 'connId', type: 'testType' } },
+        inputParameters: {
+          [nodeId]: {
+            dynamicLoadStatus: 'NotStarted',
+            parameterGroups: {
+              default: {
+                id: 'default',
+                parameters: [],
+              },
+            },
+          },
+        },
+        outputParameters: {},
+        dependencies: {
+          [nodeId]: { inputs: {}, outputs: {} },
+        },
+      },
+      panel: {},
+      connections: {},
+      settings: {},
+      designerOptions: {},
+      designerView: {},
+      tokens: {},
+      workflowParameters: {},
+      staticResults: {},
+      customCode: {},
+      dev: {},
+    };
+    const defaultParameters: any[] = [
+      {
+        id: 'hostworkflowid',
+        info: {
+          isDynamic: false,
+        },
+        parameterKey: 'inputs.$.host.workflow.id',
+        parameterName: 'host.workflow.id',
+        required: true,
+        schema: {
+          type: 'string',
+        },
+        type: 'string',
+        value: [
+          {
+            id: '69310D6E-FA52-4744-B55B-0C7802D1EE75',
+            type: 'literal',
+            value: 'childworkflow1',
+          },
+        ],
+        validationErrors: [],
+      },
+    ];
+    const defaultDependencies: any = {
+      'inputs.$.body': {
+        definition: {
+          type: 'DynamicProperties',
+          extension: {
+            dynamicState: {
+              extension: {
+                operationId: 'getWorkflowSwagger',
+                parameters: {
+                  name: {
+                    parameterReference: 'host.workflow.id',
+                    required: true,
+                  },
+                },
+              },
+              isInput: true,
+            },
+            parameters: {
+              name: {
+                parameterReference: 'host.workflow.id',
+                required: true,
+              },
+            },
+          },
+        },
+        dependencyType: 'ApiSchema',
+        dependentParameters: {
+          hostworkflowId: {
+            isValid: true,
+          },
+        },
+        parameter: {
+          dynamicSchema: {
+            type: 'DynamicProperties',
+            extension: {
+              dynamicState: {
+                extension: {
+                  operationId: 'getWorkflowSwagger',
+                  parameters: {
+                    name: {
+                      parameterReference: 'host.workflow.id',
+                      required: true,
+                    },
+                  },
+                },
+                isInput: true,
+              },
+              parameters: {
+                name: {
+                  parameterReference: 'host.workflow.id',
+                  required: true,
+                },
+              },
+            },
+          },
+          key: 'inputs.$.body',
+          name: 'body',
+          required: false,
+          type: 'any',
+        },
+      },
+    };
+    const allDynamicParams: any[] = [
+      {
+        id: 'firstP1',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body',
+        },
+        parameterKey: 'inputs.$.body.objectType.p1',
+        parameterName: 'body.objectType.p1',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.objectType.p1',
+          name: 'body.objectType.p1',
+          required: true,
+          schema: {
+            type: 'integer',
+          },
+          type: 'integer',
+          dynamicParameterReference: 'inputs.$.body',
+        },
+        type: 'integer',
+        value: [
+          {
+            id: 'AC2096BD-7746-4297-9C61-9A141167E4AD',
+            type: 'literal',
+            value: '1',
+          },
+        ],
+        validationErrors: [],
+      },
+      {
+        id: 'firstP2',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body',
+        },
+        label: 'Body stringType',
+        parameterKey: 'inputs.$.body.stringType',
+        parameterName: 'body.stringType',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.stringType',
+          name: 'body.stringType',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+          type: 'string',
+          dynamicParameterReference: 'inputs.$.body',
+        },
+        type: 'string',
+        value: [
+          {
+            id: '0E9BB919-648A-4E15-A037-56285273EFA0',
+            type: 'literal',
+            value: 'a',
+          },
+        ],
+        validationErrors: [],
+      },
+      {
+        id: 'secondParamP1',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body.dynamicObject',
+        },
+        parameterKey: 'inputs.$.body.dynamicObject.numberType',
+        parameterName: 'body.dynamicObject.numberType',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject.numberType',
+          name: 'body.dynamicObject.numberType',
+          required: true,
+          schema: {
+            type: 'number',
+          },
+          type: 'number',
+          dynamicParameterReference: 'inputs.$.body.dynamicObject',
+        },
+        type: 'number',
+        value: [
+          {
+            id: '48C8F772-799B-4FB7-A8C5-88E8B5DDFAD9',
+            type: 'literal',
+            value: '2',
+          },
+        ],
+        validationErrors: [],
+      },
+      {
+        id: 'secondParamP2',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body.dynamicObject',
+        },
+        parameterKey: 'inputs.$.body.dynamicObject.childworkflow1Type.o1',
+        parameterName: 'body.dynamicObject.childworkflow1Type.o1',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject.childworkflow1Type.o1',
+          name: 'body.dynamicObject.childworkflow1Type.o1',
+          required: true,
+          schema: {
+            type: 'integer',
+          },
+          type: 'integer',
+          dynamicParameterReference: 'inputs.$.body.dynamicObject',
+        },
+        type: 'integer',
+        value: [
+          {
+            id: '0D731936-1B36-4DF1-B7F9-7AB7811865D0',
+            type: 'literal',
+            value: '33',
+          },
+        ],
+        validationErrors: [],
+      },
+      {
+        id: 'thirdParamP1',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+        },
+        parameterKey: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2.childworkflow1-Type',
+        parameterName: 'body.dynamicObject.childworkflow1Type.dynamicObject2.childworkflow1-Type',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2.childworkflow1-Type',
+          name: 'body.dynamicObject.childworkflow1Type.dynamicObject2.childworkflow1-Type',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+          type: 'string',
+          dynamicParameterReference: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+        },
+        type: 'string',
+        value: [
+          {
+            id: '1A93F4AF-CE46-4E99-8BD4-903E01A15D07',
+            type: 'literal',
+            value: 'ee',
+          },
+        ],
+        validationErrors: [],
+      },
+      {
+        id: 'thirdParam2',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+        },
+        parameterKey: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2.1-Type',
+        parameterName: 'body.dynamicObject.childworkflow1Type.dynamicObject2.1-Type',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2.1-Type',
+          name: 'body.dynamicObject.childworkflow1Type.dynamicObject2.1-Type',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+          type: 'string',
+          dynamicParameterReference: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+        },
+        type: 'string',
+        value: [
+          {
+            id: '4512A883-BB7A-4372-AB88-CF3A5A7C8510',
+            type: 'literal',
+            value: 'fff',
+          },
+        ],
+        validationErrors: [],
+      },
+      {
+        id: 'thirdParamP3',
+        info: {
+          isDynamic: true,
+          dynamicParameterReference: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+        },
+        parameterKey: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2.33-Type',
+        parameterName: 'body.dynamicObject.childworkflow1Type.dynamicObject2.33-Type',
+        required: true,
+        schema: {
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2.33-Type',
+          name: 'body.dynamicObject.childworkflow1Type.dynamicObject2.33-Type',
+          required: true,
+          schema: {
+            type: 'string',
+          },
+          type: 'string',
+          dynamicParameterReference: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+        },
+        type: 'string',
+        value: [
+          {
+            id: 'AD21CA10-EF2D-4CF2-B938-10E230C3E94D',
+            type: 'literal',
+            value: 'ggg',
+          },
+        ],
+        validationErrors: [],
+      },
+    ];
+    const allDynamicDependencies: any = {
+      'inputs.$.body.dynamicObject': {
+        definition: {
+          type: 'DynamicProperties',
+          extension: {
+            dynamicState: {
+              extension: {
+                operationId: 'getWorkflowSubSchema',
+              },
+              isInput: true,
+            },
+            parameters: {
+              param1: {
+                parameterReference: 'host.workflow.id',
+                required: true,
+              },
+              param2: {
+                parameterReference: 'body.objectType.p1',
+                required: true,
+              },
+              param3: {
+                parameterReference: 'body.stringType',
+                required: true,
+              },
+            },
+          },
+        },
+        dependencyType: 'ApiSchema',
+        dependentParameters: {
+          hostworkflowid: {
+            isValid: true,
+          },
+          firstParamP1: {
+            isValid: true,
+          },
+          firstParamP2: {
+            isValid: false,
+          },
+        },
+        parameter: {
+          dynamicSchema: {
+            type: 'DynamicProperties',
+            extension: {
+              dynamicState: {
+                extension: {
+                  operationId: 'getWorkflowSubSchema',
+                },
+                isInput: true,
+              },
+              parameters: {
+                param1: {
+                  parameterReference: 'host.workflow.id',
+                  required: true,
+                },
+                param2: {
+                  parameterReference: 'body.objectType.p1',
+                  required: true,
+                },
+                param3: {
+                  parameterReference: 'body.stringType',
+                  required: true,
+                },
+              },
+            },
+          },
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject',
+          name: 'body.dynamicObject',
+          required: false,
+          type: 'object',
+          dynamicParameterReference: 'inputs.$.body',
+        },
+      },
+      'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2': {
+        definition: {
+          type: 'DynamicProperties',
+          extension: {
+            dynamicState: {
+              extension: {
+                operationId: 'getWorkflowSubSubSchema',
+              },
+              isInput: true,
+            },
+            parameters: {
+              param1: {
+                parameterReference: 'host.workflow.id',
+                required: true,
+              },
+              param2: {
+                parameterReference: 'body.objectType.p1',
+                required: true,
+              },
+              param3: {
+                parameterReference: 'body.dynamicObject.childworkflow1Type.o1',
+                required: true,
+              },
+            },
+          },
+        },
+        dependencyType: 'ApiSchema',
+        dependentParameters: {
+          hostworkflowid: {
+            isValid: true,
+          },
+          firstParamP1: {
+            isValid: true,
+          },
+          secondParamP1: {
+            isValid: true,
+          },
+        },
+        parameter: {
+          dynamicSchema: {
+            type: 'DynamicProperties',
+            extension: {
+              dynamicState: {
+                extension: {
+                  operationId: 'getWorkflowSubSubSchema',
+                },
+                isInput: true,
+              },
+              parameters: {
+                param1: {
+                  parameterReference: 'host.workflow.id',
+                  required: true,
+                },
+                param2: {
+                  parameterReference: 'body.objectType.p1',
+                  required: true,
+                },
+                param3: {
+                  parameterReference: 'body.dynamicObject.childworkflow1Type.o1',
+                  required: true,
+                },
+              },
+            },
+          },
+          isDynamic: true,
+          isNested: true,
+          key: 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2',
+          name: 'body.dynamicObject.childworkflow1Type.dynamicObject2',
+          required: false,
+          type: 'object',
+          dynamicParameterReference: 'inputs.$.body.dynamicObject',
+        },
+      },
+    };
+
+    beforeEach(() => {
+      rootState.operations.inputParameters[nodeId].parameterGroups.default.parameters = defaultParameters;
+      rootState.operations.dependencies[nodeId].inputs = defaultDependencies;
+    });
+
+    test('should clear dynamic inputs for specific dynamic parameter reference when dependent parameter is changed', async () => {
+      const getStateMockFn = vi.fn(() => {
+        rootState.operations.inputParameters[nodeId].parameterGroups.default.parameters = [...defaultParameters, ...allDynamicParams];
+        rootState.operations.dependencies[nodeId].inputs = { ...defaultDependencies, ...allDynamicDependencies };
+
+        return rootState;
+      });
       const dispatchMockFn = vi.fn();
 
       vi.spyOn(Helper, 'isDynamicDataReadyToLoad').mockReturnValue(false);
-      loadDynamicContentForInputsInNode('nodeId', /* isTrigger */false, {}, { operationId: 'o', connectorId: 'c', type: 'Workflow' }, undefined, dispatchMockFn, getStateMockFn);
+      await loadDynamicContentForInputsInNode(
+        nodeId,
+        /* isTrigger */ false,
+        { 'inputs.$.body.dynamicObject': allDynamicDependencies['inputs.$.body.dynamicObject'] },
+        rootState.operations.operationInfo[nodeId],
+        undefined,
+        dispatchMockFn,
+        getStateMockFn
+      );
       expect(dispatchMockFn).toHaveBeenCalledWith({
-        type: 'CLEAR_DYNAMIC_INPUTS',
+        type: 'operationMetadata/clearDynamicIO',
         payload: {
-          nodeId: 'nodeId',
+          nodeId,
           inputs: true,
           outputs: false,
-          dynamicParameterKeys: []
+          dynamicParameterKeys: ['inputs.$.body.dynamicObject', 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2'],
         },
       });
     });
