@@ -133,6 +133,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new ResourceGroupListStep());
+    promptSteps.push(new CustomLocationStorageAccountStep());
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,
@@ -140,13 +141,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       replication: StorageAccountReplication.LRS,
     };
 
-    if (!context.advancedCreation) {
-      wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-      executeSteps.push(new AppInsightsCreateStep());
-    } else if (wizardContext.customLocation) {
-      promptSteps.push(new CustomLocationStorageAccountStep(context));
-    } else {
+    if (context.advancedCreation) {
       promptSteps.push(
         new StorageAccountListStep(storageAccountCreateOptions, {
           kind: [StorageAccountKind.BlobStorage],
@@ -157,6 +152,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       );
       promptSteps.push(new AzureStorageAccountStep());
       promptSteps.push(new AppInsightsListStep());
+    } else {
+      wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
+      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      executeSteps.push(new AppInsightsCreateStep());
     }
 
     executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));

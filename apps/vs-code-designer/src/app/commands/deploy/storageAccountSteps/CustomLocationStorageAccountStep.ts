@@ -15,18 +15,11 @@ import {
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
 import type { IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { ILogicAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { StorageOptions } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
-  private readonly context: ICreateLogicAppContext;
-
-  public constructor(context: ICreateLogicAppContext) {
-    super();
-    this.context = context;
-  }
-
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
     const storagePicks: QuickPickItem[] = [{ label: StorageOptions.AzureStorage }, { label: StorageOptions.SQL }];
 
@@ -35,7 +28,7 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
   }
 
   public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
-    return wizardContext.storageType === undefined;
+    return wizardContext.customLocation && wizardContext.storageType === undefined;
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
@@ -47,7 +40,7 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
     };
 
     if (storageType === StorageOptions.AzureStorage) {
-      if (!this.context.advancedCreation) {
+      if (!wizardContext.advancedCreation) {
         return {
           executeSteps: [new StorageAccountCreateStep(storageAccountCreateOptions), new AppInsightsCreateStep()],
         };

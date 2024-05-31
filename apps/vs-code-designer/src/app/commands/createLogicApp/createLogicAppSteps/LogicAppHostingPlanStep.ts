@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
 import { ContainerAppsStep } from './Containers/ContainerAppsStep';
@@ -14,7 +15,6 @@ import {
   type INewStorageAccountDefaults,
 } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
-import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
@@ -60,7 +60,8 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
           }),
         ],
       };
-    } else if (!useConsumptionPlan) {
+    }
+    if (!useConsumptionPlan) {
       return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
     }
     return undefined;
