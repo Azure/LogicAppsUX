@@ -21,7 +21,7 @@ export class FileSharePathStep extends AzureWizardPromptStep<ILogicAppWizardCont
       validateInput: async (input: string): Promise<string | undefined> => await this.validateFileSharePath(input),
     });
 
-    wizardContext.fileSharePath = fileSharePath;
+    wizardContext.fileShare.path = fileSharePath;
   }
 
   /**

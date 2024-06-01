@@ -21,7 +21,7 @@ export class PasswordStep extends AzureWizardPromptStep<ILogicAppWizardContext> 
       validateInput: async (input: string): Promise<string | undefined> => await this.validatePassword(input),
     });
 
-    wizardContext.passwordFileShare = passwordFileShare;
+    wizardContext.fileShare.password = passwordFileShare;
   }
 
   /**

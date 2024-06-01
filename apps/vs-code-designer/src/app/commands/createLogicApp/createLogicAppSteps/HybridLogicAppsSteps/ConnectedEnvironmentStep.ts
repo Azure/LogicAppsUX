@@ -55,7 +55,8 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
     return picks;
   }
 
-  public async getSubWizard(): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
+  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
+    wizardContext.fileShare = {};
     return {
       promptSteps: [new HostNameStep(), new FileSharePathStep(), new UserNameStep(), new PasswordStep()],
     };

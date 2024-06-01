@@ -21,7 +21,7 @@ export class UserNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> 
       validateInput: async (input: string): Promise<string | undefined> => await this.validateUserName(input),
     });
 
-    wizardContext.userName = userName;
+    wizardContext.fileShare.userName = userName;
   }
 
   /**

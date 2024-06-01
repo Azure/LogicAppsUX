@@ -21,7 +21,7 @@ export class HostNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> 
       validateInput: async (input: string): Promise<string | undefined> => await this.validateHostName(input),
     });
 
-    wizardContext.hostName = hostName;
+    wizardContext.fileShare.hostName = hostName;
   }
 
   /**
