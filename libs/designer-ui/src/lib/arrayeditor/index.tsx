@@ -159,7 +159,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
       {collapsed ? (
         <CollapsedArray
           {...baseEditorProps}
-          labelProps={labelProps}
           isValid={isValid}
           collapsedValue={collapsedValue}
           itemSchema={itemSchema}
