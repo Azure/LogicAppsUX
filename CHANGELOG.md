@@ -1,5 +1,24 @@
 # Logic Apps Designer
 ## [0.3.0](https://github.com/Azure/LogicAppsUX/compare/v4.21.0...v0.3.0) (2024-05-28)
+## [4.23.0](https://github.com/Azure/LogicAppsUX/compare/v4.22.0...v4.23.0) (2024-05-31)
+
+
+### Features
+
+* **Data Mapper:** Get schema details from services, removing mock ([#4923](https://github.com/Azure/LogicAppsUX/issues/4923)) ([b09b975](https://github.com/Azure/LogicAppsUX/commit/b09b975d1a7a125f4fb8262ec4d2e6515d1f9cce))
+* **Data Mapper:** Moving away from mock schema list ([#4912](https://github.com/Azure/LogicAppsUX/issues/4912)) ([789043b](https://github.com/Azure/LogicAppsUX/commit/789043bc4daceea39b3767d603bd00f4848bffa8))
+* **designer:** Add ability for host to send in overrides for internationalized strings ([#4907](https://github.com/Azure/LogicAppsUX/issues/4907)) ([b6be06a](https://github.com/Azure/LogicAppsUX/commit/b6be06a85e093f5eb655d6bbf899bfb352454918))
+
+
+### Bug Fixes
+
+* **designer:** Turn off spell check in editors ([#4902](https://github.com/Azure/LogicAppsUX/issues/4902)) ([6332975](https://github.com/Azure/LogicAppsUX/commit/6332975dedca796f07327e317f64aa5eca7250bf))
+* **designer:** Using custom Label with ariaLabel for parameter editors for a11y ([#4889](https://github.com/Azure/LogicAppsUX/issues/4889)) ([2778673](https://github.com/Azure/LogicAppsUX/commit/27786736af369feee8992abc19943311a2ecd04c))
+* **designer:** Using UI custom Label everywhere in the designer to be consistent for a11y ([#4903](https://github.com/Azure/LogicAppsUX/issues/4903)) ([e8abdc5](https://github.com/Azure/LogicAppsUX/commit/e8abdc597da445a711a7de2e100113410540acff))
+* **meta:** Update pnpm version in coverage-report ([#4921](https://github.com/Azure/LogicAppsUX/issues/4921)) ([7011da0](https://github.com/Azure/LogicAppsUX/commit/7011da065188ffba897d8228c1b9bd4892d437f3))
+* **meta:** Update pnpm version to use ([#4919](https://github.com/Azure/LogicAppsUX/issues/4919)) ([4d3df02](https://github.com/Azure/LogicAppsUX/commit/4d3df02f6df97971d7934a227dee47f5932b1726))
+
+## [4.22.0](https://github.com/Azure/LogicAppsUX/compare/v4.21.0...v4.22.0) (2024-05-28)
 
 
 ### Bug Fixes
