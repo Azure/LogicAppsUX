@@ -5,17 +5,34 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
-import { setConsumption, setLocation, setSubscriptionId, setWorkflowName } from '../state/templates/workflowSlice';
+import {
+  setConsumption,
+  setLocation,
+  setResourceGroup,
+  setSubscriptionId,
+  setWorkflowName,
+  setTopResourceName,
+} from '../state/templates/workflowSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
   workflowName: string | undefined;
   subscriptionId: string | undefined;
   location: string | undefined;
+  resourceGroup: string | undefined;
+  topResourceName: string | undefined;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ isConsumption, workflowName, subscriptionId, location, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({
+  isConsumption,
+  workflowName,
+  subscriptionId,
+  location,
+  resourceGroup,
+  topResourceName,
+  children,
+}: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { availableTemplateNames } = useSelector((state: RootState) => state.manifest);
 
@@ -41,17 +58,27 @@ const DataProviderInner = ({ isConsumption, workflowName, subscriptionId, locati
 
   useEffect(() => {
     if (subscriptionId) {
-      console.log('setting subscriptionId', subscriptionId);
       dispatch(setSubscriptionId(subscriptionId));
     }
   }, [dispatch, subscriptionId]);
 
   useEffect(() => {
     if (location) {
-      console.log('setting location', location);
       dispatch(setLocation(location));
     }
   }, [dispatch, location]);
+
+  useEffect(() => {
+    if (resourceGroup) {
+      dispatch(setResourceGroup(resourceGroup));
+    }
+  }, [dispatch, resourceGroup]);
+
+  useEffect(() => {
+    if (topResourceName) {
+      dispatch(setTopResourceName(topResourceName));
+    }
+  }, [dispatch, topResourceName]);
 
   return <>{children}</>;
 };

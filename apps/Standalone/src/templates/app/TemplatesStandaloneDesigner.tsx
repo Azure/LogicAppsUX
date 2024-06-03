@@ -8,7 +8,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { saveWorkflowStandard, useWorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import {
+  getConnectionsData,
+  saveWorkflowStandard,
+  useWorkflowApp,
+} from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
@@ -23,9 +27,13 @@ export const TemplatesStandaloneDesigner = () => {
   const navigate = useNavigate();
 
   const { data: workflowAppData } = useWorkflowApp(appId ?? '');
-  const { subscriptionId } = new ArmParser(appId ?? '');
+  const { subscriptionId, resourceGroup, topResourceName } = new ArmParser(appId ?? '');
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  console.log('canonicalLocation', canonicalLocation, 'subscriptionId', subscriptionId);
+
+  const uri = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${topResourceName}/workflowsconfiguration/connections?api-version=2018-11-01`;
+  console.log(uri);
+  const originalConnectionsData = getConnectionsData(uri);
+  console.log(originalConnectionsData);
 
   const createWorkflowCall = async (
     workflowName: string,
@@ -91,6 +99,8 @@ export const TemplatesStandaloneDesigner = () => {
           workflowName={existingWorkflowName}
           subscriptionId={subscriptionId}
           location={canonicalLocation}
+          resourceGroup={resourceGroup}
+          topResourceName={topResourceName}
         >
           <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
         </TemplatesDataProvider>

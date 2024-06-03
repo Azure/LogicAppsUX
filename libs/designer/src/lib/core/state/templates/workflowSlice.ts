@@ -6,6 +6,8 @@ export interface WorkflowState {
   isConsumption: boolean;
   subscriptionId?: string;
   location?: string;
+  resourceGroup?: string;
+  topResourceName?: string;
 }
 
 const initialState: WorkflowState = {
@@ -32,7 +34,21 @@ export const workflowSlice = createSlice({
     setLocation: (state, action: PayloadAction<string>) => {
       state.location = action.payload;
     },
+    setResourceGroup: (state, action: PayloadAction<string>) => {
+      state.resourceGroup = action.payload;
+    },
+    setTopResourceName: (state, action: PayloadAction<string>) => {
+      state.topResourceName = action.payload;
+    },
   },
 });
 
-export const { setWorkflowName, clearWorkflowDetails, setConsumption, setSubscriptionId, setLocation } = workflowSlice.actions;
+export const {
+  setWorkflowName,
+  clearWorkflowDetails,
+  setConsumption,
+  setSubscriptionId,
+  setLocation,
+  setResourceGroup,
+  setTopResourceName,
+} = workflowSlice.actions;
