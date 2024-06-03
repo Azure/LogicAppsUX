@@ -2,8 +2,7 @@ import { useState, useMemo } from 'react';
 import { useStyles } from './styles';
 import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { Button, InlineDrawer } from '@fluentui/react-components';
-import { Text } from '@fluentui/react';
+import { Button, InlineDrawer, Subtitle2 } from '@fluentui/react-components';
 import { FunctionList } from '../functionList/FunctionList';
 import { FunctionsSVG } from '../../images/icons';
 
@@ -44,12 +43,12 @@ export const Panel = (_props: PanelProps) => {
       {isFunctionsPanelExpanded ? (
         <div className={styles.expandedDrawerBodyWrapper}>
           <div className={styles.drawerHeaderWrapper}>
-            <Text className={styles.drawerHeader}>{stringResources.FUNCTIONS}</Text>
+            <Subtitle2>{stringResources.FUNCTIONS}</Subtitle2>
             <Button
               appearance="transparent"
               className={styles.chevronButton}
               aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
-              icon={<ChevronDoubleLeftRegular fontSize={18} className={styles.functionsChevronIcon} />}
+              icon={<ChevronDoubleLeftRegular fontSize={14} className={styles.functionsChevronIcon} />}
               onClick={() => {
                 setExpandFunctionsPanel(false);
               }}

@@ -11,7 +11,8 @@ export const useStyles = makeStyles({
     minWidth: '10px',
   },
   functionsChevronIcon: {
-    alignSelf: 'center',
+    alignSelf: 'right',
+    alignItems: 'right',
   },
   expandedDataMapperFunctionPanel: {
     backgroundColor: '#E8F3FE',
@@ -29,9 +30,10 @@ export const useStyles = makeStyles({
   },
   drawerHeaderWrapper: {
     display: 'flex',
+    flexDirection: 'row',
     width: '100%',
     marginTop: '15px',
-    marginBottom: '5px',
+    marginBottom: '0px',
   },
   collapsedDrawerBodyWrapper: {
     display: 'flex',
@@ -44,8 +46,8 @@ export const useStyles = makeStyles({
     marginLeft: '10px',
   },
   drawerHeader: {
-    fontWeight: 'initial',
-    fontSize: '20px',
+    fontWeight: 'fontw',
+    fontSize: '16px',
   },
   drawerHeaderIcon: {
     alignSelf: 'center',
