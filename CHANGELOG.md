@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.24.0](https://github.com/Azure/LogicAppsUX/compare/v4.23.0...v4.24.0) (2024-06-03)
+
+
+### Features
+
+* **designer:** Adding support for dynamic input schema in dynamic parameters ([#4844](https://github.com/Azure/LogicAppsUX/issues/4844)) ([caa69b6](https://github.com/Azure/LogicAppsUX/commit/caa69b62489df9aba149306134ae920ef5da272c))
+
 ## [4.23.0](https://github.com/Azure/LogicAppsUX/compare/v4.22.0...v4.23.0) (2024-05-31)
 
 
