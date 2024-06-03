@@ -286,43 +286,30 @@ export const useAppSettings = (siteResourceId: string) => {
   return useQuery(
     ['appSettings', siteResourceId],
     async () => {
-      // const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
-      // const response = await axios.post(uri, null, {
-      //   headers: {
-      //     Authorization: `Bearer ${environment.armToken}`,
-      //   },
-      // });
+      if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+        const containerAppInfo = (
+          await axios.get(`${baseUrl}${siteResourceId}?api-version=2024-02-02-preview`, {
+            headers: {
+              Authorization: `Bearer ${environment.armToken}`,
+            },
+          })
+        ).data;
+        containerAppInfo.properties = containerAppInfo.properties.template.containers[0].env;
+        containerAppInfo.properties = containerAppInfo.properties.reduce((acc: any, cur: any) => {
+          acc[cur.name] = cur.value;
+          return acc;
+        }, {});
+        return containerAppInfo;
+      }
 
-      return {
-        id: '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/siddharth-imp/providers/Microsoft.Web/sites/sid-sap-testbox/config/appsettings',
-        name: 'appsettings',
-        type: 'Microsoft.Web/sites/config',
-        location: 'Australia East',
-        tags: {
-          'hidden-link: /app-insights-resource-id':
-            '/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/siddharth-imp/providers/microsoft.insights/components/sid-sap-testbox202301171055',
-          'hidden-link: /app-insights-instrumentation-key': '4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd',
-          'hidden-link: /app-insights-conn-string':
-            'InstrumentationKey=4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd;IngestionEndpoint=https://australiaeast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://australiaeast.livediagnostics.monitor.azure.com/;ApplicationId=b5aacd44-42d1-4707-b075-ab7ff0527ae6',
-        },
-        properties: {
-          APP_KIND: 'workflowApp',
-          APPINSIGHTS_INSTRUMENTATIONKEY: '4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd',
-          APPLICATIONINSIGHTS_CONNECTION_STRING:
-            'InstrumentationKey=4cf9c147-fe65-4ca0-b9cc-9c07546bcfbd;IngestionEndpoint=https://australiaeast-1.in.applicationinsights.azure.com/;LiveEndpoint=https://australiaeast.livediagnostics.monitor.azure.com/',
-          AzureFunctionsJobHost__extensionBundle__id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-          AzureFunctionsJobHost__extensionBundle__version: '[1.66.19]',
-          AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
-          FUNCTIONS_EXTENSION_VERSION: '~4',
-          FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI: 'https://cdnforlogicappsv2.blob.core.windows.net/logicapps-sap',
-          FUNCTIONS_WORKER_RUNTIME: 'node',
-          sap_password: '',
-          sap_sncPartnerName: '',
-          WEBSITE_CONTENTSHARE: 'sid-sap-testboxbf8a',
-          WEBSITE_NODE_DEFAULT_VERSION: '~14',
-          'Workflows.ui-test.FlowState': 'Enabled',
-        },
-      };
+      const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
+      return (
+        await axios.post(uri, null, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        })
+      ).data;
     },
     {
       refetchOnMount: false,
@@ -465,13 +452,23 @@ export const saveWorkflowStandard = async (
     // the host to go soft restart. We may need to look into if there's a race case where this may still happen
     // eventually we want to move this logic to the backend to happen with deployWorkflowArtifacts
     saveCustomCodeStandard(customCodeData);
-    const response = await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
+
+    let url = null;
+    if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+      url = `${baseUrl}${HybridAppUtility.getHybridAppBaseRelativeUrl(
+        siteResourceId
+      )}/deployWorkflowArtifacts?api-version=${hybridApiVersion}`;
+    } else {
+      url = `${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`;
+    }
+    const response = await axios.post(url, data, {
       headers: {
         'If-Match': '*',
         'Content-Type': 'application/json',
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
+
     if (!isSuccessResponse(response.status)) {
       alert('Failed to save workflow');
       return;
