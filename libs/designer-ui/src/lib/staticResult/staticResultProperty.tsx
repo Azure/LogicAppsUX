@@ -56,7 +56,14 @@ interface StaticResultPropertyProps {
 }
 
 const onRenderLabel = (text: string, required?: boolean, isRoot?: boolean): JSX.Element => {
-  return <Label text={text} isRequiredField={required} className={isRoot ? 'msla-static-result-label' : undefined} />;
+  return (
+    <Label
+      text={text}
+      isRequiredField={required}
+      requiredMarkerSide={RequiredMarkerSide.LEFT}
+      className={isRoot ? 'msla-static-result-label' : undefined}
+    />
+  );
 };
 
 function WrappedStaticResultProperty({
@@ -199,7 +206,7 @@ function WrappedStaticResultProperty({
         if (schema.items) {
           return (
             <>
-              <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
+              <Label text={schema.title ?? ''} isRequiredField={required} />
               <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
@@ -207,7 +214,7 @@ function WrappedStaticResultProperty({
         if (schema.additionalProperties) {
           return (
             <>
-              <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
+              <Label text={schema.title ?? ''} isRequiredField={required} />
               <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );

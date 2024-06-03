@@ -28,7 +28,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label } from '@fluentui/react';
+import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -62,7 +62,8 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const labelId = useId(props.label);
+  const normalizedLabel = props.label.replace(/ /g, '-');
+  const labelId = useId(normalizedLabel);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
@@ -70,9 +71,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
     <>
       {!hideLabel && (
         <div className="msla-input-parameter-label">
-          <Label id={labelId} className="msla-label" required={props.required}>
-            {props.label}
-          </Label>
+          <Label id={labelId} isRequiredField={props.required} text={props.label} />
         </div>
       )}
       <div key={props.id}>

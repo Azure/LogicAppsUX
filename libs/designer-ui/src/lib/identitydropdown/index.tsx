@@ -1,6 +1,7 @@
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
-import { Dropdown, FontSizes, Label } from '@fluentui/react';
+import { Dropdown, FontSizes } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import { Label } from '../label';
 
 export interface IdentityDropdownProps {
   defaultSelectedKey?: string;
@@ -42,7 +43,7 @@ export const IdentityDropdown: React.FC<IdentityDropdownProps> = ({ defaultSelec
 
   return (
     <div className="msla-identity-dropdown-container">
-      <Label className="msla-identity-dropdown-label">{managedIdentityLabel}</Label>
+      <Label className="msla-identity-dropdown-label" text={managedIdentityLabel} />
       <Dropdown
         ariaLabel={managedIdentityLabel}
         disabled={readOnly}

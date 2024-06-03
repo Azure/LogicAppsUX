@@ -48,12 +48,13 @@ export class StandardSearchService extends BaseSearchService {
     if (this._isDev) {
       return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(filterOperation)]);
     }
-    const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
+    const { apiVersion, baseUrl, httpClient, showStatefulOperations, locale } = this.options;
     const uri = `${baseUrl}/operations`;
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
       workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
     };
+    const headers = locale ? { 'Accept-Language': locale } : undefined;
 
     let response = null;
     if (this.isHybridLogicApp(uri)) {
@@ -70,7 +71,7 @@ export class StandardSearchService extends BaseSearchService {
         },
       });
     } else {
-      response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
+      response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters, headers });
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
@@ -122,12 +123,14 @@ export class StandardSearchService extends BaseSearchService {
       const {
         httpClient,
         apiHubServiceDetails: { apiVersion, subscriptionId, location },
+        locale,
       } = this.options;
       const filter = `$filter=${ISE_RESOURCE_ID} eq null`;
       const startUri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis?api-version=${apiVersion}`;
       const uri = `${prevNextlink ?? startUri}&${filter}`;
+      const headers = locale ? { 'Accept-Language': locale } : undefined;
 
-      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri });
+      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, headers });
       const filteredValue = value
         .filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V2'))
         .filter((connector) => connector?.location === location);
@@ -159,11 +162,12 @@ export class StandardSearchService extends BaseSearchService {
     if (this._isDev) {
       return Promise.resolve([...connectorsSearchResultsMock, ...getClientBuiltInConnectors(filterConnector)]);
     }
-    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient, locale } = this.options;
     const uri = `${baseUrl}/operationGroups`;
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
     };
+    const headers = locale ? { 'Accept-Language': locale } : undefined;
 
     let response = null;
     if (this.isHybridLogicApp(uri)) {
@@ -178,7 +182,7 @@ export class StandardSearchService extends BaseSearchService {
         },
       });
     } else {
-      response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
+      response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters, headers });
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;

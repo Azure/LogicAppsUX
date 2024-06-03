@@ -60,3 +60,7 @@ export const useSuppressDefaultNodeSelect = () => {
 export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.workflowLoader.showPerformanceDebug);
 };
+
+export const useStringOverrides = () => {
+  return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.stringOverrides);
+};
