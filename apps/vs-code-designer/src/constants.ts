@@ -300,7 +300,6 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
-export const containersKind = 'azurecontainerapps';
 
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
@@ -326,11 +325,7 @@ export const DirectoryKind = {
   file: 'file',
 } as const;
 
-export const serverFarmIdPlaceholder =
-  '/subscriptions/subscription_id/resourceGroups/resource_group/providers/Microsoft.Web/serverfarms/server_farm_name';
-
 // App settings
-export const WebsiteContentShare = 'WEBSITE_CONTENTSHARE';
 export const AzureWebJobsStorage = 'AzureWebJobsStorage';
 export const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';
 export const COMMON_ERRORS = {

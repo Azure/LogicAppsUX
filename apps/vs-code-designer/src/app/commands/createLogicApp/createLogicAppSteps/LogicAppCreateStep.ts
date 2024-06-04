@@ -12,7 +12,6 @@ import {
   logicAppKind,
   logicAppKindAppSetting,
   webhookRedirectHostUri,
-  WebsiteContentShare,
   workerRuntimeKey,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
@@ -22,7 +21,7 @@ import { createWebSiteClient } from '../../../utils/azureClients';
 import { getRandomHexString } from '../../../utils/fs';
 import { tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
 import type { NameValuePair, SiteConfig, WebSiteManagementClient } from '@azure/arm-appservice';
-import { Site as modelSite } from '@azure/arm-appservice/dist';
+import type { Site as modelSite } from '@azure/arm-appservice/dist';
 import { WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
 import type { CustomLocation } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
@@ -65,7 +64,6 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       siteConfig: await this.getNewSiteConfig(context),
       reserved: context.newSiteOS === WebsiteOS.linux,
       identity: context.customLocation ? undefined : { type: 'SystemAssigned' },
-      managedEnvironmentId: context.useContainerApps ? context.containerApp?.id : undefined,
     };
 
     if (context.customLocation) {
@@ -76,7 +74,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
   }
 
   private addCustomLocationProperties(site: modelSite, customLocation: CustomLocation): void {
-    modelSite.type.modelProperties.extendedLocation = {
+    site.type.modelProperties.extendedLocation = {
       serializedName: 'extendedLocation',
       type: {
         name: 'Composite',
@@ -115,10 +113,6 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       newSiteConfig.linuxFxVersion = linuxFxVersion;
     }
 
-    if (context.useContainerApps) {
-      newSiteConfig.linuxFxVersion = 'DOCKER|mcr.microsoft.com/azure-functions/dotnet:4-nightly';
-    }
-
     newSiteConfig.appSettings = await this.getAppSettings(context);
     return newSiteConfig;
   }
@@ -138,14 +132,11 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
         name: workerRuntimeKey,
         value: runtimeWithoutVersion,
       },
-    ];
-
-    if (!context.useContainerApps) {
-      appSettings.push({
+      {
         name: webhookRedirectHostUri,
         value: '',
-      });
-    }
+      },
+    ];
 
     if (context.storageType === StorageOptions.SQL) {
       appSettings.push(
@@ -165,7 +156,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
       });
     }
 
-    if (context.customLocation || context.useContainerApps) {
+    if (context.customLocation) {
       appSettings.push(
         {
           name: appKindSetting,
@@ -203,7 +194,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     }
 
     const isWorkflowStandard: boolean = context.plan?.sku?.family?.toLowerCase() === 'ws';
-    if (context.newSiteOS === WebsiteOS.windows || isWorkflowStandard || context.useContainerApps) {
+    if (context.newSiteOS === WebsiteOS.windows || isWorkflowStandard) {
       // WEBSITE_CONTENT* settings only apply for the following scenarios:
       // Windows: https://github.com/Microsoft/vscode-azurefunctions/issues/625
       // Linux Elastic Premium: https://github.com/microsoft/vscode-azurefunctions/issues/1682
@@ -212,8 +203,8 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
         value: storageConnectionString.websiteContentAzureFileValue,
       });
       appSettings.push({
-        name: WebsiteContentShare,
-        value: context.fileShareName ?? getNewFileShareName(nonNullProp(context, 'newSiteName')),
+        name: 'WEBSITE_CONTENTSHARE',
+        value: getNewFileShareName(nonNullProp(context, 'newSiteName')),
       });
     }
 

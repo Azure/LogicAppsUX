@@ -14,7 +14,6 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
-  containersKind,
   logicAppFilter,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -35,7 +34,6 @@ import {
   AdvancedIdentityTenantIdStep,
   AdvancedIdentityClientSecretStep,
 } from '../createLogicApp/createLogicAppSteps/AdvancedIdentityPromptSteps';
-import { deployToFileShare } from './deployToFileShareStep';
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
@@ -102,7 +100,6 @@ async function deploy(
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
-  const isDeployingToContainers = nodeKind && nodeKind.indexOf(containersKind) !== -1;
   const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
 
   context.telemetry.properties.projectLanguage = language;
@@ -184,15 +181,7 @@ async function deploy(
       : undefined;
 
     try {
-      if (isDeployingToContainers) {
-        await deployToFileShare(context, node.site);
-      } else {
-        await innerDeploy(
-          node.site,
-          deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath,
-          context
-        );
-      }
+      await innerDeploy(node.site, deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath, context);
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
@@ -200,9 +189,7 @@ async function deploy(
     }
   });
 
-  if (!isDeployingToContainers) {
-    await node.loadAllChildren(context);
-  }
+  await node.loadAllChildren(context);
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
 }
 

@@ -3,14 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { LogicAppResolver } from '../../../LogicAppResolver';
-import {
-  projectLanguageSetting,
-  webProvider,
-  workflowappRuntime,
-  storageProvider,
-  insightsProvider,
-  serverFarmIdPlaceholder,
-} from '../../../constants';
+import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
@@ -212,11 +205,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     await wizard.execute();
 
-    const site = nonNullProp(wizardContext, 'site');
-    const serverFarmId = wizardContext.useContainerApps ? serverFarmIdPlaceholder : site.serverFarmId;
-    const hostNameSslStates = wizardContext.useContainerApps ? [] : site.hostNameSslStates;
-    const parsedSite = new ParsedSite({ ...site, serverFarmId, hostNameSslStates }, subscription.subscription);
-    const client: SiteClient = await parsedSite.createClient(context);
+    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+    const client: SiteClient = await site.createClient(context);
 
     if (!client.isLinux) {
       try {
@@ -226,7 +216,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       }
     }
 
-    const resolved = new LogicAppResourceTree(subscription.subscription, { ...site, serverFarmId, hostNameSslStates });
+    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
     await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
     await ext.rgApi.appResourceTree.refresh(context);
     return new SlotTreeItem(subscription, resolved);
