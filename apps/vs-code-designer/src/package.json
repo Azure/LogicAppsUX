@@ -146,7 +146,7 @@
       },
       {
         "command": "azureLogicAppsStandard.cloudToLocal",
-        "title": "Cloud to local...",
+        "title": "Create new logic app workspace from package...",
         "category": "Azure Logic Apps",
         "preview": true
       },
@@ -388,16 +388,16 @@
           "group": "1_create@2"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.cloudToLocal",
           "group": "1_create@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
+          "group": "1_create@4"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
           "group": "2_deploy@1"
-        },
-        {
-          "command": "azureLogicAppsStandard.cloudToLocal",
-          "group": "3_import@1"
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
