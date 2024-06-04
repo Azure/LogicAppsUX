@@ -13,7 +13,6 @@ export interface ConnectionMultiAuthInputProps {
 
 const ConnectionMultiAuthInput = ({ isLoading, value, onChange, connectionParameterSets }: ConnectionMultiAuthInputProps) => {
   const authType = useIntl().formatMessage({
-    id: 'authType',
     defaultMessage: 'Authentication Type',
     description: 'Label for multi auth options',
   });
