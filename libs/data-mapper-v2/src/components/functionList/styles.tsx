@@ -62,5 +62,6 @@ export const useStyles = makeStyles({
   addIconAside: {
     paddingLeft: '0px',
     paddingRight: '4px',
+    color: tokens.colorPaletteBlueBorderActive,
   },
 });

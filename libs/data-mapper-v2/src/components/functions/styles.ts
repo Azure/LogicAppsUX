@@ -32,7 +32,7 @@ export const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
-    marginTop: '15px',
+    marginTop: '8px',
     marginBottom: '0px',
   },
   collapsedDrawerBodyWrapper: {
