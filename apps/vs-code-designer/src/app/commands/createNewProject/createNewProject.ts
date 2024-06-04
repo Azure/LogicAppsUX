@@ -14,6 +14,7 @@ import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { InitializeStaticWebAppStep } from './InitializeStaticWebAppStep';
 import type {
   ICreateFunctionOptions,
   IFunctionWizardContext,
@@ -71,7 +72,12 @@ export async function createNewProjectInternal(context: IActionContext, options:
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
     title: localize('createNewProject', 'Create new project'),
-    promptSteps: [new FolderListStep(), new NewProjectTypeStep(options.templateId, options.functionSettings), new OpenBehaviorStep()],
+    promptSteps: [
+      new FolderListStep(),
+      new NewProjectTypeStep(options.templateId, options.functionSettings),
+      new InitializeStaticWebAppStep(),
+      new OpenBehaviorStep(),
+    ],
     executeSteps: [new OpenFolderStep()],
   });
 

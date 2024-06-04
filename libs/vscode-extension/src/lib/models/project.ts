@@ -78,6 +78,7 @@ export interface IProjectWizardContext extends IActionContext {
   targetFramework?: string | string[];
   isCustomCodeLogicApp?: boolean;
   logicAppName?: string;
+  initializeStaticWebApp?: boolean;
 }
 
 export const OpenBehavior = {

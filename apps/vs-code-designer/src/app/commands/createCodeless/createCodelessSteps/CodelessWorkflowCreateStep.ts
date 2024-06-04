@@ -45,6 +45,16 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
   }
 
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
+    // Check if the user chose to initialize a static web app
+    if (context.initializeStaticWebApp) {
+      context.telemetry.properties.initializeStaticWebApp = 'true';
+      // For now, we'll just log a message
+      console.log('Initializing Static Web App...');
+      // TODO: Add the actual logic for initializing a Static Web App here
+    } else {
+      context.telemetry.properties.initializeStaticWebApp = 'false';
+    }
+
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
