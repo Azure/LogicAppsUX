@@ -147,7 +147,8 @@
       {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Cloud to local...",
-        "category": "Azure Logic Apps"
+        "category": "Azure Logic Apps",
+        "preview": true
       },
       {
         "command": "azureLogicAppsStandard.exportLogicApp",

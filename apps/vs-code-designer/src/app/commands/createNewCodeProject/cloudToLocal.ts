@@ -1,7 +1,5 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
+// Used createNewCodeProject.ts as a template to create this file
+// This file is used to take a zipped Logic App from the desktop and unzip to the local workspace
 import {
   extensionCommand,
   funcVersionSetting,
@@ -16,10 +14,10 @@ import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
+import { ZipFileStep } from '../createNewProject/createProjectSteps/ZipFileStep';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
-import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -30,11 +28,9 @@ import type {
   ProjectLanguage,
   ProjectVersion,
 } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
-import * as path from 'path';
 import { window } from 'vscode';
 
-export async function createNewCodeProjectFromCommand(
+export async function cloudToLocalCommand(
   context: IActionContext,
   folderPath?: string | undefined,
   language?: ProjectLanguage,
@@ -44,7 +40,7 @@ export async function createNewCodeProjectFromCommand(
   functionName?: string,
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
-  await createNewCodeProjectInternal(context, {
+  await cloudToLocalInternal(context, {
     folderPath: isString(folderPath) ? folderPath : undefined,
     templateId,
     functionName,
@@ -55,9 +51,9 @@ export async function createNewCodeProjectFromCommand(
   });
 }
 
-export async function createNewCodeProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
+export async function cloudToLocalInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
   addLocalFuncTelemetry(context);
-  showPreviewWarning(extensionCommand.createNewCodeProject); //Show warning if command is set to preview
+  showPreviewWarning(extensionCommand.cloudToLocal); //Show warning if command is set to preview
 
   const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
@@ -71,7 +67,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   if (options.folderPath) {
     new FolderListStep.setProjectPath(wizardContext, options.folderPath);
   }
-
+  // If suppressOpenFolder is true, set the open behavior to don't open. Otherwise, get the open behavior from the workspace settings.
   if (options.suppressOpenFolder) {
     wizardContext.openBehavior = OpenBehavior.dontOpen;
   } else if (!wizardContext.openBehavior) {
@@ -79,35 +75,23 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     context.telemetry.properties.openBehaviorFromSetting = String(!!wizardContext.openBehavior);
   }
 
+  // Create a new Azure wizard with the appropriate steps for Cloud to Local
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createNewCodeProject', 'Create new logic app workspace'),
+    title: localize('cloudToLocal', 'Import zip into new Workspace'),
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
-      new SetLogicAppType(),
       new SetLogicAppName(),
-      new NewCodeProjectTypeStep(options.templateId, options.functionSettings, options.skipWorkflowStateTypeStep),
+      new ZipFileStep(),
+      new NewCodeProjectTypeStep(options.templateId, options.functionSettings, true),
       new OpenBehaviorStep(),
     ],
     executeSteps: [new OpenFolderStepCodeProject()],
+    hideStepCount: true,
   });
 
   await wizard.prompt();
   await wizard.execute();
 
-  await createArtifactsFolder(context as IFunctionWizardContext);
-  await createLibFolder(context as IFunctionWizardContext);
-
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
-}
-
-async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
-}
-
-async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', 'net472'), { recursive: true });
 }
