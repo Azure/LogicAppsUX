@@ -2,6 +2,7 @@ import { Dropdown } from '@fluentui/react';
 import type { ConnectionParameterSets } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { Label } from '@microsoft/designer-ui';
+import { useIntl } from 'react-intl';
 
 export interface ConnectionMultiAuthInputProps {
   isLoading: boolean;
@@ -11,12 +12,18 @@ export interface ConnectionMultiAuthInputProps {
 }
 
 const ConnectionMultiAuthInput = ({ isLoading, value, onChange, connectionParameterSets }: ConnectionMultiAuthInputProps) => {
+  const intl = useIntl();
+  const authType = intl.formatMessage({
+    id: 'aIGEjB',
+    defaultMessage: 'Authentication Type',
+    description: 'Label for multi auth options',
+  });
   return (
     <div className="param-row">
       <Label
         className="label"
         isRequiredField={true}
-        text={connectionParameterSets?.uiDefinition?.displayName ?? ''}
+        text={connectionParameterSets?.uiDefinition?.displayName ?? authType}
         htmlFor={'connection-param-set-select'}
         disabled={isLoading}
       />

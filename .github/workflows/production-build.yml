@@ -43,7 +43,6 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
-            - args: [--global, turbo, typescript]
 
       - name: 'Version Bump'
         run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && ${{ env.BUMP_COMMAND }} && pnpm install
@@ -76,7 +75,6 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
-            - args: [--global, turbo, typescript]
 
       - name: 'Local Version Bump'
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
@@ -136,7 +134,6 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
-            - args: [--global, turbo, typescript]
     
       - name: 'Local Version Bump'
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
