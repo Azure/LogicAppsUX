@@ -1,38 +1,127 @@
-import type { RootState } from '../core/state/Store';
-import { Stack } from '@fluentui/react';
-import { tokens } from '@fluentui/react-components';
-import { useEffect, useState } from 'react';
+import type { AppDispatch, RootState } from '../core/state/Store';
+import { useEffect, useMemo, useRef, useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useSelector } from 'react-redux';
-import { ReactFlowProvider } from 'reactflow';
+import { useSelector, useDispatch } from 'react-redux';
+import type { Connection, CoordinateExtent, Node, Edge } from 'reactflow';
+import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { useStaticStyles, useStyles } from './styles';
+import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
 import { Panel as FunctionPanel } from '../components/functions/Panel';
+import SchemaNode from '../components/common/reactflow/SchemaNode';
+import ConnectionLine from '../components/common/reactflow/ConnectionLine';
+import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
+import { updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import { DataMapperWrappedContext } from '../core';
 
-const centerViewId = 'centerView';
-
-export interface DataMapperDesignerProps {
+interface DataMapperDesignerProps {
   saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
   saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
-  // addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
-  readCurrentSchemaOptions?: () => void;
+  readCurrentSchemaOptions: () => void;
   readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
+  const ref = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
-  const { centerViewHeight } = useCenterViewSize();
-  const [isPropPaneExpanded, _setIsPropPaneExpanded] = useState(!!selectedItemKey);
+  const nodeTypes = useMemo(
+    () => ({
+      schemaNode: SchemaNode,
+    }),
+    []
+  );
+
+  const edgeTypes = useMemo(
+    () => ({
+      connectedEdge: ConnectedEdge,
+    }),
+    []
+  );
+
+  const reactFlowExtent = useMemo(() => {
+    if (ref?.current) {
+      const rect = ref.current.getBoundingClientRect();
+      if (rect) {
+        return [
+          [0, 0],
+          [rect.width, rect.height],
+        ] as CoordinateExtent;
+      }
+    }
+
+    return undefined;
+  }, [ref]);
+
+  const dispatchEdgesAndNodes = useCallback(
+    (updatedEdges: Edge[], updatedNodes: Node[]) => {
+      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
+
+      const newNodes = [
+        ...updatedNodes.map((node) => ({
+          ...node,
+          data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
+        })),
+      ];
+
+      dispatch(updateReactFlowEdges(updatedEdges));
+
+      dispatch(updateReactFlowNodes(newNodes));
+    },
+    [dispatch]
+  );
+
+  const onEdgeConnect = useCallback(
+    (connection: Connection) => {
+      const newEdges = addEdge(
+        {
+          ...connection,
+          type: 'connectedEdge',
+          updatable: 'target',
+          focusable: true,
+          deletable: true,
+        },
+        edges
+      );
+      dispatchEdgesAndNodes(newEdges, nodes);
+    },
+    [edges, nodes, dispatchEdgesAndNodes]
+  );
+
+  const onEdgeUpdate = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => {
+      const newEdges = addEdge(
+        {
+          ...newConnection,
+          type: 'connectedEdge',
+          updatable: 'target',
+          focusable: true,
+          deletable: true,
+        },
+        edges.filter((edge) => edge.id !== oldEdge.id)
+      );
+
+      dispatchEdgesAndNodes(newEdges, nodes);
+    },
+    [edges, nodes, dispatchEdgesAndNodes]
+  );
+
+  const isValidConnection = useCallback(
+    (connection: Connection) => {
+      return !edges.find((edge) => edge.source === connection.source && edge.target === connection.target);
+    },
+    [edges]
+  );
 
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
@@ -43,87 +132,59 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
     }
   }, [isMapStateDirty, setIsMapStateDirty]);
 
-  const getCanvasAreaHeight = () => {
-    // PropPane isn't shown when in the other views, so canvas can use full height
-
-    if (isPropPaneExpanded) {
-      return centerViewHeight;
-    }
-    return centerViewHeight;
-  };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
-        <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
-        <div className={styles.dataMapperShell}>
-          <FunctionPanel />
-          <AddSchemaDrawer
-            onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-            readCurrentSchemaOptions={() => console.log('')}
-            schemaType={SchemaType.Source}
-          />
-
-          <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
-            <div
-              id="centerViewWithBreadcrumb"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                flex: '1 1 1px',
-              }}
-            >
-              <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
-                <div
-                  style={{
-                    height: getCanvasAreaHeight(),
-                    marginBottom: 0,
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  <Stack horizontal style={{ height: '100%' }}>
-                    <div
-                      className={styles.canvasWrapper}
-                      style={{
-                        backgroundColor: tokens.colorNeutralBackground4,
-                      }}
-                    />
-                  </Stack>
-                </div>
-              </div>
+        <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
+          <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
+          <div className={styles.dataMapperShell}>
+            <FunctionPanel />
+            <AddSchemaDrawer
+              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+              readCurrentSchemaOptions={() => console.log('')}
+              schemaType={SchemaType.Source}
+            />
+            <div ref={ref} id="editorView" className={styles.canvasWrapper}>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                nodesDraggable={false}
+                selectNodesOnDrag={false}
+                onlyRenderVisibleElements={false}
+                zoomOnScroll={false}
+                zoomOnPinch={false}
+                nodesConnectable={true}
+                zoomOnDoubleClick={false}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                preventScrolling={false}
+                minZoom={1}
+                elementsSelectable={false}
+                maxZoom={1}
+                autoPanOnConnect={false}
+                snapToGrid={true}
+                panOnScroll={false}
+                panOnDrag={false}
+                style={reactFlowStyle}
+                proOptions={{
+                  account: 'paid-sponsor',
+                  hideAttribution: true,
+                }}
+                isValidConnection={isValidConnection}
+                onConnect={onEdgeConnect}
+                onEdgeUpdate={onEdgeUpdate}
+                connectionLineComponent={ConnectionLine}
+                translateExtent={reactFlowExtent}
+              />
             </div>
+            <AddSchemaDrawer
+              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+              readCurrentSchemaOptions={readCurrentSchemaOptions}
+              schemaType={SchemaType.Target}
+            />
           </div>
-          <AddSchemaDrawer
-            onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-            readCurrentSchemaOptions={() => console.log('')}
-            schemaType={SchemaType.Target}
-          />
-        </div>
+        </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>
     </DndProvider>
   );
-};
-
-const useCenterViewSize = () => {
-  const [centerViewWidth, setCenterViewWidth] = useState(0);
-  const [centerViewHeight, setCenterViewHeight] = useState(0);
-
-  useEffect(() => {
-    const centerViewElement = document.getElementById(centerViewId);
-
-    const centerViewResizeObserver = new ResizeObserver((entries) => {
-      if (entries.length && entries.length > 0) {
-        setCenterViewHeight(entries[0].contentRect.height);
-        setCenterViewWidth(entries[0].contentRect.width);
-      }
-    });
-
-    if (centerViewElement) {
-      centerViewResizeObserver.observe(centerViewElement);
-    }
-
-    return () => centerViewResizeObserver.disconnect();
-  }, []);
-
-  return { centerViewWidth, centerViewHeight };
 };
