@@ -3,15 +3,16 @@ import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
-import { Picker } from './picker';
-import { PickerItemType } from './pickerItem';
+import { FilePickerPopover } from './filepickerPopover';
+import { filterAndSortItems } from './helpers';
 import { EditorValueChange } from './plugins/EditorValueChange';
 import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
-import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
-import { TooltipHost, IconButton } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
+import type { FilePickerBreadcrumb } from './types';
+import { PickerItemType } from './types';
+import { Button, Popover, PopoverTrigger, Tooltip } from '@fluentui/react-components';
+import { Folder28Regular } from '@fluentui/react-icons';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -23,7 +24,7 @@ export interface PickerCallbackHandlers {
 }
 
 export interface FilePickerEditorProps extends BaseEditorProps {
-  type: string;
+  type: PickerItemType;
   items: TreeDynamicValue[] | undefined;
   displayValue?: string;
   fileFilters?: string[];
@@ -32,12 +33,6 @@ export interface FilePickerEditorProps extends BaseEditorProps {
   editorBlur?: ChangeHandler;
   pickerCallbacks: PickerCallbackHandlers;
 }
-
-const folderIcon: IIconProps = { iconName: 'FolderOpen' };
-const hostStyles: Partial<ITooltipHostStyles> = {
-  root: { display: 'inline-block' },
-};
-const calloutProps = { gapSpace: 0 };
 
 export const FilePickerEditor = ({
   initialValue,
@@ -51,7 +46,6 @@ export const FilePickerEditor = ({
   pickerCallbacks,
   ...baseEditorProps
 }: FilePickerEditorProps) => {
-  const pickerIconId = useId();
   const intl = useIntl();
   const [selectedItem, setSelectedItem] = useState<any>();
   const initialDisplayValue = displayValue ? [createLiteralValueSegment(displayValue)] : initialValue;
@@ -62,19 +56,17 @@ export const FilePickerEditor = ({
   const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
   const fileSourceName = getFileSourceName();
 
-  const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>([]);
+  const [titleSegments, setTitleSegments] = useState<FilePickerBreadcrumb[]>([]);
 
   const onRootClicked = () => {
     setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
     onFolderNavigation(/* selectedItem */ undefined);
-  };
 
-  const openFolderPicker = () => {
-    if (!showPicker) {
-      setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
-      onFolderNavigation(/* selectedItem */ undefined);
-      setShowPicker(true);
-    }
+    LoggerService().log({
+      area: 'FilePickerEditor:onRootClicked',
+      level: LogEntryLevel.Verbose,
+      message: 'Navigated to root.',
+    });
   };
 
   const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
@@ -83,11 +75,17 @@ export const FilePickerEditor = ({
     setTitleSegments([
       ...titleSegments,
       {
+        key: selectedItem.value?.Id || displayValue,
+        onSelect: () => onFolderNavigated(selectedItem),
         text: displayValue,
-        key: displayValue,
-        onClick: () => onFolderNavigated(selectedItem),
       },
     ]);
+
+    LoggerService().log({
+      area: 'FilePickerEditor:onFolderNavigated',
+      level: LogEntryLevel.Verbose,
+      message: 'Navigated to folder.', // Folder name is PII; do not include.
+    });
   };
 
   const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
@@ -98,6 +96,13 @@ export const FilePickerEditor = ({
       setSelectedItem(selectedItem.value);
       setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
       setShowPicker(false);
+
+      LoggerService().log({
+        area: 'FilePickerEditor:onFileFolderSelected',
+        args: [`${type}Picker`, selectedItem.isParent ? 'folder' : 'file'],
+        level: LogEntryLevel.Verbose,
+        message: 'File or folder was selected.', // Item name is PII; do not include.
+      });
     }
   };
 
@@ -147,44 +152,48 @@ export const FilePickerEditor = ({
         />
         <UpdateEditorFromFilePicker pickerDisplayValue={pickerDisplayValue} />
       </EditorWrapper>
-      <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
-        <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
-      </TooltipHost>
-      <Picker
-        visible={showPicker}
-        anchorId={pickerIconId}
-        loadingFiles={isLoading}
-        currentPathSegments={titleSegments}
-        files={filterItems(items, type, fileFilters)}
-        errorDetails={errorDetails}
-        onCancel={() => setShowPicker(false)}
-        handleFolderNavigation={onFolderNavigated}
-        handleItemSelected={onFileFolderSelected}
-      />
+      <Popover
+        open={showPicker}
+        onOpenChange={(_event, data) => {
+          if (!showPicker && data.open) {
+            setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
+            onFolderNavigation(/* selectedItem */ undefined);
+          }
+
+          setShowPicker(data.open);
+
+          LoggerService().log({
+            area: 'FilePickerEditor:openFolderPicker',
+            level: LogEntryLevel.Verbose,
+            message: data.open ? 'Picker opened.' : 'Picker closed.',
+          });
+        }}
+        positioning="before-top"
+        trapFocus={true}
+        withArrow={true}
+      >
+        <Tooltip content={openFolderLabel} relationship="label">
+          <PopoverTrigger disableButtonEnhancement={true}>
+            <Button appearance="subtle" aria-label={openFolderLabel} icon={<Folder28Regular />} />
+          </PopoverTrigger>
+        </Tooltip>
+        <FilePickerPopover
+          currentPathSegments={titleSegments}
+          errorDetails={errorDetails}
+          files={filterAndSortItems(items, type, fileFilters)}
+          handleFolderNavigation={onFolderNavigated}
+          handleItemSelected={onFileFolderSelected}
+          loadingFiles={isLoading}
+        />
+      </Popover>
     </div>
   );
 };
 
-const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: string[]): TreeDynamicValue[] => {
-  if (!items || items.length === 0) {
-    return [];
-  }
-  let returnItems = items;
-  if (type === PickerItemType.FOLDER) {
-    returnItems = items.filter((item) => item.isParent);
-  }
-  if (fileFilters && fileFilters.length > 0) {
-    returnItems = returnItems.filter((item) => {
-      return fileFilters.some((filter) => equals(filter, item.mediaType) || item.isParent);
-    });
-  }
-  return returnItems;
-};
-
-const getInitialTitleSegments = (sourceName?: string, onRootClicked?: () => void): IBreadcrumbItem[] => {
+const getInitialTitleSegments = (sourceName?: string, onRootClicked?: () => void): FilePickerBreadcrumb[] => {
   if (!sourceName) {
     return [];
   }
-  const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName, onClick: onRootClicked }];
+  const items: FilePickerBreadcrumb[] = [{ key: sourceName, text: sourceName, onSelect: onRootClicked }];
   return items;
 };

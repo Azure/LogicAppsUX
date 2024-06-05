@@ -65,7 +65,7 @@ export * from './peek';
 export * from './panel';
 export * from './recurrence';
 export * from './scratch';
-export * from './picker/filepickereditor';
+export * from './picker/filepickerEditor';
 // export * from './picker';
 // export * from './rulescontrol';
 export * from './schemaeditor';
