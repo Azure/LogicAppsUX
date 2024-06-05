@@ -133,7 +133,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
   }
 
   public isHybridLogicApp(uri: string): boolean {
-    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+    return uri.toLowerCase().includes('microsoft.app');
   }
 
   public getHybridAppBaseRelativeUrl(appId: string | undefined): string {

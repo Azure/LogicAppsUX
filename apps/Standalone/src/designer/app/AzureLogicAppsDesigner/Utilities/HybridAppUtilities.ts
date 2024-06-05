@@ -69,6 +69,6 @@ export class HybridAppUtility {
   }
 
   public static isHybridLogicApp(uri: string) {
-    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+    return uri.toLowerCase().includes('microsoft.app');
   }
 }

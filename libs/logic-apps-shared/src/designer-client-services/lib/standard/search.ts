@@ -64,9 +64,8 @@ export class StandardSearchService extends BaseSearchService {
           'brazilus.management.azure.com'
         ),
         headers: {
-          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operations/?workflowKind=${
-            showStatefulOperations ? 'Stateful' : 'Stateless'
-          }`,
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operations/?workflowKind=${showStatefulOperations ? 'Stateful' : 'Stateless'
+            }`,
           'x-ms-logicapps-proxy-method': 'GET',
         },
       });
@@ -141,7 +140,7 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public isHybridLogicApp(uri: string): boolean {
-    return uri.indexOf('providers/Microsoft.App/containerApps') !== -1;
+    return uri.toLowerCase().includes('microsoft.app');
   }
 
   public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
