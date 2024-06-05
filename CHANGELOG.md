@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.13.12](https://github.com/Azure/LogicAppsUX/compare/v4.13.11...v4.13.12) (2024-06-05)
+
+
+### Bug Fixes
+
+* **designer:** Do not show label for array editor in collapsed view ([#4932](https://github.com/Azure/LogicAppsUX/issues/4932)) ([#4936](https://github.com/Azure/LogicAppsUX/issues/4936)) ([6fce6f5](https://github.com/Azure/LogicAppsUX/commit/6fce6f5a8c5f244edeeab832dcaec871e4eeeab4))
+
 ### [4.13.11](https://github.com/Azure/LogicAppsUX/compare/v4.13.10...v4.13.11) (2024-05-24)
 
 
