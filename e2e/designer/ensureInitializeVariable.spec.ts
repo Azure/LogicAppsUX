@@ -21,16 +21,16 @@ test(
     await page.getByRole('option', { name: 'true' }).click();
     await page.getByText('Boolean').click();
     await page.getByRole('option', { name: 'Integer' }).click();
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').getByRole('paragraph').fill('test');
+    await page.getByLabel('Value').getByRole('paragraph').click();
+    await page.getByLabel('Value').fill('test');
     await page
       .locator('#msla-node-details-panel-Initialize_variable div')
       .filter({ hasText: 'Name*testAdd dynamic data or' })
       .first()
       .click();
     await expect(page.getByRole('alert')).toContainText('Enter a valid integer.');
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').getByRole('paragraph').fill('12');
+    await page.getByLabel('Value').getByRole('paragraph').click();
+    await page.getByLabel('Value').fill('12');
     await page
       .locator('#msla-node-details-panel-Initialize_variable div')
       .filter({ hasText: 'Name*testAdd dynamic data or' })
