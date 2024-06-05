@@ -4,7 +4,6 @@ import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
-import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
@@ -165,7 +164,9 @@ import type {
   OperationManifest,
   RecurrenceSetting,
 } from '@microsoft/logic-apps-shared';
-import type { Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
+import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
+import { getAllVariables } from '../variables';
 
 // import { debounce } from 'lodash';
 
@@ -330,7 +331,8 @@ export function createParameterInfo(
 ): ParameterInfo {
   const value = loadParameterValue(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
-  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
+  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization, dynamicParameterReference } =
+    parameter;
   const info = {
     alias,
     dependencies,
@@ -341,6 +343,7 @@ export function createParameterInfo(
     isUnknown,
     serialization,
     deserialization,
+    dynamicParameterReference,
   };
 
   const parameterInfo: ParameterInfo = {
@@ -458,6 +461,12 @@ export function getParameterEditorProps(
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
+  } else if (editor === constants.EDITOR.ARRAY) {
+    if (itemSchema) {
+      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
+    } else {
+      editor = undefined;
+    }
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -1739,92 +1748,103 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   return isCompatible;
 }
 
-export async function updateParameterAndDependencies(
-  nodeId: string,
-  groupId: string,
-  parameterId: string,
-  properties: Partial<ParameterInfo>,
-  isTrigger: boolean,
-  operationInfo: NodeOperation,
-  connectionReference: ConnectionReference,
-  nodeInputs: NodeInputs,
-  dependencies: NodeDependencies,
-  variables: VariableDeclaration[],
-  settings: Settings,
-  dispatch: Dispatch,
-  rootState: RootState,
-  operationDefinition?: any
-): Promise<void> {
-  const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
-  const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
-  updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
-  const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
-
-  const parametersToUpdate = [
-    {
+export const updateParameterAndDependencies = createAsyncThunk(
+  'updateParameterAndDependencies',
+  async (
+    actionPayload: {
+      nodeId: string;
+      groupId: string;
+      parameterId: string;
+      properties: Partial<ParameterInfo>;
+      isTrigger: boolean;
+      operationInfo: NodeOperation;
+      connectionReference: ConnectionReference;
+      nodeInputs: NodeInputs;
+      dependencies: NodeDependencies;
+      operationDefinition?: any;
+    },
+    { dispatch, getState }
+  ): Promise<void> => {
+    const {
+      nodeId,
       groupId,
       parameterId,
-      propertiesToUpdate: propertiesWithValidations,
-    },
-  ];
-  const payload: UpdateParametersPayload = {
-    isUserAction: true,
-    nodeId,
-    parameters: parametersToUpdate,
-  };
-
-  const dependenciesToUpdate = getDependenciesToUpdate(dependencies, parameterId, updatedParameter);
-  if (dependenciesToUpdate) {
-    payload.dependencies = dependenciesToUpdate;
-
-    const inputDependencies = dependenciesToUpdate.inputs;
-    for (const key of Object.keys(inputDependencies)) {
-      if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
-        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
-        if (!dependentParameter) {
-          LoggerService().log({
-            level: LogEntryLevel.Verbose,
-            area: 'UpdateParameterAndDependencies',
-            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
-          });
-          continue;
-        }
-        payload.parameters.push({
-          groupId,
-          parameterId: dependentParameter.id,
-          propertiesToUpdate: {
-            dynamicData: { status: DynamicCallStatus.NOTSTARTED },
-            editorOptions: { options: [] },
-          },
-        });
-      }
-    }
-  }
-
-  dispatch(updateNodeParameters(payload));
-
-  updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
-
-  if (operationInfo?.type?.toLowerCase() === 'until') {
-    validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
-  }
-
-  if (dependenciesToUpdate) {
-    loadDynamicData(
-      nodeId,
+      properties,
       isTrigger,
       operationInfo,
       connectionReference,
-      dependenciesToUpdate,
-      updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
-      settings,
-      variables,
-      dispatch,
-      rootState,
-      operationDefinition
-    );
+      nodeInputs,
+      dependencies,
+      operationDefinition,
+    } = actionPayload;
+    const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
+    const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
+    updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
+    const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
+
+    const parametersToUpdate = [
+      {
+        groupId,
+        parameterId,
+        propertiesToUpdate: propertiesWithValidations,
+      },
+    ];
+    const payload: UpdateParametersPayload = {
+      isUserAction: true,
+      nodeId,
+      parameters: parametersToUpdate,
+    };
+
+    const dependenciesToUpdate = getDependenciesToUpdate(dependencies, parameterId, updatedParameter);
+    if (dependenciesToUpdate) {
+      payload.dependencies = dependenciesToUpdate;
+
+      const inputDependencies = dependenciesToUpdate.inputs;
+      for (const key of Object.keys(inputDependencies)) {
+        if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
+          const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+          if (!dependentParameter) {
+            LoggerService().log({
+              level: LogEntryLevel.Verbose,
+              area: 'UpdateParameterAndDependencies',
+              message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+            });
+            continue;
+          }
+          payload.parameters.push({
+            groupId,
+            parameterId: dependentParameter.id,
+            propertiesToUpdate: {
+              dynamicData: { status: DynamicCallStatus.NOTSTARTED },
+              editorOptions: { options: [] },
+            },
+          });
+        }
+      }
+    }
+
+    dispatch(updateNodeParameters(payload));
+
+    updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
+
+    if (operationInfo?.type?.toLowerCase() === 'until') {
+      validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+    }
+
+    if (dependenciesToUpdate) {
+      loadDynamicData(
+        nodeId,
+        isTrigger,
+        operationInfo,
+        connectionReference,
+        dependenciesToUpdate,
+        dispatch,
+        getState as () => RootState,
+        operationDefinition
+      );
+    }
   }
-}
+);
 
 function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: ParameterInfo, dispatch: Dispatch): void {
   // Updating action metadata when file picker parameters have different display values than parameter value.
@@ -1880,26 +1900,11 @@ export async function updateDynamicDataInNode(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
-  nodeInputs: NodeInputs,
-  settings: Settings,
-  variables: VariableDeclaration[],
   dispatch: Dispatch,
   getState: () => RootState,
   operationDefinition?: any
 ): Promise<void> {
-  await loadDynamicData(
-    nodeId,
-    isTrigger,
-    operationInfo,
-    connectionReference,
-    dependencies,
-    nodeInputs,
-    settings,
-    variables,
-    dispatch,
-    getState(),
-    operationDefinition
-  );
+  await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
 
   const { operations, workflowParameters } = getState();
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
@@ -1939,22 +1944,20 @@ async function loadDynamicData(
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
-  nodeInputs: NodeInputs,
-  settings: Settings,
-  variables: VariableDeclaration[],
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operationDefinition?: any
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
+    const rootState = getState();
     loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
       operationInfo,
       connectionReference,
       dependencies.outputs,
-      nodeInputs,
-      settings,
+      rootState.operations.inputParameters[nodeId],
+      rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
       rootState.workflow.workflowKind,
       rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
@@ -1965,34 +1968,47 @@ async function loadDynamicData(
   if (Object.keys(dependencies?.inputs ?? {}).length) {
     await loadDynamicContentForInputsInNode(
       nodeId,
+      isTrigger,
       dependencies.inputs,
       operationInfo,
       connectionReference,
-      nodeInputs,
-      variables,
       dispatch,
-      rootState,
+      getState,
       operationDefinition
     );
   }
 }
 
-async function loadDynamicContentForInputsInNode(
+export const loadDynamicContentForInputsInNode = async (
   nodeId: string,
+  isTrigger: boolean,
   inputDependencies: Record<string, DependencyInfo>,
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference | undefined,
-  allInputs: NodeInputs,
-  variables: VariableDeclaration[],
   dispatch: Dispatch,
-  rootState: RootState,
+  getState: () => RootState,
   operationDefinition?: any
-): Promise<void> {
+): Promise<void> => {
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (info.dependencyType === 'ApiSchema') {
-      dispatch(clearDynamicIO({ nodeId, inputs: true, outputs: false }));
+      dispatch(
+        clearDynamicIO({
+          nodeId,
+          inputs: true,
+          outputs: false,
+          dynamicParameterKeys: getAllDependentDynamicParameters(
+            inputKey,
+            getState().operations.dependencies[nodeId].inputs,
+            getState().operations.inputParameters[nodeId]
+          ),
+        })
+      );
       if (isDynamicDataReadyToLoad(info)) {
+        const rootState = getState();
+        const allInputs = rootState.operations.inputParameters[nodeId];
+        const variables = getAllVariables(rootState.tokens.variables);
+
         try {
           const inputSchema = await tryGetInputDynamicSchema(
             nodeId,
@@ -2025,12 +2041,10 @@ async function loadDynamicContentForInputsInNode(
                 newOperationDefinition
               )
             : [];
-          const inputParameters = schemaInputs.map((input) => ({
-            ...createParameterInfo(input),
-            schema: input,
-          })) as ParameterInfo[];
+          const inputsWithSchema = schemaInputs.map((input) => ({ ...input, schema: input }));
+          const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
 
-          updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
+          updateTokenMetadataInParameters(nodeId, inputParameters, getState());
 
           let swagger: SwaggerParser | undefined = undefined;
           if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
@@ -2038,8 +2052,37 @@ async function loadDynamicContentForInputsInNode(
             swagger = parsedSwagger;
           }
 
-          dispatch(
-            addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
+          const updatedParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].parameters];
+          for (const input of inputParameters) {
+            const index = updatedParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
+            if (index > -1) {
+              updatedParameters.splice(index, 1, input);
+            } else {
+              updatedParameters.push(input);
+            }
+          }
+          const newNodeInputs = {
+            ...allInputs,
+            parameterGroups: {
+              ...allInputs.parameterGroups,
+              [ParameterGroupKeys.DEFAULT]: { ...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT], parameters: updatedParameters },
+            },
+          };
+
+          const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
+
+          dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, dependencies }));
+
+          // Recursively load dynamic content for the newly added dynamic inputs
+          return updateDynamicDataInNode(
+            nodeId,
+            isTrigger,
+            operationInfo,
+            connectionReference,
+            { outputs: {}, inputs: dependencies },
+            dispatch,
+            getState,
+            operationDefinition
           );
         } catch (error: any) {
           const message = parseErrorMessage(error);
@@ -2063,6 +2106,45 @@ async function loadDynamicContentForInputsInNode(
       }
     }
   }
+};
+
+function getAllDependentDynamicParameters(
+  dynamicParameterReference: string,
+  dependencies: Record<string, DependencyInfo>,
+  allInputs: NodeInputs
+): string[] {
+  const result: string[] = [];
+  const dynamicParametersChain = [dynamicParameterReference];
+
+  while (dynamicParametersChain.length > 0) {
+    const dynamicParameterKey = dynamicParametersChain.shift() as string;
+    result.push(dynamicParameterKey);
+
+    const dynamicInputsForDynamicParameterKey = getDynamicInputsFromDynamicParameter(dynamicParameterKey, allInputs);
+    for (const dynamicInput of dynamicInputsForDynamicParameterKey) {
+      const apiSchemaDependenciesOnTheInput = Object.keys(dependencies).filter(
+        (key) => dependencies[key].dependencyType === 'ApiSchema' && dependencies[key].dependentParameters[dynamicInput.id]
+      );
+      if (apiSchemaDependenciesOnTheInput.length > 0) {
+        const uniqueDependenciesToAdd = apiSchemaDependenciesOnTheInput.filter(
+          (key) => !dynamicParametersChain.includes(key) && !result.includes(key)
+        );
+        dynamicParametersChain.push(...uniqueDependenciesToAdd);
+      }
+    }
+  }
+
+  return result;
+}
+
+function getDynamicInputsFromDynamicParameter(parameterKey: string, allInputs: NodeInputs): ParameterInfo[] {
+  const result: ParameterInfo[] = [];
+  for (const groupKey of Object.keys(allInputs.parameterGroups)) {
+    const group = allInputs.parameterGroups[groupKey];
+    result.push(...group.parameters.filter((param) => param.info.isDynamic && param.info.dynamicParameterReference === parameterKey));
+  }
+
+  return result;
 }
 
 export async function loadDynamicTreeItemsForParameter(
@@ -2259,9 +2341,9 @@ export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
   return nodeInputs.dynamicLoadStatus === DynamicLoadStatus.FAILED || nodeInputs.dynamicLoadStatus === DynamicLoadStatus.NOTSTARTED;
 }
 
-export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
+export const isDynamicDataReadyToLoad = ({ dependentParameters }: DependencyInfo): boolean => {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
-}
+};
 
 async function tryGetInputDynamicSchema(
   nodeId: string,
@@ -2567,22 +2649,6 @@ export const recurseSerializeCondition = (
   }
   return returnVal;
 };
-
-function updateNodeInputsWithParameter(
-  nodeInputs: NodeInputs,
-  parameterId: string,
-  groupId: string,
-  properties: Partial<ParameterInfo>
-): NodeInputs {
-  const inputs = clone(nodeInputs);
-  const parameterGroup = inputs.parameterGroups[groupId];
-  const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
-  if (index > -1) {
-    parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...properties };
-  }
-
-  return inputs;
-}
 
 export function getParameterFromName(nodeInputs: NodeInputs, parameterName: string): ParameterInfo | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
