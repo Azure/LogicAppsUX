@@ -116,6 +116,7 @@ export const TokenField = ({
         <ArrayEditor
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
+          initialMode={editorOptions?.initialMode}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}

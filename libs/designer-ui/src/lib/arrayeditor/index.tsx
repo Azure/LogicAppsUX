@@ -16,6 +16,11 @@ export const ArrayType = {
   COMPLEX: 'complex',
   SIMPLE: 'simple',
 } as const;
+export const InitialMode = {
+  Array: 'array',
+  Items: 'items',
+};
+
 export type ArrayType = (typeof ArrayType)[keyof typeof ArrayType];
 
 export interface ArrayItemSchema {
@@ -57,6 +62,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   itemSchema: ArrayItemSchema;
   arrayType: ArrayType;
   castParameter: CastHandler;
+  initialMode?: string;
   // Props for dynamic options
   isLoading?: boolean;
   options?: ComboboxItem[];
@@ -70,6 +76,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   disableToggle = false,
   initialValue,
   arrayType,
+  initialMode,
   labelProps,
   itemSchema,
   placeholder,
@@ -79,7 +86,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   suppressCastingForSerialize,
   ...baseEditorProps
 }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [collapsed, setCollapsed] = useState<boolean>(initialMode === InitialMode.Array);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
