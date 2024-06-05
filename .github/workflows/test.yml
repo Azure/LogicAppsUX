@@ -39,7 +39,6 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
-            - args: [--global, turbo, typescript]
             
       # - run: npx nx affected --target=lint --parallel
       - run: turbo run build --cache-dir=.turbo
