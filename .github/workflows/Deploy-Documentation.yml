@@ -49,9 +49,8 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
-            - args: [--global, turbo, typescript]
               
-      - run: turbo run build:docs
+      - run: pnpm turbo run build:docs
 
       - name: Build And Deploy
         id: builddeploy
