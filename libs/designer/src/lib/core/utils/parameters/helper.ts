@@ -458,6 +458,12 @@ export function getParameterEditorProps(
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
+  } else if (editor === constants.EDITOR.ARRAY) {
+    if (itemSchema) {
+      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
+    } else {
+      editor = undefined;
+    }
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;

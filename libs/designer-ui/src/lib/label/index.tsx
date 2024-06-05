@@ -15,6 +15,7 @@ export interface LabelProps {
   text: string;
   tooltip?: string;
   requiredMarkerSide?: RequiredMarkerSide;
+  disabled?: boolean;
 }
 
 interface RequiredParameterMarkerProps {
@@ -30,10 +31,11 @@ export const Label: React.FC<LabelProps> = ({
   isRequiredField = false,
   text,
   tooltip,
+  disabled,
   requiredMarkerSide = RequiredMarkerSide.LEFT,
 }) => {
   return (
-    <FluentLabel className={css(className, 'msla-label')} htmlFor={htmlFor} id={id} title={tooltip || text}>
+    <FluentLabel className={css(className, 'msla-label')} htmlFor={htmlFor} id={id} title={tooltip || text} disabled={disabled}>
       {requiredMarkerSide === RequiredMarkerSide.LEFT ? <RequiredParameterMarker isRequiredField={isRequiredField} /> : null}
       {text}
       {requiredMarkerSide === RequiredMarkerSide.RIGHT ? (
