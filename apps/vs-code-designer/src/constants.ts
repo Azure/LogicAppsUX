@@ -75,6 +75,12 @@ export const workflowType = {
 } as const;
 export type workflowType = (typeof workflowType)[keyof typeof workflowType];
 
+export const workflowKind = {
+  stateful: 'Stateful',
+  stateless: 'Stateless',
+} as const;
+export type workflowKind = (typeof workflowKind)[keyof typeof workflowKind];
+
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';

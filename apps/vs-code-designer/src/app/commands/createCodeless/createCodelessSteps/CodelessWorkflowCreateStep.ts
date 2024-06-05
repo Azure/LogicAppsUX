@@ -14,6 +14,7 @@ import {
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
+import { getCodelessWorkflowTemplate } from '../../../utils/codeless/templates';
 import {
   addFolderToBuildPath,
   addNugetPackagesToBuildFile,
@@ -48,29 +49,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
-    const emptyStatefulDefinition: StandardApp = {
-      definition: {
-        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {},
-        contentVersion: '1.0.0.0',
-        outputs: {},
-        triggers: {},
-      },
-      kind: 'Stateful',
-    };
-
-    const emptyStatelessDefinition: StandardApp = {
-      definition: {
-        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {},
-        contentVersion: '1.0.0.0',
-        outputs: {},
-        triggers: {},
-      },
-      kind: 'Stateless',
-    };
-
-    const codelessDefinition: StandardApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;
+    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(template?.id === workflowType.stateful);
 
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
 

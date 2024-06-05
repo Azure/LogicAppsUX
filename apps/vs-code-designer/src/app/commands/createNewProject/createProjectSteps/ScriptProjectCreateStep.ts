@@ -63,10 +63,12 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     }
 
     // Determine the base directory for the .gitignore file.
-    // If 'isCustomCodeLogicApp' is explicitly false (neither true nor null),
+    // If 'isWorkspaceWithFunctions' is explicitly false (neither true nor null),
     // use the parent directory of 'workspacePath'. Otherwise, use 'projectPath'.
     const baseDirectory =
-      !context.isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null ? path.dirname(context.workspacePath) : context.projectPath;
+      !context.isWorkspaceWithFunctions && context.isWorkspaceWithFunctions !== null
+        ? path.dirname(context.workspacePath)
+        : context.projectPath;
     const gitignorePath = path.join(baseDirectory, gitignoreFileName);
 
     if (await confirmOverwriteFile(context, gitignorePath)) {

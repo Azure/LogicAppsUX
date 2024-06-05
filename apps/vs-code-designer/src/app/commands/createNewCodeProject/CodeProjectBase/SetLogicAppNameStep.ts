@@ -5,7 +5,7 @@
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -25,6 +25,6 @@ export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return !context.isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null;
+    return context.projectType === ProjectType.logicApp;
   }
 }

@@ -34,7 +34,7 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
 
     if ((await isGitInstalled(context.workspacePath)) && !(await isInsideRepo(context.workspacePath))) {
       //Init git repo inside mutli root workspace custom logic app project
-      if (!context.isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null) {
+      if (!context.isWorkspaceWithFunctions && context.isWorkspaceWithFunctions !== null) {
         const parentDirectory = path.dirname(context.workspacePath);
         await gitInit(parentDirectory);
       } else {

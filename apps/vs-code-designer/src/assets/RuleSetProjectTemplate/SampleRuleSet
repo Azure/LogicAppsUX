@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<brl xmlns="http://schemas.microsoft.com/businessruleslanguage/2002">
+  <ruleset name="SampleRuleSet">
+    <version major="1" minor="0" description="" modifiedby="FAREAST\jaah" date="2024-05-16T05:47:09.0799765Z" />
+    <configuration />
+    <bindings>
+      <class ref="ContosoPurchase" class="ContosoPurchase" instance="0" instances="16" selectivity="1">
+        <assembly><%= methodName %>, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</assembly>
+        <namespace>ContosoNamespace</namespace>
+      </class>
+      <xmldocument ref="xml_33" doctype="SchemaUser" instances="16" selectivity="1" instance="0">
+        <selector>/*[local-name()='Root' and namespace-uri()='http://BizTalk_Server_Project1.SchemaUser']/*[local-name()='UserDetails' and namespace-uri()='']</selector>
+        <selectoralias>/Root/UserDetails</selectoralias>
+        <schema>C:\LogicAppsBRE_PrivatePreview_v1\Samples\schema\SchemaUser.xsd</schema>
+      </xmldocument>
+      <xmldocument ref="xml_31" doctype="SchemaUser" instances="16" selectivity="1" instance="0">
+        <selector>/*[local-name()='Root' and namespace-uri()='http://BizTalk_Server_Project1.SchemaUser']/*[local-name()='Status' and namespace-uri()='']</selector>
+        <selectoralias>/Root/Status</selectoralias>
+        <schema>C:\LogicAppsBRE_PrivatePreview_v1\Samples\schema\SchemaUser.xsd</schema>
+      </xmldocument>
+    </bindings>
+    <rule name="Gold" priority="0" active="true">
+      <if>
+        <predicate>
+          <xmldocumentmember xmldocumentref="xml_31" type="boolean" sideeffects="false">
+            <field>*[local-name()='Gold' and namespace-uri()='']</field>
+            <fieldalias>Gold</fieldalias>
+          </xmldocumentmember>
+        </predicate>
+      </if>
+      <then>
+        <function>
+          <xmldocumentmember xmldocumentref="xml_31" type="decimal" sideeffects="true">
+            <field>*[local-name()='Discount' and namespace-uri()='']</field>
+            <fieldalias>Discount</fieldalias>
+            <argument>
+              <arithmetic operator="add">
+                <vocabularylink uri="aee857f2-09d5-4615-a96c-87041791ec42" element="e49242c4-4f9c-42a5-b382-6c510652a75e" />
+                <lhs>
+                  <function>
+                    <xmldocumentmember xmldocumentref="xml_31" type="decimal" sideeffects="false">
+                      <field>*[local-name()='Discount' and namespace-uri()='']</field>
+                      <fieldalias>Discount</fieldalias>
+                    </xmldocumentmember>
+                  </function>
+                </lhs>
+                <rhs>
+                  <constant>
+                    <decimal>5</decimal>
+                  </constant>
+                </rhs>
+              </arithmetic>
+            </argument>
+          </xmldocumentmember>
+        </function>
+      </then>
+    </rule>
+    <rule name="Rule10Off" priority="0" active="true">
+      <if>
+        <compare operator="greater than">
+          <vocabularylink uri="3f0e9bcc-6212-4e6a-853c-e517f157a626" element="b276a0f4-12d9-4380-b242-135bbfc5e287" />
+          <lhs>
+            <function>
+              <classmember member="get_PurchaseAmount" sideeffects="true">
+                <classref ref="ContosoPurchase" />
+              </classmember>
+            </function>
+          </lhs>
+          <rhs>
+            <constant>
+              <int>1000</int>
+            </constant>
+          </rhs>
+        </compare>
+      </if>
+      <then>
+        <function>
+          <xmldocumentmember xmldocumentref="xml_31" type="decimal" sideeffects="true">
+            <field>*[local-name()='Discount' and namespace-uri()='']</field>
+            <fieldalias>Discount</fieldalias>
+            <argument>
+              <arithmetic operator="add">
+                <vocabularylink uri="aee857f2-09d5-4615-a96c-87041791ec42" element="e49242c4-4f9c-42a5-b382-6c510652a75e" />
+                <lhs>
+                  <function>
+                    <xmldocumentmember xmldocumentref="xml_31" type="decimal" sideeffects="false">
+                      <field>*[local-name()='Discount' and namespace-uri()='']</field>
+                      <fieldalias>Discount</fieldalias>
+                    </xmldocumentmember>
+                  </function>
+                </lhs>
+                <rhs>
+                  <constant>
+                    <decimal>10</decimal>
+                  </constant>
+                </rhs>
+              </arithmetic>
+            </argument>
+          </xmldocumentmember>
+        </function>
+      </then>
+    </rule>
+    <rule name="Rule1" priority="0" active="true">
+      <if>
+        <compare operator="greater than">
+          <vocabularylink uri="3f0e9bcc-6212-4e6a-853c-e517f157a626" element="b276a0f4-12d9-4380-b242-135bbfc5e287" />
+          <lhs>
+            <function>
+              <xmldocumentmember xmldocumentref="xml_33" type="decimal" sideeffects="false">
+                <field>*[local-name()='Age' and namespace-uri()='']</field>
+                <fieldalias>Age</fieldalias>
+              </xmldocumentmember>
+            </function>
+          </lhs>
+          <rhs>
+            <constant>
+              <decimal>65</decimal>
+            </constant>
+          </rhs>
+        </compare>
+      </if>
+      <then>
+        <function>
+          <xmldocumentmember xmldocumentref="xml_31" type="boolean" sideeffects="true">
+            <field>*[local-name()='Gold' and namespace-uri()='']</field>
+            <fieldalias>Gold</fieldalias>
+            <argument>
+              <constant>
+                <boolean>true</boolean>
+              </constant>
+            </argument>
+          </xmldocumentmember>
+        </function>
+        <update>
+          <vocabularylink uri="aee857f2-09d5-4615-a96c-87041791ec42" element="57517cc6-6bb7-46eb-99eb-a1fdddd5d2f6" />
+          <object>
+            <reference>
+              <xmldocumentref ref="xml_31" />
+            </reference>
+          </object>
+        </update>
+      </then>
+    </rule>
+    <rule name="SetTaxRate" priority="0" active="true">
+      <if>
+        <not>
+          <compare operator="equal">
+            <vocabularylink uri="3f0e9bcc-6212-4e6a-853c-e517f157a626" element="05703dd9-1111-40b8-890d-ad7bfc45a925" />
+            <lhs>
+              <function>
+                <classmember member="get_ZipCode" sideeffects="true">
+                  <classref ref="ContosoPurchase" />
+                </classmember>
+              </function>
+            </lhs>
+            <rhs>
+              <constant>
+                <string>98052</string>
+              </constant>
+            </rhs>
+          </compare>
+        </not>
+      </if>
+      <then>
+        <function>
+          <classmember member="set_TaxRate" sideeffects="true">
+            <classref ref="ContosoPurchase" />
+            <argument>
+              <constant>
+                <float>20</float>
+              </constant>
+            </argument>
+          </classmember>
+        </function>
+      </then>
+    </rule>
+    <rule name="SetTaxRate98052" priority="0" active="true">
+      <if>
+        <compare operator="equal">
+          <vocabularylink uri="3f0e9bcc-6212-4e6a-853c-e517f157a626" element="05703dd9-1111-40b8-890d-ad7bfc45a925" />
+          <lhs>
+            <function>
+              <classmember member="get_ZipCode" sideeffects="true">
+                <classref ref="ContosoPurchase" />
+              </classmember>
+            </function>
+          </lhs>
+          <rhs>
+            <constant>
+              <string>98052</string>
+            </constant>
+          </rhs>
+        </compare>
+      </if>
+      <then>
+        <function>
+          <classmember member="set_TaxRate" sideeffects="true">
+            <classref ref="ContosoPurchase" />
+            <argument>
+              <constant>
+                <float>10</float>
+              </constant>
+            </argument>
+          </classmember>
+        </function>
+      </then>
+    </rule>
+  </ruleset>
+</brl>

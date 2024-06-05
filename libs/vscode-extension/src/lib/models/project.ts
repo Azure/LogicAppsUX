@@ -76,7 +76,8 @@ export interface IProjectWizardContext extends IActionContext {
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
   targetFramework?: string | string[];
-  isCustomCodeLogicApp?: boolean;
+  projectType?: ProjectType;
+  isWorkspaceWithFunctions?: boolean;
   logicAppName?: string;
 }
 
@@ -88,3 +89,10 @@ export const OpenBehavior = {
   dontOpen: 'DontOpen',
 } as const;
 export type OpenBehavior = (typeof OpenBehavior)[keyof typeof OpenBehavior];
+
+export const ProjectType = {
+  logicApp: 'logicApp',
+  customCode: 'customCode',
+  rulesEngine: 'rulesEngine',
+} as const;
+export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
