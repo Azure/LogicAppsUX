@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [0.4.1](https://github.com/Azure/LogicAppsUX/compare/v4.24.0...v0.4.1) (2024-06-05)
+
+
+### Features
+
+* **designer-ui:** Update file picker to use Fluent UI v9 components ([#4917](https://github.com/Azure/LogicAppsUX/issues/4917)) ([cdfa7ae](https://github.com/Azure/LogicAppsUX/commit/cdfa7aed25dc07f856de88c5fc609259a3b1622d))
+
+
+### Bug Fixes
+
+* **designer:** Do not show label for array editor in collapsed view ([#4932](https://github.com/Azure/LogicAppsUX/issues/4932)) ([2925b87](https://github.com/Azure/LogicAppsUX/commit/2925b87efddf34ff745b22922b71ac8f2285c784))
+
+## [0.4.0](https://github.com/Azure/LogicAppsUX/compare/v4.23.0...v0.4.0) (2024-06-03)
+
 ## [0.4.0](https://github.com/Azure/LogicAppsUX/compare/v4.23.0...v0.4.0) (2024-06-03)
 
 
