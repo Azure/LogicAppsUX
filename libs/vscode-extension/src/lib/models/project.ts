@@ -78,7 +78,6 @@ export interface IProjectWizardContext extends IActionContext {
   targetFramework?: string | string[];
   isCustomCodeLogicApp?: boolean;
   logicAppName?: string;
-  skipWorkflowStateTypeStep?: boolean;
 }
 
 export const OpenBehavior = {

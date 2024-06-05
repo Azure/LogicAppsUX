@@ -17,7 +17,6 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
 
   public hideStepCount = true;
   public supportsDuplicateSteps = false;
-  ui: any;
 
   // will likely need to change the location of the start zip path
   public static async setZipFilePath(_context: Partial<IFunctionWizardContext>): Promise<void> {

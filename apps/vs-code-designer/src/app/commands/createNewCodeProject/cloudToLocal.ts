@@ -18,40 +18,25 @@ import { ZipFileStep } from '../createNewProject/createProjectSteps/ZipFileStep'
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
-import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
-import type {
-  ICreateFunctionOptions,
-  IFunctionWizardContext,
-  ProjectLanguage,
-  ProjectVersion,
-} from '@microsoft/vscode-extension-logic-apps';
+import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { window } from 'vscode';
 
-export async function cloudToLocalCommand(
-  context: IActionContext,
-  folderPath?: string | undefined,
-  language?: ProjectLanguage,
-  version?: ProjectVersion,
-  openFolder = true,
-  templateId?: string,
-  functionName?: string,
-  functionSettings?: { [key: string]: string | undefined }
-): Promise<void> {
-  await cloudToLocalInternal(context, {
-    folderPath: isString(folderPath) ? folderPath : undefined,
-    templateId,
-    functionName,
-    functionSettings,
-    suppressOpenFolder: !openFolder,
-    language,
-    version,
-  });
-}
+const openFolder = true;
 
-export async function cloudToLocalInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
+export async function cloudToLocalInternal(
+  context: IActionContext,
+  options: ICreateFunctionOptions = {
+    language: 'JavaScript',
+    version: '~4',
+    templateId: 'templateId',
+    functionName: 'functionName',
+    functionSettings: { setting1: 'value1', setting2: 'value2' },
+    suppressOpenFolder: !openFolder,
+  }
+): Promise<void> {
   addLocalFuncTelemetry(context);
   showPreviewWarning(extensionCommand.cloudToLocal); //Show warning if command is set to preview
 
@@ -64,10 +49,7 @@ export async function cloudToLocalInternal(context: IActionContext, options: ICr
     projectTemplateKey,
   });
 
-  if (options.folderPath) {
-    new FolderListStep.setProjectPath(wizardContext, options.folderPath);
-  }
-  // If suppressOpenFolder is true, set the open behavior to don't open. Otherwise, get the open behavior from the workspace settings.
+  //If suppressOpenFolder is true, set the open behavior to don't open. Otherwise, get the open behavior from the workspace settings.
   if (options.suppressOpenFolder) {
     wizardContext.openBehavior = OpenBehavior.dontOpen;
   } else if (!wizardContext.openBehavior) {
