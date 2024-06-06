@@ -8,17 +8,17 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
 import type { Progress } from 'vscode';
 import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
-import { updateSMBConnectedEnvironment } from '../../../../utils/codeless/connectedEnvironment';
+import { createContainerApp } from '../../../../utils/codeless/containerApp';
 
 export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
-  public priority = 110;
+  public priority = 120;
 
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {
-      const message: string = localize('creatingNewApp', 'Updating SMB to connected environment  "{0}"...', context.newSiteName);
+      const message: string = localize('creatingNewApp', 'Creating container app "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
-      const response = await updateSMBConnectedEnvironment(context);
+      const response = await createContainerApp(context);
       console.log(response);
     } catch (error) {
       return undefined;
