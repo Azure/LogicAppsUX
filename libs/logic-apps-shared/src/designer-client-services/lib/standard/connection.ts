@@ -731,7 +731,8 @@ function createLocalConnectionsData(
       const rawValue = parameterValue;
       if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
         const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
-        result.settings[appSettingName] = parameterValues[parameterKey];
+        result.settings[appSettingName] =
+          typeof parameterValues[parameterKey] !== 'string' ? JSON.stringify(parameterValues[parameterKey]) : parameterValues[parameterKey];
 
         parameterValue = `@appsetting('${appSettingName}')`;
       }
