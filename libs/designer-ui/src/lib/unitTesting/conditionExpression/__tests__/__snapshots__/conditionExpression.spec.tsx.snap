@@ -1,0 +1,32 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/unitTesting/conditionExpression/index > should render without assertions items and add button. 1`] = `
+<React.Fragment>
+  <div
+    id="condition-expression-condition-expression-editor-id"
+    onMouseLeave={[Function]}
+    onMouseMove={[Function]}
+    onMouseUp={[Function]}
+  >
+    <ExpressionEditor
+      currentHeight={100}
+      dragDistance={0}
+      editorRef={
+        {
+          "current": null,
+        }
+      }
+      hideUTFExpressions={false}
+      initialValue="@equals(1, 1)"
+      isDragging={false}
+      isReadOnly={false}
+      onBlur={[Function]}
+      onContentChanged={[Function]}
+      onFocus={[Function]}
+      setCurrentHeight={[Function]}
+      setExpressionEditorError={[Function]}
+      setIsDragging={[Function]}
+    />
+  </div>
+</React.Fragment>
+`;
