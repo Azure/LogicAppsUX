@@ -220,7 +220,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
     await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
     await ext.rgApi.appResourceTree.refresh(context);
-    return new SlotTreeItem(subscription, resolved);
+    const slotTreeItem = new SlotTreeItem(subscription, resolved);
+    slotTreeItem.customLocation = wizardContext.customLocation;
+    slotTreeItem.fileShare = wizardContext.fileShare;
+    return slotTreeItem;
   }
 
   public isAncestorOfImpl(contextValue: string | RegExp): boolean {

@@ -6,7 +6,13 @@ import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import type { RemoteWorkflowTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import type { AppSettingsTreeItem, DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
+import type {
+  AppSettingsTreeItem,
+  CustomLocation,
+  DeploymentsTreeItem,
+  IDeployContext,
+  ParsedSite,
+} from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -25,7 +31,13 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public readonly source: ProjectSource = ProjectSource.Remote;
   public site: ParsedSite;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
-
+  public customLocation?: CustomLocation;
+  public fileShare?: {
+    hostName?: string;
+    path?: string;
+    userName?: string;
+    password?: string;
+  };
   public readonly contextValue: string;
 
   public resourceTree: LogicAppResourceTree;
