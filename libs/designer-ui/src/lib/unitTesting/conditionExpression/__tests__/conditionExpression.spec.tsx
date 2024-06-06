@@ -18,7 +18,7 @@ describe('ui/unitTesting/conditionExpression/index', () => {
       tokenGroup: [],
       expressionGroup: [],
       getValueSegmentFromToken: vi.fn(),
-
+      isReadOnly: false,
       onChange: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
