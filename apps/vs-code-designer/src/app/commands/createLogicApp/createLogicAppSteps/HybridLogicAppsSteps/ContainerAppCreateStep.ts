@@ -10,7 +10,7 @@ import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
 import { createContainerApp } from '../../../../utils/codeless/containerApp';
 
-export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
+export class ContainerAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 120;
 
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
