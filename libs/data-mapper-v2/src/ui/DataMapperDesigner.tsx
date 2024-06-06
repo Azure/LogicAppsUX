@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, Node, Edge } from 'reactflow';
+import type { Connection, Node, Edge, ConnectionLineComponent } from 'reactflow';
 import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
@@ -34,7 +34,6 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
 
   const updateCanvasBounds = useCallback(() => {
     if (ref?.current) {
-      console.log(ref.current.getBoundingClientRect());
       setCanvasBounds(ref.current.getBoundingClientRect());
     }
   }, [ref]);
@@ -180,7 +179,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
                 isValidConnection={isValidConnection}
                 onConnect={onEdgeConnect}
                 onEdgeUpdate={onEdgeUpdate}
-                connectionLineComponent={ConnectionLine}
+                connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
                 translateExtent={
                   canvasBounds
                     ? [

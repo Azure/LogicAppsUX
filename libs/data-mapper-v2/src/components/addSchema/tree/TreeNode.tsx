@@ -1,4 +1,4 @@
-import { TreeItem, type TreeItemOpenChangeEvent, type TreeItemOpenChangeData, TreeItemLayout } from '@fluentui/react-components';
+import { TreeItemLayout, mergeClasses } from '@fluentui/react-components';
 import { useRef, useCallback, useContext, useMemo, useEffect } from 'react';
 import useIsInViewport from './UseInViewport.hook';
 import { useDispatch } from 'react-redux';
@@ -16,6 +16,7 @@ export type SchemaNodeReactFlowDataProps = SchemaNodeExtended & {
 };
 
 export type TreeNodeProps = {
+  isLeaf?: boolean;
   isLeftDirection: boolean;
   text: string;
   id: string;
@@ -25,9 +26,9 @@ export type TreeNodeProps = {
 };
 
 export const TreeNode = (props: TreeNodeProps) => {
-  const { isLeftDirection, id, data } = props;
-  const divRef = useRef<HTMLDivElement | null>(null);
-  const isInViewPort = useIsInViewport(divRef);
+  const { isLeftDirection, id, data, text, isLeaf } = props;
+  const nodeRef = useRef<HTMLDivElement | null>(null);
+  const isInViewPort = useIsInViewport(nodeRef);
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const { canvasBounds } = useContext(DataMapperWrappedContext);
@@ -35,7 +36,9 @@ export const TreeNode = (props: TreeNodeProps) => {
   const nodeId = useMemo(() => `reactflow_${isLeftDirection ? 'source' : 'target'}_${id}`, [id, isLeftDirection]);
 
   const addNodeToFlow = useCallback(
-    (currentNodeRect: DOMRect, canvasRect: DOMRect) => {
+    (currentRef: HTMLDivElement, canvasRect: DOMRect) => {
+      const currentNodeRect = currentRef.getBoundingClientRect();
+
       dispatch(
         updateReactFlowNode({
           node: {
@@ -44,13 +47,13 @@ export const TreeNode = (props: TreeNodeProps) => {
             data: {
               ...data,
               isLeftDirection: isLeftDirection,
-              connectionX: isLeftDirection ? canvasRect.left : canvasRect.right,
+              connectionX: isLeftDirection ? currentNodeRect.right + 10 : currentNodeRect.left - 10,
               id: nodeId,
             },
             type: 'schemaNode',
             position: {
-              x: currentNodeRect.x - canvasRect.left,
-              y: currentNodeRect.y - canvasRect.y - 10,
+              x: isLeftDirection ? 0 : canvasRect.width,
+              y: currentNodeRect.y - canvasRect.y + 10,
             },
           },
         })
@@ -74,20 +77,9 @@ export const TreeNode = (props: TreeNodeProps) => {
     );
   }, [nodeId, data, dispatch]);
 
-  const onOpenChange = useCallback(
-    (_event: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
-      if (data.open && isInViewPort && divRef?.current && canvasBounds) {
-        addNodeToFlow(divRef.current.getBoundingClientRect(), canvasBounds);
-      } else if (!data.open || !isInViewPort) {
-        removeNodeFromFlow();
-      }
-    },
-    [isInViewPort, divRef, canvasBounds, addNodeToFlow, removeNodeFromFlow]
-  );
-
   useEffect(() => {
-    if (divRef?.current && isInViewPort && canvasBounds) {
-      addNodeToFlow(divRef.current.getBoundingClientRect(), canvasBounds);
+    if (nodeRef?.current && isInViewPort && canvasBounds) {
+      addNodeToFlow(nodeRef.current, canvasBounds);
     } else {
       removeNodeFromFlow();
     }
@@ -95,18 +87,13 @@ export const TreeNode = (props: TreeNodeProps) => {
     return () => {
       removeNodeFromFlow();
     };
-  }, [divRef, isInViewPort, canvasBounds, addNodeToFlow, removeNodeFromFlow]);
+  }, [nodeRef, isInViewPort, canvasBounds, addNodeToFlow, removeNodeFromFlow]);
   return (
-    <TreeItem
-      itemType="leaf"
-      key={id}
-      onOpenChange={(event: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
-        onOpenChange(event, data);
-      }}
+    <TreeItemLayout
+      className={mergeClasses(isLeaf ? '' : styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}
+      ref={nodeRef}
     >
-      <TreeItemLayout className={isLeftDirection ? '' : styles.rightTreeItemLayout}>
-        <div ref={divRef} />
-      </TreeItemLayout>
-    </TreeItem>
+      {text}
+    </TreeItemLayout>
   );
 };
