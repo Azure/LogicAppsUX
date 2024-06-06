@@ -11,12 +11,11 @@ import {
   cacheWebviewPanel,
   getTriggerName,
   getAzureConnectorDetailsForLocalProject,
-  getArtifactsInLocalProject,
   getStandardAppData,
 } from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
-import { type IAzureConnectorsContext } from '../azureConnectorWizard';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { createUnitTest } from '../unitTest/createUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
@@ -27,6 +26,7 @@ import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { ViewColumn, Uri, type WebviewPanel } from 'vscode';
+import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;

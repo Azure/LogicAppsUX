@@ -16,8 +16,8 @@ import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
-import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
-import { FilePickerEditor } from '../../picker/filepickereditor';
+import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
+import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
@@ -116,6 +116,7 @@ export const TokenField = ({
         <ArrayEditor
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
+          initialMode={editorOptions?.initialMode}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}

@@ -2,9 +2,9 @@ import { localSettingsFileName, managementApiPrefix } from '../../../../constant
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
+import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 import {
   cacheWebviewPanel,
-  getArtifactsInLocalProject,
   getAzureConnectorDetailsForLocalProject,
   getManualWorkflowsInLocalProject,
   getStandardAppData,

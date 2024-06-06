@@ -1,4 +1,44 @@
 # Logic Apps Designer
+## [4.26.0](https://github.com/Azure/LogicAppsUX/compare/v4.25.0...v4.26.0) (2024-06-06)
+
+## [4.25.0](https://github.com/Azure/LogicAppsUX/compare/v4.24.0...v4.25.0) (2024-06-05)
+
+
+### Features
+
+* **designer-ui:** Update file picker to use Fluent UI v9 components ([#4917](https://github.com/Azure/LogicAppsUX/issues/4917)) ([cdfa7ae](https://github.com/Azure/LogicAppsUX/commit/cdfa7aed25dc07f856de88c5fc609259a3b1622d))
+* **vscode:** Introduce creation of rules code project  ([#4920](https://github.com/Azure/LogicAppsUX/issues/4920)) ([916c529](https://github.com/Azure/LogicAppsUX/commit/916c5290f4b4c4c002fbe298fa0a53758ba76b26))
+
+
+### Bug Fixes
+
+* **designer:** Do not show label for array editor in collapsed view ([#4932](https://github.com/Azure/LogicAppsUX/issues/4932)) ([2925b87](https://github.com/Azure/LogicAppsUX/commit/2925b87efddf34ff745b22922b71ac8f2285c784))
+
+## [4.24.0](https://github.com/Azure/LogicAppsUX/compare/v4.23.0...v4.24.0) (2024-06-03)
+
+
+### Features
+
+* **designer:** Adding support for dynamic input schema in dynamic parameters ([#4844](https://github.com/Azure/LogicAppsUX/issues/4844)) ([caa69b6](https://github.com/Azure/LogicAppsUX/commit/caa69b62489df9aba149306134ae920ef5da272c))
+
+## [4.23.0](https://github.com/Azure/LogicAppsUX/compare/v4.22.0...v4.23.0) (2024-05-31)
+
+
+### Features
+
+* **Data Mapper:** Get schema details from services, removing mock ([#4923](https://github.com/Azure/LogicAppsUX/issues/4923)) ([b09b975](https://github.com/Azure/LogicAppsUX/commit/b09b975d1a7a125f4fb8262ec4d2e6515d1f9cce))
+* **Data Mapper:** Moving away from mock schema list ([#4912](https://github.com/Azure/LogicAppsUX/issues/4912)) ([789043b](https://github.com/Azure/LogicAppsUX/commit/789043bc4daceea39b3767d603bd00f4848bffa8))
+* **designer:** Add ability for host to send in overrides for internationalized strings ([#4907](https://github.com/Azure/LogicAppsUX/issues/4907)) ([b6be06a](https://github.com/Azure/LogicAppsUX/commit/b6be06a85e093f5eb655d6bbf899bfb352454918))
+
+
+### Bug Fixes
+
+* **designer:** Turn off spell check in editors ([#4902](https://github.com/Azure/LogicAppsUX/issues/4902)) ([6332975](https://github.com/Azure/LogicAppsUX/commit/6332975dedca796f07327e317f64aa5eca7250bf))
+* **designer:** Using custom Label with ariaLabel for parameter editors for a11y ([#4889](https://github.com/Azure/LogicAppsUX/issues/4889)) ([2778673](https://github.com/Azure/LogicAppsUX/commit/27786736af369feee8992abc19943311a2ecd04c))
+* **designer:** Using UI custom Label everywhere in the designer to be consistent for a11y ([#4903](https://github.com/Azure/LogicAppsUX/issues/4903)) ([e8abdc5](https://github.com/Azure/LogicAppsUX/commit/e8abdc597da445a711a7de2e100113410540acff))
+* **meta:** Update pnpm version in coverage-report ([#4921](https://github.com/Azure/LogicAppsUX/issues/4921)) ([7011da0](https://github.com/Azure/LogicAppsUX/commit/7011da065188ffba897d8228c1b9bd4892d437f3))
+* **meta:** Update pnpm version to use ([#4919](https://github.com/Azure/LogicAppsUX/issues/4919)) ([4d3df02](https://github.com/Azure/LogicAppsUX/commit/4d3df02f6df97971d7934a227dee47f5932b1726))
+
 ## [4.22.0](https://github.com/Azure/LogicAppsUX/compare/v4.21.0...v4.22.0) (2024-05-28)
 
 
