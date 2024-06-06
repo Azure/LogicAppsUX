@@ -3,17 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { LogicAppResolver } from '../../../LogicAppResolver';
-import {
-  projectLanguageSetting,
-  webProvider,
-  workflowappRuntime,
-  storageProvider,
-  insightsProvider,
-  serverFarmIdPlaceholder,
-} from '../../../constants';
+import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { LogicAppCreateFileShareStep } from '../../commands/createLogicApp/createLogicAppSteps/FileShare/LogicAppCreateFileShareStep';
+import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
+import { ConnectedEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectedEnvironmentStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
@@ -133,6 +127,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new ResourceGroupListStep());
+    promptSteps.push(new CustomLocationStorageAccountStep());
+    promptSteps.push(new ConnectedEnvironmentStep());
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,
@@ -140,13 +136,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       replication: StorageAccountReplication.LRS,
     };
 
-    if (!context.advancedCreation) {
-      wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-      executeSteps.push(new AppInsightsCreateStep());
-    } else if (wizardContext.customLocation) {
-      promptSteps.push(new CustomLocationStorageAccountStep(context));
-    } else {
+    if (context.advancedCreation) {
       promptSteps.push(
         new StorageAccountListStep(storageAccountCreateOptions, {
           kind: [StorageAccountKind.BlobStorage],
@@ -157,11 +147,15 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       );
       promptSteps.push(new AzureStorageAccountStep());
       promptSteps.push(new AppInsightsListStep());
+    } else {
+      wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
+      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      executeSteps.push(new AppInsightsCreateStep());
     }
 
     executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
     executeSteps.push(new LogicAppCreateStep());
-    executeSteps.push(new LogicAppCreateFileShareStep());
+    executeSteps.push(new ConnectEnvironmentStep());
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
@@ -211,11 +205,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     await wizard.execute();
 
-    const site = nonNullProp(wizardContext, 'site');
-    const serverFarmId = wizardContext.useContainerApps ? serverFarmIdPlaceholder : site.serverFarmId;
-    const hostNameSslStates = wizardContext.useContainerApps ? [] : site.hostNameSslStates;
-    const parsedSite = new ParsedSite({ ...site, serverFarmId, hostNameSslStates }, subscription.subscription);
-    const client: SiteClient = await parsedSite.createClient(context);
+    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+    const client: SiteClient = await site.createClient(context);
 
     if (!client.isLinux) {
       try {
@@ -225,7 +216,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       }
     }
 
-    const resolved = new LogicAppResourceTree(subscription.subscription, { ...site, serverFarmId, hostNameSslStates });
+    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
     await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
     await ext.rgApi.appResourceTree.refresh(context);
     return new SlotTreeItem(subscription, resolved);
