@@ -307,7 +307,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
       className="msla-assertion-field"
     >
       <span
-        className="msla-assertion-field-read-only css-126"
+        className="fui-Text msla-assertion-field-read-only ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
       >
         test-description
       </span>
@@ -461,7 +461,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion > should render the component 
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-127"
+            className="ms-TextField-fieldGroup fieldGroup-126"
           >
             <input
               aria-describedby="TextFieldDescription11"

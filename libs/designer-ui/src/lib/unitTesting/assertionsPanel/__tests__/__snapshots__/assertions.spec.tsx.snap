@@ -7,11 +7,9 @@ exports[`ui/unitTesting/assertionsPanel/assertions > should render list of asser
   <div
     className="msla-workflow-assertions-heading"
   >
-    <Text
-      variant="xLarge"
-    >
-      Assertions
-    </Text>
+    <XLargeText
+      text="Assertions"
+    />
     <Button
       appearance="subtle"
       icon={<CompoundIcon />}
@@ -62,11 +60,9 @@ exports[`ui/unitTesting/assertionsPanel/assertions > should render without asser
   <div
     className="msla-workflow-assertions-heading"
   >
-    <Text
-      variant="xLarge"
-    >
-      Assertions
-    </Text>
+    <XLargeText
+      text="Assertions"
+    />
     <Button
       appearance="subtle"
       icon={<CompoundIcon />}

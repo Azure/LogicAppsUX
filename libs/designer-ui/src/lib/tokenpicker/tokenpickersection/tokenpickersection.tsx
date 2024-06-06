@@ -25,6 +25,7 @@ interface TokenPickerSectionProps extends TokenPickerBaseProps {
   fullScreen: boolean;
   noDynamicContent: boolean;
   expressionEditorCurrentHeight: number;
+  calloutMaxHeight?: number;
 }
 
 export const TokenPickerSection = ({
@@ -35,6 +36,7 @@ export const TokenPickerSection = ({
   fullScreen,
   noDynamicContent,
   expressionEditorCurrentHeight,
+  calloutMaxHeight,
   ...tokenPickerBaseProps
 }: TokenPickerSectionProps): JSX.Element => {
   const [dynamicTokenLength, setDynamicTokenLength] = useState(new Array<number>(tokenGroup.length));
@@ -66,7 +68,11 @@ export const TokenPickerSection = ({
       style={{
         maxHeight: fullScreen
           ? windowDimensions.height - (expressionEditorCurrentHeight + 287)
-          : Math.min(windowDimensions.height - (expressionEditorCurrentHeight + 197), 540),
+          : Math.min(
+              windowDimensions.height - (expressionEditorCurrentHeight + 197),
+              540,
+              (calloutMaxHeight ?? Number.POSITIVE_INFINITY) - 124
+            ),
       }}
     >
       {searchQuery && noItems ? <TokenPickerNoMatches /> : null}

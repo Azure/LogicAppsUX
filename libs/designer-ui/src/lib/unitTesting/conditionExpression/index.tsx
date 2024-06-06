@@ -167,10 +167,11 @@ export function ConditionExpression({
         <Callout
           className="msla-condition-expression-callout"
           role="dialog"
+          calloutMaxHeight={400}
           ariaLabelledBy={labelId}
           target={`#condition-expression-${editorId}`}
           isBeakVisible={false}
-          directionalHint={DirectionalHint.bottomCenter}
+          directionalHint={DirectionalHint.leftTopEdge}
           onRestoreFocus={() => {
             return;
           }}
@@ -219,6 +220,7 @@ export function ConditionExpression({
             getValueSegmentFromToken={getValueSegmentFromToken}
             noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
             expressionEditorCurrentHeight={expressionEditorCurrentHeight}
+            calloutMaxHeight={400}
           />
         </Callout>
       )}
