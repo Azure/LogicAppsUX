@@ -62,8 +62,8 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const normalizedLabel = props.label.replace(/ /g, '-');
-  const labelId = useId(normalizedLabel);
+  // const normalizedLabel = props.label.replace(/ /g, '-');
+  const labelId = useId(props.label);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
@@ -71,7 +71,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
     <>
       {!hideLabel && (
         <div className="msla-input-parameter-label">
-          <Label id={labelId} isRequiredField={props.required} text={props.label} />
+          <Label id={labelId} className="msla-label" text={props.label} />
         </div>
       )}
       <div key={props.id}>
@@ -267,7 +267,10 @@ export const TokenField = ({
           label={label}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
           multiSelect={!!getPropertyValue(editorOptions, 'multiSelect')}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
