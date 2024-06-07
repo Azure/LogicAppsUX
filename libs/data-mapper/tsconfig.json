@@ -20,7 +20,7 @@
   "include": [
     "**/src/**/*.ts",
     "**/src/**/*.tsx"
-  ],
+, "../data-mapper-v2/src/core/services/dataMapperFileService/dataMapperFileService.ts"  ],
   "exclude": [
     "**/__test__/**",
     "**/__tests__/**",
