@@ -93,6 +93,12 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  public static getProxyUrl(uri: string): { uri: string, headerPath: string } {
+    const appName = uri.split('hostruntime')[0].split('/');
+    appName.pop();
+    return { uri: `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`, headerPath: uri.split('hostruntime')[1] };
+  }
+
   /**
    * Gets run details.
    * @param {string} runId - Run id.
@@ -103,7 +109,19 @@ export class StandardRunService implements IRunService {
 
     const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
+
     try {
+      if (uri.toLowerCase().includes('microsoft.app')) {
+        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+        const response = await httpClient.post<Run, unknown>({
+          uri: newUri,
+          headers: {
+            'X-Ms-Logicapps-Proxy-Path': headerPath,
+            'X-Ms-Logicapps-Proxy-Method': 'GET',
+          },
+        });
+        return response;
+      }
       const response = await httpClient.get<Run>({
         uri,
       });
