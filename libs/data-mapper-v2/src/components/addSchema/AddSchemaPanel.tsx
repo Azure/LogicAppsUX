@@ -5,9 +5,7 @@ import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../c
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
-import type { SchemaFile } from './AddOrUpdateSchemaView';
-import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
-//import { DefaultConfigView } from './DefaultConfigView';
+import { AddOrUpdateSchemaView, UploadSchemaTypes, type SchemaFile } from './AddOrUpdateSchemaView';
 import { DefaultButton, PrimaryButton } from '@fluentui/react';
 import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
@@ -25,7 +23,7 @@ const schemaFileQuerySettings = {
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
-  readCurrentSchemaOptions?: () => void;
+  readCurrentSchemaOptions: () => void;
   schemaType: SchemaType;
 }
 
@@ -225,14 +223,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
 
   return (
     <div className={styles.root}>
-      <InlineDrawer
-        open={!!currentPanelView}
-        size="small"
-        className={mergeClasses(
-          selectedSchemaFile ? styles.fileSelectedDrawer : styles.drawer,
-          schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer
-        )}
-      >
+      <InlineDrawer open={!!currentPanelView} size="small" className={mergeClasses(styles.drawerWrapper)}>
         <AddOrUpdateSchemaView
           schemaType={schemaType}
           selectedSchema={selectedSchema?.name}
@@ -241,6 +232,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
           errorMessage={errorMessage}
           uploadType={uploadType}
           setUploadType={setUploadType}
+          getUpdatedSchemaFiles={readCurrentSchemaOptions}
         />
       </InlineDrawer>
     </div>

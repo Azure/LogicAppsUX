@@ -1,5 +1,6 @@
-import type { ICommandBarItemProps } from '@fluentui/react';
-import { CommandBar } from '@fluentui/react';
+import type { ButtonProps } from '@fluentui/react-components';
+import { Button, Toolbar } from '@fluentui/react-components';
+import { ArrowClockwiseRegular, PlayRegular } from '@fluentui/react-icons';
 import { getCallbackUrl } from '@microsoft/logic-apps-shared';
 import type { CallbackInfo } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
@@ -29,26 +30,33 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callback
     }),
   };
 
-  const items: ICommandBarItemProps[] = [
+  const items: ButtonProps[] = [
     {
-      ariaLabel: Resources.OVERVIEW_REFRESH,
+      'aria-label': Resources.OVERVIEW_REFRESH,
       disabled: isRefreshing,
-      iconProps: { iconName: 'Refresh' },
-      key: 'Refresh',
-      name: Resources.OVERVIEW_REFRESH,
+      icon: <ArrowClockwiseRegular />,
+      title: Resources.OVERVIEW_REFRESH,
       onClick: onRefresh,
     },
   ];
 
   if (callbackUrl) {
     items.push({
-      ariaLabel: Resources.OVERVIEW_RUN_TRIGGER,
-      iconProps: { iconName: 'Play' },
-      key: 'RunTrigger',
-      name: Resources.OVERVIEW_RUN_TRIGGER,
+      'aria-label': Resources.OVERVIEW_RUN_TRIGGER,
+      icon: <PlayRegular />,
+      title: Resources.OVERVIEW_RUN_TRIGGER,
       onClick: onRunTrigger,
+      disabled: false,
     });
   }
 
-  return <CommandBar data-testid="msla-overview-command-bar" items={items} />;
+  return (
+    <Toolbar data-testid="msla-overview-command-bar" style={{ padding: '8px 0' }}>
+      {items.map((item, index) => (
+        <Button key={index} appearance="transparent" {...item}>
+          {item.title}
+        </Button>
+      ))}
+    </Toolbar>
+  );
 };

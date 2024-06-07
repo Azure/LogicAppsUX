@@ -33,11 +33,11 @@ export interface DesignerOptionsState {
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
-    focusOpensTokenPicker?: boolean; // token picker auto opens on focus
+    suppressCastingForSerialize?: boolean; // suppress casting for serialize
+    recurrenceInterval?: LogicApps.Recurrence;
     forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
-    recurrenceInterval?: LogicApps.Recurrence;
-    suppressCastingForSerialize?: boolean; // suppress casting for serialize
+    stringOverrides?: Record<string, string>; // string overrides for localization
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

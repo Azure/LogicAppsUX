@@ -1,9 +1,10 @@
+import { XLargeText } from '../text';
 import ParametersIcon from '../card/images/parameters.svg';
 import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
 import { WorkflowParameter } from './workflowparameter';
-import { List, useTheme, Text } from '@fluentui/react';
+import { List, useTheme } from '@fluentui/react';
 import { Button, MessageBar } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
@@ -139,7 +140,7 @@ export function WorkflowParameters({
   return (
     <div className="msla-workflow-parameters">
       <div className="msla-workflow-parameters-heading">
-        <Text variant="xLarge">{titleText}</Text>
+        <XLargeText text={titleText} />
         <Button appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
 

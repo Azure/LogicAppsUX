@@ -33,6 +33,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { validateDotNetIsInstalled } from '../../../dotnet/validateDotNetInstalled';
+import { getFunctionWorkflowTemplate } from '../../../../utils/codeless/templates';
 
 // This class creates a new workflow for a codeless Azure Function project
 export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
@@ -59,89 +60,12 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
     const methodName = context.methodName;
 
-    // Create empty stateful and stateless definition objects
-    const emptyStatefulDefinition: StandardApp = {
-      definition: {
-        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {
-          Call_a_local_function_in_this_logic_app: {
-            type: 'InvokeFunction',
-            inputs: {
-              functionName: `${methodName}`,
-              parameters: {
-                zipCode: 85396,
-                temperatureScale: 'Celsius',
-              },
-            },
-            runAfter: {},
-          },
-          Response: {
-            type: 'Response',
-            kind: 'http',
-            inputs: {
-              statusCode: 200,
-              body: "@body('Call_a_local_function_in_this_logic_app')",
-            },
-            runAfter: {
-              Call_a_local_function_in_this_logic_app: ['Succeeded'],
-            },
-          },
-        },
-        triggers: {
-          When_a_HTTP_request_is_received: {
-            type: 'Request',
-            kind: 'Http',
-            inputs: {},
-          },
-        },
-        contentVersion: '1.0.0.0',
-        outputs: {},
-      },
-      kind: 'Stateful',
-    };
-
-    const emptyStatelessDefinition: StandardApp = {
-      definition: {
-        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {
-          Call_a_local_function_in_this_logic_app: {
-            type: 'InvokeFunction',
-            inputs: {
-              functionName: `${methodName}`,
-              parameters: {
-                zipCode: 85396,
-                temperatureScale: 'Celsius',
-              },
-            },
-            runAfter: {},
-          },
-          Response: {
-            type: 'Response',
-            kind: 'http',
-            inputs: {
-              statusCode: 200,
-              body: "@body('Call_a_local_function_in_this_logic_app')",
-            },
-            runAfter: {
-              Call_a_local_function_in_this_logic_app: ['Succeeded'],
-            },
-          },
-        },
-        triggers: {
-          When_a_HTTP_request_is_received: {
-            type: 'Request',
-            kind: 'Http',
-            inputs: {},
-          },
-        },
-        contentVersion: '1.0.0.0',
-        outputs: {},
-      },
-      kind: 'Stateless',
-    };
-
     // Determine which definition object to use based on the type of workflow template
-    const codelessDefinition: StandardApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;
+    const codelessDefinition: StandardApp = getFunctionWorkflowTemplate(
+      methodName,
+      template?.id === workflowType.stateful,
+      context.projectType
+    );
 
     // Write the workflow definition to a JSON file
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
