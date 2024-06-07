@@ -23,7 +23,7 @@ test.describe(
       await page.getByRole('button', { name: 'Body' }).click();
       await page.getByRole('code').click();
       await page.keyboard.type('.toUpperCase();');
-      await page.getByText('code', { exact: true }).click();
+      await page.getByText('code*', { exact: true }).click();
       await page.getByTestId('msla-panel-header-collapse-nav').click();
       await page.getByTestId('card-response').click();
       await page.getByTestId('msla-setting-token-editor-stringeditor-body').click();
