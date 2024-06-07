@@ -23,7 +23,7 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: Dropd
   useEffect(() => {
     // update items when the tree is closed and reopened
     onDropdownOpenClose();
-  }, [showDropdownTree, onDropdownOpenClose])
+  }, [showDropdownTree, onDropdownOpenClose]);
 
   const selectSchema = intl.formatMessage({
     defaultMessage: 'Select schema',
@@ -49,7 +49,9 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: Dropd
     }
 
     if (item.type === 'directory') {
-      const children = item.children.map((child) => filterDropdownItem(child, value)).filter((child) => child !== undefined) as IFileSysTreeItem[];
+      const children = item.children
+        .map((child) => filterDropdownItem(child, value))
+        .filter((child) => child !== undefined) as IFileSysTreeItem[];
 
       if (children.length === 0) {
         return undefined;

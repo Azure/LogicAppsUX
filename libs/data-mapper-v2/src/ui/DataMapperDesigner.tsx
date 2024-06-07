@@ -25,7 +25,11 @@ interface DataMapperDesignerProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({
+  readCurrentCustomXsltPathOptions,
+  setIsMapStateDirty,
+  readCurrentSchemaOptions,
+}: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);

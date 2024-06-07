@@ -10,5 +10,5 @@ export const useStyles = makeStyles({
   searchBox: {
     width: '85%',
     alignSelf: 'center',
-  }
+  },
 });

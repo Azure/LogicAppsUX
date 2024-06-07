@@ -51,5 +51,5 @@ export const useStyles = makeStyles({
   },
   rightDrawer: {
     ...shorthands.borderLeft('1px', 'solid', '#ddd'),
-  }
+  },
 });

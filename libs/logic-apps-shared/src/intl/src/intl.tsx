@@ -7,7 +7,7 @@ interface IntlGlobalProviderProps {
 }
 const cache = createIntlCache();
 let INTL: IntlShape | undefined;
-export const resetIntl = () => INTL = undefined;
+export const resetIntl = () => (INTL = undefined);
 const IntlGlobalProvider = (props: IntlGlobalProviderProps) => {
   INTL = useIntl();
   return <>{props.children}</>;
