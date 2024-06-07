@@ -20,12 +20,16 @@ interface DataMapperDesignerProps {
   saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
   saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
-  readCurrentSchemaOptions?: () => void;
+  readCurrentSchemaOptions: () => void;
   readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({
+  readCurrentCustomXsltPathOptions,
+  setIsMapStateDirty,
+  readCurrentSchemaOptions,
+}: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -192,7 +196,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
             </div>
             <AddSchemaDrawer
               onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-              readCurrentSchemaOptions={() => console.log('')}
+              readCurrentSchemaOptions={readCurrentSchemaOptions}
               schemaType={SchemaType.Target}
             />
           </div>

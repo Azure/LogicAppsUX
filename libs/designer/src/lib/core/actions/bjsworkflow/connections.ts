@@ -14,7 +14,6 @@ import {
 } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
-import { getAllVariables } from '../../utils/variables';
 import type {
   IOperationManifestService,
   Connection,
@@ -89,13 +88,11 @@ const updateNodeConnectionAndProperties = async (
   const newState = getState() as RootState;
   const operationInfo = getRecordEntry(newState.operations.operationInfo, nodeId);
   const dependencies = getRecordEntry(newState.operations.dependencies, nodeId);
-  const inputParameters = getRecordEntry(newState.operations.inputParameters, nodeId);
-  const settings = getRecordEntry(newState.operations.settings, nodeId);
   const newlyAddedOperations = getRecordEntry(newState.workflow.newlyAddedOperations, nodeId);
   const operation = getRecordEntry(newState.workflow.operations, nodeId);
 
   // Shouldn't happen, but required for type checking
-  if (!operationInfo || !dependencies || !inputParameters || !settings) {
+  if (!operationInfo || !dependencies) {
     return;
   }
 
@@ -105,9 +102,6 @@ const updateNodeConnectionAndProperties = async (
     operationInfo,
     getConnectionReference(newState.connections, nodeId),
     dependencies,
-    inputParameters,
-    settings,
-    getAllVariables(newState.tokens.variables),
     dispatch,
     getState,
     newlyAddedOperations ? undefined : operation

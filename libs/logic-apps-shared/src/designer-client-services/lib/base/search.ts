@@ -29,6 +29,7 @@ export interface BaseSearchServiceOptions {
   };
   httpClient: IHttpClient;
   isDev?: boolean;
+  locale?: string;
 }
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -64,7 +65,7 @@ export abstract class BaseSearchService implements ISearchService {
       return { value: [], hasMore: false };
     }
 
-    const { httpClient } = this.options;
+    const { httpClient, locale } = this.options;
 
     const queryParameters: QueryParameters = {
       $top: pageSize.toString(),
@@ -72,8 +73,10 @@ export abstract class BaseSearchService implements ISearchService {
       ...queryParams,
     };
 
+    const headers = locale ? { 'Accept-Language': locale } : undefined;
+
     try {
-      const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
+      const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
       return { value, hasMore: !!nextLink };
     } catch (error) {
       return { value: [], hasMore: false };
@@ -81,11 +84,13 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   async getAzureResourceRecursive(uri: string, queryParams: any): Promise<any[]> {
-    const { httpClient } = this.options;
+    const { httpClient, locale } = this.options;
+
+    const headers = locale ? { 'Accept-Language': locale } : undefined;
 
     const requestPage = async (uri: string, value: any[], queryParameters?: any): Promise<any> => {
       try {
-        const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
+        const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
         value.push(...newValue);
         if (nextLink) {
           return await requestPage(nextLink, value);
@@ -261,10 +266,12 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       httpClient,
       apiHubServiceDetails: { apiVersion },
+      locale,
     } = this.options;
     const uri = `${workflowId}/triggers`;
     const queryParameters: QueryParameters = { 'api-version': apiVersion };
-    const response = await httpClient.get<any>({ uri, queryParameters });
+    const headers = locale ? { 'Accept-Language': locale } : undefined;
+    const response = await httpClient.get<any>({ uri, queryParameters, headers });
     return response?.value ?? [];
   }
 

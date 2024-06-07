@@ -62,7 +62,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     expect(name.props.children).toHaveLength(2);
 
     const [label, textField1]: any[] = React.Children.toArray(name.props.children);
-    expect(label.props.children).toBe(nameTitle);
+    expect(label.props.text).toBe(nameTitle);
     expect(label.props.htmlFor).toBe('id-name');
 
     expect(textField1.props.id).toBe('id-name');
@@ -79,7 +79,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     expect(type.props.children).toHaveLength(2);
 
     const [label3, dropdown]: any[] = React.Children.toArray(type.props.children);
-    expect(label3.props.children).toBe(typeTitle);
+    expect(label3.props.text).toBe(typeTitle);
     expect(label3.props.htmlFor).toBe('id-type');
 
     expect(dropdown.props.id).toBe('id-type');
@@ -101,7 +101,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     expect(name.props.children).toHaveLength(2);
 
     const [label4, textField3]: any[] = React.Children.toArray(defaultValue.props.children);
-    expect(label4.props.children).toBe(defaultValueTitle);
+    expect(label4.props.text).toBe(defaultValueTitle);
     expect(label4.props.htmlFor).toBe('id-value');
 
     expect(textField3.props.id).toBe('id-value');
@@ -133,7 +133,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     expect(name.props.children).toHaveLength(2);
 
     const [label, textField1]: any[] = React.Children.toArray(name.props.children);
-    expect(label.props.children).toBe(nameTitle);
+    expect(label.props.text).toBe(nameTitle);
     expect(label.props.htmlFor).toBe('id-name');
 
     expect(textField1.props.id).toBe('id-name');
@@ -156,12 +156,12 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     });
     const [label2, textField2]: any[] = React.Children.toArray(description.props.children);
     expect(description.props.className).toBe(textFieldClassName);
-    expect(label2.props.children).toBe(descriptionTitle);
+    expect(label2.props.text).toBe(descriptionTitle);
     expect(label2.props.htmlFor).toBe('id-description');
     expect(textField2.props.children).toBe(minimalWithDes.definition.description);
 
     const [label3, dropdown]: any[] = React.Children.toArray(type.props.children);
-    expect(label3.props.children).toBe(typeTitle);
+    expect(label3.props.text).toBe(typeTitle);
     expect(label3.props.htmlFor).toBe('id-type');
 
     expect(dropdown.props.id).toBe('id-type');
@@ -183,7 +183,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
     expect(name.props.children).toHaveLength(2);
 
     const [label4, textField3]: any[] = React.Children.toArray(defaultValue.props.children);
-    expect(label4.props.children).toBe(defaultValueTitle);
+    expect(label4.props.text).toBe(defaultValueTitle);
     expect(label4.props.htmlFor).toBe('id-value');
 
     expect(textField3.props.id).toBe('id-value');

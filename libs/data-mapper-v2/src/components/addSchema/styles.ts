@@ -52,14 +52,4 @@ export const useStyles = makeStyles({
   rightDrawer: {
     ...shorthands.borderLeft('1px', 'solid', '#ddd'),
   },
-  searchBox: {
-    width: '85%',
-    alignSelf: 'center',
-  },
-  treeWrapper: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'center',
-    flexDirection: 'column',
-  },
 });
