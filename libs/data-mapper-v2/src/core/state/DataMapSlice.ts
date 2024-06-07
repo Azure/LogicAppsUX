@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
@@ -10,8 +9,8 @@ import {
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
 } from '../../utils/Connection.Utils';
-import type { UnknownNode} from '../../utils/DataMap.Utils';
-import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
+import type { UnknownNode } from '../../utils/DataMap.Utils';
+import { getParentId } from '../../utils/DataMap.Utils';
 import { getConnectedSourceSchema, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -21,7 +20,6 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Edge } from 'reactflow';
-// danielle strip this
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -93,16 +91,6 @@ export interface ReactFlowNodeAction {
 }
 
 export interface ConnectionAction {
-  source: SchemaNodeExtended | FunctionData;
-  destination: SchemaNodeExtended | FunctionData;
-  reactFlowSource: string;
-  reactFlowDestination: string;
-  specificInput?: number;
-}
-
-export interface ConnectionActionDraft {
-  // source?: SchemaNodeExtended | FunctionData;
-  // destination?: SchemaNodeExtended | FunctionData;
   reactFlowSource: string;
   reactFlowDestination: string;
   specificInput?: number;
@@ -195,7 +183,7 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
     },
 
-    makeConnection: (state, action: PayloadAction<ConnectionActionDraft>) => {
+    makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
@@ -205,14 +193,14 @@ export const dataMapSlice = createSlice({
       let sourceNode: UnknownNode;
 
       if (action.payload.reactFlowSource.startsWith(SchemaType.Source)) {
-        sourceNode = state.curDataMapOperation.flattenedSourceSchema[action.payload.reactFlowSource]
+        sourceNode = state.curDataMapOperation.flattenedSourceSchema[action.payload.reactFlowSource];
       } else {
         sourceNode = newState.functionNodes[action.payload.reactFlowSource].functionData;
       }
       let destinationNode: UnknownNode;
 
       if (action.payload.reactFlowDestination.startsWith(SchemaType.Target)) {
-        destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination]
+        destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination];
       } else {
         destinationNode = newState.functionNodes[action.payload.reactFlowSource].functionData;
       }
@@ -224,58 +212,7 @@ export const dataMapSlice = createSlice({
         doDataMapOperation(state, newState, 'Updated function node locations by adding');
       }
 
-      // Add any repeating parent nodes as well (except for Direct Access's)
-      // Get all the source nodes in case we have sources from multiple source chains
-      const originalSourceNode = sourceNode;
-      let actualSources: SchemaNodeExtended[];
-
-      // this seems like it could be refactored- danielle
-      if (!(isFunctionData(originalSourceNode) && originalSourceNode.key === directAccessPseudoFunctionKey)) {
-        if (isFunctionData(originalSourceNode)) {
-          const sourceNodes = getConnectedSourceSchemaNodes(
-            [newState.dataMapConnections[action.payload.reactFlowSource]],
-            newState.dataMapConnections
-          );
-          actualSources = sourceNodes;
-        } else {
-          actualSources = [originalSourceNode];
-        }
-
-        // We'll only have one output node in this case
-        const originalTargetNode = destinationNode;
-        let actualTarget: SchemaNodeExtended[];
-        if (isFunctionData(originalTargetNode)) {
-          const targetNodes = getConnectedTargetSchemaNodes(
-            [newState.dataMapConnections[action.payload.reactFlowDestination]],
-            newState.dataMapConnections
-          );
-          actualTarget = targetNodes;
-        } else {
-          actualTarget = [originalTargetNode];
-        }
-
-        actualSources.forEach((sourceNode) => {
-          if (actualTarget.length > 0) {
-            const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
-              sourceNode,
-              actualTarget[0],
-              newState.flattenedSourceSchema,
-              newState.flattenedTargetSchema,
-              newState.dataMapConnections
-            );
-
-            // add back in once notifications are discussed
-            // if (wasNewArrayConnectionAdded) {
-            //   state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
-            // }
-
-            // Bring in correct source nodes
-            // Loop through parent nodes connected to
-            const parentTargetNode = state.curDataMapOperation.currentTargetSchemaNode;
-            bringInParentSourceNodesForRepeating(parentTargetNode, newState);
-          }
-        });
-      }
+      handleDirectAccessConnection(sourceNode, action.payload, newState, destinationNode);
 
       doDataMapOperation(state, newState, 'Make connection');
     },
@@ -367,7 +304,7 @@ export const {
   updateReactFlowEdges,
   updateReactFlowNodes,
   makeConnection,
-  saveDataMap
+  saveDataMap,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -384,7 +321,12 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
   state.isDirty = true;
 };
 
-const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionActionDraft, destinationNode: SchemaNodeExtended | FunctionData, sourceNode: SchemaNodeExtended | FunctionData): void => {
+const addConnection = (
+  newConnections: ConnectionDictionary,
+  nodes: ConnectionAction,
+  destinationNode: SchemaNodeExtended | FunctionData,
+  sourceNode: SchemaNodeExtended | FunctionData
+): void => {
   applyConnectionValue(newConnections, {
     targetNode: destinationNode,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
@@ -392,7 +334,7 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
     inputIndex: nodes.specificInput,
     input: {
       reactFlowKey: nodes.reactFlowSource,
-      node: sourceNode
+      node: sourceNode,
     },
   });
 };
@@ -503,6 +445,62 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
 
     functionNode.functionLocations = uniqueLocations;
   });
+};
+
+export const handleDirectAccessConnection = (
+  sourceNode: SchemaNodeExtended | FunctionData,
+  action: ConnectionAction,
+  newState: DataMapOperationState,
+  destinationNode: SchemaNodeExtended | FunctionData
+) => {
+  // Add any repeating parent nodes as well (except for Direct Access's)
+  // Get all the source nodes in case we have sources from multiple source chains
+  const originalSourceNode = sourceNode;
+  let actualSources: SchemaNodeExtended[];
+
+  if (!(isFunctionData(originalSourceNode) && originalSourceNode.key === directAccessPseudoFunctionKey)) {
+    if (isFunctionData(originalSourceNode)) {
+      const sourceNodes = getConnectedSourceSchemaNodes([newState.dataMapConnections[action.reactFlowSource]], newState.dataMapConnections);
+      actualSources = sourceNodes;
+    } else {
+      actualSources = [originalSourceNode];
+    }
+
+    // We'll only have one output node in this case
+    const originalTargetNode = destinationNode;
+    let actualTarget: SchemaNodeExtended[];
+    if (isFunctionData(originalTargetNode)) {
+      const targetNodes = getConnectedTargetSchemaNodes(
+        [newState.dataMapConnections[action.reactFlowDestination]],
+        newState.dataMapConnections
+      );
+      actualTarget = targetNodes;
+    } else {
+      actualTarget = [originalTargetNode];
+    }
+
+    actualSources.forEach((_sourceNode) => {
+      if (actualTarget.length > 0) {
+        // const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
+        //   sourceNode,
+        //   actualTarget[0],
+        //   newState.flattenedSourceSchema,
+        //   newState.flattenedTargetSchema,
+        //   newState.dataMapConnections
+        // );
+
+        // add back in once notifications are discussed
+        // if (wasNewArrayConnectionAdded) {
+        //   state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+        // }
+
+        // Bring in correct source nodes
+        // Loop through parent nodes connected to
+        const parentTargetNode = newState.currentTargetSchemaNode;
+        bringInParentSourceNodesForRepeating(parentTargetNode, newState);
+      }
+    });
+  }
 };
 
 export const assignFunctionNodePositionsFromMetadata = (

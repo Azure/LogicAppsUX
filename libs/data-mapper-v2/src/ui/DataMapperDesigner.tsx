@@ -13,7 +13,7 @@ import { Panel as FunctionPanel } from '../components/functions/Panel';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
-import type { ConnectionActionDraft} from '../core/state/DataMapSlice';
+import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
@@ -89,12 +89,12 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   );
 
   const dispatchMakeConnection = useCallback(
-    (connection:Connection) => {
-      const connectionAction: ConnectionActionDraft = {
+    (connection: Connection) => {
+      const connectionAction: ConnectionAction = {
         reactFlowSource: connection.source ?? '',
         reactFlowDestination: connection.target ?? '',
-      }
-      dispatch(makeConnection(connectionAction))
+      };
+      dispatch(makeConnection(connectionAction));
     },
     [dispatch]
   );
