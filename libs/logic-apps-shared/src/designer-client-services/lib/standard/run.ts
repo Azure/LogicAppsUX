@@ -107,11 +107,14 @@ export class StandardRunService implements IRunService {
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
 
     try {
       if (uri.toLowerCase().includes('microsoft.app')) {
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`;
+
+
         const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
         const response = await httpClient.post<Run, unknown>({
           uri: newUri,
