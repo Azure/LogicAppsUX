@@ -1,16 +1,74 @@
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
-import type { IntlShape } from 'react-intl';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
+import { ChoiceGroup, Label, TextField } from '@fluentui/react';
+import { updateKind, updateWorkflowName } from '../../../../../core/state/templates/templateSlice';
 
 export const NameStatePanel: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { workflowName, kind } = useSelector((state: RootState) => state.template);
+  const { workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+
   const { manifest } = useSelector((state: RootState) => state.template);
+  const intl = useIntl();
+
+  const intlText = {
+    STATE_TYPE: intl.formatMessage({
+      defaultMessage: 'State Type',
+      id: 'X2xiq1',
+      description: 'Label for choosing State type',
+    }),
+    STATEFUL: intl.formatMessage({
+      defaultMessage: 'Stateful: Optimized for high reliability, ideal for process business transitional data.',
+      id: 'V9EOZ+',
+      description: 'Description for Stateful Type',
+    }),
+    STATELESS: intl.formatMessage({
+      defaultMessage: 'Stateless: Optimized for low latency, ideal for request-response and processing IoT events.',
+      id: 'mBZnZP',
+      description: 'Description for Stateless Type',
+    }),
+    WORKFLOW_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow Name',
+      id: '8WZwsC',
+      description: 'Label for workflow Name',
+    }),
+  };
 
   return isNullOrUndefined(manifest) ? null : (
     <div>
-      Overview Tab Placeholder
-      <div>Manifest Data: {JSON.stringify(manifest)}</div>
+      <Label required={true} htmlFor={'workflowName'}>
+        {intlText.WORKFLOW_NAME}
+      </Label>
+      <TextField
+        data-testid={'workflowName'}
+        id={'workflowName'}
+        ariaLabel={intlText.WORKFLOW_NAME}
+        value={existingWorkflowName ?? workflowName}
+        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
+          dispatch(updateWorkflowName(newValue ?? ''))
+        }
+        disabled={!!existingWorkflowName}
+      />
+      <ChoiceGroup
+        label={intlText.STATE_TYPE}
+        options={[
+          { key: 'stateful', text: intlText.STATEFUL, disabled: !manifest?.kinds.includes('stateful') },
+          {
+            key: 'stateless',
+            text: intlText.STATELESS,
+            disabled: !manifest?.kinds.includes('stateless'),
+          },
+        ]}
+        onChange={(_, option) => {
+          if (option?.key) {
+            dispatch(updateKind(option?.key));
+          }
+        }}
+        selectedKey={kind}
+      />
     </div>
   );
 };
