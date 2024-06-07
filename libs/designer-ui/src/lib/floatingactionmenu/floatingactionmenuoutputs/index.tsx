@@ -14,6 +14,7 @@ import { useIntl } from 'react-intl';
 type DynamicallyAddedParameterOutputsProperties = {
   type: string;
   title: string;
+  description?: string;
   format?: string;
   'x-ms-content-hint'?: DynamicallyAddedParameterTypeType; // May not be present if opening a workflow from v1 designer
   'x-ms-dynamically-added': boolean;
@@ -36,6 +37,7 @@ type FloatingActionMenuOutputsProps = {
   tokenPickerButtonProps: TokenPickerButtonEditorProps | undefined;
   getTokenPicker: GetTokenPickerHandler;
   hideValidationErrors: ChangeHandler | undefined;
+  includeOutputDescription?: boolean;
 };
 
 export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps): JSX.Element => {
@@ -57,6 +59,15 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
     if (onChange) {
       const viewModel = clone(props.editorViewModel);
       viewModel.schema.properties[schemaKey].title = newValue || '';
+      onChange({ value: props.initialValue, viewModel });
+    }
+  };
+
+  const onDynamicallyAddedParameterDescriptionChange = (schemaKey: string, newValue: string | undefined): void => {
+    const { onChange } = props;
+    if (onChange) {
+      const viewModel = clone(props.editorViewModel);
+      viewModel.schema.properties[schemaKey].description = newValue || '';
       onChange({ value: props.initialValue, viewModel });
     }
   };
@@ -102,7 +113,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
     );
   };
 
-  const dynamicParameterProps: Pick<DynamicallyAddedParameterProps, 'schemaKey' | 'icon' | 'title'>[] = Object.entries(
+  const dynamicParameterProps: Pick<DynamicallyAddedParameterProps, 'schemaKey' | 'icon' | 'title' | 'description'>[] = Object.entries(
     props.editorViewModel.schema.properties
   )
     .filter(([_key, config]) => {
@@ -110,6 +121,15 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
     })
     .map(([key, config]) => {
       const contentHint = inferContextHintFromProperties(config);
+      if (props?.includeOutputDescription) {
+        return {
+          schemaKey: key,
+          icon: getIconForDynamicallyAddedParameterType(contentHint),
+          title: config.title,
+          description: config.description,
+        };
+      }
+
       return {
         schemaKey: key,
         icon: getIconForDynamicallyAddedParameterType(contentHint),
@@ -156,13 +176,25 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
           break;
         }
       }
-      viewModel.schema.properties[schemaKey] = {
-        title: '',
-        type,
-        format,
-        'x-ms-content-hint': item.type,
-        'x-ms-dynamically-added': true,
-      };
+
+      if (props?.includeOutputDescription) {
+        viewModel.schema.properties[schemaKey] = {
+          title: '',
+          description: '',
+          type,
+          format,
+          'x-ms-content-hint': item.type,
+          'x-ms-dynamically-added': true,
+        };
+      } else {
+        viewModel.schema.properties[schemaKey] = {
+          title: '',
+          type,
+          format,
+          'x-ms-content-hint': item.type,
+          'x-ms-dynamically-added': true,
+        };
+      }
 
       onChange({ value: props.initialValue, viewModel });
     }
@@ -184,6 +216,12 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
     description: 'Placeholder for output title field',
   });
 
+  const descriptionPlaceholder = intl.formatMessage({
+    defaultMessage: 'Enter a description of the output',
+    id: 'Nbl3zN',
+    description: 'Placeholder for output description field',
+  });
+
   return (
     <FloatingActionMenuBase
       supportedTypes={props.supportedTypes}
@@ -191,14 +229,17 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
       expandedTitle={expandedTitle}
       onMenuItemSelected={onMenuItemSelected}
     >
-      {dynamicParameterProps.map((props) => (
+      {dynamicParameterProps.map((dynamicallyAddedParameterProps) => (
         <DynamicallyAddedParameter
-          {...props}
-          key={props.schemaKey}
+          {...dynamicallyAddedParameterProps}
+          key={dynamicallyAddedParameterProps.schemaKey}
           titlePlaceholder={titlePlaceholder}
+          descriptionPlaceholder={descriptionPlaceholder}
           onTitleChange={onDynamicallyAddedParameterTitleChange}
+          onDescriptionChange={onDynamicallyAddedParameterDescriptionChange}
           onDelete={onDynamicallyAddedParameterDelete}
           onRenderValueField={onRenderValueField}
+          renderDescriptionField={props.includeOutputDescription}
         />
       ))}
     </FloatingActionMenuBase>
