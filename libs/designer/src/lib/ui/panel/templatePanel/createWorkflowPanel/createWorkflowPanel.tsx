@@ -37,15 +37,12 @@ export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Pr
       <div>
         <b>{intlText.CREATE_NEW_WORKFLOW}</b>
       </div>
-      <div>
-        <b>Placeholder 1. {intlText.CONFIGURE_CONNECTIONS}</b>
-      </div>
 
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
         {panelTabs.map(({ id, visible, title }) =>
           visible ? (
             <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
-              <Tab value={id} role={'tab'}>
+              <Tab value={id} role={'tab'} data-testid={id}>
                 {title}
               </Tab>
             </OverflowItem>

@@ -10,7 +10,7 @@ export const ConnectionsPanel: React.FC = () => {
 
   return isNullOrUndefined(manifest) ? null : (
     <div>
-      Overview Tab Placeholder
+      Connections Tab Placeholder
       {connections ? <DisplayConnections connections={connections} /> : <>PLACEHOLDER: no connections to be made</>}
     </div>
   );

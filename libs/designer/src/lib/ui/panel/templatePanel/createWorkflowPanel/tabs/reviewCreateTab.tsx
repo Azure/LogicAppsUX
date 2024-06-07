@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
@@ -44,7 +43,13 @@ export const ReviewCreatePanel = ({ onCreateClick }: { onCreateClick: () => Prom
     }),
   };
 
-  return isNullOrUndefined(manifest) ? null : (
+  async function handleCreateClick() {
+    setIsLoadingCreate(true);
+    await onCreateClick();
+    setIsLoadingCreate(false);
+  }
+
+  return (
     <div>
       Review and Create Tab Placeholder
       <Label required={true} htmlFor={'workflowName'}>
@@ -77,17 +82,16 @@ export const ReviewCreatePanel = ({ onCreateClick }: { onCreateClick: () => Prom
         }}
         selectedKey={kind}
       />
-      <Button
-        appearance="outline"
-        onClick={async () => {
-          setIsLoadingCreate(true);
-          await onCreateClick();
-          setIsLoadingCreate(false);
-        }}
-        disabled={!(existingWorkflowName ?? workflowName) || !kind}
-      >
-        {isLoadingCreate ? <Spinner size="extra-tiny" /> : intlText.CREATE}
-      </Button>
+      <div>
+        <Button
+          appearance="outline"
+          onClick={handleCreateClick}
+          data-testid={'create-workflow-button'}
+          disabled={!(existingWorkflowName ?? workflowName) || !kind}
+        >
+          {isLoadingCreate ? <Spinner size="extra-tiny" /> : intlText.CREATE}
+        </Button>
+      </div>
     </div>
   );
 };
