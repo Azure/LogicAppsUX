@@ -1,12 +1,14 @@
 import { SelectExistingSchema } from './SelectExistingSchema';
 import { UploadNewSchema } from './UploadNewSchema';
-import { ChoiceGroup, SearchBox, Text } from '@fluentui/react';
+import { ChoiceGroup, Text } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
+import { mergeClasses } from '@fluentui/react-components';
+import { SchemaItemView } from '../schemaView/schemaView';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
@@ -30,6 +32,7 @@ export interface AddOrUpdateSchemaViewProps {
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
+  getUpdatedSchemaFiles: () => void;
   errorMessage: string;
   uploadType: UploadSchemaTypes;
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
@@ -40,6 +43,7 @@ export const AddOrUpdateSchemaView = ({
   schemaType,
   selectedSchemaFile,
   setSelectedSchemaFile,
+  getUpdatedSchemaFiles,
   errorMessage,
   uploadType,
   setUploadType,
@@ -101,7 +105,13 @@ export const AddOrUpdateSchemaView = ({
   );
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={mergeClasses(
+        styles.drawerRoot,
+        selectedSchemaFile ? styles.fileSelectedDrawer : '',
+        schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer
+      )}
+    >
       <div className={styles.headerWrapper}>
         <Text className={styles.header}>
           {equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION}
@@ -135,16 +145,12 @@ export const AddOrUpdateSchemaView = ({
                   setSelectSchemaVisible(false);
                   setSelectedSchemaFile(schema);
                 }}
+                getUpdatedSchemaFiles={getUpdatedSchemaFiles}
               />
             )}
           </div>
         ) : (
-          <>
-            <div className={styles.searchBoxWrapper}>
-              <SearchBox placeholder={stringResources.SEARCH_PROPERTIES} className={styles.searchBox} />
-            </div>
-            <div />
-          </>
+          <SchemaItemView schemaType={schemaType} />
         )}
       </div>
     </div>
