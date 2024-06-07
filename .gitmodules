@@ -1,6 +1,3 @@
-[submodule "libs/designer/src/lib/core/templates/samples"]
-	path = libs/designer/src/lib/core/templates/samples
-	url = https://github.com/Azure/LogicAppsTemplates
 [submodule "libs/designer/src/lib/ui/templates/templateFiles"]
 	path = libs/designer/src/lib/ui/templates/templateFiles
 	url = https://github.com/Azure/LogicAppsTemplates.git
