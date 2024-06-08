@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [4.27.0](https://github.com/Azure/LogicAppsUX/compare/v4.26.0...v4.27.0) (2024-06-08)
+
+
+### Features
+
+* **vscode:** Introduce .NET 8 to custom code and extension dependencies ([#4947](https://github.com/Azure/LogicAppsUX/issues/4947)) ([4e14837](https://github.com/Azure/LogicAppsUX/commit/4e14837ab28b5f07590e75bd540a7d2877dad4c7))
+
+
+### Bug Fixes
+
+* **designer:** Fix Real API tests ([#4942](https://github.com/Azure/LogicAppsUX/issues/4942)) ([41ca069](https://github.com/Azure/LogicAppsUX/commit/41ca06946d317ab804c56158210e301219879257))
+* **designer:** Stringifying appsetting values during connection creation ([#4938](https://github.com/Azure/LogicAppsUX/issues/4938)) ([3ed99b9](https://github.com/Azure/LogicAppsUX/commit/3ed99b9d0937280d2f8eb2848424f4319cec56ec))
+* **vscode:** Update Workflows Webjobs sdk version ([#4952](https://github.com/Azure/LogicAppsUX/issues/4952)) ([187321e](https://github.com/Azure/LogicAppsUX/commit/187321edb9952918314e7ca415dc26cc52a00066))
+
 ## [4.26.0](https://github.com/Azure/LogicAppsUX/compare/v4.25.0...v4.26.0) (2024-06-06)
 
 ## [4.25.0](https://github.com/Azure/LogicAppsUX/compare/v4.24.0...v4.25.0) (2024-06-05)
