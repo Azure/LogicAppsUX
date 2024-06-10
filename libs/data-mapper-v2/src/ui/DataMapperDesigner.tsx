@@ -1,22 +1,28 @@
-import type { AppDispatch, RootState } from '../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, CoordinateExtent, Node, Edge } from 'reactflow';
-import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
-import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
-import { SchemaType } from '@microsoft/logic-apps-shared';
-import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
-import { Panel as FunctionPanel } from '../components/functionsPanel/Panel';
-import SchemaNode from '../components/common/reactflow/SchemaNode';
-import ConnectionLine from '../components/common/reactflow/ConnectionLine';
-import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
-import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
-import type { IDataMapperFileService } from '../core';
-import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
+import type { AppDispatch, RootState } from "../core/state/Store";
+import { useEffect, useMemo, useRef, useCallback } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { useSelector, useDispatch } from "react-redux";
+import type { Connection, CoordinateExtent, Node, Edge } from "reactflow";
+import ReactFlow, { ReactFlowProvider, addEdge } from "reactflow";
+import { AddSchemaDrawer } from "../components/addSchema/AddSchemaPanel";
+import { SchemaType } from "@microsoft/logic-apps-shared";
+import { EditorCommandBar } from "../components/commandBar/EditorCommandBar";
+import { reactFlowStyle, useStaticStyles, useStyles } from "./styles";
+import { Panel as FunctionPanel } from "../components/functionsPanel/Panel";
+import SchemaNode from "../components/common/reactflow/SchemaNode";
+import ConnectionLine from "../components/common/reactflow/ConnectionLine";
+import ConnectedEdge from "../components/common/reactflow/ConnectedEdge";
+import type { ConnectionAction } from "../core/state/DataMapSlice";
+import {
+  makeConnection,
+  updateReactFlowEdges,
+  updateReactFlowNodes,
+} from "../core/state/DataMapSlice";
+import type { IDataMapperFileService } from "../core";
+import { DataMapperWrappedContext, InitDataMapperFileService } from "../core";
+import { FunctionConfigurationPopover } from "../components/functionConfigurationMenu/functionConfigurationPopover";
+import { Button, TeachingPopover, TeachingPopoverTrigger } from "@fluentui/react-components";
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -26,7 +32,11 @@ interface DataMapperDesignerProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({
+  fileService,
+  readCurrentCustomXsltPathOptions,
+  setIsMapStateDirty,
+}: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -36,9 +46,13 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     InitDataMapperFileService(fileService);
   }
 
-  const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { nodes, edges } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
 
-  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const isMapStateDirty = useSelector(
+    (state: RootState) => state.dataMap.present.isDirty
+  );
 
   const nodeTypes = useMemo(
     () => ({
@@ -70,7 +84,10 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
 
   const dispatchEdgesAndNodes = useCallback(
     (updatedEdges: Edge[], updatedNodes: Node[]) => {
-      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
+      const allNodeIds = [
+        ...updatedEdges.map((edge) => edge.source),
+        ...updatedEdges.map((edge) => edge.target),
+      ];
 
       const newNodes = [
         ...updatedNodes.map((node) => ({
@@ -89,8 +106,8 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   const dispatchMakeConnection = useCallback(
     (connection: Connection) => {
       const connectionAction: ConnectionAction = {
-        reactFlowSource: connection.source ?? '',
-        reactFlowDestination: connection.target ?? '',
+        reactFlowSource: connection.source ?? "",
+        reactFlowDestination: connection.target ?? "",
       };
       dispatch(makeConnection(connectionAction));
     },
@@ -102,8 +119,8 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       const newEdges = addEdge(
         {
           ...connection,
-          type: 'connectedEdge',
-          updatable: 'target',
+          type: "connectedEdge",
+          updatable: "target",
           focusable: true,
           deletable: true,
         },
@@ -121,8 +138,8 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       const newEdges = addEdge(
         {
           ...newConnection,
-          type: 'connectedEdge',
-          updatable: 'target',
+          type: "connectedEdge",
+          updatable: "target",
           focusable: true,
           deletable: true,
         },
@@ -136,12 +153,19 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
 
   const isValidConnection = useCallback(
     (connection: Connection) => {
-      return !edges.find((edge) => edge.source === connection.source && edge.target === connection.target);
+      return !edges.find(
+        (edge) =>
+          edge.source === connection.source && edge.target === connection.target
+      );
     },
     [edges]
   );
 
-  useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
+  useEffect(
+    () =>
+      readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(),
+    [readCurrentCustomXsltPathOptions]
+  );
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
@@ -156,8 +180,19 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
         <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
           <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
           <div className={styles.dataMapperShell}>
-            <FunctionPanel />
-            <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
+          <FunctionPanel />
+            <AddSchemaDrawer
+              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+              schemaType={SchemaType.Source}
+            />
+            <div>
+            <TeachingPopover>
+              <TeachingPopoverTrigger>
+                <Button>trigger</Button>
+              </TeachingPopoverTrigger>
+              <FunctionConfigurationPopover></FunctionConfigurationPopover>
+            </TeachingPopover>
+            </div>
             <div ref={ref} id="editorView" className={styles.canvasWrapper}>
               <ReactFlow
                 nodes={nodes}
@@ -181,7 +216,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
                 panOnDrag={false}
                 style={reactFlowStyle}
                 proOptions={{
-                  account: 'paid-sponsor',
+                  account: "paid-sponsor",
                   hideAttribution: true,
                 }}
                 isValidConnection={isValidConnection}
@@ -191,7 +226,10 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
                 translateExtent={reactFlowExtent}
               />
             </div>
-            <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
+            <AddSchemaDrawer
+              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+              schemaType={SchemaType.Target}
+            />
           </div>
         </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>
