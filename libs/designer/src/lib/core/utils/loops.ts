@@ -665,7 +665,7 @@ export const getTokenExpressionValueForManifestBasedOperation = (
 /**
  * generate the full path for the specifiecd expression segments, e.g, for @body('action')?[test] => body.$.test
  * if the splitOn is not empty, and the expression is triggerBody(), then it would also append the splitOn path,
- * e.g, @triggerBody()?[attachements] with splitOn: @triggerBody()['value'], the result would be: body.$.value.attachments
+ * e.g, @triggerBody()?[attachments] with splitOn: @triggerBody()['value'], the result would be: body.$.value.attachments
  */
 const getFullPath = (expressionSegment: ExpressionFunction, splitOn?: Expression): string => {
   const segments = [equals(expressionSegment.name, 'outputs') ? 'outputs' : 'body', '$'];
