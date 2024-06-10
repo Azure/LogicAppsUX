@@ -67,7 +67,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       try {
         const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
 
-        // danielle add this back later
+        // this can be added later
         // if (saveDraftStateCall) {
         //   saveDraftStateCall(newDataMapDefinition);
         // }
@@ -106,9 +106,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     //   );
     // }
 
-  const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
 
-  DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
+    DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 
     dispatch(
       saveDataMap({
@@ -116,14 +116,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         targetSchemaExtended: targetSchema,
       })
     );
-  }, [
-    currentConnections,
-    functions,
-    dataMapDefinition,
-    sourceSchema,
-    targetSchema,
-    dispatch,
-  ]);
+  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());

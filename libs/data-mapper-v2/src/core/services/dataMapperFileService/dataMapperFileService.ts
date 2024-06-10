@@ -11,14 +11,13 @@ export interface IDataMapperFileService {
    * Saves both the data map definition and metadata to the filesystem.
    * @arg {string} dataMapDefinition - The map definition as a string.
    * @arg {string} mapMetadata - Map metadata to be saved, as a string.
-   * @return {null}
+   * @return {null} we get the output from the store
    */
   saveMapDefinitionCall(dataMapDefinition: string, mapMetadata: string): void;
 
-  // danielle fix these later
   /**
    * Gets all schemas from the filesystem from the Schemas folder.
-   * @return {null}
+   * @return {null} we get the output from the store
    */
   readCurrentSchemaOptions(): void;
 }
