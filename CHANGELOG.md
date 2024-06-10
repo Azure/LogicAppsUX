@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.25.1](https://github.com/Azure/LogicAppsUX/compare/v4.25.0...v4.25.1) (2024-06-10)
+
+
+### Features
+
+* **vscode:** Introduce .NET 8 to custom code ([#4953](https://github.com/Azure/LogicAppsUX/issues/4953)) ([74a5363](https://github.com/Azure/LogicAppsUX/commit/74a536329bc8318459bd70607f09f20831df7a27)), closes [#4947](https://github.com/Azure/LogicAppsUX/issues/4947) [#4952](https://github.com/Azure/LogicAppsUX/issues/4952)
+
 ## [4.25.0](https://github.com/Azure/LogicAppsUX/compare/v4.24.0...v4.25.0) (2024-06-05)
 
 
