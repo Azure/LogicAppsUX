@@ -3,7 +3,7 @@ import { useRef, useCallback, useContext, useMemo, useEffect } from 'react';
 import useIsInViewport from './UseInViewport.hook';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/Store';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dataMapSchema';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { DataMapperWrappedContext } from '../../../core';
 import { useStyles } from './styles';
 import { updateReactFlowNode } from '../../../core/state/DataMapSlice';
@@ -22,11 +22,11 @@ export type TreeNodeProps = {
   id: string;
   isHovered: boolean;
   isAdded: boolean;
-  data: SchemaNodeExtended;
+  node: SchemaNodeExtended;
 };
 
 export const TreeNode = (props: TreeNodeProps) => {
-  const { isLeftDirection, id, data, text, isLeaf } = props;
+  const { isLeftDirection, id, node, text, isLeaf } = props;
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const isInViewPort = useIsInViewport(nodeRef);
   const dispatch = useDispatch<AppDispatch>();
@@ -45,7 +45,7 @@ export const TreeNode = (props: TreeNodeProps) => {
             id: nodeId,
             selectable: true,
             data: {
-              ...data,
+              ...node,
               isLeftDirection: isLeftDirection,
               connectionX: isLeftDirection ? currentNodeRect.right + 10 : currentNodeRect.left - 10,
               id: nodeId,
@@ -59,7 +59,7 @@ export const TreeNode = (props: TreeNodeProps) => {
         })
       );
     },
-    [isLeftDirection, nodeId, data, dispatch]
+    [isLeftDirection, nodeId, node, dispatch]
   );
 
   const removeNodeFromFlow = useCallback(() => {
@@ -69,13 +69,13 @@ export const TreeNode = (props: TreeNodeProps) => {
           id: nodeId,
           selectable: true,
           hidden: true,
-          data: data,
+          data: node,
           position: { x: 0, y: 0 },
         },
         removeNode: true,
       })
     );
-  }, [nodeId, data, dispatch]);
+  }, [nodeId, node, dispatch]);
 
   useEffect(() => {
     if (nodeRef?.current && isInViewPort && canvasBounds) {

@@ -52,7 +52,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       return (
         <TreeItem itemType="leaf" id={root.key}>
           <TreeNode
-            data={root}
+            node={root}
             isLeftDirection={isLeftDirection}
             id={root.key}
             text={root.name}
@@ -66,7 +66,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
     return (
       <TreeItem itemType="branch" open={openKeys[root.key]} id={root.key} value={root.key} onOpenChange={onOpenTreeItem}>
-        <TreeNode data={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />
+        <TreeNode node={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />
         <Tree aria-label="sub-tree">
           {root.children.map((child: SchemaNodeExtended, index: number) => (
             <span key={`tree-${child.key}-${index}`}>{displaySchemaTree(child)}</span>
