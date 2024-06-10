@@ -49,7 +49,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   const displaySchemaTree = (root: SchemaNodeExtended) => {
     if (root.children.length === 0) {
-      return <TreeNode data={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />;
+      return <TreeNode node={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />;
     }
 
     return (

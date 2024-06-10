@@ -4,6 +4,7 @@ import {
   DataMapperDesigner as DataMapperDesignerV2,
   DataMapDataProvider as DataMapDataProviderV2,
   DataMapperDesignerProvider as DataMapperDesignerProviderV2,
+  IDataMapperFileService,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -15,7 +16,7 @@ import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFuncti
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
@@ -41,6 +42,29 @@ const mockFileItems: IFileSysTreeItem[] = [
   },
 ];
 
+class DataMapperFileService implements IDataMapperFileService {
+  private verbose: boolean;
+
+  constructor(verbose: boolean) {
+    this.verbose = verbose
+  }
+
+  public saveMapDefinitionCall = (
+    dataMapDefinition: string,
+    mapMetadata: string
+  ) => {
+    if (this.verbose) {
+      console.log('Saved definition: ' + dataMapDefinition)
+      console.log('Saved metadata: ' + mapMetadata)
+    }
+  };
+
+  public readCurrentSchemaOptions = () => {
+    return;
+  };
+}
+
+
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 
@@ -63,13 +87,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
     accessToken: armToken,
   });
 
-  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
-    console.log('Map Definition\n===============');
-    console.log(dataMapDefinition);
-
-    console.log('Map Metadata\n===============');
-    console.log(mapMetadata);
-  };
+  const dataMapperFileService = new DataMapperFileService(true);
 
   const saveXsltCall = (dataMapXslt: string) => {
     console.log('\nXSLT\n===============');
@@ -118,7 +136,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} readCurrentSchemaOptions={() => null}/>
+            <DataMapperDesignerV2 fileService={dataMapperFileService} saveXsltCall={saveXsltCall} />
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>
