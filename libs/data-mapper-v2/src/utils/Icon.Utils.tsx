@@ -203,8 +203,6 @@ export const iconUriForIconImageName = (iconImageName: string) => {
   return `${iconBaseUrl}${iconImageName}`;
 };
 
-// danielle for function icons coming from fluent, changing the font size works
-
 export const iconForFunction = (functionKey: string, color: string, iconSize: number) => {
   const defaultStyle = { height: iconSize, width: iconSize, margin: 'auto', fontSize: `${iconSize}px` };
   const coloredDefaultStyle = { ...defaultStyle, color };

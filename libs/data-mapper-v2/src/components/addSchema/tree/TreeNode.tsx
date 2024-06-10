@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback, useContext, useMemo } from 'react';
 import useIsInViewport from './UseInViewport.hook';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/Store';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dataMapSchema';
+import { SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { DataMapperWrappedContext } from '../../../core';
 import { useStyles } from './styles';
 import { updateReactFlowNode } from '../../../core/state/DataMapSlice';
@@ -21,19 +21,18 @@ export type TreeNodeProps = {
   id: string;
   isHovered: boolean;
   isAdded: boolean;
-  data: SchemaNodeExtended;
+  node: SchemaNodeExtended;
 };
 
 export const TreeNode = (props: TreeNodeProps) => {
-  const { isLeftDirection, id, data } = props;
+  const { isLeftDirection, id, node } = props;
   const divRef = useRef<HTMLDivElement | null>(null);
   const isInViewPort = useIsInViewport(divRef);
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const dataMapperContext = useContext(DataMapperWrappedContext);
 
-  const nodeId = useMemo(() => `reactflow_${isLeftDirection ? 'source' : 'target'}_${id}`, [id, isLeftDirection]);
-
+  const nodeId = useMemo(() => `${isLeftDirection ? SchemaType.Source : SchemaType.Target}-${id}`, [id, isLeftDirection]);
   const addNodeToFlow = useCallback(() => {
     if (divRef?.current && dataMapperContext?.canvasRef?.current) {
       const divRect = divRef.current.getBoundingClientRect();
@@ -44,7 +43,7 @@ export const TreeNode = (props: TreeNodeProps) => {
             id: nodeId,
             selectable: true,
             data: {
-              ...data,
+              ...node,
               isLeftDirection: isLeftDirection,
               connectionX: isLeftDirection ? canvasRect.left : canvasRect.right,
               id: nodeId,
@@ -58,7 +57,7 @@ export const TreeNode = (props: TreeNodeProps) => {
         })
       );
     }
-  }, [isLeftDirection, divRef, nodeId, data, dispatch, dataMapperContext?.canvasRef]);
+  }, [isLeftDirection, divRef, nodeId, node, dispatch, dataMapperContext?.canvasRef]);
 
   const removeNodeFromFlow = useCallback(() => {
     dispatch(
@@ -67,13 +66,13 @@ export const TreeNode = (props: TreeNodeProps) => {
           id: nodeId,
           selectable: true,
           hidden: true,
-          data: data,
+          data: node,
           position: { x: 0, y: 0 },
         },
         removeNode: true,
       })
     );
-  }, [nodeId, data, dispatch]);
+  }, [nodeId, node, dispatch]);
 
   const onOpenChange = useCallback(
     (_event: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {

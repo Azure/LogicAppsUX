@@ -42,11 +42,4 @@ export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
   protected getExistingPanel(): WebviewPanel | undefined {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
   }
-
-  protected getPanelOptions(): vscode.WebviewOptions & vscode.WebviewPanelOptions {
-    return {
-      enableScripts: true,
-      retainContextWhenHidden: true,
-    };
-  }
 }
