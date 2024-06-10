@@ -5,12 +5,15 @@ export const useStyles = makeStyles({
     height: '20px',
     width: '20px',
   },
-  chevronButton: {
+  chevronButtonExpanded: {
     paddingLeft: '0px',
     paddingRight: '0px',
+    minWidth: '10px',
+    marginLeft: 'auto',
   },
   functionsChevronIcon: {
-    alignSelf: 'center',
+    alignSelf: 'right',
+    alignItems: 'right',
   },
   expandedDataMapperFunctionPanel: {
     backgroundColor: '#E8F3FE',
@@ -19,31 +22,36 @@ export const useStyles = makeStyles({
   },
   collapsedDataMapperFunctionPanel: {
     backgroundColor: '#E8F3FE',
-    maxWidth: '60px',
-    minWidth: '50px',
+    maxWidth: '40px',
+    minWidth: '40px',
+    width: '40px',
     ...shorthands.borderRight('1px', 'solid', '#ddd'),
     display: 'flex',
     cursor: 'pointer',
   },
   drawerHeaderWrapper: {
     display: 'flex',
+    flexDirection: 'row',
     width: '100%',
-    marginTop: '15px',
+    marginTop: '8px',
     marginBottom: '5px',
+    alignItems: 'center',
   },
   collapsedDrawerBodyWrapper: {
+    paddingTop: '8px',
     display: 'flex',
     width: '100%',
   },
   expandedDrawerBodyWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
+    marginRight: '10px',
+    width: '220px',
     marginLeft: '10px',
   },
   drawerHeader: {
-    fontWeight: 'initial',
-    fontSize: '20px',
+    fontWeight: 'fontw',
+    fontSize: '16px',
   },
   drawerHeaderIcon: {
     alignSelf: 'center',

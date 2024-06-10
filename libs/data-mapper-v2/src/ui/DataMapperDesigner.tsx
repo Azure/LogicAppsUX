@@ -9,7 +9,7 @@ import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
-import { Panel as FunctionPanel } from '../components/functions/Panel';
+import { Panel as FunctionPanel } from '../components/functionsPanel/Panel';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
