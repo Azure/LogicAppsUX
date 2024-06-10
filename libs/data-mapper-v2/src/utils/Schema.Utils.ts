@@ -265,3 +265,8 @@ const nodeCount = (schemaNode: SchemaNodeExtended): number => {
 
   return result;
 };
+
+export const removePrefixFromNodeID = (nodeID: string): string => {
+  const splitID = nodeID.split('-');
+  return splitID[1];
+}
