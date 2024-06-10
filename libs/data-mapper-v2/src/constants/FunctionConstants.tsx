@@ -8,8 +8,6 @@ import {
   ArrowSwap20Regular,
 } from '@fluentui/react-icons';
 
-// danielle revisit this
-
 export interface FunctionGroupBranding {
   displayName: string;
   colorTokenName: string;

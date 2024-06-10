@@ -11,8 +11,6 @@ import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import type { WritableDraft } from 'immer/dist/internal';
 
-// danielle do we need this?
-
 /**
  * Creates a connection entry in the connections dictionary if it doesn't already exist.
  * This is the gateway for any entries made into dataMapConnections - meaning all default
