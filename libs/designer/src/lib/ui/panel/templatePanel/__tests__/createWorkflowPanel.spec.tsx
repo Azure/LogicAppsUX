@@ -14,11 +14,9 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   let templateSliceData: TemplateState;
   let template1Manifest: Template.Manifest;
   let param1DefaultValue: string;
-  let param2DefaultValue: string;
 
   beforeAll(() => {
     param1DefaultValue = 'default value for param 1';
-    param2DefaultValue = 'boolean';
     template1Manifest = {
       title: 'Template 1',
       description: 'Template 1 Description',
@@ -46,13 +44,6 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
           name: 'param2',
           type: 'object',
           description: 'param2 description',
-        },
-        {
-          name: 'param3',
-          type: 'boolean',
-          description: 'param3 description',
-          default: param2DefaultValue,
-          required: true,
         },
       ],
     };
@@ -93,6 +84,16 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     renderWithProviders(<CreateWorkflowPanel onCreateClick={vi.fn()} />, { store });
   });
 
+  it('Ensure template state for showing information is correct', async () => {
+    expect(store.getState().template.workflowName).toBe('');
+    expect(store.getState().template.kind).toBe(undefined);
+    expect(store.getState().template.templateName).toBe(template1Manifest.title);
+    expect(store.getState().template.manifest).toBe(template1Manifest);
+    expect(store.getState().template.parameters.definitions).toBeDefined();
+    expect(store.getState().template.parameters.validationErrors).toEqual({});
+    expect(store.getState().template.connections).toBe(template1Manifest.connections);
+  });
+
   it('Shows Connections Tab for the first rendering without selected tab id', async () => {
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe('createWorkflow');
@@ -100,7 +101,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(screen.getByText('Connections Tab Placeholder')).toBeDefined();
   });
 
-  it('Shows Paramaeters Tab on tab click', async () => {
+  it('Shows Parameters Tab on tab click', async () => {
     screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS).click();
     expect(store.getState().panel.selectedTabId).toBe('PARAMETERS');
   });

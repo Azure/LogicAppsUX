@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
@@ -37,7 +36,7 @@ export const NameStatePanel: React.FC = () => {
     }),
   };
 
-  return isNullOrUndefined(manifest) ? null : (
+  return (
     <div>
       <Label required={true} htmlFor={'workflowName'}>
         {intlText.WORKFLOW_NAME}

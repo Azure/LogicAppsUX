@@ -6,9 +6,9 @@ import constants from '../../../../../common/constants';
 import { DisplayParameters } from '../../../../templates/parameters/displayParameters';
 
 export const ParametersPanel: React.FC = () => {
-  const { parameters, workflowDefinition } = useSelector((state: RootState) => state.template);
+  const { parameters } = useSelector((state: RootState) => state.template);
 
-  return isNullOrUndefined(workflowDefinition) ? null : (
+  return isNullOrUndefined(parameters) ? null : (
     <div>
       Parameters Tab Placeholder
       {parameters ? <DisplayParameters /> : <>PLACEHOLDER: no parameters</>}
