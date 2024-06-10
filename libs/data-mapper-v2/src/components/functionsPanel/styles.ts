@@ -5,10 +5,11 @@ export const useStyles = makeStyles({
     height: '20px',
     width: '20px',
   },
-  chevronButton: {
+  chevronButtonExpanded: {
     paddingLeft: '0px',
     paddingRight: '0px',
     minWidth: '10px',
+    marginLeft: 'auto',
   },
   functionsChevronIcon: {
     alignSelf: 'right',
@@ -33,16 +34,19 @@ export const useStyles = makeStyles({
     flexDirection: 'row',
     width: '100%',
     marginTop: '8px',
-    marginBottom: '0px',
+    marginBottom: '5px',
+    alignItems: 'center',
   },
   collapsedDrawerBodyWrapper: {
+    paddingTop: '8px',
     display: 'flex',
     width: '100%',
   },
   expandedDrawerBodyWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
+    marginRight: '10px',
+    width: '220px',
     marginLeft: '10px',
   },
   drawerHeader: {

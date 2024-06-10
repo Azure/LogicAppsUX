@@ -38,7 +38,6 @@ export const Panel = (_props: PanelProps) => {
     <InlineDrawer
       className={isFunctionsPanelExpanded ? styles.expandedDataMapperFunctionPanel : styles.collapsedDataMapperFunctionPanel}
       open={true}
-      size="small"
     >
       {isFunctionsPanelExpanded ? (
         <div className={styles.expandedDrawerBodyWrapper}>
@@ -46,7 +45,7 @@ export const Panel = (_props: PanelProps) => {
             <Subtitle2>{stringResources.FUNCTIONS}</Subtitle2>
             <Button
               appearance="transparent"
-              className={styles.chevronButton}
+              className={styles.chevronButtonExpanded}
               aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
               icon={<ChevronDoubleLeftRegular fontSize={14} className={styles.functionsChevronIcon} />}
               onClick={() => {
@@ -67,7 +66,7 @@ export const Panel = (_props: PanelProps) => {
         >
           <FunctionsSVG />
           <Button
-            className={styles.chevronButton}
+            className={styles.chevronButtonExpanded}
             appearance="transparent"
             aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
             icon={<ChevronDoubleRightRegular fontSize={13} className={styles.functionsChevronIcon} />}

@@ -12,11 +12,11 @@ export const useStyles = makeStyles({
     marginBottom: '8px',
   },
   functionSearchBox: {
-    width: '210px',
+    width: '100%',
   },
   functionTree: {
     backgroundColor: '#E8F3FE',
-    width: '210px',
+    width: '100%',
   },
   functionTreeItem: {
     backgroundColor: '#E8F3FE',
@@ -48,7 +48,7 @@ export const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     width: '130px',
-    paddingLeft: '4px',
+    paddingLeft: '8px',
     paddingRight: '4px',
     fontSize: '13px',
     color: '#242424',
