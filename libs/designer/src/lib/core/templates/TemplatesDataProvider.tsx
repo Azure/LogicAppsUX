@@ -1,5 +1,4 @@
 import { TemplatesWrappedContext } from './TemplatesDesignerContext';
-// import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +12,7 @@ export interface TemplatesDataProviderProps {
   children?: React.ReactNode;
 }
 
-export const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const availableTemplateNames = useSelector((state: RootState) => state?.manifest?.availableTemplateNames);
 
