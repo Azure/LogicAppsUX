@@ -140,7 +140,7 @@ const loadTemplateFromGithub = async (
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      kind: undefined,
+      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},

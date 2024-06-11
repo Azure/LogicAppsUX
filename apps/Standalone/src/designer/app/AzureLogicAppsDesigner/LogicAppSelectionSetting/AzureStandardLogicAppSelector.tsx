@@ -139,7 +139,6 @@ export const AzureStandardLogicAppSelector = () => {
           disabled={workflowOptions.length === 0 || !appId || isWorkflowsLoading}
           defaultValue={workflowName}
           onChange={(_, option) => {
-            console.log('option ', option);
             dispatch(setResourcePath(`${appId}/workflows/${option?.key}`));
             dispatch(setWorkflowName(option?.key as string));
           }}

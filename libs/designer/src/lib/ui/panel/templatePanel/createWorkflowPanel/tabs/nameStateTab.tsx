@@ -54,11 +54,10 @@ export const NameStatePanel: React.FC = () => {
       <ChoiceGroup
         label={intlText.STATE_TYPE}
         options={[
-          { key: 'stateful', text: intlText.STATEFUL, disabled: !manifest?.kinds.includes('stateful') },
+          { key: 'stateful', text: intlText.STATEFUL },
           {
             key: 'stateless',
             text: intlText.STATELESS,
-            disabled: !manifest?.kinds.includes('stateless'),
           },
         ]}
         onChange={(_, option) => {
@@ -67,6 +66,7 @@ export const NameStatePanel: React.FC = () => {
           }
         }}
         selectedKey={kind}
+        disabled={manifest?.kinds?.length === 1}
       />
     </div>
   );

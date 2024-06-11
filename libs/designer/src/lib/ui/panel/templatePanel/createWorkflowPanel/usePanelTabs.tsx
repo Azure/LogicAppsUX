@@ -44,12 +44,5 @@ export const usePanelTabs = (
     [intl]
   );
 
-  const tabs = useMemo(() => {
-    return [connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]
-      .slice()
-      .filter((a) => a.visible)
-      .sort((a, b) => a.order - b.order);
-  }, [connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
-
-  return tabs;
+  return [connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem];
 };
