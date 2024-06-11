@@ -115,6 +115,7 @@ export const templateSlice = createSlice({
 });
 
 export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
+export default templateSlice.reducer;
 
 const loadTemplateFromGithub = async (
   templateName: string,

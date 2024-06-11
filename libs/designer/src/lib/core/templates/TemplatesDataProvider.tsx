@@ -13,9 +13,9 @@ export interface TemplatesDataProviderProps {
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
+export const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { availableTemplateNames } = useSelector((state: RootState) => state.manifest);
+  const availableTemplateNames = useSelector((state: RootState) => state?.manifest?.availableTemplateNames);
 
   useEffect(() => {
     if (availableTemplateNames) {

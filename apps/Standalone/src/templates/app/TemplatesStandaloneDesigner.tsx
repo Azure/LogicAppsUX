@@ -6,10 +6,10 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
+// import { useNavigate } from 'react-router-dom';
+// import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+// import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+// import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -17,63 +17,65 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 };
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
-  const navigate = useNavigate();
+  const {
+    // appId,
+    isConsumption,
+    workflowName: existingWorkflowName,
+  } = useSelector((state: RootState) => state.workflowLoader);
+  // const navigate = useNavigate();
 
-  const createWorkflowCall = async (
-    workflowName: string,
-    workflowKind: string,
-    workflowDefinition: LogicAppsV2.WorkflowDefinition,
-    _connectionsData: any,
-    parametersData: Record<string, Template.ParameterDefinition>
-  ) => {
-    console.log('--create workflow call ');
-    const workflowNameToUse = existingWorkflowName ?? workflowName;
-    const workflow = {
-      definition: workflowDefinition,
-      connectionReferences: undefined, //TODO: change this after connections is done
-      parameters: parametersData,
-      kind: workflowKind,
-    };
-    const callBack = () => {
-      console.log('Created workflow, TODO: now redirect');
-      navigate('/');
-    };
-    if (appId) {
-      if (isConsumption) {
-        console.log('Consumption is not ready yet!');
-        // await saveWorkflowConsumption({
-        //   id: appId,
-        //   name: workflowNameToUse,
-        //   type: "json", //TODO: figure out what this type is and replace it
-        //   kind: workflowKind,
-        //   properties: {
-        //     files: {
-        //       [Artifact.WorkflowFile]: workflow,
-        //       [Artifact.ParametersFile]: parametersData as ParametersData,
-        //       [Artifact.ConnectionsFile]: _connectionsData
-        //     },
-        //     health: {},
-        //   }
-        // }, workflow);
-      } else {
-        console.log('calling create workflow standard');
-        await saveWorkflowStandard(
-          appId,
-          workflowNameToUse,
-          workflow,
-          undefined,
-          parametersData as ParametersData,
-          undefined,
-          undefined,
-          callBack,
-          true
-        );
-      }
-    } else {
-      console.log('Select App Id first!');
-    }
-  };
+  // const createWorkflowCall = async (
+  //   workflowName: string,
+  //   workflowKind: string,
+  //   workflowDefinition: LogicAppsV2.WorkflowDefinition,
+  //   _connectionsData: any,
+  //   parametersData: Record<string, Template.ParameterDefinition>
+  // ) => {
+  //   const workflowNameToUse = existingWorTemplatesDesignerkflowName ?? workflowName;
+  //   const workflow = {
+  //     definition: workflowDefinition,
+  //     connectionReferences: undefined, //TODO: change this after connections is done
+  //     parameters: parametersData,
+  //     kind: workflowKind,
+  //   };
+  //   const callBack = () => {
+  //     console.log('Created workflow, TODO: now redirect');
+  //     navigate('/');
+  //   };
+  //   if (appId) {
+  //     if (isConsumption) {
+  //       console.log('Consumption is not ready yet!');
+  //       // await saveWorkflowConsumption({
+  //       //   id: appId,
+  //       //   name: workflowNameToUse,
+  //       //   type: "json", //TODO: figure out what this type is and replace it
+  //       //   kind: workflowKind,
+  //       //   properties: {
+  //       //     files: {
+  //       //       [Artifact.WorkflowFile]: workflow,
+  //       //       [Artifact.ParametersFile]: parametersData as ParametersData,
+  //       //       [Artifact.ConnectionsFile]: _connectionsData
+  //       //     },
+  //       //     health: {},
+  //       //   }
+  //       // }, workflow);
+  //     } else {
+  //       await saveWorkflowStandard(
+  //         appId,
+  //         workflowNameToUse,
+  //         workflow,
+  //         undefined,
+  //         parametersData as ParametersData,
+  //         undefined,
+  //         undefined,
+  //         callBack,
+  //         true
+  //       );
+  //     }
+  //   } else {
+  //     console.log('Select App Id first!');
+  //   }
+  // };
 
   return (
     <ReactQueryProvider>
@@ -81,7 +83,9 @@ export const TemplatesStandaloneDesigner = () => {
         <DevToolbox />
         <TemplatesDesignerProvider locale="en-US" theme={theme}>
           <TemplatesDataProvider isConsumption={isConsumption} workflowName={existingWorkflowName}>
-            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+            <TemplatesDesigner
+            // createWorkflowCall={createWorkflowCall}
+            />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       </LoadWhenArmTokenIsLoaded>

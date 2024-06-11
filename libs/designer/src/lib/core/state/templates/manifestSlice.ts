@@ -72,6 +72,7 @@ export const manifestSlice = createSlice({
 });
 
 export const { setavailableTemplatesNames, setavailableTemplates } = manifestSlice.actions;
+export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {

@@ -28,3 +28,4 @@ export const workflowSlice = createSlice({
 });
 
 export const { setWorkflowName, clearWorkflowDetails, setConsumption } = workflowSlice.actions;
+export default workflowSlice.reducer;
