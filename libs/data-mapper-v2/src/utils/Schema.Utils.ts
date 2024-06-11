@@ -181,58 +181,8 @@ const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): 
   return result;
 };
 
-// Search key will be the node's key
-// Returns nodes that include the search key in their node.key (while maintaining the tree/schema's structure)
-// export const searchSchemaTreeFromRoot = (
-//   schemaTreeRoot: ITreeNode<SchemaNodeExtended>,
-//   flattenedSchema: SchemaNodeDictionary,
-//   nodeKeySearchTerm: string,
-//   filteredDataTypes: FilteredDataTypesDict
-// ): ITreeNode<SchemaNodeExtended> => {
-//   const fuseSchemaTreeSearchOptions = {
-//     includeScore: true,
-//     minMatchCharLength: 2,
-//     includeMatches: true,
-//     threshold: 0.4,
-//     keys: ['qName'],
-//   };
-
-//   // Fuzzy search against flattened schema tree to build a dictionary of matches
-//   const fuse = new Fuse(Object.values(flattenedSchema), fuseSchemaTreeSearchOptions);
-//   const matchedSchemaNodesDict: { [key: string]: true } = {};
-
-//   fuse.search(nodeKeySearchTerm).forEach((result) => {
-//     matchedSchemaNodesDict[result.item.key] = true;
-//   });
-
-//   // Recurse through schema tree, adding children that match the criteria
-//   const searchChildren = (result: ITreeNode<SchemaNodeExtended>[], node: ITreeNode<SchemaNodeExtended>) => {
-//     // NOTE: Type-cast (safely) node for second condition so Typescript sees all properties
-//     if (
-//       (nodeKeySearchTerm.length >= fuseSchemaTreeSearchOptions.minMatchCharLength ? matchedSchemaNodesDict[node.key] : true) &&
-//       (filteredDataTypes[(node as SchemaNodeExtended).type] ||
-//         ((node as SchemaNodeExtended).nodeProperties.includes(SchemaNodeProperty.Repeating) && filteredDataTypes[arrayType]))
-//     ) {
-//       result.push({ ...node });
-//     } else if (node.children && node.children.length > 0) {
-//       const childNodes = node.children.reduce(searchChildren, []);
-
-//       if (childNodes.length) {
-//         result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<SchemaNodeExtended>);
-//       }
-//     }
-
-//     return result;
-//   };
-
-//   return {
-//     ...schemaTreeRoot,
-//     isExpanded: true,
-//     children: schemaTreeRoot.children ? schemaTreeRoot.children.reduce<ITreeNode<SchemaNodeExtended>[]>(searchChildren, []) : [],
-//   };
-// };
-
-export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
+export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended =>
+  Object.keys(node ?? {}).includes('pathToRoot');
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
   nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;

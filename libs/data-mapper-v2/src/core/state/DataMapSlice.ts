@@ -195,14 +195,14 @@ export const dataMapSlice = createSlice({
       if (action.payload.reactFlowSource.startsWith(SchemaType.Source)) {
         sourceNode = state.curDataMapOperation.flattenedSourceSchema[action.payload.reactFlowSource];
       } else {
-        sourceNode = newState.functionNodes[action.payload.reactFlowSource].functionData;
+        sourceNode = newState.functionNodes[action.payload.reactFlowSource]?.functionData;
       }
       let destinationNode: UnknownNode;
 
       if (action.payload.reactFlowDestination.startsWith(SchemaType.Target)) {
         destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination];
       } else {
-        destinationNode = newState.functionNodes[action.payload.reactFlowSource].functionData;
+        destinationNode = newState.functionNodes[action.payload.reactFlowSource]?.functionData;
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
