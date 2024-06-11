@@ -7,7 +7,10 @@ import { ChoiceGroup, IconButton } from '@fluentui/react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-const SourceSettings = ({ showHistoryButton = true }: { showHistoryButton?: boolean }) => {
+const SourceSettings = ({
+  showEnvironment = true,
+  showHistoryButton = true,
+}: { showEnvironment?: boolean; showHistoryButton?: boolean }) => {
   const isLocal = useIsLocal();
   const isConsumption = useIsConsumption();
   const dispatch = useDispatch<AppDispatch>();
@@ -17,22 +20,24 @@ const SourceSettings = ({ showHistoryButton = true }: { showHistoryButton?: bool
 
   const armToken = environment.armToken;
   useEffect(() => {
-    if (!armToken) {
+    if (!armToken && showEnvironment) {
       dispatch(setIsLocalSelected(true));
     }
-  }, [armToken, dispatch]);
+  }, [armToken, dispatch, showEnvironment]);
 
   return (
     <div style={{ display: 'flex', gap: '24px' }}>
-      <ChoiceGroup
-        label="Environment"
-        options={[
-          { key: 'azure', text: 'Azure', disabled: !armToken },
-          { key: 'local', text: 'Local' },
-        ]}
-        onChange={(_, option) => dispatch(setIsLocalSelected(option?.key === 'local'))}
-        selectedKey={isLocal ? 'local' : 'azure'}
-      />
+      {showEnvironment ? (
+        <ChoiceGroup
+          label="Environment"
+          options={[
+            { key: 'azure', text: 'Azure', disabled: !armToken },
+            { key: 'local', text: 'Local' },
+          ]}
+          onChange={(_, option) => dispatch(setIsLocalSelected(option?.key === 'local'))}
+          selectedKey={isLocal ? 'local' : 'azure'}
+        />
+      ) : null}
       <ChoiceGroup
         label="Plan"
         options={[
