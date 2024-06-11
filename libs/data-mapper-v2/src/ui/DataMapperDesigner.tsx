@@ -9,27 +9,32 @@ import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
-import { Panel as FunctionPanel } from '../components/functions/Panel';
+import { Panel as FunctionPanel } from '../components/functionsPanel/Panel';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
-import { updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
-import { DataMapperWrappedContext } from '../core';
+import type { ConnectionAction } from '../core/state/DataMapSlice';
+import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import type { IDataMapperFileService } from '../core';
+import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
 
 interface DataMapperDesignerProps {
-  saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
+  fileService: IDataMapperFileService;
   saveXsltCall: (dataMapXslt: string) => void;
   saveDraftStateCall?: (dataMapDefinition: string) => void;
-  readCurrentSchemaOptions: () => void;
   readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch<AppDispatch>();
+
+  if (fileService) {
+    InitDataMapperFileService(fileService);
+  }
 
   const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
@@ -81,6 +86,17 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
     [dispatch]
   );
 
+  const dispatchMakeConnection = useCallback(
+    (connection: Connection) => {
+      const connectionAction: ConnectionAction = {
+        reactFlowSource: connection.source ?? '',
+        reactFlowDestination: connection.target ?? '',
+      };
+      dispatch(makeConnection(connectionAction));
+    },
+    [dispatch]
+  );
+
   const onEdgeConnect = useCallback(
     (connection: Connection) => {
       const newEdges = addEdge(
@@ -93,9 +109,11 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
         },
         edges
       );
+
+      dispatchMakeConnection(connection);
       dispatchEdgesAndNodes(newEdges, nodes);
     },
-    [edges, nodes, dispatchEdgesAndNodes]
+    [edges, nodes, dispatchEdgesAndNodes, dispatchMakeConnection]
   );
 
   const onEdgeUpdate = useCallback(
@@ -136,14 +154,10 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
         <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
-          <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
+          <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
           <div className={styles.dataMapperShell}>
             <FunctionPanel />
-            <AddSchemaDrawer
-              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-              readCurrentSchemaOptions={() => console.log('')}
-              schemaType={SchemaType.Source}
-            />
+            <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
             <div ref={ref} id="editorView" className={styles.canvasWrapper}>
               <ReactFlow
                 nodes={nodes}
@@ -177,11 +191,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
                 translateExtent={reactFlowExtent}
               />
             </div>
-            <AddSchemaDrawer
-              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-              readCurrentSchemaOptions={readCurrentSchemaOptions}
-              schemaType={SchemaType.Target}
-            />
+            <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
           </div>
         </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>

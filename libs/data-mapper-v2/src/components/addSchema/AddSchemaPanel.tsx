@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { getSelectedSchema } from '../../core';
+import { DataMapperFileService, getSelectedSchema } from '../../core';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -23,14 +23,14 @@ const schemaFileQuerySettings = {
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
-  readCurrentSchemaOptions: () => void;
   schemaType: SchemaType;
 }
 
-export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection, schemaType }: ConfigPanelProps) => {
+export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
+  const fileService = DataMapperFileService();
 
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const currentPanelView = useSelector((state: RootState) => {
@@ -172,10 +172,10 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
 
   // Read current schema file options if method exists
   useEffect(() => {
-    if (readCurrentSchemaOptions) {
-      readCurrentSchemaOptions();
+    if (fileService && fileService.readCurrentSchemaOptions) {
+      fileService.readCurrentSchemaOptions();
     }
-  }, [readCurrentSchemaOptions]);
+  }, [fileService]);
 
   const onRenderFooterContent = useCallback(() => {
     if (currentPanelView === ConfigPanelView.DefaultConfig) {
@@ -232,7 +232,6 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
           errorMessage={errorMessage}
           uploadType={uploadType}
           setUploadType={setUploadType}
-          getUpdatedSchemaFiles={readCurrentSchemaOptions}
         />
       </InlineDrawer>
     </div>

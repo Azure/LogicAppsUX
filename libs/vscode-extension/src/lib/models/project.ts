@@ -2,7 +2,7 @@ import type { IWorkerRuntime } from './cliFeed';
 import type { FuncVersion } from './functions';
 import type { IParsedHostJson } from './host';
 import type { ProjectLanguage } from './language';
-import type { WorkflowProjectType } from './workflow';
+import type { TargetFramework, WorkflowProjectType } from './workflow';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
@@ -75,8 +75,9 @@ export interface IProjectWizardContext extends IActionContext {
   workflowProjectType?: WorkflowProjectType;
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
-  targetFramework?: string | string[];
-  isCustomCodeLogicApp?: boolean;
+  targetFramework?: TargetFramework;
+  projectType?: ProjectType;
+  isWorkspaceWithFunctions?: boolean;
   logicAppName?: string;
 }
 
@@ -88,3 +89,10 @@ export const OpenBehavior = {
   dontOpen: 'DontOpen',
 } as const;
 export type OpenBehavior = (typeof OpenBehavior)[keyof typeof OpenBehavior];
+
+export const ProjectType = {
+  logicApp: 'logicApp',
+  customCode: 'customCode',
+  rulesEngine: 'rulesEngine',
+} as const;
+export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
