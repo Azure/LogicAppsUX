@@ -13,6 +13,8 @@ import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-com
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { workflowLoaderSlice } from '../state/WorkflowLoader';
+import { environment } from '../../environments/environment';
+import SourceSettings from '../../designer/app/SettingsSections/sourceSettings';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -35,6 +37,7 @@ export const DevToolbox = () => {
   );
 
   const isConsumption = useIsConsumption();
+  const armToken = environment.armToken;
 
   return (
     <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
@@ -68,7 +71,7 @@ export const DevToolbox = () => {
                 Tooltip tester! It&apos;s {isTooltipVisible ? 'visible' : 'hidden'}
               </div>
             </Tooltip>
-
+            {armToken ? null : <span style={{ color: 'red', padding: 10 }}> Reload page after loading arm token.</span>}
             <AccordionItem value="1">
               <AccordionHeader>Dev Toolbox</AccordionHeader>
               <AccordionPanel>
@@ -83,7 +86,9 @@ export const DevToolbox = () => {
                       style={{ marginBottom: '12px' }}
                     />
                   </StackItem>
-
+                  <StackItem style={{ width: '100%' }}>
+                    <SourceSettings showEnvironment={false} showHistoryButton={false} />
+                  </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
                   </StackItem>

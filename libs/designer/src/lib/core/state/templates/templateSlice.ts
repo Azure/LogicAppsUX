@@ -9,21 +9,25 @@ export interface TemplateState {
   templateName?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
+  workflowName: string | undefined;
+  kind: string | undefined;
   parameters: {
     definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
   };
-  connections: Template.Connection[];
+  connections: Record<string, Template.Connection>;
 }
 
 const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
+  workflowName: undefined,
+  kind: undefined,
   parameters: {
     definitions: {},
     validationErrors: {},
   },
-  connections: [],
+  connections: {},
 };
 
 export const loadTemplate = createAsyncThunk(
@@ -66,6 +70,12 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
+    updateWorkflowName: (state, action: PayloadAction<string>) => {
+      state.workflowName = action.payload;
+    },
+    updateKind: (state, action: PayloadAction<string>) => {
+      state.kind = action.payload;
+    },
     updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
         id,
@@ -99,12 +109,13 @@ export const templateSlice = createSlice({
         definitions: {},
         validationErrors: {},
       };
-      state.connections = [];
+      state.connections = {};
     });
   },
 });
 
-export const { changeCurrentTemplateName, updateTemplateParameterValue } = templateSlice.actions;
+export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
+export default templateSlice.reducer;
 
 const loadTemplateFromGithub = async (
   templateName: string,
@@ -128,6 +139,8 @@ const loadTemplateFromGithub = async (
     return {
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
+      workflowName: templateManifest.title,
+      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},

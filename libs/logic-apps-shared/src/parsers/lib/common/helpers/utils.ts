@@ -249,8 +249,13 @@ function makeDefinition($refs: Record<string, any>): MakeDefinitionReducer {
   };
 }
 
-export function getKnownTitles(name: string): string {
+export function getKnownTitles(name: string, description?: string): string {
   const intl = getIntl();
+  // If there is a description, first use that before defaulting to Body
+  // as it may conflict if the body has a body
+  if (name === OutputKeys.Body && description) {
+    return description;
+  }
   switch (name) {
     case OutputKeys.Body:
       return intl.formatMessage({
