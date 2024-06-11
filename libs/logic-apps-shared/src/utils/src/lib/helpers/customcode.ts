@@ -37,7 +37,7 @@ export const getFileExtensionName = (language: EditorLanguage): string => {
 
 export const getAppFileForFileExtension = (fileExtension: string): string => {
   if (fileExtension === '.ps1') {
-    return "# This file enables modules to be automatically managed by the Functions service.\r\n# See https://aka.ms/functionsmanageddependency for additional information.\r\n#\r\n@{\r\n    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. Uncomment the next line and replace the MAJOR_VERSION, e.g., 'Az' = '5.*'\r\n     'Az' = '10.*'\r\n}";
+    return "# This file enables modules to be automatically managed by the Functions service.\r\n# See https://aka.ms/functionsmanageddependency for additional information.\r\n#\r\n@{\r\n    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. Uncomment the next line and replace the MAJOR_VERSION, e.g., 'Az' = '5.*'\r\n     #'Az' = '10.*'\r\n}";
   }
   return '';
 };
