@@ -16,5 +16,11 @@ export const useStyles = makeStyles({
   headerRow: {
     display: 'flex',
     flexDirection: 'row',
-  }
+  },
+  addButton: {
+    marginLEft: '0px',
+  },
+  addIcon: {
+    fontSize: '12px',
+  },
 });

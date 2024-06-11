@@ -20,6 +20,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Edge } from 'reactflow';
+import { addFunction } from '../../__mocks__/FunctionMock';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -53,7 +54,12 @@ export interface DataMapOperationState {
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentSourceSchemaNodes: [],
-  functionNodes: {},
+  functionNodes: {
+    abc: {
+      functionData: addFunction,
+      functionLocations: [],
+    },
+  },
   flattenedSourceSchema: {},
   sourceSchemaOrdering: [],
   flattenedTargetSchema: {},

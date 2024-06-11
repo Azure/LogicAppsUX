@@ -1,3 +1,4 @@
+import { addFunction } from '../../__mocks__/FunctionMock';
 import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasToolbox';
 import type { NotificationData } from '../../components/notification/Notification';
 import {
@@ -92,7 +93,12 @@ export interface DataMapOperationState {
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentSourceSchemaNodes: [],
-  functionNodes: {},
+  functionNodes: {
+    abc: {
+      functionData: addFunction,
+      functionLocations: [],
+    },
+  },
   flattenedSourceSchema: {},
   sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
