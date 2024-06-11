@@ -7,13 +7,14 @@ import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
-import { useIsConsumption, useIsLocal } from '../../designer/state/workflowLoadingSelectors';
+import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { workflowLoaderSlice } from '../state/WorkflowLoader';
 import SourceSettings from '../../designer/app/SettingsSections/sourceSettings';
+import { environment } from '../../environments/environment';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -34,9 +35,8 @@ export const DevToolbox = () => {
     },
     [dispatch]
   );
-
-  const isLocal = useIsLocal();
   const isConsumption = useIsConsumption();
+  const armToken = environment.armToken;
 
   return (
     <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
@@ -70,7 +70,7 @@ export const DevToolbox = () => {
                 Tooltip tester! It&apos;s {isTooltipVisible ? 'visible' : 'hidden'}
               </div>
             </Tooltip>
-
+            {armToken ? null : <span style={{ color: 'red', padding: 10 }}> Reload page after loading arm token.</span>}
             <AccordionItem value="1">
               <AccordionHeader>Dev Toolbox</AccordionHeader>
               <AccordionPanel>
@@ -86,10 +86,10 @@ export const DevToolbox = () => {
                     />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
-                    <SourceSettings showHistoryButton={false} />
+                    <SourceSettings showEnvironment={false} showHistoryButton={false} />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
-                    {isLocal ? null : isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
+                    {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
                   </StackItem>
                 </Stack>
               </AccordionPanel>

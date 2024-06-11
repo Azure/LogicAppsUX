@@ -15,7 +15,7 @@ export interface TemplateState {
     definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
   };
-  connections: Template.Connection[];
+  connections: Record<string, Template.Connection>;
 }
 
 const initialState: TemplateState = {
@@ -27,7 +27,7 @@ const initialState: TemplateState = {
     definitions: {},
     validationErrors: {},
   },
-  connections: [],
+  connections: {},
 };
 
 export const loadTemplate = createAsyncThunk(
@@ -109,7 +109,7 @@ export const templateSlice = createSlice({
         definitions: {},
         validationErrors: {},
       };
-      state.connections = [];
+      state.connections = {};
     });
   },
 });

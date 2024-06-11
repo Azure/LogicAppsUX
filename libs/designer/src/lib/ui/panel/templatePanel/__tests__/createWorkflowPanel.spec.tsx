@@ -24,6 +24,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       description: 'Template 1 Description',
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
+      tags: {},
+      images: {},
       artifacts: [
         {
           type: 'workflow',
@@ -34,21 +36,24 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
           file: 'description.md',
         },
       ],
-      connections: [],
+      connections: {},
       parameters: [
         {
           name: 'param1',
+          displayName: 'param1',
           type: 'string',
           description: 'param1 description',
           default: param1DefaultValue,
         },
         {
           name: 'param2',
+          displayName: 'param2',
           type: 'object',
           description: 'param2 description',
         },
         {
           name: 'param3',
+          displayName: 'param3',
           type: 'boolean',
           description: 'param3 description',
           default: param2DefaultValue,

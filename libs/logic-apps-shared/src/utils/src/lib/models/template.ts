@@ -1,16 +1,18 @@
-const SkuType = ['standard', 'consumption'];
-export type SkuType = (typeof SkuType)[keyof typeof SkuType];
+export type SkuType = 'standard' | 'consumption';
+export type WorkflowKindType = 'stateful' | 'stateless';
+export type ConnectorRuntimeType = 'inapp' | 'shared';
 
 export interface Manifest {
   title: string;
   description: string;
-  thumbnail?: string;
   skus: SkuType[];
-  kinds: string[];
+  kinds: WorkflowKindType[];
+  tags: Record<string, string>;
   artifacts: Artifact[];
-  images?: string[];
+  images: Record<string, string>;
+  prerequisites?: string;
   parameters: Parameter[];
-  connections: Connection[];
+  connections: Record<string, Connection>;
 }
 
 export interface Artifact {
@@ -24,6 +26,8 @@ export interface Parameter {
   default?: string;
   description: string;
   required?: boolean;
+  displayName: string;
+  allowedValues?: { value: any; displayName: string }[];
 }
 
 export interface ParameterDefinition extends Parameter {
@@ -32,4 +36,5 @@ export interface ParameterDefinition extends Parameter {
 
 export interface Connection {
   id: string;
+  kind?: ConnectorRuntimeType;
 }
