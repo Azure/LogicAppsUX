@@ -8,7 +8,7 @@ import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMult
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
 import type { IDropdownOption } from '@fluentui/react';
-import { MessageBarType, MessageBar, Label } from '@fluentui/react';
+import { MessageBarType, MessageBar } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
@@ -34,7 +34,7 @@ import type {
   Subscription,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
+import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -607,9 +607,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           {/* Legacy Managed Identity Selection */}
           {legacyManagedIdentitySelected && (
             <div className="param-row">
-              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {legacyManagedIdentityLabelText}
-              </Label>
+              <Label
+                className="label"
+                isRequiredField={true}
+                text={legacyManagedIdentityLabelText}
+                htmlFor={'connection-param-set-select'}
+                disabled={isLoading}
+              />
               <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
             </div>
           )}

@@ -1,8 +1,10 @@
 import { ConnectionParameterRow, type ConnectionParameterRowProps } from '../connectionParameterRow';
-import { Label, TooltipHost } from '@fluentui/react';
-import React, { type ReactElement } from 'react';
+import { TooltipHost } from '@fluentui/react';
+import React, { ReactNode, type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { Label } from '@microsoft/designer-ui';
+
 describe('ui/connectionParameterRow', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -57,7 +59,7 @@ describe('ui/connectionParameterRow', () => {
 
       const { label } = render(props);
 
-      expect(React.Children.toArray(label.props.children)[0]).toEqual(props.displayName);
+      expect(label.props.text).toEqual(props.displayName);
     });
 
     it.each([undefined, true, false])('should support required = %s', (required) => {
@@ -66,7 +68,7 @@ describe('ui/connectionParameterRow', () => {
 
       const { label } = render(props);
 
-      expect(label.props.required).toEqual(props.required);
+      expect(label.props.isRequiredField).toEqual(props.required);
     });
 
     it.each([undefined, true, false])('should support disabled = %s', (disabled) => {
@@ -83,9 +85,8 @@ describe('ui/connectionParameterRow', () => {
       props.tooltip = undefined;
 
       const { label } = render(props);
-      const labelChildren = React.Children.toArray(label.props.children);
 
-      expect(labelChildren).toHaveLength(1);
+      expect(label.props.children).toBeUndefined();
     });
 
     it('should render tooltip when provided', () => {
@@ -93,11 +94,12 @@ describe('ui/connectionParameterRow', () => {
       props.tooltip = 'Tooltip content';
 
       const { label } = render(props);
-      const labelChildren = React.Children.toArray(label.props.children) as ReactElement[];
+      expect(label.props.children).toBeDefined();
+      const labelTooltip = label.props.children as ReactElement;
 
-      expect(labelChildren).toHaveLength(2);
-      expect(labelChildren[1].type).toEqual(TooltipHost);
-      expect(labelChildren[1].props.content).toEqual(props.tooltip);
+      expect(labelTooltip).toBeDefined();
+      expect(labelTooltip.type).toEqual(TooltipHost);
+      expect(labelTooltip.props.content).toEqual(props.tooltip);
     });
   });
 });

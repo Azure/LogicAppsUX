@@ -16,7 +16,7 @@ export interface TemplateState {
     definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
   };
-  connections: Template.Connection[];
+  connections: Record<string, Template.Connection>;
   initializeTemplateServices: boolean | undefined;
 }
 
@@ -29,7 +29,7 @@ const initialState: TemplateState = {
     definitions: {},
     validationErrors: {},
   },
-  connections: [],
+  connections: {},
   initializeTemplateServices: undefined,
 };
 
@@ -112,7 +112,7 @@ export const templateSlice = createSlice({
         definitions: {},
         validationErrors: {},
       };
-      state.connections = [];
+      state.connections = {};
     });
 
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
@@ -122,6 +122,7 @@ export const templateSlice = createSlice({
 });
 
 export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
+export default templateSlice.reducer;
 
 const loadTemplateFromGithub = async (
   templateName: string,
@@ -147,7 +148,7 @@ const loadTemplateFromGithub = async (
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      kind: undefined,
+      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},

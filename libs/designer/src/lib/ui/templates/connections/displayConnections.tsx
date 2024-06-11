@@ -7,7 +7,7 @@ import { useConnector } from '../../../core/state/connection/connectionSelector'
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 
 export interface DisplayConnectionsProps {
-  connections: Template.Connection[];
+  connections: Record<string, Template.Connection>;
   subscriptionId: string | undefined;
   location: string | undefined;
 }
@@ -81,8 +81,8 @@ export const DisplayConnections = ({ connections, subscriptionId, location }: Di
             </TableRow>
           </TableHeader>
           <TableBody>
-            {connections.map((connection) => (
-              <ConnectionListItem key={connection.id} blankConnectorId={connection.id} />
+            {Object.keys(connections).map((connectionKey, index) => (
+              <ConnectionListItem key={index} blankConnectorId={connections[connectionKey]?.id} />
             ))}
           </TableBody>
         </Table>

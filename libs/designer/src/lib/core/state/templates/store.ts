@@ -1,15 +1,15 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
-import { workflowSlice } from './workflowSlice';
-import { templateSlice } from './templateSlice';
-import { manifestSlice } from './manifestSlice';
-import { panelSlice } from './panelSlice';
+import workflowReducer from './workflowSlice';
+import templateReducer from './templateSlice';
+import manifestReducer from './manifestSlice';
+import panelReducer from './panelSlice';
 
 const rootReducer = combineReducers({
-  workflow: workflowSlice.reducer,
-  template: templateSlice.reducer,
-  manifest: manifestSlice.reducer,
-  panel: panelSlice.reducer,
+  workflow: workflowReducer,
+  template: templateReducer,
+  manifest: manifestReducer,
+  panel: panelReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
@@ -20,7 +20,7 @@ export const setupStore = (preloadedState?: Partial<RootState>) => {
 };
 
 export const templateStore = setupStore();
-export const templatesPathFromState = '../../templates/samples';
+export const templatesPathFromState = '../../templates/templateFiles';
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof setupStore>;
 export type AppDispatch = AppStore['dispatch'];

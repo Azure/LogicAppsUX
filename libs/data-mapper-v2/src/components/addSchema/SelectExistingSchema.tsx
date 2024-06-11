@@ -1,31 +1,10 @@
 import { DropdownTree } from '../common/DropdownTree';
-import type { ITreeFile, ITreeItem } from 'models/Tree';
+import type { ITreeFile, IFileSysTreeItem } from 'models/Tree';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
-
-const mockFileItems: ITreeItem[] = [
-  {
-    name: 'Child1.xsd',
-    type: 'file',
-    fullPath: '/Artifacts/Schemas/Child1.xsd',
-  },
-  {
-    name: 'Folder',
-    type: 'directory',
-    children: [
-      {
-        name: 'Abc.json',
-        type: 'file',
-        fullPath: '/Artifacts/Schemas/Folder/Abc.json',
-      },
-    ],
-  },
-  {
-    name: 'sourceSchema.json',
-    type: 'file',
-    fullPath: '/Artifacts/Schemas/sourceSchema.json',
-  },
-];
+import type { RootState } from '../../core/state/Store';
+import { useSelector } from 'react-redux';
+import { DataMapperFileService } from '../../core';
 
 export type SelectExistingSchemaProps = {
   schemaType?: SchemaType;
@@ -34,16 +13,20 @@ export type SelectExistingSchemaProps = {
 };
 
 export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+  const fileService = DataMapperFileService();
+
   return (
     <DropdownTree
-      items={mockFileItems}
-      onItemSelect={(item: ITreeItem) => {
+      items={availableSchemaList}
+      onItemSelect={(item: IFileSysTreeItem) => {
         props.setSelectedSchema({
           name: item.name ?? '',
           path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
           type: props.schemaType ?? SchemaType.Source,
         });
       }}
+      onDropdownOpenClose={fileService.readCurrentSchemaOptions ? fileService.readCurrentSchemaOptions : () => null}
     />
   );
 };

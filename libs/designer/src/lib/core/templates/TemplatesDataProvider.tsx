@@ -1,27 +1,26 @@
 import { TemplatesWrappedContext } from './TemplatesDesignerContext';
-// import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
-import { setConsumption, setLocation, setSubscriptionId, setWorkflowName } from '../state/templates/workflowSlice';
+import { setConsumption, setExistingWorkflowName, setLocation, setSubscriptionId } from '../state/templates/workflowSlice';
 import type { ServiceOptions } from '../state/designerOptions/designerOptionsInterfaces';
 import { initializeTemplateServices } from '../state/templates/templateSlice';
 import { useAreTemplateServicesInitialized } from '../state/templates/templateSelectors';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
-  workflowName: string | undefined;
+  existingWorkflowName: string | undefined;
   subscriptionId: string | undefined;
   location: string | undefined;
-  services?: ServiceOptions;
+  services: ServiceOptions;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ isConsumption, workflowName, subscriptionId, location, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, existingWorkflowName, subscriptionId, location, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { availableTemplateNames } = useSelector((state: RootState) => state.manifest);
+  const availableTemplateNames = useSelector((state: RootState) => state?.manifest?.availableTemplateNames);
 
   useEffect(() => {
     if (availableTemplateNames) {
@@ -38,10 +37,10 @@ const DataProviderInner = ({ isConsumption, workflowName, subscriptionId, locati
   }, [dispatch, isConsumption]);
 
   useEffect(() => {
-    if (workflowName) {
-      dispatch(setWorkflowName(workflowName));
+    if (existingWorkflowName) {
+      dispatch(setExistingWorkflowName(existingWorkflowName));
     }
-  }, [dispatch, workflowName]);
+  }, [dispatch, existingWorkflowName]);
 
   useEffect(() => {
     if (subscriptionId) {

@@ -1,7 +1,8 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
-import { PrimaryButton, Text, TextField } from '@fluentui/react';
+import { TextField } from '@fluentui/react';
+import { Text, Button } from '@fluentui/react-components';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -98,7 +99,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
         validateOnFocusOut={true}
       />
 
-      <PrimaryButton
+      <Button
         disabled={!readyToSubmit}
         onClick={() => {
           if (!readyToSubmit) {
@@ -106,9 +107,10 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
           }
           submitCallback();
         }}
+        appearance="primary"
       >
         {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
-      </PrimaryButton>
+      </Button>
     </div>
   );
 };

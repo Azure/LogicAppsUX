@@ -20,12 +20,5 @@ export const usePanelTabs = () => {
     [intl]
   );
 
-  const tabs = useMemo(() => {
-    return [overviewTabItem, workflowTabItem]
-      .slice()
-      .filter((a) => a.visible)
-      .sort((a, b) => a.order - b.order);
-  }, [overviewTabItem, workflowTabItem]);
-
-  return tabs;
+  return [overviewTabItem, workflowTabItem];
 };

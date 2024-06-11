@@ -2,8 +2,8 @@ import { openUpdateSourceSchemaPanelView, openUpdateTargetSchemaPanelView } from
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { IChoiceGroupOption } from '@fluentui/react';
-import { ChoiceGroup, IconButton, Label, Stack, StackItem, Text } from '@fluentui/react';
-import { useId } from '@microsoft/designer-ui';
+import { ChoiceGroup, IconButton, Stack, StackItem, Text } from '@fluentui/react';
+import { useId, Label } from '@microsoft/designer-ui';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -165,9 +165,7 @@ export const DefaultConfigView = ({ setFunctionDisplayExpanded, useExpandedFunct
           <Text>{functionsSectionDescriptionLoc}</Text>
         </StackItem>
         <StackItem>
-          <Label id={functionDisplayLabelId} className="subsection-label-text">
-            {functionDisplayLoc}
-          </Label>
+          <Label id={functionDisplayLabelId} className="subsection-label-text" text={functionDisplayLoc} />
           <ChoiceGroup
             ariaLabelledBy={functionDisplayLabelId}
             defaultSelectedKey={useExpandedFunctionCards ? 'expanded' : 'simple'}
