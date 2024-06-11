@@ -22,7 +22,7 @@ export const TemplatePanel = (
         />
       ) : currentPanelView === 'quickView' ? (
         <QuickViewPanel />
-      ) : undefined}
+      ) : null}
     </Panel>
   );
 };

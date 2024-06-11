@@ -8,7 +8,7 @@ import { updateKind, updateWorkflowName } from '../../../../../core/state/templa
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
-  const { workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
 
   const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();

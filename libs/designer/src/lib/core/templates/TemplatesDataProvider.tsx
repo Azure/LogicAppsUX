@@ -4,15 +4,15 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
-import { setConsumption, setWorkflowName } from '../state/templates/workflowSlice';
+import { setConsumption, setExistingWorkflowName } from '../state/templates/workflowSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
-  workflowName: string | undefined;
+  existingWorkflowName: string | undefined;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const availableTemplateNames = useSelector((state: RootState) => state?.manifest?.availableTemplateNames);
 
@@ -31,10 +31,10 @@ const DataProviderInner = ({ isConsumption, workflowName, children }: TemplatesD
   }, [dispatch, isConsumption]);
 
   useEffect(() => {
-    if (workflowName) {
-      dispatch(setWorkflowName(workflowName));
+    if (existingWorkflowName) {
+      dispatch(setExistingWorkflowName(existingWorkflowName));
     }
-  }, [dispatch, workflowName]);
+  }, [dispatch, existingWorkflowName]);
 
   return <>{children}</>;
 };

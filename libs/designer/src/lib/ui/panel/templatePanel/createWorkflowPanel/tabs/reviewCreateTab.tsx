@@ -10,7 +10,7 @@ export const ReviewCreatePanel = (
 ) => {
   const intl = useIntl();
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
-  const { workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const intlText = {
     CREATE: intl.formatMessage({
