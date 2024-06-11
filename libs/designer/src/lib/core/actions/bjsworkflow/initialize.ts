@@ -443,7 +443,8 @@ export const updateCallbackUrlInInputs = async (
       LoggerService().log({
         level: LogEntryLevel.Error,
         area: 'CallbackUrl_Update',
-        message: `Unable to initialize callback url for manual trigger, error ${error}`,
+        message: 'Unable to initialize callback url for manual trigger.',
+        error: error instanceof Error ? error : undefined,
       });
     }
   }
