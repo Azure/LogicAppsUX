@@ -57,7 +57,7 @@ import {
   excludePathValueFromTarget,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, UIConstants } from '@microsoft/designer-ui';
 import type {
   Segment,
@@ -66,13 +66,12 @@ import type {
   OperationManifest,
   SubGraphDetail,
   OperationMock,
-  ValueSegment,
   AssertionDefintion,
   Assertion,
   UnitTestDefinition,
 } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
-import { createTokenValueSegment } from '../../../core';
+import { createTokenValueSegment } from '../../utils/parameters/segment';
 
 export interface SerializeOptions {
   skipValidation: boolean;

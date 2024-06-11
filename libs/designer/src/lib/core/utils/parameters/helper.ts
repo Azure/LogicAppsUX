@@ -115,7 +115,8 @@ import {
   getRecordEntry,
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
-  isStringNonPrimitive,
+  isBodySegment,
+  canStringBeConverted,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -1070,7 +1071,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   }
 }
 
-export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined, source: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName?: string, source?: string): string {
   const segments = parseEx(key);
   if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -1097,7 +1098,7 @@ function segmentsAreBodyReference(segments: Segment[]): boolean {
     return false;
   }
 
-  return segments[0].value === OutputSource.Body;
+  return isBodySegment(segments[0]);
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
@@ -1112,13 +1113,16 @@ export function generateExpressionFromKey(
   overrideMethod = true
 ): string {
   const segments = parseEx(tokenKey);
-  segments.shift();
+  const outputSourceFromBody = isBodySegment(segments.shift());
   segments.shift();
   const result = [];
   // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
   let rootMethod = method;
-  if (overrideMethod && !isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
-    segments.shift();
+  if (overrideMethod && !isInsideArray && isBodySegment(segments[0])) {
+    // NOTE: If it is a nested Body property like body.$.Body, we wouldn't want to shift the property out
+    if (actionName || !outputSourceFromBody) {
+      segments.shift();
+    }
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
 
@@ -1602,7 +1606,7 @@ function reduceRedundantSegments(segments: Segment[]): void {
 }
 
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
-  if (inputParameter.type === constants.SWAGGER.TYPE.ANY && typeof parameterValue === 'string' && isStringNonPrimitive(parameterValue)) {
+  if (inputParameter.type === constants.SWAGGER.TYPE.ANY && typeof parameterValue === 'string' && canStringBeConverted(parameterValue)) {
     parameterValue = `"${parameterValue}"`;
   }
   return { ...inputParameter, hideInUI: invisible, value: parameterValue };
@@ -2471,7 +2475,7 @@ export function fetchErrorWhenDependenciesNotReady(
   };
 }
 
-export function getStringifiedValueFromEditorViewModel(
+function getStringifiedValueFromEditorViewModel(
   parameter: ParameterInfo,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
@@ -3512,8 +3516,28 @@ export function parameterValueToString(
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
   }
   const shouldInterpolate = value.length > 1;
+  return segmentsAfterCasting
+    .map((segment) => {
+      let expressionValue = segment.value;
+      if (isTokenValueSegment(segment)) {
+        if (shouldInterpolate) {
+          expressionValue = parameterType === constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
+        } else if (!isUndefinedOrEmptyString(expressionValue)) {
+          // Note: Token segment should be auto casted using interpolation if token type is
+          // non string and referred in a string parameter.
+          expressionValue =
+            !remappedParameterInfo.suppressCasting &&
+            parameterType === 'string' &&
+            segment.token?.type !== 'string' &&
+            !shouldUseLiteralValues(segment.token?.expression)
+              ? `@{${expressionValue}}`
+              : `@${expressionValue}`;
+        }
+      }
 
-  return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo.suppressCasting);
+      return expressionValue;
+    })
+    .join('');
 }
 
 /**
