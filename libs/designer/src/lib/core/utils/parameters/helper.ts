@@ -116,6 +116,7 @@ import {
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
   isStringNonPrimitive,
+  isBodySegment,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -1070,7 +1071,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   }
 }
 
-export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined, source: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName?: string, source?: string): string {
   const segments = parseEx(key);
   if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -1097,7 +1098,7 @@ function segmentsAreBodyReference(segments: Segment[]): boolean {
     return false;
   }
 
-  return segments[0].value === OutputSource.Body;
+  return isBodySegment(segments[0]);
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
@@ -1112,18 +1113,17 @@ export function generateExpressionFromKey(
   overrideMethod = true
 ): string {
   const segments = parseEx(tokenKey);
-  segments.shift();
+  const outputSourceFromBody = isBodySegment(segments.shift());
   segments.shift();
   const result = [];
   // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
   let rootMethod = method;
-  if (overrideMethod && !isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
-    if (actionName) {
+  if (overrideMethod && !isInsideArray && isBodySegment(segments[0])) {
+    // NOTE: If it is a nested Body property like body.$.Body, we wouldn't want to shift the property out
+    if (actionName || !outputSourceFromBody) {
       segments.shift();
-      rootMethod = `${OutputSource.Body}(${convertToStringLiteral(actionName)})`;
-    } else {
-      rootMethod = constants.TRIGGER_BODY_OUTPUT;
     }
+    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   }
 
   while (segments.length) {
