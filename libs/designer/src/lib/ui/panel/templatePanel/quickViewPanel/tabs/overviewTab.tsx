@@ -1,16 +1,85 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
-import type { IntlShape } from 'react-intl';
+import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
+import { getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
+import { Body1Strong } from '@fluentui/react-components';
+import { useConnector } from '../../../../../core/state/connection/connectionSelector';
+import { useConnectionsForConnector } from '../../../../../core/queries/connections';
 
 export const OverviewPanel: React.FC = () => {
-  const { manifest } = useSelector((state: RootState) => state.template);
+  const { connections } = useSelector((state: RootState) => state.template);
+  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
 
-  return isNullOrUndefined(manifest) ? null : (
+  const intl = useIntl();
+  const connectionsTitle = intl.formatMessage({
+    defaultMessage: 'Connections included in this template',
+    id: 'crzL9d',
+    description: 'Connections Display Title',
+  });
+  const prerequisitesTitle = intl.formatMessage({
+    defaultMessage: 'Prerequisites',
+    id: 'KfEojk',
+    description: 'Prerequisites Title',
+  });
+  const detailsTitle = intl.formatMessage({
+    defaultMessage: 'Details',
+    id: 'D3QvcW',
+    description: 'Details Title',
+  });
+
+  const ConnectionListItem = ({ blankConnectorId }: { blankConnectorId: string }) => {
+    const connectorId =
+      subscriptionId && location ? blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location) : undefined;
+    const { data: connector } = useConnector(connectorId);
+    const iconUri = getIconUriFromConnector(connector);
+    const displayName = getDisplayNameFromConnector(connector);
+    const { data: connection } = useConnectionsForConnector(connectorId);
+    const hasExistingConnection = connection && connection.length > 0;
+    console.log('connections:', connection);
+    const connectorType = 'In App';
+
+    return (
+      <div>
+        <img className="msla-action-icon" src={iconUri} />
+        <Body1Strong className="msla-flex-header-title">{displayName}</Body1Strong>
+        <p>
+          {connectorType} {hasExistingConnection ? 'Connected' : 'Not Connected'}
+        </p>
+      </div>
+    );
+  };
+
+  return (
     <div>
-      Overview Tab Placeholder
-      <div>Manifest Data: {JSON.stringify(manifest)}</div>
+      {connections && (
+        <div>
+          <b>{connectionsTitle}</b>
+          {connections.map((connection) => (
+            <ConnectionListItem key={connection.id} blankConnectorId={connection.id} />
+          ))}
+        </div>
+      )}
+
+      <div>
+        <b>{prerequisitesTitle}</b>
+        <p>This implementation template has the following dependencies:</p>
+        <li>Jack Henry SilverLake instance </li>
+        <li>Jack Henry SilverLake instance </li>
+        <p>
+          Underlying all IT architectures are core systems of records that are often not readily available due to complexity and
+          connectivity concerns. System APIs provide a means of hiding that complexity from the user while exposing data and providing
+          downstream insulation from any interface changes or rationalization of those systems. This API provides an implementation best
+          practice to expose order data from CRM systems like Salesforce via a set of RESTful services, making it easy to consume within an
+          enterprise.
+        </p>
+      </div>
+
+      <div>
+        <b>{detailsTitle}</b>
+        <p>Solution type: Workflow</p>
+        <p>Trigger type: Request</p>
+      </div>
     </div>
   );
 };

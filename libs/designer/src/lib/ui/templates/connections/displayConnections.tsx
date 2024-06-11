@@ -1,13 +1,10 @@
 import { Button, Table, TableBody, TableCell, TableCellLayout, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
-import type {
-  // getDisplayNameFromConnector,
-  // getIconUriFromConnector,
-  // useConnector,
-  Template,
-} from '@microsoft/logic-apps-shared';
+import { getDisplayNameFromConnector, getIconUriFromConnector, type Template } from '@microsoft/logic-apps-shared';
 import { CreateTemplateConnectionWrapper } from '../../panel/templatePanel/createWorkflowPanel/createTemplateConnectionWrapper';
 import { useState } from 'react';
 import { CheckmarkCircle12Filled, SubtractCircle12Filled } from '@fluentui/react-icons';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
+import { useConnectionsForConnector } from '../../../core/queries/connections';
 
 export interface DisplayConnectionsProps {
   connections: Template.Connection[];
@@ -26,43 +23,47 @@ export const DisplayConnections = ({ connections, subscriptionId, location }: Di
 
   const columns = [
     { columnKey: 'name', label: 'Name' },
+    { columnKey: 'status', label: 'Status' },
     { columnKey: 'connection', label: 'Connection' },
-    { columnKey: 'connectionName', label: 'Connection Name' },
   ];
 
   const ConnectionListItem = ({ blankConnectorId }: { blankConnectorId: string }) => {
-    if (!subscriptionId || !location) {
-      return null;
-    }
-    const connectorId = blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location);
-    //const connectorQuery = useConnector(connectorId);
-    //const connector = connectorQuery.data; // this is undefined/empty
-    const iconUri = 'hi'; // getIconUriFromConnector(connector);
-    const displayName = 'temp'; // getDisplayNameFromConnector(connector);
-    const hasExistingConnection = false; // TODO: check if connection exists
+    const connectorId =
+      subscriptionId && location ? blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location) : undefined;
+    const { data: connector } = useConnector(connectorId);
+    const iconUri = getIconUriFromConnector(connector);
+    const displayName = getDisplayNameFromConnector(connector);
+    const { data: connection } = useConnectionsForConnector(connectorId);
+    const hasExistingConnection = connection && connection.length > 0;
 
     return (
-      <TableRow key={displayName}>
-        <TableCell tabIndex={0} role="gridcell">
-          <TableCellLayout media={<img className="msla-action-icon" src={iconUri} />}>{displayName}</TableCellLayout>
-        </TableCell>
-        <TableCell tabIndex={0} role="gridcell">
-          <TableCellLayout media={hasExistingConnection ? <CheckmarkCircle12Filled /> : <SubtractCircle12Filled />}>
-            {hasExistingConnection ? 'Connected' : 'Not Connected'}
-          </TableCellLayout>
-        </TableCell>
-        <TableCell role="gridcell">
-          <TableCellLayout>
-            <Button
-              onClick={() => {
-                displayConnectionsPanel(connectorId);
-              }}
-            >
-              Create
-            </Button>
-          </TableCellLayout>
-        </TableCell>
-      </TableRow>
+      connectorId && (
+        <TableRow key={displayName}>
+          <TableCell tabIndex={0} role="gridcell">
+            <TableCellLayout media={<img className="msla-action-icon" src={iconUri} />}>{displayName}</TableCellLayout>
+          </TableCell>
+          <TableCell tabIndex={0} role="gridcell">
+            <TableCellLayout media={hasExistingConnection ? <CheckmarkCircle12Filled /> : <SubtractCircle12Filled />}>
+              {hasExistingConnection ? 'Connected' : 'Not Connected'}
+            </TableCellLayout>
+          </TableCell>
+          <TableCell role="gridcell">
+            <TableCellLayout>
+              {hasExistingConnection && connection ? (
+                <p>{connection[0].properties.displayName}</p>
+              ) : (
+                <Button
+                  onClick={() => {
+                    displayConnectionsPanel(connectorId);
+                  }}
+                >
+                  Create
+                </Button>
+              )}
+            </TableCellLayout>
+          </TableCell>
+        </TableRow>
+      )
     );
   };
   return (
