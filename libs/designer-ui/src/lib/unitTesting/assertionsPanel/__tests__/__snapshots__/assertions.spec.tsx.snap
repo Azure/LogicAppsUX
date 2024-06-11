@@ -20,15 +20,15 @@ exports[`ui/unitTesting/assertionsPanel/assertions > should render list of asser
     items={
       [
         {
+          "assertionString": "@equals(1, 1)",
           "description": "test-description",
-          "expression": "@equals(1, 1)",
           "id": "test-id",
           "isEditable": true,
           "name": "test-assertion",
         },
         {
+          "assertionString": "@equals(1, 2)",
           "description": "",
-          "expression": "@equals(1, 2)",
           "id": "test-id-2",
           "isEditable": true,
           "name": "test-assertion-2",

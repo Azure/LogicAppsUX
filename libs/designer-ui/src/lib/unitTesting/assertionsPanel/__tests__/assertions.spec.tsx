@@ -37,14 +37,14 @@ describe('ui/unitTesting/assertionsPanel/assertions', () => {
       {
         name: 'test-assertion',
         description: 'test-description',
-        expression: '@equals(1, 1)',
+        assertionString: '@equals(1, 1)',
         id: 'test-id',
         isEditable: true,
       },
       {
         name: 'test-assertion-2',
         description: '',
-        expression: '@equals(1, 2)',
+        assertionString: '@equals(1, 2)',
         id: 'test-id-2',
         isEditable: true,
       },

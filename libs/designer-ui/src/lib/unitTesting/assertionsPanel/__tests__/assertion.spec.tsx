@@ -17,7 +17,7 @@ describe('ui/unitTesting/assertionsPanel/assertion', () => {
         id: 'test-id',
         name: 'test-name',
         description: 'test-description',
-        expression: '@equals(1, 1)',
+        assertionString: '@equals(1, 1)',
         isEditable: true,
       },
       onAssertionDelete: vi.fn(),
@@ -48,7 +48,7 @@ describe('ui/unitTesting/assertionsPanel/assertion', () => {
 
   it('should render the component with validation errors and error traffic light dot', () => {
     minimal.assertion.name = '';
-    minimal.assertion.expression = '';
+    minimal.assertion.assertionString = '';
 
     minimal.validationErrors = {
       name: 'Must provide the Assertion name.',
