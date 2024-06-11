@@ -1,6 +1,7 @@
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
-import { css, Dropdown, Label, FontSizes } from '@fluentui/react';
+import { css, Dropdown, FontSizes } from '@fluentui/react';
 import { useState } from 'react';
+import { Label } from '../label';
 
 export const DropdownType = {
   Frequency: 'frequency',
@@ -89,9 +90,7 @@ export const DropdownControl = ({
   return (
     <div className={className}>
       <div className="msla-input-parameter-label">
-        <Label className={'msla-label'} required={required}>
-          {label}
-        </Label>
+        <Label text={label} isRequiredField={required} />
       </div>
       <Dropdown
         styles={type === DropdownType.Timezone ? timezoneDropdownStyles : type === DropdownType.Hours ? hoursDropdownStyles : dropdownStyle}

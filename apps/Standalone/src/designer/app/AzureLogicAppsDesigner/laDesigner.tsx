@@ -170,11 +170,12 @@ const DesignerEditor = () => {
         tenantId,
         objectId,
         canonicalLocation,
+        language,
         queryClient,
         dispatch
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId]
+    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -370,6 +371,7 @@ const getDesignerServices = (
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
+  locale: string | undefined,
   queryClient: QueryClient,
   dispatch: AppDispatch
 ): any => {
@@ -475,6 +477,91 @@ const getDesignerServices = (
           true /* supportsAuthenticationParameter */
         );
       },
+      getWorkflowSubSchema: (args: any) => {
+        const { parameters } = args;
+        if (parameters.param1 && parameters.param2 && parameters.param3) {
+          const objectType = `${parameters.param1}Type`;
+          return Promise.resolve({
+            type: 'object',
+            properties: {
+              numberType: {
+                type: 'number',
+              },
+              [objectType]: {
+                type: 'object',
+                properties: {
+                  o1: {
+                    type: 'integer',
+                  },
+                  dynamicObject2: {
+                    type: 'object',
+                    properties: {},
+                    'x-ms-dynamic-properties': {
+                      dynamicState: {
+                        extension: {
+                          operationId: 'getWorkflowSubSubSchema',
+                        },
+                        isInput: true,
+                      },
+                      parameters: {
+                        param1: {
+                          parameterReference: 'host.workflow.id',
+                          required: true,
+                        },
+                        param2: {
+                          parameterReference: 'body.objectType.p1',
+                          required: true,
+                        },
+                        param3: {
+                          parameterReference: `body.dynamicObject.${objectType}.o1`,
+                          required: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        return Promise.resolve({
+          type: 'object',
+          properties: {
+            mockString: {
+              type: 'string',
+            },
+          },
+        });
+      },
+      getWorkflowSubSubSchema: (args: any) => {
+        const { parameters } = args;
+        if (parameters.param1 && parameters.param2 && parameters.param3) {
+          return Promise.resolve({
+            type: 'object',
+            properties: {
+              [`${parameters.param1}-Type`]: {
+                type: 'string',
+              },
+              [`${parameters.param2}-Type`]: {
+                type: 'string',
+              },
+              [`${parameters.param3}-Type`]: {
+                type: 'string',
+              },
+            },
+          });
+        }
+
+        return Promise.resolve({
+          type: 'object',
+          properties: {
+            mockBool: {
+              type: 'boolean',
+            },
+          },
+        });
+      },
     },
     valuesClient: {
       getWorkflows: () => childWorkflowService.getWorkflowsWithRequestTrigger(),
@@ -520,6 +607,7 @@ const getDesignerServices = (
     },
     showStatefulOperations: isStateful,
     isDev: false,
+    locale,
   });
 
   const oAuthService = new StandaloneOAuthService({

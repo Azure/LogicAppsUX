@@ -11,7 +11,6 @@ import {
   cacheWebviewPanel,
   getTriggerName,
   getAzureConnectorDetailsForLocalProject,
-  getArtifactsInLocalProject,
   getStandardAppData,
 } from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
@@ -26,6 +25,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { ViewColumn } from 'vscode';
+import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;

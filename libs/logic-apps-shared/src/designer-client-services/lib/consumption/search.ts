@@ -162,12 +162,14 @@ export class ConsumptionSearchService extends BaseSearchService {
       const {
         httpClient,
         apiHubServiceDetails: { apiVersion, subscriptionId, location },
+        locale,
       } = this.options;
       const filter = `$filter=${ISE_RESOURCE_ID} eq null`;
       const startUri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/customApis?api-version=${apiVersion}`;
       const uri = `${prevNextlink ?? startUri}&${filter}`;
+      const headers = locale ? { 'Accept-Language': locale } : undefined;
 
-      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri });
+      const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, headers });
       const filteredValue = value
         .filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V1'))
         .filter((connector) => connector?.location === location);

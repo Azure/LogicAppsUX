@@ -264,8 +264,8 @@ export const isSupportedSplitOnExpression = (expression: Expression): boolean =>
 };
 
 export const getSplitOnOptions = (outputs: NodeOutputs | undefined, isManifestBasedOperation: boolean): string[] => {
-  let arrayOutputs = unmap(outputs?.originalOutputs ?? outputs?.outputs).filter((output) =>
-    isString(output.type) && equals(output.type, Constants.SWAGGER.TYPE.ARRAY)
+  let arrayOutputs = unmap(outputs?.originalOutputs ?? outputs?.outputs).filter(
+    (output) => isString(output.type) && equals(output.type, Constants.SWAGGER.TYPE.ARRAY)
   );
 
   // make sure keys are not redundant due to aliasing key format

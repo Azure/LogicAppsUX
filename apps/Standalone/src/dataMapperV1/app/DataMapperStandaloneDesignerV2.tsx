@@ -4,6 +4,7 @@ import {
   DataMapperDesigner as DataMapperDesignerV2,
   DataMapDataProvider as DataMapDataProviderV2,
   DataMapperDesignerProvider as DataMapperDesignerProviderV2,
+  IDataMapperFileService,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -15,17 +16,55 @@ import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFuncti
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
 
-const workflowSchemaFilenames = [
-  'Source.xsd',
-  'Target.xsd',
-  'SourceJson.json',
-  'folder/TargetJson.json',
-  'folder 2/file.json',
-  'a/a.json',
-  'a/b.json',
-  'a/b/c.json',
+const mockFileItems: IFileSysTreeItem[] = [
+  {
+    name: 'Child1.xsd',
+    type: 'file',
+    fullPath: '/Artifacts/Schemas/Child1.xsd',
+  },
+  {
+    name: 'Folder',
+    type: 'directory',
+    children: [
+      {
+        name: 'Abc.json',
+        type: 'file',
+        fullPath: '/Artifacts/Schemas/Folder/Abc.json',
+      },
+    ],
+  },
+  {
+    name: 'sourceSchema.json',
+    type: 'file',
+    fullPath: '/Artifacts/Schemas/sourceSchema.json',
+  },
 ];
+
+class DataMapperFileService implements IDataMapperFileService {
+  private verbose: boolean;
+
+  constructor(verbose: boolean) {
+    this.verbose = verbose
+  }
+
+  public saveMapDefinitionCall = (
+    dataMapDefinition: string,
+    mapMetadata: string
+  ) => {
+    if (this.verbose) {
+      console.log('Saved definition: ' + dataMapDefinition)
+      console.log('Saved metadata: ' + mapMetadata)
+    }
+  };
+
+  public readCurrentSchemaOptions = () => {
+    return;
+  };
+}
+
+
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 
@@ -48,13 +87,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
     accessToken: armToken,
   });
 
-  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
-    console.log('Map Definition\n===============');
-    console.log(dataMapDefinition);
-
-    console.log('Map Metadata\n===============');
-    console.log(mapMetadata);
-  };
+  const dataMapperFileService = new DataMapperFileService(true);
 
   const saveXsltCall = (dataMapXslt: string) => {
     console.log('\nXSLT\n===============');
@@ -76,7 +109,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
   const isLightMode = theme === ThemeType.Light;
 
   return (
-    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ flex: '0 1 1px' }}>
         <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
           <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
@@ -98,12 +131,12 @@ export const DataMapperStandaloneDesignerV2 = () => {
             dataMapMetadata={mapMetadata}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
-            availableSchemas={workflowSchemaFilenames}
+            availableSchemas={mockFileItems}
             customXsltPaths={customXsltPath}
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} />
+            <DataMapperDesignerV2 fileService={dataMapperFileService} saveXsltCall={saveXsltCall} />
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>

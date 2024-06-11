@@ -4,12 +4,7 @@ import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/cust
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
-import {
-  useDependencies,
-  useNodesInitialized,
-  useOperationErrorInfo,
-  useRawInputParameters,
-} from '../../../../../core/state/operation/operationSelector';
+import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { usePanelLocation, useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -35,7 +30,7 @@ import {
 } from '../../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../../core/utils/tokens';
 import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../../core/utils/tokens';
-import { getAllVariables, getAvailableVariables } from '../../../../../core/utils/variables';
+import { getAvailableVariables } from '../../../../../core/utils/variables';
 import { SettingsSection } from '../../../../settings/settingsection';
 import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
@@ -187,30 +182,22 @@ const ParameterSection = ({
   const dispatch = useDispatch<AppDispatch>();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
-  const nodeInputs = useRawInputParameters(nodeId) ?? { parameterGroups: {} };
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
-  const {
-    settings: nodeSettings,
-    variables,
-    upstreamNodeIds,
-    operationDefinition,
-    connectionReference,
-    idReplacements,
-    workflowParameters,
-  } = useSelector((state: RootState) => {
-    return {
-      settings: getRecordEntry(state.operations.settings, nodeId) ?? {},
-      upstreamNodeIds: getRecordEntry(state.tokens.outputTokens, nodeId)?.upstreamNodeIds,
-      variables: state.tokens.variables,
-      operationDefinition: getRecordEntry(state.workflow.newlyAddedOperations, nodeId)
-        ? undefined
-        : getRecordEntry(state.workflow.operations, nodeId),
-      connectionReference: getConnectionReference(state.connections, nodeId),
-      idReplacements: state.workflow.idReplacements,
-      workflowParameters: state.workflowParameters.definitions,
-    };
-  });
+  const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters } = useSelector(
+    (state: RootState) => {
+      return {
+        upstreamNodeIds: getRecordEntry(state.tokens.outputTokens, nodeId)?.upstreamNodeIds,
+        variables: state.tokens.variables,
+        operationDefinition: getRecordEntry(state.workflow.newlyAddedOperations, nodeId)
+          ? undefined
+          : getRecordEntry(state.workflow.operations, nodeId),
+        connectionReference: getConnectionReference(state.connections, nodeId),
+        idReplacements: state.workflow.idReplacements,
+        workflowParameters: state.workflowParameters.definitions,
+      };
+    }
+  );
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -219,6 +206,11 @@ const ParameterSection = ({
   const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
+
+  const nodeInputs = useMemo(
+    () => rootState.operations.inputParameters[nodeId] ?? { parameterGroups: {} },
+    [nodeId, rootState.operations.inputParameters]
+  );
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -234,6 +226,7 @@ const ParameterSection = ({
         propertiesToUpdate.editorViewModel = viewModel;
       }
 
+      // TODO: This should never be added, since the update is taken care by dynamic parameter update.
       if (getRecordEntry(variables, nodeId)) {
         if (parameter?.parameterKey === 'inputs.$.name') {
           dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
@@ -247,37 +240,23 @@ const ParameterSection = ({
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
-      updateParameterAndDependencies(
-        nodeId,
-        group.id,
-        id,
-        propertiesToUpdate,
-        isTrigger,
-        operationInfo,
-        connectionReference,
-        nodeInputs,
-        dependencies,
-        getAllVariables(variables),
-        nodeSettings,
-        dispatch,
-        rootState,
-        operationDefinition
+      dispatch(
+        updateParameterAndDependencies({
+          nodeId,
+          groupId: group.id,
+          parameterId: id,
+          properties: propertiesToUpdate,
+          isTrigger,
+          operationInfo,
+          connectionReference,
+          nodeInputs,
+          dependencies,
+          operationDefinition,
+        })
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      nodeId,
-      group.id,
-      isTrigger,
-      operationInfo,
-      connectionReference,
-      nodeInputs,
-      dependencies,
-      variables,
-      nodeSettings,
-      dispatch,
-      operationDefinition,
-    ]
+    [nodeId, group.id, isTrigger, operationInfo, connectionReference, nodeInputs, dependencies, variables, dispatch, operationDefinition]
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {

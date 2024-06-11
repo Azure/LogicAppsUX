@@ -112,7 +112,7 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
     scriptContext.projectPath = parentDirPath;
     return scriptContext;
   } catch (error) {
-    const errorMessage = localize('executeAzureWizardError', 'Error in setupWizardScriptContext', error.message ?? error);
+    const errorMessage = localize('setupWizardScriptContextError', 'Error in setupWizardScriptContext: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     throw new Error(errorMessage);
   }
