@@ -13,6 +13,7 @@ import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-com
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { workflowLoaderSlice } from '../state/WorkflowLoader';
+import SourceSettings from '../../designer/app/SettingsSections/sourceSettings';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -83,7 +84,9 @@ export const DevToolbox = () => {
                       style={{ marginBottom: '12px' }}
                     />
                   </StackItem>
-
+                  <StackItem style={{ width: '100%' }}>
+                    <SourceSettings showHistoryButton={false} />
+                  </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
                   </StackItem>
