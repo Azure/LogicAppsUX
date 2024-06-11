@@ -20,6 +20,8 @@ describe('ui/templates/DisplayParameters', () => {
     template1Manifest = {
       title: 'Template 1',
       description: 'Template 1 Description',
+      tags: {},
+      images: {},
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
       artifacts: [
@@ -32,21 +34,24 @@ describe('ui/templates/DisplayParameters', () => {
           file: 'description.md',
         },
       ],
-      connections: [],
+      connections: {},
       parameters: [
         {
           name: 'param1',
+          displayName: 'param1',
           type: 'string',
           description: 'param1 description',
           default: param1DefaultValue,
         },
         {
           name: 'param2',
+          displayName: 'param2',
           type: 'object',
           description: 'param2 description',
         },
         {
           name: 'param3',
+          displayName: 'param3',
           type: 'boolean',
           description: 'param3 description',
           default: param2DefaultValue,
@@ -73,6 +78,8 @@ describe('ui/templates/DisplayParameters', () => {
         validationErrors: {},
       },
       connections: template1Manifest.connections,
+      workflowName: undefined,
+      kind: undefined,
     };
     const minimalStoreData = {
       template: templateSliceData,
