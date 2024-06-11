@@ -4,7 +4,7 @@ import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
 import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
-import { CustomCodeService, LogEntryLevel, LoggerService, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
+import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
@@ -32,6 +32,36 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
       return response.data;
     },
     {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
+
+export const useConnectionsData = (appId?: string) => {
+  return useQuery(
+    ['getConnectionsData', appId],
+    async () => {
+      const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
+      try {
+        const response = await axios.get(uri, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        });
+        const { files, health } = response.data.properties;
+        if (equals(health.state, 'healthy')) {
+          return files['connections.json'];
+        }
+        const { error } = health;
+        throw new Error(error.message);
+      } catch (error) {
+        return {};
+      }
+    },
+    {
+      enabled: !!appId,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -232,7 +262,7 @@ export const listCallbackUrl = async (
   };
 };
 
-export const useWorkflowApp = (siteResourceId: string, isConsumption = false) => {
+export const useWorkflowApp = (siteResourceId?: string, isConsumption = false) => {
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
@@ -246,6 +276,7 @@ export const useWorkflowApp = (siteResourceId: string, isConsumption = false) =>
       return response.data;
     },
     {
+      enabled: !!siteResourceId,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -253,7 +284,7 @@ export const useWorkflowApp = (siteResourceId: string, isConsumption = false) =>
   );
 };
 
-export const useAppSettings = (siteResourceId: string) => {
+export const useAppSettings = (siteResourceId?: string) => {
   return useQuery(
     ['appSettings', siteResourceId],
     async () => {
@@ -267,6 +298,7 @@ export const useAppSettings = (siteResourceId: string) => {
       return response.data;
     },
     {
+      enabled: !!siteResourceId,
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,

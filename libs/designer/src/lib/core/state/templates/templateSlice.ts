@@ -1,9 +1,10 @@
-import { getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@microsoft/logic-apps-shared';
+import { getIntl, getRecordEntry, InitConnectionService, type LogicAppsV2, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
+import type { ServiceOptions } from '../designerOptions/designerOptionsInterfaces';
 
 export interface TemplateState {
   templateName?: string;
@@ -16,6 +17,7 @@ export interface TemplateState {
     validationErrors: Record<string, string | undefined>;
   };
   connections: Template.Connection[];
+  initializeTemplateServices: boolean | undefined;
 }
 
 const initialState: TemplateState = {
@@ -28,6 +30,7 @@ const initialState: TemplateState = {
     validationErrors: {},
   },
   connections: [],
+  initializeTemplateServices: undefined,
 };
 
 export const loadTemplate = createAsyncThunk(
@@ -111,6 +114,10 @@ export const templateSlice = createSlice({
       };
       state.connections = [];
     });
+
+    builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
+      state.initializeTemplateServices = action.payload;
+    });
   },
 });
 
@@ -122,11 +129,12 @@ const loadTemplateFromGithub = async (
 ): Promise<TemplateState | undefined> => {
   try {
     const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
+      /* @vite-ignore */
       `${templatesPathFromState}/${templateName}/workflow.json`
     );
 
     const templateManifest: Template.Manifest =
-      manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
+      manifest ?? (await import(/* @vite-ignore */ `${templatesPathFromState}/${templateName}/manifest.json`)).default;
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -145,9 +153,20 @@ const loadTemplateFromGithub = async (
         validationErrors: {},
       },
       connections: templateManifest.connections,
+      initializeTemplateServices: undefined,
     };
   } catch (ex) {
     console.error(ex);
     return undefined;
   }
 };
+
+export const initializeTemplateServices = createAsyncThunk('initializeTemplateServices', async ({ connectionService }: ServiceOptions) => {
+  InitConnectionService(connectionService);
+
+  // if (connectorService) {
+  //   InitConnectorService(connectorService);
+  // }
+
+  return true;
+});

@@ -5,34 +5,21 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
-import {
-  setConsumption,
-  setLocation,
-  setResourceGroup,
-  setSubscriptionId,
-  setWorkflowName,
-  setTopResourceName,
-} from '../state/templates/workflowSlice';
+import { setConsumption, setLocation, setSubscriptionId, setWorkflowName } from '../state/templates/workflowSlice';
+import type { ServiceOptions } from '../state/designerOptions/designerOptionsInterfaces';
+import { initializeTemplateServices } from '../state/templates/templateSlice';
+import { useAreTemplateServicesInitialized } from '../state/templates/templateSelectors';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
   workflowName: string | undefined;
   subscriptionId: string | undefined;
   location: string | undefined;
-  resourceGroup: string | undefined;
-  topResourceName: string | undefined;
+  services?: ServiceOptions;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({
-  isConsumption,
-  workflowName,
-  subscriptionId,
-  location,
-  resourceGroup,
-  topResourceName,
-  children,
-}: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, workflowName, subscriptionId, location, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { availableTemplateNames } = useSelector((state: RootState) => state.manifest);
 
@@ -68,27 +55,24 @@ const DataProviderInner = ({
     }
   }, [dispatch, location]);
 
-  useEffect(() => {
-    if (resourceGroup) {
-      dispatch(setResourceGroup(resourceGroup));
-    }
-  }, [dispatch, resourceGroup]);
-
-  useEffect(() => {
-    if (topResourceName) {
-      dispatch(setTopResourceName(topResourceName));
-    }
-  }, [dispatch, topResourceName]);
-
   return <>{children}</>;
 };
 
 export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
   const wrapped = useContext(TemplatesWrappedContext);
 
+  const dispatch = useDispatch<AppDispatch>();
+  const servicesInitialized = useAreTemplateServicesInitialized();
+
   if (!wrapped) {
     throw new Error('TemplatesDataProvider must be used inside of a TemplatesWrappedContext');
   }
+
+  useEffect(() => {
+    if (!servicesInitialized && props.services) {
+      dispatch(initializeTemplateServices(props.services));
+    }
+  }, [dispatch, servicesInitialized, props.services]);
 
   return <DataProviderInner {...props} />;
 };

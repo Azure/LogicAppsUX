@@ -46,8 +46,8 @@ export interface DesignerOptionsState {
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
-  operationManifestService: IOperationManifestService;
-  searchService: ISearchService;
+  operationManifestService?: IOperationManifestService;
+  searchService?: ISearchService;
   connectorService?: IConnectorService;
   gatewayService?: IGatewayService;
   loggerService?: ILoggerService;
