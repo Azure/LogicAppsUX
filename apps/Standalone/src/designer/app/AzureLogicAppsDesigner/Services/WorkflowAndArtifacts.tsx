@@ -374,7 +374,8 @@ export const saveWorkflowStandard = async (
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
-  clearDirtyState: () => void
+  clearDirtyState: () => void,
+  skipValidation?: boolean
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -395,11 +396,13 @@ export const saveWorkflowStandard = async (
   }
 
   try {
-    try {
-      await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
-    } catch (error: any) {
-      if (error.status !== 404) {
-        return;
+    if (!skipValidation) {
+      try {
+        await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
+      } catch (error: any) {
+        if (error.status !== 404) {
+          return;
+        }
       }
     }
 

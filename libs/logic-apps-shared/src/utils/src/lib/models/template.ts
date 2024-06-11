@@ -1,12 +1,12 @@
-export type SkuType = 'standard' | 'consumption';
-export type Kind = 'stateful' | 'stateless';
+const SkuType = ['standard', 'consumption'];
+export type SkuType = (typeof SkuType)[keyof typeof SkuType];
 
 export interface Manifest {
   title: string;
   description: string;
   thumbnail?: string;
   skus: SkuType[];
-  kinds: Kind[];
+  kinds: string[];
   artifacts: Artifact[];
   images?: string[];
   parameters: Parameter[];

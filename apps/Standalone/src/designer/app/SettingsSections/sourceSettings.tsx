@@ -7,7 +7,7 @@ import { ChoiceGroup, IconButton } from '@fluentui/react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-const SourceSettings = () => {
+const SourceSettings = ({ showHistoryButton = true }: { showHistoryButton?: boolean }) => {
   const isLocal = useIsLocal();
   const isConsumption = useIsConsumption();
   const dispatch = useDispatch<AppDispatch>();
@@ -43,7 +43,7 @@ const SourceSettings = () => {
         selectedKey={isConsumption ? 'consumption' : 'standard'}
       />
       {/* History Button to load last loaded workflow */}
-      {!resourcePath && stateHistory ? (
+      {showHistoryButton && !resourcePath && stateHistory ? (
         <IconButton iconProps={{ iconName: 'History' }} title="History" ariaLabel="History" onClick={() => dispatch(loadLastWorkflow())} />
       ) : null}
     </div>
