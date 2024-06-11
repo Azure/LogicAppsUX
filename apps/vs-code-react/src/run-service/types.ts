@@ -1,3 +1,4 @@
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
 import type { ApiHubServiceDetails, SchemaType } from '@microsoft/logic-apps-shared';
 import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
@@ -217,6 +218,11 @@ export interface LoadDataMapMessage {
 export interface ShowAvailableSchemasMessage {
   command: typeof ExtensionCommand.showAvailableSchemas;
   data: string[];
+}
+
+export interface ShowAvailableSchemasMessageV2 {
+  command: typeof ExtensionCommand.showAvailableSchemasV2;
+  data: IFileSysTreeItem[];
 }
 
 export interface GetAvailableCustomXsltPathsMessage {

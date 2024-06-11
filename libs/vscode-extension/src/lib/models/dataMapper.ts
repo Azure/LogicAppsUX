@@ -18,6 +18,7 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.fetchSchema; data: FetchSchemaData }
   | { command: typeof ExtensionCommand.loadDataMap; data: MapDefinitionData }
   | { command: typeof ExtensionCommand.showAvailableSchemas; data: string[] }
+  | { command: typeof ExtensionCommand.showAvailableSchemasV2; data: any[] } //todo: change to IFileSysTreeItem
   | { command: typeof ExtensionCommand.getAvailableCustomXsltPaths; data: string[] }
   | { command: typeof ExtensionCommand.setXsltData; data: XsltData }
   | { command: typeof ExtensionCommand.setRuntimePort; data: string }

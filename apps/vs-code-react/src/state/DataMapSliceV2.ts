@@ -1,4 +1,5 @@
 import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
 import type { DataMapSchema, MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -14,7 +15,7 @@ export interface DataMapState {
   sourceSchema?: DataMapSchema;
   targetSchemaFilename?: string;
   targetSchema?: DataMapSchema;
-  schemaFileList?: string[];
+  schemaFileList?: IFileSysTreeItem[];
   customXsltPathsList?: string[];
   xsltFilename: string;
   xsltContent: string;
@@ -66,7 +67,7 @@ export const dataMapSlice = createSlice({
     changeTargetSchema: (state, action: PayloadAction<DataMapSchema>) => {
       state.targetSchema = action.payload;
     },
-    changeSchemaList: (state, action: PayloadAction<string[]>) => {
+    changeSchemaTreeList: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       state.schemaFileList = action.payload;
     },
     changeCustomXsltPathList: (state, action: PayloadAction<string[]>) => {
@@ -94,7 +95,7 @@ export const {
   changeSourceSchema,
   changeTargetSchemaFilename,
   changeTargetSchema,
-  changeSchemaList,
+  changeSchemaTreeList,
   changeCustomXsltPathList,
   changeFetchedFunctions,
   changeUseExpandedFunctionCards,

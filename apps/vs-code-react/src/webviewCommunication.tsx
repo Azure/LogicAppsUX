@@ -15,6 +15,7 @@ import type {
   CompleteFileSystemConnectionMessage,
   ReceiveCallbackMessage,
   GetDataMapperVersionMessage,
+  ShowAvailableSchemasMessageV2,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -33,7 +34,7 @@ import {
   changeDataMapMetadata as changeDataMapMetadataV2,
   changeMapDefinition as changeMapDefinitionV2,
   changeRuntimePort as changeRuntimePortV2,
-  changeSchemaList as changeSchemaListV2,
+  changeSchemaTreeList,
   changeSourceSchemaFilename as changeSourceSchemaFilenameV2,
   changeTargetSchemaFilename as changeTargetSchemaFilenameV2,
   changeUseExpandedFunctionCards as changeUseExpandedFunctionCardsV2,
@@ -61,6 +62,7 @@ type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
   | ShowAvailableSchemasMessage
+  | ShowAvailableSchemasMessageV2
   | GetAvailableCustomXsltPathsMessage
   | SetXsltDataMessage
   | SetRuntimePortMessage
@@ -129,8 +131,8 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               dispatch(changeDataMapMetadataV2(message.data.metadata));
               break;
             }
-            case ExtensionCommand.showAvailableSchemas: {
-              dispatch(changeSchemaListV2(message.data));
+            case ExtensionCommand.showAvailableSchemasV2: {
+              dispatch(changeSchemaTreeList(message.data));
               break;
             }
             case ExtensionCommand.getAvailableCustomXsltPaths: {
