@@ -8,7 +8,7 @@ import { loadManifestNames, loadManifests } from '../state/templates/manifestSli
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface TemplatesDataProviderProps {
-  kinds?: Template.Kind[];
+  kinds?: Template.WorkflowKindType[];
   skus?: Template.SkuType[];
   children?: React.ReactNode;
 }
