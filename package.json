@@ -61,7 +61,7 @@
   },
   "engines": {
     "node": ">=18",
-    "pnpm": ">=9"
+    "pnpm": ">=7.9"
   },
   "license": "MIT",
   "lint-staged": {
