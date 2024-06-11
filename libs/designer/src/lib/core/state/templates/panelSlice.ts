@@ -44,3 +44,4 @@ export const panelSlice = createSlice({
 });
 
 export const { openQuickViewPanelView, openCreateWorkflowPanelView, selectPanelTab, closePanel } = panelSlice.actions;
+export default panelSlice.reducer;
