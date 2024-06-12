@@ -105,6 +105,10 @@ export interface ParameterCredentialMapping {
    */
   type: string;
   /**
+   * Ordinal value of the type enum.
+   */
+  typeEnumValue: number;
+  /**
    * The key used to read the expected value from the credential for this parameter.
    */
   credentialKeyName: string;

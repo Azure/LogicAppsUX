@@ -341,6 +341,7 @@ describe('ui/createConnection', () => {
                     {
                       credentialKeyName: 'myCredentialPasswordKey',
                       type: 'UserPassword',
+                      typeEnumValue: 1,
                     },
                   ],
                 },
@@ -357,6 +358,7 @@ describe('ui/createConnection', () => {
                     {
                       credentialKeyName: 'myCredentialUserKey',
                       type: 'UserPassword',
+                      typeEnumValue: 1,
                     },
                   ],
                 },
@@ -399,6 +401,7 @@ describe('ui/createConnection', () => {
                     {
                       credentialKeyName: 'myCredentialPasswordKey',
                       type: 'UserPassword',
+                      typeEnumValue: 1,
                     },
                   ],
                 },
@@ -415,6 +418,7 @@ describe('ui/createConnection', () => {
                     {
                       credentialKeyName: 'myCredentialPasswordKey',
                       type: 'UserPassword',
+                      typeEnumValue: 1,
                     },
                   ],
                 },
