@@ -131,7 +131,7 @@ export const useTokenDependencies = (nodeId: string) => {
   }, [operationInputParameters]);
 };
 
-export const useTokenNodesDependencies = (nodes: Set<string>) => {
+export const useNodesTokenDependencies = (nodes: Set<string>) => {
   const operationsInputsParameters = useOperationsInputParameters();
   const dependencies: Record<string, Set<string>> = {};
   if (!operationsInputsParameters) {

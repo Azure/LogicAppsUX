@@ -31,7 +31,7 @@ import {
   LogEntryLevel,
   LoggerService,
 } from '@microsoft/logic-apps-shared';
-import { useTokenNodesDependencies } from '../../core/state/operation/operationSelector';
+import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -69,7 +69,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
-  const upstreamNodesDependencies = useTokenNodesDependencies(upstreamNodes);
+  const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
   const upstreamScopeArr = useAllGraphParents(graphId);
   const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
   useOnViewportChange({
