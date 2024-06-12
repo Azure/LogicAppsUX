@@ -34,12 +34,14 @@ import { RelativePattern, window, workspace } from 'vscode';
 export default class DataMapperPanel {
   public panel: WebviewPanel;
 
+  public dataMapVersion: number;
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
 
   constructor(panel: WebviewPanel, dataMapName: string) {
     this.panel = panel;
+    this.dataMapVersion = this.getDataMapperVersion();
     this.dataMapName = dataMapName;
     this.dataMapStateIsDirty = false;
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
@@ -160,7 +162,7 @@ export default class DataMapperPanel {
       }
 
       case ExtensionCommand.getDataMapperVersion: {
-        this.getDataMapperVersion();
+        this.handleGetDataMapperVersion();
         break;
       }
     }
@@ -211,7 +213,41 @@ export default class DataMapperPanel {
     }
   }
 
+  //TODO: change this any to IFileSysTreeItem[]
+  public getNestedFileTreePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: any[], filetypes: string[]) {
+    const rootPath = path.join(ext.logicAppWorkspace, relativePath);
+    const absolutePath = path.join(rootPath, parentPath, fileName);
+    if (statSync(absolutePath).isDirectory()) {
+      const childrenFilesToDisplay: any[] = [];
+      const combinedRelativePath = path.join(parentPath, fileName);
+      readdirSync(absolutePath).forEach((childFileName) => {
+        this.getNestedFileTreePaths(childFileName, combinedRelativePath, relativePath, childrenFilesToDisplay, filetypes);
+      });
+      if (childrenFilesToDisplay?.length > 0) {
+        filesToDisplay.push({
+          name: fileName,
+          type: 'directory',
+          fullPath: combinedRelativePath,
+          children: childrenFilesToDisplay,
+        });
+      }
+    } else {
+      const fileExt = path.extname(fileName).toLowerCase();
+      if (filetypes.includes(fileExt)) {
+        const relativePath = path.join(parentPath, fileName);
+        filesToDisplay.push({
+          name: fileName,
+          type: 'file',
+          fullPath: relativePath,
+        });
+      }
+    }
+  }
+
   public handleReadSchemaFileOptions() {
+    if (this.dataMapVersion === 2) {
+      return this.getFilesTreeForPath(schemasPath, supportedSchemaFileExts);
+    }
     return this.getFilesForPath(schemasPath, ExtensionCommand.showAvailableSchemas, supportedSchemaFileExts);
   }
 
@@ -234,6 +270,19 @@ export default class DataMapperPanel {
       });
       this.sendMsgToWebview({
         command,
+        data: filesToDisplay,
+      });
+    });
+  }
+
+  private getFilesTreeForPath(folderPath: string, fileTypes: string[]) {
+    fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
+      const filesToDisplay: any[] = [];
+      result.forEach((file) => {
+        this.getNestedFileTreePaths(file, '', folderPath, filesToDisplay, fileTypes);
+      });
+      this.sendMsgToWebview({
+        command: ExtensionCommand.showAvailableSchemasV2,
         data: filesToDisplay,
       });
     });
@@ -428,13 +477,17 @@ export default class DataMapperPanel {
     });
   }
 
+  public handleGetDataMapperVersion() {
+    this.sendMsgToWebview({
+      command: ExtensionCommand.getDataMapperVersion,
+      data: this.dataMapVersion,
+    });
+  }
+
   public getDataMapperVersion() {
     const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
     const configValue = azureDataMapperConfig.get<number>(dataMapperVersionSetting) ?? defaultDataMapperVersion;
-    this.sendMsgToWebview({
-      command: ExtensionCommand.getDataMapperVersion,
-      data: configValue,
-    });
+    return configValue;
   }
 
   private getMapMetadataPath() {
