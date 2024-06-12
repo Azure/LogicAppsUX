@@ -3516,28 +3516,7 @@ export function parameterValueToString(
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
   }
   const shouldInterpolate = value.length > 1;
-  return segmentsAfterCasting
-    .map((segment) => {
-      let expressionValue = segment.value;
-      if (isTokenValueSegment(segment)) {
-        if (shouldInterpolate) {
-          expressionValue = parameterType === constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
-        } else if (!isUndefinedOrEmptyString(expressionValue)) {
-          // Note: Token segment should be auto casted using interpolation if token type is
-          // non string and referred in a string parameter.
-          expressionValue =
-            !remappedParameterInfo.suppressCasting &&
-            parameterType === 'string' &&
-            segment.token?.type !== 'string' &&
-            !shouldUseLiteralValues(segment.token?.expression)
-              ? `@{${expressionValue}}`
-              : `@${expressionValue}`;
-        }
-      }
-
-      return expressionValue;
-    })
-    .join('');
+  return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo.suppressCasting);
 }
 
 /**
