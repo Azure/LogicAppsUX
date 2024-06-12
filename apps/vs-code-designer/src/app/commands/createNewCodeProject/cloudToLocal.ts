@@ -23,7 +23,9 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { window } from 'vscode';
-
+import * as path from 'path';
+import AdmZip = require('adm-zip');
+import * as fs from 'fs';
 const openFolder = true;
 
 export async function cloudToLocalInternal(
@@ -71,9 +73,72 @@ export async function cloudToLocalInternal(
     executeSteps: [new OpenFolderStepCodeProject()],
     hideStepCount: true,
   });
+  try {
+    await wizard.prompt();
+    await wizard.execute();
+  } catch (error) {
+    console.error('Error during wizard execution:', error);
+  }
 
-  await wizard.prompt();
-  await wizard.execute();
+  console.log('Starting other code stuff');
 
+  // Factory function to create an AdmZip instance
+  function createAdmZipInstance(zipFilePath: string) {
+    return new AdmZip(zipFilePath);
+  }
+
+  // Function to abstract away the direct use of the AdmZip constructor
+  function getZipEntries(zipFilePath: string) {
+    const zip = createAdmZipInstance(zipFilePath);
+    return zip.getEntries(); // Returns all entries (files and folders) within the zip file
+  }
+
+  const zipFilePath = ZipFileStep.zipFilePath;
+  const zipEntries = getZipEntries(zipFilePath);
+
+  let zipSettings = {};
+
+  // Check if the local.settings.json file exists in the zip and read its contents
+  const localSettingsEntry = zipEntries.find((entry) => entry.entryName === 'local.settings.json');
+  if (localSettingsEntry) {
+    const zipSettingsContent = localSettingsEntry.getData().toString('utf8');
+    zipSettings = JSON.parse(zipSettingsContent);
+    console.log('Zip Settings:', JSON.stringify(zipSettings, null, 2));
+  }
+  // Merge local.settings.json files
+  const localSettingsPath = path.join(wizardContext.workspacePath, 'local.settings.json');
+  let localSettings = {};
+
+  // Check if a local local.settings.json file exists
+  if (fs.existsSync(localSettingsPath)) {
+    // If it does, read its contents
+    const localSettingsContent = fs.readFileSync(localSettingsPath, 'utf8');
+    localSettings = JSON.parse(localSettingsContent);
+    console.log('Local Settings:', JSON.stringify(localSettings, null, 2));
+  }
+
+  function deepMergeObjects(target: any, source: any): any {
+    // Iterate over all properties in the source object
+    for (const key of Object.keys(source)) {
+      if (source[key] instanceof Object && key in target) {
+        // If the value is an object and the key exists in the target, recurse
+        Object.assign(source[key], deepMergeObjects(target[key], source[key]));
+      }
+    }
+    // Perform the merge
+    Object.assign(target || {}, source);
+    return target;
+  }
+
+  localSettings = deepMergeObjects(zipSettings, localSettings);
+  console.log('Merged Settings:', JSON.stringify(localSettings, null, 2));
+
+  // Write the merged contents back to the local local.settings.json file
+  try {
+    fs.writeFileSync(localSettingsPath, JSON.stringify(localSettings, null, 2));
+    console.log(`Successfully wrote to ${localSettingsPath}`);
+  } catch (error) {
+    console.error('Error writing file:', error);
+  }
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }

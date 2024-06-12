@@ -12,7 +12,7 @@ import * as rimraf from 'rimraf';
 export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   private zipContent: Buffer | Buffer[];
   private targetDirectory: string;
-  private static zipFilePath: string;
+  public static zipFilePath: string;
   private wizardContext: IFunctionWizardContext;
 
   public hideStepCount = true;
@@ -22,7 +22,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public static async setZipFilePath(_context: Partial<IFunctionWizardContext>): Promise<void> {
     const fileUris = await vscode.window.showOpenDialog({
       canSelectMany: false,
-      defaultUri: vscode.Uri.file(path.join(os.homedir(), 'Desktop')),
+      defaultUri: vscode.Uri.file(path.join(os.homedir(), 'Downloads')),
       // filters: {
       //     'Zip files': ['zip']
       // },
@@ -47,15 +47,13 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   private async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
     try {
       if (ZipFileStep.zipFilePath) {
-        console.log(`zipFilePath: ${ZipFileStep.zipFilePath}`);
         this.zipContent = fs.readFileSync(ZipFileStep.zipFilePath);
-        console.log(`workspacePath: ${this.wizardContext.workspacePath}`);
         this.targetDirectory = path.join(this.wizardContext.workspacePath, this.wizardContext.logicAppName);
-        console.log(`targetDirectory: ${this.targetDirectory}`);
         await unzipLogicAppArtifacts(this.zipContent, this.targetDirectory);
 
         const zipBaseName = path.basename(ZipFileStep.zipFilePath, path.extname(ZipFileStep.zipFilePath));
-        const excludedFiles = [`${zipBaseName}.csproj`, '.vscode', 'obj', 'bin', 'local.settings.json', 'host.json'];
+        const excludedFiles = [`${zipBaseName}.csproj`, '.vscode', 'obj', 'bin', 'local.settings.json'];
+
         for (const file of excludedFiles) {
           rimraf.sync(path.join(this.targetDirectory, file));
         }
