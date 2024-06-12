@@ -1,6 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { IFileSysTreeItem } from '../../models/Tree';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 
 export interface SchemaState {
   availableSchemas: IFileSysTreeItem[];

@@ -23,3 +23,18 @@ export interface ConnectionAndOrder {
 export interface MapMetadata {
   functionNodes: FunctionMetadata[];
 }
+
+// For Schema File System
+export type IFileSysTreeItem = ITreeDirectory | ITreeFile;
+
+export interface ITreeDirectory {
+  name: string;
+  type: 'directory';
+  children: IFileSysTreeItem[];
+}
+
+export interface ITreeFile {
+  name: string;
+  type: 'file';
+  fullPath?: string;
+}
