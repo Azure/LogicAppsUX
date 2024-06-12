@@ -7,11 +7,15 @@ import { DisplayConnections } from '../../../../templates/connections/displayCon
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections, manifest } = useSelector((state: RootState) => state.template);
+  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
 
   return isNullOrUndefined(manifest) ? null : (
     <div>
-      Connections Tab Placeholder
-      {connections ? <DisplayConnections connections={connections} /> : <>PLACEHOLDER: no connections to be made</>}
+      {connections ? (
+        <DisplayConnections connections={connections} subscriptionId={subscriptionId} location={location} />
+      ) : (
+        <>PLACEHOLDER: no connections to be made</>
+      )}
     </div>
   );
 };

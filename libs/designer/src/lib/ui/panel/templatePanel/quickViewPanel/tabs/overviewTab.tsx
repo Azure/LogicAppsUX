@@ -2,7 +2,7 @@ import type { RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
+import { getDisplayNameFromConnector, getIconUriFromConnector, isArmResourceId } from '@microsoft/logic-apps-shared';
 import { Body1Strong } from '@fluentui/react-components';
 import { useConnector } from '../../../../../core/state/connection/connectionSelector';
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
@@ -29,22 +29,25 @@ export const OverviewPanel: React.FC = () => {
   });
 
   const ConnectionListItem = ({ blankConnectorId }: { blankConnectorId: string }) => {
+    // TODO: implement this to work for service provider connectors too
     const connectorId =
-      subscriptionId && location ? blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location) : undefined;
+      isArmResourceId(blankConnectorId) && subscriptionId && location
+        ? blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location)
+        : blankConnectorId;
     const { data: connector } = useConnector(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const displayName = getDisplayNameFromConnector(connector);
     const { data: connection } = useConnectionsForConnector(connectorId);
     const hasExistingConnection = connection && connection.length > 0;
     console.log('connections:', connection);
-    const connectorType = 'In App';
+    const connectorKind = 'In App'; // default to In App for now
 
     return (
       <div>
         <img className="msla-action-icon" src={iconUri} />
         <Body1Strong className="msla-flex-header-title">{displayName}</Body1Strong>
         <p>
-          {connectorType} {hasExistingConnection ? 'Connected' : 'Not Connected'}
+          {connectorKind} {hasExistingConnection ? 'Connected' : 'Not Connected'}
         </p>
       </div>
     );
@@ -55,8 +58,8 @@ export const OverviewPanel: React.FC = () => {
       {connections && (
         <div>
           <b>{connectionsTitle}</b>
-          {connections.map((connection) => (
-            <ConnectionListItem key={connection.id} blankConnectorId={connection.id} />
+          {Object.keys(connections).map((connectionKey, index) => (
+            <ConnectionListItem key={index} blankConnectorId={connections[connectionKey]?.id} />
           ))}
         </div>
       )}

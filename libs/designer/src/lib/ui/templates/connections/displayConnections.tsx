@@ -1,5 +1,5 @@
 import { Button, Table, TableBody, TableCell, TableCellLayout, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
-import { getDisplayNameFromConnector, getIconUriFromConnector, type Template } from '@microsoft/logic-apps-shared';
+import { getDisplayNameFromConnector, getIconUriFromConnector, type Template, isArmResourceId } from '@microsoft/logic-apps-shared';
 import { CreateTemplateConnectionWrapper } from '../../panel/templatePanel/createWorkflowPanel/createTemplateConnectionWrapper';
 import { useState } from 'react';
 import { CheckmarkCircle12Filled, SubtractCircle12Filled } from '@fluentui/react-icons';
@@ -28,8 +28,11 @@ export const DisplayConnections = ({ connections, subscriptionId, location }: Di
   ];
 
   const ConnectionListItem = ({ blankConnectorId }: { blankConnectorId: string }) => {
+    // TODO: implement this to work for service provider connectors too
     const connectorId =
-      subscriptionId && location ? blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location) : undefined;
+      isArmResourceId(blankConnectorId) && subscriptionId && location
+        ? blankConnectorId.replace('#subscription#', subscriptionId).replace('#location#', location)
+        : blankConnectorId;
     const { data: connector } = useConnector(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const displayName = getDisplayNameFromConnector(connector);
