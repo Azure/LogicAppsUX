@@ -2475,7 +2475,7 @@ export function fetchErrorWhenDependenciesNotReady(
   };
 }
 
-export function getStringifiedValueFromEditorViewModel(
+function getStringifiedValueFromEditorViewModel(
   parameter: ParameterInfo,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
@@ -3516,7 +3516,6 @@ export function parameterValueToString(
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
   }
   const shouldInterpolate = value.length > 1;
-
   return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo.suppressCasting);
 }
 

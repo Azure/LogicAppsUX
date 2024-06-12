@@ -22,6 +22,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { resetWorkflowState } from '../global';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -213,6 +214,9 @@ export const unitTestSlice = createSlice({
       };
       checkAssertionsErrors(state);
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialUnitTestState);
   },
 });
 
