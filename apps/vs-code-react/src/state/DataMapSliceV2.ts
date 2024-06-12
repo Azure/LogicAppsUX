@@ -1,6 +1,5 @@
 import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
-import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
-import type { DataMapSchema, MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, MapDefinitionEntry, MapMetadata, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

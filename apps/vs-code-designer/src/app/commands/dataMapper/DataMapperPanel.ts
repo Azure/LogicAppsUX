@@ -13,7 +13,7 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
-import type { SchemaType, MapMetadata } from '@microsoft/logic-apps-shared';
+import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
@@ -213,12 +213,17 @@ export default class DataMapperPanel {
     }
   }
 
-  //TODO: change this any to IFileSysTreeItem[]
-  public getNestedFileTreePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: any[], filetypes: string[]) {
+  public getNestedFileTreePaths(
+    fileName: string,
+    parentPath: string,
+    relativePath: string,
+    filesToDisplay: IFileSysTreeItem[],
+    filetypes: string[]
+  ) {
     const rootPath = path.join(ext.logicAppWorkspace, relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
-      const childrenFilesToDisplay: any[] = [];
+      const childrenFilesToDisplay: IFileSysTreeItem[] = [];
       const combinedRelativePath = path.join(parentPath, fileName);
       readdirSync(absolutePath).forEach((childFileName) => {
         this.getNestedFileTreePaths(childFileName, combinedRelativePath, relativePath, childrenFilesToDisplay, filetypes);
@@ -227,7 +232,6 @@ export default class DataMapperPanel {
         filesToDisplay.push({
           name: fileName,
           type: 'directory',
-          fullPath: combinedRelativePath,
           children: childrenFilesToDisplay,
         });
       }
@@ -277,7 +281,7 @@ export default class DataMapperPanel {
 
   private getFilesTreeForPath(folderPath: string, fileTypes: string[]) {
     fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
-      const filesToDisplay: any[] = [];
+      const filesToDisplay: IFileSysTreeItem[] = [];
       result.forEach((file) => {
         this.getNestedFileTreePaths(file, '', folderPath, filesToDisplay, fileTypes);
       });
