@@ -189,6 +189,17 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
     },
 
+    setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      applyConnectionValue(newState.dataMapConnections, action.payload);
+
+      doDataMapOperation(state, newState, 'Set connection input value');
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -311,6 +322,7 @@ export const {
   updateReactFlowNodes,
   makeConnection,
   saveDataMap,
+  setConnectionInput,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
