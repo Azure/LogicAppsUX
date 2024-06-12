@@ -147,6 +147,9 @@ export const useNodesTokenDependencies = (nodes: Set<string>) => {
             if (value.token?.actionName) {
               innerDependencies.add(value.token.actionName);
             }
+            if (value.token?.arrayDetails?.loopSource) {
+              innerDependencies.add(value.token.arrayDetails.loopSource);
+            }
           }
         }
       }
