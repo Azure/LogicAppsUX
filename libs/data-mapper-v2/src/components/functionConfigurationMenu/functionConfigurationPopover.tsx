@@ -28,7 +28,11 @@ export interface FunctionConfigurationPopoverProps {
 type TabTypes = 'input' | 'output' | 'description';
 
 export const FunctionConfigurationPopover = (props: FunctionConfigurationPopoverProps) => {
-  const func = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes[props.functionId].functionData);
+  const funcBoth = useSelector((state: RootState) => {
+    return state.dataMap.present.curDataMapOperation.functionNodes[props.functionId];
+  });
+
+  const func = funcBoth?.functionData;
 
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = useState<TabTypes>('input');
@@ -36,11 +40,11 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
   const tab = (selectedTab: string) => {
     switch (selectedTab) {
       case 'input':
-        return InputTabContents(func);
+        return <InputTabContents func={func} />;
       case 'output':
-        return OutputTabContents(func);
+        return <OutputTabContents func={func} />;
       case 'description':
-        return DetailsTabContents(func);
+        return <DetailsTabContents func={func} />;
       default:
         return null;
     }
@@ -72,17 +76,17 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
   );
 };
 
-const DetailsTabContents = (func: FunctionData) => {
-  return <div>{func.description}</div>;
+const DetailsTabContents = (props: { func: FunctionData }) => {
+  return <div>{props.func.description}</div>;
 };
 
-const InputTabContents = (func: FunctionData) => {
+const InputTabContents = (props: { func: FunctionData }) => {
   const columns = [
     { columnKey: 'name', label: 'Name' },
     { columnKey: 'types', label: 'Accepted Types' },
   ];
   const styles = useStyles();
-  const inputs = func.inputs;
+  const inputs = props.func.inputs;
   const table = (
     <Table size="extra-small">
       <TableHeader>
@@ -101,7 +105,7 @@ const InputTabContents = (func: FunctionData) => {
             <TableCell>
               <TableCellLayout>{input.allowedTypes.join(', ')}</TableCellLayout>
             </TableCell>
-            {func.maxNumberOfInputs === UnboundedInput && (
+            {props.func.maxNumberOfInputs === UnboundedInput && (
               <TableCell>
                 <TableCellLayout>
                   <Button appearance="transparent" icon={<ReOrderRegular />} />
@@ -120,12 +124,12 @@ const InputTabContents = (func: FunctionData) => {
   );
   return (
     <div>
-      <div>{table}</div> {func.maxNumberOfInputs === UnboundedInput && addInput}
+      <div>{table}</div> {props.func.maxNumberOfInputs === UnboundedInput && addInput}
     </div>
   );
 };
 
-const OutputTabContents = (func: FunctionData) => {
+const OutputTabContents = (props: { func: FunctionData }) => {
   // const outputType = func.outputValueType;
   const columns = [
     { columnKey: 'destination', label: 'Destination' },
@@ -161,7 +165,7 @@ const OutputTabContents = (func: FunctionData) => {
   const addInput = <Button appearance="transparent">Add Destination</Button>;
   return (
     <>
-      <div>{table}</div> {func.maxNumberOfInputs === UnboundedInput && addInput}
+      <div>{table}</div> {props.func.maxNumberOfInputs === UnboundedInput && addInput}
     </>
   );
 };
