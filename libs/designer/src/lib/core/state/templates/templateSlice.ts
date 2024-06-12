@@ -130,12 +130,11 @@ const loadTemplateFromGithub = async (
 ): Promise<TemplateState | undefined> => {
   try {
     const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
-      /* @vite-ignore */
       `${templatesPathFromState}/${templateName}/workflow.json`
     );
 
     const templateManifest: Template.Manifest =
-      manifest ?? (await import(/* @vite-ignore */ `${templatesPathFromState}/${templateName}/manifest.json`)).default;
+      manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
