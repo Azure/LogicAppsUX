@@ -39,7 +39,6 @@ export const OverviewPanel: React.FC = () => {
     const displayName = getDisplayNameFromConnector(connector);
     const { data: connection } = useConnectionsForConnector(connectorId);
     const hasExistingConnection = connection && connection.length > 0;
-    console.log('connections:', connection);
     const connectorKind = 'In App'; // default to In App for now
 
     return (
