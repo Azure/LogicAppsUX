@@ -25,9 +25,11 @@ concurrency:
 jobs:
   alert:
     runs-on: ubuntu-latest
+    environment: E2ETesting
     permissions:
       issues: write
       pull-requests: write
+      id-token: write
     name: Sync workflow
     steps:
       - uses: actions/checkout@v3
