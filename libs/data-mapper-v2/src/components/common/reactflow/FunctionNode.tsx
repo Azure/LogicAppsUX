@@ -8,7 +8,7 @@ import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 //import HandleWrapper from './../HandleWrapper';
 //import { errorCardStyles, getStylesForSharedState, highlightedCardStyles, selectedCardStyles } from './../NodeCard';
 //import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
-import { Button, PresenceBadge, Text, Tooltip, tokens } from '@fluentui/react-components';
+import { Button, Text, Tooltip, tokens } from '@fluentui/react-components';
 import { useCardContextMenu } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -64,9 +64,9 @@ export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
 //     return inputsValid(reactFlowId, functionData, connections);
 //   }, [connections, reactFlowId, functionData]);
 
-  let cardStyle: React.CSSProperties = {
-    backgroundColor: customTokens[functionBranding.colorTokenName],
-  };
+//   let cardStyle: React.CSSProperties = {
+//     backgroundColor: customTokens[functionBranding.colorTokenName],
+//   };
 
 //   if (isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId) {
 //     cardStyle = { ...selectedCardStyles, ...cardStyle };
@@ -97,7 +97,7 @@ export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
         }}
         relationship="label"
       >
-        <Button onClick={onClick} style={cardStyle} disabled={!!disabled}>
+        <Button onClick={onClick} disabled={!!disabled}>
           <FunctionIcon
           iconSize={11}
             functionKey={functionData.key}

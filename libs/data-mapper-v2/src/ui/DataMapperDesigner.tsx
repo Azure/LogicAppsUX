@@ -54,8 +54,8 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
       id: node[1].key,
       type: 'functionNode',
-      data: {},
-      position: node[1].position || { x: 0, y: 0 },
+      data: {functionData:node[1] },
+      position: node[1].position || { x: 10, y: 200 },
     }));
     setAllNodes(nodes.concat(newNodes));
   }, [nodes, functionNodes])
@@ -174,13 +174,16 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       accept: 'function',
       drop: (item, monitor) => {
         const xyPosition = monitor.getClientOffset()
-        if (xyPosition && reactFlowInstance) {
-        const position = (reactFlowInstance as any).screenToFlowPosition({
-          x: xyPosition.x,
-          y: xyPosition.y,
-        });
-        return { position };
-      }
+        if (xyPosition) {
+          if (reactFlowInstance) {
+            const position = (reactFlowInstance as any).screenToFlowPosition({
+              x: xyPosition.x,
+              y: xyPosition.y,
+            });
+            return { position };
+          }
+          return { position: xyPosition}
+        }
       }
     }));
 
@@ -194,7 +197,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
             <div ref={ref} id="editorView" className={styles.canvasWrapper}>
               <ReactFlow
                 ref={drop}
-                nodes={nodes}
+                nodes={allNodes}
                 edges={edges}
                 nodesDraggable={false}
                 selectNodesOnDrag={false}
