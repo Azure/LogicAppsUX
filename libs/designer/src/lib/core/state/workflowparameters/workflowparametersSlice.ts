@@ -1,7 +1,7 @@
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { validateParameterValueWithSwaggerType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl, equals, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
@@ -102,7 +102,7 @@ export const workflowParametersSlice = createSlice({
       delete state.definitions[parameterId];
       state.isDirty = true;
     },
-    updateParameter: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+    updateParameter: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
         id,
         newDefinition: { name, type, value, defaultValue },

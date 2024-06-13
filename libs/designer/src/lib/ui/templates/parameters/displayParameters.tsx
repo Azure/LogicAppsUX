@@ -1,10 +1,10 @@
 import { List } from '@fluentui/react';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { WorkflowparameterField, XLargeText } from '@microsoft/designer-ui';
+import { TemplatesParameterField, XLargeText } from '@microsoft/designer-ui';
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export const DisplayParameters = () => {
@@ -14,7 +14,7 @@ export const DisplayParameters = () => {
   const validationErrors = parameters.validationErrors;
   const parametersDefinition = Object.entries(parameters.definitions).map(([key, value]) => ({ id: key, ...value }));
 
-  const onUpdateParameterValue = (event: WorkflowParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
+  const onUpdateParameterValue = (event: TemplatesParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -31,7 +31,20 @@ export const DisplayParameters = () => {
     return (
       <div key={item?.name} className="msla-workflow-parameter">
         <div>
-          <WorkflowparameterField
+        <TemplatesParameterField
+            name={item?.name}
+            definition={{ id: item?.name ?? 'id', ...item }}
+            validationErrors={{
+              value: validationErrors[item?.name ?? ''],
+            }}
+            // setName={() => {}}
+            onChange={onUpdateParameterValue}
+            // isEditable={{
+            //   value: true,
+            // }}
+            required={item?.required ?? false}
+          />
+          {/* <WorkflowparameterField
             name={item?.name}
             definition={{ id: item?.name ?? 'id', ...item }}
             validationErrors={{
@@ -45,7 +58,7 @@ export const DisplayParameters = () => {
             required={{
               value: item?.required ?? false,
             }}
-          />
+          /> */}
         </div>
       </div>
     );
@@ -64,3 +77,4 @@ export const DisplayParameters = () => {
     </>
   );
 };
+0
