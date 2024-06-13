@@ -28,7 +28,7 @@ export type FloatingActionMenuOutputViewModel = {
   outputValueSegmentsMap: Record<string, ValueSegment[] | undefined>;
 };
 
-type FloatingActionMenuOutputsProps = {
+export type FloatingActionMenuOutputsProps = {
   supportedTypes: string[];
   initialValue: ValueSegment[];
   onChange?: ChangeHandler;
