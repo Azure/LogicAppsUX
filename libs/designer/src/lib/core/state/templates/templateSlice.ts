@@ -1,10 +1,22 @@
-import { InitApiManagementService, InitAppServiceService, InitConnectionParameterEditorService, InitConnectionService, InitFunctionService, InitGatewayService, InitOAuthService, getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@microsoft/logic-apps-shared';
+import {
+  InitApiManagementService,
+  InitAppServiceService,
+  InitConnectionParameterEditorService,
+  InitConnectionService,
+  InitFunctionService,
+  InitGatewayService,
+  InitOAuthService,
+  getIntl,
+  getRecordEntry,
+  type LogicAppsV2,
+  type Template,
+} from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
-import type { TemplateServiceOptions } from 'lib/core/templates/TemplatesDesignerContext';
+import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
 
 interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
@@ -19,7 +31,7 @@ interface TemplateData {
 }
 
 export interface TemplateState extends TemplateData {
-  templateName?: string;  
+  templateName?: string;
   servicesInitialized: boolean;
 }
 
@@ -36,7 +48,8 @@ const initialState: TemplateState = {
   servicesInitialized: false,
 };
 
-export const initializeTemplateServices = createAsyncThunk('initializeTemplateServices',
+export const initializeTemplateServices = createAsyncThunk(
+  'initializeTemplateServices',
   async ({
     connectionService,
     oAuthService,
@@ -46,27 +59,28 @@ export const initializeTemplateServices = createAsyncThunk('initializeTemplateSe
     appServiceService,
     connectionParameterEditorService,
   }: TemplateServiceOptions) => {
-  InitConnectionService(connectionService);
-  InitOAuthService(oAuthService);
+    InitConnectionService(connectionService);
+    InitOAuthService(oAuthService);
 
-  if (gatewayService) {
-    InitGatewayService(gatewayService);
-  }
-  if (apimService) {
-    InitApiManagementService(apimService);
-  }
-  if (functionService) {
-    InitFunctionService(functionService);
-  }
-  if (appServiceService) {
-    InitAppServiceService(appServiceService);
-  }
-  if (connectionParameterEditorService) {
-    InitConnectionParameterEditorService(connectionParameterEditorService);
-  }
+    if (gatewayService) {
+      InitGatewayService(gatewayService);
+    }
+    if (apimService) {
+      InitApiManagementService(apimService);
+    }
+    if (functionService) {
+      InitFunctionService(functionService);
+    }
+    if (appServiceService) {
+      InitAppServiceService(appServiceService);
+    }
+    if (connectionParameterEditorService) {
+      InitConnectionParameterEditorService(connectionParameterEditorService);
+    }
 
-  return true;
-});
+    return true;
+  }
+);
 
 export const loadTemplate = createAsyncThunk(
   'template/loadTemplate',
@@ -159,10 +173,7 @@ export const templateSlice = createSlice({
 export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
 export default templateSlice.reducer;
 
-const loadTemplateFromGithub = async (
-  templateName: string,
-  manifest: Template.Manifest | undefined
-): Promise<TemplateData | undefined> => {
+const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {
   try {
     const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
       `${templatesPathFromState}/${templateName}/workflow.json`
