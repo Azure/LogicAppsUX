@@ -20,23 +20,16 @@ export const DisplayParameters = () => {
     }
 
     return (
-      <div key={item?.name} className="msla-templates-parameters">
-        <div>
-          <TemplatesParameterField
-            definition={item}
-            validationError={validationErrors[item?.name ?? '']}
-            onChange={onUpdateParameterValue}
-            required={item?.required ?? false}
-          />
-        </div>
-      </div>
+      <TemplatesParameterField
+        key={item?.name}
+        definition={item}
+        validationError={validationErrors[item?.name ?? '']}
+        onChange={onUpdateParameterValue}
+        required={item?.required ?? false}
+      />
     );
   };
 
-  return (
-    <div className="msla-templates-parameters">
-      <List items={Object.values(parameters.definitions)} onRenderCell={renderParameter} />
-    </div>
-  );
+  return <List className="msla-templates-parameters" items={Object.values(parameters.definitions)} onRenderCell={renderParameter} />;
 };
 0;
