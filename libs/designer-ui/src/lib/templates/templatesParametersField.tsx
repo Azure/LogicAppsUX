@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
 import { Label } from '../label';
 import type { EventHandler } from '../eventhandler';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 const labelStyles: Partial<ILabelStyles> = {
   root: {
@@ -37,27 +38,15 @@ interface ParameterFieldDetails {
   description?: string;
 }
 
-export interface TemplatesParameterDefinition {
-  value?: string;
-  id: string;
-  isEditable?: boolean;
-  name?: string;
-  type: string;
-  required?: boolean;
-  description?: string;
-}
-
 export interface TemplatesParameterUpdateEvent {
-  id: string;
-  newDefinition: TemplatesParameterDefinition;
+  newDefinition: Template.ParameterDefinition;
   useLegacy?: boolean;
 }
 
 export type TemplatesParameterUpdateHandler = EventHandler<TemplatesParameterUpdateEvent>;
 
 export interface TemplatesParameterFieldProps {
-  name?: string;
-  definition: TemplatesParameterDefinition;
+  definition: Template.ParameterDefinition;
   validationError: string | undefined;
   onChange?: TemplatesParameterUpdateHandler;
   useLegacy?: boolean;
@@ -66,7 +55,6 @@ export interface TemplatesParameterFieldProps {
 }
 
 export const TemplatesParameterField = ({
-  name,
   definition,
   validationError,
   onChange,
@@ -78,10 +66,10 @@ export const TemplatesParameterField = ({
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
-    name: `${definition.id}-${NAME_KEY}`,
-    value: `${definition.id}-${VALUE_KEY}`,
-    description: `${definition.id}-${DESCRIPTION_KEY}`,
-    type: `${definition.id}-type`,
+    name: `${definition.name}-${NAME_KEY}`,
+    value: `${definition.name}-${VALUE_KEY}`,
+    description: `${definition.name}-${DESCRIPTION_KEY}`,
+    type: `${definition.name}-type`,
   };
 
   const valueTitle = intl.formatMessage({
@@ -103,13 +91,9 @@ export const TemplatesParameterField = ({
     setValue(value);
 
     onChange?.({
-      id: definition.id,
       newDefinition: {
         ...definition,
-        name,
-        // type,
         value,
-        // defaultValue
       },
       useLegacy,
     });
@@ -118,8 +102,8 @@ export const TemplatesParameterField = ({
   return (
     <>
       {/* TODO: show isrequired */}
-      <div className="msla-templates-parameter-field">
-        <Text className="msla-templates-parameter-read-only">{definition.name}</Text>
+      <div className="msla-templates-parameters-heading">
+        <Text className="msla-templates-parameters-read-only">{definition.displayName}</Text>
       </div>
       <div className="msla-templates-parameter-field">
         <Text className="msla-templates-parameter-read-only">{definition.description}</Text>

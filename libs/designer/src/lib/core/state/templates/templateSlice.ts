@@ -78,17 +78,16 @@ export const templateSlice = createSlice({
     },
     updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
-        id,
-        newDefinition: { type, value, required },
+        newDefinition: { name, type, value, required },
       } = action.payload;
 
       const validationError = validateParameterValue({ type, value }, required);
 
-      state.parameters.definitions[id] = {
-        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+      state.parameters.definitions[name] = {
+        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[id] = validationError;
+      state.parameters.validationErrors[name] = validationError;
     },
   },
   extraReducers: (builder) => {
