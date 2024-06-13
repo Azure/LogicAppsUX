@@ -46,11 +46,7 @@ export async function generateDeploymentScripts(context: IActionContext, project
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const connectionsJson = await getConnectionsJson(projectPath);
-    if (isEmptyString(connectionsJson)) {
-      return;
-    }
-
-    const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+    const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
 
     if (!isParameterized) {
