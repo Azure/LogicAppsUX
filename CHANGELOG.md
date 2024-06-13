@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.29.0](https://github.com/Azure/LogicAppsUX/compare/v4.28.0...v4.29.0) (2024-06-13)
+
+
+### Features
+
+* **designer:** [CredentialMapping] Updating the schema ([#4965](https://github.com/Azure/LogicAppsUX/issues/4965)) ([ccb2693](https://github.com/Azure/LogicAppsUX/commit/ccb2693fd944fe29b446362619429fe24ca14882))
+* **Vscode Data Mapper:** Fetch Workspace File System in Tree Structure ([#4970](https://github.com/Azure/LogicAppsUX/issues/4970)) ([f7b32bd](https://github.com/Azure/LogicAppsUX/commit/f7b32bd4dd169392bd837b47b10b4a7978cd62a3))
+
+
+### Bug Fixes
+
+* **designer:** Prevent parent node from being dragged below dependent node ([#4973](https://github.com/Azure/LogicAppsUX/issues/4973)) ([a29916d](https://github.com/Azure/LogicAppsUX/commit/a29916d41fb6b4cd9849c032f5e44efb15933caf))
+
 ## [4.28.0](https://github.com/Azure/LogicAppsUX/compare/v4.27.0...v4.28.0) (2024-06-12)
 
 
