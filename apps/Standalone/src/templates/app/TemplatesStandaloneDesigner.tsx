@@ -6,12 +6,11 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-// import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
+import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
-import { isSuccessResponse } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -20,7 +19,7 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
@@ -33,10 +32,10 @@ export const TemplatesStandaloneDesigner = () => {
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
-    // const callBack = () => {
-    //   console.log('Created workflow, TODO: now redirect');
-    //   navigate('/');
-    // };
+    const callBack = () => {
+      console.log('Created workflow, TODO: now redirect');
+      navigate('/');
+    };
     if (appId) {
       if (isConsumption) {
         console.log('Consumption is not ready yet!');
@@ -77,19 +76,25 @@ export const TemplatesStandaloneDesigner = () => {
           kind: workflowKind,
         };
 
+        const getExistingParametersData = async () => {
+          try {
+            const response = await axios.get(
+              `https://management.azure.com${appId}/hostruntime/admin/vfs/parameters.json?api-version=2018-11-01&relativepath=1`,
+              {
+                headers: {
+                  'If-Match': '*',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${environment.armToken}`,
+                },
+              }
+            );
+            return response.data as ParametersData;
+          } catch (error: any) {
+            return error?.response?.status === 404 ? {} : undefined;
+          }
+        };
         try {
-          const response = await axios.get(
-            `https://management.azure.com/subscriptions/${appId}/resourceGroups/RapidUpdateUD0LogicApps/providers/Microsoft.Web/sites/PreRapidUpdateSignoff3/hostruntime/admin/vfs/parameters.json?api-version=2018-11-01&relativepath=1`,
-            {
-              headers: {
-                'If-Match': '*',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${environment.armToken}`,
-              },
-            }
-          );
-
-          const existingParametersData = response.status === 404 ? {} : isSuccessResponse(response.status) ? response.data : undefined;
+          const existingParametersData = await getExistingParametersData();
 
           if (!existingParametersData) {
             alert('Error fetching parameters');
@@ -98,24 +103,24 @@ export const TemplatesStandaloneDesigner = () => {
 
           const updatedParametersData: ParametersData = {
             ...existingParametersData,
-            sanitizedParameterData,
+            ...sanitizedParameterData,
           };
 
-          console.log('---updatedParametersData: ', workflowNameToUse, workflow, updatedParametersData);
+          // console.log('---updatedParametersData: ', workflowNameToUse, workflow, updatedParametersData);
 
-          // await saveWorkflowStandard(
-          //   appId,
-          //   workflowNameToUse,
-          //   workflow,
-          //   undefined,
-          //   updatedParametersData,
-          //   undefined,
-          //   undefined,
-          //   callBack,
-          //   true
-          // );
+          await saveWorkflowStandard(
+            appId,
+            workflowNameToUse,
+            workflow,
+            undefined,
+            updatedParametersData,
+            undefined,
+            undefined,
+            callBack,
+            true
+          );
         } catch (error) {
-          console.log(error);
+          console.log('---', error);
         }
       }
     } else {
