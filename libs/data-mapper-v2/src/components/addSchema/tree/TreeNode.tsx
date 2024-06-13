@@ -77,17 +77,37 @@ export const TreeNode = (props: TreeNodeProps) => {
     );
   }, [nodeId, node, dispatch]);
 
-  useEffect(() => {
+  const updateNodePosition = useCallback(() => {
     if (nodeRef?.current && isInViewPort && canvasBounds) {
       addNodeToFlow(nodeRef.current, canvasBounds);
     } else {
       removeNodeFromFlow();
     }
+  }, [nodeRef, isInViewPort, canvasBounds, addNodeToFlow, removeNodeFromFlow]);
+
+  const nodeObserver = useMemo(
+    () =>
+      new MutationObserver(() => {
+        updateNodePosition();
+      }),
+    [updateNodePosition]
+  );
+
+  useEffect(() => {
+    if (nodeRef?.current) {
+      updateNodePosition();
+      nodeObserver.observe(nodeRef.current, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      });
+    }
 
     return () => {
       removeNodeFromFlow();
+      nodeObserver.disconnect();
     };
-  }, [nodeRef, isInViewPort, canvasBounds, addNodeToFlow, removeNodeFromFlow]);
+  }, [nodeRef, removeNodeFromFlow, nodeObserver, updateNodePosition]);
   return (
     <TreeItemLayout
       className={mergeClasses(isLeaf ? '' : styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}

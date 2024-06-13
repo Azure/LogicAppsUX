@@ -1,9 +1,10 @@
 import { type SchemaExtended, SchemaType, type SchemaNodeExtended, equals } from '@microsoft/logic-apps-shared';
 import { Tree, TreeItem, mergeClasses, type TreeItemOpenChangeData } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { TreeNode } from './TreeNode';
 import { useIntl } from 'react-intl';
+import { flattenSchemaIntoSortArray } from '../../../utils/Schema.Utils';
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
@@ -12,10 +13,16 @@ export type SchemaTreeProps = {
 
 export const SchemaTree = (props: SchemaTreeProps) => {
   const styles = useStyles();
-  const { schemaType } = props;
+  const {
+    schemaType,
+    schema: { schemaTreeRoot },
+  } = props;
+
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
-  const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({});
+  const [refreshTree, setRefreshTree] = useState(false);
+  const [scehmaTree, setSchemaTree] = useState<React.ReactElement>();
   const intl = useIntl();
+  const treeRef = useRef<HTMLDivElement | null>(null);
 
   const treeAriaLabel = intl.formatMessage({
     defaultMessage: 'Schema tree',
@@ -23,65 +30,87 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     description: 'tree showing schema nodes',
   });
 
-  const onOpenTreeItem = (_event: any, data: TreeItemOpenChangeData) => {
-    setOpenKeys((prev) => ({
-      ...prev,
-      [data.value]: !prev[data.value],
-    }));
-  };
+  const onOpenTreeItem = useCallback(
+    (_event: any, _data: TreeItemOpenChangeData) => {
+      setRefreshTree(true);
+    },
+    [setRefreshTree]
+  );
 
-  useEffect(() => {
-    const openKeys: Record<string, boolean> = {};
-
-    const setDefaultState = (root: SchemaNodeExtended) => {
-      if (root.children.length > 0) {
-        openKeys[root.key] = true;
+  const displaySchemaTree = useCallback(
+    (root: SchemaNodeExtended) => {
+      if (root.children.length === 0) {
+        return (
+          <TreeItem itemType="leaf" id={root.key}>
+            <TreeNode
+              node={root}
+              isLeftDirection={isLeftDirection}
+              id={root.key}
+              text={root.name}
+              isHovered={false}
+              isAdded={false}
+              isLeaf={true}
+            />
+          </TreeItem>
+        );
       }
 
-      for (const child of root.children) {
-        setDefaultState(child);
-      }
-    };
-
-    setDefaultState(props.schema.schemaTreeRoot);
-    setOpenKeys(openKeys);
-  }, [props.schema]);
-
-  const displaySchemaTree = (root: SchemaNodeExtended) => {
-    if (root.children.length === 0) {
       return (
-        <TreeItem itemType="leaf" id={root.key}>
-          <TreeNode
-            node={root}
-            isLeftDirection={isLeftDirection}
-            id={root.key}
-            text={root.name}
-            isHovered={false}
-            isAdded={false}
-            isLeaf={true}
-          />
+        <TreeItem itemType="branch" id={root.key} value={root.key}>
+          <TreeNode node={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />
+          <Tree aria-label="sub-tree">
+            {root.children.map((child: SchemaNodeExtended, index: number) => (
+              <span key={`tree-${child.key}-${index}`}>{displaySchemaTree(child)}</span>
+            ))}
+          </Tree>
         </TreeItem>
       );
+    },
+    [isLeftDirection]
+  );
+
+  const updateSchemaTree = useCallback(() => {
+    const tree = displaySchemaTree(schemaTreeRoot);
+    setSchemaTree(tree);
+  }, [schemaTreeRoot, setSchemaTree, displaySchemaTree]);
+
+  const treeObserver = useMemo(() => new MutationObserver(updateSchemaTree), [updateSchemaTree]);
+
+  useEffect(() => {
+    updateSchemaTree();
+  }, [schemaTreeRoot, updateSchemaTree]);
+
+  useEffect(() => {
+    if (treeRef.current) {
+      treeObserver.observe(treeRef?.current, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+      });
     }
 
-    return (
-      <TreeItem itemType="branch" open={openKeys[root.key]} id={root.key} value={root.key} onOpenChange={onOpenTreeItem}>
-        <TreeNode node={root} isLeftDirection={isLeftDirection} id={root.key} text={root.name} isHovered={false} isAdded={false} />
-        <Tree aria-label="sub-tree">
-          {root.children.map((child: SchemaNodeExtended, index: number) => (
-            <span key={`tree-${child.key}-${index}`}>{displaySchemaTree(child)}</span>
-          ))}
-        </Tree>
-      </TreeItem>
-    );
-  };
+    return () => {
+      treeObserver.disconnect();
+    };
+  }, [treeObserver, treeRef]);
 
-  return props.schema.schemaTreeRoot ? (
+  useEffect(() => {
+    if (refreshTree) {
+      console.log('We are here');
+      updateSchemaTree();
+      setRefreshTree(false);
+    }
+  }, [refreshTree, updateSchemaTree, setRefreshTree]);
+
+  return schemaTreeRoot ? (
     <Tree
+      ref={treeRef}
       className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
       aria-label={treeAriaLabel}
+      defaultOpenItems={flattenSchemaIntoSortArray(schemaTreeRoot)}
+      onOpenChange={onOpenTreeItem}
     >
-      {displaySchemaTree(props.schema.schemaTreeRoot)}
+      {scehmaTree}
     </Tree>
   ) : (
     <></>
