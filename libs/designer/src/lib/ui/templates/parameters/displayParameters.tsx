@@ -29,36 +29,15 @@ export const DisplayParameters = () => {
     }
 
     return (
-      <div key={item?.name} className="msla-workflow-parameter">
+      <div key={item?.name} className="msla-templates-parameters">
         <div>
-        <TemplatesParameterField
+          <TemplatesParameterField
             name={item?.name}
             definition={{ id: item?.name ?? 'id', ...item }}
-            validationErrors={{
-              value: validationErrors[item?.name ?? ''],
-            }}
-            // setName={() => {}}
+            validationError={validationErrors[item?.name ?? '']}
             onChange={onUpdateParameterValue}
-            // isEditable={{
-            //   value: true,
-            // }}
             required={item?.required ?? false}
           />
-          {/* <WorkflowparameterField
-            name={item?.name}
-            definition={{ id: item?.name ?? 'id', ...item }}
-            validationErrors={{
-              value: validationErrors[item?.name ?? ''],
-            }}
-            setName={() => {}}
-            onChange={onUpdateParameterValue}
-            isEditable={{
-              value: true,
-            }}
-            required={{
-              value: item?.required ?? false,
-            }}
-          /> */}
         </div>
       </div>
     );
@@ -67,7 +46,7 @@ export const DisplayParameters = () => {
   return (
     <>
       <XLargeText text={titleText} />
-      <div className="msla-workflow-parameters">
+      <div className="msla-templates-parameters">
         {parametersDefinition.length ? (
           <List items={parametersDefinition} onRenderCell={renderParameter} />
         ) : (
@@ -77,4 +56,4 @@ export const DisplayParameters = () => {
     </>
   );
 };
-0
+0;

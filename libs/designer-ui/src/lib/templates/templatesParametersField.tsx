@@ -1,10 +1,8 @@
-// import Constants from '../constants';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
-import {  TextField } from '@fluentui/react';
+import { TextField } from '@fluentui/react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
-// import { SmallText } from '../text';
 import { Label } from '../label';
 import type { EventHandler } from '../eventhandler';
 
@@ -28,18 +26,6 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
 };
 
-// const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
-//   root: fieldStyles,
-//   fieldGroup: {
-//     borderColor: Constants.FIELD_GROUP_BORDER_COLOR_WARNING,
-//     selectors: {
-//       '&:hover': {
-//         borderColor: Constants.FIELD_GROUP_BORDER_COLOR_WARNING,
-//       },
-//     },
-//   },
-// };
-
 const NAME_KEY = 'name';
 const DESCRIPTION_KEY = 'description';
 const VALUE_KEY = 'value';
@@ -47,7 +33,6 @@ const VALUE_KEY = 'value';
 interface ParameterFieldDetails {
   name: string;
   value: string;
-  // defaultValue?: string;
   type: string;
   description?: string;
 }
@@ -58,7 +43,6 @@ export interface TemplatesParameterDefinition {
   isEditable?: boolean;
   name?: string;
   type: string;
-  // defaultValue?: string;
   required?: boolean;
   description?: string;
 }
@@ -74,41 +58,32 @@ export type TemplatesParameterUpdateHandler = EventHandler<TemplatesParameterUpd
 export interface TemplatesParameterFieldProps {
   name?: string;
   definition: TemplatesParameterDefinition;
-  validationErrors?: Record<string, string | undefined>;
-  // setName: (value: string | undefined | ((prevVar: string | undefined) => string)) => void;
+  validationError: string | undefined;
   onChange?: TemplatesParameterUpdateHandler;
   useLegacy?: boolean;
   isReadOnly?: boolean;
-  // isEditable?: boolean | Record<string, boolean>;
   required?: boolean;
 }
 
 export const TemplatesParameterField = ({
   name,
   definition,
-  validationErrors,
-  // setName,
+  validationError,
   onChange,
-  // isEditable,
   required = true,
   isReadOnly,
   useLegacy,
 }: TemplatesParameterFieldProps): JSX.Element => {
-  // const [type, setType] = useState(definition.type);
   const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value));
-  // const [defaultValue, setDefaultValue] = useState<string | undefined>(stringifyValue(definition.defaultValue));
-
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
     name: `${definition.id}-${NAME_KEY}`,
     value: `${definition.id}-${VALUE_KEY}`,
     description: `${definition.id}-${DESCRIPTION_KEY}`,
-    // defaultValue: `${definition.id}-default-${VALUE_KEY}`,
     type: `${definition.id}-type`,
   };
 
-  const errors = validationErrors ? validationErrors : {};
   const valueTitle = intl.formatMessage({
     defaultMessage: 'Value',
     id: 'ClZW2r',
@@ -129,12 +104,12 @@ export const TemplatesParameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { 
-        ...definition, 
-        name, 
-        // type, 
-        value, 
-        // defaultValue 
+      newDefinition: {
+        ...definition,
+        name,
+        // type,
+        value,
+        // defaultValue
       },
       useLegacy,
     });
@@ -143,14 +118,14 @@ export const TemplatesParameterField = ({
   return (
     <>
       {/* TODO: show isrequired */}
-      <div className="msla-workflow-parameter-field">
-        <Text className="msla-workflow-parameter-read-only">{definition.name}</Text>
+      <div className="msla-templates-parameter-field">
+        <Text className="msla-templates-parameter-read-only">{definition.name}</Text>
       </div>
-      <div className="msla-workflow-parameter-field">
-        <Text className="msla-workflow-parameter-read-only">{definition.description}</Text>
+      <div className="msla-templates-parameter-field">
+        <Text className="msla-templates-parameter-read-only">{definition.description}</Text>
       </div>
 
-      <div className="msla-workflow-parameter-field">
+      <div className="msla-templates-parameter-field">
         <Label
           styles={labelStyles}
           text={`${valueTitle} (${definition.type})`}
@@ -163,7 +138,7 @@ export const TemplatesParameterField = ({
           ariaLabel={valueTitle}
           placeholder={valueDescription}
           value={value}
-          errorMessage={errors[VALUE_KEY]}
+          errorMessage={validationError}
           styles={textFieldStyles}
           onChange={onValueChange}
           disabled={isReadOnly}
