@@ -3,9 +3,9 @@
   "ado": {
     "organization": "msazure",
     "project": "one",
-    "wit": "Task",
+    "wit": "Bug",
     "states": {
-      "new": "To Do",
+      "new": "New",
       "closed": "Done",
       "reopened": "Active",
       "deleted": "Removed",
