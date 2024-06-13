@@ -2,7 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitignoreFileName, hostFileName, localSettingsFileName, logicAppKind, workerRuntimeKey } from '../../../../constants';
+import {
+  ProjectDirectoryPath,
+  appKindSetting,
+  azureWebJobsStorageKey,
+  gitignoreFileName,
+  hostFileName,
+  localSettingsFileName,
+  logicAppKind,
+  workerRuntimeKey,
+} from '../../../../constants';
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
 import { getFunctionsWorkerRuntime } from '../../../utils/vsCodeConfig/settings';
@@ -47,9 +56,9 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
         Values: {
-          AzureWebJobsStorage: '',
-          APP_KIND: logicAppKind,
-          ProjectDirectoryPath: path.join(context.projectPath),
+          [azureWebJobsStorageKey]: '',
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPath]: path.join(context.projectPath),
         },
       };
 
