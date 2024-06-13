@@ -4,7 +4,7 @@ import reducer, {
   initializeNodes,
   initializeOperationInfo,
 } from '../../operation/operationMetadataSlice';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, beforeEach, test, expect } from 'vitest';
 
 describe('operationMetadataSlice', () => {
   let initialState: OperationMetadataState;
