@@ -31,6 +31,7 @@ import {
   LogEntryLevel,
   LoggerService,
 } from '@microsoft/logic-apps-shared';
+import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -68,6 +69,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
+  const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
   const upstreamScopeArr = useAllGraphParents(graphId);
   const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
   useOnViewportChange({
@@ -208,6 +210,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             return false;
           }
         }
+
+        for (const node of upstreamNodes) {
+          if (upstreamNodesDependencies[node].has(item.id) || upstreamNodesDependencies[item.id].has(node)) {
+            return false;
+          }
+        }
         // TODO: Support preventing moving a node below downstream output
         // TODO: Support calculating dependencies when dragging of scopes
         return item.id !== childId && item.id !== parentId;
@@ -217,7 +225,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         canDrop: monitor.isOver() && monitor.canDrop(), // Only calculate canDrop when isOver is true
       }),
     }),
-    [graphId, parentId, childId, upstreamNodes]
+    [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies]
   );
 
   const parentName = useNodeDisplayName(parentId);

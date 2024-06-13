@@ -131,6 +131,36 @@ export const useTokenDependencies = (nodeId: string) => {
   }, [operationInputParameters]);
 };
 
+export const useNodesTokenDependencies = (nodes: Set<string>) => {
+  const operationsInputsParameters = useOperationsInputParameters();
+  const dependencies: Record<string, Set<string>> = {};
+  if (!operationsInputsParameters) {
+    return dependencies;
+  }
+  for (const node of nodes) {
+    const operationInputParameters = getRecordEntry(operationsInputsParameters, node);
+    if (operationInputParameters) {
+      const innerDependencies = new Set<string>();
+      for (const group of Object.values(operationInputParameters.parameterGroups)) {
+        for (const parameter of group.parameters) {
+          for (const value of parameter.value) {
+            if (value.token?.actionName) {
+              innerDependencies.add(value.token.actionName);
+            }
+            if (value.token?.arrayDetails?.loopSource) {
+              innerDependencies.add(value.token.arrayDetails.loopSource);
+            }
+          }
+        }
+      }
+      dependencies[node] = innerDependencies;
+    } else {
+      dependencies[node] = new Set();
+    }
+  }
+  return dependencies;
+};
+
 export const useAllOperationErrors = () => useSelector(createSelector(getOperationState, (state) => state.errors));
 
 export const useParameterValidationErrors = (nodeId: string) => {
