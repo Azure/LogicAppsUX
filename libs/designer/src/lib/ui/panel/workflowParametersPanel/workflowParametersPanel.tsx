@@ -6,7 +6,7 @@ import {
   useWorkflowParameters,
   useWorkflowParameterValidationErrors,
 } from '../../../core/state/workflowparameters/workflowparametersselector';
-import type { CommonPanelProps, TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
 
@@ -19,7 +19,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
 
   const onWorkflowParameterAdd = () => dispatch(addParameter());
   const onDeleteWorkflowParameter = (event: { id: string }) => dispatch(deleteWorkflowParameter(event.id));
-  const onUpdateParameter = (event: TemplatesParameterUpdateEvent) => dispatch(updateParameter(event));
+  const onUpdateParameter = (event: WorkflowParameterUpdateEvent) => dispatch(updateParameter(event));
 
   return (
     <WorkflowParameters
