@@ -1,19 +1,15 @@
-import reducer, { OperationMetadataState, initializeOperationInfo } from '../../operation/operationMetadataSlice';
+import reducer, {
+  NodeData,
+  OperationMetadataState,
+  initializeNodes,
+  initializeOperationInfo,
+} from '../../operation/operationMetadataSlice';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-
-const test2 = {
-  id: 'manual',
-  connectorId: 'connectionProviders/request',
-  operationId: 'request',
-  type: 'Request',
-  kind: 'Http',
-};
 
 describe('operationMetadataSlice', () => {
   let initialState: OperationMetadataState;
 
   beforeEach(() => {
-    // Runs before each test
     initialState = {
       operationInfo: {},
       inputParameters: {},
@@ -52,5 +48,20 @@ describe('operationMetadataSlice', () => {
       type: action.type,
       kind: action.kind,
     });
+  });
+
+  test('should initialize nodes status to true and nodes data remain the same when there are no nodes', () => {
+    const nodes: Array<NodeData | undefined> = [];
+    const updatedState = reducer(initialState, initializeNodes(nodes));
+    expect(updatedState.operationInfo).toEqual(initialState.operationInfo);
+    expect(updatedState.inputParameters).toEqual(initialState.inputParameters);
+    expect(updatedState.outputParameters).toEqual(initialState.outputParameters);
+    expect(updatedState.loadStatus.nodesInitialized).toEqual(true);
+  });
+
+  test('should stay the nodes initialized load status as false when any node is set as undefined', () => {
+    const nodes: Array<NodeData | undefined> = [undefined, undefined];
+    const updatedState = reducer(initialState, initializeNodes(nodes));
+    expect(updatedState.loadStatus.nodesInitialized).toEqual(false);
   });
 });
