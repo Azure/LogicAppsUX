@@ -17,8 +17,7 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   return isLoading ? null : <>{children}</>;
 };
 export const TemplatesStandaloneDesigner = () => {
-  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, isConsumption, workflowName: existingWorkflowName, theme } = useSelector((state: RootState) => state.workflowLoader);
   const navigate = useNavigate();
 
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
