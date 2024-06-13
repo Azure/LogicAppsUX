@@ -17,6 +17,7 @@ import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../c
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
 import { CodeView } from '../components/codeView/CodeView';
+import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -33,6 +34,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
   const dispatch = useDispatch<AppDispatch>();
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [allNodes, setAllNodes] = useState<Node[]>([]);
 
   const updateCanvasBounds = useCallback(() => {
     if (ref?.current) {
@@ -46,13 +48,24 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     InitDataMapperFileService(fileService);
   }
 
-  const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+
+  useEffect(() => {
+    const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
+      id: node[1].key,
+      type: 'functionNode',
+      data: {},
+      position: node[1].position || { x: 0, y: 0 },
+    }));
+    setAllNodes(nodes.concat(newNodes));
+  }, [nodes, functionNodes])
+
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
   const nodeTypes = useMemo(
     () => ({
       schemaNode: SchemaNode,
-    }),
+      functionNode: FunctionNode    }),
     []
   );
 
@@ -166,15 +179,8 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
           x: xyPosition.x,
           y: xyPosition.y,
         });
-
-        const newNode = {
-          id: 'abc',
-          position,
-          data: { label: `${'abc'} node` },
-        };
-        return newNode;
+        return { position };
       }
-      return 'nope'
       }
     }));
 

@@ -25,7 +25,7 @@ import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, Edge } from 'reactflow';
+import type { Node, Edge, XYPosition } from 'reactflow';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 
 export interface DataMapState {
@@ -248,7 +248,6 @@ export const dataMapSlice = createSlice({
     },
     
     addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
-      if (state.curDataMapOperation.currentTargetSchemaNode) {
         const newState: DataMapOperationState = {
           ...state.curDataMapOperation,
           functionNodes: { ...state.curDataMapOperation.functionNodes },
@@ -273,7 +272,6 @@ export const dataMapSlice = createSlice({
         createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
 
         doDataMapOperation(state, newState, 'Add function node');
-      }
     },
 
     saveDataMap: (
@@ -291,6 +289,18 @@ export const dataMapSlice = createSlice({
       }
       state.pristineDataMap = state.curDataMapOperation;
       state.isDirty = false;
+    },
+
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: XYPosition}>) => {
+      const newOp = { ...state.curDataMapOperation };
+      const node = newOp.functionNodes[action.payload.id];
+      if (!node) {
+        return;
+      }
+      let position = node.position;
+      newOp.functionNodes[action.payload.id].position = position;
+
+      state.curDataMapOperation = newOp;
     },
 
     updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
@@ -565,7 +575,7 @@ export const assignFunctionNodePositionsFromMetadata = (
     // assign position data to function in store
     functions[key] = {
       ...functions[key],
-      positions: matchingMetadata?.positions,
+      position: matchingMetadata?.position,
     };
   });
   return functions;

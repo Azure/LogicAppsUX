@@ -8,6 +8,7 @@ import { AddRegular } from '@fluentui/react-icons';
 import { useDrag } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { addFunctionNode } from '../../core/state/DataMapSlice';
+import type { XYPosition } from 'reactflow';
 
 interface FunctionListItemProps {
   functionData: FunctionData;
@@ -23,12 +24,11 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
     item:  functionData.key,
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult<{
-        graphId: string;
-        parentId: string;
-        childId: string;
-      }>();
+        position: XYPosition
+      } | undefined>();
       if (item && dropResult) {
         console.log(JSON.stringify(dropResult))
+        functionData.position = dropResult.position;
         dispatch(
           addFunctionNode(functionData)
         );

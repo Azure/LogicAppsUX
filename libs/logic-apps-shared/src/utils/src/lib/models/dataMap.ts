@@ -15,6 +15,14 @@ export interface FunctionMetadata {
   connectionShorthand: string;
 }
 
+export interface FunctionMetadataV1 {
+  reactFlowGuid: string;
+  functionKey: string;
+  positions: FunctionPositionMetadata[];
+  connections: ConnectionAndOrder[];
+  connectionShorthand: string;
+}
+
 export interface ConnectionAndOrder {
   name: string;
   inputOrder: number;
@@ -37,4 +45,7 @@ export interface ITreeFile {
   name: string;
   type: 'file';
   fullPath?: string;
+}
+export interface MapMetadataV1 {
+  functionNodes: FunctionMetadataV1[];
 }

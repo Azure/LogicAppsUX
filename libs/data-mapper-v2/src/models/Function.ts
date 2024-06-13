@@ -1,5 +1,5 @@
+import type { XYPosition } from 'reactflow';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import type { FunctionPositionMetadata } from '@microsoft/logic-apps-shared';
 import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/logic-apps-shared';
 
 export interface FunctionManifest {
@@ -10,7 +10,7 @@ export interface FunctionManifest {
 export interface FunctionData {
   key: string;
   functionName: string;
-  positions?: FunctionPositionMetadata[];
+  position?: XYPosition;
 
   maxNumberOfInputs: number; // -1 for unlimited
   inputs: FunctionInput[];

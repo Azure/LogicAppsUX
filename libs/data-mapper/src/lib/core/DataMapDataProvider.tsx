@@ -7,7 +7,7 @@ import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } 
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import type { MapMetadata, MapDefinitionEntry, DataMapSchema } from '@microsoft/logic-apps-shared';
+import type { MapMetadataV1, MapDefinitionEntry, DataMapSchema } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect, useMemo } from 'react';
@@ -17,7 +17,7 @@ export interface DataMapDataProviderProps {
   xsltFilename?: string;
   xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
-  dataMapMetadata?: MapMetadata;
+  dataMapMetadataV1?: MapMetadataV1;
   sourceSchema?: DataMapSchema;
   targetSchema?: DataMapSchema;
   availableSchemas?: string[];
@@ -31,7 +31,7 @@ const DataProviderInner = ({
   xsltFilename,
   xsltContent,
   mapDefinition,
-  dataMapMetadata,
+  dataMapMetadataV1,
   sourceSchema,
   targetSchema,
   availableSchemas,
@@ -68,11 +68,11 @@ const DataProviderInner = ({
           sourceSchema: extendedSourceSchema,
           targetSchema: extendedTargetSchema,
           dataMapConnections: connections,
-          metadata: dataMapMetadata,
+          metadata: dataMapMetadataV1,
         })
       );
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadata]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadataV1]);
 
   useEffect(() => {
     if (extendedSourceSchema) {
