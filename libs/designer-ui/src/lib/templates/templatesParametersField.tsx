@@ -27,17 +27,6 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
 };
 
-const NAME_KEY = 'name';
-const DESCRIPTION_KEY = 'description';
-const VALUE_KEY = 'value';
-
-interface ParameterFieldDetails {
-  name: string;
-  value: string;
-  type: string;
-  description?: string;
-}
-
 export interface TemplatesParameterUpdateEvent {
   newDefinition: Template.ParameterDefinition;
   useLegacy?: boolean;
@@ -65,12 +54,7 @@ export const TemplatesParameterField = ({
   const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value));
   const intl = useIntl();
 
-  const parameterDetails: ParameterFieldDetails = {
-    name: `${definition.name}-${NAME_KEY}`,
-    value: `${definition.name}-${VALUE_KEY}`,
-    description: `${definition.name}-${DESCRIPTION_KEY}`,
-    type: `${definition.name}-type`,
-  };
+  const parameterValueId = `${definition.name}-value`;
 
   const valueTitle = intl.formatMessage({
     defaultMessage: 'Value',
@@ -101,24 +85,18 @@ export const TemplatesParameterField = ({
 
   return (
     <>
-      {/* TODO: show isrequired */}
-      <div className="msla-templates-parameters-heading">
-        <Text className="msla-templates-parameters-read-only">{definition.displayName}</Text>
+      <div className="msla-templates-parameter-heading">
+        <Label className="msla-templates-parameter-heading-text" text={definition.displayName} isRequiredField={required} />
       </div>
-      <div className="msla-templates-parameter-field">
-        <Text className="msla-templates-parameter-read-only">{definition.description}</Text>
+      <div className="msla-templates-parameter-description">
+        <Text className="msla-templates-parameter-description-text">{definition.description}</Text>
       </div>
 
       <div className="msla-templates-parameter-field">
-        <Label
-          styles={labelStyles}
-          text={`${valueTitle} (${definition.type})`}
-          isRequiredField={required}
-          htmlFor={parameterDetails.value}
-        />
+        <Label styles={labelStyles} text={`${valueTitle} (${definition.type})`} htmlFor={parameterValueId} />
         <TextField
-          data-testid={parameterDetails.value}
-          id={parameterDetails.value}
+          data-testid={parameterValueId}
+          id={parameterValueId}
           ariaLabel={valueTitle}
           placeholder={valueDescription}
           value={value}

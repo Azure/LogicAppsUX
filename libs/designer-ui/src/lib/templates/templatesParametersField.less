@@ -3,80 +3,31 @@
   flex-direction: column;
   gap: 16px;
 
-  .msla-templates-parameters-description {
-    margin-top: 16px; 
-    margin-bottom: 16px; 
-  }
-
-  .msla-templates-parameters-description-text {
-    font-size: 13px;
-    line-height: 18px;
-  }
-
-  .msla-templates-parameters-heading {
-    margin-bottom: 8px;;
+  .msla-templates-parameter-heading {
+    margin-bottom: 8px;
   }
 
   .msla-templates-parameter-heading-text {
-    padding-left: 10px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .msla-templates-parameter-description {
+    margin-bottom: 16px;
+  }
+
+  .msla-templates-parameter-description-text {
+    font-size: 13px;
+    color: @ms-color-neutralLight;
   }
 
   .ms-List-cell {
     padding-bottom: 16px;
   }
 
-  .msla-templates-parameter {
-    display: flex;
-    gap: 8px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #9e9e9e;
-
-    & > div:first-child {
-      flex-grow: 1;
-    }
-  }
-
-  .msla-templates-parameters-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 8%;
-    margin-bottom: 30px;
-  }
-
-  .msla-templates-parameters-error {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .msla-theme-dark {
-    .msla-templates-parameters-text {
-      color: @ms-color-themePrimary;
-    }
-  }
-
-  .msla-templates-parameter-read-only {
-    vertical-align: sub;
-  }
-
-  .msla-templates-parameters-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 8%;
-    margin-bottom: 30px;
-  }
-
   .msla-templates-parameter-field {
-    padding: 10px 0px 0px 10px;
     display: flex;
     min-height: 24px;
-  }
-
-  .msla-templates-parameter-value-field {
-    padding: 10px 0px 10px 10px;
-    display: flex;
-    align-items: flex-start;
   }
 
   *.ms-Button {
