@@ -54,7 +54,7 @@ export const TemplatesStandaloneDesigner = () => {
         //   }
         // }, workflow);
       } else {
-        const sanitizedWorkflowDefinition = workflowDefinition;
+        let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
         const sanitizedParameterData: ParametersData = {};
 
         // Sanitizing parameter name & body
@@ -67,10 +67,14 @@ export const TemplatesStandaloneDesigner = () => {
             allowedValues: parameter?.allowedValues,
             value: parameter?.value ?? parameter?.default,
           };
+          sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
+            `@parameters('${parameter.name}')`,
+            `@parameters('${sanitizedParameterName}')`
+          );
         });
 
         const workflow = {
-          definition: sanitizedWorkflowDefinition,
+          definition: JSON.parse(sanitizedWorkflowDefinitionString),
           connectionReferences: undefined, //TODO: change this after connections is done
           parameters: sanitizedParameterData,
           kind: workflowKind,
@@ -105,9 +109,6 @@ export const TemplatesStandaloneDesigner = () => {
             ...existingParametersData,
             ...sanitizedParameterData,
           };
-
-          // console.log('---updatedParametersData: ', workflowNameToUse, workflow, updatedParametersData);
-
           await saveWorkflowStandard(
             appId,
             workflowNameToUse,
@@ -120,7 +121,7 @@ export const TemplatesStandaloneDesigner = () => {
             true
           );
         } catch (error) {
-          console.log('---', error);
+          console.log(error);
         }
       }
     } else {
