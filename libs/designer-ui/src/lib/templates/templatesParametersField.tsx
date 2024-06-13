@@ -97,7 +97,7 @@ export const TemplatesParameterField = ({
         <TextField
           data-testid={parameterValueId}
           id={parameterValueId}
-          ariaLabel={valueTitle}
+          ariaLabel={`${valueTitle} (${definition.type})`}
           placeholder={valueDescription}
           value={value}
           errorMessage={validationError}
