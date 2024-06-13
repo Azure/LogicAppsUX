@@ -318,10 +318,11 @@ export class SchemaProcessor {
       const name = this._getName() as string;
       const dynamicValues = getParameterDynamicValues(schema);
       const key = keyPrefix || this.options.keyPrefix || '$';
+      const description = schema.description;
       schemaProperties.push({
         alias: schema[SwaggerConstants.ExtensionProperties.Alias],
         default: schema.default,
-        description: schema.description,
+        description: description,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
         editor: getEditorForParameter(schema, dynamicValues),
@@ -343,7 +344,8 @@ export class SchemaProcessor {
           schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
           this.options.currentKey as string,
           key,
-          name
+          name,
+          description
         ),
         type: SwaggerConstants.Types.Object,
         visibility: this._getVisibility(schema),
@@ -493,7 +495,8 @@ export class SchemaProcessor {
       schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
       this.options.currentKey as string,
       keyPrefix,
-      name as string
+      name as string,
+      schema.description
     );
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
@@ -557,7 +560,7 @@ export class SchemaProcessor {
     return summaryPrefix && summaryText ? `${summaryPrefix} ${summaryText}` : summaryText;
   }
 
-  private _getTitle(title: string, key: string, keyPrefix: string, name: string): string {
+  private _getTitle(title: string, key: string, keyPrefix: string, name: string, description?: string): string {
     const intl = getIntl();
     const defaultItemTitle = intl.formatMessage({
       defaultMessage: 'Item',
@@ -568,7 +571,7 @@ export class SchemaProcessor {
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
         ? defaultItemTitle
-        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
+        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name, description) ?? key;
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

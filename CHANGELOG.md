@@ -1,4 +1,37 @@
 # Logic Apps Designer
+## [4.29.0](https://github.com/Azure/LogicAppsUX/compare/v4.28.0...v4.29.0) (2024-06-13)
+
+
+### Features
+
+* **designer:** [CredentialMapping] Updating the schema ([#4965](https://github.com/Azure/LogicAppsUX/issues/4965)) ([ccb2693](https://github.com/Azure/LogicAppsUX/commit/ccb2693fd944fe29b446362619429fe24ca14882))
+* **Vscode Data Mapper:** Fetch Workspace File System in Tree Structure ([#4970](https://github.com/Azure/LogicAppsUX/issues/4970)) ([f7b32bd](https://github.com/Azure/LogicAppsUX/commit/f7b32bd4dd169392bd837b47b10b4a7978cd62a3))
+
+
+### Bug Fixes
+
+* **designer:** Prevent parent node from being dragged below dependent node ([#4973](https://github.com/Azure/LogicAppsUX/issues/4973)) ([a29916d](https://github.com/Azure/LogicAppsUX/commit/a29916d41fb6b4cd9849c032f5e44efb15933caf))
+
+## [4.28.0](https://github.com/Azure/LogicAppsUX/compare/v4.27.0...v4.28.0) (2024-06-12)
+
+
+### Features
+
+* **Data Mapper:** Able to save data map ([#4950](https://github.com/Azure/LogicAppsUX/issues/4950)) ([9bfc3f0](https://github.com/Azure/LogicAppsUX/commit/9bfc3f0ec0f2f88e61d3f805369cd0b6eceb7c19))
+* **designer:** Data structure changes to template ([#4967](https://github.com/Azure/LogicAppsUX/issues/4967)) ([2999fe0](https://github.com/Azure/LogicAppsUX/commit/2999fe0a0a5e244ae1eff41232f3e20d7016c7bb))
+* **designer:** Update input token styling to increase size ([#4959](https://github.com/Azure/LogicAppsUX/issues/4959)) ([4731ac0](https://github.com/Azure/LogicAppsUX/commit/4731ac0ea6ab677e7f0389bbeaeeabb7d6b51806))
+* **Templates:** Deploy Create Workflow From Template Logic + Restructure + UI ([#4828](https://github.com/Azure/LogicAppsUX/issues/4828)) ([5441da6](https://github.com/Azure/LogicAppsUX/commit/5441da6c60c070d24feac73d14547535cf1f2ae1))
+
+
+### Bug Fixes
+
+* **Data Mapper:** styling the function panel ([#4935](https://github.com/Azure/LogicAppsUX/issues/4935)) ([529a6ce](https://github.com/Azure/LogicAppsUX/commit/529a6cea824c9eaaef109ec8367f8c13b7e7da4f))
+* **designer:** During load, if an array is surrounded by quotes, keep those quotes ([#4962](https://github.com/Azure/LogicAppsUX/issues/4962)) ([80835a5](https://github.com/Azure/LogicAppsUX/commit/80835a5a86826479f419ee44b981d411111bc2b7))
+* **designer:** Fix attachment wording ([#4949](https://github.com/Azure/LogicAppsUX/issues/4949)) ([8d5133e](https://github.com/Azure/LogicAppsUX/commit/8d5133e0f6eca2ece88c2f40f984a25c0b963981))
+* **Designer:** Fixed error log error object passing in `updateCallbackUrlInInputs` ([#4964](https://github.com/Azure/LogicAppsUX/issues/4964)) ([43643dc](https://github.com/Azure/LogicAppsUX/commit/43643dcdec7e5edf55159f419f3b7c8169b72d92))
+* **designer:** Trigger Body Output Fixes ([#4867](https://github.com/Azure/LogicAppsUX/issues/4867)) ([0564692](https://github.com/Azure/LogicAppsUX/commit/0564692019c125644ad56e6b11dcfac980857d01))
+* **vscode:** Add base path for svgs and remove duplicated code ([#4958](https://github.com/Azure/LogicAppsUX/issues/4958)) ([47cf368](https://github.com/Azure/LogicAppsUX/commit/47cf36846b3bd95133376c16c68562edef0dc8b8))
+
 ## [4.27.0](https://github.com/Azure/LogicAppsUX/compare/v4.26.0...v4.27.0) (2024-06-08)
 
 

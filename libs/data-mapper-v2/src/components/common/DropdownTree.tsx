@@ -2,7 +2,7 @@ import { Tree, TreeItem, TreeItemLayout, Text } from '@fluentui/react-components
 import { SearchBox } from '@fluentui/react';
 import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import type { IFileSysTreeItem } from 'models/Tree';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import useStyles from './styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
