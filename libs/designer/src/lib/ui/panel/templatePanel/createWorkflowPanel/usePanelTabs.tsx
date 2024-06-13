@@ -5,9 +5,7 @@ import { parametersTab } from './tabs/parametersTab';
 import { nameStateTab } from './tabs/nameStateTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
 
-export const usePanelTabs = (
-  // onCreateClick: () => Promise<void>
-) => {
+export const usePanelTabs = (onCreateClick: () => Promise<void>) => {
   const intl = useIntl();
 
   const connectionsTabItem = useMemo(
@@ -31,17 +29,11 @@ export const usePanelTabs = (
     [intl]
   );
 
-  // const reviewCreateTabItem = useMemo(
-  //   () => ({
-  //     ...reviewCreateTab(intl, onCreateClick),
-  //   }),
-  //   [intl, onCreateClick]
-  // );
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl),
+      ...reviewCreateTab(intl, onCreateClick),
     }),
-    [intl]
+    [intl, onCreateClick]
   );
 
   return [connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem];
