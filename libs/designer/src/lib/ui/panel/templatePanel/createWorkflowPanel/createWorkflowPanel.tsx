@@ -6,15 +6,10 @@ import type { SelectTabData } from '@fluentui/react-components';
 import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
 import { usePanelTabs } from './usePanelTabs';
 
-export const CreateWorkflowPanel = (
-  // { onCreateClick }: { onCreateClick: () => Promise<void> }
-) => {
+export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const panelTabs =
-    usePanelTabs(
-      // onCreateClick
-    );
+  const panelTabs = usePanelTabs(onCreateClick);
   const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId) ?? panelTabs[0]?.id;
 
   const intlText = {
