@@ -7,11 +7,11 @@ export default defineProject({
     alias: [
       {
         find: 'vscode',
-        replacement: `${__dirname}/__mocks__/vscode`,
+        replacement: `${__dirname}/node_modules/@types/vscode/index.d`,
       },
       {
         find: '@microsoft/vscode-azext-utils',
-        replacement: `${__dirname}/__mocks__/vscode`,
+        replacement: `${__dirname}/node_modules/@types/vscode/index.d`,
       },
     ],
   },
