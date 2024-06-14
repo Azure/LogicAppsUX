@@ -43,7 +43,7 @@ describe('templates/TemplatesDataProvider', () => {
       <ReactQueryProvider>
         <TemplatesDesignerProvider locale="en-US" theme={'light'}>
           <TemplatesDataProvider
-            resourceDetails={{subscriptionId: 'sub', resourceGroup: 'rg', location: 'us'}}
+            resourceDetails={{ subscriptionId: 'sub', resourceGroup: 'rg', location: 'us' }}
             isConsumption={false}
             existingWorkflowName={'workflowName'}
             services={{

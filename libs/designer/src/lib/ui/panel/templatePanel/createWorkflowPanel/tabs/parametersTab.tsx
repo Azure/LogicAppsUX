@@ -8,12 +8,7 @@ import { DisplayParameters } from '../../../../templates/parameters/displayParam
 export const ParametersPanel: React.FC = () => {
   const { parameters } = useSelector((state: RootState) => state.template);
 
-  return isNullOrUndefined(parameters) ? null : (
-    <div>
-      Parameters Tab Placeholder
-      {parameters ? <DisplayParameters /> : <>PLACEHOLDER: no parameters</>}
-    </div>
-  );
+  return isNullOrUndefined(parameters) ? null : <DisplayParameters />;
 };
 
 export const parametersTab = (intl: IntlShape) => ({

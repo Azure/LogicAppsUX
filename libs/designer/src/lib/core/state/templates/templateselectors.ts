@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import type { RootState } from "./store";
+import { useSelector } from 'react-redux';
+import type { RootState } from './store';
 
 export const useAreServicesInitialized = () => {
-    return useSelector((state: RootState) => state.template.servicesInitialized ?? false);
-  };
+  return useSelector((state: RootState) => state.template.servicesInitialized ?? false);
+};
