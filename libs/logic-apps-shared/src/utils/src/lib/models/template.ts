@@ -7,7 +7,8 @@ export interface Manifest {
   description: string;
   skus: SkuType[];
   kinds: WorkflowKindType[];
-  tags: Record<string, string>;
+  details: Record<string, string>;
+  tags?: string[];
   artifacts: Artifact[];
   images: Record<string, string>;
   prerequisites?: string;
@@ -34,6 +35,6 @@ export interface ParameterDefinition extends Parameter {
 }
 
 export interface Connection {
-  id: string;
+  connectorId: string;
   kind?: ConnectorRuntimeType;
 }

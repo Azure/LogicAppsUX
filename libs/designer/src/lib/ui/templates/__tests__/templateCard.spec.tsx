@@ -19,24 +19,15 @@ describe('ui/templates/templatesDesigner', () => {
       description: 'Template 1 Description',
       skus: ['standard'],
       kinds: ['stateful'],
+      images: {},
+      details: {},
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
-        {
-          type: 'description',
-          file: 'description.md',
-        },
       ],
-      connections: [
-        {
-          id: 'connection example 1',
-        },
-        {
-          id: 'connection example 2',
-        },
-      ],
+      connections: {},
       parameters: [],
     };
     template2Manifest = {
@@ -44,21 +35,15 @@ describe('ui/templates/templatesDesigner', () => {
       description: 'Template 2 Description',
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
+      images: {},
+      details: {},
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
-        {
-          type: 'description',
-          file: 'description.md',
-        },
       ],
-      connections: [
-        {
-          id: 'connection example 1',
-        },
-      ],
+      connections: {},
       parameters: [],
     };
     template3Manifest = {
@@ -66,20 +51,19 @@ describe('ui/templates/templatesDesigner', () => {
       description: 'Template 2 Description',
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
+      images: {},
+      details: {},
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
-        {
-          type: 'description',
-          file: 'description.md',
-        },
       ],
-      connections: [],
+      connections: {},
       parameters: [
         {
           name: 'param1',
+          displayName: 'param1',
           type: 'object',
           description: 'param1 description',
         },
@@ -101,36 +85,9 @@ describe('ui/templates/templatesDesigner', () => {
 
     renderWithProviders(<TemplateCard templateName="template1" />, { store });
 
-    expect(screen.getByText('Create Workflow')).toBeDefined();
-    expect(screen.getByText('Quick View')).toBeDefined();
-    screen.getByText('Create Workflow').click();
+    expect(screen.getByText('Template 1')).toBeDefined();
+    screen.getByText('Template 1').click();
     expect(store.getState().template.templateName).toBe('template1');
-  });
-
-  it('Renders TemplateCard and Opens the right panel', async () => {
-    minimalStoreData = {
-      manifest: {
-        availableTemplateNames: ['template1', 'template2'],
-        availableTemplates: {
-          template1: template1Manifest,
-          template2: template2Manifest,
-        },
-      },
-    };
-    store = setupStore(minimalStoreData);
-
-    renderWithProviders(<TemplateCard templateName="template2" />, { store });
-
-    expect(screen.getByText('Create Workflow')).toBeDefined();
-    expect(screen.getByText('Quick View')).toBeDefined();
-    screen.getByText('Create Workflow').click();
-    expect(store.getState().panel.isOpen).toBe(true);
-    expect(store.getState().panel.currentPanelView).toBe('createWorkflow');
-    store.dispatch({ type: 'panel/closePanel' });
-    expect(store.getState().panel.isOpen).toBe(false);
-    screen.getByText('Quick View').click();
-    expect(store.getState().panel.isOpen).toBe(true);
-    expect(store.getState().panel.currentPanelView).toBe('quickView');
   });
 
   it('Renders TemplateCard and Opens the right panel', async () => {
@@ -148,15 +105,11 @@ describe('ui/templates/templatesDesigner', () => {
 
     renderWithProviders(<TemplateCard templateName="template2" />, { store });
 
-    expect(screen.getByText('Create Workflow')).toBeDefined();
-    expect(screen.getByText('Quick View')).toBeDefined();
-    screen.getByText('Create Workflow').click();
-    expect(store.getState().panel.isOpen).toBe(true);
-    expect(store.getState().panel.currentPanelView).toBe('createWorkflow');
-    store.dispatch({ type: 'panel/closePanel' });
-    expect(store.getState().panel.isOpen).toBe(false);
-    screen.getByText('Quick View').click();
+    expect(screen.getByText('Template 2')).toBeDefined();
+    screen.getByText('Template 2').click();
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe('quickView');
+    store.dispatch({ type: 'panel/closePanel' });
+    expect(store.getState().panel.isOpen).toBe(false);
   });
 });

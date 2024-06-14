@@ -22,7 +22,8 @@ describe('ui/templates/displayConnections', () => {
       description: 'Template 1 Description',
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
-      tags: {},
+      details: {},
+      tags: [],
       images: {},
       artifacts: [
         {
@@ -31,7 +32,7 @@ describe('ui/templates/displayConnections', () => {
         },
       ],
       connections: {
-        "conn1": { id: '/serviceProviders/abc', kind: 'inapp' }
+        "conn1": { connectorId: '/serviceProviders/abc', kind: 'inapp' }
       },
       parameters: [],
     };
@@ -50,6 +51,7 @@ describe('ui/templates/displayConnections', () => {
         validationErrors: {},
       },
       connections: template1Manifest.connections,
+      servicesInitialized: false,
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -63,6 +65,6 @@ describe('ui/templates/displayConnections', () => {
 
   it('should render the connection ids for connections', async () => {
     const conn = template1Manifest?.connections['conn1'];
-    expect(screen.getByText(`1: ${conn.id}`)).toBeDefined();
+    expect(screen.getByText(`1: ${conn.connectorId}`)).toBeDefined();
   });
 });

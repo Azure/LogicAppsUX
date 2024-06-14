@@ -4,7 +4,7 @@ import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
 import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
-import { CustomCodeService, LogEntryLevel, LoggerService, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
+import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
@@ -16,6 +16,36 @@ import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
 const consumptionApiVersion = '2019-05-01';
+
+export const useConnectionsData = (appId?: string) => {
+  return useQuery(
+    ['getConnectionsData', appId],
+    async () => {
+      const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
+      try {
+        const response = await axios.get(uri, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        });
+        const { files, health } = response.data.properties;
+        if (equals(health.state, 'healthy')) {
+          return files['connections.json'];
+        }
+        const { error } = health;
+        throw new Error(error.message);
+      } catch (error) {
+        return {};
+      }
+    },
+    {
+      enabled: !!appId,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
 
 export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   return useQuery(
