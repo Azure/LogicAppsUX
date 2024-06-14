@@ -67,7 +67,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
     const { onChange } = props;
     if (onChange) {
       const viewModel = clone(props.editorViewModel);
-      viewModel.schema.properties[schemaKey].description = newValue || '';
+      viewModel.schema.properties[schemaKey].description = newValue ?? '';
       onChange({ value: props.initialValue, viewModel });
     }
   };
