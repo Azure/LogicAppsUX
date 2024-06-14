@@ -2,7 +2,7 @@ import { type StandardApp, ProjectType } from '@microsoft/vscode-extension-logic
 import { describe, it, expect } from 'vitest';
 import { getCodelessWorkflowTemplate, getFunctionWorkflowTemplate } from '../templates';
 import { workflowKind } from '../../../../constants';
-import { isNullOrEmpty, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty } from '@microsoft/logic-apps-shared';
 
 const methodName = 'testMethod';
 

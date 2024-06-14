@@ -16,11 +16,12 @@ import {
   showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
+  workerRuntimeKey,
+  appKindSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import type { settingsFileContent } from '../../commands/dataMapper/extensionConfig';
-import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
@@ -35,6 +36,7 @@ import {
   type IAzExtOutputChannel,
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
@@ -63,14 +65,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         },
       },
     };
-    const settingsFileContent: any = {
-      IsEncrypted: false,
-      Values: {
-        AzureWebJobsSecretStorageType: 'Files',
-        FUNCTIONS_WORKER_RUNTIME: WorkerRuntime.Node,
-        APP_KIND: logicAppKind,
-      },
-    };
+
     if (!ext.designTimePort) {
       ext.designTimePort = await portfinder.getPortPromise();
     }
@@ -88,15 +83,21 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       );
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-      settingsFileContent.Values[ProjectDirectoryPath] = projectPath;
+      const settingsFileContent = getLocalSettingsSchema(true, projectPath);
 
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-        await addOrUpdateLocalAppSettings(actionContext, designTimeDirectory.fsPath, {
-          APP_KIND: logicAppKind,
-          ProjectDirectoryPath: projectPath,
-        });
+        await addOrUpdateLocalAppSettings(
+          actionContext,
+          designTimeDirectory.fsPath,
+          {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPath]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+          },
+          true
+        );
         await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;
@@ -243,13 +244,13 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
  * If the file already exists, it will not be overwritten.
  * @param {Uri} directory - The directory where the file will be created.
  * @param {string} fileName - The name of the file to be created.
- * @param {hostFileContent | settingsFileContent}fileContent - The content of the file to be created.
+ * @param {hostFileContent | ILocalSettingsJson}fileContent - The content of the file to be created.
  * @returns A Promise that resolves when the file is created successfully.
  */
 export async function createJsonFile(
   directory: Uri,
   fileName: string,
-  fileContent: typeof hostFileContent | typeof settingsFileContent
+  fileContent: typeof hostFileContent | ILocalSettingsJson
 ): Promise<void> {
   const filePath: Uri = Uri.file(path.join(directory.fsPath, fileName));
 
