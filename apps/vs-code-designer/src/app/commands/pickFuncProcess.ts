@@ -6,6 +6,7 @@ import { Platform, autoStartAzuriteSetting, defaultFuncPort, hostStartTaskName, 
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
+import { verifyLocalConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
@@ -35,6 +36,7 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
       await activateAzurite(context);
+      await verifyLocalConnectionKeys(context);
     });
   });
   const result: IPreDebugValidateResult = await preDebugValidate(context, debugConfig);
@@ -44,7 +46,6 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   }
 
   await waitForPrevFuncTaskToStop(result.workspace);
-  // apply here
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, result.workspace.uri.fsPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
