@@ -26,7 +26,7 @@ async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMet
   // Only use an aka.ms link for the most common case, otherwise we will dynamically construct the url
   let url: string;
   if (!envVarUri && bundleId === extensionBundleId) {
-    url = 'https://aka.ms/AA66i2x';
+    url = 'https://aka.ms/AAqvc78';
   } else {
     const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
     url = `${baseUrl}/ExtensionBundles/${bundleId}/index-v2.json`;
