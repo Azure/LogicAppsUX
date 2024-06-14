@@ -109,8 +109,8 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
       const viewModel = clone(props.editorViewModel);
       if (viewModel?.outputValueSegmentsMap) {
         viewModel.outputValueSegmentsMap[schemaKey] = newValue;
+        onChange({ value: props.initialValue, viewModel });
       }
-      onChange({ value: props.initialValue, viewModel });
     };
 
     return (
