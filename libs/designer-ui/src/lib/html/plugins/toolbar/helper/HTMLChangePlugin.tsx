@@ -22,29 +22,19 @@ import { $getRoot } from 'lexical';
 export interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
   setIsSwitchFromPlaintextBlocked: (value: boolean) => void;
-  setIsValuePlaintext: (isValuePlaintext: boolean) => void;
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const HTMLChangePlugin = ({
-  isValuePlaintext,
-  setIsSwitchFromPlaintextBlocked,
-  setIsValuePlaintext,
-  setValue,
-}: HTMLChangePluginProps) => {
+export const HTMLChangePlugin = ({ isValuePlaintext, setIsSwitchFromPlaintextBlocked, setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
-    let isNewValuePlaintext = isValuePlaintext;
+    const isNewValuePlaintext = isValuePlaintext;
 
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), nodeMap);
       const isSafeForLexical = isHtmlStringValueSafeForLexical(editorString, nodeMap);
 
       setIsSwitchFromPlaintextBlocked(!isSafeForLexical);
-      if (!isSafeForLexical) {
-        isNewValuePlaintext = true;
-        setIsValuePlaintext(isNewValuePlaintext);
-      }
 
       convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext }).then(setValue);
     });

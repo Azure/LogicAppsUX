@@ -44,7 +44,6 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       <HTMLChangePlugin
         isValuePlaintext={isValuePlaintext}
         setIsSwitchFromPlaintextBlocked={setIsSwitchFromPlaintextBlocked}
-        setIsValuePlaintext={setIsValuePlaintext}
         setValue={onValueChange}
       />
     </EditorWrapper>
