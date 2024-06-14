@@ -13,6 +13,9 @@ describe('templates/TemplatesDataProvider', () => {
     const minimalStoreData: Partial<RootState> = {
       workflow: {
         isConsumption: false,
+        subscriptionId: '',
+        resourceGroup: '',
+        location: '',
       },
       template: {
         workflowDefinition: undefined,
@@ -23,7 +26,8 @@ describe('templates/TemplatesDataProvider', () => {
           definitions: {},
           validationErrors: {},
         },
-        connections: [],
+        connections: {},
+        servicesInitialized: true,
       },
       manifest: {
         availableTemplateNames: ['undefined'],
@@ -38,7 +42,15 @@ describe('templates/TemplatesDataProvider', () => {
     renderWithProviders(
       <ReactQueryProvider>
         <TemplatesDesignerProvider locale="en-US" theme={'light'}>
-          <TemplatesDataProvider isConsumption={false} workflowName={'workflowName'}>
+          <TemplatesDataProvider
+            resourceDetails={{ subscriptionId: 'sub', resourceGroup: 'rg', location: 'us' }}
+            isConsumption={false}
+            existingWorkflowName={'workflowName'}
+            services={{
+              connectionService: {} as any,
+              oAuthService: {} as any,
+            }}
+          >
             <div>{'Children'}</div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
