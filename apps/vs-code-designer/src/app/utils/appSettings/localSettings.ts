@@ -11,6 +11,7 @@ import {
   localEmulatorConnectionString,
   logicAppKind,
   workerRuntimeKey,
+  azureStorageTypeSetting,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
@@ -24,8 +25,7 @@ import { MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-log
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { MessageItem } from 'vscode';
-import { Uri } from 'vscode';
+import { Uri, type MessageItem } from 'vscode';
 
 /**
  * Updates local.settings.json file.
@@ -192,23 +192,15 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
  * @returns The local settings schema.
  */
 export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string) => {
-  return isDesignTime
-    ? {
-        IsEncrypted: false,
-        Values: {
-          [azureWebJobsSecretStorageTypeKey]: 'Files',
-          [appKindSetting]: logicAppKind,
-          [workerRuntimeKey]: WorkerRuntime.Node,
-          ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
-        },
-      }
-    : {
-        IsEncrypted: false,
-        Values: {
-          [azureWebJobsStorageKey]: localEmulatorConnectionString,
-          [appKindSetting]: logicAppKind,
-          [workerRuntimeKey]: WorkerRuntime.Node,
-          ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
-        },
-      };
+  return {
+    IsEncrypted: false,
+    Values: {
+      [appKindSetting]: logicAppKind,
+      [workerRuntimeKey]: WorkerRuntime.Node,
+      ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
+      ...(isDesignTime
+        ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
+        : { [azureWebJobsStorageKey]: localEmulatorConnectionString }),
+    },
+  };
 };
