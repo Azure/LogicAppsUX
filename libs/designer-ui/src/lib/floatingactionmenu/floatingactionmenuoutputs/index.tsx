@@ -56,17 +56,25 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
 
   const onDynamicallyAddedParameterTitleChange = (schemaKey: string, newValue: string | undefined): void => {
     const { onChange } = props;
-    if (onChange) {
-      const viewModel = clone(props.editorViewModel);
-      viewModel.schema.properties[schemaKey].title = newValue || '';
+    if (!onChange) {
+      return;
+    }
+
+    const viewModel = clone(props.editorViewModel);
+    if (viewModel?.schema?.properties?.[schemaKey]) {
+      viewModel.schema.properties[schemaKey].title = newValue ?? '';
       onChange({ value: props.initialValue, viewModel });
     }
   };
 
   const onDynamicallyAddedParameterDescriptionChange = (schemaKey: string, newValue: string | undefined): void => {
     const { onChange } = props;
-    if (onChange) {
-      const viewModel = clone(props.editorViewModel);
+    if (!onChange) {
+      return;
+    }
+
+    const viewModel = clone(props.editorViewModel);
+    if (viewModel.schema?.properties?.[schemaKey]) {
       viewModel.schema.properties[schemaKey].description = newValue ?? '';
       onChange({ value: props.initialValue, viewModel });
     }
@@ -74,8 +82,12 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
 
   const onDynamicallyAddedParameterDelete = (schemaKey: string): void => {
     const { onChange } = props;
-    if (onChange) {
-      const viewModel = clone(props.editorViewModel);
+    if (!onChange) {
+      return;
+    }
+
+    const viewModel = clone(props.editorViewModel);
+    if (viewModel?.schema?.properties && viewModel?.outputValueSegmentsMap) {
       delete viewModel.schema.properties[schemaKey];
       delete viewModel.outputValueSegmentsMap[schemaKey];
       onChange({ value: props.initialValue, viewModel });
@@ -90,11 +102,15 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
     });
     const onDynamicallyAddedParameterValueChange = (schemaKey: string, newValue: ValueSegment[]) => {
       const { onChange } = props;
-      if (onChange) {
-        const viewModel = clone(props.editorViewModel);
-        viewModel.outputValueSegmentsMap[schemaKey] = newValue;
-        onChange({ value: props.initialValue, viewModel });
+      if (!onChange) {
+        return;
       }
+
+      const viewModel = clone(props.editorViewModel);
+      if (viewModel?.outputValueSegmentsMap) {
+        viewModel.outputValueSegmentsMap[schemaKey] = newValue;
+      }
+      onChange({ value: props.initialValue, viewModel });
     };
 
     return (
@@ -103,7 +119,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
         placeholder={placeholder}
         basePlugins={props.basePlugins}
         readonly={false}
-        initialValue={props.editorViewModel.outputValueSegmentsMap[schemaKey] || []}
+        initialValue={props.editorViewModel?.outputValueSegmentsMap?.[schemaKey] ?? []}
         tokenPickerButtonProps={props.tokenPickerButtonProps}
         editorBlur={(newState: ChangeState) => onDynamicallyAddedParameterValueChange(schemaKey, newState.value)}
         getTokenPicker={props.getTokenPicker}
@@ -114,7 +130,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
   };
 
   const dynamicParameterProps: Pick<DynamicallyAddedParameterProps, 'schemaKey' | 'icon' | 'title' | 'description'>[] = Object.entries(
-    props.editorViewModel.schema.properties
+    props.editorViewModel?.schema?.properties ?? {}
   )
     .filter(([_key, config]) => {
       return config?.['x-ms-dynamically-added'];
@@ -139,9 +155,12 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
 
   const onMenuItemSelected = (item: FloatingActionMenuItem): void => {
     const { onChange } = props;
-    if (onChange) {
-      const viewModel = clone(props.editorViewModel);
+    if (!onChange) {
+      return;
+    }
 
+    const viewModel = clone(props.editorViewModel);
+    if (viewModel?.schema?.properties) {
       // Effectively a placeholder key that will be renmaed to 'title' if valid at EditorViewModel serialization.
       const schemaKey = generateDynamicParameterKey(Object.keys(viewModel.schema.properties), item.type);
 
