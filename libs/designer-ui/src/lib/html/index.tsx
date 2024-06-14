@@ -6,12 +6,14 @@ import { HTMLChangePlugin } from './plugins/toolbar/helper/HTMLChangePlugin';
 import { isHtmlStringValueSafeForLexical } from './plugins/toolbar/helper/util';
 import { useState } from 'react';
 
+const isValueSafeForLexical = (value: ValueSegment[]) => {
+  const blankNodeMap = new Map<string, ValueSegment>();
+  const initialValueString = convertSegmentsToString(value, blankNodeMap);
+  return isHtmlStringValueSafeForLexical(initialValueString, blankNodeMap);
+};
+
 export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseEditorProps): JSX.Element => {
-  const [isValuePlaintext, setIsValuePlaintext] = useState(() => {
-    const blankNodeMap = new Map<string, ValueSegment>();
-    const initialValueString = convertSegmentsToString(initialValue, blankNodeMap);
-    return !isHtmlStringValueSafeForLexical(initialValueString, blankNodeMap);
-  });
+  const [isValuePlaintext, setIsValuePlaintext] = useState(() => !isValueSafeForLexical(initialValue));
   const [isSwitchFromPlaintextBlocked, setIsSwitchFromPlaintextBlocked] = useState(() => isValuePlaintext);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
 
@@ -21,6 +23,11 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
 
   const handleBlur = () => {
     onChange?.({ value: value });
+  };
+
+  const handleSetIsValuePlaintext = (newIsPlaintext: boolean) => {
+    setIsValuePlaintext(newIsPlaintext);
+    setIsSwitchFromPlaintextBlocked(!isValueSafeForLexical(value));
   };
 
   return (
@@ -39,12 +46,11 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
       }}
       isSwitchFromPlaintextBlocked={isSwitchFromPlaintextBlocked}
       onBlur={handleBlur}
-      setIsValuePlaintext={setIsValuePlaintext}
+      setIsValuePlaintext={handleSetIsValuePlaintext}
     >
       <HTMLChangePlugin
         isValuePlaintext={isValuePlaintext}
         setIsSwitchFromPlaintextBlocked={setIsSwitchFromPlaintextBlocked}
-        setIsValuePlaintext={setIsValuePlaintext}
         setValue={onValueChange}
       />
     </EditorWrapper>
