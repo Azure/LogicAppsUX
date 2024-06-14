@@ -28,7 +28,6 @@ export interface HTMLChangePluginProps {
 export const HTMLChangePlugin = ({ isValuePlaintext, setIsSwitchFromPlaintextBlocked, setValue }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
-    const isNewValuePlaintext = isValuePlaintext;
 
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), nodeMap);
@@ -36,7 +35,7 @@ export const HTMLChangePlugin = ({ isValuePlaintext, setIsSwitchFromPlaintextBlo
 
       setIsSwitchFromPlaintextBlocked(!isSafeForLexical);
 
-      convertEditorState(editor, nodeMap, { isValuePlaintext: isNewValuePlaintext }).then(setValue);
+      convertEditorState(editor, nodeMap, { isValuePlaintext }).then(setValue);
     });
   };
   return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
