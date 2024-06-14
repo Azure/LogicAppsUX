@@ -32,7 +32,7 @@ describe('ui/templates/displayConnections', () => {
         },
       ],
       connections: {
-        "conn1": { connectorId: '/serviceProviders/abc', kind: 'inapp' }
+        conn1: { connectorId: '/serviceProviders/abc', kind: 'inapp' },
       },
       parameters: [],
     };

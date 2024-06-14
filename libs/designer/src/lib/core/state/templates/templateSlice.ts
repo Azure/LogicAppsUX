@@ -14,7 +14,7 @@ import {
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
 
@@ -128,19 +128,18 @@ export const templateSlice = createSlice({
     updateKind: (state, action: PayloadAction<string>) => {
       state.kind = action.payload;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+    updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
-        id,
-        newDefinition: { type, value, required },
+        newDefinition: { name, type, value, required },
       } = action.payload;
 
       const validationError = validateParameterValue({ type, value }, required);
 
-      state.parameters.definitions[id] = {
-        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+      state.parameters.definitions[name] = {
+        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[id] = validationError;
+      state.parameters.validationErrors[name] = validationError;
     },
   },
   extraReducers: (builder) => {

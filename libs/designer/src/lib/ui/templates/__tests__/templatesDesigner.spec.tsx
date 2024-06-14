@@ -53,7 +53,7 @@ describe('ui/templates/templatesDesigner', () => {
     workflowDefinition: any,
     _connectionsData: any,
     parametersData: Record<string, Template.ParameterDefinition>
-  ) => { }
+  ) => {};
   it('Fetches templates and display the title and description', async () => {
     minimalStoreData = {
       manifest: {
@@ -66,7 +66,7 @@ describe('ui/templates/templatesDesigner', () => {
     };
     store = setupStore(minimalStoreData);
 
-    renderWithProviders(<TemplatesDesigner createWorkflowCall={createWorkflowCall}/>, { store });
+    renderWithProviders(<TemplatesDesigner createWorkflowCall={createWorkflowCall} />, { store });
 
     expect(screen.getByText(/Template 1/i)).toBeDefined();
     expect(screen.getByText(/Template 2/i)).toBeDefined();
