@@ -1,7 +1,7 @@
-import { azurePublicBaseUrl, connectionsFileName } from '../../../constants';
+import { azurePublicBaseUrl, connectionsFileName, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
-import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
@@ -14,8 +14,10 @@ import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
+import { JwtTokenHelper, JwtTokenConstants } from '../../../../../vs-code-react/src/app/designer/services/JwtHelper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
+  ILocalSettingsJson,
   ServiceProviderConnectionModel,
   ConnectionAndSettings,
   ConnectionReferenceModel,
@@ -123,6 +125,15 @@ async function addConnectionDataInJson(
   }
 }
 
+function isKeyExpired(jwtTokenHelper: JwtTokenHelper, connectionKey: string, bufferInHours: number): boolean {
+  const payload: Record<string, any> = jwtTokenHelper.extractJwtTokenPayload(connectionKey);
+  const secondsSinceEpoch = Math.round(Date.now() / 1000);
+  const buffer = bufferInHours * 3600; // convert to seconds
+  const expiry = payload[JwtTokenConstants.expiry];
+
+  return expiry - buffer <= secondsSinceEpoch;
+}
+
 async function getConnectionReference(
   referenceKey: string,
   reference: any,
@@ -168,26 +179,40 @@ async function getConnectionReference(
     });
 }
 
+//change workflow file path to project root
+
 export async function getConnectionsAndSettingsToUpdate(
   context: IActionContext,
-  workflowFilePath: string,
+  projectPath: string,
   connectionReferences: any,
   azureTenantId: string,
   workflowBaseManagementUri: string,
   parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
-  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
+  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
+  const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
   let accessToken: string | undefined;
 
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
 
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
+      referencesToAdd[referenceKey] = await getConnectionReference(
+        referenceKey,
+        reference,
+        accessToken,
+        workflowBaseManagementUri,
+        settingsToAdd,
+        parametersFromDefinition
+      );
+    } else if (settings.Values[referenceKey] && isKeyExpired(jwtTokenHelper, settings.Values[referenceKey], 3)) {
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -210,10 +235,9 @@ export async function getConnectionsAndSettingsToUpdate(
 
 export async function saveConnectionReferences(
   context: IActionContext,
-  workflowFilePath: string,
+  projectPath: string,
   connectionAndSettingsToUpdate: ConnectionAndSettings
 ): Promise<void> {
-  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);

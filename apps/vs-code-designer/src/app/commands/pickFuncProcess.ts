@@ -37,7 +37,6 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
       await activateAzurite(context);
     });
   });
-
   const result: IPreDebugValidateResult = await preDebugValidate(context, debugConfig);
 
   if (!result.shouldContinue) {
@@ -45,7 +44,7 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   }
 
   await waitForPrevFuncTaskToStop(result.workspace);
-
+  // apply here
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, result.workspace.uri.fsPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
