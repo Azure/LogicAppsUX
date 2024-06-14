@@ -17,7 +17,8 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
       context.openBehavior = OpenBehavior.openInCurrentWindow;
     }
 
-    const uri: Uri = Uri.file(context.workspacePath);
+    //open directory which contains both SWA and LA
+    const uri: Uri = Uri.file(`${context.workspacePath}/..`);
     if (context.openBehavior === OpenBehavior.addToWorkspace) {
       workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
     } else {

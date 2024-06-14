@@ -6,8 +6,10 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
+
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist",
+        "--inspect-brk=9230"
       ],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",

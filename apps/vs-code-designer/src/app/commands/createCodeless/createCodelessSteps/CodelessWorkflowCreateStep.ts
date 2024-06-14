@@ -33,6 +33,7 @@ import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardAp
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
+import * as vscodeExtension from 'vscode';
 
 export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -48,9 +49,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     // Check if the user chose to initialize a static web app
     if (context.initializeStaticWebApp) {
       context.telemetry.properties.initializeStaticWebApp = 'true';
-      // For now, we'll just log a message
-      console.log('Initializing Static Web App...');
-      // TODO: Add the actual logic for initializing a Static Web App here
+      vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp');
     } else {
       context.telemetry.properties.initializeStaticWebApp = 'false';
     }
