@@ -56,6 +56,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       type: 'functionNode',
       data: {functionData:node[1] },
       position: node[1].position || { x: 10, y: 200 },
+      draggable: true,
     }));
     setAllNodes(nodes.concat(newNodes));
   }, [nodes, functionNodes])
@@ -170,7 +171,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   }, [isMapStateDirty, setIsMapStateDirty]);
 
   const [{ isOver, canDrop }, drop] = useDrop(
-    () => ({
+    () => ({ 
       accept: 'function',
       drop: (item, monitor) => {
         const xyPosition = monitor.getClientOffset()
@@ -185,7 +186,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
           return { position: xyPosition}
         }
       }
-    }));
+    }), [reactFlowInstance]);
 
   return (
       <ReactFlowProvider>

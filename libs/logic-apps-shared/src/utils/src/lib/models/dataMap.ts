@@ -10,7 +10,7 @@ export interface FunctionPositionMetadata {
 export interface FunctionMetadata {
   reactFlowGuid: string;
   functionKey: string;
-  positions: FunctionPositionMetadata[];
+  position: XYPosition;
   connections: ConnectionAndOrder[];
   connectionShorthand: string;
 }
