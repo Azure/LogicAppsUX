@@ -2,13 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  defaultVersionRange,
-  defaultBundleId,
-  localSettingsFileName,
-  defaultExtensionBundlePathValue,
-  extensionBundleId,
-} from '../../constants';
+import { defaultVersionRange, extensionBundleId, localSettingsFileName, defaultExtensionBundlePathValue } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
 import { getJsonFeed } from './feed';
@@ -26,13 +20,13 @@ import * as vscode from 'vscode';
  * @returns {Promise<IBundleFeed>} Returns bundle extension object.
  */
 async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMetadata | undefined): Promise<IBundleFeed> {
-  const bundleId: string = (bundleMetadata && bundleMetadata.id) || defaultBundleId;
+  const bundleId: string = (bundleMetadata && bundleMetadata.id) || extensionBundleId;
 
   const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   // Only use an aka.ms link for the most common case, otherwise we will dynamically construct the url
   let url: string;
-  if (!envVarUri && bundleId === defaultBundleId) {
-    url = 'https://aka.ms/AA66i2x';
+  if (!envVarUri && bundleId === extensionBundleId) {
+    url = 'https://aka.ms/AAqvc78';
   } else {
     const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
     url = `${baseUrl}/ExtensionBundles/${bundleId}/index-v2.json`;
@@ -65,7 +59,7 @@ async function getBundleDependencyFeed(
   context: IActionContext,
   bundleMetadata: IBundleMetadata | undefined
 ): Promise<IBundleDependencyFeed> {
-  const bundleId: string = (bundleMetadata && bundleMetadata?.id) || defaultBundleId;
+  const bundleId: string = (bundleMetadata && bundleMetadata?.id) || extensionBundleId;
   const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
   let envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   if (projectPath) {
@@ -112,7 +106,7 @@ export async function addDefaultBundle(context: IActionContext, hostJson: IHostJ
   }
 
   hostJson.extensionBundle = {
-    id: defaultBundleId,
+    id: extensionBundleId,
     version: versionRange,
   };
 }
