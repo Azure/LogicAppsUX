@@ -217,7 +217,6 @@ export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const azureStorageTypeSetting = 'Files';
 // Project
-export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';
 export const extInstallCommand = 'extensions install';
