@@ -41,7 +41,7 @@ export const useStyles = makeStyles({
   functionButton: {
     ...shorthands.borderRadius('16px'),
     height: '26px',
-    minWidth: '40px',
+    minWidth: '80px',
     display: 'inline-flex',
     justifyContent: 'left',
     paddingRight: '20px'

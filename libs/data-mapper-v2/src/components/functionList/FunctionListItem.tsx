@@ -24,10 +24,9 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
     item:  functionData.key,
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult<{
-        position: XYPosition
+        position: XYPosition // danielle export this as a type
       } | undefined>();
       if (item && dropResult) {
-        console.log(JSON.stringify(dropResult))
         functionData.position = dropResult.position;
         dispatch(
           addFunctionNode(functionData)

@@ -52,9 +52,9 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
 
   useEffect(() => {
     const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
-      id: node[1].key,
+      id: node[0],
       type: 'functionNode',
-      data: {functionData:node[1] },
+      data: { functionData:node[1] },
       position: node[1].position || { x: 10, y: 200 },
       draggable: true,
     }));
