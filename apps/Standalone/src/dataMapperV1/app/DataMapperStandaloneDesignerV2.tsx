@@ -17,6 +17,7 @@ import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
+import { SchemaFile } from '@microsoft/logic-apps-data-mapper/src/lib/components/configPanel/AddOrUpdateSchemaView';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
@@ -56,9 +57,25 @@ class DataMapperFileService implements IDataMapperFileService {
     }
   };
 
+  public saveDraftStateCall(_dataMapDefinition: string): void {
+    return;
+  }
+
   public readCurrentSchemaOptions = () => {
     return;
   };
+
+  public saveXsltCall = (_xslt: string) => {
+    return;
+  }
+  
+  public readCurrentCustomXsltPathOptions = () => {
+    return;
+  }
+
+  public addSchemaFromFile = (_selectedSchemaFile: SchemaFile) => {
+    return;
+  }
 }
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
@@ -83,11 +100,6 @@ export const DataMapperStandaloneDesignerV2 = () => {
   });
 
   const dataMapperFileService = new DataMapperFileService(true);
-
-  const saveXsltCall = (dataMapXslt: string) => {
-    console.log('\nXSLT\n===============');
-    console.log(dataMapXslt);
-  };
 
   useEffect(() => {
     const fetchFunctionList = async () => {
@@ -131,7 +143,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesignerV2 fileService={dataMapperFileService} saveXsltCall={saveXsltCall} />
+            <DataMapperDesignerV2 fileService={dataMapperFileService} />
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>

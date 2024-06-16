@@ -36,5 +36,5 @@ export interface ITreeDirectory {
 export interface ITreeFile {
   name: string;
   type: 'file';
-  fullPath?: string;
+  fullPath: string;
 }

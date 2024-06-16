@@ -20,13 +20,10 @@ import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
-  saveXsltCall: (dataMapXslt: string) => void;
-  saveDraftStateCall?: (dataMapDefinition: string) => void;
-  readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -141,7 +138,11 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     [edges]
   );
 
-  useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
+  useEffect(() => {
+    if (fileService) {
+      fileService. readCurrentCustomXsltPathOptions()
+    } }
+  , [fileService]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {

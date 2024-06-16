@@ -24,5 +24,5 @@ export const DataMapperApp = () => {
     });
   }, [sendMsgToVsix]);
 
-  return dataMapperVersion === undefined ? <></> : dataMapperVersion === 2 ? <DataMapperAppV2 /> : <DataMapperAppV1 />;
+  return <DataMapperAppV2 />; // DO NOT MERGE INTO MAIN
 };

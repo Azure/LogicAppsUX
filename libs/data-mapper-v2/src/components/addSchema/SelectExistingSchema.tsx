@@ -4,7 +4,7 @@ import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import type { RootState } from '../../core/state/Store';
 import { useSelector } from 'react-redux';
-import { DataMapperFileService } from '../../core';
+import { DataMapperFileService, getSelectedSchema } from '../../core';
 
 export type SelectExistingSchemaProps = {
   schemaType?: SchemaType;
@@ -20,6 +20,10 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
     <DropdownTree
       items={availableSchemaList}
       onItemSelect={(item: IFileSysTreeItem) => {
+        if (item.type === 'file') {
+          getSelectedSchema(item.name, item.fullPath);
+
+        }
         props.setSelectedSchema({
           name: item.name ?? '',
           path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
