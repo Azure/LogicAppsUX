@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { ReactQueryProvider, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -161,27 +161,25 @@ export const TemplatesStandaloneDesigner = () => {
   );
   const resourceDetails = new ArmParser(appId ?? '');
   return (
-    <ReactQueryProvider>
-      <LoadWhenArmTokenIsLoaded>
-        <DevToolbox />
-        {workflowAppData ? (
-          <TemplatesDesignerProvider locale="en-US" theme={theme}>
-            <TemplatesDataProvider
-              resourceDetails={{
-                subscriptionId: resourceDetails.subscriptionId,
-                resourceGroup: resourceDetails.resourceGroup,
-                location: canonicalLocation,
-              }}
-              services={services}
-              isConsumption={isConsumption}
-              existingWorkflowName={existingWorkflowName}
-            >
-              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
-            </TemplatesDataProvider>
-          </TemplatesDesignerProvider>
-        ) : null}
-      </LoadWhenArmTokenIsLoaded>
-    </ReactQueryProvider>
+    <LoadWhenArmTokenIsLoaded>
+      <DevToolbox />
+      {workflowAppData ? (
+        <TemplatesDesignerProvider locale="en-US" theme={theme}>
+          <TemplatesDataProvider
+            resourceDetails={{
+              subscriptionId: resourceDetails.subscriptionId,
+              resourceGroup: resourceDetails.resourceGroup,
+              location: canonicalLocation,
+            }}
+            services={services}
+            isConsumption={isConsumption}
+            existingWorkflowName={existingWorkflowName}
+          >
+            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+          </TemplatesDataProvider>
+        </TemplatesDesignerProvider>
+      ) : null}
+    </LoadWhenArmTokenIsLoaded>
   );
 };
 
