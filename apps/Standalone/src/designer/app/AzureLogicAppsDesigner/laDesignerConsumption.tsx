@@ -43,6 +43,7 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  getSKUDefaultHostOptions,
   Constants,
 } from '@microsoft/logic-apps-designer';
 import * as React from 'react';
@@ -223,7 +224,7 @@ const DesignerEditorConsumption = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
+            ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
           },
           showPerformanceDebug,
         }}
