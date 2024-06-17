@@ -93,6 +93,8 @@ export const TreeNode = (props: TreeNodeProps) => {
     [updateNodePosition]
   );
 
+  const nodeResizerObserver = useMemo(() => new ResizeObserver(() => updateNodePosition()), [updateNodePosition]);
+
   useEffect(() => {
     if (nodeRef?.current) {
       updateNodePosition();
@@ -101,13 +103,15 @@ export const TreeNode = (props: TreeNodeProps) => {
         childList: true,
         subtree: true,
       });
+
+      nodeResizerObserver.observe(nodeRef.current);
     }
 
     return () => {
       removeNodeFromFlow();
       nodeObserver.disconnect();
     };
-  }, [nodeRef, removeNodeFromFlow, nodeObserver, updateNodePosition]);
+  }, [nodeRef, removeNodeFromFlow, nodeObserver, nodeResizerObserver, updateNodePosition]);
   return (
     <TreeItemLayout
       className={mergeClasses(isLeaf ? '' : styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}

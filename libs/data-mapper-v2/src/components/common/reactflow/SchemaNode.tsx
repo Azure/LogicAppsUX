@@ -17,7 +17,7 @@ const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
     return () => {
       updateNodeInternals(id);
     };
-  }, [id, updateNodeInternals]);
+  });
   return (
     <div className={mergeClasses('nodrag', styles.nodeWrapper)} ref={divRef}>
       <Handle
