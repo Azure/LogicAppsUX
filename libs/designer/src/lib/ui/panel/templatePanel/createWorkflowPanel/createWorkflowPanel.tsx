@@ -21,7 +21,13 @@ export const CreateWorkflowPanel = ({
         <b>{intlText.CREATE_NEW_WORKFLOW}</b>
       </div> */}
 
-      <TemplatesPanelContent panelType="createWorkflow" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
+      <TemplatesPanelContent
+        panelType="createWorkflow"
+        tabs={panelTabs}
+        selectedTab={selectedTabId}
+        selectTab={handleSelectTab}
+        isSequence={true}
+      />
     </div>
   );
 };

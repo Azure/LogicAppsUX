@@ -1,9 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { TabList, Tab, OverflowItem } from '@fluentui/react-components';
-import type { SelectTabData } from '@fluentui/react-components';
 import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { TemplatesPanelContent, type TemplatePanelTab } from '@microsoft/designer-ui';
 
 export const QuickViewPanel = ({
   panelTabs,
@@ -11,34 +9,19 @@ export const QuickViewPanel = ({
   panelTabs: TemplatePanelTab[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { templateName } = useSelector((state: RootState) => ({
-    templates: state.manifest.availableTemplates,
-    templateName: state.template.templateName,
-  }));
   const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId) ?? panelTabs[0]?.id;
 
-  const onTabSelected = (_: unknown, data?: SelectTabData): void => {
-    if (data) {
-      const itemKey = data.value as string;
-      dispatch(selectPanelTab(itemKey));
-    }
+  const handleSelectTab = (tabId: string): void => {
+    dispatch(selectPanelTab(tabId));
   };
 
   return (
-    <>
-      <b>{templateName}</b>
-      <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
-        {panelTabs.map(({ id, visible, title }) =>
-          visible ? (
-            <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
-              <Tab value={id} role={'tab'}>
-                {title}
-              </Tab>
-            </OverflowItem>
-          ) : null
-        )}
-      </TabList>
-      <div className="msla-panel-content-container">{panelTabs.find((tab) => tab.id === selectedTabId)?.content}</div>
-    </>
+    <TemplatesPanelContent
+      panelType="quickView"
+      tabs={panelTabs}
+      selectedTab={selectedTabId}
+      selectTab={handleSelectTab}
+      isSequence={false}
+    />
   );
 };

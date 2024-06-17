@@ -5,7 +5,7 @@ import type { TemplatePanelTab } from './templatePanelUtil';
 
 export interface TemplatesPanelContentProps {
   panelType: string;
-  isSequence?: boolean;
+  isSequence: boolean;
   tabs: TemplatePanelTab[];
   selectedTab?: string;
   selectTab: (tabId: string) => void;
@@ -40,7 +40,7 @@ export const TemplatesPanelContent = ({
               className={css('msla-templates-panel-tabName', id === selectedTabId && 'selected')}
               value={id}
               role={'tab'}
-              disabled={isSequence ? order > selectedTabOrder : selectedTab !== id}
+              disabled={isSequence && order > selectedTabOrder}
             >
               {isSequence && (
                 <Text className="msla-templates-panel-tabName-index">
