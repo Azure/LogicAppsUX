@@ -110,8 +110,8 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       {displayRuntimeInfo || displayActionType ? (
         <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
           {displayRuntimeInfo && runtimeFilters.length > 0 ? (
-            <div>
-              <Label>{intl.formatMessage({ defaultMessage: 'Runtime', id: 'g5A6Bn', description: 'Filter by label' })} </Label>
+            <div style={{ display: 'inherit' }}>
+              <Label>{intl.formatMessage({ defaultMessage: 'Runtime', id: 'g5A6Bn', description: 'Filter by label' })}</Label>
               <Dropdown
                 placeholder={
                   filters?.['runtime']
@@ -135,8 +135,8 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
             </div>
           ) : null}
           {displayActionType ? (
-            <div>
-              <Label> {intl.formatMessage({ defaultMessage: 'Action Type', id: 'TRpSCQ', description: 'Filter by label' })}</Label>
+            <div style={{ display: 'inherit' }}>
+              <Label>{intl.formatMessage({ defaultMessage: 'Action Type', id: 'TRpSCQ', description: 'Filter by label' })}</Label>
               <Dropdown
                 placeholder={
                   filters?.['actionType']
