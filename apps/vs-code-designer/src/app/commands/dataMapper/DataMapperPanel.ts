@@ -491,7 +491,7 @@ export default class DataMapperPanel {
   public getDataMapperVersion() {
     const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
     const configValue = azureDataMapperConfig.get<number>(dataMapperVersionSetting) ?? defaultDataMapperVersion;
-    return 2; // DO NOT MERGE INTO MAIN
+    return configValue;
   }
 
   private getMapMetadataPath() {

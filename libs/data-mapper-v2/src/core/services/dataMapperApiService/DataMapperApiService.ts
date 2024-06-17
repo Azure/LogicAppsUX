@@ -48,9 +48,12 @@ export class DataMapperApiService {
 
   private getBaseUri = () => `${this.options.baseUrl}:${this.options.port}`;
 
-  private getSchemaFileUri = (schemaFilename: string, schemaFilePath: string) => {
-    const queryParams = schemaFilePath.length === 0 ? '' : `?relativePath=${schemaFilePath}`;
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${schemaFilename}/contents/schemaTree${queryParams}`;
+  public getSchemaFileUri = (schemaFilename: string, schemaFilePath: string) => {
+    console.log(schemaFilename, schemaFilePath);
+    const filename = schemaFilename.substring(0, schemaFilename.lastIndexOf('.'));
+    const formattedFilePath = schemaFilePath.replace(schemaFilename, '');
+    const queryParams = schemaFilePath === schemaFilename ? '' : `?relativePath=${formattedFilePath}`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${filename}/contents/schemaTree${queryParams}`;
   };
   private getFunctionsManifestUri = () =>
     `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=${dataMapperApiVersions.Oct2019Edge}`;
