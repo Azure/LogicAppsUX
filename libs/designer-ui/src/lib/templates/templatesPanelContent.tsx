@@ -2,6 +2,7 @@ import { Icon, css } from '@fluentui/react';
 import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplatePanelTab } from './templatePanelUtil';
+import { TemplatePanelFooter } from './templatesPanelFooter';
 
 export interface TemplatesPanelContentProps {
   panelType: string;
@@ -18,7 +19,9 @@ export const TemplatesPanelContent = ({
   selectTab,
 }: TemplatesPanelContentProps): JSX.Element => {
   const selectedTabId = selectedTab ?? tabs[0]?.id;
-  const selectedTabOrder = tabs?.find((tab) => tab.id === selectedTabId)?.order ?? 0;
+
+  const selectedTabProps = tabs?.find((tab) => tab.id === selectedTabId);
+  const selectedTabOrder = selectedTabProps?.order ?? 0;
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
@@ -27,10 +30,14 @@ export const TemplatesPanelContent = ({
     }
   };
 
+  if (!selectedTabProps) {
+    return <></>;
+  }
+
   return (
     <div id={`msla-templates-panel-${panelType}`} className="msla-templates-panel">
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
-        {tabs.map(({ id, visible, title, order }, index) =>
+        {tabs.map(({ id, title, visible, order }, index) =>
           visible ? (
             <Tab
               key={id}
@@ -50,7 +57,13 @@ export const TemplatesPanelContent = ({
           ) : null
         )}
       </TabList>
-      <div className="msla-panel-content-container">{tabs.find((tab) => tab.id === selectedTabId)?.content}</div>
+      <div className="msal-templates-panel-footer">
+        <TemplatePanelFooter {...selectedTabProps.footerContent} />
+      </div>
+      <div className="msla-panel-content-container1">{selectedTabProps?.content}</div>
+      <div className="msal-templates-panel-footer">
+        <TemplatePanelFooter {...selectedTabProps.footerContent} />
+      </div>
     </div>
   );
 };

@@ -4,39 +4,40 @@ import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
 import { nameStateTab } from './tabs/nameStateTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 
 export const usePanelTabs = (onCreateClick: () => Promise<void>) => {
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const { parameters } = useSelector((state: RootState) => state.template);
 
   const connectionsTabItem = useMemo(
     () => ({
-      ...connectionsTab(intl),
+      ...connectionsTab(intl, dispatch),
     }),
-    [intl]
+    [intl, dispatch]
   );
 
   const parametersTabItem = useMemo(
     () => ({
-      ...parametersTab(intl),
+      ...parametersTab(intl, dispatch),
     }),
-    [intl]
+    [intl, dispatch]
   );
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl),
+      ...nameStateTab(intl, dispatch),
     }),
-    [intl]
+    [intl, dispatch]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, onCreateClick),
+      ...reviewCreateTab(intl, dispatch, onCreateClick),
     }),
-    [intl, onCreateClick]
+    [intl, dispatch, onCreateClick]
   );
 
   const tabs = useMemo(() => {

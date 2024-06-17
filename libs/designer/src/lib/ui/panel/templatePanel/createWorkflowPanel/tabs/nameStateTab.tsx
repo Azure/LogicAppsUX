@@ -5,6 +5,7 @@ import constants from '../../../../../common/constants';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
 import { updateKind, updateWorkflowName } from '../../../../../core/state/templates/templateSlice';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -73,7 +74,7 @@ export const NameStatePanel: React.FC = () => {
   );
 };
 
-export const nameStateTab = (intl: IntlShape): TemplatePanelTab => ({
+export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
     defaultMessage: 'Name and State',
@@ -86,6 +87,14 @@ export const nameStateTab = (intl: IntlShape): TemplatePanelTab => ({
     description: 'An accessability label that describes the name and state tab',
   }),
   visible: true,
-  content: <NameStatePanel />,
   order: 2,
+  content: <NameStatePanel />,
+  footerContent: {
+    primaryButtonText: 'Next',
+    primaryButtonOnClick: () => {
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+    },
+    primaryButtonDisabled: false,
+    onClose: () => {},
+  },
 });

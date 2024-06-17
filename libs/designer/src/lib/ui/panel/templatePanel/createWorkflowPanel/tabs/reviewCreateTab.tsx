@@ -1,4 +1,4 @@
-import type { RootState } from '../../../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import { Button, Spinner } from '@fluentui/react-components';
@@ -41,7 +41,7 @@ export const ReviewCreatePanel = ({ onCreateClick }: { onCreateClick: () => Prom
   );
 };
 
-export const reviewCreateTab = (intl: IntlShape, onCreateClick: () => Promise<void>): TemplatePanelTab => ({
+export const reviewCreateTab = (intl: IntlShape, _dispatch: AppDispatch, onCreateClick: () => Promise<void>): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
     defaultMessage: 'Review and Create',
@@ -54,6 +54,12 @@ export const reviewCreateTab = (intl: IntlShape, onCreateClick: () => Promise<vo
     description: 'An accessability label that describes the review and create tab',
   }),
   visible: true,
-  content: <ReviewCreatePanel onCreateClick={onCreateClick} />,
   order: 3,
+  content: <ReviewCreatePanel onCreateClick={onCreateClick} />,
+  footerContent: {
+    primaryButtonText: 'Next',
+    primaryButtonOnClick: () => console.log('TODO'),
+    primaryButtonDisabled: false,
+    onClose: () => {},
+  },
 });

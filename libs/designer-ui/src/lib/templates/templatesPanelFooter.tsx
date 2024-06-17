@@ -1,6 +1,6 @@
 import { Button } from '@fluentui/react-components';
 
-interface TemplatePanelFooterProps {
+export interface TemplatePanelFooterProps {
   primaryButtonText: string;
   primaryButtonOnClick: () => void;
   primaryButtonDisabled?: boolean;
