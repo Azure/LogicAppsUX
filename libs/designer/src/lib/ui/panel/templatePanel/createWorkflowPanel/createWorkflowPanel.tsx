@@ -1,10 +1,9 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { TabList, Tab, OverflowItem } from '@fluentui/react-components';
-import type { SelectTabData } from '@fluentui/react-components';
 import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
 import { usePanelTabs } from './usePanelTabs';
+import { TemplatesPanelContent } from '@microsoft/designer-ui';
 
 export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,11 +24,8 @@ export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Pr
     }),
   };
 
-  const onTabSelected = (_: unknown, data?: SelectTabData): void => {
-    if (data) {
-      const itemKey = data.value as string;
-      dispatch(selectPanelTab(itemKey));
-    }
+  const handleSelectTab = (tabId: string): void => {
+    dispatch(selectPanelTab(tabId));
   };
 
   return (
@@ -38,18 +34,7 @@ export const CreateWorkflowPanel = ({ onCreateClick }: { onCreateClick: () => Pr
         <b>{intlText.CREATE_NEW_WORKFLOW}</b>
       </div>
 
-      <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
-        {panelTabs.map(({ id, visible, title }) =>
-          visible ? (
-            <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
-              <Tab value={id} role={'tab'} data-testid={id}>
-                {title}
-              </Tab>
-            </OverflowItem>
-          ) : null
-        )}
-      </TabList>
-      <div className="msla-panel-content-container">{panelTabs.find((tab) => tab.id === selectedTabId)?.content}</div>
+      <TemplatesPanelContent panelType="createWorkflow" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
     </>
   );
 };
