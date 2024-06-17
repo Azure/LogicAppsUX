@@ -1,8 +1,9 @@
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const OverviewPanel: React.FC = () => {
   const { manifest } = useSelector((state: RootState) => state.template);
@@ -15,7 +16,7 @@ export const OverviewPanel: React.FC = () => {
   );
 };
 
-export const overviewTab = (intl: IntlShape) => ({
+export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Overview',
@@ -30,5 +31,13 @@ export const overviewTab = (intl: IntlShape) => ({
   visible: true,
   content: <OverviewPanel />,
   order: 1,
-  icon: 'Info',
+  footerContent: {
+    primaryButtonText: 'Next',
+    primaryButtonOnClick: () => {
+      //TODO: revisit. if parameters is invisible, we should skip to the next visible tab
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS));
+    },
+    primaryButtonDisabled: false,
+    onClose: () => {},
+  },
 });

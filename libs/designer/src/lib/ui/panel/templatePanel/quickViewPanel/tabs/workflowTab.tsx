@@ -1,8 +1,10 @@
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const WorkflowPanel: React.FC = () => {
   const { workflowDefinition } = useSelector((state: RootState) => state.template);
@@ -15,7 +17,7 @@ export const WorkflowPanel: React.FC = () => {
   );
 };
 
-export const workflowTab = (intl: IntlShape) => ({
+export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',
@@ -30,5 +32,13 @@ export const workflowTab = (intl: IntlShape) => ({
   visible: true,
   content: <WorkflowPanel />,
   order: 0,
-  icon: 'Info',
+  footerContent: {
+    primaryButtonText: 'Next',
+    primaryButtonOnClick: () => {
+      //TODO: revisit. if parameters is invisible, we should skip to the next visible tab
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS));
+    },
+    primaryButtonDisabled: false,
+    onClose: () => {},
+  },
 });

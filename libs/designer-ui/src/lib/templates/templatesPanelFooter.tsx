@@ -7,7 +7,7 @@ export interface TemplatePanelFooterProps {
   onClose: () => void;
 }
 
-export const TemplatePanelFooter = ({ primaryButtonText = 'Example', primaryButtonOnClick, onClose }: TemplatePanelFooterProps) => {
+export const TemplatesPanelFooter = ({ primaryButtonText = 'Example', primaryButtonOnClick, onClose }: TemplatePanelFooterProps) => {
   return (
     <>
       <Button appearance="primary" onClick={primaryButtonOnClick}>

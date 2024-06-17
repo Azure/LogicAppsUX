@@ -1,21 +1,24 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { usePanelTabs } from './usePanelTabs';
 import { TabList, Tab, OverflowItem } from '@fluentui/react-components';
 import type { SelectTabData } from '@fluentui/react-components';
 import { openCreateWorkflowPanelView, selectPanelTab } from '../../../../core/state/templates/panelSlice';
 import { PrimaryButton } from '@fluentui/react';
 import { changeCurrentTemplateName, loadTemplate } from '../../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
-export const QuickViewPanel = () => {
+export const QuickViewPanel = ({
+  panelTabs,
+}: {
+  panelTabs: TemplatePanelTab[];
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { templates, templateName } = useSelector((state: RootState) => ({
     templates: state.manifest.availableTemplates,
     templateName: state.template.templateName,
   }));
   const templateManifest = templates?.[templateName ?? ''];
-  const panelTabs = usePanelTabs();
   const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId) ?? panelTabs[0]?.id;
   const intl = useIntl();
   const intlText = {

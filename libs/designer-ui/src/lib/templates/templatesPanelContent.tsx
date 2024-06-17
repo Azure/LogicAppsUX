@@ -2,7 +2,6 @@ import { Icon, css } from '@fluentui/react';
 import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplatePanelTab } from './templatePanelUtil';
-import { TemplatePanelFooter } from './templatesPanelFooter';
 
 export interface TemplatesPanelContentProps {
   panelType: string;
@@ -30,10 +29,6 @@ export const TemplatesPanelContent = ({
     }
   };
 
-  if (!selectedTabProps) {
-    return <></>;
-  }
-
   return (
     <div id={`msla-templates-panel-${panelType}`} className="msla-templates-panel">
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
@@ -57,13 +52,7 @@ export const TemplatesPanelContent = ({
           ) : null
         )}
       </TabList>
-      <div className="msal-templates-panel-footer">
-        <TemplatePanelFooter {...selectedTabProps.footerContent} />
-      </div>
-      <div className="msla-panel-content-container1">{selectedTabProps?.content}</div>
-      <div className="msal-templates-panel-footer">
-        <TemplatePanelFooter {...selectedTabProps.footerContent} />
-      </div>
+      <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
     </div>
   );
 };

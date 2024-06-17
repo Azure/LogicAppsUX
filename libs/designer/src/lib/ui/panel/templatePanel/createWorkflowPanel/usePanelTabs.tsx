@@ -6,8 +6,9 @@ import { nameStateTab } from './tabs/nameStateTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
-export const usePanelTabs = (onCreateClick: () => Promise<void>) => {
+export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { parameters } = useSelector((state: RootState) => state.template);
