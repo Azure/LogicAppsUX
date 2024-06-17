@@ -5,9 +5,7 @@ import { Button, Spinner } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import { useState } from 'react';
 
-export const ReviewCreatePanel = (
-  // { onCreateClick }: { onCreateClick: () => Promise<void> }
-) => {
+export const ReviewCreatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const intl = useIntl();
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
@@ -22,7 +20,7 @@ export const ReviewCreatePanel = (
 
   async function handleCreateClick() {
     setIsLoadingCreate(true);
-    // await onCreateClick();
+    await onCreateClick();
     setIsLoadingCreate(false);
   }
 
@@ -42,10 +40,7 @@ export const ReviewCreatePanel = (
   );
 };
 
-export const reviewCreateTab = (
-  intl: IntlShape
-  // , onCreateClick: () => Promise<void>
-) => ({
+export const reviewCreateTab = (intl: IntlShape, onCreateClick: () => Promise<void>) => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
     defaultMessage: 'Review and Create',
@@ -58,11 +53,7 @@ export const reviewCreateTab = (
     description: 'An accessability label that describes the review and create tab',
   }),
   visible: true,
-  content: (
-    <ReviewCreatePanel
-    // onCreateClick={onCreateClick}
-    />
-  ),
+  content: <ReviewCreatePanel onCreateClick={onCreateClick} />,
   order: 3,
   icon: 'Info',
 });
