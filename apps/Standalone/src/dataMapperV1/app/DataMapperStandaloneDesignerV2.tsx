@@ -12,12 +12,12 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
-import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFunctions } from '@microsoft/logic-apps-data-mapper';
+import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFunctions } from '@microsoft/logic-apps-data-mapper-v2';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import { SchemaFile } from '@microsoft/logic-apps-data-mapper/src/lib/components/configPanel/AddOrUpdateSchemaView';
+import type { SchemaFile } from '@microsoft/logic-apps-data-mapper/src/lib/components/configPanel/AddOrUpdateSchemaView';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
@@ -67,15 +67,15 @@ class DataMapperFileService implements IDataMapperFileService {
 
   public saveXsltCall = (_xslt: string) => {
     return;
-  }
-  
+  };
+
   public readCurrentCustomXsltPathOptions = () => {
     return;
-  }
+  };
 
   public addSchemaFromFile = (_selectedSchemaFile: SchemaFile) => {
     return;
-  }
+  };
 }
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
