@@ -286,6 +286,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           hideValidationErrors={hideValidationErrors}
+          includeOutputDescription={editorOptions?.includeOutputDescription}
         />
       ) : (
         <FloatingActionMenuInputs
