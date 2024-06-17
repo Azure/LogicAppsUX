@@ -1,10 +1,14 @@
-import { type SchemaExtended, SchemaType, equals } from '@microsoft/logic-apps-shared';
-import { Tree, mergeClasses, type TreeOpenChangeData } from '@fluentui/react-components';
-import { useStyles } from './styles';
-import { useState, useMemo, useRef } from 'react';
-import { useIntl } from 'react-intl';
-import { flattenSchemaIntoSortArray } from '../../../utils/Schema.Utils';
-import RecursiveTree from './RecursiveTree';
+import {
+  type SchemaExtended,
+  SchemaType,
+  equals,
+} from "@microsoft/logic-apps-shared";
+import { Tree, mergeClasses } from "@fluentui/react-components";
+import { useStyles } from "./styles";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useIntl } from "react-intl";
+import RecursiveTree from "./RecursiveTree";
+import { flattenSchemaIntoSortArray, flattenSchemaNodeMap } from "../../../utils";
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
@@ -18,28 +22,42 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     schema: { schemaTreeRoot },
   } = props;
 
-  const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
-  const [refreshTree, setRefreshTree] = useState(false);
+  const isLeftDirection = useMemo(
+    () => equals(schemaType, SchemaType.Source),
+    [schemaType]
+  );
+  const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
   const intl = useIntl();
   const treeRef = useRef<HTMLDivElement | null>(null);
+  const flattenedScehma = useMemo(() => flattenSchemaNodeMap(schemaTreeRoot), [schemaTreeRoot]);
 
   const treeAriaLabel = intl.formatMessage({
-    defaultMessage: 'Schema tree',
-    id: 't2Xi1/',
-    description: 'tree showing schema nodes',
+    defaultMessage: "Schema tree",
+    id: "t2Xi1/",
+    description: "tree showing schema nodes",
   });
 
+  useEffect(() => {
+    const allNodes = flattenSchemaIntoSortArray(schemaTreeRoot);
+    setOpenKeys(new Set<string>(allNodes));
+  }, [schemaTreeRoot, setOpenKeys]);
   return schemaTreeRoot ? (
     <Tree
       ref={treeRef}
-      className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
+      className={
+        isLeftDirection
+          ? mergeClasses(styles.leftWrapper, styles.wrapper)
+          : mergeClasses(styles.rightWrapper, styles.wrapper)
+      }
       aria-label={treeAriaLabel}
-      defaultOpenItems={flattenSchemaIntoSortArray(schemaTreeRoot)}
-      onOpenChange={(_e: any, _d: TreeOpenChangeData) => {
-        setRefreshTree(!refreshTree);
-      }}
     >
-      <RecursiveTree root={schemaTreeRoot} isLeftDirection={isLeftDirection} refreshTree={refreshTree} />
+      <RecursiveTree
+        root={schemaTreeRoot}
+        isLeftDirection={isLeftDirection}
+        setOpenKeys={setOpenKeys}
+        openKeys={openKeys}
+        flattenedScehmaMap={flattenedScehma}
+      />
     </Tree>
   ) : null;
 };
