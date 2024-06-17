@@ -1,11 +1,12 @@
 import { Icon, css } from '@fluentui/react';
-import { TabList, Tab, Text, Button } from '@fluentui/react-components';
+import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
+import type { TemplatePanelTab } from './templatePanelUtil';
 
 export interface TemplatesPanelContentProps {
   panelType: string;
   isSequence?: boolean;
-  tabs: any[];
+  tabs: TemplatePanelTab[];
   selectedTab?: string;
   selectTab: (tabId: string) => void;
 }
@@ -49,16 +50,7 @@ export const TemplatesPanelContent = ({
           ) : null
         )}
       </TabList>
-      <div className="msla-panel-content-container">
-        {tabs.find((tab) => tab.id === selectedTabId)?.content}
-        <Button
-          onClick={() => {
-            console.log('--');
-          }}
-        >
-          Next
-        </Button>
-      </div>
+      <div className="msla-panel-content-container">{tabs.find((tab) => tab.id === selectedTabId)?.content}</div>
     </div>
   );
 };

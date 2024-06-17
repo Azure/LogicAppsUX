@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayParameters } from '../../../../templates/parameters/displayParameters';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
 export const ParametersPanel: React.FC = () => {
   const { parameters } = useSelector((state: RootState) => state.template);
@@ -11,7 +12,7 @@ export const ParametersPanel: React.FC = () => {
   return isNullOrUndefined(parameters) ? null : <DisplayParameters />;
 };
 
-export const parametersTab = (intl: IntlShape) => ({
+export const parametersTab = (intl: IntlShape): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -26,5 +27,4 @@ export const parametersTab = (intl: IntlShape) => ({
   visible: true,
   content: <ParametersPanel />,
   order: 1,
-  icon: 'Info',
 });

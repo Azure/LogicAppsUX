@@ -4,6 +4,7 @@ import { useIntl, type IntlShape } from 'react-intl';
 import { Button, Spinner } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import { useState } from 'react';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
 export const ReviewCreatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const intl = useIntl();
@@ -40,7 +41,7 @@ export const ReviewCreatePanel = ({ onCreateClick }: { onCreateClick: () => Prom
   );
 };
 
-export const reviewCreateTab = (intl: IntlShape, onCreateClick: () => Promise<void>) => ({
+export const reviewCreateTab = (intl: IntlShape, onCreateClick: () => Promise<void>): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
     defaultMessage: 'Review and Create',
@@ -55,5 +56,4 @@ export const reviewCreateTab = (intl: IntlShape, onCreateClick: () => Promise<vo
   visible: true,
   content: <ReviewCreatePanel onCreateClick={onCreateClick} />,
   order: 3,
-  icon: 'Info',
 });

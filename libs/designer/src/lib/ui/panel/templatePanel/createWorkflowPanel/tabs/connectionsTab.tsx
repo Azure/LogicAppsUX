@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayConnections } from '../../../../templates/connections/displayConnections';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections, manifest } = useSelector((state: RootState) => state.template);
@@ -16,7 +17,7 @@ export const ConnectionsPanel: React.FC = () => {
   );
 };
 
-export const connectionsTab = (intl: IntlShape) => ({
+export const connectionsTab = (intl: IntlShape): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
@@ -31,5 +32,4 @@ export const connectionsTab = (intl: IntlShape) => ({
   visible: true,
   content: <ConnectionsPanel />,
   order: 0,
-  icon: 'Info',
 });
