@@ -1,4 +1,4 @@
-import { Button } from '@fluentui/react-components';
+import { DefaultButton, PrimaryButton } from '@fluentui/react';
 
 export interface TemplatePanelFooterProps {
   primaryButtonText: string;
@@ -7,15 +7,18 @@ export interface TemplatePanelFooterProps {
   onClose: () => void;
 }
 
-export const TemplatesPanelFooter = ({ primaryButtonText = 'Example', primaryButtonOnClick, onClose }: TemplatePanelFooterProps) => {
+export const TemplatesPanelFooter = ({ primaryButtonText, primaryButtonOnClick, onClose }: TemplatePanelFooterProps) => {
   return (
-    <>
-      <Button appearance="primary" onClick={primaryButtonOnClick}>
-        {primaryButtonText}
-      </Button>
-      <Button appearance="outline" onClick={onClose}>
+    <div className="msla-templates-panel-footer">
+      <PrimaryButton onClick={primaryButtonOnClick}>{primaryButtonText}</PrimaryButton>
+      <DefaultButton
+        onClick={onClose}
+        style={{
+          marginLeft: '8px',
+        }}
+      >
         Close
-      </Button>
-    </>
+      </DefaultButton>
+    </div>
   );
 };

@@ -1,10 +1,11 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { changeCurrentTemplateName, loadTemplate } from '../../../../../core/state/templates/templateSlice';
+import { openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 
 export const WorkflowPanel: React.FC = () => {
   const { workflowDefinition } = useSelector((state: RootState) => state.template);
@@ -17,7 +18,17 @@ export const WorkflowPanel: React.FC = () => {
   );
 };
 
-export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const workflowTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  {
+    templateName,
+    templateManifest,
+  }: {
+    templateName: string | undefined;
+    templateManifest: Template.Manifest | undefined;
+  }
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',
@@ -33,10 +44,15 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
   content: <WorkflowPanel />,
   order: 0,
   footerContent: {
-    primaryButtonText: 'Next',
+    primaryButtonText: intl.formatMessage({
+      defaultMessage: 'Create a workflow with this template',
+      id: 'wGkH/j',
+      description: 'Button text to create workflow from this template',
+    }),
     primaryButtonOnClick: () => {
-      //TODO: revisit. if parameters is invisible, we should skip to the next visible tab
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS));
+      dispatch(changeCurrentTemplateName(templateName ?? ''));
+      dispatch(loadTemplate(templateManifest));
+      dispatch(openCreateWorkflowPanelView());
     },
     primaryButtonDisabled: false,
     onClose: () => {},
