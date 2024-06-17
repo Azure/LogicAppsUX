@@ -1,4 +1,25 @@
 # Logic Apps Designer
+## [4.30.0](https://github.com/Azure/LogicAppsUX/compare/v4.29.0...v4.30.0) (2024-06-17)
+
+
+### Features
+
+* **designer-ui:** Adding output descriptions to Floating Action Menu ([#4956](https://github.com/Azure/LogicAppsUX/issues/4956)) ([a48f43b](https://github.com/Azure/LogicAppsUX/commit/a48f43bcdea897100a42a488c330563db82b4ce5))
+* **Designer:** Increased browse operation request page size to 5k ([#4989](https://github.com/Azure/LogicAppsUX/issues/4989)) ([04cee68](https://github.com/Azure/LogicAppsUX/commit/04cee68897c4ac525807c3c1774c867e1ef2306d))
+* **templates:** Adding template card UI ([#4975](https://github.com/Azure/LogicAppsUX/issues/4975)) ([43070e2](https://github.com/Azure/LogicAppsUX/commit/43070e256b488e7b27564fcfba74d83114c432f9))
+* **Templates:** End to End Create Experience With Sanitized Parameters ([#4974](https://github.com/Azure/LogicAppsUX/issues/4974)) ([c8c94ce](https://github.com/Azure/LogicAppsUX/commit/c8c94ce3b09155dd2e703da2424133390b285c0a))
+* **Templates:** Styling for Templates Parameters ([#4978](https://github.com/Azure/LogicAppsUX/issues/4978)) ([8cf13cd](https://github.com/Azure/LogicAppsUX/commit/8cf13cded218d18b787d934c7fbd44e20e441173))
+
+
+### Bug Fixes
+
+* **designer-ui:** Remove problematic call to `setIsValuePlaintext` ([#4979](https://github.com/Azure/LogicAppsUX/issues/4979)) ([7ded280](https://github.com/Azure/LogicAppsUX/commit/7ded2802dde0829b9ff95e3bb92cc10031d74385))
+* **designer:** Update token code for powershell custom code ([#4960](https://github.com/Azure/LogicAppsUX/issues/4960)) ([47b7c07](https://github.com/Azure/LogicAppsUX/commit/47b7c078f0c9b5ee8d4d71682d779cb1f949bbf0))
+* **Templates:** Fix Standalone Breaking For Query Provider Issue ([#4985](https://github.com/Azure/LogicAppsUX/issues/4985)) ([325ae34](https://github.com/Azure/LogicAppsUX/commit/325ae34000317c3fd64abd51726b2e153cca5d91))
+* **vscode:** Allow script generation without connections and click in project root ([#4976](https://github.com/Azure/LogicAppsUX/issues/4976)) ([cef9348](https://github.com/Azure/LogicAppsUX/commit/cef93489ccd27d367c12d3204063d24c93a3aea5))
+* **vscode:** Fix designtime local.settings overwriting  ([#4983](https://github.com/Azure/LogicAppsUX/issues/4983)) ([b010740](https://github.com/Azure/LogicAppsUX/commit/b01074011e143fc1f1aa35da8ceec414dcec4cfe))
+* **vscode:** Update functions extension bundle to workflows ([#4986](https://github.com/Azure/LogicAppsUX/issues/4986)) ([d942192](https://github.com/Azure/LogicAppsUX/commit/d9421921f677e277576653f45649d585439f2f50))
+
 ## [4.29.0](https://github.com/Azure/LogicAppsUX/compare/v4.28.0...v4.29.0) (2024-06-13)
 
 
