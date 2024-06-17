@@ -24,6 +24,7 @@ import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { window } from 'vscode';
 import * as path from 'path';
+import * as util from 'util';
 import AdmZip = require('adm-zip');
 import * as fs from 'fs';
 const openFolder = true;
@@ -31,11 +32,12 @@ const openFolder = true;
 export async function cloudToLocalInternal(
   context: IActionContext,
   options: ICreateFunctionOptions = {
-    language: 'JavaScript',
-    version: '~4',
-    templateId: 'templateId',
-    functionName: 'functionName',
-    functionSettings: { setting1: 'value1', setting2: 'value2' },
+    folderPath: undefined,
+    language: undefined,
+    version: undefined,
+    templateId: undefined,
+    functionName: undefined,
+    functionSettings: undefined,
     suppressOpenFolder: !openFolder,
   }
 ): Promise<void> {
@@ -80,8 +82,6 @@ export async function cloudToLocalInternal(
     console.error('Error during wizard execution:', error);
   }
 
-  console.log('Starting other code stuff');
-
   // Factory function to create an AdmZip instance
   function createAdmZipInstance(zipFilePath: string) {
     return new AdmZip(zipFilePath);
@@ -103,7 +103,6 @@ export async function cloudToLocalInternal(
   if (localSettingsEntry) {
     const zipSettingsContent = localSettingsEntry.getData().toString('utf8');
     zipSettings = JSON.parse(zipSettingsContent);
-    console.log('Zip Settings:', JSON.stringify(zipSettings, null, 2));
   }
   // Merge local.settings.json files
   const localSettingsPath = path.join(wizardContext.workspacePath, 'local.settings.json');
@@ -114,7 +113,6 @@ export async function cloudToLocalInternal(
     // If it does, read its contents
     const localSettingsContent = fs.readFileSync(localSettingsPath, 'utf8');
     localSettings = JSON.parse(localSettingsContent);
-    console.log('Local Settings:', JSON.stringify(localSettings, null, 2));
   }
 
   function deepMergeObjects(target: any, source: any): any {
@@ -131,7 +129,6 @@ export async function cloudToLocalInternal(
   }
 
   localSettings = deepMergeObjects(zipSettings, localSettings);
-  console.log('Merged Settings:', JSON.stringify(localSettings, null, 2));
 
   // Write the merged contents back to the local local.settings.json file
   try {
@@ -140,5 +137,63 @@ export async function cloudToLocalInternal(
   } catch (error) {
     console.error('Error writing file:', error);
   }
+
+  const fsExists = util.promisify(fs.exists);
+  const fsReadFile = util.promisify(fs.readFile);
+
+  async function waitForFile(filePath: string, timeout = 30000, interval = 1000): Promise<void> {
+    const startTime = Date.now();
+
+    return new Promise<void>((resolve, reject) => {
+      const checkFile = async () => {
+        if (await fsExists(filePath)) {
+          const content = await fsReadFile(filePath, 'utf8');
+          if (content.length > 0) {
+            resolve();
+          } else {
+            // File exists but is empty, continue waiting
+            setTimeout(checkFile, interval);
+          }
+        } else if (Date.now() - startTime > timeout) {
+          reject(new Error(`File ${filePath} not found or empty within ${timeout} ms`));
+        } else {
+          // File does not exist, continue waiting
+          setTimeout(checkFile, interval);
+        }
+      };
+
+      checkFile();
+    });
+  }
+  const parametersFilePath = '.../parameters.json';
+  waitForFile(parametersFilePath)
+    .then(() => {
+      console.log('parameters.json is ready');
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+  const fsWriteFile = util.promisify(fs.writeFile);
+  async function modifyFunctionSettings(filePath: string): Promise<void> {
+    try {
+      // Step 1: Read the parameters.json file
+      const fileContent = await fsReadFile(filePath, 'utf8');
+
+      // Step 2: Replace 'ManagedServiceIdentity' with 'Raw/Key' in the file content
+      const modifiedContent = fileContent.replace(/ManagedServiceIdentity/g, 'KeyAuth');
+
+      // Step 3: Write the modified content back to the file
+      await fsWriteFile(filePath, modifiedContent);
+
+      console.log('Modified functionSettings successfully.');
+    } catch (error) {
+      console.error('Failed to modify function settings:', error);
+    }
+  }
+  modifyFunctionSettings(parametersFilePath)
+    .then(() => console.log('Function settings modified successfully.'))
+    .catch(console.error);
+
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }

@@ -47,7 +47,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
         Values: {
-          AzureWebJobsStorage: '',
+          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
           APP_KIND: logicAppKind,
           ProjectDirectoryPath: path.join(context.projectPath),
         },

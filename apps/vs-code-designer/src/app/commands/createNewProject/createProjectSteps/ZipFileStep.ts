@@ -52,7 +52,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
         await unzipLogicAppArtifacts(this.zipContent, this.targetDirectory);
 
         const zipBaseName = path.basename(ZipFileStep.zipFilePath, path.extname(ZipFileStep.zipFilePath));
-        const excludedFiles = [`${zipBaseName}.csproj`, '.vscode', 'obj', 'bin', 'local.settings.json'];
+        const excludedFiles = [`${zipBaseName}.csproj`, '.vscode', 'obj', 'bin', 'local.settings.json', 'host.json'];
 
         for (const file of excludedFiles) {
           rimraf.sync(path.join(this.targetDirectory, file));
