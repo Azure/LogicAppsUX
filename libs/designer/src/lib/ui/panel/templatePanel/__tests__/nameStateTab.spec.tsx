@@ -21,7 +21,8 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
         definitions: {},
         validationErrors: {},
       },
-      connections: [],
+      connections: {},
+      servicesInitialized: false,
     };
     const minimalStoreData = {
       template: templateSliceData,
