@@ -26,8 +26,6 @@ export const DesignerWrapper = () => {
         ) : resourcePath ? (
           hostingPlan === 'consumption' ? (
             <LogicAppsDesignerConsumption />
-          ) : hostingPlan === 'standard' ? (
-            <LogicAppsDesignerStandard />
           ) : (
             <LogicAppsDesignerStandard />
           )

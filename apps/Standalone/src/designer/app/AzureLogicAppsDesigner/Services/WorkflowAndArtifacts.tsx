@@ -13,8 +13,9 @@ import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
+import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 
-const baseUrl = 'https://brazilus.management.azure.com';
+const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
 const hybridApiVersion = '2024-02-02-preview';
 const consumptionApiVersion = '2019-05-01';
@@ -44,13 +45,17 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   );
 };
 
-export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => {
-  return useQuery(['workflowCustomCode', appId, workflowName], async () => await getAllCustomCodeFiles(appId, workflowName), {
-    enabled: !!appId && !!workflowName,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+export const useAllCustomCodeFiles = (appId?: string, workflowName?: string, isHybridLogicApp?: boolean) => {
+  return useQuery(
+    ['workflowCustomCode', appId, workflowName],
+    async () => await getAllCustomCodeFiles(appId, workflowName, isHybridLogicApp),
+    {
+      enabled: !!appId && !!workflowName,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 };
 
 interface HostJSON {
@@ -102,7 +107,14 @@ export const getCustomCodeAppFiles = async (
   return appFiles;
 };
 
-const getAllCustomCodeFiles = async (appId?: string, workflowName?: string): Promise<Record<string, string>> => {
+const getAllCustomCodeFiles = async (
+  appId?: string,
+  workflowName?: string,
+  isHybridLogicApp?: boolean
+): Promise<Record<string, string>> => {
+  if (isHybridLogicApp) {
+    return {};
+  }
   const customCodeFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
   const vfsObjects: VFSObject[] = (await fetchFilesFromFolder(uri)).filter((file) => file.name !== Artifact.WorkflowFile);
@@ -148,14 +160,16 @@ export const useRunInstanceStandard = (
   return useQuery(
     ['getRunInstance', appId, workflowName, runId],
     async () => {
+      if (!appId) {
+        return;
+      }
       if (HybridAppUtility.isHybridLogicApp(appId)) {
-        return HybridAppUtility.getProxy(
+        return HybridAppUtility.getProxy<LogicAppsV2.RunInstanceDefinition>(
           `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
           null,
           {
             Authorization: `Bearer ${environment.armToken}`,
-          },
-          null
+          }
         );
       }
 
@@ -215,22 +229,19 @@ export const listCallbackUrl = async (
 ): Promise<CallbackInfo> => {
   let callbackInfo: any;
   if (triggerName) {
+    const authToken = {
+      Authorization: `Bearer ${environment.armToken}`,
+    };
     if (HybridAppUtility.isHybridLogicApp(workflowId)) {
-      callbackInfo = HybridAppUtility.postProxy(
-        `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl/`,
-        null,
-        {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-        null
-      );
+      console.log(baseUrl, workflowId);
+      callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
     } else {
       const result = await axios.post(
         `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
         null,
         {
           headers: {
-            Authorization: `Bearer ${environment.armToken}`,
+            ...authToken,
           },
         }
       );
@@ -259,13 +270,16 @@ export const listCallbackUrl = async (
   };
 };
 
-export const useWorkflowApp = (siteResourceId: string, hostingPlan: string) => {
+export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}?api-version=${
-        hostingPlan === 'consumption' ? '2016-10-01' : hostingPlan === 'standard' ? '2018-11-01' : '2023-11-02-preview'
-      }`;
+      const apiVersions = {
+        consumption: '2016-10-01',
+        standard: '2018-11-01',
+        hybrid: '2023-11-02-preview',
+      };
+      const uri = `${baseUrl}${siteResourceId}?api-version=${apiVersions[hostingPlan] || '2018-11-01'}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -533,8 +547,7 @@ const validateWorkflow = async (
       requestPayload,
       {
         Authorization: `Bearer ${environment.armToken}`,
-      },
-      null
+      }
     );
   } else {
     response = await axios.post(

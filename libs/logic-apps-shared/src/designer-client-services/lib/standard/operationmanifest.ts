@@ -2,6 +2,7 @@ import type { OperationInfo, OperationManifest } from '../../../utils/src';
 import { ConnectionType, equals } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
+import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 
 export class StandardOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -23,22 +24,6 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     //throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
-  public isHybridLogicApp(uri: string): boolean {
-    return uri.toLowerCase().includes('microsoft.app');
-  }
-
-  public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
-    if (!appId) {
-      throw new Error(`Invalid value for appId: '${appId}'`);
-    }
-
-    if (appId.endsWith('/')) {
-      appId = appId.substring(0, appId.length - 1);
-    }
-
-    return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
-  }
-
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedBaseManifestObjects.get(operationId);
     if (supportedManifest) {
@@ -55,12 +40,9 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
 
     try {
       let response = null;
-      if (this.isHybridLogicApp(baseUrl)) {
+      if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
-          uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
-            'management.azure.com',
-            'brazilus.management.azure.com'
-          ),
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
           headers: {
             'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorName}/operations/${operationName}?$expand=properties/manifest`,
             'x-ms-logicapps-proxy-method': 'GET',

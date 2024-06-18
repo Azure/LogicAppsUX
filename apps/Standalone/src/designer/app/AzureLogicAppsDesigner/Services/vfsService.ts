@@ -1,7 +1,6 @@
 import type { VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import { environment } from '../../../../environments/environment';
-import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
 
 const params = {
   relativePath: 1,
@@ -9,17 +8,6 @@ const params = {
 };
 
 export const fetchFilesFromFolder = async (uri: string): Promise<VFSObject[]> => {
-  if (HybridAppUtility.isHybridLogicApp(uri)) {
-    return await HybridAppUtility.getProxy(
-      `${uri}/?relativePath=1`,
-      null,
-      {
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-      null
-    );
-  }
-
   return (
     await axios.get<VFSObject[]>(uri, {
       headers: {

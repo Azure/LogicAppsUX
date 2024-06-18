@@ -2,7 +2,7 @@ import { environment } from '../../../environments/environment';
 import { getStateHistory } from '../../state/historyHelpers';
 import type { AppDispatch } from '../../state/store';
 import { useIsLocal, useHostingPlan, useResourcePath } from '../../state/workflowLoadingSelectors';
-import { loadLastWorkflow, setHostingPlan, setIsLocalSelected } from '../../state/workflowLoadingSlice';
+import { type HostingPlanTypes, loadLastWorkflow, setHostingPlan, setIsLocalSelected } from '../../state/workflowLoadingSlice';
 import { ChoiceGroup, IconButton } from '@fluentui/react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -40,7 +40,7 @@ const SourceSettings = () => {
           { key: 'consumption', text: 'Consumption' },
           { key: 'hybrid', text: 'Hybrid' },
         ]}
-        onChange={(_, option) => dispatch(setHostingPlan(option?.key || 'standard'))}
+        onChange={(_, option) => dispatch(setHostingPlan((option?.key as HostingPlanTypes) || 'standard'))}
         selectedKey={hostingPlan}
       />
       {/* History Button to load last loaded workflow */}

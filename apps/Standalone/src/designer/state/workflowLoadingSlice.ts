@@ -6,6 +6,8 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+export type HostingPlanTypes = 'standard' | 'consumption' | 'hybrid';
+
 export interface WorkflowLoadingState {
   resourcePath?: string;
   appId?: string;
@@ -17,7 +19,7 @@ export interface WorkflowLoadingState {
   isReadOnly: boolean;
   isMonitoringView: boolean;
   isDarkMode: boolean;
-  hostingPlan: string;
+  hostingPlan: HostingPlanTypes;
   isLocal: boolean;
   showChatBot?: boolean;
   parameters: Record<string, WorkflowParameter>;
@@ -128,7 +130,7 @@ export const workflowLoadingSlice = createSlice({
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.isDarkMode = action.payload;
     },
-    setHostingPlan: (state, action: PayloadAction<string>) => {
+    setHostingPlan: (state, action: PayloadAction<HostingPlanTypes>) => {
       state.hostingPlan = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;

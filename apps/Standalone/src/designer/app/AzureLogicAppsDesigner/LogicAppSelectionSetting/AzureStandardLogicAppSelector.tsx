@@ -30,7 +30,7 @@ export const AzureStandardLogicAppSelector = () => {
   const hostingPlan = useHostingPlan();
   const standardList = useFetchStandardApps();
   const hybridList = useFetchHybridApps();
-  const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'standard' ? standardList : hybridList;
+  const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -40,11 +40,9 @@ export const AzureStandardLogicAppSelector = () => {
     }
 
     const getWorkflowUrl =
-      hostingPlan === 'standard'
-        ? `https://management.azure.com${appId}/workflows?api-version=2018-11-01`
-        : `https://brazilus.management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(
-            appId
-          )}/workflows?api-version=2024-02-02-preview`;
+      hostingPlan === 'hybrid'
+        ? `https://management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows?api-version=2024-02-02-preview`
+        : `https://management.azure.com${appId}/workflows?api-version=2018-11-01`;
 
     const results = await axios.get<WorkflowList>(getWorkflowUrl, {
       headers: {
@@ -65,14 +63,15 @@ export const AzureStandardLogicAppSelector = () => {
         return null;
       }
 
+      const authToken = {
+        Authorization: `Bearer ${environment.armToken}`,
+      };
+
       if (hostingPlan === 'hybrid') {
-        return HybridAppUtility.getProxy(
-          `https://brazilus.management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs`,
+        return HybridAppUtility.getProxy<RunList>(
+          `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs`,
           null,
-          {
-            Authorization: `Bearer ${environment.armToken}`,
-          },
-          null
+          authToken
         );
       }
 
@@ -80,7 +79,7 @@ export const AzureStandardLogicAppSelector = () => {
         `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`,
         {
           headers: {
-            Authorization: `Bearer ${environment.armToken}`,
+            ...authToken,
           },
         }
       );

@@ -80,14 +80,15 @@ const DesignerEditor = () => {
     showChatBot,
     language,
     hostOptions,
+    hostingPlan,
     showConnectionsPanel,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
-
+  const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
-  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName);
+  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());

@@ -3,6 +3,7 @@ import { ArgumentException, UnsupportedException } from '../../../utils/src';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
+import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
@@ -65,12 +66,9 @@ export class StandardConnectorService extends BaseConnectorService {
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
     let response = null;
-    if (this.isHybridLogicApp(uri)) {
+    if (isHybridLogicApp(uri)) {
       response = await httpClient.post({
-        uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
-          'management.azure.com',
-          'brazilus.management.azure.com'
-        ),
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
         headers: {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
             .split('/')
@@ -88,22 +86,6 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     return this._getResponseFromDynamicApi(response, uri);
-  }
-
-  public isHybridLogicApp(uri: string): boolean {
-    return uri.toLowerCase().includes('microsoft.app');
-  }
-
-  public getHybridAppBaseRelativeUrl(appId: string | undefined): string {
-    if (!appId) {
-      throw new Error(`Invalid value for appId: '${appId}'`);
-    }
-
-    if (appId.endsWith('/')) {
-      appId = appId.substring(0, appId.length - 1);
-    }
-
-    return `${appId}/providers/Microsoft.App/logicApps/${appId.split('/').pop()}`;
   }
 
   async getDynamicSchema(
@@ -137,12 +119,9 @@ export class StandardConnectorService extends BaseConnectorService {
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
 
     let response = null;
-    if (this.isHybridLogicApp(uri)) {
+    if (isHybridLogicApp(uri)) {
       response = await httpClient.post({
-        uri: `${this.getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`.replace(
-          'management.azure.com',
-          'brazilus.management.azure.com'
-        ),
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
         headers: {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
             .split('/')
