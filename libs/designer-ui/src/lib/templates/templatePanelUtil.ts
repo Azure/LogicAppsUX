@@ -1,5 +1,5 @@
 import type { IntlShape } from 'react-intl';
-import type { TemplatePanelFooterProps } from './templatesPanelFooter';
+import type { ReactNode } from 'react';
 
 export type TemplatePanelTabFn = (intl: IntlShape) => TemplatePanelTab;
 export interface TemplatePanelTab {
@@ -9,5 +9,9 @@ export interface TemplatePanelTab {
   visible?: boolean;
   order: number;
   content: React.ReactElement;
-  footerContent: TemplatePanelFooterProps;
+  footerContent: {
+    primaryButtonText: string | ReactNode;
+    primaryButtonOnClick: () => void | Promise<void>;
+    primaryButtonDisabled?: boolean;
+  };
 }

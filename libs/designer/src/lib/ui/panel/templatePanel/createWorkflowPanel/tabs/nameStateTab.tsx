@@ -95,6 +95,5 @@ export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePa
       dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
     },
     primaryButtonDisabled: false,
-    onClose: () => {},
   },
 });

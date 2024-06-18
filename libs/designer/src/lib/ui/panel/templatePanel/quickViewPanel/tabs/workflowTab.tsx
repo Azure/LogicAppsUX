@@ -1,10 +1,9 @@
-import { type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { changeCurrentTemplateName, loadTemplate } from '../../../../../core/state/templates/templateSlice';
 import { openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 
 export const WorkflowPanel: React.FC = () => {
@@ -18,17 +17,7 @@ export const WorkflowPanel: React.FC = () => {
   );
 };
 
-export const workflowTab = (
-  intl: IntlShape,
-  dispatch: AppDispatch,
-  {
-    templateName,
-    templateManifest,
-  }: {
-    templateName: string | undefined;
-    templateManifest: Template.Manifest | undefined;
-  }
-): TemplatePanelTab => ({
+export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',
@@ -50,11 +39,8 @@ export const workflowTab = (
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
-      dispatch(changeCurrentTemplateName(templateName ?? ''));
-      dispatch(loadTemplate(templateManifest));
       dispatch(openCreateWorkflowPanelView());
     },
     primaryButtonDisabled: false,
-    onClose: () => {},
   },
 });

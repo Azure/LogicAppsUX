@@ -40,6 +40,5 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): Template
       dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS));
     },
     primaryButtonDisabled: false,
-    onClose: () => {},
   },
 });

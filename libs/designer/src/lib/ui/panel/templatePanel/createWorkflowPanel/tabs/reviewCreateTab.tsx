@@ -5,12 +5,12 @@ import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
 export const ReviewCreatePanel = () => {
-  return <div></div>;
+  return <></>;
 };
 
 export const reviewCreateTab = (
   intl: IntlShape,
-  _dispatch: AppDispatch,
+  dispatch: AppDispatch,
   onCreateClick: () => Promise<void>,
   {
     isLoading,
@@ -46,6 +46,5 @@ export const reviewCreateTab = (
     ),
     primaryButtonOnClick: onCreateClick,
     primaryButtonDisabled: isButtonDisabled || isLoading,
-    onClose: () => {},
   },
 });

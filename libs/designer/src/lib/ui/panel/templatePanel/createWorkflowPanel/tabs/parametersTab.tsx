@@ -34,6 +34,5 @@ export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateP
       dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
     },
     primaryButtonDisabled: false,
-    onClose: () => {},
   },
 });

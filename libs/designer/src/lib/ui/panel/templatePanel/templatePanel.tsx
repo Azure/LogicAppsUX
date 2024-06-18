@@ -8,13 +8,17 @@ import { QuickViewPanel } from './quickViewPanel/quickViewPanel';
 import { type TemplatePanelTab, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { useQuickViewPanelTabs } from './quickViewPanel/usePanelTabs';
+import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
   const templateTitle = useSelector((state: RootState) => state.template?.manifest?.title) ?? '';
   const templateDescription = useSelector((state: RootState) => state.template?.manifest?.description) ?? '';
-  const dismissPanel = useCallback(() => dispatch(closePanel()), [dispatch]);
+  const dismissPanel = useCallback(() => {
+    dispatch(closePanel());
+    dispatch(clearTemplateDetails());
+  }, [dispatch]);
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs(onCreateClick);
   const quickViewPanelTabs = useQuickViewPanelTabs();
 
@@ -35,8 +39,8 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     [templateTitle, templateDescription, currentPanelView]
   );
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps]
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} onClose={dismissPanel} /> : null),
+    [selectedTabProps, dismissPanel]
   );
 
   return (

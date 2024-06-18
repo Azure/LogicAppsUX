@@ -1,10 +1,10 @@
-import { type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { changeCurrentTemplateName, loadTemplate } from '../../../../../core/state/templates/templateSlice';
-import { openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const OverviewPanel: React.FC = () => {
   const { manifest } = useSelector((state: RootState) => state.template);
@@ -17,17 +17,7 @@ export const OverviewPanel: React.FC = () => {
   );
 };
 
-export const overviewTab = (
-  intl: IntlShape,
-  dispatch: AppDispatch,
-  {
-    templateName,
-    templateManifest,
-  }: {
-    templateName: string | undefined;
-    templateManifest: Template.Manifest | undefined;
-  }
-) => ({
+export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Overview',
@@ -49,11 +39,12 @@ export const overviewTab = (
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
-      dispatch(changeCurrentTemplateName(templateName ?? ''));
-      dispatch(loadTemplate(templateManifest));
       dispatch(openCreateWorkflowPanelView());
     },
     primaryButtonDisabled: false,
-    onClose: () => {},
+    onClose: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
   },
 });

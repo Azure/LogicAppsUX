@@ -141,6 +141,17 @@ export const templateSlice = createSlice({
       };
       state.parameters.validationErrors[name] = validationError;
     },
+    clearTemplateDetails: (state) => {
+      state.workflowDefinition = undefined;
+      state.manifest = undefined;
+      state.workflowName = undefined;
+      state.kind = undefined;
+      state.parameters = {
+        definitions: {},
+        validationErrors: {},
+      };
+      state.connections = {};
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadTemplate.fulfilled, (state, action) => {
@@ -169,7 +180,8 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
+export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue, clearTemplateDetails } =
+  templateSlice.actions;
 export default templateSlice.reducer;
 
 const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {
