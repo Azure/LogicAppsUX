@@ -4,14 +4,12 @@ import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplatePanelTab } from './templatePanelUtil';
 
 export interface TemplatesPanelContentProps {
-  panelType: string;
   isSequence: boolean;
   tabs: TemplatePanelTab[];
   selectedTab?: string;
   selectTab: (tabId: string) => void;
 }
 export const TemplatesPanelContent = ({
-  panelType,
   isSequence = true,
   tabs = [],
   selectedTab,
@@ -30,27 +28,25 @@ export const TemplatesPanelContent = ({
   };
 
   return (
-    <div id={`msla-templates-panel-${panelType}`} className="msla-templates-panel">
+    <div className="msla-templates-panel">
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
-        {tabs.map(({ id, title, visible, order }, index) =>
-          visible ? (
-            <Tab
-              key={id}
-              id={id}
-              className={css('msla-templates-panel-tabName', id === selectedTabId && 'selected')}
-              value={id}
-              role={'tab'}
-              disabled={isSequence && order > selectedTabOrder}
-            >
-              {isSequence && (
-                <Text className="msla-templates-panel-tabName-index">
-                  {order < selectedTabOrder ? <Icon iconName="accept" /> : index + 1}
-                </Text>
-              )}
-              <Text className="msla-templates-panel-tabName-title">{title}</Text>
-            </Tab>
-          ) : null
-        )}
+        {tabs.map(({ id, title, order }, index) => (
+          <Tab
+            key={id}
+            id={id}
+            className={css('msla-templates-panel-tabName', id === selectedTabId && 'selected')}
+            value={id}
+            role={'tab'}
+            disabled={isSequence && order > selectedTabOrder}
+          >
+            {isSequence && (
+              <Text className="msla-templates-panel-tabName-index">
+                {order < selectedTabOrder ? <Icon iconName="accept" /> : index + 1}
+              </Text>
+            )}
+            <Text className="msla-templates-panel-tabName-title">{title}</Text>
+          </Tab>
+        ))}
       </TabList>
       <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
     </div>

@@ -15,13 +15,5 @@ export const QuickViewPanel = ({
     dispatch(selectPanelTab(tabId));
   };
 
-  return (
-    <TemplatesPanelContent
-      panelType="quickView"
-      tabs={panelTabs}
-      selectedTab={selectedTabId}
-      selectTab={handleSelectTab}
-      isSequence={false}
-    />
-  );
+  return <TemplatesPanelContent isSequence={false} tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />;
 };

@@ -7,14 +7,18 @@ import { reviewCreateTab } from './tabs/reviewCreateTab';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import Constants from '../../../../common/constants';
 
 export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { parameters } = useSelector((state: RootState) => state.template);
+  const selectedManifest = useSelector((state: RootState) => state.template.manifest);
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+
+  const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
+  const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
@@ -24,9 +28,13 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
 
   const connectionsTabItem = useMemo(
     () => ({
-      ...connectionsTab(intl, dispatch),
+      ...connectionsTab(
+        intl,
+        dispatch,
+        parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE
+      ),
     }),
-    [intl, dispatch]
+    [intl, dispatch, parametersExist]
   );
 
   const parametersTabItem = useMemo(
@@ -54,11 +62,17 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   );
 
   const tabs = useMemo(() => {
-    if (!parameters) {
-      return [connectionsTabItem, nameStateTabItem, reviewCreateTabItem];
+    const validTabs = [];
+    if (connectionsExist) {
+      validTabs.push(connectionsTabItem);
     }
-    return [connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem];
-  }, [parameters, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
+    if (parametersExist) {
+      validTabs.push(parametersTabItem);
+    }
+    validTabs.push(nameStateTabItem);
+    validTabs.push(reviewCreateTabItem);
+    return validTabs;
+  }, [connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
 
   return tabs;
 };

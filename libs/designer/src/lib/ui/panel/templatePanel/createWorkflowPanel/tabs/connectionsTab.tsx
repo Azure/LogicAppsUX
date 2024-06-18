@@ -18,7 +18,7 @@ export const ConnectionsPanel: React.FC = () => {
   );
 };
 
-export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId: string): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
@@ -36,8 +36,7 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): Template
   footerContent: {
     primaryButtonText: 'Next',
     primaryButtonOnClick: () => {
-      //TODO: revisit. if parameters is invisible, we should skip to the next visible tab
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS));
+      dispatch(selectPanelTab(nextTabId));
     },
     primaryButtonDisabled: false,
   },
