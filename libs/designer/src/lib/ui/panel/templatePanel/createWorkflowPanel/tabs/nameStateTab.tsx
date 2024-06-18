@@ -77,9 +77,9 @@ export const NameStatePanel: React.FC = () => {
 
   const onRenderStatefulField = useCallback(
     () => (
-      <div className="msla-templates-choiceGroup-label">
+      <div className="msla-templates-tab-choiceGroup-label">
         <Text>{intlText.STATEFUL}</Text>
-        <div className="msla-templates-choiceGroup-list">
+        <div className="msla-templates-tab-choiceGroup-list">
           <li>{intlText.STATEFUL_FIRST_POINT}</li>
           <li>{intlText.STATEFUL_SECOND_POINT}</li>
         </div>
@@ -90,9 +90,9 @@ export const NameStatePanel: React.FC = () => {
 
   const onRenderStatelessField = useCallback(
     () => (
-      <div className="msla-templates-choiceGroup-label">
+      <div className="msla-templates-tab-choiceGroup-label">
         <Text>{intlText.STATELESS}</Text>
-        <div className="msla-templates-choiceGroup-list">
+        <div className="msla-templates-tab-choiceGroup-list">
           <li>{intlText.STATELESS_FIRST_POINT}</li>
           <li>{intlText.STATELESS_SECOND_POINT}</li>
         </div>
@@ -127,13 +127,13 @@ export const NameStatePanel: React.FC = () => {
   };
 
   return (
-    <div className="msla-templates-nameStateTab">
-      <Label className="msla-templates-label" required={true} htmlFor={'workflowName'}>
+    <div className="msla-templates-tab">
+      <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
         {intlText.WORKFLOW_NAME}
       </Label>
-      <Text className="msla-templates-label-description">{intlText.WORKFLOW_NAME_DESCRIPTION}</Text>
+      <Text className="msla-templates-tab-label-description">{intlText.WORKFLOW_NAME_DESCRIPTION}</Text>
       <TextField
-        className="msla-templates-textField"
+        className="msla-templates-tab-textField"
         data-testid={'workflowName'}
         id={'workflowName'}
         ariaLabel={intlText.WORKFLOW_NAME}
@@ -145,12 +145,12 @@ export const NameStatePanel: React.FC = () => {
         onBlur={testRegex}
         errorMessage={validationError}
       />
-      <Label className="msla-templates-label" required={true} htmlFor={'workflowName'}>
+      <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
         {intlText.STATE_TYPE}
       </Label>
-      <Text className="msla-templates-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
+      <Text className="msla-templates-tab-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
       <ChoiceGroup
-        className="msla-templates-choiceGroup"
+        className="msla-templates-tab-choiceGroup"
         options={[
           { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
           {
