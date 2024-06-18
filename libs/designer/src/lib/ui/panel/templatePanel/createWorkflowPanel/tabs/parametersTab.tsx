@@ -23,9 +23,10 @@ export const parametersTab = (
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Parameters Tab',
-    id: 'dcpRnG',
-    description: 'An accessability label that describes the parameters tab',
+    defaultMessage:
+      'Parameters are values that can be reused throughout your workflows, enabling greater flexibility and easier maintenance. By using parameters, you can simplify workflow modifications and ensure consistency across your automation processes. The parameters will be saved when the workflow is created. You can edit parameters here or in designer.',
+    id: 'oG8Tky',
+    description: 'An accessability label that describes the objective of parameters tab',
   }),
   visible: true,
   order: 1,

@@ -49,6 +49,7 @@ export const TemplatesPanelContent = ({
           </Tab>
         ))}
       </TabList>
+      <div className="msla-panel-content-description">{selectedTabProps?.description}</div>
       <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
     </div>
   );

@@ -27,9 +27,9 @@ export const reviewCreateTab = (
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Review and Create Tab',
-    id: 'z4pjNi',
-    description: 'An accessability label that describes the review and create tab',
+    defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
+    id: 'BPSraP',
+    description: 'An accessability label that describes the objective of review and create tab',
   }),
   visible: true,
   order: 3,

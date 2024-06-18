@@ -82,9 +82,9 @@ export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch, isMissingIn
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Name and State Tab',
-    id: 'PEo0hr',
-    description: 'An accessability label that describes the name and state tab',
+    defaultMessage: 'Provide a unique, descriptive name and review the state type to ensure your workflow is properly configured.',
+    id: 'ZXyMDQ',
+    description: 'An accessability label that describes the objective of name and state tab',
   }),
   visible: true,
   order: 2,
