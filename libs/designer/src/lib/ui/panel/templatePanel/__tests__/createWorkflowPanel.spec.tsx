@@ -120,19 +120,19 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   });
 
   it('Ensure clicking on primary button moves onto next tab only with no missing info', async () => {
-    screen.getByTestId('template-primary-button').click(); // no missing info (no required parameters)
+    screen.getByTestId('template-footer-primary-button').click(); // no missing info (no required parameters)
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
-    screen.getByTestId('template-primary-button').click(); // missing info (kind), should not move to next tab
+    screen.getByTestId('template-footer-primary-button').click(); // missing info (kind), should not move to next tab
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
   });
 
   it('Ensure clicking on primary button moves onto next tab when missing info is filled', async () => {
-    screen.getByTestId('template-primary-button').click(); // no missing info (no required parameters)
+    screen.getByTestId('template-footer-primary-button').click(); // no missing info (no required parameters)
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
     store.dispatch(updateKind('stateful'));
     expect(store.getState().template.kind).toEqual('stateful');
     expect(store.getState().template.workflowName).toEqual(''); // Empty string is considered as missing info
-    screen.getByTestId('template-primary-button').click();
+    screen.getByTestId('template-footer-primary-button').click();
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
   });
 });
