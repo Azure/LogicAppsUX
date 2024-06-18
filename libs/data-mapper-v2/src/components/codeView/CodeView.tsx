@@ -4,7 +4,6 @@ import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
-//import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
@@ -27,49 +26,12 @@ export const CodeView = () => {
   const dataMapDefinition = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
 
-  // const [initialDragXPos, setInitialDragXPos] = useState<number | undefined>(undefined);
-  // const [initialDragWidth, setInitialDragWidth] = useState<number | undefined>(undefined);
-
   const onStartDrag = (e: React.DragEvent) => {
-    // setInitialDragXPos(e.clientX);
-    // setInitialDragWidth(contentWidth);
-
     // Show empty image in place of dragging ghost preview
     const img = new Image();
     img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
     e.dataTransfer.setDragImage(img, 0, 0);
   };
-
-  // const onDrag = (e: React.DragEvent) => {
-  //   // Have to check for clientY being 0 as it messes everything up when drag ends for some unknown reason
-  //   if (!initialDragWidth || !initialDragXPos || e.clientX === 0) {
-  //     return;
-  //   }
-
-  //   const deltaX = e.clientX - initialDragXPos; // Going up == negative
-
-  //   // Clamp height percent between 0 and the centerViewWidth
-  //   const newPaneContentHeight = Math.min(centerViewWidth, Math.max(0, initialDragWidth - deltaX));
-
-  //   // Max width is half the canvas
-  //   const halfWidth = 0.5 * centerViewWidth;
-  //   if (newPaneContentHeight >= halfWidth) {
-  //     setContentWidth(halfWidth);
-  //     return;
-  //   }
-
-  //   if (newPaneContentHeight <= minCodeViewWidth) {
-  //     setContentWidth(minCodeViewWidth);
-  //     return;
-  //   }
-
-  //   setContentWidth(newPaneContentHeight);
-  // };
-
-  // const onDragEnd = () => {
-  //   setInitialDragWidth(undefined);
-  //   setInitialDragXPos(undefined);
-  // };
 
   const codeViewLoc = intl.formatMessage({
     defaultMessage: 'Code view',
@@ -105,8 +67,6 @@ export const CodeView = () => {
           cursor: isCodeViewOpen ? 'col-resize' : 'auto',
         }}
         onDragStart={onStartDrag}
-        // onDrag={onDrag}
-        //onDragEnd={onDragEnd}
         draggable={isCodeViewOpen ? 'true' : 'false'}
       />
       <div className={styles.containerStyle}>
@@ -149,7 +109,6 @@ export const CodeView = () => {
               value={dataMapDefinition === '' ? noMapDefLoc : dataMapDefinition}
               className={styles.editorStyle}
               {...commonCodeEditorProps}
-              //height={`${Math.max(200, canvasAreaHeight - 75)}px`}
               readOnly
             />
           </div>
