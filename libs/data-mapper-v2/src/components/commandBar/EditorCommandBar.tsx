@@ -1,6 +1,6 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { makeStyles, shorthands, Toolbar, ToolbarButton, ToolbarGroup } from '@fluentui/react-components';
+import { Toolbar, ToolbarButton, ToolbarGroup } from '@fluentui/react-components';
 import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -11,39 +11,12 @@ import { saveDataMap } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView } from '../../core/state/PanelSlice';
+import { useStyles } from './styles';
 
 export interface EditorCommandBarProps {
   onUndoClick: () => void;
   onTestClick: () => void;
 }
-
-const useStyles = makeStyles({
-  toolbar: {
-    backgroundColor: '#F6FAFE',
-    justifyContent: 'space-between',
-    ...shorthands.borderBottom('1px', 'solid', '#ddd'),
-  },
-  button: {
-    ...shorthands.padding('5px', '0px'),
-    minWidth: '80px',
-  },
-  toggleButton: {
-    ...shorthands.border('0'),
-    ...shorthands.borderStyle('none'),
-    backgroundColor: 'transparent',
-  },
-  toggleButtonSelected: {
-    ...shorthands.border('0'),
-    ...shorthands.borderStyle('none'),
-  },
-  divider: {
-    maxHeight: '25px',
-    marginTop: '4px',
-  },
-  toolbarGroup: {
-    display: 'flex',
-  },
-});
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const { onUndoClick, onTestClick } = props;
@@ -196,9 +169,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
           {Resources.RUN_TEST}
         </ToolbarButton>
-        <ToolbarGroup>
-          <ToolbarButton onClick={toggleCodeViewClick}>Code View</ToolbarButton>
-        </ToolbarGroup>
+      </ToolbarGroup>
+      <ToolbarGroup>
+        <ToolbarButton onClick={toggleCodeViewClick}>Code View</ToolbarButton>
       </ToolbarGroup>
     </Toolbar>
   );

@@ -1,5 +1,5 @@
 import { Stack } from '@fluentui/react';
-import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Text } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { MonacoEditor } from '@microsoft/designer-ui';
@@ -8,6 +8,7 @@ import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
+import { useStyles } from './styles';
 
 export const minCodeViewWidth = 320;
 
@@ -18,26 +19,6 @@ export const commonCodeEditorProps: Partial<MonacoProps> = {
   wordWrap: 'on',
   wrappingIndent: 'same',
 };
-
-const useStyles = makeStyles({
-  containerStyle: {
-    height: '100%',
-    width: '100%',
-    ...shorthands.overflow('hidden'),
-    ...shorthands.padding('12px'),
-    boxSizing: 'border-box',
-    backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-  },
-  titleTextStyle: {
-    ...typographyStyles.body1Strong,
-  },
-  editorStyle: {
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('10px'),
-  },
-});
 
 export const CodeView = () => {
   const intl = useIntl();
