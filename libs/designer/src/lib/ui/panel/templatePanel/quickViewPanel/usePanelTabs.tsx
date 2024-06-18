@@ -1,24 +1,4 @@
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
-import { overviewTab } from './tabs/overviewTab';
-import { workflowTab } from './tabs/workflowTab';
-
+/* This should contain create workflow tabs so we know what tabs to show not for quickview */
 export const usePanelTabs = () => {
-  const intl = useIntl();
-
-  const overviewTabItem = useMemo(
-    () => ({
-      ...overviewTab(intl),
-    }),
-    [intl]
-  );
-
-  const workflowTabItem = useMemo(
-    () => ({
-      ...workflowTab(intl),
-    }),
-    [intl]
-  );
-
-  return [overviewTabItem, workflowTabItem];
+  return [];
 };

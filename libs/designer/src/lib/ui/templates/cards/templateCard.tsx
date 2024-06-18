@@ -54,15 +54,13 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
           {title}
         </Text>
         <div className="msla-template-card-tags">
-          <Text size={300} className="msla-template-card-tag">
-            By: {details['By']}
-          </Text>
-          <Text size={300} className="msla-template-card-tag">
-            Type: {details['Type']}
-          </Text>
-          <Text size={300} className="msla-template-card-tag">
-            Trigger: {details['Trigger']}
-          </Text>
+          {Object.keys(details).map((key: string) => {
+            return (
+                <Text key={key} size={300} className="msla-template-card-tag">
+                  {key}: {details[key]}
+                </Text>
+            );
+          })}
         </div>
       </div>
       <hr className="msla-templates-break" />
