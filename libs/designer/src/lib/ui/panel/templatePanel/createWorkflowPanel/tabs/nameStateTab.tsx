@@ -6,6 +6,8 @@ import { ChoiceGroup, Label, TextField } from '@fluentui/react';
 import { updateKind, updateWorkflowName } from '../../../../../core/state/templates/templateSlice';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { Text } from '@fluentui/react-components';
+import { useCallback, useMemo } from 'react';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,35 +17,97 @@ export const NameStatePanel: React.FC = () => {
   const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();
 
-  const intlText = {
-    STATE_TYPE: intl.formatMessage({
-      defaultMessage: 'State Type',
-      id: 'X2xiq1',
-      description: 'Label for choosing State type',
+  const intlText = useMemo(
+    () => ({
+      WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Provide a unique, descriptive name. Use underscores (_) or dashes (-) instead of spaces to keep names clean and searchable. To prevent any issues, avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'xtDCgy',
+        description: 'Description for workflow name field and the expected format of the name.',
+      }),
+      STATE_TYPE: intl.formatMessage({
+        defaultMessage: 'State Type',
+        id: 'X2xiq1',
+        description: 'Label for choosing State type',
+      }),
+      STATE_TYPE_DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'The workflow state determines how data is managed and retained during execution of workflows.',
+        id: 'ixEnhz',
+        description: 'Description for state type choice group.',
+      }),
+      STATEFUL: intl.formatMessage({
+        defaultMessage: 'Stateful',
+        id: 'kU4VfD',
+        description: 'Choice group first choice: Stateful Type',
+      }),
+      STATEFUL_FIRST_POINT: intl.formatMessage({
+        defaultMessage: 'Optimized for high reliability',
+        id: 'RLoDgQ',
+        description: 'First bullet point of stateful type',
+      }),
+      STATEFUL_SECOND_POINT: intl.formatMessage({
+        defaultMessage: 'Ideal for process business transitional data',
+        id: 'F1AkvV',
+        description: 'Second bullet point of stateful type',
+      }),
+      STATELESS: intl.formatMessage({
+        defaultMessage: 'Stateless',
+        id: 'uTTbhk',
+        description: 'Choice group first choice: Stateless Type',
+      }),
+      STATELESS_FIRST_POINT: intl.formatMessage({
+        defaultMessage: 'Optimized for low latency',
+        id: 'xHyhqO',
+        description: 'First bullet point of stateless type',
+      }),
+      STATELESS_SECOND_POINT: intl.formatMessage({
+        defaultMessage: 'Ideal for request-response and processing IoT events',
+        id: 'yeagrz',
+        description: 'Second bullet point of stateless type',
+      }),
+      WORKFLOW_NAME: intl.formatMessage({
+        defaultMessage: 'Workflow Name',
+        id: '8WZwsC',
+        description: 'Label for workflow Name',
+      }),
     }),
-    STATEFUL: intl.formatMessage({
-      defaultMessage: 'Stateful: Optimized for high reliability, ideal for process business transitional data.',
-      id: 'V9EOZ+',
-      description: 'Description for Stateful Type',
-    }),
-    STATELESS: intl.formatMessage({
-      defaultMessage: 'Stateless: Optimized for low latency, ideal for request-response and processing IoT events.',
-      id: 'mBZnZP',
-      description: 'Description for Stateless Type',
-    }),
-    WORKFLOW_NAME: intl.formatMessage({
-      defaultMessage: 'Workflow Name',
-      id: '8WZwsC',
-      description: 'Label for workflow Name',
-    }),
-  };
+    [intl]
+  );
+
+  const onRenderStatefulField = useCallback(
+    () => (
+      <div className="msla-templates-choiceGroup-label">
+        <Text>{intlText.STATEFUL}</Text>
+        <div className="msla-templates-choiceGroup-list">
+          <li>{intlText.STATEFUL_FIRST_POINT}</li>
+          <li>{intlText.STATEFUL_SECOND_POINT}</li>
+        </div>
+      </div>
+    ),
+    [intlText]
+  );
+
+  const onRenderStatelessField = useCallback(
+    () => (
+      <div className="msla-templates-choiceGroup-label">
+        <Text>{intlText.STATELESS}</Text>
+        <div className="msla-templates-choiceGroup-list">
+          <li>{intlText.STATELESS_FIRST_POINT}</li>
+          <li>{intlText.STATELESS_SECOND_POINT}</li>
+        </div>
+      </div>
+    ),
+    [intlText]
+  );
 
   return (
-    <div>
-      <Label required={true} htmlFor={'workflowName'}>
+    <div className="msla-templates-nameStateTab">
+      <Label className="msla-templates-label" required={true} htmlFor={'workflowName'}>
         {intlText.WORKFLOW_NAME}
       </Label>
+      <Text className="msla-templates-label-description">{intlText.WORKFLOW_NAME_DESCRIPTION}</Text>
       <TextField
+        className="msla-templates-textField"
         data-testid={'workflowName'}
         id={'workflowName'}
         ariaLabel={intlText.WORKFLOW_NAME}
@@ -53,13 +117,18 @@ export const NameStatePanel: React.FC = () => {
         }
         disabled={!!existingWorkflowName}
       />
+      <Label className="msla-templates-label" required={true} htmlFor={'workflowName'}>
+        {intlText.STATE_TYPE}
+      </Label>
+      <Text className="msla-templates-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
       <ChoiceGroup
-        label={intlText.STATE_TYPE}
+        className="msla-templates-choiceGroup"
         options={[
-          { key: 'stateful', text: intlText.STATEFUL },
+          { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
           {
             key: 'stateless',
             text: intlText.STATELESS,
+            onRenderLabel: onRenderStatelessField,
           },
         ]}
         onChange={(_, option) => {
