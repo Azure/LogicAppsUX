@@ -7,12 +7,13 @@ import { updateKind, updateWorkflowName } from '../../../../../core/state/templa
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { Text } from '@fluentui/react-components';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const [validationError, setValidationError] = useState('');
 
   const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();
@@ -100,6 +101,31 @@ export const NameStatePanel: React.FC = () => {
     [intlText]
   );
 
+  const testRegex = () => {
+    if (!workflowName) {
+      setValidationError(
+        intl.formatMessage({
+          defaultMessage: 'Must provide value for workflow name.',
+          id: 'sKy720',
+          description: 'Error message when the workflow name is empty.',
+        })
+      );
+      return;
+    }
+    const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+    if (!regex.test(workflowName)) {
+      setValidationError(
+        intl.formatMessage({
+          defaultMessage: 'Name does not match the given pattern.',
+          id: 'zMKxg9',
+          description: 'Error message when the workflow name is invalid regex.',
+        })
+      );
+      return;
+    }
+    setValidationError('');
+  };
+
   return (
     <div className="msla-templates-nameStateTab">
       <Label className="msla-templates-label" required={true} htmlFor={'workflowName'}>
@@ -116,6 +142,8 @@ export const NameStatePanel: React.FC = () => {
           dispatch(updateWorkflowName(newValue ?? ''))
         }
         disabled={!!existingWorkflowName}
+        onBlur={testRegex}
+        errorMessage={validationError}
       />
       <Label className="msla-templates-label" required={true} htmlFor={'workflowName'}>
         {intlText.STATE_TYPE}
