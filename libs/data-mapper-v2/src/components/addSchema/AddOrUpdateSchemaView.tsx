@@ -28,7 +28,7 @@ export interface SchemaFile {
 }
 
 export interface AddOrUpdateSchemaViewProps {
-  schemaType?: SchemaType;
+  schemaType: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;

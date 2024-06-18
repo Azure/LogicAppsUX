@@ -84,7 +84,7 @@ export class DataMapperApiService {
   // NOTE: From BPM repo, looks like two schema files with the same name will prefer the JSON one
   async getSchemaFile(schemaFilename: string, schemaFilePath: string): Promise<DataMapSchema> {
     const headers = this.getHeaders();
-    const schemaFileUri = this.getSchemaFileUri(schemaFilename.substring(0, schemaFilename.lastIndexOf('.')), schemaFilePath);
+    const schemaFileUri = this.getSchemaFileUri(schemaFilename, schemaFilePath);
     console.log(schemaFileUri);
     const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 

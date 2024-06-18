@@ -23,7 +23,7 @@ const mockFileItems: IFileSysTreeItem[] = [
   {
     name: 'Child1.xsd',
     type: 'file',
-    fullPath: '/Artifacts/Schemas/Child1.xsd',
+    fullPath: 'Child1.xsd',
   },
   {
     name: 'Folder',
@@ -32,14 +32,14 @@ const mockFileItems: IFileSysTreeItem[] = [
       {
         name: 'Abc.json',
         type: 'file',
-        fullPath: '/Artifacts/Schemas/Folder/Abc.json',
+        fullPath: 'Folder/Abc.json',
       },
     ],
   },
   {
     name: 'sourceSchema.json',
     type: 'file',
-    fullPath: '/Artifacts/Schemas/sourceSchema.json',
+    fullPath: 'sourceSchema.json',
   },
 ];
 
