@@ -53,6 +53,8 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  Constants,
+  getSKUDefaultHostOptions,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -311,7 +313,7 @@ const DesignerEditor = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: { interval: 1, frequency: 'Minute' },
+            ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
           showPerformanceDebug,
