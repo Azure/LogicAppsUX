@@ -4,10 +4,10 @@ import { setupStore } from '../../../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
-import type { TemplateState } from '../../../../core/state/templates/templateSlice';
-import { CreateWorkflowPanel } from '../createWorkflowPanel/createWorkflowPanel';
+import { updateKind, type TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
+import { TemplatePanel } from '../templatePanel';
 
 describe('panel/templatePanel/createWorkflowPanel', () => {
   let store: AppStore;
@@ -22,6 +22,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       description: 'Template 1 Description',
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
+      details: {},
+      images: {},
       artifacts: [
         {
           type: 'workflow',
@@ -32,16 +34,18 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
           file: 'description.md',
         },
       ],
-      connections: [],
+      connections: {},
       parameters: [
         {
           name: 'param1',
+          displayName: 'Param 1',
           type: 'string',
           description: 'param1 description',
           default: param1DefaultValue,
         },
         {
           name: 'param2',
+          displayName: 'Param 2',
           type: 'object',
           description: 'param2 description',
         },
@@ -68,6 +72,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         validationErrors: {},
       },
       connections: template1Manifest.connections,
+      servicesInitialized: false,
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -81,7 +86,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   });
 
   beforeEach(() => {
-    renderWithProviders(<CreateWorkflowPanel onCreateClick={vi.fn()} />, { store });
+    renderWithProviders(<TemplatePanel onCreateClick={vi.fn()} />, { store });
   });
 
   it('Ensure template state for showing information is correct', async () => {
@@ -98,21 +103,36 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe('createWorkflow');
     expect(store.getState().panel.selectedTabId).toBe(undefined);
-    expect(screen.getByText('Connections Tab Placeholder')).toBeDefined();
   });
 
-  it('Shows Parameters Tab on tab click', async () => {
-    screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS).click();
-    expect(store.getState().panel.selectedTabId).toBe('PARAMETERS');
+  it('Hides Connections Tab on no connections', async () => {
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
   });
 
-  it('Shows Name and State Tab on tab click', async () => {
+  it('Ensure clicking on next tab button for sequential ordering does not work', async () => {
     screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE).click();
-    expect(store.getState().panel.selectedTabId).toBe('NAME_AND_STATE');
+    expect(store.getState().panel.selectedTabId).toBe(undefined);
+    screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE).click();
+    expect(store.getState().panel.selectedTabId).toBe(undefined);
   });
 
-  it('Shows Review and Create Tab on tab click', async () => {
-    screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE).click();
-    expect(store.getState().panel.selectedTabId).toBe('REVIEW_AND_CREATE');
+  it('Ensure clicking on primary button moves onto next tab only with no missing info', async () => {
+    screen.getByTestId('template-primary-button').click(); // no missing info (no required parameters)
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
+    screen.getByTestId('template-primary-button').click(); // missing info (kind), should not move to next tab
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
+  });
+
+  it('Ensure clicking on primary button moves onto next tab when missing info is filled', async () => {
+    screen.getByTestId('template-primary-button').click(); // no missing info (no required parameters)
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
+    store.dispatch(updateKind('stateful'));
+    expect(store.getState().template.kind).toEqual('stateful');
+    expect(store.getState().template.workflowName).toEqual(''); // Empty string is considered as missing info
+    screen.getByTestId('template-primary-button').click();
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
   });
 });

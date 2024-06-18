@@ -16,7 +16,7 @@ export const TemplatesPanelFooter = ({
 }: TemplatePanelFooterProps) => {
   return (
     <div className="msla-templates-panel-footer">
-      <PrimaryButton onClick={primaryButtonOnClick} disabled={primaryButtonDisabled}>
+      <PrimaryButton data-testid={'template-primary-button'} onClick={primaryButtonOnClick} disabled={primaryButtonDisabled}>
         {primaryButtonText}
       </PrimaryButton>
       <DefaultButton

@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
+import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): TemplatePanelTab[] => {
   const intl = useIntl();
@@ -27,7 +28,7 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
     () => Object.values(parameters.definitions).some((param) => param.required && !param.value),
     [parameters.definitions]
   );
-  const hasWorkflowName = existingWorkflowName ?? workflowName;
+  const missingWorkflowName = isUndefinedOrEmptyString(existingWorkflowName ?? workflowName);
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
@@ -55,19 +56,19 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch, !hasWorkflowName || !kind),
+      ...nameStateTab(intl, dispatch, missingWorkflowName || !kind),
     }),
-    [intl, dispatch, hasWorkflowName, kind]
+    [intl, dispatch, missingWorkflowName, kind]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoading: isLoadingCreate,
-        isButtonDisabled: !hasWorkflowName || !kind,
+        isButtonDisabled: missingWorkflowName || !kind,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, hasWorkflowName, kind]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind]
   );
 
   const tabs = useMemo(() => {

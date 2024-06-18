@@ -1,4 +1,3 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
@@ -8,14 +7,9 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const ConnectionsPanel: React.FC = () => {
-  const { connections, manifest } = useSelector((state: RootState) => state.template);
+  const { connections } = useSelector((state: RootState) => state.template);
 
-  return isNullOrUndefined(manifest) ? null : (
-    <div>
-      Connections Tab Placeholder
-      {connections ? <DisplayConnections connections={connections} /> : <>PLACEHOLDER: no connections to be made</>}
-    </div>
-  );
+  return <DisplayConnections connections={connections} />;
 };
 
 export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId: string): TemplatePanelTab => ({

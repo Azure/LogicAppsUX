@@ -34,6 +34,7 @@ export const TemplatesPanelContent = ({
           <Tab
             key={id}
             id={id}
+            data-testid={id}
             className={css('msla-templates-panel-tabName', id === selectedTabId && 'selected')}
             value={id}
             role={'tab'}
