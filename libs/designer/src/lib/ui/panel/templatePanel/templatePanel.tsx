@@ -5,13 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
 import { QuickViewPanel } from './quickViewPanel/quickViewPanel';
-import { type TemplatePanelTab, TemplatesPanelFooter } from '@microsoft/designer-ui';
+import { type TemplatePanelTab, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { useQuickViewPanelTabs } from './quickViewPanel/usePanelTabs';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
+  const templateTitle = useSelector((state: RootState) => state.template?.manifest?.title) ?? '';
+  const templateDescription = useSelector((state: RootState) => state.template?.manifest?.description) ?? '';
   const dismissPanel = useCallback(() => dispatch(closePanel()), [dispatch]);
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs(onCreateClick);
   const quickViewPanelTabs = useQuickViewPanelTabs();
@@ -21,11 +23,21 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     [currentPanelView, createWorkflowPanelTabs, quickViewPanelTabs]
   );
 
-  const onRenderFooterContent = useCallback(() => {
-    const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
+  const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
 
-    return selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null;
-  }, [selectedTabId, currentPanelTabs]);
+  const onRenderHeaderContent = useCallback(
+    () => (
+      <TemplatesPanelHeader
+        title={currentPanelView === 'createWorkflow' ? 'Create a new workflow' : templateTitle}
+        description={currentPanelView === 'createWorkflow' ? templateDescription : 'By Microsoft'}
+      />
+    ),
+    [templateTitle, templateDescription, currentPanelView]
+  );
+  const onRenderFooterContent = useCallback(
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
+    [selectedTabProps]
+  );
 
   return (
     <Panel
@@ -34,6 +46,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       isOpen={isOpen}
       onDismiss={dismissPanel}
       hasCloseButton={true}
+      onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       isFooterAtBottom={true}
     >
