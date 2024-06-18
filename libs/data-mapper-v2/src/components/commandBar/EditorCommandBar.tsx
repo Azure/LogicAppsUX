@@ -10,6 +10,7 @@ import { DataMapperFileService } from '../../core';
 import { saveDataMap } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
+import { toggleCodeView } from '../../core/state/PanelSlice';
 
 export interface EditorCommandBarProps {
   onUndoClick: () => void;
@@ -165,6 +166,10 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const toolbarStyles = useStyles();
   const bothSchemasDefined = sourceSchema && targetSchema;
 
+  const toggleCodeViewClick = () => {
+    dispatch(toggleCodeView());
+  };
+
   return (
     <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
       <ToolbarGroup className={toolbarStyles.toolbarGroup}>
@@ -191,6 +196,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
           {Resources.RUN_TEST}
         </ToolbarButton>
+        <ToolbarGroup>
+          <ToolbarButton onClick={toggleCodeViewClick}>Code View</ToolbarButton>
+        </ToolbarGroup>
       </ToolbarGroup>
     </Toolbar>
   );
