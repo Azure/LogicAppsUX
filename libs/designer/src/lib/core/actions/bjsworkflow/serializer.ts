@@ -919,7 +919,8 @@ const getSerializedRuntimeConfiguration = (
 
   if (!isTrigger) {
     if (!settings.sequential) {
-      const repetitions = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+      const repetitions = settings.concurrency?.value?.enabled ? settings.concurrency.value.runs : undefined;
+      const maximumWaitingRuns = settings.concurrency?.value?.enabled ? settings.concurrency.value.maximumWaitingRuns : undefined;
 
       if (repetitions !== undefined) {
         safeSetObjectPropertyValue(
@@ -927,10 +928,12 @@ const getSerializedRuntimeConfiguration = (
           [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.REPETITIONS],
           repetitions
         );
+        safeSetObjectPropertyValue(runtimeConfiguration, [Constants.SETTINGS.PROPERTY_NAMES.MAXIMUM_WAITING_RUNS], maximumWaitingRuns);
       }
     }
   } else if (!settings.singleInstance) {
-    const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+    const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.runs : undefined;
+    const maximumWaitingRuns = settings.concurrency?.value?.enabled ? settings.concurrency.value.maximumWaitingRuns : undefined;
 
     if (runs !== undefined) {
       safeSetObjectPropertyValue(
@@ -938,6 +941,7 @@ const getSerializedRuntimeConfiguration = (
         [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
         runs
       );
+      safeSetObjectPropertyValue(runtimeConfiguration, [Constants.SETTINGS.PROPERTY_NAMES.MAXIMUM_WAITING_RUNS], maximumWaitingRuns);
     }
   }
 
