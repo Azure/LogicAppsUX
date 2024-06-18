@@ -34,7 +34,11 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId
   order: 0,
   content: <ConnectionsPanel />,
   footerContent: {
-    primaryButtonText: 'Next',
+    primaryButtonText: intl.formatMessage({
+      defaultMessage: 'Next',
+      id: '0UfxUM',
+      description: 'Button text for moving to the next tab in the create workflow panel',
+    }),
     primaryButtonOnClick: () => {
       dispatch(selectPanelTab(nextTabId));
     },

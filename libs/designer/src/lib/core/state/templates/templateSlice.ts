@@ -133,13 +133,22 @@ export const templateSlice = createSlice({
         newDefinition: { name, type, value, required },
       } = action.payload;
 
-      const validationError = validateParameterValue({ type, value }, required);
+      const validationError = validateParameterValue({ type, value: value }, required);
 
       state.parameters.definitions[name] = {
         ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
         value,
       };
       state.parameters.validationErrors[name] = validationError;
+    },
+    validateParameters: (state) => {
+      Object.keys(state.parameters.definitions).forEach((parameterName) => {
+        const thisParameter = state.parameters.definitions[parameterName];
+        state.parameters.validationErrors[parameterName] = validateParameterValue(
+          { type: thisParameter.type, value: thisParameter.value },
+          thisParameter.required
+        );
+      });
     },
     clearTemplateDetails: (state) => {
       state.workflowDefinition = undefined;
@@ -180,8 +189,14 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue, clearTemplateDetails } =
-  templateSlice.actions;
+export const {
+  changeCurrentTemplateName,
+  updateWorkflowName,
+  updateKind,
+  updateTemplateParameterValue,
+  validateParameters,
+  clearTemplateDetails,
+} = templateSlice.actions;
 export default templateSlice.reducer;
 
 const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {

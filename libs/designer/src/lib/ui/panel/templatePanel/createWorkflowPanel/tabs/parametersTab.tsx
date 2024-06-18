@@ -1,19 +1,21 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { RootState, AppDispatch } from '../../../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch } from '../../../../../core/state/templates/store';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayParameters } from '../../../../templates/parameters/displayParameters';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { validateParameters } from '../../../../../core/state/templates/templateSlice';
 
 export const ParametersPanel: React.FC = () => {
-  const { parameters } = useSelector((state: RootState) => state.template);
-
-  return isNullOrUndefined(parameters) ? null : <DisplayParameters />;
+  return <DisplayParameters />;
 };
 
-export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const parametersTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  hasParametersValidationErrors: boolean,
+  missingRequiredParameters: boolean
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -29,10 +31,17 @@ export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateP
   order: 1,
   content: <ParametersPanel />,
   footerContent: {
-    primaryButtonText: 'Next',
+    primaryButtonText: intl.formatMessage({
+      defaultMessage: 'Next',
+      id: '0UfxUM',
+      description: 'Button text for moving to the next tab in the create workflow panel',
+    }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
+      dispatch(validateParameters());
+      if (!missingRequiredParameters && !hasParametersValidationErrors) {
+        dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
+      }
     },
-    primaryButtonDisabled: false,
+    primaryButtonDisabled: hasParametersValidationErrors,
   },
 });

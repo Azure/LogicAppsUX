@@ -8,10 +8,17 @@ export interface TemplatePanelFooterProps {
   onClose: () => void;
 }
 
-export const TemplatesPanelFooter = ({ primaryButtonText, primaryButtonOnClick, onClose }: TemplatePanelFooterProps) => {
+export const TemplatesPanelFooter = ({
+  primaryButtonText,
+  primaryButtonDisabled,
+  primaryButtonOnClick,
+  onClose,
+}: TemplatePanelFooterProps) => {
   return (
     <div className="msla-templates-panel-footer">
-      <PrimaryButton onClick={primaryButtonOnClick}>{primaryButtonText}</PrimaryButton>
+      <PrimaryButton onClick={primaryButtonOnClick} disabled={primaryButtonDisabled}>
+        {primaryButtonText}
+      </PrimaryButton>
       <DefaultButton
         onClick={onClose}
         style={{

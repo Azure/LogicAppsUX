@@ -74,7 +74,7 @@ export const NameStatePanel: React.FC = () => {
   );
 };
 
-export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch, isMissingInfo: boolean): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
     defaultMessage: 'Name and State',
@@ -90,10 +90,16 @@ export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePa
   order: 2,
   content: <NameStatePanel />,
   footerContent: {
-    primaryButtonText: 'Next',
+    primaryButtonText: intl.formatMessage({
+      defaultMessage: 'Next',
+      id: '0UfxUM',
+      description: 'Button text for moving to the next tab in the create workflow panel',
+    }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+      if (!isMissingInfo) {
+        dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+      }
     },
-    primaryButtonDisabled: false,
+    primaryButtonDisabled: isMissingInfo,
   },
 });

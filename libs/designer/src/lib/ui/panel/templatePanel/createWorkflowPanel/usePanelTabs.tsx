@@ -13,12 +13,21 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const selectedManifest = useSelector((state: RootState) => state.template.manifest);
-  const { workflowName, kind } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, parameters } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
 
   const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
+  const hasParametersValidationErrors = useMemo(
+    () => Object.values(parameters.validationErrors).some((error) => !!error),
+    [parameters.validationErrors]
+  );
+  const missingRequiredParameters = useMemo(
+    () => Object.values(parameters.definitions).some((param) => param.required && !param.value),
+    [parameters.definitions]
+  );
+  const hasWorkflowName = existingWorkflowName ?? workflowName;
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
@@ -39,26 +48,26 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
 
   const parametersTabItem = useMemo(
     () => ({
-      ...parametersTab(intl, dispatch),
+      ...parametersTab(intl, dispatch, hasParametersValidationErrors, missingRequiredParameters),
     }),
-    [intl, dispatch]
+    [intl, dispatch, hasParametersValidationErrors, missingRequiredParameters]
   );
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch),
+      ...nameStateTab(intl, dispatch, !hasWorkflowName || !kind),
     }),
-    [intl, dispatch]
+    [intl, dispatch, hasWorkflowName, kind]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoading: isLoadingCreate,
-        isButtonDisabled: !(existingWorkflowName ?? workflowName) || !kind,
+        isButtonDisabled: !hasWorkflowName || !kind,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, existingWorkflowName, workflowName, kind]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, hasWorkflowName, kind]
   );
 
   const tabs = useMemo(() => {
