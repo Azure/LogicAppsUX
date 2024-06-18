@@ -1,8 +1,9 @@
 import { DefaultButton, PrimaryButton } from '@fluentui/react';
+import type { ReactNode } from 'react';
 
 export interface TemplatePanelFooterProps {
-  primaryButtonText: string;
-  primaryButtonOnClick: () => void;
+  primaryButtonText: string | ReactNode;
+  primaryButtonOnClick: () => void | Promise<void>;
   primaryButtonDisabled?: boolean;
   onClose: () => void;
 }

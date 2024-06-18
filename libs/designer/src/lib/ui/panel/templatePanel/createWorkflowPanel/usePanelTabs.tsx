@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
@@ -12,6 +12,15 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { parameters } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind } = useSelector((state: RootState) => state.template);
+  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+
+  const handleCreateClick = useCallback(async () => {
+    setIsLoadingCreate(true);
+    await onCreateClick();
+    setIsLoadingCreate(false);
+  }, [onCreateClick]);
 
   const connectionsTabItem = useMemo(
     () => ({
@@ -36,9 +45,12 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, dispatch, onCreateClick),
+      ...reviewCreateTab(intl, dispatch, handleCreateClick, {
+        isLoading: isLoadingCreate,
+        isButtonDisabled: !(existingWorkflowName ?? workflowName) || !kind,
+      }),
     }),
-    [intl, dispatch, onCreateClick]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, existingWorkflowName, workflowName, kind]
   );
 
   const tabs = useMemo(() => {
