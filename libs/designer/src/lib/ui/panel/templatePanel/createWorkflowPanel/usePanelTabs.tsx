@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
@@ -10,7 +10,10 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
-export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): TemplatePanelTab[] => {
+export const useCreateWorkflowPanelTabs = ({
+  onCreateClick,
+  redirectCallback,
+}: { onCreateClick: () => Promise<void>; redirectCallback: () => void }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const selectedManifest = useSelector((state: RootState) => state.template.manifest);
@@ -31,12 +34,18 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   );
   const missingWorkflowName = isUndefinedOrEmptyString(existingWorkflowName ?? workflowName);
 
+  useEffect(() => {
+    setIsLoadingCreate(false);
+    setIsCreated(false);
+  }, [selectedManifest]);
+
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
     await onCreateClick();
     setIsLoadingCreate(false);
     setIsCreated(true);
-  }, [onCreateClick]);
+    redirectCallback();
+  }, [onCreateClick, redirectCallback]);
 
   const connectionsTabItem = useMemo(
     () => ({
@@ -80,9 +89,10 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
         isLoadingCreate,
         isPrimaryButtonDisabled: missingWorkflowName || !kind,
         isCreated,
+        redirectCallback,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated, redirectCallback]
   );
 
   const tabs = useMemo(() => {

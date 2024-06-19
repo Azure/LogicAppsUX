@@ -42,6 +42,10 @@ export const TemplatesStandaloneDesigner = () => {
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
 
+  const redirectCallback = () => {
+    console.log('Created workflow, TODO: now redirect');
+  };
+
   const createWorkflowCall = async (
     workflowName: string,
     workflowKind: string,
@@ -50,9 +54,6 @@ export const TemplatesStandaloneDesigner = () => {
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
-    const callBack = () => {
-      console.log('Created workflow, TODO: now redirect');
-    };
     if (appId) {
       if (isConsumption) {
         console.log('Consumption is not ready yet!');
@@ -133,7 +134,7 @@ export const TemplatesStandaloneDesigner = () => {
             updatedParametersData,
             undefined,
             undefined,
-            callBack,
+            redirectCallback,
             true
           );
         } catch (error) {
@@ -166,7 +167,7 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
-            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+            <TemplatesDesigner createWorkflowCall={createWorkflowCall} redirectCallback={redirectCallback} />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       ) : null}

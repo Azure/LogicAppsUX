@@ -97,10 +97,12 @@ export const reviewCreateTab = (
     isLoadingCreate,
     isCreated,
     isPrimaryButtonDisabled,
+    redirectCallback,
   }: {
     isLoadingCreate: boolean;
     isCreated: boolean;
     isPrimaryButtonDisabled: boolean;
+    redirectCallback: () => void;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
@@ -144,7 +146,7 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated ? () => {} : isLoadingCreate ? () => {} : onCreateClick,
+    primaryButtonOnClick: isCreated ? redirectCallback : isLoadingCreate ? () => {} : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
     secondaryButtonText: isCreated
       ? undefined
