@@ -17,8 +17,12 @@ export interface DynamicallyAddedParameterProps {
   schemaKey: string;
   icon: string;
   title: string;
+  description?: string;
   titlePlaceholder?: string;
+  descriptionPlaceholder?: string;
+  renderDescriptionField?: boolean;
   onTitleChange: (schemaKey: string, newValue: string | undefined) => void;
+  onDescriptionChange?: (schemaKey: string, newValue: string | undefined) => void;
   onDelete: (schemaKey: string) => void;
   onRenderValueField: (schemaKey: string) => JSX.Element;
 }
@@ -81,20 +85,37 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
       props.onTitleChange(props.schemaKey, newValue);
     };
 
+    const onDescriptionChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
+      e.preventDefault();
+      props?.onDescriptionChange?.(props.schemaKey, newValue);
+    };
+
     return (
-      <div className="msla-dynamic-added-param-header">
-        <div className="msla-dynamic-added-param-icon" style={iconStyle} />
-        <div className="msla-dynamic-added-param-inputs-container">
-          <TextField
-            className="msla-dynamic-added-param-title"
-            placeholder={props.titlePlaceholder}
-            value={props.title}
-            onChange={onTitleChange}
-          />
-          <div className="msla-dynamic-added-param-value">{props.onRenderValueField(props.schemaKey)}</div>
+      <>
+        <div className="msla-dynamic-added-param-header">
+          <div className="msla-dynamic-added-param-icon" style={iconStyle} />
+          <div className="msla-dynamic-added-param-inputs-container">
+            <TextField
+              className="msla-dynamic-added-param-title"
+              placeholder={props.titlePlaceholder}
+              value={props.title}
+              onChange={onTitleChange}
+            />
+            <div className="msla-dynamic-added-param-value">{props.onRenderValueField(props.schemaKey)}</div>
+          </div>
+          <div className="msla-dynamic-add-param-menu-container">{renderMenuButton()}</div>
         </div>
-        <div className="msla-dynamic-add-param-menu-container">{renderMenuButton()}</div>
-      </div>
+        {props?.renderDescriptionField && (
+          <div className="msla-dynamic-added-param-footer">
+            <TextField
+              className="msla-dynamic-added-param-description"
+              placeholder={props?.descriptionPlaceholder}
+              value={props?.description}
+              onChange={onDescriptionChange}
+            />
+          </div>
+        )}
+      </>
     );
   };
 

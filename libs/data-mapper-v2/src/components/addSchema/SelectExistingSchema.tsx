@@ -1,5 +1,5 @@
 import { DropdownTree } from '../common/DropdownTree';
-import type { ITreeFile, IFileSysTreeItem } from 'models/Tree';
+import type { ITreeFile, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import type { RootState } from '../../core/state/Store';

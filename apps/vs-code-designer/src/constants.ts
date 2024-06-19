@@ -33,9 +33,6 @@ export const azuriteLocationSetting = 'location';
 // Functions
 export const func = 'func';
 export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
-export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
-export const ProjectDirectoryPath = 'ProjectDirectoryPath';
-export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
@@ -60,6 +57,7 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
+export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const workflowappRuntime = 'node|14';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
@@ -214,9 +212,11 @@ export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
-
+export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
+export const ProjectDirectoryPath = 'ProjectDirectoryPath';
+export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
+export const azureStorageTypeSetting = 'Files';
 // Project
-export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
 export const funcWatchProblemMatcher = '$func-watch';
 export const extInstallCommand = 'extensions install';

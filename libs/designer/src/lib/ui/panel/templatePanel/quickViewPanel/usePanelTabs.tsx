@@ -2,30 +2,26 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { overviewTab } from './tabs/overviewTab';
 import { workflowTab } from './tabs/workflowTab';
+import type { AppDispatch } from '../../../../core/state/templates/store';
+import { useDispatch } from 'react-redux';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
 
-export const usePanelTabs = () => {
+export const useQuickViewPanelTabs = (): TemplatePanelTab[] => {
   const intl = useIntl();
-
+  const dispatch = useDispatch<AppDispatch>();
   const overviewTabItem = useMemo(
     () => ({
-      ...overviewTab(intl),
+      ...overviewTab(intl, dispatch),
     }),
-    [intl]
+    [intl, dispatch]
   );
 
   const workflowTabItem = useMemo(
     () => ({
-      ...workflowTab(intl),
+      ...workflowTab(intl, dispatch),
     }),
-    [intl]
+    [intl, dispatch]
   );
 
-  const tabs = useMemo(() => {
-    return [overviewTabItem, workflowTabItem]
-      .slice()
-      .filter((a) => a.visible)
-      .sort((a, b) => a.order - b.order);
-  }, [overviewTabItem, workflowTabItem]);
-
-  return tabs;
+  return [overviewTabItem, workflowTabItem];
 };

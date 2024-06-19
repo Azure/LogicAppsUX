@@ -1,14 +1,18 @@
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import {
+  ProjectDirectoryPath,
+  appKindSetting,
   designTimeDirectoryName,
   designerStartApi,
   hostFileContent,
   hostFileName,
   localSettingsFileName,
   logicAppKind,
+  workerRuntimeKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../../utils/appSettings/localSettings';
 import {
   createJsonFile,
   getOrCreateDesignTimeDirectory,
@@ -17,7 +21,7 @@ import {
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { backendRuntimeBaseUrl, settingsFileContent } from './extensionConfig';
+import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as portfinder from 'portfinder';
 import { ProgressLocation, type Uri, window } from 'vscode';
@@ -43,17 +47,22 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
       return;
     }
 
-    const modifiedSettingsFileContent = { ...settingsFileContent };
-    modifiedSettingsFileContent.Values.ProjectDirectoryPath = projectPath;
+    const settingsFileContent = getLocalSettingsSchema(true, projectPath);
 
     try {
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-        await createJsonFile(designTimeDirectory, localSettingsFileName, modifiedSettingsFileContent);
-        await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, {
-          APP_KIND: logicAppKind,
-          ProjectDirectoryPath: projectPath,
-        });
+        await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
+        await addOrUpdateLocalAppSettings(
+          context,
+          designTimeDirectory.fsPath,
+          {
+            [appKindSetting]: logicAppKind,
+            [ProjectDirectoryPath]: projectPath,
+            [workerRuntimeKey]: WorkerRuntime.Node,
+          },
+          true
+        );
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
