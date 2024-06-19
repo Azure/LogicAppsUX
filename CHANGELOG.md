@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [4.31.0](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v4.31.0) (2024-06-19)
+
+
+### Features
+
+* **Data Mapper:** basic version of code view ([#4996](https://github.com/Azure/LogicAppsUX/issues/4996)) ([ce2ecb5](https://github.com/Azure/LogicAppsUX/commit/ce2ecb5f5a7c707c7637c9c984fd8c4265227ca2))
+* **designer:** adding maxWaitingRuns to Concurrency Settings ([#4988](https://github.com/Azure/LogicAppsUX/issues/4988)) ([691fdbb](https://github.com/Azure/LogicAppsUX/commit/691fdbb760bb8978eb9e33e10219e853b1d03490))
+* **Designer:** Tenant selection support for OAuth connection creation ([#4999](https://github.com/Azure/LogicAppsUX/issues/4999)) ([14b7b9c](https://github.com/Azure/LogicAppsUX/commit/14b7b9cb521d1010ceba6988b02ff5b0076010fe))
+* **Templates:** Styling for Header, Tabs, Footer ([#4992](https://github.com/Azure/LogicAppsUX/issues/4992)) ([8a64f12](https://github.com/Azure/LogicAppsUX/commit/8a64f12f40e49aa45d9add0ebf3e1d3ca48da5e2))
+
 ## [4.30.0](https://github.com/Azure/LogicAppsUX/compare/v4.29.0...v4.30.0) (2024-06-17)
 
 
