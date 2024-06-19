@@ -642,4 +642,15 @@ describe('ui/createConnection', () => {
     }
     return undefined;
   }
+
+  function findTenantPicker(createConnection: ReactElement) {
+    const connectionsParamContainer = findConnectionsParamContainer(createConnection);
+    for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
+      const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
+      if (testId === 'connection-param-oauth-tenants') {
+        return paramRow;
+      }
+    }
+    return undefined;
+  }
 });

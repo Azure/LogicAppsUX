@@ -8,8 +8,7 @@ import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMult
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
 import type { IDropdownOption } from '@fluentui/react';
-import { MessageBarType, MessageBar } from '@fluentui/react';
-import { Body1Strong, Button, Divider } from '@fluentui/react-components';
+import { Body1Strong, Button, Divider, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
   ConnectionService,
@@ -21,6 +20,8 @@ import {
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
+  isUsingAadAuthentication,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -39,6 +40,9 @@ import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useConnector } from '../../../../core/state/connection/connectionSelector';
+import { DismissRegular } from '@fluentui/react-icons';
+import TenantPicker from './formInputs/tenantPicker';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
@@ -101,6 +105,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   } = props;
 
   const intl = useIntl();
+
+  const { data: connector } = useConnector(connectorId);
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
@@ -282,6 +288,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
   );
 
+  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+  const showTenantIdSelection = useMemo(
+    () =>
+      usingAadConnection &&
+      isUsingOAuth &&
+      Object.keys(connectionParameters ?? {}).some((key) => equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)),
+    [connectionParameters, isUsingOAuth, usingAadConnection]
+  );
+
   // Don't show name for simple connections
   const showNameInput = useMemo(
     () =>
@@ -314,6 +329,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const submitCallback = useCallback(() => {
     const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
+
+    // The OAuth tenant ID is passed a little strange, we need to manually add it here
+    const oauthTenantId = additionalParameterValues?.[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID];
+    if (showTenantIdSelection && oauthTenantId) {
+      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID] = oauthTenantId;
+    }
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     if (
@@ -353,6 +374,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isUsingOAuth,
     capabilityEnabledParameters,
     servicePrincipalSelected,
+    showTenantIdSelection,
   ]);
 
   // INTL STRINGS
@@ -559,13 +581,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       <div className="msla-create-connection-container">
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar
-            messageBarType={MessageBarType.error}
-            isMultiline={true}
-            onDismiss={clearErrorCallback}
-            dismissButtonAriaLabel={closeErrorButtonAriaLabel}
-          >
-            {errorMessage}
+          <MessageBar intent={'error'} style={{ width: '100%' }}>
+            <MessageBarBody>{errorMessage}</MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                  aria-label={closeErrorButtonAriaLabel}
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                  onClick={clearErrorCallback}
+                />
+              }
+            />
           </MessageBar>
         )}
 
@@ -626,6 +653,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
+            />
+          )}
+
+          {/* OAuth tenant ID selection */}
+          {showTenantIdSelection && (
+            <TenantPicker
+              data-testId={'connection-param-oauth-tenants'}
+              isLoading={isLoading}
+              value={parameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]}
+              setValue={(val: string) =>
+                setParameterValues({ ...parameterValues, [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val })
+              }
             />
           )}
 
