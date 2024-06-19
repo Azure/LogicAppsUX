@@ -34,7 +34,7 @@ const TenantPicker = (props: any) => {
 
   useEffect(() => {
     if (!value && tenantOptions.length > 0) {
-      setValue({ id: tenantOptions[0]?.key.toString() });
+      setValue(tenantOptions[0]?.key.toString());
     }
   }, [setValue, tenantOptions, value]);
 
@@ -50,9 +50,9 @@ const TenantPicker = (props: any) => {
       <Dropdown
         id="connection-param-oauth-tenants"
         className="connection-parameter-input"
-        selectedKey={value?.id}
+        selectedKey={value}
         onChange={(e: any, newVal?: IDropdownOption) => {
-          setValue({ id: newVal?.key.toString() });
+          setValue(newVal?.key.toString());
         }}
         disabled={isLoading || tenantsLoading}
         errorMessage={errorMessage}
