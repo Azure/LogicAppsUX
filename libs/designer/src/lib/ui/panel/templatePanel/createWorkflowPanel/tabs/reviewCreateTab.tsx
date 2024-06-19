@@ -92,11 +92,11 @@ export const reviewCreateTab = (
   dispatch: AppDispatch,
   onCreateClick: () => Promise<void>,
   {
-    isLoading,
-    isButtonDisabled,
+    isLoadingCreate,
+    isPrimaryButtonDisabled,
   }: {
-    isLoading: boolean;
-    isButtonDisabled: boolean;
+    isLoadingCreate: boolean;
+    isPrimaryButtonDisabled: boolean;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
@@ -114,7 +114,7 @@ export const reviewCreateTab = (
   order: 3,
   content: <ReviewCreatePanel />,
   footerContent: {
-    primaryButtonText: isLoading ? (
+    primaryButtonText: isLoadingCreate ? (
       <Spinner size="extra-tiny" />
     ) : (
       intl.formatMessage({
@@ -124,6 +124,14 @@ export const reviewCreateTab = (
       })
     ),
     primaryButtonOnClick: onCreateClick,
-    primaryButtonDisabled: isButtonDisabled || isLoading,
+    primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
+    // secondaryButtonText: intl.formatMessage({
+    //   defaultMessage: 'Previous',
+    //   id: 'Yua/4o',
+    //   description: 'Button text for moving to the previous tab in the create workflow panel',
+    // }),
+    // secondaryButtonOnClick: previousTabId ? () => {
+    //   dispatch(selectPanelTab(previousTabId));
+    // } : undefined,
   },
 });

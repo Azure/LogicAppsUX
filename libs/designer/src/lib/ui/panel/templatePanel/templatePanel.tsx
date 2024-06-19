@@ -56,7 +56,13 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     [templateTitle, templateDescription, currentPanelView, intlText]
   );
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} onClose={dismissPanel} /> : null),
+    () =>
+      selectedTabProps?.footerContent ? (
+        <TemplatesPanelFooter
+          {...selectedTabProps?.footerContent}
+          secondaryButtonOnClick={selectedTabProps?.footerContent?.secondaryButtonOnClick ?? dismissPanel}
+        />
+      ) : null,
     [selectedTabProps, dismissPanel]
   );
 

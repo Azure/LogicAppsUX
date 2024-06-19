@@ -142,13 +142,16 @@ export const templateSlice = createSlice({
       state.parameters.validationErrors[name] = validationError;
     },
     validateParameters: (state) => {
-      Object.keys(state.parameters.definitions).forEach((parameterName) => {
-        const thisParameter = state.parameters.definitions[parameterName];
-        state.parameters.validationErrors[parameterName] = validateParameterValue(
+      const parametersDefinition = { ...state.parameters.definitions };
+      const parametersValidationErrors = { ...state.parameters.validationErrors };
+      Object.keys(parametersDefinition).forEach((parameterName) => {
+        const thisParameter = parametersDefinition[parameterName];
+        parametersValidationErrors[parameterName] = validateParameterValue(
           { type: thisParameter.type, value: thisParameter.value },
           thisParameter.required
         );
       });
+      state.parameters.validationErrors = parametersValidationErrors;
     },
     clearTemplateDetails: (state) => {
       state.workflowDefinition = undefined;

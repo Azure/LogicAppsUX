@@ -6,14 +6,16 @@ export interface TemplatePanelFooterProps {
   primaryButtonText: string | ReactNode;
   primaryButtonOnClick: () => void | Promise<void>;
   primaryButtonDisabled?: boolean;
-  onClose: () => void;
+  secondaryButtonText?: string | undefined;
+  secondaryButtonOnClick?: () => void;
 }
 
 export const TemplatesPanelFooter = ({
   primaryButtonText,
   primaryButtonDisabled,
   primaryButtonOnClick,
-  onClose,
+  secondaryButtonText,
+  secondaryButtonOnClick,
 }: TemplatePanelFooterProps) => {
   const intl = useIntl();
   const CLOSE = intl.formatMessage({
@@ -33,12 +35,12 @@ export const TemplatesPanelFooter = ({
         {primaryButtonText}
       </PrimaryButton>
       <DefaultButton
-        onClick={onClose}
+        onClick={secondaryButtonOnClick}
         style={{
           marginLeft: '8px',
         }}
       >
-        {CLOSE}
+        {secondaryButtonText ?? CLOSE}
       </DefaultButton>
     </div>
   );

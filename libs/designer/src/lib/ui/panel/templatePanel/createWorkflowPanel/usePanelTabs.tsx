@@ -49,23 +49,34 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
 
   const parametersTabItem = useMemo(
     () => ({
-      ...parametersTab(intl, dispatch, hasParametersValidationErrors, missingRequiredParameters),
+      ...parametersTab(intl, dispatch, {
+        hasParametersValidationErrors,
+        missingRequiredParameters,
+        previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : undefined,
+      }),
     }),
-    [intl, dispatch, hasParametersValidationErrors, missingRequiredParameters]
+    [intl, dispatch, hasParametersValidationErrors, missingRequiredParameters, connectionsExist]
   );
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch, missingWorkflowName || !kind),
+      ...nameStateTab(intl, dispatch, {
+        isMissingInfo: missingWorkflowName || !kind,
+        previousTabId: parametersExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+          : connectionsExist
+            ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+            : undefined,
+      }),
     }),
-    [intl, dispatch, missingWorkflowName, kind]
+    [intl, dispatch, missingWorkflowName, kind, connectionsExist, parametersExist]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
-        isLoading: isLoadingCreate,
-        isButtonDisabled: missingWorkflowName || !kind,
+        isLoadingCreate,
+        isPrimaryButtonDisabled: missingWorkflowName || !kind,
       }),
     }),
     [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind]

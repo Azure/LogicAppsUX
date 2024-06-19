@@ -13,8 +13,15 @@ export const ParametersPanel: React.FC = () => {
 export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  hasParametersValidationErrors: boolean,
-  missingRequiredParameters: boolean
+  {
+    hasParametersValidationErrors,
+    missingRequiredParameters,
+    previousTabId,
+  }: {
+    hasParametersValidationErrors: boolean;
+    missingRequiredParameters: boolean;
+    previousTabId: string | undefined;
+  }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
@@ -44,5 +51,17 @@ export const parametersTab = (
       }
     },
     primaryButtonDisabled: hasParametersValidationErrors,
+    secondaryButtonText: previousTabId
+      ? intl.formatMessage({
+          defaultMessage: 'Previous',
+          id: 'Yua/4o',
+          description: 'Button text for moving to the previous tab in the create workflow panel',
+        })
+      : undefined,
+    secondaryButtonOnClick: previousTabId
+      ? () => {
+          dispatch(selectPanelTab(previousTabId));
+        }
+      : undefined,
   },
 });
