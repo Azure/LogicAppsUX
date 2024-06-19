@@ -147,12 +147,12 @@ export const reviewCreateTab = (
     primaryButtonOnClick: isCreated ? () => {} : isLoadingCreate ? () => {} : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
     secondaryButtonText: isCreated
-      ? intl.formatMessage({
+      ? undefined
+      : intl.formatMessage({
           defaultMessage: 'Previous',
           id: 'Yua/4o',
           description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : undefined,
+        }),
     secondaryButtonOnClick: isCreated
       ? undefined
       : () => {
