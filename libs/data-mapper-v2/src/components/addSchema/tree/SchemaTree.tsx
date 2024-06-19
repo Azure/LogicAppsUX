@@ -47,21 +47,20 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   );
 
   useEffect(() => {
-    if (Object.keys(updatedNodes).length === totalNodes) {
+    const keys = Object.keys(updatedNodes);
+    if (keys.length === totalNodes) {
       const nodeChanges: NodeChange[] = [];
-      for (const node of nodes) {
-        const id = node.id;
-        const updatedNode = updatedNodes[id];
-        if (updatedNode) {
-          if (updatedNode.position.x === 0 && updatedNode.position.y === 0) {
-            nodeChanges.push({ id: id, type: 'remove' });
-          } else {
-            nodeChanges.push({
-              id: id,
-              type: 'position',
-              position: updatedNode.position,
-            });
-          }
+      for (const key of keys) {
+        const updatedNode = updatedNodes[key];
+        const id = updatedNode.id;
+        if (updatedNode.position.x < 0 && updatedNode.position.y < 0) {
+          nodeChanges.push({ id: id, type: 'remove' });
+        } else if (nodes.find((node) => node.id === id)) {
+          nodeChanges.push({
+            id: id,
+            type: 'position',
+            position: updatedNode.position,
+          });
         } else {
           nodeChanges.push({ type: 'add', item: updatedNode });
         }

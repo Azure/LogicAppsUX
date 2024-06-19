@@ -71,15 +71,15 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     }
 
     if (isNodeHidden(root.parentKey)) {
-      x = 0;
-      y = 0;
+      x = -1;
+      y = -1;
     } else if (nodeRef?.current && canvasBounds) {
       const nodeRect = nodeRef.current.getBoundingClientRect();
       x = currentNode.data.isLeftDirection ? 0 : canvasBounds.width;
       y = nodeRect.y - canvasBounds.y + 10;
     } else {
-      x = 0;
-      y = 0;
+      x = -1;
+      y = -1;
     }
 
     setUpdatedNode({ ...currentNode, position: { x, y } });
