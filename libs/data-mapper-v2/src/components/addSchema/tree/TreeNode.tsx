@@ -10,7 +10,6 @@ import { updateReactFlowNode } from '../../../core/state/DataMapSlice';
 
 export type SchemaNodeReactFlowDataProps = SchemaNodeExtended & {
   isLeftDirection: boolean;
-  connectionX: number;
   id: string;
   isConnected?: boolean;
 };

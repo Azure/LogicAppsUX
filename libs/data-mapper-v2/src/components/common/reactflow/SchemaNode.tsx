@@ -1,5 +1,5 @@
 import { Handle, Position, useUpdateNodeInternals, type NodeProps } from 'reactflow';
-import type { SchemaNodeReactFlowDataProps } from 'components/addSchema/tree/TreeNode';
+import type { SchemaNodeReactFlowDataProps } from '../../addSchema/tree/TreeNode';
 import { mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useRef, useEffect } from 'react';

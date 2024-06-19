@@ -40,6 +40,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   }, [ref]);
 
   const resizeObserver = useMemo(() => new ResizeObserver((_) => updateCanvasBounds()), [updateCanvasBounds]);
+
   if (fileService) {
     InitDataMapperFileService(fileService);
   }
