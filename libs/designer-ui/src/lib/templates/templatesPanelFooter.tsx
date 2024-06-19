@@ -8,6 +8,7 @@ export interface TemplatePanelFooterProps {
   primaryButtonDisabled?: boolean;
   secondaryButtonText?: string | undefined;
   secondaryButtonOnClick?: () => void;
+  secondaryButtonDisabled?: boolean;
 }
 
 export const TemplatesPanelFooter = ({
@@ -16,6 +17,7 @@ export const TemplatesPanelFooter = ({
   primaryButtonOnClick,
   secondaryButtonText,
   secondaryButtonOnClick,
+  secondaryButtonDisabled = false,
 }: TemplatePanelFooterProps) => {
   const intl = useIntl();
   const CLOSE = intl.formatMessage({
@@ -39,6 +41,7 @@ export const TemplatesPanelFooter = ({
         style={{
           marginLeft: '8px',
         }}
+        disabled={secondaryButtonDisabled}
       >
         {secondaryButtonText ?? CLOSE}
       </DefaultButton>

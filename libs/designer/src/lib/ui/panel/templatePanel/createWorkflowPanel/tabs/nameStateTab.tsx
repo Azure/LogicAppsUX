@@ -175,10 +175,10 @@ export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    isMissingInfo,
+    primaryButtonDisabled,
     previousTabId,
   }: {
-    isMissingInfo: boolean;
+    primaryButtonDisabled: boolean;
     previousTabId: string | undefined;
   }
 ): TemplatePanelTab => ({
@@ -203,11 +203,11 @@ export const nameStateTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      if (!isMissingInfo) {
+      if (!primaryButtonDisabled) {
         dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
       }
     },
-    primaryButtonDisabled: isMissingInfo,
+    primaryButtonDisabled: primaryButtonDisabled,
     secondaryButtonText: previousTabId
       ? intl.formatMessage({
           defaultMessage: 'Previous',

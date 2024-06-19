@@ -3,8 +3,7 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
-import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 
 export const OverviewPanel: React.FC = () => {
   const { manifest } = useSelector((state: RootState) => state.template);
@@ -42,9 +41,5 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
       dispatch(openCreateWorkflowPanelView());
     },
     primaryButtonDisabled: false,
-    onClose: () => {
-      dispatch(closePanel());
-      dispatch(clearTemplateDetails());
-    },
   },
 });

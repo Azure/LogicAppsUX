@@ -63,7 +63,7 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   const nameStateTabItem = useMemo(
     () => ({
       ...nameStateTab(intl, dispatch, {
-        isMissingInfo: missingWorkflowName || !kind,
+        primaryButtonDisabled: missingWorkflowName || !kind,
         previousTabId: parametersExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
