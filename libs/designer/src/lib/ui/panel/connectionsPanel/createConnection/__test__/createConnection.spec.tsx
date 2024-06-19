@@ -8,10 +8,16 @@ import {
   InitConnectionService,
   StandardConnectionService,
 } from '@microsoft/logic-apps-shared';
-import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/logic-apps-shared';
+import type { ConnectionParameter, ConnectionParameterSets, Connector } from '@microsoft/logic-apps-shared';
 import React, { type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import {
+  mockConnectionParameters,
+  mockConnectionParameterSets,
+  mockOauthWithTenantParameters,
+  mockParameterSetsWithCredentialMapping,
+} from './mocks/connectionParameters';
 describe('ui/createConnection', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -41,103 +47,28 @@ describe('ui/createConnection', () => {
     renderer.unmount();
   });
 
-  const getConnectionParameters = (): Record<string, ConnectionParameter> => ({
-    parameterA: {
-      type: 'string',
+  const baseConnector: Connector = {
+    id: 'myConnectorId',
+    type: 'connector',
+    name: 'myConnector',
+    properties: {
+      iconUri: 'https://iconUri',
+      displayName: 'My Connector',
+      capabilities: ['generic'],
     },
-    hiddenParameterB: {
-      type: 'string',
-      uiDefinition: {
-        constraints: {
-          hidden: 'true',
-        },
-      },
-    },
-    hideInUIParameterC: {
-      type: 'string',
-      uiDefinition: {
-        constraints: {
-          hideInUI: 'true',
-        },
-      },
-    },
-    parameterD: {
-      type: 'string',
-    },
-  });
+  };
 
-  const getConnectionParameterSets = (): ConnectionParameterSets => ({
-    uiDefinition: {
-      description: '',
-      displayName: '',
+  const connectorWithParameters: Connector = {
+    ...baseConnector,
+    properties: {
+      ...baseConnector.properties,
+      connectionParameters: mockConnectionParameters,
     },
-    values: [
-      {
-        name: 'parameterSetA',
-        uiDefinition: {
-          description: '',
-          displayName: 'first parameter set',
-        },
-        parameters: {
-          parameterA: {
-            type: 'string',
-            uiDefinition: {
-              description: '',
-              displayName: '',
-            },
-          },
-          hiddenParameterB: {
-            type: 'string',
-            uiDefinition: {
-              description: '',
-              displayName: '',
-              constraints: {
-                hidden: 'true',
-              },
-            },
-          },
-          hideInUIParameterC: {
-            type: 'string',
-            uiDefinition: {
-              description: '',
-              displayName: '',
-              constraints: {
-                hideInUI: 'true',
-              },
-            },
-          },
-          parameterD: {
-            type: 'string',
-            uiDefinition: {
-              description: '',
-              displayName: '',
-            },
-          },
-        },
-      },
-      {
-        name: 'parameterSetB',
-        uiDefinition: {
-          description: '',
-          displayName: 'second parameter set',
-        },
-        parameters: {
-          parameterE: {
-            type: 'string',
-            uiDefinition: {
-              description: '',
-              displayName: '',
-            },
-          },
-        },
-      },
-    ],
-  });
+  };
 
   it('should render the create connection component', () => {
     const props: CreateConnectionProps = {
-      connectorId: 'myConnectorId',
-      connectorDisplayName: 'My Connector',
+      connector: baseConnector,
       checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
@@ -158,9 +89,7 @@ describe('ui/createConnection', () => {
 
   it('should render visible connectionParameters', () => {
     const props: CreateConnectionProps = {
-      connectorId: 'myConnectorId',
-      connectorDisplayName: 'My Connector',
-      connectionParameters: getConnectionParameters(),
+      connector: connectorWithParameters,
       checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
@@ -173,21 +102,45 @@ describe('ui/createConnection', () => {
     expect(parameters).toHaveLength(2);
 
     expect(parameters[0].props.parameterKey).toEqual('parameterA');
-    expect(parameters[0].props.parameter).toEqual(props.connectionParameters?.['parameterA']);
+    expect(parameters[0].props.parameter).toEqual(props.connector.properties.connectionParameters?.['parameterA']);
     expect(parameters[0].props.value).toBeUndefined();
     expect(parameters[0].props.setValue).toEqual(expect.any(Function));
 
     expect(parameters[1].props.parameterKey).toEqual('parameterD');
-    expect(parameters[1].props.parameter).toEqual(props.connectionParameters?.['parameterD']);
+    expect(parameters[1].props.parameter).toEqual(props.connector.properties.connectionParameters?.['parameterD']);
     expect(parameters[1].props.value).toBeUndefined();
     expect(parameters[1].props.setValue).toEqual(expect.any(Function));
   });
 
+  it('should render oauth with tenant selection', () => {
+    const props: CreateConnectionProps = {
+      connector: {
+        ...baseConnector,
+        properties: {
+          ...baseConnector.properties,
+          connectionParameters: mockOauthWithTenantParameters,
+        },
+      },
+      checkOAuthCallback: vi.fn(),
+    };
+    renderer.render(<CreateConnection {...props} />);
+    const createConnectionContainer = renderer.getRenderOutput();
+    const createConnection = findConnectionCreateDiv(createConnectionContainer);
+
+    const parameterSetsDropdown = findParameterSetsDropdown(createConnection);
+    expect(parameterSetsDropdown).toBeUndefined();
+
+    const legacyMultiAuth = findLegacyMultiAuth(createConnection);
+    expect(legacyMultiAuth).toBeDefined();
+
+    const tenantPicker = findTenantPicker(createConnection);
+    expect(tenantPicker).toBeDefined();
+  });
+
   it('should render connectionParameterSet dropdown and parameters', () => {
     const props: CreateConnectionProps = {
-      connectorId: 'myConnectorId',
-      connectorDisplayName: 'My Connector',
-      connectionParameterSets: getConnectionParameterSets(),
+      connector: baseConnector,
+      connectionParameterSets: mockConnectionParameterSets,
       checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
@@ -236,9 +189,7 @@ describe('ui/createConnection', () => {
 
     it('should support custom parameter editor for connectionParameters', () => {
       const props: CreateConnectionProps = {
-        connectorId: 'myConnectorId',
-        connectorDisplayName: 'My Connector',
-        connectionParameters: getConnectionParameters(),
+        connector: connectorWithParameters,
         checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
@@ -259,13 +210,13 @@ describe('ui/createConnection', () => {
       expect(parameters).toHaveLength(2);
       expect(parameters[0].type).toEqual(CustomConnectionParameter);
       expect(parameters[0].props.parameterKey).toEqual('parameterA');
-      expect(parameters[0].props.parameter).toEqual(props.connectionParameters?.['parameterA']);
+      expect(parameters[0].props.parameter).toEqual(props.connector.properties.connectionParameters?.['parameterA']);
       expect(parameters[0].props.value).toBeUndefined();
       expect(parameters[0].props.setValue).toEqual(expect.any(Function));
 
       expect(parameters[1].type).toEqual(UniversalConnectionParameter);
       expect(parameters[1].props.parameterKey).toEqual('parameterD');
-      expect(parameters[1].props.parameter).toEqual(props.connectionParameters?.['parameterD']);
+      expect(parameters[1].props.parameter).toEqual(props.connector.properties.connectionParameters?.['parameterD']);
       expect(parameters[1].props.value).toBeUndefined();
       expect(parameters[1].props.setValue).toEqual(expect.any(Function));
     });
@@ -286,9 +237,8 @@ describe('ui/createConnection', () => {
       InitConnectionParameterEditorService(connectionParameterEditorService);
 
       const props: CreateConnectionProps = {
-        connectorId: 'myConnectorId',
-        connectorDisplayName: 'My Connector',
-        connectionParameterSets: getConnectionParameterSets(),
+        connector: baseConnector,
+        connectionParameterSets: mockConnectionParameterSets,
         checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
@@ -317,118 +267,6 @@ describe('ui/createConnection', () => {
   });
 
   describe('custom credential mapping editor', () => {
-    const getConnectionParameterSetsWithCredentialMapping = (): ConnectionParameterSets => ({
-      uiDefinition: {
-        description: '',
-        displayName: '',
-      },
-      values: [
-        {
-          name: 'parameterSetA',
-          uiDefinition: {
-            description: '',
-            displayName: 'first parameter set',
-          },
-          parameters: {
-            parameterA: {
-              type: 'string',
-              uiDefinition: {
-                description: '',
-                displayName: '',
-                credentialMapping: {
-                  mappingName: 'myCredentialMapping',
-                  values: [
-                    {
-                      credentialKeyName: 'myCredentialPasswordKey',
-                      type: 'UserPassword',
-                      typeEnumValue: 1,
-                    },
-                  ],
-                },
-              },
-            },
-            parameterB: {
-              type: 'string',
-              uiDefinition: {
-                description: '',
-                displayName: '',
-                credentialMapping: {
-                  mappingName: 'myCredentialMapping',
-                  values: [
-                    {
-                      credentialKeyName: 'myCredentialUserKey',
-                      type: 'UserPassword',
-                      typeEnumValue: 1,
-                    },
-                  ],
-                },
-              },
-            },
-            hiddenParameterC: {
-              type: 'string',
-              uiDefinition: {
-                description: '',
-                displayName: '',
-                constraints: {
-                  hideInUI: 'true',
-                },
-              },
-            },
-            parameterD: {
-              type: 'string',
-              uiDefinition: {
-                description: '',
-                displayName: '',
-              },
-            },
-          },
-        },
-        {
-          name: 'parameterSetB',
-          uiDefinition: {
-            description: '',
-            displayName: 'second parameter set',
-          },
-          parameters: {
-            parameterE: {
-              type: 'string',
-              uiDefinition: {
-                description: '',
-                displayName: '',
-                credentialMapping: {
-                  mappingName: 'myOtherCredentialMapping',
-                  values: [
-                    {
-                      credentialKeyName: 'myCredentialPasswordKey',
-                      type: 'UserPassword',
-                      typeEnumValue: 1,
-                    },
-                  ],
-                },
-              },
-            },
-            parameterF: {
-              type: 'string',
-              uiDefinition: {
-                description: '',
-                displayName: '',
-                credentialMapping: {
-                  mappingName: 'myOtherCredentialMapping',
-                  values: [
-                    {
-                      credentialKeyName: 'myCredentialPasswordKey',
-                      type: 'UserPassword',
-                      typeEnumValue: 1,
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-      ],
-    });
-
     const CustomCredentialMappingEditor = () => <div>Custom CRedential Mapping Editor</div>;
 
     let connectionParameterEditorService: IConnectionParameterEditorService;
@@ -455,11 +293,9 @@ describe('ui/createConnection', () => {
     });
 
     it('should not render CustomCredentialMappingEditor when connector has no mapping metadata', () => {
-      const connectionParameterSets = getConnectionParameterSets();
       const props: CreateConnectionProps = {
-        connectorId: 'myConnectorId',
-        connectorDisplayName: 'My Connector',
-        connectionParameterSets,
+        connector: baseConnector,
+        connectionParameterSets: mockConnectionParameterSets,
         checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
@@ -476,10 +312,9 @@ describe('ui/createConnection', () => {
     });
 
     it('should render CustomCredentialMappingEditor when connector has mapping metadata', () => {
-      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
+      const connectionParameterSets = mockParameterSetsWithCredentialMapping;
       const props: CreateConnectionProps = {
-        connectorId: 'myConnectorId',
-        connectorDisplayName: 'My Connector',
+        connector: baseConnector,
         connectionParameterSets,
         checkOAuthCallback: vi.fn(),
       };
@@ -519,12 +354,10 @@ describe('ui/createConnection', () => {
     });
 
     it('should render CustomCredentialMappingEditor in loading state', () => {
-      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
       const props: CreateConnectionProps = {
         isLoading: true,
-        connectorId: 'myConnectorId',
-        connectorDisplayName: 'My Connector',
-        connectionParameterSets,
+        connector: baseConnector,
+        connectionParameterSets: mockParameterSetsWithCredentialMapping,
         checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
@@ -559,11 +392,9 @@ describe('ui/createConnection', () => {
     ])(`should not render CustomCredentialMappingEditor when %s`, (_, setup) => {
       setup();
 
-      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
       const props: CreateConnectionProps = {
-        connectorId: 'myConnectorId',
-        connectorDisplayName: 'My Connector',
-        connectionParameterSets,
+        connector: baseConnector,
+        connectionParameterSets: mockParameterSetsWithCredentialMapping,
         checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
@@ -637,6 +468,17 @@ describe('ui/createConnection', () => {
     for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
       const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
       if (testId === 'connection-multi-auth-input') {
+        return paramRow;
+      }
+    }
+    return undefined;
+  }
+
+  function findLegacyMultiAuth(createConnection: ReactElement) {
+    const connectionsParamContainer = findConnectionsParamContainer(createConnection);
+    for (const paramRow of React.Children.toArray(connectionsParamContainer.props.children)) {
+      const testId = (paramRow as ReactElement)?.props?.['data-testId']?.toString();
+      if (testId === 'legacy-multi-auth') {
         return paramRow;
       }
     }

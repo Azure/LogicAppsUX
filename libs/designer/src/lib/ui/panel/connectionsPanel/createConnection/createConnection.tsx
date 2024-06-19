@@ -33,6 +33,7 @@ import type {
   Gateway,
   ManagedIdentity,
   Subscription,
+  Connector,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
@@ -40,7 +41,6 @@ import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { DismissRegular } from '@fluentui/react-icons';
 import TenantPicker from './formInputs/tenantPicker';
 
@@ -49,12 +49,8 @@ type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 export interface CreateConnectionProps {
   nodeIds?: string[];
   iconUri?: string;
-  connectorId: string;
-  connectorDisplayName: string;
-  connectorCapabilities?: string[];
-  connectionParameters?: Record<string, ConnectionParameter>;
+  connector: Connector;
   connectionParameterSets?: ConnectionParameterSets;
-  connectionAlternativeParameters?: Record<string, ConnectionParameter>;
   identity?: ManagedIdentity;
   isLoading?: boolean;
   createConnectionCallback?: (
@@ -83,12 +79,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const {
     nodeIds = [],
     iconUri = '',
-    connectorId,
-    connectorDisplayName,
-    connectorCapabilities,
-    connectionParameters,
+    connector,
     connectionParameterSets: _connectionParameterSets,
-    connectionAlternativeParameters,
     identity,
     isLoading = false,
     createConnectionCallback,
@@ -106,7 +98,14 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const intl = useIntl();
 
-  const { data: connector } = useConnector(connectorId);
+  const connectorId = connector?.id;
+
+  const {
+    connectionParameters,
+    connectionAlternativeParameters,
+    capabilities: connectorCapabilities,
+    displayName: connectorDisplayName,
+  } = connector.properties;
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
