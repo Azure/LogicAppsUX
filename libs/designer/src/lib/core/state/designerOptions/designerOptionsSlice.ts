@@ -24,7 +24,7 @@ import {
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: DesignerOptionsState = {
+export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isDarkMode: false,
@@ -119,7 +119,7 @@ export const initializeServices = createAsyncThunk(
 
 export const designerOptionsSlice = createSlice({
   name: 'designerOptions',
-  initialState,
+  initialState: initialDesignerOptionsState,
   reducers: {
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
