@@ -5,6 +5,7 @@ import {
   InitConnectionService,
   InitFunctionService,
   InitGatewayService,
+  InitTenantService,
   InitOAuthService,
   getIntl,
   getRecordEntry,
@@ -54,6 +55,7 @@ export const initializeTemplateServices = createAsyncThunk(
     connectionService,
     oAuthService,
     gatewayService,
+    tenantService,
     apimService,
     functionService,
     appServiceService,
@@ -64,6 +66,9 @@ export const initializeTemplateServices = createAsyncThunk(
 
     if (gatewayService) {
       InitGatewayService(gatewayService);
+    }
+    if (tenantService) {
+      InitTenantService(tenantService);
     }
     if (apimService) {
       InitApiManagementService(apimService);

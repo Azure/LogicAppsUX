@@ -14,11 +14,12 @@ export class HttpClient implements IHttpClient {
   async get<ReturnType>(options: HttpRequestOptions<any>): Promise<ReturnType> {
     const isArmId = isArmResourceId(options.uri);
     const requestUrl = getRequestUrl(options);
-    const auth = isArmId
-      ? {
-          Authorization: `Bearer ${environment.armToken}`,
-        }
-      : {};
+    const auth =
+      isArmId || options.includeAuth
+        ? {
+            Authorization: `Bearer ${environment.armToken}`,
+          }
+        : {};
 
     const response = await axios.get(requestUrl, {
       headers: {
