@@ -30,3 +30,6 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// Tenant
+export { BaseTenantService } from './tenant';
+export type { BaseTenantServiceOptions } from './tenant';

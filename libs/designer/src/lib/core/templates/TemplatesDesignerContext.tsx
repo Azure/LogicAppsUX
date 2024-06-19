@@ -5,6 +5,7 @@ import type {
   IConnectionService,
   IFunctionService,
   IGatewayService,
+  ITenantService,
   ILoggerService,
   IOAuthService,
 } from '@microsoft/logic-apps-shared';
@@ -17,6 +18,7 @@ export interface TemplatesDesignerContext {
 export interface TemplateServiceOptions {
   connectionService: IConnectionService;
   gatewayService?: IGatewayService;
+  tenantService?: ITenantService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   apimService?: IApiManagementService;

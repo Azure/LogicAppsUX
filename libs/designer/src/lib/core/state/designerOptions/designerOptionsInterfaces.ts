@@ -3,6 +3,7 @@ import type {
   IConnectionService,
   IConnectorService,
   IGatewayService,
+  ITenantService,
   ILoggerService,
   IOperationManifestService,
   ISearchService,
@@ -53,6 +54,7 @@ export interface ServiceOptions {
   searchService: ISearchService;
   connectorService?: IConnectorService;
   gatewayService?: IGatewayService;
+  tenantService?: ITenantService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;

@@ -12,6 +12,7 @@ import {
   isServiceProviderOperation,
   getRecordEntry,
   type Connector,
+  TenantService,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -62,19 +63,16 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
   );
 };
 
-export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> => {
-  return useQuery(
-    ['gateways', { subscriptionId }, { connectorName }],
-    async () => GatewayService().getGateways(subscriptionId, connectorName),
-    {
-      enabled: !!connectorName,
-    }
-  );
-};
+export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> =>
+  useQuery(['gateways', { subscriptionId }, { connectorName }], async () => GatewayService().getGateways(subscriptionId, connectorName), {
+    enabled: !!connectorName,
+  });
 
 export const useSubscriptions = () => useQuery(['subscriptions'], async () => GatewayService().getSubscriptions());
 
 export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getConfig?.() ?? {}, []);
+
+export const useTenants = () => useQuery(['tenants'], async () => TenantService().getTenants?.());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;

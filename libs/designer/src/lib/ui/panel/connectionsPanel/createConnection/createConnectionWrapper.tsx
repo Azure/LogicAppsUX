@@ -284,16 +284,12 @@ export const CreateConnectionWrapper = () => {
     <CreateConnection
       nodeIds={nodeIds}
       iconUri={iconUri}
-      connectorId={connector.id}
-      connectorDisplayName={connector.properties.displayName}
-      connectorCapabilities={connector.properties.capabilities}
-      connectionParameters={connector.properties.connectionParameters}
+      connector={connector}
       connectionParameterSets={getSupportedParameterSets(
         connector.properties.connectionParameterSets,
         operationInfo.type,
         connector.properties.capabilities
       )}
-      connectionAlternativeParameters={connector.properties?.connectionAlternativeParameters}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
       isLoading={isLoading}
