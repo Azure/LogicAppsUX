@@ -1,9 +1,11 @@
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
-import { Label, Spinner, Text } from '@fluentui/react-components';
+import { Label, Text } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -93,9 +95,11 @@ export const reviewCreateTab = (
   onCreateClick: () => Promise<void>,
   {
     isLoadingCreate,
+    isCreated,
     isPrimaryButtonDisabled,
   }: {
     isLoadingCreate: boolean;
+    isCreated: boolean;
     isPrimaryButtonDisabled: boolean;
   }
 ): TemplatePanelTab => ({
@@ -105,17 +109,34 @@ export const reviewCreateTab = (
     id: 'vlWl7f',
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
-  description: intl.formatMessage({
-    defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
-    id: 'BPSraP',
-    description: 'An accessability label that describes the objective of review and create tab',
-  }),
+  description: isCreated ? (
+    <MessageBar messageBarType={MessageBarType.success}>
+      {intl.formatMessage({
+        defaultMessage:
+          'Your workflow has been created. You will be automatically redirected to Workflows in Logic Apps. If nothing happens click the button below to navigate to the page.',
+        id: 'eiv5l8',
+        description: 'The message displayed when the workflow is successfully created',
+      })}
+    </MessageBar>
+  ) : (
+    intl.formatMessage({
+      defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
+      id: 'BPSraP',
+      description: 'An accessability label that describes the objective of review and create tab',
+    })
+  ),
   visible: true,
   order: 3,
   content: <ReviewCreatePanel />,
   footerContent: {
-    primaryButtonText: isLoadingCreate ? (
-      <Spinner size="extra-tiny" />
+    primaryButtonText: isCreated ? (
+      intl.formatMessage({
+        defaultMessage: 'Take me to my workflow',
+        id: '//uf06',
+        description: 'The button text for navigating to the workflows page after creating the workflow',
+      })
+    ) : isLoadingCreate ? (
+      <Spinner size={SpinnerSize.xSmall} />
     ) : (
       intl.formatMessage({
         defaultMessage: 'Create',
@@ -123,15 +144,19 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: onCreateClick,
+    primaryButtonOnClick: isCreated ? () => {} : isLoadingCreate ? () => {} : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
-    // secondaryButtonText: intl.formatMessage({
-    //   defaultMessage: 'Previous',
-    //   id: 'Yua/4o',
-    //   description: 'Button text for moving to the previous tab in the create workflow panel',
-    // }),
-    // secondaryButtonOnClick: previousTabId ? () => {
-    //   dispatch(selectPanelTab(previousTabId));
-    // } : undefined,
+    secondaryButtonText: isCreated
+      ? intl.formatMessage({
+          defaultMessage: 'Previous',
+          id: 'Yua/4o',
+          description: 'Button text for moving to the previous tab in the create workflow panel',
+        })
+      : undefined,
+    secondaryButtonOnClick: isCreated
+      ? undefined
+      : () => {
+          dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
+        },
   },
 });

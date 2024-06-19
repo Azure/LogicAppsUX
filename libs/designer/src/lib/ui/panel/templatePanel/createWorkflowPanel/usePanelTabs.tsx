@@ -17,6 +17,7 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   const { workflowName, kind, parameters } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
 
   const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
@@ -34,6 +35,7 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
     setIsLoadingCreate(true);
     await onCreateClick();
     setIsLoadingCreate(false);
+    setIsCreated(true);
   }, [onCreateClick]);
 
   const connectionsTabItem = useMemo(
@@ -77,9 +79,10 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
         isPrimaryButtonDisabled: missingWorkflowName || !kind,
+        isCreated,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated]
   );
 
   const tabs = useMemo(() => {
