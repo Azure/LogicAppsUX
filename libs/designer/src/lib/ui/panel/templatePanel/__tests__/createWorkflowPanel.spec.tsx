@@ -86,7 +86,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   });
 
   beforeEach(() => {
-    renderWithProviders(<TemplatePanel onCreateClick={vi.fn()} redirectCallback={vi.fn()} getExistingWorkflowNames={vi.fn()} />, { store });
+    renderWithProviders(<TemplatePanel onCreateClick={vi.fn()} />, { store });
   });
 
   it('Ensure template state for showing information is correct', async () => {
