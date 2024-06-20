@@ -14,30 +14,28 @@ interface FunctionListItemProps {
   functionData: FunctionData;
 }
 
+export type DropResult = { position: XYPosition } | undefined;
+
 const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const dispatch = useDispatch();
 
-  const [collected, drag, dragPreview] = useDrag(() => ({
+  const [, drag] = useDrag(() => ({
     type: 'function',
-    item:  functionData.key,
+    item: functionData.key,
     end: (item, monitor) => {
-      const dropResult = monitor.getDropResult<{
-        position: XYPosition // danielle export this as a type
-      } | undefined>();
+      const dropResult = monitor.getDropResult<DropResult>();
       if (item && dropResult) {
         functionData.position = dropResult.position;
-        dispatch(
-          addFunctionNode(functionData)
-        );
+        dispatch(addFunctionNode(functionData));
       }
     },
-  }))
+  }));
 
   return (
     <TreeItem itemType="leaf">
-      <TreeItemLayout ref={drag}className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
+      <TreeItemLayout ref={drag} className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
         <div key={functionData.key} className={styles.listButton}>
           <div className={styles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
             <FunctionIcon
