@@ -2,7 +2,7 @@ import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
 import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
 import { functionMock, loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
-import type { MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, MapMetadataV1 } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -21,14 +21,14 @@ export interface DataMapLoadingState {
   rawDefinition?: MapDefDropdownOption;
   loadingMethod: LoadingMethod;
   mapDefinition: MapDefinitionEntry;
-  mapMetadata?: MapMetadata;
+  mapMetadata?: MapMetadataV1;
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
   customXsltPaths: string[];
 }
 
-const mockMetadata: MapMetadata = {
+const mockMetadata: MapMetadataV1 = {
   functionNodes: [
     {
       reactFlowGuid: 'Ceiling-52B496E3-E270-4A8E-AFB2-414989219B15',

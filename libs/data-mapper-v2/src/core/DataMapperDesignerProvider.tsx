@@ -13,6 +13,8 @@ import { IntlProvider, Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 interface ExtendedTheme extends Theme {
   [key: string]: any;
@@ -56,6 +58,7 @@ export const DataMapperDesignerProvider = ({
   children,
 }: DataMapperDesignerProviderProps) => {
   return (
+    <DndProvider backend={HTML5Backend}>
     <AppInsightsContext.Provider value={reactPlugin}>
       <ReduxProvider store={store}>
         <DataMapperWrappedContext.Provider value={options}>
@@ -90,5 +93,6 @@ export const DataMapperDesignerProvider = ({
         </DataMapperWrappedContext.Provider>
       </ReduxProvider>
     </AppInsightsContext.Provider>
+    </DndProvider>
   );
 };

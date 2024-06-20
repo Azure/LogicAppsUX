@@ -1,9 +1,9 @@
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { ConnectionAndOrder, FunctionMetadata, MapMetadata } from '@microsoft/logic-apps-shared';
+import type { ConnectionAndOrder, FunctionMetadataV1, MapMetadataV1 } from '@microsoft/logic-apps-shared';
 
-export const generateMapMetadata = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadata => {
-  const functionMetadata: FunctionMetadata[] = [];
+export const generateMapMetadataV1 = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadataV1 => {
+  const functionMetadata: FunctionMetadataV1[] = [];
 
   Object.entries(functionDictionary).forEach(([functionKey, functionValue]) => {
     const connectionIdMetadata = generateFunctionConnectionMetadata(functionKey, connections);

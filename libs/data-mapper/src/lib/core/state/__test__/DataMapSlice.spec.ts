@@ -18,7 +18,7 @@ import {
   deleteNodeFromConnections,
   deleteParentRepeatingConnections,
 } from '../DataMapSlice';
-import type { FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '@microsoft/logic-apps-shared';
+import type { FunctionMetadataV1, FunctionPositionMetadata, Schema, SchemaExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 // NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by defaultimport { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -352,7 +352,7 @@ describe('DataMapSlice', () => {
           y: 700,
         },
       };
-      const mockManifest: FunctionMetadata = {
+      const mockManifest: FunctionMetadataV1 = {
         functionKey: 'ToLower',
         reactFlowGuid: 'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B',
         positions: [expectedPosition],
