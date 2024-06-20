@@ -110,20 +110,28 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('isAttributeSupportedByHtmlEditor', () => {
     it.each<[string, string, boolean]>([
       ['', 'href', false],
+      ['a', 'class', true],
       ['a', '', false],
       ['a', 'href', true],
       ['a', 'id', true],
       ['a', 'style', true],
+      ['span', 'class', true],
+      ['span', 'cellpadding', false],
       ['span', 'href', false],
       ['span', 'id', true],
       ['span', 'style', true],
+      ['p', 'class', true],
+      ['p', 'cellpadding', false],
       ['p', 'href', false],
       ['p', 'id', true],
       ['p', 'style', true],
+      ['img', 'class', true],
       ['img', 'id', true],
       ['img', 'alt', true],
       ['img', 'script', false],
       ['img', 'src', true],
+      ['table', 'class', true],
+      ['table', 'cellpadding', true],
     ])('should return <%s %s="..." /> as supported=%p', (inputTag, inputAttr, expected) => {
       expect(isAttributeSupportedByHtmlEditor(inputTag, inputAttr)).toBe(expected);
     });
