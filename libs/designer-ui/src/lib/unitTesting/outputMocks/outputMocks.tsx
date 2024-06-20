@@ -37,8 +37,6 @@ export interface OutputMocksProps {
 
 export const ActionResults = {
   SUCCESS: 'Succeeded',
-  TIMEDOUT: 'TimedOut',
-  SKIPPED: 'Skipped',
   FAILED: 'Failed',
 };
 
