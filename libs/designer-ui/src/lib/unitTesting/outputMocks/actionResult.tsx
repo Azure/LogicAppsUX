@@ -22,16 +22,6 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResu
       id: 'HF2SNx',
       description: 'Successful action result',
     }),
-    TIMEDOUT_STATUS: intl.formatMessage({
-      defaultMessage: 'Timed out',
-      id: '2M+Kcv',
-      description: 'Timed action result',
-    }),
-    SKIPPED_STATUS: intl.formatMessage({
-      defaultMessage: 'Is skipped',
-      id: 'gX4ect',
-      description: 'Skipped action result',
-    }),
     FAILED_STATUS: intl.formatMessage({
       defaultMessage: 'Has failed',
       id: 'cySYfO',
@@ -42,8 +32,6 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResu
   const labelId = `dropdown-label-action-result-${nodeId}`;
   const options: IDropdownOption[] = [
     { key: ActionResults.SUCCESS, text: intlText.SUCCEEDED_STATUS },
-    { key: ActionResults.TIMEDOUT, text: intlText.TIMEDOUT_STATUS },
-    { key: ActionResults.SKIPPED, text: intlText.SKIPPED_STATUS },
     { key: ActionResults.FAILED, text: intlText.FAILED_STATUS },
   ];
 
