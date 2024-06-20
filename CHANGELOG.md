@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [4.32.0](https://github.com/Azure/LogicAppsUX/compare/v4.31.0...v4.32.0) (2024-06-20)
+
+
+### Features
+
+* **Data Mapper:** Handle Node connections and state management ([#4990](https://github.com/Azure/LogicAppsUX/issues/4990)) ([dd0c2b8](https://github.com/Azure/LogicAppsUX/commit/dd0c2b86674068a94eebe1a011b50d9001ee764f))
+* **designer-ui:** Allow makers to use `class` attributes and `table` styling in raw HTML ([#5000](https://github.com/Azure/LogicAppsUX/issues/5000)) ([3446119](https://github.com/Azure/LogicAppsUX/commit/344611928460671e46ae740923c0869d2732a606))
+* **template:** Updating quickview panel with latest UI ([#4994](https://github.com/Azure/LogicAppsUX/issues/4994)) ([4704eaf](https://github.com/Azure/LogicAppsUX/commit/4704eafc0dcce8c7026beba7cfe0e6715a49a25a))
+
 ## [4.31.0](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v4.31.0) (2024-06-19)
 
 
