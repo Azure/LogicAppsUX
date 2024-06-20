@@ -11,6 +11,7 @@ import {
   getRecordEntry,
   type LogicAppsV2,
   type Template,
+  InitTemplateService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -62,6 +63,7 @@ export const initializeTemplateServices = createAsyncThunk(
     functionService,
     appServiceService,
     connectionParameterEditorService,
+    templateService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOAuthService(oAuthService);
@@ -83,6 +85,10 @@ export const initializeTemplateServices = createAsyncThunk(
     }
     if (connectionParameterEditorService) {
       InitConnectionParameterEditorService(connectionParameterEditorService);
+    }
+
+    if (templateService) {
+      InitTemplateService(templateService);
     }
 
     return true;

@@ -11,12 +11,9 @@ import { clearTemplateDetails } from '../../../core/state/templates/templateSlic
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { setExistingWorkflowNames } from '../../../core/state/templates/workflowSlice';
+import { TemplateService } from '@microsoft/logic-apps-shared';
 
-export const TemplatePanel = ({
-  onCreateClick,
-  redirectCallback,
-  getExistingWorkflowNames,
-}: { onCreateClick: () => Promise<void>; redirectCallback: () => void; getExistingWorkflowNames: () => Promise<any> }) => {
+export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
@@ -27,7 +24,7 @@ export const TemplatePanel = ({
     dispatch(closePanel());
     dispatch(clearTemplateDetails());
   }, [dispatch]);
-  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({ onCreateClick, redirectCallback });
+  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({ onCreateClick });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : getQuickViewTabs(intl, dispatch)),
     [currentPanelView, createWorkflowPanelTabs, intl, dispatch]
@@ -75,13 +72,14 @@ export const TemplatePanel = ({
 
   useEffect(() => {
     async function fetchWorkflowNames() {
-      const existingWorkflowNames = await getExistingWorkflowNames();
+      const existingWorkflowNames = await TemplateService().getExistingWorkflowNames();
+
       dispatch(setExistingWorkflowNames(existingWorkflowNames));
     }
     if (isOpen && currentPanelView === 'createWorkflow') {
       fetchWorkflowNames();
     }
-  }, [isOpen, currentPanelView, dispatch, getExistingWorkflowNames]);
+  }, [isOpen, currentPanelView, dispatch]);
 
   return (
     <Panel

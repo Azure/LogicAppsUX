@@ -8,6 +8,7 @@ import type {
   ITenantService,
   ILoggerService,
   IOAuthService,
+  ITemplateService,
 } from '@microsoft/logic-apps-shared';
 import { createContext } from 'react';
 
@@ -25,6 +26,7 @@ export interface TemplateServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
+  templateService?: ITemplateService;
 }
 
 export const TemplatesWrappedContext = createContext<TemplatesDesignerContext | null>(null);

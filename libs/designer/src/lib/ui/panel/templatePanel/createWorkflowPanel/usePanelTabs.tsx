@@ -8,12 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { TemplateService, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
-export const useCreateWorkflowPanelTabs = ({
-  onCreateClick,
-  redirectCallback,
-}: { onCreateClick: () => Promise<void>; redirectCallback: () => void }): TemplatePanelTab[] => {
+export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { workflowName, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
@@ -43,8 +40,8 @@ export const useCreateWorkflowPanelTabs = ({
     await onCreateClick();
     setIsLoadingCreate(false);
     setIsCreated(true);
-    redirectCallback();
-  }, [onCreateClick, redirectCallback]);
+    TemplateService().openBladeAfterCreate();
+  }, [onCreateClick]);
 
   const connectionsTabItem = useMemo(
     () => ({
@@ -88,10 +85,9 @@ export const useCreateWorkflowPanelTabs = ({
         isLoadingCreate,
         isPrimaryButtonDisabled: missingWorkflowName || !kind,
         isCreated,
-        redirectCallback,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated, redirectCallback]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated]
   );
 
   const tabs = useMemo(() => {

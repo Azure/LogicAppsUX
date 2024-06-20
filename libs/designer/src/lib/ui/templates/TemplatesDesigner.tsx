@@ -6,8 +6,6 @@ import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export const TemplatesDesigner = ({
   createWorkflowCall,
-  redirectCallback,
-  getExistingWorkflowNames,
 }: {
   createWorkflowCall: (
     workflowName: string,
@@ -16,8 +14,6 @@ export const TemplatesDesigner = ({
     connectionsData: any,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => Promise<void>;
-  redirectCallback: () => void;
-  getExistingWorkflowNames: () => Promise<any>;
 }) => {
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { workflowName, kind, workflowDefinition, parameters } = useSelector((state: RootState) => state.template);
@@ -46,11 +42,7 @@ export const TemplatesDesigner = ({
 
   return (
     <>
-      <TemplatePanel
-        onCreateClick={onCreateClick}
-        redirectCallback={redirectCallback}
-        getExistingWorkflowNames={getExistingWorkflowNames}
-      />
+      <TemplatePanel onCreateClick={onCreateClick} />
       <div className="msla-templates-list">
         {availableTemplatesNames?.map((templateName: string) => (
           <TemplateCard key={templateName} templateName={templateName} />

@@ -6,6 +6,7 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { TemplateService } from '@microsoft/logic-apps-shared';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -97,12 +98,10 @@ export const reviewCreateTab = (
     isLoadingCreate,
     isCreated,
     isPrimaryButtonDisabled,
-    redirectCallback,
   }: {
     isLoadingCreate: boolean;
     isCreated: boolean;
     isPrimaryButtonDisabled: boolean;
-    redirectCallback: () => void;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
@@ -146,7 +145,7 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated ? redirectCallback : isLoadingCreate ? () => {} : onCreateClick,
+    primaryButtonOnClick: isCreated ? () => TemplateService().openBladeAfterCreate() : isLoadingCreate ? () => {} : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
     secondaryButtonText: isCreated
       ? undefined

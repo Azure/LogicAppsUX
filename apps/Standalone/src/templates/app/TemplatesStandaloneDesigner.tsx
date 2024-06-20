@@ -6,7 +6,7 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { BaseGatewayService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
+import { BaseGatewayService, BaseTemplateService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
 import {
   useAppSettings,
   useConnectionsData,
@@ -41,25 +41,6 @@ export const TemplatesStandaloneDesigner = () => {
 
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
-
-  const redirectCallback = () => {
-    console.log('Created workflow, TODO: now redirect');
-  };
-
-  const getExistingWorkflowNames = async () => {
-    try {
-      const response = await axios.get(`https://management.azure.com${appId}/workflows?api-version=2018-11-01`, {
-        headers: {
-          'If-Match': '*',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      });
-      return response.data.value.map((workflow: any) => workflow.name.split('/')[1]);
-    } catch (error: any) {
-      return [];
-    }
-  };
 
   const createWorkflowCall = async (
     workflowName: string,
@@ -149,7 +130,7 @@ export const TemplatesStandaloneDesigner = () => {
             updatedParametersData,
             undefined,
             undefined,
-            redirectCallback,
+            () => {},
             true
           );
         } catch (error) {
@@ -162,9 +143,9 @@ export const TemplatesStandaloneDesigner = () => {
   };
 
   const services = useMemo(
-    () => getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
+    () => getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, appId, tenantId, objectId, canonicalLocation),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
+    [connectionsData, settingsData, workflowAppData, appId, tenantId, canonicalLocation]
   );
   const resourceDetails = new ArmParser(appId ?? '');
   return (
@@ -182,11 +163,7 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
-            <TemplatesDesigner
-              createWorkflowCall={createWorkflowCall}
-              redirectCallback={redirectCallback}
-              getExistingWorkflowNames={getExistingWorkflowNames}
-            />
+            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       ) : null}
@@ -200,6 +177,7 @@ const httpClient = new HttpClient();
 const getServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
+  appId: string | undefined,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string
@@ -249,10 +227,24 @@ const getServices = (
     objectId,
   });
 
+  const templateService = new BaseTemplateService({
+    baseUrl: armUrl,
+    appId,
+    httpClient,
+    apiVersions: {
+      subscription: apiVersion,
+      gateway: '2018-11-01',
+    },
+    openBladeAfterCreate: () => {
+      console.log('Open blade after create');
+    },
+  });
+
   return {
     connectionService,
     gatewayService,
     tenantService,
     oAuthService,
+    templateService,
   };
 };
