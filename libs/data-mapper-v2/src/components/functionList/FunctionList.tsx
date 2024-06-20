@@ -127,13 +127,17 @@ export const FunctionList = () => {
     }
 
     return newFunctionListTree;
-  }, [functionData, searchTerm, inlineFunctionInputOutputKeys]);
+  }, [functionData, searchTerm, inlineFunctionInputOutputKeys, openItems]);
 
-  const treeItems = functionListTree.children.map((node) => {
+  const treeItems = functionListTree.children.map((node, index) => {
     return node.key.startsWith(functionCategoryItemKeyPrefix) ? (
-      <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} functions={node} />
+      <FunctionListHeader
+        key={`function-header-${index}`}
+        category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory}
+        functions={node}
+      />
     ) : (
-      <FunctionListItem functionData={node as FunctionData} />
+      <FunctionListItem key={`function-item-${index}`} functionData={node as FunctionData} />
     );
   });
 
@@ -149,7 +153,13 @@ export const FunctionList = () => {
         />
       </span>
 
-      <Tree appearance="transparent" className={styles.functionTree} onOpenChange={handleOpenChange} openItems={openItems}>
+      <Tree
+        appearance="transparent"
+        className={styles.functionTree}
+        onOpenChange={handleOpenChange}
+        openItems={openItems}
+        aria-label="function-tree"
+      >
         {treeItems}
       </Tree>
     </>
