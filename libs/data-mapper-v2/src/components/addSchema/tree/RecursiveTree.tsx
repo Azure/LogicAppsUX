@@ -1,9 +1,9 @@
 import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClasses } from '@fluentui/react-components';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useContext, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useStyles } from './styles';
-import { DataMapperWrappedContext } from '../../../core';
 import type { Node } from 'reactflow';
+import useNodePosition from './useNodePosition';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -20,25 +20,13 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
 
-  const { canvasBounds } = useContext(DataMapperWrappedContext);
-
-  const currentNode = useMemo(
-    () => ({
-      id: `reactflow_${isLeftDirection ? 'source' : 'target'}_${key}`,
-      selectable: true,
-      data: {
-        ...root,
-        isLeftDirection: isLeftDirection,
-        id: `reactflow_${isLeftDirection ? 'source' : 'target'}_${key}`,
-      },
-      type: 'schemaNode',
-      position: {
-        x: 0,
-        y: 0,
-      },
-    }),
-    [isLeftDirection, key, root]
-  );
+  const nodePosition = useNodePosition({
+    key: key,
+    openKeys: openKeys,
+    schemaMap: flattenedScehmaMap,
+    isLeftDirection: isLeftDirection,
+    nodeBounds: nodeRef.current?.getBoundingClientRect(),
+  });
 
   const onOpenChange = useCallback(
     (_e: any, data: TreeItemOpenChangeData) => {
@@ -54,36 +42,22 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [openKeys, setOpenKeys]
   );
 
-  useLayoutEffect(() => {
-    let { x, y } = currentNode.position;
+  useEffect(() => {
+    const nodeId = `reactflow_${isLeftDirection ? 'source' : 'target'}_${root.key}`;
 
-    // NOTE: Node should be hidden if a parent at any level is hidden
-    function isNodeHidden(key?: string) {
-      if (!key) {
-        return false;
-      }
-
-      if (!openKeys.has(key)) {
-        return true;
-      }
-
-      return isNodeHidden(flattenedScehmaMap[key]?.parentKey);
-    }
-
-    if (isNodeHidden(root.parentKey)) {
-      x = -1;
-      y = -1;
-    } else if (nodeRef?.current && canvasBounds) {
-      const nodeRect = nodeRef.current.getBoundingClientRect();
-      x = currentNode.data.isLeftDirection ? 0 : canvasBounds.width;
-      y = nodeRect.y - canvasBounds.y + 10;
-    } else {
-      x = -1;
-      y = -1;
-    }
-
-    setUpdatedNode({ ...currentNode, position: { x, y } });
-  }, [openKeys, nodeRef, canvasBounds, flattenedScehmaMap, currentNode, setUpdatedNode, root]);
+    setUpdatedNode({
+      ...{
+        id: nodeId,
+        selectable: true,
+        data: {
+          ...root,
+          isLeftDirection: isLeftDirection,
+        },
+        type: 'schemaNode',
+        position: nodePosition,
+      },
+    });
+  }, [isLeftDirection, nodePosition, root, setUpdatedNode]);
 
   if (root.children.length === 0) {
     return (

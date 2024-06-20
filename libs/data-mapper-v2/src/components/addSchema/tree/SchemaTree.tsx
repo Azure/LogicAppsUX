@@ -49,31 +49,40 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   useEffect(() => {
     const keys = Object.keys(updatedNodes);
     if (keys.length === totalNodes) {
+      const currentNodesMap: Record<string, Node> = {};
+      for (const node of nodes) {
+        currentNodesMap[node.id] = node;
+      }
+
       const nodeChanges: NodeChange[] = [];
       for (const key of keys) {
         const updatedNode = updatedNodes[key];
-        const id = updatedNode.id;
+        const currentNode = currentNodesMap[key];
         if (updatedNode.position.x < 0 && updatedNode.position.y < 0) {
-          nodeChanges.push({ id: id, type: 'remove' });
-        } else if (nodes.find((node) => node.id === id)) {
+          if (currentNode) {
+            nodeChanges.push({ id: key, type: 'remove' });
+          }
+        } else if (!currentNode) {
+          nodeChanges.push({ type: 'add', item: updatedNode });
+        } else if (currentNode.position.x !== updatedNode.position.x && currentNode.position.y !== updatedNode.position.y) {
           nodeChanges.push({
-            id: id,
+            id: key,
             type: 'position',
             position: updatedNode.position,
           });
-        } else {
-          nodeChanges.push({ type: 'add', item: updatedNode });
         }
       }
-      const newNodes = applyNodeChanges(nodeChanges, nodes);
-      setUpdatedNodes({});
-      dispatch(updateReactFlowNodes(newNodes));
+
+      if (nodeChanges.length > 0) {
+        const newNodes = applyNodeChanges(nodeChanges, nodes);
+        setUpdatedNodes({});
+        dispatch(updateReactFlowNodes(newNodes));
+      }
     }
   }, [nodes, updatedNodes, totalNodes, dispatch]);
 
   useEffect(() => {
     setOpenKeys(new Set<string>(Object.keys(flattenedScehmaMap).filter((key) => flattenedScehmaMap[key].children.length > 0)));
-    console.log('Map Length: ', Object.keys(flattenedScehmaMap).length);
   }, [flattenedScehmaMap, setOpenKeys]);
   return schemaTreeRoot ? (
     <Tree
