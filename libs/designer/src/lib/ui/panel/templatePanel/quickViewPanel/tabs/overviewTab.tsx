@@ -1,47 +1,52 @@
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../../../../core/state/templates/store';
+import { type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { Text } from '@fluentui/react-components';
-
+import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { getUniqueConnectors } from '../../../../../core/templates/utils/helper';
+import { List } from '@fluentui/react';
+import { ConnectorWithDetails } from '../../../../../ui/templates/connections/connector';
 
 export const OverviewPanel: React.FC = () => {
   const intl = useIntl();
   const { manifest } = useSelector((state: RootState) => state.template);
 
   const detailsTags: Record<string, string> = {
-    'Type': intl.formatMessage({
+    Type: intl.formatMessage({
       defaultMessage: 'Solution type',
       id: 'JVNRly',
       description: 'Solution type of the template',
     }),
-    'Trigger': intl.formatMessage({
+    Trigger: intl.formatMessage({
       defaultMessage: 'Trigger type',
       id: 'DcJBUx',
       description: 'Type of the trigger in the template',
     }),
-    'By': intl.formatMessage({
+    By: intl.formatMessage({
       defaultMessage: 'Published by',
       id: 'n+sJ5W',
       description: 'Name of the organization that published this template',
     }),
-  }
+  };
 
   return isNullOrUndefined(manifest) ? null : (
     <div className="msla-template-overview">
       <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title" >
+        <Text className="msla-template-overview-section-title">
           {intl.formatMessage({
             defaultMessage: 'Connections included in this template',
             id: 'TnwRGo',
             description: 'Title for the connections section in the template overview tab',
           })}
         </Text>
+        <Connections connections={manifest.connections} />
       </div>
       {manifest.prerequisites ? (
         <div className="msla-template-overview-section">
-          <Text className="msla-template-overview-section-title" >
+          <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Prerequisites',
               id: 'Jk2B0i',
@@ -51,9 +56,10 @@ export const OverviewPanel: React.FC = () => {
           <Text align="start" className="msla-template-overview-connections">
             {manifest.prerequisites}
           </Text>
-        </div>) : null}
+        </div>
+      ) : null}
       <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title" >
+        <Text className="msla-template-overview-section-title">
           {intl.formatMessage({
             defaultMessage: 'Details',
             id: 'ocW+RF',
@@ -61,19 +67,17 @@ export const OverviewPanel: React.FC = () => {
           })}
         </Text>
         {Object.keys(detailsTags).map((key: string) => {
-            return (
-              <div className="msla-template-overview-section-detail" key={key}>
-                <Text className="msla-template-overview-section-detailkey">
-                  {detailsTags[key]}: 
-                </Text>
-                <Text>{manifest.details[key]}</Text>
-              </div>
-            );
+          return (
+            <div className="msla-template-overview-section-detail" key={key}>
+              <Text className="msla-template-overview-section-detailkey">{detailsTags[key]}:</Text>
+              <Text>{manifest.details[key]}</Text>
+            </div>
+          );
         })}
       </div>
       {manifest.tags?.length ? (
         <div className="msla-template-overview-section">
-          <Text className="msla-template-overview-section-title" >
+          <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Tags',
               id: 'X02GGK',
@@ -81,14 +85,17 @@ export const OverviewPanel: React.FC = () => {
             })}
           </Text>
           {manifest.tags.map((key: string) => (
-              <Text key={key} className="msla-template-overview-section-tag" size={300}>{key}</Text>
-            ))}
-        </div>) : null }
+            <Text key={key} className="msla-template-overview-section-tag" size={300}>
+              {key}
+            </Text>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };
 
-export const overviewTab = (intl: IntlShape) => ({
+export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Overview',
@@ -103,5 +110,42 @@ export const overviewTab = (intl: IntlShape) => ({
   visible: true,
   content: <OverviewPanel />,
   order: 1,
-  icon: 'Info',
+  footerContent: {
+    primaryButtonText: intl.formatMessage({
+      defaultMessage: 'Create a workflow with this template',
+      id: 'wGkH/j',
+      description: 'Button text to create workflow from this template',
+    }),
+    primaryButtonOnClick: () => {
+      dispatch(openCreateWorkflowPanelView());
+    },
+    primaryButtonDisabled: false,
+    onClose: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
+  },
 });
+
+const Connections = (props: { connections: Record<string, Template.Connection> }): JSX.Element => {
+  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
+  const connectors = getUniqueConnectors(props.connections, subscriptionId, location);
+
+  const onRenderCell = (item: Template.Connection | undefined): JSX.Element => {
+    if (!item) {
+      return <div>No data</div>;
+    }
+
+    return (
+      <div className="msla-template-overview-connection">
+        <ConnectorWithDetails connectorId={item.connectorId} kind={item.kind} />
+      </div>
+    );
+  };
+
+  return (
+    <div className="msla-template-overview-connections">
+      <List items={connectors} onRenderCell={onRenderCell} />
+    </div>
+  );
+};

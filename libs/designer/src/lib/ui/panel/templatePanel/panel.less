@@ -1,7 +1,7 @@
 .msla-template-quickview-header {
     display: flex;
     flex-direction: column;
-    padding-bottom: 35px;
+    padding: 10px 0 35px 0;
 }
 
 .msla-template-panel-header {
@@ -23,24 +23,12 @@
 
 .msla-template-quickview-tabs {
     border-bottom: solid #d4d4d4 1px;
-
-    .msla-template-quickview-tab {
-        padding: 0 5px 10px 0;
-        margin: 0 20px 0 0;
-
-        &.selected {
-            font-weight: 600;
-            border-bottom: solid rgb(16, 110, 190) 2px !important;
-            margin-top: 2px;
-        }
-    }
 }
 
 .msla-template-workflow-preview {
     display: inline-block;
     margin-left: calc(-25%);
     margin-bottom: calc(-20%);
-    overflow: hidden;
 }
 
 .msla-template-overview {
@@ -69,9 +57,41 @@
         }
 
         .msla-template-overview-section-tag {
-            border: 5px solid rgb(130, 203, 236);
-            background-color: rgb(130, 203, 236);
+            border: 5px solid #d9eefe;
+            background-color: #d9eefe;
             width: fit-content;
+        }
+
+        .msla-template-overview-connections {
+            display: flex;
+            .msla-template-overview-connection {
+                display: flex;
+                flex-direction: column;
+
+                .msla-template-connector {
+                    display: flex;
+                    flex-direction: row;
+
+                    .msla-template-connector-box {
+                        width: 50px;
+                        height: 50px;
+                    }
+
+                    .msla-template-connector-details {
+                        padding: 10px;;
+                        .msla-template-connector-name {
+                            font-size: 15px;
+                            font-weight: 600;
+                        }
+
+                        .msla-template-connector-type {
+                            padding-top: 3px;
+                            font-size: 10px !important;
+                            display: flex;
+                        }
+                    }
+                }
+            }
         }
     }
 }

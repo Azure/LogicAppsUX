@@ -51,10 +51,10 @@ const DataMapperV2 = () => {
 
 const TemplatesStandalone = () => {
   return (
-    <ReactQueryProvider>
-      <Provider store={templateStore}>
+    <Provider store={templateStore}>
+      <ReactQueryProvider>
         <TemplatesStandaloneDesigner />
-      </Provider>
-    </ReactQueryProvider>
+      </ReactQueryProvider>
+    </Provider>
   );
 };

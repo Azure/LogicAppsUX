@@ -4,6 +4,8 @@ import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
 import { updateKind, updateWorkflowName } from '../../../../../core/state/templates/templateSlice';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -72,7 +74,7 @@ export const NameStatePanel: React.FC = () => {
   );
 };
 
-export const nameStateTab = (intl: IntlShape) => ({
+export const nameStateTab = (intl: IntlShape, dispatch: AppDispatch, isMissingInfo: boolean): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
     defaultMessage: 'Name and State',
@@ -85,7 +87,19 @@ export const nameStateTab = (intl: IntlShape) => ({
     description: 'An accessability label that describes the name and state tab',
   }),
   visible: true,
-  content: <NameStatePanel />,
   order: 2,
-  icon: 'Info',
+  content: <NameStatePanel />,
+  footerContent: {
+    primaryButtonText: intl.formatMessage({
+      defaultMessage: 'Next',
+      id: '0UfxUM',
+      description: 'Button text for moving to the next tab in the create workflow panel',
+    }),
+    primaryButtonOnClick: () => {
+      if (!isMissingInfo) {
+        dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+      }
+    },
+    primaryButtonDisabled: isMissingInfo,
+  },
 });
