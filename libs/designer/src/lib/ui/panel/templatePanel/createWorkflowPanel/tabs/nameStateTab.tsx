@@ -12,7 +12,7 @@ import { useCallback, useMemo, useState } from 'react';
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
-  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { existingWorkflowName, existingWorkflowNames } = useSelector((state: RootState) => state.workflow);
   const [validationError, setValidationError] = useState('');
 
   const { manifest } = useSelector((state: RootState) => state.template);
@@ -120,6 +120,19 @@ export const NameStatePanel: React.FC = () => {
           id: 'zMKxg9',
           description: 'Error message when the workflow name is invalid regex.',
         })
+      );
+      return;
+    }
+    if (existingWorkflowNames.includes(workflowName)) {
+      setValidationError(
+        intl.formatMessage(
+          {
+            defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+            id: '7F4Bzv',
+            description: 'Error message when the workflow name already exists.',
+          },
+          { workflowName }
+        )
       );
       return;
     }

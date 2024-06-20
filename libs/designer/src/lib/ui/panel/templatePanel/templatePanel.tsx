@@ -1,6 +1,6 @@
 import { Panel, PanelType } from '@fluentui/react';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
@@ -10,11 +10,13 @@ import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { useQuickViewPanelTabs } from './quickViewPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
+import { setExistingWorkflowNames } from '../../../core/state/templates/workflowSlice';
 
 export const TemplatePanel = ({
   onCreateClick,
   redirectCallback,
-}: { onCreateClick: () => Promise<void>; redirectCallback: () => void }) => {
+  getExistingWorkflowNames,
+}: { onCreateClick: () => Promise<void>; redirectCallback: () => void; getExistingWorkflowNames: () => Promise<any> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
@@ -68,6 +70,16 @@ export const TemplatePanel = ({
       ) : null,
     [selectedTabProps, dismissPanel]
   );
+
+  useEffect(() => {
+    async function fetchWorkflowNames() {
+      const existingWorkflowNames = await getExistingWorkflowNames();
+      dispatch(setExistingWorkflowNames(existingWorkflowNames));
+    }
+    if (isOpen && currentPanelView === 'createWorkflow') {
+      fetchWorkflowNames();
+    }
+  }, [isOpen, currentPanelView, dispatch, getExistingWorkflowNames]);
 
   return (
     <Panel

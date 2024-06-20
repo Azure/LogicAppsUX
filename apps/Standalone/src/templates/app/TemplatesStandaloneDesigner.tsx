@@ -46,6 +46,21 @@ export const TemplatesStandaloneDesigner = () => {
     console.log('Created workflow, TODO: now redirect');
   };
 
+  const getExistingWorkflowNames = async () => {
+    try {
+      const response = await axios.get(`https://management.azure.com${appId}/workflows?api-version=2018-11-01`, {
+        headers: {
+          'If-Match': '*',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      });
+      return response.data.value.map((workflow: any) => workflow.name.split('/')[1]);
+    } catch (error: any) {
+      return [];
+    }
+  };
+
   const createWorkflowCall = async (
     workflowName: string,
     workflowKind: string,
@@ -167,7 +182,11 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
-            <TemplatesDesigner createWorkflowCall={createWorkflowCall} redirectCallback={redirectCallback} />
+            <TemplatesDesigner
+              createWorkflowCall={createWorkflowCall}
+              redirectCallback={redirectCallback}
+              getExistingWorkflowNames={getExistingWorkflowNames}
+            />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       ) : null}

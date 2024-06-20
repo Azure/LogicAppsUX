@@ -9,6 +9,7 @@ export interface ResourceDetails {
 
 export interface WorkflowState {
   existingWorkflowName?: string;
+  existingWorkflowNames: string[];
   isConsumption: boolean;
   subscriptionId: string;
   resourceGroup: string;
@@ -17,6 +18,7 @@ export interface WorkflowState {
 
 const initialState: WorkflowState = {
   isConsumption: false,
+  existingWorkflowNames: [],
   subscriptionId: '',
   resourceGroup: '',
   location: '',
@@ -29,6 +31,9 @@ export const workflowSlice = createSlice({
     setExistingWorkflowName: (state, action: PayloadAction<string>) => {
       state.existingWorkflowName = action.payload;
     },
+    setExistingWorkflowNames: (state, action: PayloadAction<string[]>) => {
+      state.existingWorkflowNames = action.payload;
+    },
     setResourceDetails: (state, action: PayloadAction<ResourceDetails>) => {
       state.subscriptionId = action.payload.subscriptionId;
       state.resourceGroup = action.payload.resourceGroup;
@@ -36,6 +41,7 @@ export const workflowSlice = createSlice({
     },
     clearWorkflowDetails: (state) => {
       state.existingWorkflowName = undefined;
+      state.existingWorkflowNames = [];
     },
     setConsumption: (state, action: PayloadAction<boolean>) => {
       state.isConsumption = action.payload;
@@ -44,5 +50,6 @@ export const workflowSlice = createSlice({
   },
 });
 
-export const { setExistingWorkflowName, setResourceDetails, clearWorkflowDetails, setConsumption } = workflowSlice.actions;
+export const { setExistingWorkflowName, setExistingWorkflowNames, setResourceDetails, clearWorkflowDetails, setConsumption } =
+  workflowSlice.actions;
 export default workflowSlice.reducer;

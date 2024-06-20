@@ -16,8 +16,7 @@ export const useCreateWorkflowPanelTabs = ({
 }: { onCreateClick: () => Promise<void>; redirectCallback: () => void }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const selectedManifest = useSelector((state: RootState) => state.template.manifest);
-  const { workflowName, kind, parameters } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isCreated, setIsCreated] = useState(false);

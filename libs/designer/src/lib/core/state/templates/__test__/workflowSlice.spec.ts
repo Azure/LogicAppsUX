@@ -4,6 +4,10 @@ describe('workflow slice reducers', () => {
   it('update state call tests', async () => {
     const initialState = {
       isConsumption: false,
+      existingWorkflowNames: [],
+      subscriptionId: '',
+      resourceGroup: '',
+      location: '',
     };
 
     const state1 = workflowSlice.reducer(initialState, setExistingWorkflowName('workflowName'));
