@@ -44,9 +44,11 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
     expect(screen.getAllByText('Workflow Name')).toBeDefined();
     expect(screen.getAllByDisplayValue(store.getState().template.workflowName ?? 'n/a')).toBeDefined;
     expect(screen.getAllByText('State Type')).toBeDefined();
-    expect(screen.getAllByText('Stateful: Optimized for high reliability, ideal for process business transitional data.')).toBeDefined();
-    expect(
-      screen.getAllByText('Stateless: Optimized for low latency, ideal for request-response and processing IoT events.')
-    ).toBeDefined();
+    expect(screen.getAllByText('Stateful')).toBeDefined();
+    expect(screen.getAllByText('Optimized for high reliability')).toBeDefined();
+    expect(screen.getAllByText('Ideal for process business transitional data')).toBeDefined();
+    expect(screen.getAllByText('Stateless')).toBeDefined();
+    expect(screen.getAllByText('Optimized for low latency')).toBeDefined();
+    expect(screen.getAllByText('Ideal for request-response and processing IoT events')).toBeDefined();
   });
 });
