@@ -51,9 +51,11 @@ export const TemplatesDesigner = ({
         redirectCallback={redirectCallback}
         getExistingWorkflowNames={getExistingWorkflowNames}
       />
-      {availableTemplatesNames?.map((templateName: string) => (
-        <TemplateCard key={templateName} templateName={templateName} />
-      ))}
+      <div className="msla-templates-list">
+        {availableTemplatesNames?.map((templateName: string) => (
+          <TemplateCard key={templateName} templateName={templateName} />
+        ))}
+      </div>
     </>
   );
 };

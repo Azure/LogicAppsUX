@@ -1,9 +1,9 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, CoordinateExtent, Node, Edge } from 'reactflow';
+import type { Connection, Node, Edge, ConnectionLineComponent } from 'reactflow';
 import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
@@ -17,6 +17,7 @@ import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
+import { CodeView } from '../components/codeView/CodeView';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -30,14 +31,22 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   useStaticStyles();
   const styles = useStyles();
   const ref = useRef<HTMLDivElement | null>(null);
+  const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
   const dispatch = useDispatch<AppDispatch>();
+
+  const updateCanvasBounds = useCallback(() => {
+    if (ref?.current) {
+      setCanvasBounds(ref.current.getBoundingClientRect());
+    }
+  }, [ref]);
+
+  const resizeObserver = useMemo(() => new ResizeObserver((_) => updateCanvasBounds()), [updateCanvasBounds]);
 
   if (fileService) {
     InitDataMapperFileService(fileService);
   }
 
   const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
   const nodeTypes = useMemo(
@@ -53,20 +62,6 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     }),
     []
   );
-
-  const reactFlowExtent = useMemo(() => {
-    if (ref?.current) {
-      const rect = ref.current.getBoundingClientRect();
-      if (rect) {
-        return [
-          [0, 0],
-          [rect.width, rect.height],
-        ] as CoordinateExtent;
-      }
-    }
-
-    return undefined;
-  }, [ref]);
 
   const dispatchEdgesAndNodes = useCallback(
     (updatedEdges: Edge[], updatedNodes: Node[]) => {
@@ -141,6 +136,17 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     [edges]
   );
 
+  useEffect(() => {
+    if (ref?.current) {
+      resizeObserver.observe(ref.current);
+      updateCanvasBounds();
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [ref, resizeObserver, updateCanvasBounds]);
+
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
@@ -153,7 +159,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
-        <DataMapperWrappedContext.Provider value={{ canvasRef: ref }}>
+        <DataMapperWrappedContext.Provider value={{ canvasBounds: canvasBounds }}>
           <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
           <div className={styles.dataMapperShell}>
             <FunctionPanel />
@@ -187,11 +193,19 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
                 isValidConnection={isValidConnection}
                 onConnect={onEdgeConnect}
                 onEdgeUpdate={onEdgeUpdate}
-                connectionLineComponent={ConnectionLine}
-                translateExtent={reactFlowExtent}
+                connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
+                translateExtent={
+                  canvasBounds
+                    ? [
+                        [0, 0],
+                        [canvasBounds.right, canvasBounds.bottom],
+                      ]
+                    : undefined
+                }
               />
             </div>
             <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
+            <CodeView />
           </div>
         </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>

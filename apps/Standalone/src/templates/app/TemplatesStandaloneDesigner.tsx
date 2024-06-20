@@ -6,7 +6,7 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { BaseGatewayService, StandardConnectionService } from '@microsoft/logic-apps-shared';
+import { BaseGatewayService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
 import {
   useAppSettings,
   useConnectionsData,
@@ -234,6 +234,11 @@ const getServices = (
       gateway: '2016-06-01',
     },
   });
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2017-08-01',
+  });
   const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
@@ -247,6 +252,7 @@ const getServices = (
   return {
     connectionService,
     gatewayService,
+    tenantService,
     oAuthService,
   };
 };

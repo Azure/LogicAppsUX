@@ -31,4 +31,9 @@ export const useStyles = makeStyles({
     backgroundColor: '#C6DEEE',
     ...shorthands.border('1px', 'solid', '#C6DEEE'),
   },
+  nodeWrapper: {
+    width: '10px',
+    height: '10px',
+    backgroundColor: 'transparent',
+  },
 });
