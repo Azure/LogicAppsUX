@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { useOperationInfo } from '../../core';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useRawInputParameters } from '../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
@@ -66,6 +66,11 @@ interface SettingSectionProps {
   dispatch: AppDispatch;
   updateSettings: (settings: Settings, validateSetting?: boolean) => void;
   expandSettingSection: (sectionName: SettingSectionName) => void;
+}
+
+export interface MaximumWaitingRunsMetadata {
+  min: number;
+  max: number;
 }
 
 export type HeaderClickHandler = (sectionName: SettingSectionName) => void;
@@ -231,7 +236,7 @@ function GeneralSettings({
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
-
+  const maximumWaitingRunsMetadata = useHostOptions().maxWaitingRuns;
   const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
   const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);
 
@@ -240,21 +245,29 @@ function GeneralSettings({
   );
 
   const onConcurrencyToggle = (checked: boolean): void => {
-    const value = checked ? concurrency?.value?.value ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT : undefined;
-
+    const value = checked ? concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT : undefined;
     updateSettings({
       concurrency: {
         isSupported: !!concurrency?.isSupported,
-        value: { value, enabled: checked },
+        value: { runs: value, enabled: checked },
       },
     });
   };
 
-  const onConcurrencyValueChange = (value: number): void => {
+  const onConcurrencyRunValueChange = (value: number): void => {
     updateSettings({
       concurrency: {
         isSupported: !!concurrency?.isSupported,
-        value: { enabled: true, value },
+        value: { enabled: true, runs: value, maximumWaitingRuns: concurrency?.value?.maximumWaitingRuns },
+      },
+    });
+  };
+
+  const onConcurrencyMaxWaitRunChange = (value: number): void => {
+    updateSettings({
+      concurrency: {
+        isSupported: !!concurrency?.isSupported,
+        value: { enabled: true, runs: concurrency?.value?.runs, maximumWaitingRuns: value },
       },
     });
   };
@@ -349,13 +362,15 @@ function GeneralSettings({
         splitOnConfiguration={splitOnConfiguration}
         onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
         onConcurrencyToggle={onConcurrencyToggle}
-        onConcurrencyValueChange={onConcurrencyValueChange}
+        onConcurrencyRunValueChange={onConcurrencyRunValueChange}
+        onConcurrencyMaxWaitRunChange={onConcurrencyMaxWaitRunChange}
         onInvokerConnectionToggle={onInvokerConnectionToggle}
         onSplitOnToggle={onSplitOnToggle}
         onSplitOnSelectionChanged={onSplitOnSelectionChanged}
         onTimeoutValueChange={onTimeoutValueChange}
         onTriggerConditionsChange={onTriggerConditionsChange}
         onClientTrackingIdChange={onClientTrackingIdChange}
+        maximumWaitingRunsMetadata={maximumWaitingRunsMetadata ?? constants.MAXIMUM_WAITING_RUNS.DEFAULT}
       />
     );
   }

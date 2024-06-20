@@ -46,6 +46,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
         validationErrors: {},
       },
       connections: {},
+      servicesInitialized: false,
     };
     const minimalStoreData = {
       template: templateSliceData,

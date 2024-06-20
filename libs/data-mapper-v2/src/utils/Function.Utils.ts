@@ -61,7 +61,8 @@ export const findFunctionForFunctionName = (nodeKey: string, functions: Function
 export const findFunctionForKey = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>
   functions.find((functionData) => functionData.key === nodeKey);
 
-export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData => 'functionName' in node;
+export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData =>
+  Object.keys(node ?? {}).includes('functionName');
 
 export const getFunctionOutputValue = (inputValues: string[], functionName: string) => {
   if (!functionName) {
@@ -157,7 +158,10 @@ export const getFunctionLocationsForAllFunctions = (
       });
 
       const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
-      functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
+      functionNodes[connectionKey] = {
+        functionData: func,
+        functionLocations: combinedTargetNodes,
+      };
     }
   }
   return functionNodes;
