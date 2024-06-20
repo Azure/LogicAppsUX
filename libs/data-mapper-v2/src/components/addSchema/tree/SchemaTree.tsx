@@ -58,6 +58,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       for (const key of keys) {
         const updatedNode = updatedNodes[key];
         const currentNode = currentNodesMap[key];
+
         if (updatedNode.position.x < 0 && updatedNode.position.y < 0) {
           if (currentNode) {
             nodeChanges.push({ id: key, type: 'remove' });

@@ -25,7 +25,8 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     openKeys: openKeys,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
-    nodeBounds: nodeRef.current?.getBoundingClientRect(),
+    nodeX: nodeRef.current?.getBoundingClientRect().x,
+    nodeY: nodeRef.current?.getBoundingClientRect().y,
   });
 
   const onOpenChange = useCallback(

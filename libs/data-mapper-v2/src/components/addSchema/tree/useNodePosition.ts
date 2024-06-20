@@ -8,7 +8,8 @@ type NodePositionProps = {
   openKeys: Set<string>;
   schemaMap: Record<string, SchemaNodeExtended>;
   isLeftDirection: boolean;
-  nodeBounds?: DOMRect;
+  nodeX?: number;
+  nodeY?: number;
 };
 
 function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKeys: Set<string>, key?: string) {
@@ -24,20 +25,22 @@ function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKey
 }
 
 const useNodePosition = (props: NodePositionProps) => {
-  const { schemaMap, openKeys, key, isLeftDirection, nodeBounds } = props;
+  const { schemaMap, openKeys, key, isLeftDirection, nodeY = -1 } = props;
   const [position, setPosition] = useState<XYPosition>({ x: -1, y: -1 });
 
-  const { canvasBounds } = useContext(DataMapperWrappedContext);
+  const {
+    canvasBounds: { y: canvasY = -1, width: canvasWidth = -1 } = {},
+  } = useContext(DataMapperWrappedContext);
 
   useEffect(() => {
     if (isTreeNodeHidden(schemaMap, openKeys, schemaMap[key]?.parentKey)) {
       setPosition({ x: -1, y: -1 });
-    } else if (canvasBounds && nodeBounds) {
-      const x = isLeftDirection ? 0 : canvasBounds.width;
-      const y = nodeBounds.y - canvasBounds.y + 10;
+    } else if (canvasY >= 0 && nodeY >= 0 && canvasWidth >= 0) {
+      const x = isLeftDirection ? 0 : canvasWidth;
+      const y = nodeY - canvasY + 10;
       setPosition({ x, y });
     }
-  }, [openKeys, schemaMap, canvasBounds, nodeBounds, position, isLeftDirection, key]);
+  }, [openKeys, schemaMap, canvasY, canvasWidth, nodeY, isLeftDirection, key]);
 
   return position;
 };

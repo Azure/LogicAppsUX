@@ -134,7 +134,9 @@ export const dataMapSlice = createSlice({
 
       if (action.payload.schemaType === SchemaType.Source) {
         const sourceSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const sourceCurrentFlattenedSchemaMap = flattenSchemaNodeMap(currentState.sourceSchema.schemaTreeRoot);
+        const sourceCurrentFlattenedSchemaMap = currentState.sourceSchema
+          ? flattenSchemaNodeMap(currentState.sourceSchema.schemaTreeRoot)
+          : {};
 
         currentState.sourceSchema = action.payload.schema;
         currentState.flattenedSourceSchema = flattenedSchema;
@@ -147,7 +149,9 @@ export const dataMapSlice = createSlice({
         currentState.nodes = currentState.nodes.filter((node) => !sourceCurrentFlattenedSchemaMap[node.data.id]);
       } else {
         const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const targetCurrentFlattenedSchemaMap = flattenSchemaNodeMap(currentState.targetSchema.schemaTreeRoot);
+        const targetCurrentFlattenedSchemaMap = currentState.targetSchema
+          ? flattenSchemaNodeMap(currentState.targetSchema.schemaTreeRoot)
+          : {};
 
         currentState.targetSchema = action.payload.schema;
         currentState.flattenedTargetSchema = flattenedSchema;
