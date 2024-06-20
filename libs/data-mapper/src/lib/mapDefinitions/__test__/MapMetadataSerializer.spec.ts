@@ -1,5 +1,5 @@
 import type { ConnectionDictionary } from '../../models/Connection';
-import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../MapMetadataV1Serializer';
+import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../MapMetadataSerializer';
 import type { ConnectionAndOrder } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapMetadataSerializer', () => {
