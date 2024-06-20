@@ -145,7 +145,7 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated ? () => TemplateService().openBladeAfterCreate() : isLoadingCreate ? () => {} : onCreateClick,
+    primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate() : isLoadingCreate ? () => {} : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
     secondaryButtonText: isCreated
       ? undefined

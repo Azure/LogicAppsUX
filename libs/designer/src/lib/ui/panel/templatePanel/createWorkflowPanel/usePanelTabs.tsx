@@ -40,7 +40,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     await onCreateClick();
     setIsLoadingCreate(false);
     setIsCreated(true);
-    TemplateService().openBladeAfterCreate();
+    TemplateService()?.openBladeAfterCreate();
   }, [onCreateClick]);
 
   const connectionsTabItem = useMemo(

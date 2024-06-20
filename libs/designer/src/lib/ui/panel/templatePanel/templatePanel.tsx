@@ -72,7 +72,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
 
   useEffect(() => {
     async function fetchWorkflowNames() {
-      const existingWorkflowNames = await TemplateService().getExistingWorkflowNames();
+      const existingWorkflowNames = await TemplateService()?.getExistingWorkflowNames();
 
       dispatch(setExistingWorkflowNames(existingWorkflowNames));
     }
