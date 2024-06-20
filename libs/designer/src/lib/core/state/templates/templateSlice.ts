@@ -29,6 +29,7 @@ interface TemplateData {
     validationErrors: Record<string, string | undefined>;
   };
   connections: Record<string, Template.Connection>;
+  images?: Record<string, any>;
 }
 
 export interface TemplateState extends TemplateData {
@@ -47,6 +48,7 @@ const initialState: TemplateState = {
   },
   connections: {},
   servicesInitialized: false,
+  images: {},
 };
 
 export const initializeTemplateServices = createAsyncThunk(
@@ -174,6 +176,7 @@ export const templateSlice = createSlice({
         state.manifest = action.payload.manifest;
         state.parameters = action.payload.parameters;
         state.connections = action.payload.connections;
+        state.images = action.payload.images;
       }
     });
 
@@ -212,6 +215,12 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
 
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
+
+    const images: Record<string, any> = {};
+    for (const key of Object.keys(templateManifest.images)) {
+      images[key] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images[key]}`)).default;
+    }
+
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -230,6 +239,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
         validationErrors: {},
       },
       connections: templateManifest.connections,
+      images,
     };
   } catch (ex) {
     console.error(ex);

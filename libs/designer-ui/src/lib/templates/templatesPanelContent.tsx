@@ -1,9 +1,10 @@
 import { Icon, css } from '@fluentui/react';
 import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import type { TemplatePanelTab } from './templatePanelUtil';
+import type { TemplatePanelTab } from './model';
 
 export interface TemplatesPanelContentProps {
+  className?: string;
   isSequence: boolean;
   tabs: TemplatePanelTab[];
   selectedTab?: string;
@@ -14,6 +15,7 @@ export const TemplatesPanelContent = ({
   tabs = [],
   selectedTab,
   selectTab,
+  className,
 }: TemplatesPanelContentProps): JSX.Element => {
   const selectedTabId = selectedTab ?? tabs[0]?.id;
 
@@ -27,9 +29,10 @@ export const TemplatesPanelContent = ({
     }
   };
 
+  const tabClass = className ?? 'msla-template-panel-tabs';
   return (
     <div className="msla-templates-panel">
-      <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
+      <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
         {tabs.map(({ id, title, order }, index) => (
           <Tab
             key={id}

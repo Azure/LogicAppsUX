@@ -371,6 +371,12 @@ export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, 
 };
 
 export const getConnectorCategoryString = (connector: Connector | OperationApi | string): string => {
+  const allStrings = getConnectorAllCategories();
+
+  return isBuiltInConnector(connector) ? allStrings['inapp'] : isCustomConnector(connector) ? allStrings['custom'] : allStrings['shared'];
+};
+
+export const getConnectorAllCategories = (): Record<string, string> => {
   const intl = getIntl();
   const builtInText = intl.formatMessage({
     defaultMessage: 'In App',
@@ -388,7 +394,7 @@ export const getConnectorCategoryString = (connector: Connector | OperationApi |
     description: 'Custom category name text',
   });
 
-  return isBuiltInConnector(connector) ? builtInText : isCustomConnector(connector) ? customText : azureText;
+  return { inapp: builtInText, shared: azureText, custom: customText };
 };
 
 export const getPreviewTag = (status: string | undefined): string | undefined => {
