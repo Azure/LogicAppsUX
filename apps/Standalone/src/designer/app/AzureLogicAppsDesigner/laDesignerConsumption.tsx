@@ -24,6 +24,7 @@ import {
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   ConsumptionConnectionService,
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
@@ -43,6 +44,7 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  getSKUDefaultHostOptions,
   Constants,
 } from '@microsoft/logic-apps-designer';
 import * as React from 'react';
@@ -223,7 +225,7 @@ const DesignerEditorConsumption = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
+            ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
           },
           showPerformanceDebug,
         }}
@@ -296,6 +298,7 @@ const getDesignerServices = (
     tenantId,
     httpClient,
   });
+
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,
     apiVersion: '2019-12-01',
@@ -310,6 +313,7 @@ const getDesignerServices = (
     apiVersion: '2022-03-01',
     subscriptionId,
   });
+
   const connectorService = new ConsumptionConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
@@ -382,6 +386,7 @@ const getDesignerServices = (
     apiVersion: '2018-07-01-preview',
     workflowReferenceId: workflowId,
   });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -391,12 +396,18 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    ...defaultServiceParams,
+    apiVersion: '2017-08-01',
+  });
+
   const operationManifestService = new ConsumptionOperationManifestService({
     ...defaultServiceParams,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
     location: location || 'location',
   });
+
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
     openApiConnectionMode: false, // This should be turned on for Open Api testing.
@@ -473,6 +484,7 @@ const getDesignerServices = (
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService,

@@ -20,6 +20,8 @@ describe('ui/templates/DisplayParameters', () => {
     template1Manifest = {
       title: 'Template 1',
       description: 'Template 1 Description',
+      tags: {},
+      images: {},
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
       artifacts: [
@@ -32,21 +34,24 @@ describe('ui/templates/DisplayParameters', () => {
           file: 'description.md',
         },
       ],
-      connections: [],
+      connections: {},
       parameters: [
         {
           name: 'param1',
+          displayName: 'param 1',
           type: 'string',
           description: 'param1 description',
           default: param1DefaultValue,
         },
         {
           name: 'param2',
+          displayName: 'param 2',
           type: 'object',
           description: 'param2 description',
         },
         {
           name: 'param3',
+          displayName: 'param 3',
           type: 'boolean',
           description: 'param3 description',
           default: param2DefaultValue,
@@ -73,6 +78,8 @@ describe('ui/templates/DisplayParameters', () => {
         validationErrors: {},
       },
       connections: template1Manifest.connections,
+      workflowName: undefined,
+      kind: undefined,
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -86,8 +93,8 @@ describe('ui/templates/DisplayParameters', () => {
 
   it('DisplayParameters with default case ', async () => {
     const parameter1 = template1Manifest?.parameters[0];
-    expect(screen.getByText(parameter1.name)).toBeDefined();
-    expect(screen.getByText(parameter1.type)).toBeDefined();
+    expect(screen.getByText(parameter1.displayName)).toBeDefined();
+    expect(screen.getByText(`Value (${parameter1.type})`)).toBeDefined();
     expect(screen.getByText(parameter1.description)).toBeDefined();
     expect(screen.getAllByDisplayValue(param1DefaultValue)).toBeDefined();
   });
@@ -95,15 +102,17 @@ describe('ui/templates/DisplayParameters', () => {
   it('Renders DisplayParameters, updating parameter with wrong type ', async () => {
     const parameter2 = template1Manifest?.parameters[1];
 
-    expect(screen.getByText(parameter2.name)).toBeDefined();
-    expect(screen.getByText(parameter2.type)).toBeDefined();
+    expect(screen.getByText(parameter2.displayName)).toBeDefined();
+    expect(screen.getByText(`Value (${parameter2.type})`)).toBeDefined();
     expect(screen.getByText(parameter2.description)).toBeDefined();
 
     store.dispatch(
       updateTemplateParameterValue({
-        id: parameter2.name,
         newDefinition: {
-          id: parameter2.name,
+          ...parameter2,
+          name: parameter2.name,
+          description: parameter2.description,
+          displayName: parameter2.displayName,
           type: parameter2.type,
           value: 'non-object value',
         },
@@ -115,17 +124,18 @@ describe('ui/templates/DisplayParameters', () => {
   it('Renders DisplayParameters, updating required parameter with empty value ', async () => {
     const parameter3 = template1Manifest?.parameters[2];
 
-    expect(screen.getByText(parameter3.name)).toBeDefined();
-    expect(screen.getByText(parameter3.type)).toBeDefined();
+    expect(screen.getByText(parameter3.displayName)).toBeDefined();
+    expect(screen.getByText(`Value (${parameter3.type})`)).toBeDefined();
     expect(screen.getByText(parameter3.description)).toBeDefined();
     expect(screen.getAllByDisplayValue(param2DefaultValue)).toBeDefined();
 
     store.dispatch(
       updateTemplateParameterValue({
-        id: parameter3.name,
         newDefinition: {
-          id: parameter3.name,
-          type: parameter3.type,
+          ...parameter3,
+          name: parameter3.name,
+          description: parameter3.description,
+          displayName: parameter3.displayName,
           value: '',
         },
       })

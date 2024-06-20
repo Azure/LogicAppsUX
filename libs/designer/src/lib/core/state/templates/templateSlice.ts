@@ -1,30 +1,93 @@
-import { getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@microsoft/logic-apps-shared';
+import {
+  InitApiManagementService,
+  InitAppServiceService,
+  InitConnectionParameterEditorService,
+  InitConnectionService,
+  InitFunctionService,
+  InitGatewayService,
+  InitTenantService,
+  InitOAuthService,
+  getIntl,
+  getRecordEntry,
+  type LogicAppsV2,
+  type Template,
+} from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
+import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
 
-export interface TemplateState {
-  templateName?: string;
+interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
+  workflowName: string | undefined;
+  kind: string | undefined;
   parameters: {
     definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
   };
-  connections: Template.Connection[];
+  connections: Record<string, Template.Connection>;
+  images?: Record<string, any>;
+}
+
+export interface TemplateState extends TemplateData {
+  templateName?: string;
+  servicesInitialized: boolean;
 }
 
 const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
+  workflowName: undefined,
+  kind: undefined,
   parameters: {
     definitions: {},
     validationErrors: {},
   },
-  connections: [],
+  connections: {},
+  servicesInitialized: false,
+  images: {},
 };
+
+export const initializeTemplateServices = createAsyncThunk(
+  'initializeTemplateServices',
+  async ({
+    connectionService,
+    oAuthService,
+    gatewayService,
+    tenantService,
+    apimService,
+    functionService,
+    appServiceService,
+    connectionParameterEditorService,
+  }: TemplateServiceOptions) => {
+    InitConnectionService(connectionService);
+    InitOAuthService(oAuthService);
+
+    if (gatewayService) {
+      InitGatewayService(gatewayService);
+    }
+    if (tenantService) {
+      InitTenantService(tenantService);
+    }
+    if (apimService) {
+      InitApiManagementService(apimService);
+    }
+    if (functionService) {
+      InitFunctionService(functionService);
+    }
+    if (appServiceService) {
+      InitAppServiceService(appServiceService);
+    }
+    if (connectionParameterEditorService) {
+      InitConnectionParameterEditorService(connectionParameterEditorService);
+    }
+
+    return true;
+  }
+);
 
 export const loadTemplate = createAsyncThunk(
   'template/loadTemplate',
@@ -66,19 +129,44 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+    updateWorkflowName: (state, action: PayloadAction<string>) => {
+      state.workflowName = action.payload;
+    },
+    updateKind: (state, action: PayloadAction<string>) => {
+      state.kind = action.payload;
+    },
+    updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
-        id,
-        newDefinition: { type, value, required },
+        newDefinition: { name, type, value, required },
       } = action.payload;
 
-      const validationError = validateParameterValue({ type, value }, required);
+      const validationError = validateParameterValue({ type, value: value }, required);
 
-      state.parameters.definitions[id] = {
-        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+      state.parameters.definitions[name] = {
+        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[id] = validationError;
+      state.parameters.validationErrors[name] = validationError;
+    },
+    validateParameters: (state) => {
+      Object.keys(state.parameters.definitions).forEach((parameterName) => {
+        const thisParameter = state.parameters.definitions[parameterName];
+        state.parameters.validationErrors[parameterName] = validateParameterValue(
+          { type: thisParameter.type, value: thisParameter.value },
+          thisParameter.required
+        );
+      });
+    },
+    clearTemplateDetails: (state) => {
+      state.workflowDefinition = undefined;
+      state.manifest = undefined;
+      state.workflowName = undefined;
+      state.kind = undefined;
+      state.parameters = {
+        definitions: {},
+        validationErrors: {},
+      };
+      state.connections = {};
     },
   },
   extraReducers: (builder) => {
@@ -88,6 +176,7 @@ export const templateSlice = createSlice({
         state.manifest = action.payload.manifest;
         state.parameters = action.payload.parameters;
         state.connections = action.payload.connections;
+        state.images = action.payload.images;
       }
     });
 
@@ -99,17 +188,26 @@ export const templateSlice = createSlice({
         definitions: {},
         validationErrors: {},
       };
-      state.connections = [];
+      state.connections = {};
+    });
+
+    builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
+      state.servicesInitialized = action.payload;
     });
   },
 });
 
-export const { changeCurrentTemplateName, updateTemplateParameterValue } = templateSlice.actions;
+export const {
+  changeCurrentTemplateName,
+  updateWorkflowName,
+  updateKind,
+  updateTemplateParameterValue,
+  validateParameters,
+  clearTemplateDetails,
+} = templateSlice.actions;
+export default templateSlice.reducer;
 
-const loadTemplateFromGithub = async (
-  templateName: string,
-  manifest: Template.Manifest | undefined
-): Promise<TemplateState | undefined> => {
+const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {
   try {
     const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
       `${templatesPathFromState}/${templateName}/workflow.json`
@@ -117,6 +215,12 @@ const loadTemplateFromGithub = async (
 
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
+
+    const images: Record<string, any> = {};
+    for (const key of Object.keys(templateManifest.images)) {
+      images[key] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images[key]}`)).default;
+    }
+
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -128,11 +232,14 @@ const loadTemplateFromGithub = async (
     return {
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
+      workflowName: templateManifest.title,
+      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},
       },
       connections: templateManifest.connections,
+      images,
     };
   } catch (ex) {
     console.error(ex);

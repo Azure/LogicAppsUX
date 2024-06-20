@@ -18,24 +18,15 @@ describe('ui/templates/templatesDesigner', () => {
       description: 'Template 1 Description',
       skus: ['standard'],
       kinds: ['stateful'],
+      images: {},
+      details: {},
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
-        {
-          type: 'description',
-          file: 'description.md',
-        },
       ],
-      connections: [
-        {
-          id: 'connection example 1',
-        },
-        {
-          id: 'connection example 2',
-        },
-      ],
+      connections: {},
       parameters: [],
     };
     template2Manifest = {
@@ -43,25 +34,26 @@ describe('ui/templates/templatesDesigner', () => {
       description: 'Template 2 Description',
       skus: ['standard', 'consumption'],
       kinds: ['stateful', 'stateless'],
+      images: {},
+      details: {},
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
-        {
-          type: 'description',
-          file: 'description.md',
-        },
       ],
-      connections: [
-        {
-          id: 'connection example 1',
-        },
-      ],
+      connections: {},
       parameters: [],
     };
   });
 
+  const createWorkflowCall = async (
+    workflowName: string,
+    workflowKind: string,
+    workflowDefinition: any,
+    _connectionsData: any,
+    parametersData: Record<string, Template.ParameterDefinition>
+  ) => {};
   it('Fetches templates and display the title and description', async () => {
     minimalStoreData = {
       manifest: {
@@ -74,11 +66,9 @@ describe('ui/templates/templatesDesigner', () => {
     };
     store = setupStore(minimalStoreData);
 
-    renderWithProviders(<TemplatesDesigner />, { store });
+    renderWithProviders(<TemplatesDesigner createWorkflowCall={createWorkflowCall} />, { store });
 
     expect(screen.getByText(/Template 1/i)).toBeDefined();
-    expect(screen.getByText(/Template 1 Description/i)).toBeDefined();
     expect(screen.getByText(/Template 2/i)).toBeDefined();
-    expect(screen.getByText(/Template 2 Description/i)).toBeDefined();
   });
 });

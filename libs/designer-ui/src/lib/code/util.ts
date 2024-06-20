@@ -76,7 +76,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       return formatForJavascript(property, actionName, source);
     }
     case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.POWERSHELL: {
-      return formatForPowershell(segmentedProperty, actionName, source);
+      return formatForPowershell(property, actionName, source);
     }
     case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.CSHARP: {
       return formatForCSharp(segmentedProperty, actionName, source ? capitalizeFirstLetter(source) : source);
@@ -116,9 +116,16 @@ function formatForJavascript(property: string, actionName?: string, source?: str
 }
 
 function formatForPowershell(property: string, actionName?: string, source?: string): string {
-  const result = `(get-WorkflowActionOutputs -actionName ${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)})${
-    source ? `["${source}"]` : ''
-  }${property}`;
+  const type = actionName ? `(Get-ActionOutput -ActionName "${actionName}")` : '(Get-TriggerOutput)';
+  let result = type;
+  if (source === 'outputs') {
+    result = `${result}.${source}`;
+  } else {
+    result = `${result}.outputs.${source}`;
+  }
+  if (property) {
+    result = `${result}.${property}`;
+  }
 
   return result;
 }

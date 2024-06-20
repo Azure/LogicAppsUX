@@ -32,6 +32,7 @@ import {
   BaseChatbotService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   StandardConnectionService,
   StandardConnectorService,
   StandardCustomCodeService,
@@ -53,6 +54,8 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  Constants,
+  getSKUDefaultHostOptions,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -311,7 +314,7 @@ const DesignerEditor = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: { interval: 1, frequency: 'Minute' },
+            ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
           showPerformanceDebug,
@@ -597,6 +600,12 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    apiVersion: '2017-08-01',
+    httpClient,
+  });
+
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
     ...defaultServiceParams,
@@ -692,6 +701,7 @@ const getDesignerServices = (
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService: null,

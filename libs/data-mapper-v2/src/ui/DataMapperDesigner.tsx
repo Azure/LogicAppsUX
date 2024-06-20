@@ -17,6 +17,7 @@ import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
+import { CodeView } from '../components/codeView/CodeView';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -46,7 +47,6 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   }
 
   const { nodes, edges } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
   const nodeTypes = useMemo(
@@ -205,6 +205,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
               />
             </div>
             <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
+            <CodeView />
           </div>
         </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>

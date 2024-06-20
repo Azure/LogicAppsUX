@@ -58,6 +58,10 @@ export default {
     PREMIUM: 'PREMIUM',
     STANDARD: 'STANDARD',
   },
+  SKU: {
+    STANDARD: 'standard',
+    CONSUMPTION: 'consumption',
+  },
   ACTION_PALETTE_KEY: 'actionpalettekey',
   ARM_RESOURCE: {
     FUNCTION: {
@@ -466,6 +470,10 @@ export default {
   TEMPLATE_PANEL_TAB_NAMES: {
     OVERVIEW: 'OVERVIEW',
     WORKFLOW_VIEW: 'WORKFLOW_VIEW',
+    CONNECTIONS: 'CONNECTIONS',
+    PARAMETERS: 'PARAMETERS',
+    NAME_AND_STATE: 'NAME_AND_STATE',
+    REVIEW_AND_CREATE: 'REVIEW_AND_CREATE',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',
@@ -836,6 +844,7 @@ export default {
       CONCURRENCY: 'concurrency',
       REPETITIONS: 'repetitions',
       RUNS: 'runs',
+      MAXIMUM_WAITING_RUNS: 'maximumWaitingRuns',
       STATIC_RESULT: 'staticResult',
       SECURE_DATA: 'secureData',
       UPLOAD_CHUNK_SIZE: 'uploadChunkSizeInMB',
@@ -848,6 +857,10 @@ export default {
     SPLITON: {
       AUTOLOAD: '@autoload()',
     },
+  },
+  MAXIMUM_WAITING_RUNS: {
+    CONSUMPTION: { min: 10, max: 200 },
+    DEFAULT: { min: 10, max: 100 },
   },
   SWAGGER,
   SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'SystemAssigned_Managed_Identity',

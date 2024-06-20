@@ -35,6 +35,7 @@ export interface DataMapState {
 
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
+  dataMapLML: string;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
   sourceSchemaOrdering: string[];
@@ -57,6 +58,7 @@ export interface DataMapOperationState {
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
+  dataMapLML: '',
   currentSourceSchemaNodes: [],
   functionNodes: {},
   flattenedSourceSchema: {},
@@ -238,6 +240,10 @@ export const dataMapSlice = createSlice({
       handleDirectAccessConnection(sourceNode, action.payload, newState, destinationNode);
 
       doDataMapOperation(state, newState, 'Make connection');
+    },
+
+    updateDataMapLML: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.dataMapLML = action.payload;
     },
 
     saveDataMap: (
