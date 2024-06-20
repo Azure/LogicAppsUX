@@ -30,6 +30,10 @@ export const useStyles = makeStyles({
       ...shorthands.borderRadius(tokens.borderRadiusCircular),
     },
   },
+  dragWrapper: {
+    // allows for oval shape without background during drag
+    opacity: 0.99,
+  },
   listButton: {
     height: '30px',
     width: '100%',

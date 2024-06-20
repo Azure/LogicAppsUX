@@ -35,25 +35,31 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
 
   return (
     <TreeItem itemType="leaf">
-      <TreeItemLayout ref={drag} className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
-        <div key={functionData.key} className={styles.listButton}>
-          <div className={styles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
-            <FunctionIcon
-              functionKey={functionData.key}
-              functionName={functionData.functionName}
-              categoryName={functionData.category}
-              color={tokens.colorNeutralForegroundInverted}
-              iconSize={11}
-            />
+      <div className={styles.dragWrapper} ref={drag}>
+        <TreeItemLayout className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
+          <div key={functionData.key} className={styles.listButton}>
+            <div
+              className={styles.iconContainer}
+              style={{
+                backgroundColor: customTokens[fnBranding.colorTokenName],
+              }}
+            >
+              <FunctionIcon
+                functionKey={functionData.key}
+                functionName={functionData.functionName}
+                categoryName={functionData.category}
+                color={tokens.colorNeutralForegroundInverted}
+                iconSize={11}
+              />
+            </div>
+
+            <Caption1 truncate block className={styles.functionNameText}>
+              {functionData.displayName}
+            </Caption1>
+            <span style={{ marginLeft: 'auto' }} />
           </div>
-
-          <Caption1 truncate block className={styles.functionNameText}>
-            {functionData.displayName}
-          </Caption1>
-
-          <span style={{ marginLeft: 'auto' }} />
-        </div>
-      </TreeItemLayout>
+        </TreeItemLayout>
+      </div>
     </TreeItem>
   );
 };

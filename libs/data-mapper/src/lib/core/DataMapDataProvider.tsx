@@ -17,7 +17,7 @@ export interface DataMapDataProviderProps {
   xsltFilename?: string;
   xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
-  dataMapMetadataV1?: MapMetadataV1;
+  dataMapMetadata?: MapMetadataV1;
   sourceSchema?: DataMapSchema;
   targetSchema?: DataMapSchema;
   availableSchemas?: string[];
@@ -31,7 +31,7 @@ const DataProviderInner = ({
   xsltFilename,
   xsltContent,
   mapDefinition,
-  dataMapMetadataV1,
+  dataMapMetadata,
   sourceSchema,
   targetSchema,
   availableSchemas,
@@ -68,11 +68,11 @@ const DataProviderInner = ({
           sourceSchema: extendedSourceSchema,
           targetSchema: extendedTargetSchema,
           dataMapConnections: connections,
-          metadata: dataMapMetadataV1,
+          metadata: dataMapMetadata,
         })
       );
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadataV1]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadata]);
 
   useEffect(() => {
     if (extendedSourceSchema) {
