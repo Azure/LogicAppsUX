@@ -1,5 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import type { FunctionPositionMetadata, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { FunctionPositionMetadata } from '@microsoft/logic-apps-shared';
 import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/logic-apps-shared';
 
 export interface FunctionManifest {
@@ -47,14 +47,8 @@ export const FunctionCategory = {
 } as const;
 export type FunctionCategory = (typeof FunctionCategory)[keyof typeof FunctionCategory];
 
-export interface CreatedFunction {
-  // Should be the target schema to display this on
-  functionLocations: SchemaNodeExtended[];
-  functionData: FunctionData;
-}
-
 // The key is the function guid, also used in the connection dict
-export type FunctionDictionary = { [key: string]: CreatedFunction };
+export type FunctionDictionary = { [key: string]: FunctionData };
 
 //#region Pseudo Functions
 export const indexPseudoFunctionKey = 'index';

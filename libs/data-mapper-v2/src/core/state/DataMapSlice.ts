@@ -3,6 +3,7 @@ import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictiona
 import {
   applyConnectionValue,
   bringInParentSourceNodesForRepeating,
+  createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
   getConnectedSourceSchemaNodes,
@@ -25,6 +26,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Edge } from 'reactflow';
+import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -220,20 +222,19 @@ export const dataMapSlice = createSlice({
       if (action.payload.reactFlowSource.startsWith(SchemaType.Source)) {
         sourceNode = state.curDataMapOperation.flattenedSourceSchema[action.payload.reactFlowSource];
       } else {
-        sourceNode = newState.functionNodes[action.payload.reactFlowSource]?.functionData;
+        sourceNode = newState.functionNodes[action.payload.reactFlowSource];
       }
       let destinationNode: UnknownNode;
 
       if (action.payload.reactFlowDestination.startsWith(SchemaType.Target)) {
         destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination];
       } else {
-        destinationNode = newState.functionNodes[action.payload.reactFlowSource]?.functionData;
+        destinationNode = newState.functionNodes[action.payload.reactFlowSource];
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
 
       if (isFunctionData(sourceNode)) {
-        updateFunctionNodeLocations(newState, action.payload.reactFlowSource);
         doDataMapOperation(state, newState, 'Updated function node locations by adding');
       }
 
@@ -244,6 +245,35 @@ export const dataMapSlice = createSlice({
 
     updateDataMapLML: (state, action: PayloadAction<string>) => {
       state.curDataMapOperation.dataMapLML = action.payload;
+    },
+    
+    addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
+      if (state.curDataMapOperation.currentTargetSchemaNode) {
+        const newState: DataMapOperationState = {
+          ...state.curDataMapOperation,
+          functionNodes: { ...state.curDataMapOperation.functionNodes },
+        };
+
+        let fnReactFlowKey: string;
+        let fnData: FunctionData;
+
+        // Default - just provide the FunctionData and the key will be handled under the hood
+        if ('newReactFlowKey' in action.payload) {
+          // Alternative - specify the key you want to use (needed for adding inline Functions)
+          fnData = action.payload.functionData;
+          fnReactFlowKey = action.payload.newReactFlowKey;
+          newState.functionNodes[fnReactFlowKey] = fnData;
+        } else {
+          fnData = { ...action.payload, isNewNode: true };
+          fnReactFlowKey = createReactFlowFunctionKey(fnData);
+          newState.functionNodes[fnReactFlowKey] = fnData;
+        }
+
+        // Create connection entry to instantiate default connection inputs
+        createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
+
+        doDataMapOperation(state, newState, 'Add function node');
+      }
     },
 
     saveDataMap: (
@@ -337,6 +367,7 @@ export const {
   updateReactFlowNodes,
   makeConnection,
   saveDataMap,
+  addFunctionNode
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -464,21 +495,6 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
   }
 };
 
-export const updateFunctionNodeLocations = (newState: DataMapOperationState, functionKey: string) => {
-  const connection = newState.dataMapConnections[functionKey];
-  const targetNodes = getConnectedTargetSchemaNodes([connection], newState.dataMapConnections);
-  const functionNode = newState.functionNodes[functionKey];
-  targetNodes.forEach((targetNode) => {
-    functionNode.functionLocations.push(targetNode);
-
-    const uniqueLocations = functionNode.functionLocations.filter((location, index, self) => {
-      return self.findIndex((subLocation) => subLocation.key === location.key) === index;
-    });
-
-    functionNode.functionLocations = uniqueLocations;
-  });
-};
-
 export const handleDirectAccessConnection = (
   sourceNode: SchemaNodeExtended | FunctionData,
   action: ConnectionAction,
@@ -547,8 +563,8 @@ export const assignFunctionNodePositionsFromMetadata = (
     const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
 
     // assign position data to function in store
-    functions[key].functionData = {
-      ...functions[key].functionData,
+    functions[key] = {
+      ...functions[key],
       positions: matchingMetadata?.positions,
     };
   });

@@ -1,7 +1,6 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useDrop } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
 import type { Connection, Node, Edge, ConnectionLineComponent } from 'reactflow';
 import ReactFlow, { ReactFlowProvider, addEdge } from 'reactflow';
@@ -33,6 +32,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   const ref = useRef<HTMLDivElement | null>(null);
   const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
   const dispatch = useDispatch<AppDispatch>();
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const updateCanvasBounds = useCallback(() => {
     if (ref?.current) {
@@ -156,8 +156,29 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     }
   }, [isMapStateDirty, setIsMapStateDirty]);
 
+  const [{ isOver, canDrop }, drop] = useDrop(
+    () => ({
+      accept: 'function',
+      drop: (item, monitor) => {
+        const xyPosition = monitor.getClientOffset()
+        if (xyPosition && reactFlowInstance) {
+        const position = (reactFlowInstance as any).screenToFlowPosition({
+          x: xyPosition.x,
+          y: xyPosition.y,
+        });
+
+        const newNode = {
+          id: 'abc',
+          position,
+          data: { label: `${'abc'} node` },
+        };
+        return newNode;
+      }
+      return 'nope'
+      }
+    }));
+
   return (
-    <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
         <DataMapperWrappedContext.Provider value={{ canvasBounds: canvasBounds }}>
           <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
@@ -166,6 +187,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
             <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
             <div ref={ref} id="editorView" className={styles.canvasWrapper}>
               <ReactFlow
+                ref={drop}
                 nodes={nodes}
                 edges={edges}
                 nodesDraggable={false}
@@ -186,6 +208,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
                 panOnScroll={false}
                 panOnDrag={false}
                 style={reactFlowStyle}
+                onInit={setReactFlowInstance as any}
                 proOptions={{
                   account: 'paid-sponsor',
                   hideAttribution: true,
@@ -209,6 +232,5 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
           </div>
         </DataMapperWrappedContext.Provider>
       </ReactFlowProvider>
-    </DndProvider>
   );
 };

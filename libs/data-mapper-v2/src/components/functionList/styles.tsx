@@ -21,16 +21,21 @@ export const useStyles = makeStyles({
   functionTreeItem: {
     backgroundColor: '#E8F3FE',
     paddingLeft: '10px',
+    ':hover': {
+      backgroundColor: '#D5E4FF',
+      ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    },
+    ':active': {
+      backgroundColor: '#D5E4FF',
+      ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    },
   },
   listButton: {
     height: '30px',
     width: '100%',
-    backgroundColor: '#E8F3FE',
+    backgroundColor: 'inherit',
     ...shorthands.border('0px'),
     ...shorthands.padding('1px 4px 1px 4px'),
-    ':hover': {
-      backgroundColor: '#E8F3FE',
-    },
     display: 'flex',
     alignItems: 'center',
   },

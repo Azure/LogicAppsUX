@@ -5,6 +5,9 @@ import { FunctionIcon } from '../functionIcon/FunctionIcon';
 import { Caption1, TreeItem, TreeItemLayout, tokens } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { AddRegular } from '@fluentui/react-icons';
+import { useDrag } from 'react-dnd';
+import { useDispatch } from 'react-redux';
+import { addFunctionNode } from '../../core/state/DataMapSlice';
 
 interface FunctionListItemProps {
   functionData: FunctionData;
@@ -13,10 +16,29 @@ interface FunctionListItemProps {
 const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
+  const dispatch = useDispatch();
+
+  const [collected, drag, dragPreview] = useDrag(() => ({
+    type: 'function',
+    item:  functionData.key,
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult<{
+        graphId: string;
+        parentId: string;
+        childId: string;
+      }>();
+      if (item && dropResult) {
+        console.log(JSON.stringify(dropResult))
+        dispatch(
+          addFunctionNode(functionData)
+        );
+      }
+    },
+  }))
 
   return (
-    <TreeItem className={styles.functionTreeItem} itemType="leaf">
-      <TreeItemLayout className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
+    <TreeItem itemType="leaf">
+      <TreeItemLayout ref={drag}className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
         <div key={functionData.key} className={styles.listButton}>
           <div className={styles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
             <FunctionIcon
