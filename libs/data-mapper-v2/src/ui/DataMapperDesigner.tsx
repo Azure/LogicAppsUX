@@ -178,11 +178,13 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
         const xyPosition = monitor.getClientOffset();
         if (xyPosition) {
           if (reactFlowInstance) {
-            //const viewport = reactFlowInstance.;
             const position = reactFlowInstance.screenToFlowPosition({
               x: xyPosition.x,
               y: xyPosition.y,
             });
+            // middle of node is placed where pointer is
+            position.x -= 20;
+            position.y -= 20;
             return { position };
           }
           return { position: xyPosition };
