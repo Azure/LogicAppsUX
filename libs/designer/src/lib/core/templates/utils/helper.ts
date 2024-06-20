@@ -28,7 +28,7 @@ export const getUniqueConnectors = (
   return result;
 };
 
-const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
+export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
   if (!isArmResourceId(connectorId)) {
     return connectorId;
   }
