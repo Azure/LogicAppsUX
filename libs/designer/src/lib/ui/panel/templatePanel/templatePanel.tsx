@@ -10,6 +10,7 @@ import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
+import { setExistingWorkflowNames } from '../../../core/state/templates/workflowSlice';
 
 export const TemplatePanel = ({
   onCreateClick,
@@ -27,7 +28,6 @@ export const TemplatePanel = ({
     dispatch(clearTemplateDetails());
   }, [dispatch]);
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({ onCreateClick, redirectCallback });
-
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : getQuickViewTabs(intl, dispatch)),
     [currentPanelView, createWorkflowPanelTabs, intl, dispatch]
