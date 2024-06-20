@@ -24,6 +24,7 @@ import {
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   ConsumptionConnectionService,
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
@@ -297,6 +298,7 @@ const getDesignerServices = (
     tenantId,
     httpClient,
   });
+
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,
     apiVersion: '2019-12-01',
@@ -311,6 +313,7 @@ const getDesignerServices = (
     apiVersion: '2022-03-01',
     subscriptionId,
   });
+
   const connectorService = new ConsumptionConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
@@ -383,6 +386,7 @@ const getDesignerServices = (
     apiVersion: '2018-07-01-preview',
     workflowReferenceId: workflowId,
   });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -392,12 +396,18 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    ...defaultServiceParams,
+    apiVersion: '2017-08-01',
+  });
+
   const operationManifestService = new ConsumptionOperationManifestService({
     ...defaultServiceParams,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
     location: location || 'location',
   });
+
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
     openApiConnectionMode: false, // This should be turned on for Open Api testing.
@@ -474,6 +484,7 @@ const getDesignerServices = (
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService,

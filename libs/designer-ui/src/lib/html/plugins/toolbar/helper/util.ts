@@ -39,9 +39,10 @@ const lexicalSupportedTagNames = new Set([
   'ul',
 ]);
 const htmlEditorSupportedAttributes: { '*': string[] } & Record<string, string[]> = {
-  '*': ['id', 'style'],
+  '*': ['class', 'id', 'style'],
   a: ['href'],
   img: ['alt', 'src'],
+  table: ['border', 'cellpadding', 'cellspacing'],
 };
 
 export interface Position {
