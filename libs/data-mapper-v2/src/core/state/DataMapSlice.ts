@@ -12,7 +12,7 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { getConnectedSourceSchema, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
+import { getConnectedSourceSchema, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
   flattenSchemaIntoDictionary,
@@ -187,8 +187,8 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
-      let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
-      functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      //let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+      //functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
       const connectedFlattenedSourceSchema = getConnectedSourceSchema(dataMapConnections, flattenedSourceSchema);
 
       const newState: DataMapOperationState = {
@@ -198,7 +198,7 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes,
+        functionNodes: {}, //functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
@@ -246,32 +246,32 @@ export const dataMapSlice = createSlice({
     updateDataMapLML: (state, action: PayloadAction<string>) => {
       state.curDataMapOperation.dataMapLML = action.payload;
     },
-    
+
     addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
-        const newState: DataMapOperationState = {
-          ...state.curDataMapOperation,
-          functionNodes: { ...state.curDataMapOperation.functionNodes },
-        };
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        functionNodes: { ...state.curDataMapOperation.functionNodes },
+      };
 
-        let fnReactFlowKey: string;
-        let fnData: FunctionData;
+      let fnReactFlowKey: string;
+      let fnData: FunctionData;
 
-        // Default - just provide the FunctionData and the key will be handled under the hood
-        if ('newReactFlowKey' in action.payload) {
-          // Alternative - specify the key you want to use (needed for adding inline Functions)
-          fnData = action.payload.functionData;
-          fnReactFlowKey = action.payload.newReactFlowKey;
-          newState.functionNodes[fnReactFlowKey] = fnData;
-        } else {
-          fnData = { ...action.payload, isNewNode: true };
-          fnReactFlowKey = createReactFlowFunctionKey(fnData);
-          newState.functionNodes[fnReactFlowKey] = fnData;
-        }
+      // Default - just provide the FunctionData and the key will be handled under the hood
+      if ('newReactFlowKey' in action.payload) {
+        // Alternative - specify the key you want to use (needed for adding inline Functions)
+        fnData = action.payload.functionData;
+        fnReactFlowKey = action.payload.newReactFlowKey;
+        newState.functionNodes[fnReactFlowKey] = fnData;
+      } else {
+        fnData = { ...action.payload, isNewNode: true };
+        fnReactFlowKey = createReactFlowFunctionKey(fnData);
+        newState.functionNodes[fnReactFlowKey] = fnData;
+      }
 
-        // Create connection entry to instantiate default connection inputs
-        createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
+      // Create connection entry to instantiate default connection inputs
+      createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
 
-        doDataMapOperation(state, newState, 'Add function node');
+      doDataMapOperation(state, newState, 'Add function node');
     },
 
     saveDataMap: (
@@ -291,13 +291,13 @@ export const dataMapSlice = createSlice({
       state.isDirty = false;
     },
 
-    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: XYPosition}>) => {
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: XYPosition }>) => {
       const newOp = { ...state.curDataMapOperation };
       const node = newOp.functionNodes[action.payload.id];
       if (!node) {
         return;
       }
-      let position = node.position;
+      const position = node.position;
       newOp.functionNodes[action.payload.id].position = position;
 
       state.curDataMapOperation = newOp;
@@ -377,7 +377,7 @@ export const {
   updateReactFlowNodes,
   makeConnection,
   saveDataMap,
-  addFunctionNode
+  addFunctionNode,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

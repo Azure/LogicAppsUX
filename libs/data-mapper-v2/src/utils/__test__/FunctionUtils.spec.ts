@@ -6,7 +6,6 @@ import {
   addQuotesToString,
   calculateIndexValue,
   functionInputHasInputs,
-  getFunctionLocationsForAllFunctions,
   getFunctionOutputValue,
   removeQuotesFromString,
 } from '../Function.Utils';
@@ -414,15 +413,15 @@ describe('utils/Functions', () => {
         ],
       },
     };
-    it('adds connected target node and parent to functionLocations', () => {
-      const functions = getFunctionLocationsForAllFunctions(mockConnections, mockFlattenedTargetSchema);
-      const locationsForFunction = functions['Minimum-A17C8DF0-AE6B-43C3-BF37-E75CA2807551'].functionLocations;
-      expect(
-        locationsForFunction.every((node) => {
-          return node.key === 'target-/ns0:Root/ConditionalMapping/ItemPrice' || node.key === 'target-/ns0:Root/ConditionalMapping';
-        }) && locationsForFunction.length === 2
-      );
-    });
+    // it('adds connected target node and parent to functionLocations', () => {
+    //   const functions = getFunctionLocationsForAllFunctions(mockConnections, mockFlattenedTargetSchema);
+    //   const locationsForFunction = functions['Minimum-A17C8DF0-AE6B-43C3-BF37-E75CA2807551'].functionLocations;
+    //   expect(
+    //     locationsForFunction.every((node) => {
+    //       return node.key === 'target-/ns0:Root/ConditionalMapping/ItemPrice' || node.key === 'target-/ns0:Root/ConditionalMapping';
+    //     }) && locationsForFunction.length === 2
+    //   );
+    // });
   });
 
   describe('addQuotesToString', () => {

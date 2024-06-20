@@ -189,6 +189,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
           }
           return { position: xyPosition };
         }
+        return { position: { x: 0, y: 0 } };
       },
     }),
     [reactFlowInstance]
