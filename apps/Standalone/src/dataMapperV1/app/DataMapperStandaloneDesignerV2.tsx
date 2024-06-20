@@ -16,7 +16,7 @@ import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFuncti
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
