@@ -125,16 +125,16 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   const columnSizingOptions: TableColumnSizingOptions = {
     status: {
-      defaultWidth: 40,
-      idealWidth: 40,
+      defaultWidth: 36,
+      idealWidth: 36,
     },
     displayName: {
       defaultWidth: 420,
       idealWidth: 420,
     },
     details: {
-      defaultWidth: 50,
-      idealWidth: 50,
+      defaultWidth: 48,
+      idealWidth: 48,
     },
   };
 
@@ -158,39 +158,37 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   }, [currentConnectionId, items]);
 
   return (
-    <div>
-      <DataGrid
-        className="msla-connection-table"
-        items={items}
-        columns={columns}
-        selectionMode="single"
-        selectedItems={[currentConnectionIndex]}
-        onSelectionChange={onSelectionChange}
-        columnSizingOptions={columnSizingOptions}
-        resizableColumns
-        focusMode="row_unstable"
-        subtleSelection
-        style={{
-          border: '1px solid var(--colorNeutralStroke2)',
-          borderRadius: '4px',
-        }}
-      >
-        <DataGridHeader>
-          <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
-        </DataGridHeader>
-        <DataGridBody<ConnectionWithFlattenedProperties>>
-          {({ item, rowId }) => (
-            <DataGridRow<ConnectionWithFlattenedProperties>
-              key={rowId}
-              selectionCell={{ 'aria-label': 'Select row' }}
-              aria-disabled={!!item.invalid}
-              style={item.invalid ? { opacity: 0.5 } : undefined}
-            >
-              {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
-            </DataGridRow>
-          )}
-        </DataGridBody>
-      </DataGrid>
-    </div>
+    <DataGrid
+      className="msla-connection-table"
+      items={items}
+      columns={columns}
+      selectionMode="single"
+      selectedItems={[currentConnectionIndex]}
+      onSelectionChange={onSelectionChange}
+      columnSizingOptions={columnSizingOptions}
+      resizableColumns
+      focusMode="row_unstable"
+      subtleSelection
+      style={{
+        border: '1px solid var(--colorNeutralStroke2)',
+        borderRadius: '4px',
+      }}
+    >
+      <DataGridHeader>
+        <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
+      </DataGridHeader>
+      <DataGridBody<ConnectionWithFlattenedProperties>>
+        {({ item, rowId }) => (
+          <DataGridRow<ConnectionWithFlattenedProperties>
+            key={rowId}
+            selectionCell={{ 'aria-label': 'Select row' }}
+            aria-disabled={!!item.invalid}
+            style={item.invalid ? { opacity: 0.5 } : undefined}
+          >
+            {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
+          </DataGridRow>
+        )}
+      </DataGridBody>
+    </DataGrid>
   );
 };
