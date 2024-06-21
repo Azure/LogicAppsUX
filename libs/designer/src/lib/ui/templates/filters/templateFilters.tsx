@@ -1,19 +1,13 @@
 import { SearchBox } from '@fluentui/react';
-import { TemplatesFilterPill } from '@microsoft/designer-ui';
+import { type FilterObject, TemplatesFilterPill } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-// import { PillEditorFilterableList } from "@microsoft/azureportal-reactview/PillEditorHelpers";
-interface FilterObject {
-  value: string;
-  displayName: string;
-}
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
-  triggers?: FilterObject[];
-  filters: Record<string, FilterObject[]>;
+  detailFilters: Record<string, FilterObject[]>;
 }
 
-export const TemplateFilters = ({ connectors, triggers, filters }: TemplateFiltersProps) => {
+export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersProps) => {
   const intl = useIntl();
 
   const intlText = {
@@ -27,23 +21,22 @@ export const TemplateFilters = ({ connectors, triggers, filters }: TemplateFilte
       id: 'KO2eUv',
       description: 'Label text for connectors filter',
     }),
-    TRIGGERS: intl.formatMessage({
-      defaultMessage: 'Triggers',
-      id: 'ZhLAAn',
-      description: 'Label text for triggers filter',
+    TYPE: intl.formatMessage({
+      defaultMessage: 'Type',
+      id: 'wfekJ7',
+      description: 'Label text for type filter',
     }),
   };
 
   return (
-    <div className="msla-templates-filters">
-      <div className="msla-templates-filters-search">
+    <div className="msla-templates-detailFilters">
+      <div className="msla-templates-detailFilters-search">
         <SearchBox placeholder={intlText.SEARCH} autoFocus={false} onChange={(_e, _newValue) => {}} />
       </div>
-      <div className="msla-templates-filters-pills">
+      <div className="msla-templates-detailFilters-pills">
         {connectors && <TemplatesFilterPill filterName={intlText.CONNECTORS} items={connectors} onApplyButtonClick={() => {}} />}
-        {triggers && <TemplatesFilterPill filterName={intlText.TRIGGERS} items={triggers} onApplyButtonClick={() => {}} />}
-        {Object.keys(filters).map((filterName, index) => (
-          <TemplatesFilterPill key={index} filterName={filterName} items={filters[filterName]} onApplyButtonClick={() => {}} />
+        {Object.keys(detailFilters).map((filterName, index) => (
+          <TemplatesFilterPill key={index} filterName={filterName} items={detailFilters[filterName]} onApplyButtonClick={() => {}} />
         ))}
       </div>
     </div>

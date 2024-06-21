@@ -14,7 +14,7 @@ const checkedBtnStyles = {
   backgroundColor: '#c8c8c8',
 };
 
-interface FilterObject {
+export interface FilterObject {
   value: string;
   displayName: string;
 }

@@ -2,17 +2,26 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
+import type { FilterObject } from '@microsoft/designer-ui';
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   //TODO: rename this to availableTemplateManifests
   availableTemplates?: Record<ManifestName, Template.Manifest>;
+  filteredTemplates?: Record<ManifestName, Template.Manifest>;
+  filters: {
+    connectors?: FilterObject[];
+    detailFilters: Record<string, FilterObject[]>;
+  };
 }
 
 type ManifestName = string;
 
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
+  filters: {
+    detailFilters: {},
+  },
 };
 
 export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', async () => {
@@ -49,6 +58,17 @@ export const manifestSlice = createSlice({
         state.availableTemplates = action.payload;
       }
     },
+    setFilteredTemplates: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
+      if (action.payload) {
+        state.filteredTemplates = action.payload;
+      }
+    },
+    setConnectorsFilters: (state, action: PayloadAction<FilterObject[]>) => {
+      state.filters.connectors = action.payload;
+    },
+    setDetailsFilters: (state, action: PayloadAction<Record<string, FilterObject[]>>) => {
+      state.filters.detailFilters = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadManifestNames.fulfilled, (state, action) => {
@@ -71,7 +91,8 @@ export const manifestSlice = createSlice({
   },
 });
 
-export const { setavailableTemplatesNames, setavailableTemplates } = manifestSlice.actions;
+export const { setavailableTemplatesNames, setavailableTemplates, setFilteredTemplates, setConnectorsFilters, setDetailsFilters } =
+  manifestSlice.actions;
 export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
