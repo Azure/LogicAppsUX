@@ -42,7 +42,7 @@ const useNodePosition = (props: NodePositionProps) => {
     }
   }, [openKeys, schemaMap, canvasY, canvasWidth, nodeY, isLeftDirection, key]);
 
-  return position;
+  return { position };
 };
 
 export default useNodePosition;

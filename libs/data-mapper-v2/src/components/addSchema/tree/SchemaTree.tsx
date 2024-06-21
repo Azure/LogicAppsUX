@@ -1,7 +1,7 @@
 import { type SchemaExtended, SchemaType, equals } from '@microsoft/logic-apps-shared';
 import { Tree, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { flattenSchemaNodeMap } from '../../../utils';
@@ -39,15 +39,10 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     description: 'tree showing schema nodes',
   });
 
-  const setUpdatedNode = useCallback(
-    (node: Node) => {
-      setUpdatedNodes((prev) => ({ ...prev, [node.id]: node }));
-    },
-    [setUpdatedNodes]
-  );
-
   useEffect(() => {
     const keys = Object.keys(updatedNodes);
+
+    // NOTE: Update the nodes when all the updated position has been fetched for the keys
     if (keys.length === totalNodes) {
       const currentNodesMap: Record<string, Node> = {};
       for (const node of nodes) {
@@ -97,7 +92,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         setOpenKeys={setOpenKeys}
         openKeys={openKeys}
         flattenedScehmaMap={flattenedScehmaMap}
-        setUpdatedNode={setUpdatedNode}
+        setUpdatedNodes={setUpdatedNodes}
       />
     </Tree>
   ) : null;

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useStyles } from './styles';
 import type { Node } from 'reactflow';
 import useNodePosition from './useNodePosition';
+import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -11,16 +12,18 @@ type RecursiveTreeProps = {
   openKeys: Set<string>;
   setOpenKeys: (openKeys: Set<string>) => void;
   flattenedScehmaMap: Record<string, SchemaNodeExtended>;
-  setUpdatedNode: (node: Node) => void;
+  setUpdatedNodes: React.Dispatch<React.SetStateAction<Record<string, Node>>>;
 };
 
 const RecursiveTree = (props: RecursiveTreeProps) => {
-  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNode } = props;
+  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNodes } = props;
   const { key } = root;
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
 
-  const nodePosition = useNodePosition({
+  const {
+    position: { x, y },
+  } = useNodePosition({
     key: key,
     openKeys: openKeys,
     schemaMap: flattenedScehmaMap,
@@ -44,21 +47,23 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   );
 
   useEffect(() => {
-    const nodeId = `reactflow_${isLeftDirection ? 'source' : 'target'}_${root.key}`;
-
-    setUpdatedNode({
-      ...{
-        id: nodeId,
-        selectable: true,
-        data: {
-          ...root,
-          isLeftDirection: isLeftDirection,
-        },
-        type: 'schemaNode',
-        position: nodePosition,
+    const nodeId = getReactFlowNodeId(root.key, isLeftDirection);
+    const node = {
+      id: nodeId,
+      selectable: true,
+      data: {
+        ...root,
+        isLeftDirection: isLeftDirection,
       },
-    });
-  }, [isLeftDirection, nodePosition, root, setUpdatedNode]);
+      type: 'schemaNode',
+      position: { x, y },
+    };
+
+    setUpdatedNodes((prev) => ({
+      ...prev,
+      [nodeId]: node,
+    }));
+  }, [isLeftDirection, x, y, root, setUpdatedNodes]);
 
   if (root.children.length === 0) {
     return (
@@ -82,7 +87,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
               openKeys={openKeys}
               setOpenKeys={setOpenKeys}
               flattenedScehmaMap={flattenedScehmaMap}
-              setUpdatedNode={setUpdatedNode}
+              setUpdatedNodes={setUpdatedNodes}
             />
           </span>
         ))}
