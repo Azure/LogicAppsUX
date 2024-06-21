@@ -1,19 +1,36 @@
 import { describe, beforeAll, expect, it, beforeEach, vi } from 'vitest';
 import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { BaseTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { updateKind, type TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
 import { TemplatePanel } from '../templatePanel';
+import { MockHttpClient } from '../../../../__test__/mock-http-client';
 
 describe('panel/templatePanel/createWorkflowPanel', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
   let template1Manifest: Template.Manifest;
   let param1DefaultValue: string;
+
+  const httpClient = new MockHttpClient();
+  InitTemplateService(
+    new BaseTemplateService({
+      baseUrl: '/baseUrl',
+      appId: '/appId',
+      httpClient,
+      apiVersions: {
+        subscription: '2018-07-01-preview',
+        gateway: '2018-11-01',
+      },
+      openBladeAfterCreate: () => {
+        console.log('Open blade after create');
+      },
+    })
+  );
 
   beforeAll(() => {
     param1DefaultValue = 'default value for param 1';
