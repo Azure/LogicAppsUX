@@ -1,18 +1,19 @@
-import { Icon, TooltipHost } from '@fluentui/react';
 import type { DataGridProps, TableColumnDefinition, TableColumnSizingOptions } from '@fluentui/react-components';
 import {
+  createTableColumn,
   DataGrid,
   DataGridBody,
   DataGridCell,
   DataGridHeader,
   DataGridHeaderCell,
   DataGridRow,
-  createTableColumn,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { getConnectionErrors, getIdLeaf } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { getIdLeaf } from '@microsoft/logic-apps-shared';
+import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import type { ConnectionWithFlattenedProperties} from './selectConnection.helpers';
+import { compareFlattenedConnections, flattenConnection } from './selectConnection.helpers';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -27,29 +28,22 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const { connections, currentConnectionId, saveSelectionCallback, cancelSelectionCallback, isXrmConnectionReferenceMode } = props;
 
   const intl = useIntl();
+  const initiallySelectedConnectionId = useRef(currentConnectionId);
 
   // We need to flatten the connection to allow the detail list access to nested props
   const items = useMemo(
     () =>
-      connections.map((connection) => {
-        const errors = getConnectionErrors(connection);
-        return {
-          ...connection,
-          ...connection.properties,
-          // 'invalid' being truthy is being used to determine whether the details list row is disabled
-          invalid:
-            errors.length > 0 ? (
-              <div className="msla-connection-error-icon-container">
-                <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
-                  <Icon iconName="Error" className="msla-connection-error-icon" styles={{ root: { color: '#e00202' } }} />
-                </TooltipHost>
-              </div>
-            ) : null,
-        };
+      connections.map(flattenConnection).sort((a, b) => {
+        if (a.id === initiallySelectedConnectionId.current) {
+          return -1;
+        }
+        if (b.id === initiallySelectedConnectionId.current) {
+          return 1;
+        }
+        return compareFlattenedConnections(a, b);
       }),
     [connections]
   );
-  type ConnectionWithFlattenedProperties = (typeof items)[0];
 
   const areIdLeavesEqual = (id1?: string, id2?: string): boolean => getIdLeaf(id1) === getIdLeaf(id2);
 
@@ -65,7 +59,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   );
 
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
-    createTableColumn<any>({
+    createTableColumn({
       columnId: 'invalid',
       renderHeaderCell: () =>
         intl.formatMessage({
@@ -75,7 +69,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         }),
       renderCell: (item) => item.invalid,
     }),
-    createTableColumn<any>({
+    createTableColumn({
       columnId: 'displayName',
       renderHeaderCell: () =>
         intl.formatMessage({
@@ -85,7 +79,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         }),
       renderCell: (item) => item.displayName,
     }),
-    createTableColumn<any>({
+    createTableColumn({
       columnId: 'name',
       renderHeaderCell: () =>
         isXrmConnectionReferenceMode
@@ -101,7 +95,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
             }),
       renderCell: (item) => item.name,
     }),
-    createTableColumn<any>({
+    createTableColumn({
       columnId: 'gateway',
       renderHeaderCell: () =>
         intl.formatMessage({
@@ -109,7 +103,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
           id: 'LvpxiA',
           description: 'Column header for connection gateway',
         }),
-      renderCell: (item) => item.gateway,
+      renderCell: (item) => item.parameterValues?.gateway?.name,
     }),
   ];
 
@@ -152,36 +146,38 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   }, [currentConnectionId, items]);
 
   return (
-    <DataGrid
-      items={items}
-      columns={columns}
-      selectionMode="single"
-      selectedItems={[currentConnectionIndex]}
-      onSelectionChange={onSelectionChange}
-      columnSizingOptions={columnSizingOptions}
-      resizableColumns
-      focusMode="row_unstable"
-      subtleSelection
-      style={{
-        border: '1px solid var(--colorNeutralStroke2)',
-        borderRadius: '4px',
-      }}
-    >
-      <DataGridHeader>
-        <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
-      </DataGridHeader>
-      <DataGridBody<any>>
-        {({ item, rowId }) => (
-          <DataGridRow<any>
-            key={rowId}
-            selectionCell={{ 'aria-label': 'Select row' }}
-            aria-disabled={!!item.invalid}
-            style={item.invalid && { opacity: 0.5 }}
-          >
-            {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
-          </DataGridRow>
-        )}
-      </DataGridBody>
-    </DataGrid>
+    <div>
+      <DataGrid
+        items={items}
+        columns={columns}
+        selectionMode="single"
+        selectedItems={[currentConnectionIndex]}
+        onSelectionChange={onSelectionChange}
+        columnSizingOptions={columnSizingOptions}
+        resizableColumns
+        focusMode="row_unstable"
+        subtleSelection
+        style={{
+          border: '1px solid var(--colorNeutralStroke2)',
+          borderRadius: '4px',
+        }}
+      >
+        <DataGridHeader>
+          <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
+        </DataGridHeader>
+        <DataGridBody<ConnectionWithFlattenedProperties>>
+          {({ item, rowId }) => (
+            <DataGridRow<ConnectionWithFlattenedProperties>
+              key={rowId}
+              selectionCell={{ 'aria-label': 'Select row' }}
+              aria-disabled={!!item.invalid}
+              style={item.invalid ? { opacity: 0.5 } : undefined}
+            >
+              {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
+            </DataGridRow>
+          )}
+        </DataGridBody>
+      </DataGrid>
+    </div>
   );
 };

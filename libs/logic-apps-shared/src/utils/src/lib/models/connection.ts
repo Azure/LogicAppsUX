@@ -30,6 +30,11 @@ interface Api {
   type: string;
 }
 
+export interface ConnectionParameterValues {
+  authType: string;
+  gateway?: ArmResource<never>;
+}
+
 export interface ConnectionParameterSetValues {
   name: string;
   values: Record<string, ValueObject>;
@@ -46,6 +51,7 @@ export interface ConnectionProperties {
   createdTime: string;
   displayName: string;
   overallStatus: string;
+  parameterValues?: ConnectionParameterValues;
   parameterValueType?: string;
   statuses: ConnectionStatus[];
   testLinks?: TestConnectionObject[];
