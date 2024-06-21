@@ -43,7 +43,7 @@ import type {
 import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
+import { type TaskDefinition, type DebugConfiguration, type WorkspaceFolder, Uri } from 'vscode';
 
 export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
@@ -114,6 +114,8 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   private async writeTasksJson(context: IProjectWizardContext, vscodePath: string): Promise<void> {
     //writing custom Task json which will start LA and SWA. not following how tasks are originally added; should be fixed TODO
     const tasksJsonPath: string = path.join(vscodePath, 'tasks.json');
+    const logicAppFolderPathUri = Uri.parse(context.logicAppFolderPath);
+
     const tasksJsonContent = `{
   "version": "2.0.0",
   "tasks": [
@@ -153,7 +155,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
         "label": "Start SWA",
   "dependsOn": "Build SWA",
         "type": "shell",
-        "command": "swa start . --api-location ..",
+        "command": "swa start --api-location ${logicAppFolderPathUri.fsPath.replace(/\\/g, '/')}",
         "problemMatcher": [],
   "options": {
             "cwd": "\${workspaceFolder}/static-web-app"
