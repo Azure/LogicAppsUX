@@ -143,7 +143,7 @@ export const TemplatesStandaloneDesigner = () => {
   };
 
   const services = useMemo(
-    () => getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, appId, tenantId, objectId, canonicalLocation),
+    () => getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, appId, tenantId, canonicalLocation]
   );
@@ -177,7 +177,6 @@ const httpClient = new HttpClient();
 const getServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
-  appId: string | undefined,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string
@@ -229,7 +228,7 @@ const getServices = (
 
   const templateService = new BaseTemplateService({
     baseUrl: armUrl,
-    appId,
+    appId: siteResourceId,
     httpClient,
     apiVersions: {
       subscription: apiVersion,

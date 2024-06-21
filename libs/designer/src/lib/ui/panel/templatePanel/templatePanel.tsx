@@ -44,6 +44,11 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
         id: 'Xs7Uvt',
         description: 'Panel description for stating it was created by Microsoft',
       }),
+      CLOSE: intl.formatMessage({
+        defaultMessage: 'Close',
+        id: 'FTrMxN',
+        description: 'Button text for closing the panel',
+      }),
     };
   }, [intl]);
 
@@ -64,10 +69,11 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       selectedTabProps?.footerContent ? (
         <TemplatesPanelFooter
           {...selectedTabProps?.footerContent}
+          secondaryButtonText={selectedTabProps?.footerContent?.secondaryButtonText ?? intlText.CLOSE}
           secondaryButtonOnClick={selectedTabProps?.footerContent?.secondaryButtonOnClick ?? dismissPanel}
         />
       ) : null,
-    [selectedTabProps, dismissPanel]
+    [selectedTabProps, dismissPanel, intlText]
   );
 
   useEffect(() => {
