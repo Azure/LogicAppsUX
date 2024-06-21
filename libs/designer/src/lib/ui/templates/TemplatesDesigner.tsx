@@ -44,7 +44,50 @@ export const TemplatesDesigner = ({
   return (
     <>
       <div>
-        <TemplateFilters />
+        <TemplateFilters
+          connectors={[
+            {
+              value: 'connector1',
+              displayName: 'Connector 1',
+            },
+            {
+              value: 'connector2',
+              displayName: 'Connector 2',
+            },
+          ]}
+          triggers={[
+            {
+              value: 'trigger1',
+              displayName: 'Trigger 1',
+            },
+            {
+              value: 'trigger2',
+              displayName: 'Trigger 2',
+            },
+          ]}
+          filters={{
+            Filter1: [
+              {
+                value: 'filter1',
+                displayName: 'Filter 1',
+              },
+              {
+                value: 'filter2',
+                displayName: 'Filter 2',
+              },
+            ],
+            Filter2: [
+              {
+                value: 'filter3',
+                displayName: 'Filter 3',
+              },
+              {
+                value: 'filter4',
+                displayName: 'Filter 4',
+              },
+            ],
+          }}
+        />
       </div>
       <TemplatePanel onCreateClick={onCreateClick} />
       <div className="msla-templates-list">
