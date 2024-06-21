@@ -45,6 +45,7 @@ export interface ValueObject {
 }
 
 export interface ConnectionProperties {
+  authenticatedUser?: { name?: string };
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParametersSet?: ConnectionParameterSet;
   createdBy?: Principal;

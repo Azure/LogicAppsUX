@@ -7,12 +7,15 @@ import {
   DataGridHeader,
   DataGridHeaderCell,
   DataGridRow,
+  PresenceBadge,
+  Text,
+  Tooltip,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { getIdLeaf } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
-import type { ConnectionWithFlattenedProperties} from './selectConnection.helpers';
+import type { ConnectionWithFlattenedProperties } from './selectConnection.helpers';
 import { compareFlattenedConnections, flattenConnection } from './selectConnection.helpers';
 
 export interface ConnectionTableProps {
@@ -60,14 +63,27 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
     createTableColumn({
-      columnId: 'invalid',
+      columnId: 'status',
       renderHeaderCell: () =>
         intl.formatMessage({
-          defaultMessage: 'Invalid',
-          id: '7lvqST',
-          description: 'Column header for invalid connections',
+          defaultMessage: 'Status',
+          id: 'qxw9UO',
+          description: 'Column header for connection valid/invalid status',
         }),
-      renderCell: (item) => item.invalid,
+      renderCell: (item) => {
+        const statusText = item.invalid
+          ? [...new Set(item.statuses?.map((e) => e.error?.message).filter((m) => !!m))].join(', ')
+          : intl.formatMessage({
+              defaultMessage: 'Connected',
+              id: 'oOGTSo',
+              description: 'Connected text',
+            });
+        return (
+          <Tooltip content={statusText} relationship="label">
+            <PresenceBadge status={item.invalid ? 'offline' : 'available'} />
+          </Tooltip>
+        );
+      },
     }),
     createTableColumn({
       columnId: 'displayName',
@@ -77,7 +93,22 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
           id: 'tsmuoF',
           description: 'Column header for connection display name',
         }),
-      renderCell: (item) => item.displayName,
+      renderCell: (item) => {
+        const label = item.displayName;
+        const subLabel = item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name;
+        return (
+          <div className="msla-connection-row-display-name">
+            <Text block={true} className="msla-connection-row-display-name-label" size={300}>
+              {label}
+            </Text>
+            {subLabel && subLabel !== label ? (
+              <Text block={true} className="msla-connection-row-display-name-label" size={200}>
+                {subLabel}
+              </Text>
+            ) : null}
+          </div>
+        );
+      },
     }),
     createTableColumn({
       columnId: 'name',
@@ -95,34 +126,20 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
             }),
       renderCell: (item) => item.name,
     }),
-    createTableColumn({
-      columnId: 'gateway',
-      renderHeaderCell: () =>
-        intl.formatMessage({
-          defaultMessage: 'Gateway',
-          id: 'LvpxiA',
-          description: 'Column header for connection gateway',
-        }),
-      renderCell: (item) => item.parameterValues?.gateway?.name,
-    }),
   ];
 
   const columnSizingOptions: TableColumnSizingOptions = {
-    invalid: {
+    status: {
       defaultWidth: 40,
       idealWidth: 40,
     },
     displayName: {
-      defaultWidth: 200,
-      idealWidth: 200,
+      defaultWidth: 280,
+      idealWidth: 280,
     },
     name: {
-      defaultWidth: 120,
-      idealWidth: 120,
-    },
-    gateway: {
-      defaultWidth: 80,
-      idealWidth: 80,
+      defaultWidth: 200,
+      idealWidth: 200,
     },
   };
 
