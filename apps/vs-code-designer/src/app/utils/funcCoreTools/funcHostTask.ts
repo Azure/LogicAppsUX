@@ -21,19 +21,18 @@ export interface IRunningFuncTask {
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
 
 /**
- * Returns wheter the task is a func host start task.
+ * Returns whether the task is an SWA start task.
  * @param {vscode.Task} task - Function task.
- * @returns {number} Returns true if the task is a func host start task, otherwise returns false.
+ * @returns {boolean} Returns true if the task is an SWA start task, otherwise returns false.
  */
 export function isFuncHostTask(task: vscode.Task): boolean {
+  //changed to look for SWA start task instead of func host task
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type === 'shell') {
-    const command = (task.execution as vscode.ShellExecution).command?.toString();
-    const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
-    // check for args?
-    return funcRegex.test(command);
+    // Check if the command line starts with "swa start"
+    return /^swa start/.test(commandLine || '');
   }
-  return /func (host )?start/i.test(commandLine || '');
+  return false;
 }
 
 export function registerFuncHostTaskEvents(): void {

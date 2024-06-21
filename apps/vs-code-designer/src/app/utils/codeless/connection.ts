@@ -5,7 +5,6 @@ import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
@@ -13,7 +12,6 @@ import * as parameterizer from './parameterizer';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
-import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ServiceProviderConnectionModel,
@@ -71,8 +69,10 @@ export async function addConnectionData(
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
-  const workspacePath: string = workspaceFolder.uri.fsPath;
+  //when creating logic app workspace with static web app. there is an issue with the workspace, the workflow is always in the same spot so temporary fix TODO
+  //const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  //const workspacePath: string = workspaceFolder.uri.fsPath;
+  const workspacePath: string = path.join(workflowFilePath, '../..');
 
   const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
 

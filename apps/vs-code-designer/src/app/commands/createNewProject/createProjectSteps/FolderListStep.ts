@@ -7,15 +7,11 @@ import { getContainingWorkspace, selectWorkspaceFolder } from '../../../utils/wo
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import * as fs from 'fs';
 
 export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public static setProjectPath(context: Partial<IProjectWizardContext>, projectPath: string): void {
-    //creates logic app directory
-    fs.mkdirSync(`${projectPath}/logic-app`, { recursive: true });
-    projectPath = `${projectPath}/logic-app`;
     context.projectPath = projectPath;
     context.workspaceFolder = getContainingWorkspace(projectPath);
     context.workspacePath = (context.workspaceFolder && context.workspaceFolder.uri.fsPath) || projectPath;

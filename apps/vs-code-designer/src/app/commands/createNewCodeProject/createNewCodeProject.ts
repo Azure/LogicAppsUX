@@ -83,10 +83,12 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     title: localize('createNewCodeProject', 'Create new logic app workspace'),
     promptSteps: [
       new FolderListStep(),
+
       new setWorkspaceName(),
       new SetLogicAppType(),
       new SetLogicAppName(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
+
       new OpenBehaviorStep(),
     ],
     executeSteps: [new OpenFolderStepCodeProject()],

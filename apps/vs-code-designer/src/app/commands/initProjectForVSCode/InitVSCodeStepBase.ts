@@ -8,8 +8,6 @@ import {
   projectLanguageSetting,
   funcVersionSetting,
   deploySubpathSetting,
-  tasksVersion,
-  tasksFileName,
   launchVersion,
   settingsFileName,
   preDeployTaskSetting,
@@ -21,7 +19,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { isSubpath, isPathEqual, confirmEditJsonFile } from '../../utils/fs';
+import { isSubpath, confirmEditJsonFile } from '../../utils/fs';
 import {
   getDebugConfigs,
   getLaunchVersion,
@@ -30,7 +28,6 @@ import {
   updateLaunchVersion,
 } from '../../utils/vsCodeConfig/launch';
 import { updateWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getTasksVersion, updateTasksVersion, updateTasks, getTasks, updateInputs, getInputs } from '../../utils/vsCodeConfig/tasks';
 import { isMultiRootWorkspace } from '../../utils/workspace';
 import { AzureWizardExecuteStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -40,7 +37,6 @@ import type {
   ProjectLanguage,
   ITask,
   ITaskInputs,
-  ITasksJson,
   ILaunchJson,
   IExtensionsJson,
 } from '@microsoft/vscode-extension-logic-apps';
@@ -81,6 +77,8 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
+    //creating all .vscode files in the root of the workspace
+    context.workspacePath = path.join(context.workspacePath, '../..');
     const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
     await this.writeTasksJson(context, vscodePath);
@@ -114,53 +112,114 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   }
 
   private async writeTasksJson(context: IProjectWizardContext, vscodePath: string): Promise<void> {
-    const newTasks: TaskDefinition[] = this.getTasks();
+    //writing custom Task json which will start LA and SWA. not following how tasks are originally added; should be fixed TODO
+    const tasksJsonPath: string = path.join(vscodePath, 'tasks.json');
+    const tasksJsonContent = `{
+  "version": "2.0.0",
+  "tasks": [
+  {
+          "label": "Install Node Modules",
+          "type": "shell",
+          "command": "npm install",
+          "problemMatcher": [],
+    "options": {
+              "cwd": "\${workspaceFolder}/static-web-app"
+          },
+          "group": "build"
+      },
+  {
+          "label": "Init SWA",
+          "type": "shell",
+          "command": "swa init",
+    "dependsOn": "Install Node Modules",
+          "problemMatcher": [],
+    "options": {
+              "cwd": "\${workspaceFolder}/static-web-app"
+          },
+          "group": "build"
+      },
+      {
+          "label": "Build SWA",
+    "dependsOn": "Init SWA",
+          "type": "shell",
+          "command": "swa build",
+          "problemMatcher": [],
+    "options": {
+              "cwd": "\${workspaceFolder}/static-web-app"
+          },
+          "group": "build"
+      },
+      {
+        "label": "Start SWA",
+  "dependsOn": "Build SWA",
+        "type": "shell",
+        "command": "swa start . --api-location ..",
+        "problemMatcher": [],
+  "options": {
+            "cwd": "\${workspaceFolder}/static-web-app"
+        },
+        "group": "build"
+    },
 
-    for (const task of newTasks) {
-      let cwd: string = (task.options && task.options.cwd) || '.';
-      cwd = this.addSubDir(context, cwd);
-      if (!isPathEqual(cwd, '.')) {
-        task.options = task.options || {};
-        // always use posix for debug config
-        task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
+  ],
+  "inputs": [
+      {
+          "id": "getDebugSymbolDll",
+          "type": "command",
+          "command": "azureLogicAppsStandard.getDebugSymbolDll"
       }
+  ]
+}`;
+    await fse.writeFile(tasksJsonPath, tasksJsonContent);
+    /*
+  const newTasks: TaskDefinition[] = this.getTasks();
+
+  for (const task of newTasks) {
+    let cwd: string = (task.options && task.options.cwd) || '.';
+    cwd = this.addSubDir(context, cwd);
+    if (!isPathEqual(cwd, '.')) {
+      task.options = task.options || {};
+      // always use posix for debug config
+      task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
     }
+  }
 
-    const versionMismatchError: Error = new Error(
-      localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', tasksFileName, tasksVersion)
-    );
+  const versionMismatchError: Error = new Error(
+    localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', tasksFileName, tasksVersion)
+  );
 
-    // Use VS Code api to update config if folder is open and it's not a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235)
-    // The VS Code api is better for several reasons, including:
-    // 1. It handles comments in json files
-    // 2. It sends the 'onDidChangeConfiguration' event
-    if (context.workspaceFolder && !isMultiRootWorkspace()) {
-      const currentVersion: string | undefined = getTasksVersion(context.workspaceFolder);
-      if (!currentVersion) {
-        updateTasksVersion(context.workspaceFolder, tasksVersion);
-      } else if (currentVersion !== tasksVersion) {
+  // Use VS Code api to update config if folder is open and it's not a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235)
+  // The VS Code api is better for several reasons, including:
+  // 1. It handles comments in json files
+  // 2. It sends the 'onDidChangeConfiguration' event
+  if (context.workspaceFolder && !isMultiRootWorkspace()) {
+    const currentVersion: string | undefined = getTasksVersion(context.workspaceFolder);
+    if (!currentVersion) {
+      updateTasksVersion(context.workspaceFolder, tasksVersion);
+    } else if (currentVersion !== tasksVersion) {
+      throw versionMismatchError;
+    }
+    updateTasks(context.workspaceFolder, this.insertNewTasks(getTasks(context.workspaceFolder), newTasks));
+    if (this.getTaskInputs) {
+      updateInputs(context.workspaceFolder, this.insertNewTaskInputs(context, getInputs(context.workspaceFolder), this.getTaskInputs()));
+    }
+  } else {
+    // otherwise manually edit json
+    const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
+    await confirmEditJsonFile(context, tasksJsonPath, (data: ITasksJson): ITasksJson => {
+      if (!data.version) {
+        data.version = tasksVersion;
+      } else if (data.version !== tasksVersion) {
         throw versionMismatchError;
       }
-      updateTasks(context.workspaceFolder, this.insertNewTasks(getTasks(context.workspaceFolder), newTasks));
+      data.tasks = this.insertNewTasks(data.tasks, newTasks);
       if (this.getTaskInputs) {
-        updateInputs(context.workspaceFolder, this.insertNewTaskInputs(context, getInputs(context.workspaceFolder), this.getTaskInputs()));
+        data.inputs = this.insertNewTaskInputs(context, data.inputs, this.getTaskInputs());
       }
-    } else {
-      // otherwise manually edit json
-      const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
-      await confirmEditJsonFile(context, tasksJsonPath, (data: ITasksJson): ITasksJson => {
-        if (!data.version) {
-          data.version = tasksVersion;
-        } else if (data.version !== tasksVersion) {
-          throw versionMismatchError;
-        }
-        data.tasks = this.insertNewTasks(data.tasks, newTasks);
-        if (this.getTaskInputs) {
-          data.inputs = this.insertNewTaskInputs(context, data.inputs, this.getTaskInputs());
-        }
-        return data;
-      });
-    }
+      return data;
+    });
+  }
+    */
   }
 
   private insertNewTasks(existingTasks: ITask[] | undefined, newTasks: ITask[]): ITask[] {
