@@ -34,8 +34,10 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
       token.onCancellationRequested(() => {
         // Handle cancellation logic
         context.telemetry.properties.canceledRun = 'true';
-        ext.outputChannel.appendLine(localize('canceledRunUnitTest', 'Run unit test was canceled'))
+        ext.outputChannel.appendLine(localize('canceledRunUnitTest', 'Run unit test was canceled'));
       });
+
+      const start = Date.now();
       try {
         let unitTestPath: string;
         const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
@@ -51,7 +53,6 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           throw new Error(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
         }
 
-        const start = Date.now();
         await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
         const duration = Date.now() - start;
 
@@ -105,7 +106,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
             });
           }
         );
-        progress.report({ increment: 100});
+        progress.report({ increment: 100 });
 
         ext.outputChannel.appendLine(cmdOutput);
         ext.outputChannel.appendLine(cmdOutputIncludingStderr);
@@ -131,7 +132,10 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         vscode.window.showErrorMessage(`${localize('runFailure', 'Error Running Unit Test.')} ${error.message}`, localize('OK', 'OK'));
         context.telemetry.properties.errorMessage = error.message;
         context.telemetry.properties.sucessUnitTest = 'false';
-        throw error;
+        return {
+          isSuccessful: false,
+          duration: Date.now() - start,
+        };
       }
     });
   });
