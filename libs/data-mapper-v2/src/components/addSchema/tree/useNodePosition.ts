@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useLayoutEffect, useContext } from 'react';
 import type { XYPosition } from 'reactflow';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { DataMapperWrappedContext } from '../../../core';
@@ -32,7 +32,7 @@ const useNodePosition = (props: NodePositionProps) => {
     canvasBounds: { y: canvasY = -1, width: canvasWidth = -1 } = {},
   } = useContext(DataMapperWrappedContext);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isTreeNodeHidden(schemaMap, openKeys, schemaMap[key]?.parentKey)) {
       setPosition({ x: -1, y: -1 });
     } else if (canvasY >= 0 && nodeY >= 0 && canvasWidth >= 0) {

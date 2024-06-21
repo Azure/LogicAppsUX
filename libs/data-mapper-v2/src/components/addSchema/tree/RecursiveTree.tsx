@@ -1,6 +1,6 @@
 import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClasses } from '@fluentui/react-components';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useStyles } from './styles';
 import type { Node } from 'reactflow';
 import useNodePosition from './useNodePosition';
@@ -46,7 +46,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [openKeys, setOpenKeys]
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const nodeId = getReactFlowNodeId(root.key, isLeftDirection);
     const node = {
       id: nodeId,
@@ -59,10 +59,22 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       position: { x, y },
     };
 
-    setUpdatedNodes((prev) => ({
-      ...prev,
-      [nodeId]: node,
-    }));
+    // Remove the current node from the updated nodes if it exists
+    setUpdatedNodes((prev) => {
+      const updatedNodes = { ...prev };
+      if (updatedNodes[nodeId]) {
+        delete updatedNodes[nodeId];
+        return updatedNodes;
+      }
+      return prev;
+    });
+
+    // Add the current node back to the map
+    setUpdatedNodes((prev) => {
+      const updatedNodes = { ...prev };
+      updatedNodes[nodeId] = node;
+      return updatedNodes;
+    });
   }, [isLeftDirection, x, y, root, setUpdatedNodes]);
 
   if (root.children.length === 0) {

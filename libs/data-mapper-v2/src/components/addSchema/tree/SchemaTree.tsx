@@ -1,7 +1,7 @@
 import { type SchemaExtended, SchemaType, equals } from '@microsoft/logic-apps-shared';
 import { Tree, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useLayoutEffect } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { flattenSchemaNodeMap } from '../../../utils';
@@ -32,6 +32,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const flattenedScehmaMap = useMemo(() => flattenSchemaNodeMap(schemaTreeRoot), [schemaTreeRoot]);
   const totalNodes = useMemo(() => Object.keys(flattenedScehmaMap).length, [flattenedScehmaMap]);
   const { nodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const updatedNodesLength = useMemo(() => Object.keys(updatedNodes).length, [updatedNodes]);
 
   const treeAriaLabel = intl.formatMessage({
     defaultMessage: 'Schema tree',
@@ -39,11 +40,11 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     description: 'tree showing schema nodes',
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const keys = Object.keys(updatedNodes);
 
     // NOTE: Update the nodes when all the updated position has been fetched for the keys
-    if (keys.length === totalNodes) {
+    if (updatedNodesLength === totalNodes) {
       const currentNodesMap: Record<string, Node> = {};
       for (const node of nodes) {
         currentNodesMap[node.id] = node;
@@ -75,9 +76,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         dispatch(updateReactFlowNodes(newNodes));
       }
     }
-  }, [nodes, updatedNodes, totalNodes, dispatch]);
+  }, [nodes, updatedNodes, totalNodes, updatedNodesLength, dispatch]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setOpenKeys(new Set<string>(Object.keys(flattenedScehmaMap).filter((key) => flattenedScehmaMap[key].children.length > 0)));
   }, [flattenedScehmaMap, setOpenKeys]);
   return schemaTreeRoot ? (
