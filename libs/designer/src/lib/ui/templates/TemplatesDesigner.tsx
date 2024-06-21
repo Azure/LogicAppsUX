@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { TemplateCard } from './cards/templateCard';
 import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { TemplateFilters } from './filters/templateFilters';
 
 export const TemplatesDesigner = ({
   createWorkflowCall,
@@ -42,6 +43,9 @@ export const TemplatesDesigner = ({
 
   return (
     <>
+      <div>
+        <TemplateFilters />
+      </div>
       <TemplatePanel onCreateClick={onCreateClick} />
       <div className="msla-templates-list">
         {availableTemplatesNames?.map((templateName: string) => (
