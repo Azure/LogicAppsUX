@@ -15,6 +15,7 @@ import type { Connection } from '@microsoft/logic-apps-shared';
 import { getIdLeaf } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
 import type { ConnectionWithFlattenedProperties } from './selectConnection.helpers';
 import { compareFlattenedConnections, flattenConnection } from './selectConnection.helpers';
 
@@ -111,20 +112,14 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'name',
+      columnId: 'details',
       renderHeaderCell: () =>
-        isXrmConnectionReferenceMode
-          ? intl.formatMessage({
-              defaultMessage: 'Logical Name',
-              id: 'UIWX6p',
-              description: 'Column header for connection reference logical name',
-            })
-          : intl.formatMessage({
-              defaultMessage: 'Name',
-              id: 'T6VIym',
-              description: 'Column header for connection name',
-            }),
-      renderCell: (item) => item.name,
+        intl.formatMessage({
+          defaultMessage: 'Details',
+          id: 'pH6ubt',
+          description: 'Column header for accessing connection-related details',
+        }),
+      renderCell: (item) => <ConnectionTableDetailsButton connection={item} isXrmConnectionReferenceMode={isXrmConnectionReferenceMode} />,
     }),
   ];
 
@@ -134,22 +129,22 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       idealWidth: 40,
     },
     displayName: {
-      defaultWidth: 280,
-      idealWidth: 280,
+      defaultWidth: 420,
+      idealWidth: 420,
     },
-    name: {
-      defaultWidth: 200,
-      idealWidth: 200,
+    details: {
+      defaultWidth: 50,
+      idealWidth: 50,
     },
   };
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
     (e: any, data: any) => {
-      const index = data.selectedItems.values().next().value;
+      const index: number = data.selectedItems.values().next().value;
       if (items[index]?.invalid) {
         return; // Don't allow selection of invalid connections (they are disabled)
       }
-      const connection = connections[index];
+      const connection = connections.find((c) => items[index].id === c.id);
       if (!connection) {
         return;
       }
@@ -165,6 +160,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   return (
     <div>
       <DataGrid
+        className="msla-connection-table"
         items={items}
         columns={columns}
         selectionMode="single"

@@ -31,8 +31,12 @@ interface Api {
 }
 
 export interface ConnectionParameterValues {
-  authType: string;
-  gateway?: ArmResource<never>;
+  authType?: string;
+  gateway?: {
+    id: string;
+    name: string;
+    type: string;
+  };
 }
 
 export interface ConnectionParameterSetValues {
