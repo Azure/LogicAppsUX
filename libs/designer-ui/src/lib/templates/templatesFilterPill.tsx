@@ -1,4 +1,4 @@
-import { Checkbox, Text } from '@fluentui/react';
+import { Checkbox, DefaultButton, PrimaryButton, Text } from '@fluentui/react';
 import { ToggleButton } from '@fluentui/react-components';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,34 +25,41 @@ interface TemplatesFilterPillProps {
   onApplyButtonClick: (_filterItems: FilterObject[]) => void;
 }
 
-export const TemplatesFilterPill = ({ filterName, items }: TemplatesFilterPillProps) => {
+export const TemplatesFilterPill = ({ filterName, items, onApplyButtonClick }: TemplatesFilterPillProps) => {
   const intl = useIntl();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selected, setSelected] = useState<FilterObject[]>([]);
 
   const intlText = {
-    APPLY: intl.formatMessage({
-      defaultMessage: 'Apply',
-      id: 'a+Wx9e',
-      description: 'Button text for applying the selected filters',
-    }),
     All: intl.formatMessage({
       defaultMessage: 'All',
       id: 'eaEXYa',
       description: 'Checkbox text for the filter representing all items',
     }),
+    APPLY: intl.formatMessage({
+      defaultMessage: 'Apply',
+      id: 'a+Wx9e',
+      description: 'Button text for applying the selected filters',
+    }),
+    CANCEL: intl.formatMessage({
+      defaultMessage: 'Cancel',
+      id: '21sQ1Q',
+      description: 'Button text for closing the filters selection',
+    }),
   };
 
   return (
-    <div>
+    <div className="msla-templates-fillter-pill">
       <ToggleButton
         style={{ ...btnStyles, ...(isExpanded ? checkedBtnStyles : {}) }}
         shape="circular"
         checked={isExpanded}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <Text>{filterName}:</Text>
-        {selected.length > 1 ? selected?.map((item) => <Text key={item?.value}>{item?.displayName}</Text>) : intlText.All}
+        <Text className="msal-template-filter-pill-name">{filterName}:</Text>
+        {selected.length > 0
+          ? selected?.map((item, index) => `${item?.displayName}${index < selected.length - 1 ? ', ' : ''}`)
+          : intlText.All}
       </ToggleButton>
       {isExpanded && (
         <div>
@@ -79,6 +86,27 @@ export const TemplatesFilterPill = ({ filterName, items }: TemplatesFilterPillPr
               }}
             />
           ))}
+          <div>
+            <PrimaryButton
+              onClick={() => {
+                onApplyButtonClick(selected);
+                setIsExpanded(false);
+              }}
+            >
+              {intlText.APPLY}
+            </PrimaryButton>
+            <DefaultButton
+              onClick={() => {
+                onApplyButtonClick(selected);
+                setIsExpanded(false);
+              }}
+              style={{
+                marginLeft: '8px',
+              }}
+            >
+              {intlText.CANCEL}
+            </DefaultButton>
+          </div>
         </div>
       )}
     </div>
