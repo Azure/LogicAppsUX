@@ -25,7 +25,7 @@ import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/H
 // import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 // import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import { useNavigate } from 'react-router-dom';
-import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
@@ -46,7 +46,7 @@ export const TemplatesStandaloneDesigner = () => {
   const navigate = useNavigate();
 
   // const navigate = useNavigate();
-
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
 
@@ -171,6 +171,7 @@ export const TemplatesStandaloneDesigner = () => {
               resourceGroup: resourceDetails.resourceGroup,
               location: canonicalLocation,
             }}
+            connectionReferences={connectionReferences}
             services={services}
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
@@ -237,11 +238,16 @@ const getServices = (
     tenantId,
     objectId,
   });
+  const workflowService: IWorkflowService = {
+    getCallbackUrl: () => Promise.resolve({} as any),
+    getAppIdentity: () => workflowApp?.identity as any,
+  };
 
   return {
     connectionService,
     gatewayService,
     tenantService,
     oAuthService,
+    workflowService,
   };
 };
