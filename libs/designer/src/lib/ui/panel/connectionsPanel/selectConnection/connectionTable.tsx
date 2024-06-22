@@ -34,14 +34,18 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const intl = useIntl();
   const initiallySelectedConnectionId = useRef(currentConnectionId);
 
+  const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
+    return connection.id === initiallySelectedConnectionId.current;
+  };
+
   // We need to flatten the connection to allow the detail list access to nested props
   const items = useMemo(
     () =>
       connections.map(flattenConnection).sort((a, b) => {
-        if (a.id === initiallySelectedConnectionId.current) {
+        if (isSelectedConnection(a)) {
           return -1;
         }
-        if (b.id === initiallySelectedConnectionId.current) {
+        if (isSelectedConnection(b)) {
           return 1;
         }
         return compareFlattenedConnections(a, b);
@@ -81,7 +85,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
             });
         return (
           <Tooltip content={statusText} relationship="label">
-            <PresenceBadge status={item.invalid ? 'offline' : 'available'} />
+            <PresenceBadge outOfOffice={!item.invalid && !isSelectedConnection(item)} status={item.invalid ? 'offline' : 'available'} />
           </Tooltip>
         );
       },
