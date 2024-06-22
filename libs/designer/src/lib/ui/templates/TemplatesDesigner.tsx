@@ -17,7 +17,7 @@ export const TemplatesDesigner = ({
 }) => {
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { workflowName, kind, workflowDefinition, parameters } = useSelector((state: RootState) => state.template);
-  const availableTemplatesNames = useSelector((state: RootState) => state.manifest.availableTemplateNames);
+  const filteredTemplateNames = useSelector((state: RootState) => state.manifest.filteredTemplateNames);
 
   const onCreateClick = async () => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
@@ -44,7 +44,7 @@ export const TemplatesDesigner = ({
     <>
       <TemplatePanel onCreateClick={onCreateClick} />
       <div className="msla-templates-list">
-        {availableTemplatesNames?.map((templateName: string) => (
+        {filteredTemplateNames?.map((templateName: string) => (
           <TemplateCard key={templateName} templateName={templateName} />
         ))}
       </div>

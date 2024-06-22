@@ -45,8 +45,9 @@ export const getFilteredTemplates = (
     connectors?: FilterObject[];
     detailFilters: Record<string, FilterObject[]>;
   }
-) => {
-  const hello = Object.entries(templates).filter(([_key, templateManifest]) => {
+): string[] => {
+  return Object.keys(templates).filter((templateName) => {
+    const templateManifest = templates[templateName];
     const hasKeyword =
       !filters.keyword ||
       (!isUndefinedOrEmptyString(filters.keyword) &&
@@ -76,8 +77,4 @@ export const getFilteredTemplates = (
     });
     return hasDetailFilters;
   });
-
-  const res = Object.fromEntries(hello);
-
-  return res;
 };

@@ -6,9 +6,8 @@ import type { FilterObject } from '@microsoft/designer-ui';
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
-  //TODO: rename this to availableTemplateManifests
+  filteredTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
-  filteredTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
     keyword?: string;
     connectors: FilterObject[] | undefined;
@@ -60,9 +59,9 @@ export const manifestSlice = createSlice({
         state.availableTemplates = action.payload;
       }
     },
-    setFilteredTemplates: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
+    setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
       if (action.payload) {
-        state.filteredTemplates = action.payload;
+        state.filteredTemplateNames = action.payload;
       }
     },
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
@@ -111,7 +110,7 @@ export const manifestSlice = createSlice({
 export const {
   setavailableTemplatesNames,
   setavailableTemplates,
-  setFilteredTemplates,
+  setFilteredTemplateNames,
   setKeywordFilter,
   setConnectorsFilters,
   setDetailsFilters,

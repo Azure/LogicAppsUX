@@ -3,7 +3,7 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { loadManifestNames, loadManifests, setFilteredTemplates } from '../state/templates/manifestSlice';
+import { loadManifestNames, loadManifests, setFilteredTemplateNames } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setConsumption, setExistingWorkflowName, setResourceDetails } from '../state/templates/workflowSlice';
 import { initializeTemplateServices } from '../state/templates/templateSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
@@ -29,11 +29,11 @@ const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: Te
 
   useEffect(() => {
     if (!availableTemplates) {
-      dispatch(setFilteredTemplates(undefined));
+      dispatch(setFilteredTemplateNames(undefined));
       return;
     }
-    const filteredTemplates = getFilteredTemplates(availableTemplates, filters);
-    dispatch(setFilteredTemplates(filteredTemplates));
+    const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters);
+    dispatch(setFilteredTemplateNames(filteredTemplateNames));
   }, [dispatch, availableTemplates, filters]);
 
   useEffect(() => {

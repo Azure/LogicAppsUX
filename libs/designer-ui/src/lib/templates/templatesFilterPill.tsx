@@ -79,7 +79,8 @@ export const TemplatesFilterPill = ({ filterName, items, onApplyButtonClick }: T
                 if (checked) {
                   setSelected(selected ? [...selected, item] : [item]);
                 } else {
-                  setSelected(selected?.filter((i) => i.value !== item.value));
+                  const updatedSelected = selected?.filter((i) => i.value !== item.value) ?? [];
+                  setSelected(updatedSelected?.length > 0 ? updatedSelected : undefined);
                 }
               }}
             />
