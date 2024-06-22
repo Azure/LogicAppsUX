@@ -44,10 +44,16 @@ export const getFilteredTemplates = (
     keyword?: string;
     connectors?: FilterObject[];
     detailFilters: Record<string, FilterObject[]>;
-  }
+  },
+  isConsumption: boolean
 ): string[] => {
   return Object.keys(templates).filter((templateName) => {
     const templateManifest = templates[templateName];
+
+    if (!templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')) {
+      return false;
+    }
+
     const hasKeyword =
       !filters.keyword ||
       (!isUndefinedOrEmptyString(filters.keyword) &&

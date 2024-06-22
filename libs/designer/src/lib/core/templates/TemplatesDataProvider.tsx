@@ -32,9 +32,9 @@ const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: Te
       dispatch(setFilteredTemplateNames(undefined));
       return;
     }
-    const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters);
+    const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
     dispatch(setFilteredTemplateNames(filteredTemplateNames));
-  }, [dispatch, availableTemplates, filters]);
+  }, [dispatch, availableTemplates, filters, isConsumption]);
 
   useEffect(() => {
     dispatch(loadManifestNames());
