@@ -10,6 +10,14 @@ export interface FunctionPositionMetadata {
 export interface FunctionMetadata {
   reactFlowGuid: string;
   functionKey: string;
+  position: XYPosition;
+  connections: ConnectionAndOrder[];
+  connectionShorthand: string;
+}
+
+export interface FunctionMetadataV1 {
+  reactFlowGuid: string;
+  functionKey: string;
   positions: FunctionPositionMetadata[];
   connections: ConnectionAndOrder[];
   connectionShorthand: string;
@@ -37,4 +45,7 @@ export interface ITreeFile {
   name: string;
   type: 'file';
   fullPath?: string;
+}
+export interface MapMetadataV1 {
+  functionNodes: FunctionMetadataV1[];
 }
