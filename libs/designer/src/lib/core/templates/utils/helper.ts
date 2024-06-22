@@ -56,6 +56,7 @@ export const getFilteredTemplates = (
     if (!hasKeyword) {
       return false;
     }
+
     const hasConnectors =
       filters?.connectors?.some((connector) =>
         Object.values(templateManifest.connections)?.some((connection) => {
@@ -71,9 +72,9 @@ export const getFilteredTemplates = (
     const hasDetailFilters = Object.entries(filters.detailFilters).every(([filterName, filterItems]) => {
       const templateManifestDetailValue = templateManifest.details?.[filterName];
       if (!templateManifestDetailValue) {
-        return true;
+        return false;
       }
-      return filterItems.some((filterItem) => templateManifestDetailValue.includes(filterItem.value));
+      return filterItems.some((filterItem) => filterItem.value === templateManifestDetailValue);
     });
     return hasDetailFilters;
   });

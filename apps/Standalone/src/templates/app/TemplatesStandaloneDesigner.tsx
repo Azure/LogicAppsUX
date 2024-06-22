@@ -189,6 +189,10 @@ export const TemplatesStandaloneDesigner = () => {
                   value: 'sql',
                   displayName: 'SQL',
                 },
+                {
+                  value: 'amazon',
+                  displayName: 'Amazon',
+                },
               ]}
               detailFilters={{
                 Trigger: [
