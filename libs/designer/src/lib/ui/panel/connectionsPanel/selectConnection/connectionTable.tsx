@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { getIdLeaf } from '@microsoft/logic-apps-shared';
+import { getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
@@ -57,6 +57,13 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   const onConnectionSelect = useCallback(
     (connection: Connection) => {
+      LoggerService().log({
+        area: 'ConnectionTable.onConnectionSelect',
+        args: [`new:${connection.id}`, `current:${currentConnectionId}`],
+        level: LogEntryLevel.Verbose,
+        message: 'Connection was selected.',
+      });
+
       if (areIdLeavesEqual(connection.id, currentConnectionId)) {
         cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
       } else {
@@ -145,11 +152,17 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
     (e: any, data: any) => {
       const index: number = data.selectedItems.values().next().value;
-      if (items[index]?.invalid) {
+      if (!items[index] || items[index].invalid) {
         return; // Don't allow selection of invalid connections (they are disabled)
       }
       const connection = connections.find((c) => items[index].id === c.id);
       if (!connection) {
+        LoggerService().log({
+          area: 'ConnectionTable.onSelectionChange',
+          args: [`index:${index}`, `expectedId:${items[index].id}`],
+          level: LogEntryLevel.Error,
+          message: 'A connection was selected but no matching ID was found.',
+        });
         return;
       }
       onConnectionSelect(connection);

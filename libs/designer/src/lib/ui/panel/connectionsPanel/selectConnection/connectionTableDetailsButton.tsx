@@ -3,6 +3,7 @@ import { MoreHorizontalFilled } from '@fluentui/react-icons';
 import type React from 'react';
 import { useIntl } from 'react-intl';
 import type { ConnectionWithFlattenedProperties } from './selectConnection.helpers';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 interface ConnectionTableDetailsButtonProps {
   connection: ConnectionWithFlattenedProperties;
@@ -39,7 +40,18 @@ export const ConnectionTableDetailsButton = (props: ConnectionTableDetailsButton
   });
 
   return (
-    <Popover positioning="before" withArrow={true}>
+    <Popover
+      onOpenChange={(_e, data) => {
+        LoggerService().log({
+          area: 'ConnectionTableDetailsButton.Popover.onOpenChange',
+          args: [`connection:${connection.id}`, `isOpen:${data.open}`],
+          level: LogEntryLevel.Verbose,
+          message: 'Details popover was toggled.',
+        });
+      }}
+      positioning="before"
+      withArrow={true}
+    >
       <PopoverTrigger disableButtonEnhancement={true}>
         <Button
           appearance="subtle"
