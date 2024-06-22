@@ -58,9 +58,14 @@ describe('ui/templates/templatesDesigner', () => {
     minimalStoreData = {
       manifest: {
         availableTemplateNames: ['template1', 'template2'],
+        filteredTemplateNames: ['template1', 'template2'],
         availableTemplates: {
           template1: template1Manifest,
           template2: template2Manifest,
+        },
+        filters: {
+          connectors: undefined,
+          detailFilters: {},
         },
       },
     };
