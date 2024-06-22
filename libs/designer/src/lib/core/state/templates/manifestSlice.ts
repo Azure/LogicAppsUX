@@ -10,7 +10,8 @@ export interface ManifestState {
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filteredTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
-    connectors?: FilterObject[];
+    keyword?: string;
+    connectors: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
 }
@@ -20,6 +21,7 @@ type ManifestName = string;
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
   filters: {
+    connectors: undefined,
     detailFilters: {},
   },
 };
@@ -63,11 +65,26 @@ export const manifestSlice = createSlice({
         state.filteredTemplates = action.payload;
       }
     },
-    setConnectorsFilters: (state, action: PayloadAction<FilterObject[]>) => {
+    setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
+      state.filters.keyword = action.payload;
+    },
+    setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
     },
-    setDetailsFilters: (state, action: PayloadAction<Record<string, FilterObject[]>>) => {
-      state.filters.detailFilters = action.payload;
+    setDetailsFilters: (
+      state,
+      action: PayloadAction<{
+        filterName: string;
+        filters: FilterObject[] | undefined;
+      }>
+    ) => {
+      const currentDetailFilters = { ...state.filters.detailFilters };
+      if (action.payload.filters) {
+        currentDetailFilters[action.payload.filterName] = action.payload.filters;
+      } else {
+        delete currentDetailFilters[action.payload.filterName];
+      }
+      state.filters.detailFilters = currentDetailFilters;
     },
   },
   extraReducers: (builder) => {
@@ -91,8 +108,14 @@ export const manifestSlice = createSlice({
   },
 });
 
-export const { setavailableTemplatesNames, setavailableTemplates, setFilteredTemplates, setConnectorsFilters, setDetailsFilters } =
-  manifestSlice.actions;
+export const {
+  setavailableTemplatesNames,
+  setavailableTemplates,
+  setFilteredTemplates,
+  setKeywordFilter,
+  setConnectorsFilters,
+  setDetailsFilters,
+} = manifestSlice.actions;
 export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {

@@ -1,6 +1,9 @@
 import { SearchBox } from '@fluentui/react';
 import { type FilterObject, TemplatesFilterPill } from '@microsoft/designer-ui';
+import type { AppDispatch } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
+import { setConnectorsFilters, setDetailsFilters, setKeywordFilter } from '../../../core/state/templates/manifestSlice';
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
@@ -8,6 +11,7 @@ export interface TemplateFiltersProps {
 }
 
 export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
   const intlText = {
@@ -29,14 +33,35 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
   };
 
   return (
-    <div className="msla-templates-detailFilters">
-      <div className="msla-templates-detailFilters-search">
-        <SearchBox placeholder={intlText.SEARCH} autoFocus={false} onChange={(_e, _newValue) => {}} />
+    <div className="msla-templates-filters">
+      <div className="msla-templates-filters-search">
+        <SearchBox
+          placeholder={intlText.SEARCH}
+          autoFocus={false}
+          onChange={(_e, newValue) => {
+            dispatch(setKeywordFilter(newValue));
+          }}
+        />
       </div>
-      <div className="msla-templates-detailFilters-pills">
-        {connectors && <TemplatesFilterPill filterName={intlText.CONNECTORS} items={connectors} onApplyButtonClick={() => {}} />}
+      <div className="msla-templates-filters-pills">
+        {connectors && (
+          <TemplatesFilterPill
+            filterName={intlText.CONNECTORS}
+            items={connectors}
+            onApplyButtonClick={(filterItems) => {
+              dispatch(setConnectorsFilters(filterItems));
+            }}
+          />
+        )}
         {Object.keys(detailFilters).map((filterName, index) => (
-          <TemplatesFilterPill key={index} filterName={filterName} items={detailFilters[filterName]} onApplyButtonClick={() => {}} />
+          <TemplatesFilterPill
+            key={index}
+            filterName={filterName}
+            items={detailFilters[filterName]}
+            onApplyButtonClick={(filterItems) => {
+              dispatch(setDetailsFilters({ filterName, filters: filterItems }));
+            }}
+          />
         ))}
       </div>
     </div>

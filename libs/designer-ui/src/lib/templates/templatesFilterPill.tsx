@@ -22,13 +22,13 @@ export interface FilterObject {
 interface TemplatesFilterPillProps {
   filterName: string;
   items: FilterObject[];
-  onApplyButtonClick: (_filterItems: FilterObject[]) => void;
+  onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
 }
 
 export const TemplatesFilterPill = ({ filterName, items, onApplyButtonClick }: TemplatesFilterPillProps) => {
   const intl = useIntl();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [selected, setSelected] = useState<FilterObject[]>([]);
+  const [selected, setSelected] = useState<FilterObject[] | undefined>();
 
   const intlText = {
     All: intl.formatMessage({
@@ -57,18 +57,16 @@ export const TemplatesFilterPill = ({ filterName, items, onApplyButtonClick }: T
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <Text className="msal-template-filter-pill-name">{filterName}:</Text>
-        {selected.length > 0
-          ? selected?.map((item, index) => `${item?.displayName}${index < selected.length - 1 ? ', ' : ''}`)
-          : intlText.All}
+        {selected ? selected.map((item, index) => `${item?.displayName}${index < selected.length - 1 ? ', ' : ''}`) : intlText.All}
       </ToggleButton>
       {isExpanded && (
         <div>
           <Checkbox
             label={intlText.All}
-            checked={selected.length === 0}
+            checked={!selected}
             onChange={(_, checked) => {
               if (checked) {
-                setSelected([]);
+                setSelected(undefined);
               }
             }}
           />
@@ -76,12 +74,12 @@ export const TemplatesFilterPill = ({ filterName, items, onApplyButtonClick }: T
             <Checkbox
               key={item.value}
               label={item.displayName}
-              checked={selected.some((i) => i.value === item.value)}
+              checked={selected?.some((i) => i.value === item.value)}
               onChange={(_, checked) => {
                 if (checked) {
-                  setSelected([...selected, item]);
+                  setSelected(selected ? [...selected, item] : [item]);
                 } else {
-                  setSelected(selected.filter((i) => i.value !== item.value));
+                  setSelected(selected?.filter((i) => i.value !== item.value));
                 }
               }}
             />
