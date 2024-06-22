@@ -3542,7 +3542,7 @@ export function parameterValueToString(
 }
 
 export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
-  return (expression?.type as ExpressionType) === ExpressionType.NullLiteral;
+  return (expression?.type as ExpressionType) !== ExpressionType.StringLiteral;
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
