@@ -16,8 +16,6 @@ import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
-import { FunctionConfigurationPopover } from '../components/functionConfigurationMenu/functionConfigurationPopover';
-import { Button, Popover, PopoverTrigger } from '@fluentui/react-components';
 import { CodeView } from '../components/codeView/CodeView';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 
