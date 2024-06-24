@@ -12,7 +12,7 @@ interface TemplateCardProps {
   templateName: string;
 }
 
-const maxConnectorsToShow = 5;
+const maxConnectorsToShow = 1;
 
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,7 +38,16 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const showOverflow = connectors.length > maxConnectorsToShow;
   const connectorsToShow = showOverflow ? connectors.slice(0, maxConnectorsToShow) : connectors;
   const overflowList = showOverflow ? connectors.slice(maxConnectorsToShow) : [];
-  const onRenderMenuItem = (item: IContextualMenuItem) => <ConnectorIconWithName connectorId={item.key} />;
+  const onRenderMenuItem = (item: IContextualMenuItem) => (
+    <ConnectorIconWithName
+      connectorId={item.key}
+      classes={{
+        root: 'msla-template-connector-menuitem',
+        icon: 'msla-template-connector-menuitem-icon',
+        text: 'msla-template-connector-menuitem-text',
+      }}
+    />
+  );
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
     items: overflowList.map((connector) => ({ key: connector.connectorId, text: connector.connectorId, onRender: onRenderMenuItem })),
