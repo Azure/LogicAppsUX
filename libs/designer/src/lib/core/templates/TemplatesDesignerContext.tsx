@@ -5,8 +5,10 @@ import type {
   IConnectionService,
   IFunctionService,
   IGatewayService,
+  ITenantService,
   ILoggerService,
   IOAuthService,
+  IWorkflowService,
 } from '@microsoft/logic-apps-shared';
 import { createContext } from 'react';
 
@@ -16,7 +18,9 @@ export interface TemplatesDesignerContext {
 
 export interface TemplateServiceOptions {
   connectionService: IConnectionService;
+  workflowService: IWorkflowService;
   gatewayService?: IGatewayService;
+  tenantService?: ITenantService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   apimService?: IApiManagementService;

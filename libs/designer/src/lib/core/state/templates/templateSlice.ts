@@ -5,11 +5,13 @@ import {
   InitConnectionService,
   InitFunctionService,
   InitGatewayService,
+  InitTenantService,
   InitOAuthService,
   getIntl,
   getRecordEntry,
   type LogicAppsV2,
   type Template,
+  InitWorkflowService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -28,6 +30,7 @@ interface TemplateData {
     validationErrors: Record<string, string | undefined>;
   };
   connections: Record<string, Template.Connection>;
+  images?: Record<string, any>;
 }
 
 export interface TemplateState extends TemplateData {
@@ -46,14 +49,17 @@ const initialState: TemplateState = {
   },
   connections: {},
   servicesInitialized: false,
+  images: {},
 };
 
 export const initializeTemplateServices = createAsyncThunk(
   'initializeTemplateServices',
   async ({
     connectionService,
+    workflowService,
     oAuthService,
     gatewayService,
+    tenantService,
     apimService,
     functionService,
     appServiceService,
@@ -61,9 +67,13 @@ export const initializeTemplateServices = createAsyncThunk(
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOAuthService(oAuthService);
+    InitWorkflowService(workflowService);
 
     if (gatewayService) {
       InitGatewayService(gatewayService);
+    }
+    if (tenantService) {
+      InitTenantService(tenantService);
     }
     if (apimService) {
       InitApiManagementService(apimService);
@@ -169,6 +179,7 @@ export const templateSlice = createSlice({
         state.manifest = action.payload.manifest;
         state.parameters = action.payload.parameters;
         state.connections = action.payload.connections;
+        state.images = action.payload.images;
       }
     });
 
@@ -207,6 +218,12 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
 
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
+
+    const images: Record<string, any> = {};
+    for (const key of Object.keys(templateManifest.images)) {
+      images[key] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images[key]}`)).default;
+    }
+
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -219,12 +236,13 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
+      kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},
       },
       connections: templateManifest.connections,
+      images,
     };
   } catch (ex) {
     console.error(ex);

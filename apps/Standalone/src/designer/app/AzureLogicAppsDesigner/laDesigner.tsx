@@ -32,6 +32,7 @@ import {
   BaseChatbotService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   StandardConnectionService,
   StandardConnectorService,
   StandardCustomCodeService,
@@ -599,6 +600,12 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    apiVersion: '2017-08-01',
+    httpClient,
+  });
+
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
     ...defaultServiceParams,
@@ -694,6 +701,7 @@ const getDesignerServices = (
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService: null,

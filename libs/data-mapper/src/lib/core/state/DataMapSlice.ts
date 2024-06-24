@@ -49,9 +49,9 @@ import {
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type {
-  FunctionMetadata,
+  FunctionMetadataV1,
   FunctionPositionMetadata,
-  MapMetadata,
+  MapMetadataV1,
   SchemaExtended,
   SchemaNodeDictionary,
   SchemaNodeExtended,
@@ -87,7 +87,7 @@ export interface DataMapOperationState {
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
-  loadedMapMetadata?: MapMetadata;
+  loadedMapMetadataV1?: MapMetadataV1;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -126,7 +126,7 @@ export interface InitialDataMapAction {
   sourceSchema: SchemaExtended;
   targetSchema: SchemaExtended;
   dataMapConnections: ConnectionDictionary;
-  metadata: MapMetadata | undefined;
+  metadata: MapMetadataV1 | undefined;
 }
 
 export interface ConnectionAction {
@@ -218,7 +218,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
         currentTargetSchemaNode: targetSchema.schemaTreeRoot,
-        loadedMapMetadata: metadata,
+        loadedMapMetadataV1: metadata,
       };
 
       state.curDataMapOperation = newState;
@@ -956,7 +956,7 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
 
 export const assignFunctionNodePositionsFromMetadata = (
   connections: ConnectionDictionary,
-  metadata: FunctionMetadata[],
+  metadata: FunctionMetadataV1[],
   functions: FunctionDictionary
 ) => {
   Object.keys(functions).forEach((key) => {
