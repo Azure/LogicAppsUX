@@ -26,6 +26,7 @@ import {
   tests,
   TestRunProfileKind,
 } from 'vscode';
+import { getUnitTestName } from '../../utils/unitTests';
 
 export type TestData = TestWorkspace | TestWorkflow | TestFile;
 
@@ -207,7 +208,6 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
  */
 const getOrCreateFile = async (controller: TestController, uri: Uri) => {
   const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
-  const testName = path.basename(uri.fsPath);
   const workflowName = path.basename(path.dirname(uri.fsPath));
 
   const existingWorkspaceTest = controller.items.get(workspaceName);
@@ -216,8 +216,11 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
     const existingWorkflowTest = existingWorkspaceTest.children.get(`${workspaceName}/${workflowName}`);
 
     if (existingWorkflowTest) {
-      const existingFileTest = existingWorkflowTest.children.get(`${workspaceName}/${workflowName}/${testName}`);
-      return { file: existingFileTest, data: ext.testData.get(existingFileTest) as TestFile };
+      const testName = getUnitTestName(uri.fsPath);
+      const unitTestFileName = path.basename(uri.fsPath);
+      const fileTestItem = controller.createTestItem(`${workspaceName}/${workflowName}/${unitTestFileName}`, testName, uri);
+      existingWorkflowTest.children.add(fileTestItem);
+      return {};
     }
     const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
     workflowTestItem.canResolveChildren = true;
