@@ -1,18 +1,23 @@
-import { Icon, TooltipHost } from '@fluentui/react';
 import type { DataGridProps, TableColumnDefinition, TableColumnSizingOptions } from '@fluentui/react-components';
 import {
+  createTableColumn,
   DataGrid,
   DataGridBody,
   DataGridCell,
   DataGridHeader,
   DataGridHeaderCell,
   DataGridRow,
-  createTableColumn,
+  PresenceBadge,
+  Text,
+  Tooltip,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { getConnectionErrors, getIdLeaf } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
+import type { ConnectionWithFlattenedProperties } from './selectConnection.helpers';
+import { compareFlattenedConnections, flattenConnection } from './selectConnection.helpers';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -27,34 +32,38 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const { connections, currentConnectionId, saveSelectionCallback, cancelSelectionCallback, isXrmConnectionReferenceMode } = props;
 
   const intl = useIntl();
+  const initiallySelectedConnectionId = useRef(currentConnectionId);
+
+  const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
+    return connection.id === initiallySelectedConnectionId.current;
+  };
 
   // We need to flatten the connection to allow the detail list access to nested props
   const items = useMemo(
     () =>
-      connections.map((connection) => {
-        const errors = getConnectionErrors(connection);
-        return {
-          ...connection,
-          ...connection.properties,
-          // 'invalid' being truthy is being used to determine whether the details list row is disabled
-          invalid:
-            errors.length > 0 ? (
-              <div className="msla-connection-error-icon-container">
-                <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
-                  <Icon iconName="Error" className="msla-connection-error-icon" styles={{ root: { color: '#e00202' } }} />
-                </TooltipHost>
-              </div>
-            ) : null,
-        };
+      connections.map(flattenConnection).sort((a, b) => {
+        if (isSelectedConnection(a)) {
+          return -1;
+        }
+        if (isSelectedConnection(b)) {
+          return 1;
+        }
+        return compareFlattenedConnections(a, b);
       }),
     [connections]
   );
-  type ConnectionWithFlattenedProperties = (typeof items)[0];
 
   const areIdLeavesEqual = (id1?: string, id2?: string): boolean => getIdLeaf(id1) === getIdLeaf(id2);
 
   const onConnectionSelect = useCallback(
     (connection: Connection) => {
+      LoggerService().log({
+        area: 'ConnectionTable.onConnectionSelect',
+        args: [`new:${connection.id}`, `current:${currentConnectionId}`],
+        level: LogEntryLevel.Verbose,
+        message: 'Connection was selected.',
+      });
+
       if (areIdLeavesEqual(connection.id, currentConnectionId)) {
         cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
       } else {
@@ -65,17 +74,30 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   );
 
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
-    createTableColumn<any>({
-      columnId: 'invalid',
+    createTableColumn({
+      columnId: 'status',
       renderHeaderCell: () =>
         intl.formatMessage({
-          defaultMessage: 'Invalid',
-          id: '7lvqST',
-          description: 'Column header for invalid connections',
+          defaultMessage: 'Status',
+          id: 'qxw9UO',
+          description: 'Column header for connection valid/invalid status',
         }),
-      renderCell: (item) => item.invalid,
+      renderCell: (item) => {
+        const statusText = item.invalid
+          ? [...new Set(item.statuses?.map((e) => e.error?.message).filter((m) => !!m))].join(', ')
+          : intl.formatMessage({
+              defaultMessage: 'Connected',
+              id: 'oOGTSo',
+              description: 'Connected text',
+            });
+        return (
+          <Tooltip content={statusText} relationship="label">
+            <PresenceBadge outOfOffice={!item.invalid && !isSelectedConnection(item)} status={item.invalid ? 'offline' : 'available'} />
+          </Tooltip>
+        );
+      },
     }),
-    createTableColumn<any>({
+    createTableColumn({
       columnId: 'displayName',
       renderHeaderCell: () =>
         intl.formatMessage({
@@ -83,63 +105,64 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
           id: 'tsmuoF',
           description: 'Column header for connection display name',
         }),
-      renderCell: (item) => item.displayName,
+      renderCell: (item) => {
+        const label = item.displayName;
+        const subLabel = item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name;
+        return (
+          <div className="msla-connection-row-display-name">
+            <Text block={true} className="msla-connection-row-display-name-label" size={300}>
+              {label}
+            </Text>
+            {subLabel && subLabel !== label ? (
+              <Text block={true} className="msla-connection-row-display-name-label" size={200}>
+                {subLabel}
+              </Text>
+            ) : null}
+          </div>
+        );
+      },
     }),
-    createTableColumn<any>({
-      columnId: 'name',
-      renderHeaderCell: () =>
-        isXrmConnectionReferenceMode
-          ? intl.formatMessage({
-              defaultMessage: 'Logical Name',
-              id: 'UIWX6p',
-              description: 'Column header for connection reference logical name',
-            })
-          : intl.formatMessage({
-              defaultMessage: 'Name',
-              id: 'T6VIym',
-              description: 'Column header for connection name',
-            }),
-      renderCell: (item) => item.name,
-    }),
-    createTableColumn<any>({
-      columnId: 'gateway',
+    createTableColumn({
+      columnId: 'details',
       renderHeaderCell: () =>
         intl.formatMessage({
-          defaultMessage: 'Gateway',
-          id: 'LvpxiA',
-          description: 'Column header for connection gateway',
+          defaultMessage: 'Details',
+          id: 'pH6ubt',
+          description: 'Column header for accessing connection-related details',
         }),
-      renderCell: (item) => item.gateway,
+      renderCell: (item) => <ConnectionTableDetailsButton connection={item} isXrmConnectionReferenceMode={isXrmConnectionReferenceMode} />,
     }),
   ];
 
   const columnSizingOptions: TableColumnSizingOptions = {
-    invalid: {
-      defaultWidth: 40,
-      idealWidth: 40,
+    status: {
+      defaultWidth: 36,
+      idealWidth: 36,
     },
     displayName: {
-      defaultWidth: 200,
-      idealWidth: 200,
+      defaultWidth: 420,
+      idealWidth: 420,
     },
-    name: {
-      defaultWidth: 120,
-      idealWidth: 120,
-    },
-    gateway: {
-      defaultWidth: 80,
-      idealWidth: 80,
+    details: {
+      defaultWidth: 48,
+      idealWidth: 48,
     },
   };
 
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
     (e: any, data: any) => {
-      const index = data.selectedItems.values().next().value;
-      if (items[index]?.invalid) {
+      const index: number = data.selectedItems.values().next().value;
+      if (!items[index] || items[index].invalid) {
         return; // Don't allow selection of invalid connections (they are disabled)
       }
-      const connection = connections[index];
+      const connection = connections.find((c) => items[index].id === c.id);
       if (!connection) {
+        LoggerService().log({
+          area: 'ConnectionTable.onSelectionChange',
+          args: [`index:${index}`, `expectedId:${items[index].id}`],
+          level: LogEntryLevel.Error,
+          message: 'A connection was selected but no matching ID was found.',
+        });
         return;
       }
       onConnectionSelect(connection);
@@ -153,6 +176,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   return (
     <DataGrid
+      className="msla-connection-table"
       items={items}
       columns={columns}
       selectionMode="single"
@@ -170,13 +194,13 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       <DataGridHeader>
         <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
       </DataGridHeader>
-      <DataGridBody<any>>
+      <DataGridBody<ConnectionWithFlattenedProperties>>
         {({ item, rowId }) => (
-          <DataGridRow<any>
+          <DataGridRow<ConnectionWithFlattenedProperties>
             key={rowId}
             selectionCell={{ 'aria-label': 'Select row' }}
             aria-disabled={!!item.invalid}
-            style={item.invalid && { opacity: 0.5 }}
+            style={item.invalid ? { opacity: 0.5 } : undefined}
           >
             {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
           </DataGridRow>
