@@ -11,6 +11,7 @@ import {
   getRecordEntry,
   type LogicAppsV2,
   type Template,
+  InitWorkflowService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -55,6 +56,7 @@ export const initializeTemplateServices = createAsyncThunk(
   'initializeTemplateServices',
   async ({
     connectionService,
+    workflowService,
     oAuthService,
     gatewayService,
     tenantService,
@@ -65,6 +67,7 @@ export const initializeTemplateServices = createAsyncThunk(
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOAuthService(oAuthService);
+    InitWorkflowService(workflowService);
 
     if (gatewayService) {
       InitGatewayService(gatewayService);
@@ -233,7 +236,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
+      kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},

@@ -1,7 +1,8 @@
+import { getExistingReferenceKey } from '../../utils/connectors/connections';
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
-import { LogEntryLevel, LoggerService, deepCompareObjects, equals, getUniqueName } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, getUniqueName } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -29,15 +30,7 @@ export const connectionSlice = createSlice({
     },
     changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
       const { nodeId, connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = action.payload;
-      const existingReferenceKey = Object.keys(state.connectionReferences).find((referenceKey) => {
-        const reference = state.connectionReferences[referenceKey];
-        return (
-          equals(reference.api.id, connectorId) &&
-          equals(reference.connection.id, connectionId) &&
-          equals(reference.connectionRuntimeUrl ?? '', connectionRuntimeUrl ?? '') &&
-          deepCompareObjects(reference.connectionProperties, connectionProperties)
-        );
-      });
+      const existingReferenceKey = getExistingReferenceKey(state.connectionReferences, action.payload);
 
       if (existingReferenceKey) {
         state.connectionsMapping[nodeId] = existingReferenceKey;

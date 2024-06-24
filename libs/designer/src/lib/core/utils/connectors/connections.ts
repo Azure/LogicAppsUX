@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { ConnectionReference } from '../../../common/models/workflow';
+import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
@@ -18,6 +18,7 @@ import {
   getResourceName,
   getRecordEntry,
   getPropertyValue,
+  deepCompareObjects,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -28,6 +29,7 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
+import type { UpdateConnectionPayload } from '../../../core/actions/bjsworkflow/connections';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   return getConnectionReference(state, nodeId)?.connection?.id ?? '';
@@ -64,6 +66,19 @@ export async function isConnectionReferenceValid(
   } catch (error: any) {
     return false;
   }
+}
+
+export function getExistingReferenceKey(allReferences: ConnectionReferences, connectionData: UpdateConnectionPayload): string | undefined {
+  const { connectionId, connectorId, connectionProperties, connectionRuntimeUrl } = connectionData;
+  return Object.keys(allReferences).find((referenceKey) => {
+    const reference = allReferences[referenceKey];
+    return (
+      equals(reference.api.id, connectorId) &&
+      equals(reference.connection.id, connectionId) &&
+      equals(reference.connectionRuntimeUrl ?? '', connectionRuntimeUrl ?? '') &&
+      deepCompareObjects(reference.connectionProperties, connectionProperties)
+    );
+  });
 }
 
 export function getAssistedConnectionProps(connector: Connector, manifest?: OperationManifest): AssistedConnectionProps | undefined {

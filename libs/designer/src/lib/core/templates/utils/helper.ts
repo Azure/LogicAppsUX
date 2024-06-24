@@ -36,3 +36,18 @@ export const normalizeConnectorId = (connectorId: string, subscriptionId: string
   const result = connectorId.replaceAll('#subscription#', subscriptionId);
   return result.replaceAll('#location#', location);
 };
+
+export const getConnectorResources = (intl: IntlShape) => {
+  return {
+    connected: intl.formatMessage({
+      defaultMessage: 'Connected',
+      id: 'oOGTSo',
+      description: 'Connected text',
+    }),
+    notConnected: intl.formatMessage({
+      defaultMessage: 'Not Connected',
+      id: '3HrFPS',
+      description: 'Not Connected text',
+    }),
+  };
+};

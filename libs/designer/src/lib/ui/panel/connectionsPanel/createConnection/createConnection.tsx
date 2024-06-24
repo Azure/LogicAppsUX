@@ -64,6 +64,7 @@ export interface CreateConnectionProps {
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
+  showActionBar?: boolean;
   errorMessage?: string;
   clearErrorCallback?: () => void;
   selectSubscriptionCallback?: (subscriptionId: string) => void;
@@ -78,6 +79,7 @@ export interface CreateConnectionProps {
 export const CreateConnection = (props: CreateConnectionProps) => {
   const {
     nodeIds = [],
+    showActionBar = true,
     iconUri = '',
     connector,
     connectionParameterSets: _connectionParameterSets,
@@ -572,7 +574,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   return (
     <div className="msla-edit-connection-container">
-      <ActionList nodeIds={nodeIds} iconUri={iconUri} />
+      {showActionBar ? <ActionList nodeIds={nodeIds} iconUri={iconUri} /> : null}
       <Divider />
 
       <Body1Strong>{componentDescription}</Body1Strong>

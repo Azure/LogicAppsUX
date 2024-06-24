@@ -6,7 +6,7 @@ export interface Manifest {
   title: string;
   description: string;
   skus: SkuType[];
-  kinds: WorkflowKindType[];
+  kinds?: WorkflowKindType[];
   details: Record<string, string>;
   tags?: string[];
   artifacts: Artifact[];
