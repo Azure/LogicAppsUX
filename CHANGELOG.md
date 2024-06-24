@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.25.2](https://github.com/Azure/LogicAppsUX/compare/v4.25.1...v4.25.2) (2024-06-24)
+
+
+### Bug Fixes
+
+* **vscode:** Fix dotnet versions and local settings overwrite ([#5016](https://github.com/Azure/LogicAppsUX/issues/5016)) ([4a136af](https://github.com/Azure/LogicAppsUX/commit/4a136af475d02ac9adf277f2cd914085522ab681)), closes [#4983](https://github.com/Azure/LogicAppsUX/issues/4983) [#5014](https://github.com/Azure/LogicAppsUX/issues/5014)
+
 ### [4.25.1](https://github.com/Azure/LogicAppsUX/compare/v4.25.0...v4.25.1) (2024-06-10)
 
 
