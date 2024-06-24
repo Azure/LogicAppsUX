@@ -18,5 +18,5 @@ export interface IBundleDependencyFeed {
   dotnet?: string;
   funcCoreTools?: string;
   nodejs?: string;
-  dotnetMulti?: string;
+  dotnetVersions?: string;
 }
