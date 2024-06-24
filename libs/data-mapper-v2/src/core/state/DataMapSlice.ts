@@ -25,7 +25,7 @@ import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { addFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
+import { greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { Node, Edge, XYPosition } from 'reactflow';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 
@@ -60,291 +60,98 @@ export interface DataMapOperationState {
 }
 
 const mockConnections: ConnectionDictionary = {
-    'abcsdfasdf': {
-      self: {
-        node: {
-          key: 'Add',
-          maxNumberOfInputs: -1,
-          functionName: 'add',
-          outputValueType: 'Any',
-          inputs: [
-            {
-              name: 'Summand',
-              allowedTypes: [
-                'Any'
-              ],
-              isOptional: false,
-              allowCustomInput: true,
-              placeHolder: 'The numbers to add.'
-            }
-          ],
-          displayName: 'Add',
-          category: 'Math',
-          description: 'Returns the sum from two or more numbers.',
-          children: [],
-          isNewNode: true,
-        },
-        reactFlowKey: 'Add-51AFB810-AC38-4E36-8C93-772CA03216D7'
-      },
-      inputs: {
-   
-      },
-      outputs: []
-    },
-    'abc': {
-      self: {
-        node: {
-          key: 'Add',
-          maxNumberOfInputs: -1,
-          functionName: 'add',
-          outputValueType: 'Any',
-          inputs: [
-            {
-              name: 'Summand',
-              allowedTypes: [
-                'Any'
-              ],
-              isOptional: false,
-              allowCustomInput: true,
-              placeHolder: 'The numbers to add.',
-              //inputEntryType: 'NotSpecified'
-            }
-          ],
-          displayName: 'Add',
-          category: 'Math',
-          //iconFileName: 'dm_category_math.svg',
-          description: 'Returns the sum from two or more numbers.',
-          children: [],
-          isNewNode: true
-        },
-        reactFlowKey: 'Add-026E7C3F-3602-48BD-A6D1-3923C2F1CDE1'
-      },
-      inputs: {
-        '0': [
+  abcsdfasdf: {
+    self: {
+      node: {
+        key: 'Add',
+        maxNumberOfInputs: -1,
+        functionName: 'add',
+        outputValueType: 'Any',
+        inputs: [
           {
-            reactFlowKey: 'source-/ns0:Root/DirectTranslation/EmployeeID',
-            node: {
-              key: '/ns0:Root/DirectTranslation/EmployeeID',
-              name: 'EmployeeID',
-              type: 'Decimal',
-              properties: 'None',
-              qName: 'EmployeeID',
-              parentKey: '/ns0:Root/DirectTranslation',
-              nodeProperties: [
-                'None'
-              ],
-              children: [],
-              pathToRoot: [
-                {
-                  key: '/ns0:Root',
-                  name: 'Root',
-                  qName: 'ns0:Root',
-                  repeating: false
-                },
-                {
-                  key: '/ns0:Root/DirectTranslation',
-                  name: 'DirectTranslation',
-                  qName: 'DirectTranslation',
-                  repeating: false
-                },
-                {
-                  key: '/ns0:Root/DirectTranslation/EmployeeID',
-                  name: 'EmployeeID',
-                  qName: 'EmployeeID',
-                  repeating: false
-                }
-              ],
-            }
+            name: 'Summand',
+            allowedTypes: ['Any'],
+            isOptional: false,
+            allowCustomInput: true,
+            placeHolder: 'The numbers to add.',
           },
         ],
+        displayName: 'Add',
+        category: 'Math',
+        description: 'Returns the sum from two or more numbers.',
+        children: [],
+        isNewNode: true,
       },
-      outputs: [
+      reactFlowKey: 'Add-51AFB810-AC38-4E36-8C93-772CA03216D7',
+    },
+    inputs: {},
+    outputs: [],
+  },
+  abc: {
+    self: {
+      node: {
+        key: 'Add',
+        maxNumberOfInputs: -1,
+        functionName: 'add',
+        outputValueType: 'Any',
+        inputs: [
+          {
+            name: 'Summand',
+            allowedTypes: ['Any'],
+            isOptional: false,
+            allowCustomInput: true,
+            placeHolder: 'The numbers to add.',
+            //inputEntryType: 'NotSpecified'
+          },
+        ],
+        displayName: 'Add',
+        category: 'Math',
+        //iconFileName: 'dm_category_math.svg',
+        description: 'Returns the sum from two or more numbers.',
+        children: [],
+        isNewNode: true,
+      },
+      reactFlowKey: 'Add-026E7C3F-3602-48BD-A6D1-3923C2F1CDE1',
+    },
+    inputs: {
+      '0': [
         {
+          reactFlowKey: 'source-/ns0:Root/DirectTranslation/EmployeeID',
           node: {
-            key: '/ns0:Root/DirectTranslation/Employee',
-            name: 'Employee',
-            type: 'Complex',
+            key: '/ns0:Root/DirectTranslation/EmployeeID',
+            name: 'EmployeeID',
+            type: 'Decimal',
             properties: 'None',
-            children: [
-              {
-                key: '/ns0:Root/DirectTranslation/Employee/ID',
-                name: 'ID',
-                type: 'Decimal',
-                properties: 'None',
-                qName: 'ID',
-                parentKey: '/ns0:Root/DirectTranslation/Employee',
-                nodeProperties: [
-                  'None'
-                ],
-                children: [],
-                pathToRoot: [
-                  {
-                    key: '/ns0:Root',
-                    name: 'Root',
-                    qName: 'ns0:Root',
-                    repeating: false
-                  },
-                  {
-                    key: '/ns0:Root/DirectTranslation',
-                    name: 'DirectTranslation',
-                    qName: 'DirectTranslation',
-                    repeating: false
-                  },
-                  {
-                    key: '/ns0:Root/DirectTranslation/Employee',
-                    name: 'Employee',
-                    qName: 'Employee',
-                    repeating: false
-                  },
-                  {
-                    key: '/ns0:Root/DirectTranslation/Employee/ID',
-                    name: 'ID',
-                    qName: 'ID',
-                    repeating: false
-                  }
-                ],
-              },
-              {
-                key: '/ns0:Root/DirectTranslation/Employee/Name',
-                name: 'Name',
-                type: 'String',
-                properties: 'None',
-                qName: 'Name',
-                parentKey: '/ns0:Root/DirectTranslation/Employee',
-                nodeProperties: [
-                  'None'
-                ],
-                children: [],
-                pathToRoot: [
-                  {
-                    key: '/ns0:Root',
-                    name: 'Root',
-                    qName: 'ns0:Root',
-                    repeating: false
-                  },
-                  {
-                    key: '/ns0:Root/DirectTranslation',
-                    name: 'DirectTranslation',
-                    qName: 'DirectTranslation',
-                    repeating: false
-                  },
-                  {
-                    key: '/ns0:Root/DirectTranslation/Employee',
-                    name: 'Employee',
-                    qName: 'Employee',
-                    repeating: false
-                  },
-                  {
-                    key: '/ns0:Root/DirectTranslation/Employee/Name',
-                    name: 'Name',
-                    qName: 'Name',
-                    repeating: false
-                  }
-                ]
-              }
-            ],
-            qName: 'Employee',
+            qName: 'EmployeeID',
             parentKey: '/ns0:Root/DirectTranslation',
-            nodeProperties: [
-              'None'
-            ],
+            nodeProperties: ['None'],
+            children: [],
             pathToRoot: [
               {
                 key: '/ns0:Root',
                 name: 'Root',
                 qName: 'ns0:Root',
-                repeating: false
+                repeating: false,
               },
               {
                 key: '/ns0:Root/DirectTranslation',
                 name: 'DirectTranslation',
                 qName: 'DirectTranslation',
-                repeating: false
+                repeating: false,
               },
               {
-                key: '/ns0:Root/DirectTranslation/Employee',
-                name: 'Employee',
-                qName: 'Employee',
-                repeating: false
-              }
-            ]
-          },
-          reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee'
-        }
-      ]
-    },
-    'source-/ns0:Root/DirectTranslation/EmployeeID': {
-      self: {
-        node: {
-          key: '/ns0:Root/DirectTranslation/EmployeeID',
-          name: 'EmployeeID',
-          type: 'Decimal',
-          properties: 'None',
-          qName: 'EmployeeID',
-          parentKey: '/ns0:Root/DirectTranslation',
-          nodeProperties: [
-            'None'
-          ],
-          children: [],
-          pathToRoot: [
-            {
-              key: '/ns0:Root',
-              name: 'Root',
-              qName: 'ns0:Root',
-              repeating: false
-            },
-            {
-              key: '/ns0:Root/DirectTranslation',
-              name: 'DirectTranslation',
-              qName: 'DirectTranslation',
-              repeating: false
-            },
-            {
-              key: '/ns0:Root/DirectTranslation/EmployeeID',
-              name: 'EmployeeID',
-              qName: 'EmployeeID',
-              repeating: false
-            }
-          ]
-        },
-        reactFlowKey: 'source-/ns0:Root/DirectTranslation/EmployeeID'
-      },
-      inputs: {
-        '0': []
-      },
-      outputs: [
-        {
-          node: {
-            key: 'Add',
-            maxNumberOfInputs: -1,
-            functionName: 'add',
-            outputValueType: 'Any',
-            inputs: [
-              {
-                name: 'Summand',
-                allowedTypes: [
-                  'Any'
-                ],
-                isOptional: false,
-                allowCustomInput: true,
-                placeHolder: 'The numbers to add.',
-                //inputEntryType: 'NotSpecified'
-              }
+                key: '/ns0:Root/DirectTranslation/EmployeeID',
+                name: 'EmployeeID',
+                qName: 'EmployeeID',
+                repeating: false,
+              },
             ],
-            displayName: 'Add',
-            category: 'Math',
-            //iconFileName: 'dm_category_math.svg',
-            description: 'Returns the sum from two or more numbers.',
-            children: [],
-            isNewNode: true,
-            
           },
-          reactFlowKey: 'Add-026E7C3F-3602-48BD-A6D1-3923C2F1CDE1'
-        }
-      ]
+        },
+      ],
     },
-    'target-/ns0:Root/DirectTranslation/Employee': {
-      self: {
+    outputs: [
+      {
         node: {
           key: '/ns0:Root/DirectTranslation/Employee',
           name: 'Employee',
@@ -358,36 +165,34 @@ const mockConnections: ConnectionDictionary = {
               properties: 'None',
               qName: 'ID',
               parentKey: '/ns0:Root/DirectTranslation/Employee',
-              nodeProperties: [
-                'None'
-              ],
+              nodeProperties: ['None'],
               children: [],
               pathToRoot: [
                 {
                   key: '/ns0:Root',
                   name: 'Root',
                   qName: 'ns0:Root',
-                  repeating: false
+                  repeating: false,
                 },
                 {
                   key: '/ns0:Root/DirectTranslation',
                   name: 'DirectTranslation',
                   qName: 'DirectTranslation',
-                  repeating: false
+                  repeating: false,
                 },
                 {
                   key: '/ns0:Root/DirectTranslation/Employee',
                   name: 'Employee',
                   qName: 'Employee',
-                  repeating: false
+                  repeating: false,
                 },
                 {
                   key: '/ns0:Root/DirectTranslation/Employee/ID',
                   name: 'ID',
                   qName: 'ID',
-                  repeating: false
-                }
-              ]
+                  repeating: false,
+                },
+              ],
             },
             {
               key: '/ns0:Root/DirectTranslation/Employee/Name',
@@ -396,111 +201,275 @@ const mockConnections: ConnectionDictionary = {
               properties: 'None',
               qName: 'Name',
               parentKey: '/ns0:Root/DirectTranslation/Employee',
-              nodeProperties: [
-                'None'
-              ],
+              nodeProperties: ['None'],
               children: [],
               pathToRoot: [
                 {
                   key: '/ns0:Root',
                   name: 'Root',
                   qName: 'ns0:Root',
-                  repeating: false
+                  repeating: false,
                 },
                 {
                   key: '/ns0:Root/DirectTranslation',
                   name: 'DirectTranslation',
                   qName: 'DirectTranslation',
-                  repeating: false
+                  repeating: false,
                 },
                 {
                   key: '/ns0:Root/DirectTranslation/Employee',
                   name: 'Employee',
                   qName: 'Employee',
-                  repeating: false
+                  repeating: false,
                 },
                 {
                   key: '/ns0:Root/DirectTranslation/Employee/Name',
                   name: 'Name',
                   qName: 'Name',
-                  repeating: false
-                }
-              ]
-            }
+                  repeating: false,
+                },
+              ],
+            },
           ],
           qName: 'Employee',
           parentKey: '/ns0:Root/DirectTranslation',
-          nodeProperties: [
-            'None'
-          ],
+          nodeProperties: ['None'],
           pathToRoot: [
             {
               key: '/ns0:Root',
               name: 'Root',
               qName: 'ns0:Root',
-              repeating: false
+              repeating: false,
             },
             {
               key: '/ns0:Root/DirectTranslation',
               name: 'DirectTranslation',
               qName: 'DirectTranslation',
-              repeating: false
+              repeating: false,
             },
             {
               key: '/ns0:Root/DirectTranslation/Employee',
               name: 'Employee',
               qName: 'Employee',
-              repeating: false
-            }
-          ]
+              repeating: false,
+            },
+          ],
         },
-        reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee'
+        reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee',
       },
-      inputs: {
-        '0': [
+    ],
+  },
+  'source-/ns0:Root/DirectTranslation/EmployeeID': {
+    self: {
+      node: {
+        key: '/ns0:Root/DirectTranslation/EmployeeID',
+        name: 'EmployeeID',
+        type: 'Decimal',
+        properties: 'None',
+        qName: 'EmployeeID',
+        parentKey: '/ns0:Root/DirectTranslation',
+        nodeProperties: ['None'],
+        children: [],
+        pathToRoot: [
           {
-            reactFlowKey: 'Add-026E7C3F-3602-48BD-A6D1-3923C2F1CDE1',
-            node: {
-              key: 'Add',
-              maxNumberOfInputs: -1,
-              functionName: 'add',
-              outputValueType: 'Any',
-              inputs: [
-                {
-                  name: 'Summand',
-                  allowedTypes: [
-                    'Any'
-                  ],
-                  isOptional: false,
-                  allowCustomInput: true,
-                  placeHolder: 'The numbers to add.'
-                  //inputEntryType: 'NotSpecified'
-                }
-              ],
-              displayName: 'Add',
-              category: 'Math',
-              //iconFileName: 'dm_category_math.svg',
-              description: 'Returns the sum from two or more numbers.',
-              children: [],
-              isNewNode: true,
-          }
-        }
-        ]
-      
+            key: '/ns0:Root',
+            name: 'Root',
+            qName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation',
+            name: 'DirectTranslation',
+            qName: 'DirectTranslation',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation/EmployeeID',
+            name: 'EmployeeID',
+            qName: 'EmployeeID',
+            repeating: false,
+          },
+        ],
       },
-      outputs: []
-    }
-  };
-
+      reactFlowKey: 'source-/ns0:Root/DirectTranslation/EmployeeID',
+    },
+    inputs: {
+      '0': [],
+    },
+    outputs: [
+      {
+        node: {
+          key: 'Add',
+          maxNumberOfInputs: -1,
+          functionName: 'add',
+          outputValueType: 'Any',
+          inputs: [
+            {
+              name: 'Summand',
+              allowedTypes: ['Any'],
+              isOptional: false,
+              allowCustomInput: true,
+              placeHolder: 'The numbers to add.',
+              //inputEntryType: 'NotSpecified'
+            },
+          ],
+          displayName: 'Add',
+          category: 'Math',
+          //iconFileName: 'dm_category_math.svg',
+          description: 'Returns the sum from two or more numbers.',
+          children: [],
+          isNewNode: true,
+        },
+        reactFlowKey: 'Add-026E7C3F-3602-48BD-A6D1-3923C2F1CDE1',
+      },
+    ],
+  },
+  'target-/ns0:Root/DirectTranslation/Employee': {
+    self: {
+      node: {
+        key: '/ns0:Root/DirectTranslation/Employee',
+        name: 'Employee',
+        type: 'Complex',
+        properties: 'None',
+        children: [
+          {
+            key: '/ns0:Root/DirectTranslation/Employee/ID',
+            name: 'ID',
+            type: 'Decimal',
+            properties: 'None',
+            qName: 'ID',
+            parentKey: '/ns0:Root/DirectTranslation/Employee',
+            nodeProperties: ['None'],
+            children: [],
+            pathToRoot: [
+              {
+                key: '/ns0:Root',
+                name: 'Root',
+                qName: 'ns0:Root',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation',
+                name: 'DirectTranslation',
+                qName: 'DirectTranslation',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation/Employee',
+                name: 'Employee',
+                qName: 'Employee',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation/Employee/ID',
+                name: 'ID',
+                qName: 'ID',
+                repeating: false,
+              },
+            ],
+          },
+          {
+            key: '/ns0:Root/DirectTranslation/Employee/Name',
+            name: 'Name',
+            type: 'String',
+            properties: 'None',
+            qName: 'Name',
+            parentKey: '/ns0:Root/DirectTranslation/Employee',
+            nodeProperties: ['None'],
+            children: [],
+            pathToRoot: [
+              {
+                key: '/ns0:Root',
+                name: 'Root',
+                qName: 'ns0:Root',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation',
+                name: 'DirectTranslation',
+                qName: 'DirectTranslation',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation/Employee',
+                name: 'Employee',
+                qName: 'Employee',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/DirectTranslation/Employee/Name',
+                name: 'Name',
+                qName: 'Name',
+                repeating: false,
+              },
+            ],
+          },
+        ],
+        qName: 'Employee',
+        parentKey: '/ns0:Root/DirectTranslation',
+        nodeProperties: ['None'],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            qName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation',
+            name: 'DirectTranslation',
+            qName: 'DirectTranslation',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/DirectTranslation/Employee',
+            name: 'Employee',
+            qName: 'Employee',
+            repeating: false,
+          },
+        ],
+      },
+      reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee',
+    },
+    inputs: {
+      '0': [
+        {
+          reactFlowKey: 'Add-026E7C3F-3602-48BD-A6D1-3923C2F1CDE1',
+          node: {
+            key: 'Add',
+            maxNumberOfInputs: -1,
+            functionName: 'add',
+            outputValueType: 'Any',
+            inputs: [
+              {
+                name: 'Summand',
+                allowedTypes: ['Any'],
+                isOptional: false,
+                allowCustomInput: true,
+                placeHolder: 'The numbers to add.',
+                //inputEntryType: 'NotSpecified'
+              },
+            ],
+            displayName: 'Add',
+            category: 'Math',
+            //iconFileName: 'dm_category_math.svg',
+            description: 'Returns the sum from two or more numbers.',
+            children: [],
+            isNewNode: true,
+          },
+        },
+      ],
+    },
+    outputs: [],
+  },
+};
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: mockConnections,
   dataMapLML: '',
   currentSourceSchemaNodes: [],
   functionNodes: {
-    abc: 
-       greaterThanFunction
-  ,
+    abc: greaterThanFunction,
   },
   flattenedSourceSchema: {},
   sourceSchemaOrdering: [],
@@ -779,6 +748,30 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = newState;
     },
+
+    deleteFunction: (state, action: PayloadAction<string>) => {
+      const reactFlowKey = action.payload;
+      const currentDataMap = state.curDataMapOperation;
+      const functionNode = currentDataMap.functionNodes[reactFlowKey];
+      const newFunctionsState = { ...currentDataMap.functionNodes };
+      if (functionNode) {
+        delete newFunctionsState[reactFlowKey];
+
+        const newConnections = deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
+
+        doDataMapOperation(
+          state,
+          {
+            ...currentDataMap,
+            functionNodes: newFunctionsState,
+            dataMapConnections: newConnections,
+          },
+          'Delete function by key'
+        );
+        return;
+      }
+    },
+
     updateReactFlowEdges: (state, action: PayloadAction<Edge[]>) => {
       const currentState = state.curDataMapOperation;
       const newState = {
@@ -829,6 +822,7 @@ export const {
   saveDataMap,
   setConnectionInput,
   addFunctionNode,
+  deleteFunction,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

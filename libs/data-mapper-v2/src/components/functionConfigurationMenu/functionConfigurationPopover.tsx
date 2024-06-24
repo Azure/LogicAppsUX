@@ -13,53 +13,47 @@ import {
   TableCellLayout,
   Caption1,
   Dropdown,
-} from "@fluentui/react-components";
-import { useStyles } from "./styles";
-import {
-  AddRegular,
-  DeleteRegular,
-  ReOrderRegular,
-} from "@fluentui/react-icons";
-import { useState } from "react";
-import type { RootState } from "../../core/state/Store";
-import { useDispatch, useSelector } from "react-redux";
-import type { FunctionData } from "../../models";
-import { UnboundedInput } from "../../constants/FunctionConstants";
-import type { InputConnection } from "../../models/Connection";
-import { setConnectionInput } from "../../core/state/DataMapSlice";
-import { isSchemaNodeExtended } from "../../utils";
+} from '@fluentui/react-components';
+import { useStyles } from './styles';
+import { AddRegular, DeleteRegular, ReOrderRegular } from '@fluentui/react-icons';
+import { useState } from 'react';
+import type { RootState } from '../../core/state/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { FunctionData } from '../../models';
+import { UnboundedInput } from '../../constants/FunctionConstants';
+import type { InputConnection } from '../../models/Connection';
+import { deleteFunction, setConnectionInput } from '../../core/state/DataMapSlice';
+import { isSchemaNodeExtended } from '../../utils';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
 }
 
-type TabTypes = "input" | "output" | "description";
+type TabTypes = 'input' | 'output' | 'description';
 
-export const FunctionConfigurationPopover = (
-  props: FunctionConfigurationPopoverProps
-) => {
-  const funcBoth = useSelector((state: RootState) => {
-    return state.dataMap.present.curDataMapOperation.functionNodes[
-      props.functionId
-    ];
-  });
-
-  const func = funcBoth;
-
+export const FunctionConfigurationPopover = (props: FunctionConfigurationPopoverProps) => {
+  const dispatch = useDispatch();
   const styles = useStyles();
-  const [selectedTab, setSelectedTab] = useState<TabTypes>("input");
+  const [selectedTab, setSelectedTab] = useState<TabTypes>('input');
+  const func = useSelector((state: RootState) => {
+    return state.dataMap.present.curDataMapOperation.functionNodes[props.functionId];
+  });
 
   const tab = (selectedTab: string) => {
     switch (selectedTab) {
-      case "input":
+      case 'input':
         return <InputTabContents func={func} functionKey={props.functionId} />;
-      case "output":
+      case 'output':
         return <OutputTabContents func={func} functionId={props.functionId} />;
-      case "description":
+      case 'description':
         return <DetailsTabContents func={func} />;
       default:
         return null;
     }
+  };
+
+  const onDeleteClick = () => {
+    dispatch(deleteFunction(props.functionId));
   };
 
   return (
@@ -71,12 +65,11 @@ export const FunctionConfigurationPopover = (
             className={styles.deleteButton}
             appearance="transparent"
             size="small"
+            onClick={onDeleteClick}
             icon={<DeleteRegular className={styles.deleteIcon} />}
           />
         </div>
-        <TabList
-          onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}
-        >
+        <TabList onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
           <Tab value="description">Details</Tab>
           <Tab value="input">Input</Tab>
           <Tab value="output">Output</Tab>
@@ -99,23 +92,17 @@ const InputTabContents = (props: {
   functionKey: string;
 }) => {
   const columns = [
-    { columnKey: "input", label: "Input" },
-    { columnKey: "name", label: "Name" },
-    { columnKey: "types", label: "Accepted Types" },
+    { columnKey: 'input', label: 'Input' },
+    { columnKey: 'name', label: 'Name' },
+    { columnKey: 'types', label: 'Accepted Types' },
   ];
   const styles = useStyles();
   const inputs = props.func.inputs;
   const dispatch = useDispatch();
 
-  const connections = useSelector(
-    (state: RootState) =>
-      state.dataMap.present.curDataMapOperation.dataMapConnections
-  );
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
-  const updateInput = (
-    inputIndex: number,
-    newValue: InputConnection | null
-  ) => {
+  const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
     const targetNodeReactFlowKey = props.functionKey;
     dispatch(
       setConnectionInput({
@@ -127,11 +114,11 @@ const InputTabContents = (props: {
     );
   };
 
-  let table = <div>ABC</div>;
+  let table: JSX.Element;
 
   if (props.func.maxNumberOfInputs !== UnboundedInput) {
     const functionConnection = connections[props.functionKey];
-    table = props.func.inputs.map((input, index) => {
+    const tableContents = props.func.inputs.map((input, index) => {
       const inputConnection = functionConnection
         ? Object.values(functionConnection.inputs).length > 1
           ? functionConnection.inputs[index][0]
@@ -142,33 +129,29 @@ const InputTabContents = (props: {
       // }
       return (
         <div key={index}>
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <Caption1>{input.name}</Caption1>
             <Caption1>{input.allowedTypes}</Caption1>
           </div>
-          {inputConnection !== undefined &&
-            typeof inputConnection !== "string" && (
-              <div>
-                <Caption1>
-                  {isSchemaNodeExtended(inputConnection.node)
-                    ? inputConnection.node.name
-                    : inputConnection.node.displayName}
-                </Caption1>
-                <Caption1>Type</Caption1>
-              </div>
-            )}
+          {inputConnection !== undefined && typeof inputConnection !== 'string' && (
+            <div>
+              <Caption1>
+                {isSchemaNodeExtended(inputConnection.node) ? inputConnection.node.name : inputConnection.node.displayName}
+              </Caption1>
+              <Caption1>Type</Caption1>
+            </div>
+          )}
         </div>
       );
     });
-  } else
+    table = <div>{tableContents}</div>;
+  } else {
     table = (
       <Table size="extra-small">
         <TableHeader>
           <TableRow>
             {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey}>
-                {column.label}
-              </TableHeaderCell>
+              <TableHeaderCell key={column.columnKey}>{column.label}</TableHeaderCell>
             ))}
           </TableRow>
         </TableHeader>
@@ -184,17 +167,12 @@ const InputTabContents = (props: {
                 <TableCellLayout>{input.name}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>
-                  {input.allowedTypes.join(", ")}
-                </TableCellLayout>
+                <TableCellLayout>{input.allowedTypes.join(', ')}</TableCellLayout>
               </TableCell>
               {props.func.maxNumberOfInputs === UnboundedInput && (
                 <TableCell>
                   <TableCellLayout>
-                    <Button
-                      appearance="transparent"
-                      icon={<ReOrderRegular />}
-                    />
+                    <Button appearance="transparent" icon={<ReOrderRegular />} />
                   </TableCellLayout>
                 </TableCell>
               )}
@@ -203,6 +181,7 @@ const InputTabContents = (props: {
         </TableBody>
       </Table>
     );
+  }
   const addInput = (
     <Button
       icon={<AddRegular className={styles.addIcon} />}
@@ -215,8 +194,7 @@ const InputTabContents = (props: {
   );
   return (
     <div>
-      <div>{table}</div>{" "}
-      {props.func.maxNumberOfInputs === UnboundedInput && addInput}
+      <div>{table}</div> {props.func.maxNumberOfInputs === UnboundedInput && addInput}
     </div>
   );
 };
@@ -227,13 +205,10 @@ const OutputTabContents = (props: {
 }) => {
   // const outputType = func.outputValueType;
   const columns = [
-    { columnKey: "destination", label: "Destination" },
-    { columnKey: "type", label: "Output Type" },
+    { columnKey: 'destination', label: 'Destination' },
+    { columnKey: 'type', label: 'Output Type' },
   ];
-  const connections = useSelector(
-    (state: RootState) =>
-      state.dataMap.present.curDataMapOperation.dataMapConnections
-  );
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const styles = useStyles();
   const outputs = connections[props.functionId]?.outputs;
 
@@ -242,9 +217,7 @@ const OutputTabContents = (props: {
       <TableHeader>
         <TableRow>
           {columns.map((column) => (
-            <TableHeaderCell key={column.columnKey}>
-              {column.label}
-            </TableHeaderCell>
+            <TableHeaderCell key={column.columnKey}>{column.label}</TableHeaderCell>
           ))}
         </TableRow>
       </TableHeader>
@@ -261,39 +234,31 @@ const OutputTabContents = (props: {
                 </TableCell>
               </TableRow>
             );
-          } else {
-            const outputFunc = connections[output.reactFlowKey];
-            const funcInputSlot = outputFunc.inputs[output.reactFlowKey];
-            return (
-              <TableRow key={output.reactFlowKey}>
-                <TableCell>
-                  <TableCellLayout>
-                    {`${output.node.displayName}`}
-                  </TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <TableCellLayout>{"abcd"}</TableCellLayout>
-                </TableCell>
-              </TableRow>
-            );
           }
+          // const outputFunc = connections[output.reactFlowKey];
+          // const funcInputSlot = outputFunc.inputs[output.reactFlowKey];
+          return (
+            <TableRow key={output.reactFlowKey}>
+              <TableCell>
+                <TableCellLayout>{`${output.node.displayName}`}</TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{'abcd'}</TableCellLayout>
+              </TableCell>
+            </TableRow>
+          );
         })}
       </TableBody>
     </Table>
   );
   const addOutput = (
-    <Button
-      icon={<AddRegular className={styles.addIcon} />}
-      className={styles.addButton}
-      appearance="transparent"
-    >
+    <Button icon={<AddRegular className={styles.addIcon} />} className={styles.addButton} appearance="transparent">
       <Caption1>Add Output</Caption1>
     </Button>
   );
   return (
     <>
-      <div>{table}</div>{" "}
-      {props.func.maxNumberOfInputs === UnboundedInput && addOutput}
+      <div>{table}</div> {props.func.maxNumberOfInputs === UnboundedInput && addOutput}
     </>
   );
 };
