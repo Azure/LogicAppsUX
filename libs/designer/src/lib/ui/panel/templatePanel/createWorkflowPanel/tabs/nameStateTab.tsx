@@ -8,15 +8,16 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
+import { useExistingWorkflowNames } from '../../../../../core/templates/utils/helper';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflowName, kind } = useSelector((state: RootState) => state.template);
-  const { existingWorkflowName, existingWorkflowNames } = useSelector((state: RootState) => state.workflow);
-  const [validationError, setValidationError] = useState('');
-
+  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();
+  const [validationError, setValidationError] = useState('');
 
   const intlText = useMemo(
     () => ({
@@ -123,7 +124,7 @@ export const NameStatePanel: React.FC = () => {
       );
       return;
     }
-    if (existingWorkflowNames.includes(workflowName)) {
+    if (existingWorkflowNames?.includes(workflowName)) {
       setValidationError(
         intl.formatMessage(
           {
