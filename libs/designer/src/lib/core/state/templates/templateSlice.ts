@@ -13,6 +13,9 @@ import {
   type Template,
   InitTemplateService,
   InitWorkflowService,
+  type ILoggerService,
+  DevLogger,
+  InitLoggerService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -66,10 +69,20 @@ export const initializeTemplateServices = createAsyncThunk(
     appServiceService,
     connectionParameterEditorService,
     templateService,
+    loggerService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOAuthService(oAuthService);
     InitWorkflowService(workflowService);
+
+    const loggerServices: ILoggerService[] = [];
+    if (loggerService) {
+      loggerServices.push(loggerService);
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      loggerServices.push(new DevLogger());
+    }
+    InitLoggerService(loggerServices);
 
     if (gatewayService) {
       InitGatewayService(gatewayService);

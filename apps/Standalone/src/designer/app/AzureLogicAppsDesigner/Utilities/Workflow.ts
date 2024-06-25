@@ -1,4 +1,4 @@
-import type { ConnectionsData, ParametersData } from '../Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from '../Models/Workflow';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 
 export class WorkflowUtility {
@@ -121,4 +121,50 @@ function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: strin
   } catch {
     return undefined;
   }
+}
+
+export async function addConnectionData(
+  connectionAndSetting: ConnectionAndAppSetting,
+  connectionsData: ConnectionsData,
+  settings: any
+): Promise<void> {
+  addConnectionInJson(connectionAndSetting, connectionsData ?? {});
+  addOrUpdateAppSettings(connectionAndSetting.settings, settings?.properties ?? {});
+}
+
+function addConnectionInJson(connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): void {
+  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+
+  let pathToSetConnectionsData: any = connectionsJson;
+
+  for (const path of pathLocation) {
+    if (!pathToSetConnectionsData[path]) {
+      pathToSetConnectionsData[path] = {};
+    }
+
+    pathToSetConnectionsData = pathToSetConnectionsData[path];
+  }
+
+  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+    // TODO: To show this in a notification of info bar on the blade.
+    // const message = 'ConnectionKeyAlreadyExist - Connection key \'{0}\' already exists.'.format(connectionKey);
+    return;
+  }
+
+  pathToSetConnectionsData[connectionKey] = connectionData;
+}
+
+function addOrUpdateAppSettings(settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> {
+  const settingsToAdd = Object.keys(settings);
+
+  for (const settingKey of settingsToAdd) {
+    if (originalSettings[settingKey]) {
+      // TODO: To show this in a notification of info bar on the blade that key will be overriden.
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    originalSettings[settingKey] = settings[settingKey];
+  }
+
+  return originalSettings;
 }

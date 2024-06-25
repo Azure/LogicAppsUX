@@ -14,11 +14,11 @@ import {
   useCurrentTenantId,
   useWorkflowApp,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import type { ConnectionsData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionsData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
-import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { WorkflowUtility, addConnectionData } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
@@ -142,8 +142,21 @@ export const TemplatesStandaloneDesigner = () => {
     }
   };
 
+  const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+    addConnectionData(connectionAndSetting, connectionsData ?? {}, settingsData ?? {});
+  };
+
   const services = useMemo(
-    () => getServices(isConsumption, connectionsData ?? {}, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
+    () =>
+      getServices(
+        isConsumption,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        tenantId,
+        objectId,
+        canonicalLocation
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, appId, tenantId, canonicalLocation]
   );
@@ -179,6 +192,7 @@ const getServices = (
   isConsumption: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
+  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string
@@ -204,6 +218,7 @@ const getServices = (
     },
     workflowAppDetails: { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
+    writeConnection: addConnection as any,
   });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,
