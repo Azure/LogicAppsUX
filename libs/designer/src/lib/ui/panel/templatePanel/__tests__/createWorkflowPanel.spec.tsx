@@ -9,6 +9,10 @@ import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
 import { TemplatePanel } from '../templatePanel';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { getReactQueryClient } from '../../../../core';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('panel/templatePanel/createWorkflowPanel', () => {
   let store: AppStore;
@@ -103,7 +107,14 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   });
 
   beforeEach(() => {
-    renderWithProviders(<TemplatePanel onCreateClick={vi.fn()} />, { store });
+    const queryClient = getReactQueryClient();
+
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <TemplatePanel onCreateClick={vi.fn()} />
+      </QueryClientProvider>,
+      { store }
+    );
   });
 
   it('Ensure template state for showing information is correct', async () => {
