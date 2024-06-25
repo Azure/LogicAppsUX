@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplateFilters, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -177,6 +177,68 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
+            <TemplateFilters
+              connectors={[
+                {
+                  value: 'azureaisearch',
+                  displayName: 'Azure AI Search',
+                },
+                {
+                  value: 'openai',
+                  displayName: 'Open AI',
+                },
+                {
+                  value: 'sql',
+                  displayName: 'SQL',
+                },
+                {
+                  value: 'amazon',
+                  displayName: 'Amazon',
+                },
+              ]}
+              detailFilters={{
+                Trigger: [
+                  {
+                    value: 'Request',
+                    displayName: 'Request',
+                  },
+                  {
+                    value: 'Instant',
+                    displayName: 'Instant',
+                  },
+                ],
+                By: [
+                  {
+                    value: 'Microsoft',
+                    displayName: 'Microsoft',
+                  },
+                  {
+                    value: 'Other',
+                    displayName: 'Other',
+                  },
+                ],
+                Type: [
+                  {
+                    value: 'Workflow',
+                    displayName: 'Workflow',
+                  },
+                  {
+                    value: 'Other',
+                    displayName: 'Other',
+                  },
+                ],
+                Industry: [
+                  {
+                    value: 'Analytics',
+                    displayName: 'Analytics',
+                  },
+                  {
+                    value: 'IT',
+                    displayName: 'IT',
+                  },
+                ],
+              }}
+            />
             <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
