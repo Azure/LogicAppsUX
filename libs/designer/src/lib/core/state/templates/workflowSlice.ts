@@ -89,6 +89,7 @@ export const workflowSlice = createSlice({
 
 export const {
   setExistingWorkflowName,
+  setExistingWorkflowNames,
   setResourceDetails,
   clearWorkflowDetails,
   setConsumption,

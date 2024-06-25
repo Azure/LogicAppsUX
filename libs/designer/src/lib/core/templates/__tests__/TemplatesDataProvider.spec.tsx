@@ -18,7 +18,7 @@ describe('templates/TemplatesDataProvider', () => {
         subscriptionId: '',
         resourceGroup: '',
         location: '',
-        connections: { references: {}, mapping: {}},
+        connections: { references: {}, mapping: {} },
       },
       template: {
         workflowDefinition: undefined,
