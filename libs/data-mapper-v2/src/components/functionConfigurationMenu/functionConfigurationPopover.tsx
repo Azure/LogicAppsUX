@@ -13,6 +13,7 @@ import {
   TableCellLayout,
   Caption1,
   Dropdown,
+  Caption2,
 } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { AddRegular, DeleteRegular, ReOrderRegular } from '@fluentui/react-icons';
@@ -70,7 +71,9 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
           />
         </div>
         <TabList onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
-          <Tab value="description">Details</Tab>
+          <Tab className={styles.detailsButton} value="description">
+            Details
+          </Tab>
           <Tab value="input">Input</Tab>
           <Tab value="output">Output</Tab>
         </TabList>
@@ -124,13 +127,13 @@ const InputTabContents = (props: {
           ? functionConnection.inputs[index][0]
           : functionConnection.inputs[0][index]
         : undefined;
-      // if () {
-      //   return;
-      // }
       return (
         <div key={index}>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Caption1>{input.name}</Caption1>
+          <div className={styles.boundedInputTopRow}>
+            <div className={styles.inputNameDiv}>
+              <Caption1 className={styles.inputName}>{input.name}</Caption1>
+              <Caption2>{input.placeHolder}</Caption2>
+            </div>
             <Caption1>{input.allowedTypes}</Caption1>
           </div>
           {inputConnection !== undefined && typeof inputConnection !== 'string' && (
@@ -185,7 +188,7 @@ const InputTabContents = (props: {
   const addInput = (
     <Button
       icon={<AddRegular className={styles.addIcon} />}
-      onClick={() => updateInput(0, null)}
+      onClick={() => updateInput(0, undefined)}
       className={styles.addButton}
       appearance="transparent"
     >

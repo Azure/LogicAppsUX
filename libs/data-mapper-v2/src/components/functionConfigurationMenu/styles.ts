@@ -6,6 +6,11 @@ export const useStyles = makeStyles({
     width: '360px',
     height: '410px',
     flexDirection: 'column',
+    paddingLeft: '24px',
+    paddingRight: '24px',
+  },
+  detailsButton: {
+    paddingLeft: '10px',
   },
   deleteIcon: {
     color: tokens.colorPaletteBlueBorderActive,
@@ -22,5 +27,16 @@ export const useStyles = makeStyles({
   },
   addIcon: {
     fontSize: '12px',
+  },
+  inputNameDiv: {
+    width: '200px',
+  },
+  inputName: {
+    display: 'block',
+  },
+  boundedInputTopRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    height: '40px',
   },
 });
