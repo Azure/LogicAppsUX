@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { extensionCommand } from '../../../constants';
-import type { Uri } from 'vscode';
-import { commands } from 'vscode';
+import { commands, type Uri } from 'vscode';
 
 /**
  * Executes command to decrypt local settings file.

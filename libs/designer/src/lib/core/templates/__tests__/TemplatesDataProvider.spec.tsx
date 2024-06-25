@@ -5,6 +5,8 @@ import { type RootState, setupStore, type AppStore } from '../../state/templates
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { TemplatesDesignerProvider } from '../TemplatesDesignerProvider';
 import { ReactQueryProvider } from '../../ReactQueryProvider';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('templates/TemplatesDataProvider', () => {
   let store: AppStore;
@@ -13,6 +15,10 @@ describe('templates/TemplatesDataProvider', () => {
     const minimalStoreData: Partial<RootState> = {
       workflow: {
         isConsumption: false,
+        subscriptionId: '',
+        resourceGroup: '',
+        location: '',
+        connections: { references: {}, mapping: {}},
       },
       template: {
         workflowDefinition: undefined,
@@ -23,7 +29,8 @@ describe('templates/TemplatesDataProvider', () => {
           definitions: {},
           validationErrors: {},
         },
-        connections: [],
+        connections: {},
+        servicesInitialized: true,
       },
       manifest: {
         availableTemplateNames: ['undefined'],
@@ -38,7 +45,17 @@ describe('templates/TemplatesDataProvider', () => {
     renderWithProviders(
       <ReactQueryProvider>
         <TemplatesDesignerProvider locale="en-US" theme={'light'}>
-          <TemplatesDataProvider isConsumption={false} workflowName={'workflowName'}>
+          <TemplatesDataProvider
+            resourceDetails={{ subscriptionId: 'sub', resourceGroup: 'rg', location: 'us' }}
+            isConsumption={false}
+            existingWorkflowName={'workflowName'}
+            connectionReferences={{}}
+            services={{
+              connectionService: {} as any,
+              oAuthService: {} as any,
+              workflowService: {} as any,
+            }}
+          >
             <div>{'Children'}</div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>

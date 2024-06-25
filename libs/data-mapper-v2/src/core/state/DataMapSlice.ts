@@ -3,6 +3,7 @@ import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictiona
 import {
   applyConnectionValue,
   bringInParentSourceNodesForRepeating,
+  createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
   getConnectedSourceSchemaNodes,
@@ -11,15 +12,21 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { getConnectedSourceSchema, getFunctionLocationsForAllFunctions, isFunctionData } from '../../utils/Function.Utils';
+import { getConnectedSourceSchema, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
-import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import {
+  flattenSchemaIntoDictionary,
+  flattenSchemaIntoSortArray,
+  flattenSchemaNodeMap,
+  isSchemaNodeExtended,
+} from '../../utils/Schema.Utils';
 import type { FunctionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, Edge } from 'reactflow';
+import type { Node, Edge, XYPosition } from 'reactflow';
+import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -30,6 +37,7 @@ export interface DataMapState {
 
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
+  dataMapLML: string;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
   sourceSchemaOrdering: string[];
@@ -52,6 +60,7 @@ export interface DataMapOperationState {
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
+  dataMapLML: '',
   currentSourceSchemaNodes: [],
   functionNodes: {},
   flattenedSourceSchema: {},
@@ -125,31 +134,49 @@ export const dataMapSlice = createSlice({
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       const flattenedSchema = flattenSchemaIntoDictionary(action.payload.schema, action.payload.schemaType);
+      const currentState = state.curDataMapOperation;
 
       if (action.payload.schemaType === SchemaType.Source) {
         const sourceSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
+        const sourceCurrentFlattenedSchemaMap = currentState.sourceSchema
+          ? flattenSchemaNodeMap(currentState.sourceSchema.schemaTreeRoot)
+          : {};
 
-        state.curDataMapOperation.sourceSchema = action.payload.schema;
-        state.curDataMapOperation.flattenedSourceSchema = flattenedSchema;
-        state.curDataMapOperation.sourceSchemaOrdering = sourceSchemaSortArray;
+        currentState.sourceSchema = action.payload.schema;
+        currentState.flattenedSourceSchema = flattenedSchema;
+        currentState.sourceSchemaOrdering = sourceSchemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
         state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
+
+        // NOTE: Reset ReactFlow nodes to filter out source nodes
+        currentState.nodes = currentState.nodes.filter((node) => !sourceCurrentFlattenedSchemaMap[node.data.id]);
       } else {
         const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
+        const targetCurrentFlattenedSchemaMap = currentState.targetSchema
+          ? flattenSchemaNodeMap(currentState.targetSchema.schemaTreeRoot)
+          : {};
 
-        state.curDataMapOperation.targetSchema = action.payload.schema;
-        state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
-        state.curDataMapOperation.targetSchemaOrdering = targetSchemaSortArray;
-        state.curDataMapOperation.currentTargetSchemaNode = undefined;
+        currentState.targetSchema = action.payload.schema;
+        currentState.flattenedTargetSchema = flattenedSchema;
+        currentState.targetSchemaOrdering = targetSchemaSortArray;
+        currentState.currentTargetSchemaNode = undefined;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
+
+        // NOTE: Reset ReactFlow nodes to filter out source nodes
+        currentState.nodes = currentState.nodes.filter((node) => !targetCurrentFlattenedSchemaMap[node.data.id]);
       }
 
+      // NOTE: Reset ReactFlow edges
+      currentState.edges = [];
+
       if (state.curDataMapOperation.sourceSchema && state.curDataMapOperation.targetSchema) {
-        state.curDataMapOperation.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
+        currentState.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
       }
+
+      state.curDataMapOperation = { ...currentState };
     },
 
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
@@ -160,8 +187,8 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
-      let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
-      functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      //let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+      //functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
       const connectedFlattenedSourceSchema = getConnectedSourceSchema(dataMapConnections, flattenedSourceSchema);
 
       const newState: DataMapOperationState = {
@@ -171,7 +198,7 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes,
+        functionNodes: {}, //functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
@@ -195,20 +222,19 @@ export const dataMapSlice = createSlice({
       if (action.payload.reactFlowSource.startsWith(SchemaType.Source)) {
         sourceNode = state.curDataMapOperation.flattenedSourceSchema[action.payload.reactFlowSource];
       } else {
-        sourceNode = newState.functionNodes[action.payload.reactFlowSource].functionData;
+        sourceNode = newState.functionNodes[action.payload.reactFlowSource];
       }
       let destinationNode: UnknownNode;
 
       if (action.payload.reactFlowDestination.startsWith(SchemaType.Target)) {
         destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination];
       } else {
-        destinationNode = newState.functionNodes[action.payload.reactFlowSource].functionData;
+        destinationNode = newState.functionNodes[action.payload.reactFlowSource];
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
 
       if (isFunctionData(sourceNode)) {
-        updateFunctionNodeLocations(newState, action.payload.reactFlowSource);
         doDataMapOperation(state, newState, 'Updated function node locations by adding');
       }
 
@@ -217,9 +243,43 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Make connection');
     },
 
+    updateDataMapLML: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.dataMapLML = action.payload;
+    },
+
+    addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        functionNodes: { ...state.curDataMapOperation.functionNodes },
+      };
+
+      let fnReactFlowKey: string;
+      let fnData: FunctionData;
+
+      // Default - just provide the FunctionData and the key will be handled under the hood
+      if ('newReactFlowKey' in action.payload) {
+        // Alternative - specify the key you want to use (needed for adding inline Functions)
+        fnData = action.payload.functionData;
+        fnReactFlowKey = action.payload.newReactFlowKey;
+        newState.functionNodes[fnReactFlowKey] = fnData;
+      } else {
+        fnData = { ...action.payload, isNewNode: true };
+        fnReactFlowKey = createReactFlowFunctionKey(fnData);
+        newState.functionNodes[fnReactFlowKey] = fnData;
+      }
+
+      // Create connection entry to instantiate default connection inputs
+      createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
+
+      doDataMapOperation(state, newState, 'Add function node');
+    },
+
     saveDataMap: (
       state,
-      action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
+      action: PayloadAction<{
+        sourceSchemaExtended: SchemaExtended | undefined;
+        targetSchemaExtended: SchemaExtended | undefined;
+      }>
     ) => {
       const sourceSchemaExtended = action.payload.sourceSchemaExtended;
       const targetSchemaExtended = action.payload.targetSchemaExtended;
@@ -229,6 +289,18 @@ export const dataMapSlice = createSlice({
       }
       state.pristineDataMap = state.curDataMapOperation;
       state.isDirty = false;
+    },
+
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: XYPosition }>) => {
+      const newOp = { ...state.curDataMapOperation };
+      const node = newOp.functionNodes[action.payload.id];
+      if (!node) {
+        return;
+      }
+      const position = node.position;
+      newOp.functionNodes[action.payload.id].position = position;
+
+      state.curDataMapOperation = newOp;
     },
 
     updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
@@ -305,6 +377,7 @@ export const {
   updateReactFlowNodes,
   makeConnection,
   saveDataMap,
+  addFunctionNode,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -432,21 +505,6 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
   }
 };
 
-export const updateFunctionNodeLocations = (newState: DataMapOperationState, functionKey: string) => {
-  const connection = newState.dataMapConnections[functionKey];
-  const targetNodes = getConnectedTargetSchemaNodes([connection], newState.dataMapConnections);
-  const functionNode = newState.functionNodes[functionKey];
-  targetNodes.forEach((targetNode) => {
-    functionNode.functionLocations.push(targetNode);
-
-    const uniqueLocations = functionNode.functionLocations.filter((location, index, self) => {
-      return self.findIndex((subLocation) => subLocation.key === location.key) === index;
-    });
-
-    functionNode.functionLocations = uniqueLocations;
-  });
-};
-
 export const handleDirectAccessConnection = (
   sourceNode: SchemaNodeExtended | FunctionData,
   action: ConnectionAction,
@@ -515,9 +573,9 @@ export const assignFunctionNodePositionsFromMetadata = (
     const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
 
     // assign position data to function in store
-    functions[key].functionData = {
-      ...functions[key].functionData,
-      positions: matchingMetadata?.positions,
+    functions[key] = {
+      ...functions[key],
+      position: matchingMetadata?.position,
     };
   });
   return functions;

@@ -147,6 +147,19 @@ export function isFirstPartyConnector(connector: Connector): boolean {
   );
 }
 
+export function isUsingAadAuthentication(connector: Connector): boolean {
+  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
+
+  return (
+    !!oauthParameters &&
+    oauthParameters.length > 0 &&
+    !!oauthParameters[0].oAuthSettings &&
+    !!oauthParameters[0].oAuthSettings.identityProvider &&
+    (equals(oauthParameters[0].oAuthSettings.identityProvider, 'aadcertificate') ||
+      equals(oauthParameters[0].oAuthSettings.identityProvider, 'aad'))
+  );
+}
+
 export function getConnectionParametersWithType(
   connector: Connector,
   connectionParameterType: string,

@@ -10,9 +10,9 @@ import {
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
-import type { FunctionData, FunctionDictionary } from '../models/Function';
+import type { FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { isConnectionUnit, isCustomValue } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 //import { addTargetReactFlowPrefix } from './ReactFlow.Util';
@@ -61,7 +61,8 @@ export const findFunctionForFunctionName = (nodeKey: string, functions: Function
 export const findFunctionForKey = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>
   functions.find((functionData) => functionData.key === nodeKey);
 
-export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData => 'functionName' in node;
+export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData =>
+  Object.keys(node ?? {}).includes('functionName');
 
 export const getFunctionOutputValue = (inputValues: string[], functionName: string) => {
   if (!functionName) {
@@ -134,34 +135,37 @@ export const isIfAndGuid = (key: string) => {
   return key.startsWith(ifPseudoFunctionKey) && isAGuid(key.substring(ifPseudoFunctionKey.length + 1));
 };
 
-export const functionsForLocation = (functions: FunctionDictionary, targetKey: string) =>
-  Object.fromEntries(
-    Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
-  );
+// export const functionsForLocation = (functions: FunctionDictionary, targetKey: string) =>
+//   Object.fromEntries(
+//     Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
+//   );
 
-export const getFunctionLocationsForAllFunctions = (
-  dataMapConnections: ConnectionDictionary,
-  _flattenedTargetSchema: SchemaNodeDictionary
-): FunctionDictionary => {
-  const functionNodes: FunctionDictionary = {};
-  for (const connectionKey in dataMapConnections) {
-    const func = dataMapConnections[connectionKey].self.node as FunctionData;
-    if (func.functionName !== undefined) {
-      const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+// export const getFunctionLocationsForAllFunctions = (
+//   dataMapConnections: ConnectionDictionary,
+//   _flattenedTargetSchema: SchemaNodeDictionary
+// ): FunctionDictionary => {
+//   const functionNodes: FunctionDictionary = {};
+//   for (const connectionKey in dataMapConnections) {
+//     const func = dataMapConnections[connectionKey].self.node as FunctionData;
+//     if (func.functionName !== undefined) {
+//       const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
 
-      const parentNodes: SchemaNodeExtended[] = [];
-      targetNodesConnectedToFunction.forEach((childNode) => {
-        if (childNode.parentKey) {
-          //parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
-        }
-      });
+//       const parentNodes: SchemaNodeExtended[] = [];
+//       targetNodesConnectedToFunction.forEach((childNode) => {
+//         if (childNode.parentKey) {
+//           //parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
+//         }
+//       });
 
-      const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
-      functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
-    }
-  }
-  return functionNodes;
-};
+//       const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
+//       functionNodes[connectionKey] = {
+//         functionData: func,
+//         functionLocations: combinedTargetNodes,
+//       };
+//     }
+//   }
+//   return functionNodes;
+// };
 
 export const getConnectedSourceSchema = (
   dataMapConnections: ConnectionDictionary,

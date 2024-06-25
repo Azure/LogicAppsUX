@@ -83,6 +83,8 @@ export class StandaloneOAuthPopup implements IOAuthPopup {
       width: windowWidth,
       height: windowHeight,
       popup: true,
+      top: screen.height / 2 - 600 / 2,
+      left: screen.width / 2 - 600 / 2,
     })
       .map(([key, value]) => `${key}=${value}`)
       .join(',');
@@ -95,9 +97,6 @@ export class StandaloneOAuthPopup implements IOAuthPopup {
     if (!this._popupWindow) {
       throw new Error('The browser has blocked the popup window.');
     }
-
-    // eslint-disable-next-line no-restricted-globals
-    this._popupWindow?.moveBy((screen.width - windowWidth) / 2, (screen.height - windowHeight) / 2);
 
     let timeoutCounter = 0;
     const listener = (event: MessageEvent) => {

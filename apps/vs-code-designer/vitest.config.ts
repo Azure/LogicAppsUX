@@ -3,6 +3,18 @@ import packageJson from './package.json';
 
 export default defineProject({
   plugins: [],
+  resolve: {
+    alias: [
+      {
+        find: 'vscode',
+        replacement: `${__dirname}/node_modules/@types/vscode/index.d`,
+      },
+      {
+        find: '@microsoft/vscode-azext-utils',
+        replacement: `${__dirname}/node_modules/@types/vscode/index.d`,
+      },
+    ],
+  },
   test: {
     name: packageJson.name,
     dir: './src',

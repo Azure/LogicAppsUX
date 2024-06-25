@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { debugSymbolDll } from '../../../constants';
+import { debugSymbolDll, extensionBundleId } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
@@ -12,7 +12,7 @@ import * as path from 'path';
 
 export async function getDebugSymbolDll(): Promise<string> {
   const bundleFolderRoot = await getExtensionBundleFolder();
-  const bundleFolder = path.join(bundleFolderRoot, 'Microsoft.Azure.Functions.ExtensionBundle.Workflows');
+  const bundleFolder = path.join(bundleFolderRoot, extensionBundleId);
   let bundleVersionNumber = '0.0.0';
 
   const bundleFolders = await fse.readdir(bundleFolder);

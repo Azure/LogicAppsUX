@@ -2,7 +2,7 @@ name: Sync with Azure DevOps
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '0 */2 * * *'
   issues:
     types: [opened, closed, deleted, reopened, edited, labeled, unlabeled, assigned, unassigned]
   issue_comment:

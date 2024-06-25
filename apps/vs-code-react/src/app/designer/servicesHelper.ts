@@ -14,6 +14,7 @@ import {
   BaseAppServiceService,
   HTTP_METHODS,
   clone,
+  BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -48,6 +49,7 @@ export const getDesignerServices = (
   searchService: StandardSearchService;
   oAuthService: BaseOAuthService;
   gatewayService: BaseGatewayService;
+  tenantService: BaseTenantService;
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
@@ -241,6 +243,12 @@ export const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2017-08-01',
+  });
+
   // Workflow service needs to be implemented to get the callback url for azure resources
   const workflowService: IWorkflowService = {
     getCallbackUrl: async () => {
@@ -302,6 +310,7 @@ export const getDesignerServices = (
     searchService,
     oAuthService,
     gatewayService,
+    tenantService,
     workflowService,
     hostService,
     runService,

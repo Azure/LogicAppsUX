@@ -10,21 +10,24 @@ import { ParametersPanel } from '../createWorkflowPanel/tabs/parametersTab';
 
 describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
   let store: AppStore;
+  let param1: Template.ParameterDefinition;
+  let param2: Template.ParameterDefinition;
 
   beforeAll(() => {
-    const parameters = [
-      {
-        name: 'param1',
-        type: 'string',
-        description: 'param1 description',
-        default: 'param1DefaultValue',
-      },
-      {
-        name: 'param2',
-        type: 'object',
-        description: 'param2 description',
-      },
-    ];
+    param1 = {
+      name: 'param1',
+      displayName: 'param 1',
+      type: 'string',
+      description: 'param1 description',
+      default: 'param1DefaultValue',
+    };
+    param2 = {
+      name: 'param2',
+      displayName: 'param 2',
+      type: 'object',
+      description: 'param2 description',
+    };
+    const parameters = [param1, param2];
 
     const templateSliceData = {
       workflowName: '',
@@ -42,7 +45,8 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
         }, {}),
         validationErrors: {},
       },
-      connections: [],
+      connections: {},
+      servicesInitialized: false,
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -63,11 +67,11 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS);
     expect(store.getState().template.parameters.definitions['param1'].type).toBe('string');
     expect(store.getState().template.parameters.definitions['param2'].type).toBe('object');
-    expect(screen.getAllByText('param1')).toBeDefined();
-    expect(screen.getAllByText('string')).toBeDefined();
-    expect(screen.getAllByText('param1 description')).toBeDefined();
-    expect(screen.getAllByText('param2')).toBeDefined();
-    expect(screen.getAllByText('object')).toBeDefined();
-    expect(screen.getAllByText('param2 description')).toBeDefined();
+    expect(screen.getAllByText(param1.displayName)).toBeDefined();
+    expect(screen.getAllByText(`Value (${param1.type})`)).toBeDefined();
+    expect(screen.getAllByText(param1.description)).toBeDefined();
+    expect(screen.getAllByText(param2.displayName)).toBeDefined();
+    expect(screen.getAllByText(`Value (${param2.type})`)).toBeDefined();
+    expect(screen.getAllByText(param2.description)).toBeDefined();
   });
 });
