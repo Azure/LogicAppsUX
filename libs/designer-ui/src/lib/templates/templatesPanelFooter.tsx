@@ -5,8 +5,8 @@ export interface TemplatePanelFooterProps {
   primaryButtonText: string | ReactNode;
   primaryButtonOnClick: () => void | Promise<void>;
   primaryButtonDisabled?: boolean;
-  secondaryButtonText?: string | undefined;
-  secondaryButtonOnClick?: () => void;
+  secondaryButtonText: string;
+  secondaryButtonOnClick: () => void;
   secondaryButtonDisabled?: boolean;
 }
 
@@ -28,17 +28,15 @@ export const TemplatesPanelFooter = ({
       >
         {primaryButtonText}
       </PrimaryButton>
-      {secondaryButtonText && (
-        <DefaultButton
-          onClick={secondaryButtonOnClick}
-          style={{
-            marginLeft: '8px',
-          }}
-          disabled={secondaryButtonDisabled}
-        >
-          {secondaryButtonText}
-        </DefaultButton>
-      )}
+      <DefaultButton
+        onClick={secondaryButtonOnClick}
+        style={{
+          marginLeft: '8px',
+        }}
+        disabled={secondaryButtonDisabled}
+      >
+        {secondaryButtonText}
+      </DefaultButton>
     </div>
   );
 };

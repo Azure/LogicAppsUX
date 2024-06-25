@@ -3,8 +3,8 @@ import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayParameters } from '../../../../templates/parameters/displayParameters';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { validateParameters } from '../../../../../core/state/templates/templateSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails, validateParameters } from '../../../../../core/state/templates/templateSlice';
 
 export const ParametersPanel: React.FC = () => {
   return <DisplayParameters />;
@@ -57,11 +57,18 @@ export const parametersTab = (
           id: 'Yua/4o',
           description: 'Button text for moving to the previous tab in the create workflow panel',
         })
-      : undefined,
+      : intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
     secondaryButtonOnClick: previousTabId
       ? () => {
           dispatch(selectPanelTab(previousTabId));
         }
-      : undefined,
+      : () => {
+          dispatch(closePanel());
+          dispatch(clearTemplateDetails());
+        },
   },
 });

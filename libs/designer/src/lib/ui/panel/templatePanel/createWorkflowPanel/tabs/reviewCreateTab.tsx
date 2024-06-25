@@ -5,8 +5,9 @@ import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { TemplateService } from '@microsoft/logic-apps-shared';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -148,14 +149,21 @@ export const reviewCreateTab = (
     primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate() : isLoadingCreate ? () => {} : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
     secondaryButtonText: isCreated
-      ? undefined
+      ? intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        })
       : intl.formatMessage({
           defaultMessage: 'Previous',
           id: 'Yua/4o',
           description: 'Button text for moving to the previous tab in the create workflow panel',
         }),
     secondaryButtonOnClick: isCreated
-      ? undefined
+      ? () => {
+          dispatch(closePanel());
+          dispatch(clearTemplateDetails());
+        }
       : () => {
           dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
         },

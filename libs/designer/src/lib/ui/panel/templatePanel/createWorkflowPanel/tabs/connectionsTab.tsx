@@ -4,7 +4,8 @@ import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayConnections } from '../../../../templates/connections/displayConnections';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections } = useSelector((state: RootState) => state.template);
@@ -38,5 +39,14 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId
       dispatch(selectPanelTab(nextTabId));
     },
     primaryButtonDisabled: false,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
   },
 });

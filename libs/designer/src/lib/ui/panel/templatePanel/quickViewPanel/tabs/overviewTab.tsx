@@ -3,11 +3,13 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { Text } from '@fluentui/react-components';
 import { getUniqueConnectors } from '../../../../../core/templates/utils/helper';
 import { List } from '@fluentui/react';
 import { ConnectorWithDetails } from '../../../../../ui/templates/connections/connector';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const OverviewPanel: React.FC = () => {
   const intl = useIntl();
@@ -94,7 +96,7 @@ export const OverviewPanel: React.FC = () => {
   );
 };
 
-export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
+export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Overview',
@@ -119,6 +121,15 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
       dispatch(openCreateWorkflowPanelView());
     },
     primaryButtonDisabled: false,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
   },
 });
 

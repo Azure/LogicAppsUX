@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
-import { updateKind, updateWorkflowName } from '../../../../../core/state/templates/templateSlice';
+import { updateKind, updateWorkflowName, clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useExistingWorkflowNames } from '../../../../../core/templates/utils/helper';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -228,11 +228,18 @@ export const nameStateTab = (
           id: 'Yua/4o',
           description: 'Button text for moving to the previous tab in the create workflow panel',
         })
-      : undefined,
+      : intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
     secondaryButtonOnClick: previousTabId
       ? () => {
           dispatch(selectPanelTab(previousTabId));
         }
-      : undefined,
+      : () => {
+          dispatch(closePanel());
+          dispatch(clearTemplateDetails());
+        },
   },
 });
