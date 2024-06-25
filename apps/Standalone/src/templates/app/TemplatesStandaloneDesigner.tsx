@@ -6,7 +6,7 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { BaseGatewayService, BaseTemplateService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
+import { BaseGatewayService, StandardTemplateService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
 import {
   useAppSettings,
   useConnectionsData,
@@ -143,7 +143,7 @@ export const TemplatesStandaloneDesigner = () => {
   };
 
   const services = useMemo(
-    () => getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
+    () => getServices(isConsumption, connectionsData ?? {}, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, appId, tenantId, canonicalLocation]
   );
@@ -176,6 +176,7 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const getServices = (
+  isConsumption: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   tenantId: string | undefined,
@@ -231,18 +232,20 @@ const getServices = (
     getAppIdentity: () => workflowApp?.identity as any,
   };
 
-  const templateService = new BaseTemplateService({
-    baseUrl: armUrl,
-    appId: siteResourceId,
-    httpClient,
-    apiVersions: {
-      subscription: apiVersion,
-      gateway: '2018-11-01',
-    },
-    openBladeAfterCreate: () => {
-      console.log('Open blade after create');
-    },
-  });
+  const templateService = isConsumption
+    ? undefined
+    : new StandardTemplateService({
+        baseUrl: armUrl,
+        appId: siteResourceId,
+        httpClient,
+        apiVersions: {
+          subscription: apiVersion,
+          gateway: '2018-11-01',
+        },
+        openBladeAfterCreate: () => {
+          console.log('Open blade after create');
+        },
+      });
 
   return {
     connectionService,

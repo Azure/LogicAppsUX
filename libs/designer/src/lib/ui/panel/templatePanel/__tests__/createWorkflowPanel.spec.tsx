@@ -1,7 +1,7 @@
 import { describe, beforeAll, expect, it, beforeEach, vi } from 'vitest';
 import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
-import { BaseTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
+import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { updateKind, type TemplateState } from '../../../../core/state/templates/templateSlice';
@@ -18,7 +18,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
   const httpClient = new MockHttpClient();
   InitTemplateService(
-    new BaseTemplateService({
+    new StandardTemplateService({
       baseUrl: '/baseUrl',
       appId: '/appId',
       httpClient,
