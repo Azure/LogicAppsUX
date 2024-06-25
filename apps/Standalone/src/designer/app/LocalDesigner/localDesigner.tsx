@@ -17,6 +17,7 @@ import {
   ConsumptionConnectionService,
   StandardCustomCodeService,
   ResourceIdentityType,
+  BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -106,6 +107,12 @@ const gatewayService = new BaseGatewayService({
   },
 });
 
+const tenantService = new BaseTenantService({
+  baseUrl: '/url',
+  apiVersion: '2017-08-01',
+  httpClient,
+});
+
 const functionService = new BaseFunctionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
@@ -177,6 +184,7 @@ export const LocalDesigner = () => {
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
       oAuthService,
       gatewayService,
+      tenantService,
       functionService,
       appServiceService,
       workflowService,

@@ -5,16 +5,18 @@ import {
   InitConnectionService,
   InitFunctionService,
   InitGatewayService,
+  InitTenantService,
   InitOAuthService,
   getIntl,
   getRecordEntry,
   type LogicAppsV2,
   type Template,
+  InitWorkflowService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
 
@@ -28,6 +30,7 @@ interface TemplateData {
     validationErrors: Record<string, string | undefined>;
   };
   connections: Record<string, Template.Connection>;
+  images?: Record<string, any>;
 }
 
 export interface TemplateState extends TemplateData {
@@ -46,14 +49,17 @@ const initialState: TemplateState = {
   },
   connections: {},
   servicesInitialized: false,
+  images: {},
 };
 
 export const initializeTemplateServices = createAsyncThunk(
   'initializeTemplateServices',
   async ({
     connectionService,
+    workflowService,
     oAuthService,
     gatewayService,
+    tenantService,
     apimService,
     functionService,
     appServiceService,
@@ -61,9 +67,13 @@ export const initializeTemplateServices = createAsyncThunk(
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOAuthService(oAuthService);
+    InitWorkflowService(workflowService);
 
     if (gatewayService) {
       InitGatewayService(gatewayService);
+    }
+    if (tenantService) {
+      InitTenantService(tenantService);
     }
     if (apimService) {
       InitApiManagementService(apimService);
@@ -128,19 +138,38 @@ export const templateSlice = createSlice({
     updateKind: (state, action: PayloadAction<string>) => {
       state.kind = action.payload;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+    updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
-        id,
-        newDefinition: { type, value, required },
+        newDefinition: { name, type, value, required },
       } = action.payload;
 
-      const validationError = validateParameterValue({ type, value }, required);
+      const validationError = validateParameterValue({ type, value: value }, required);
 
-      state.parameters.definitions[id] = {
-        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+      state.parameters.definitions[name] = {
+        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[id] = validationError;
+      state.parameters.validationErrors[name] = validationError;
+    },
+    validateParameters: (state) => {
+      Object.keys(state.parameters.definitions).forEach((parameterName) => {
+        const thisParameter = state.parameters.definitions[parameterName];
+        state.parameters.validationErrors[parameterName] = validateParameterValue(
+          { type: thisParameter.type, value: thisParameter.value },
+          thisParameter.required
+        );
+      });
+    },
+    clearTemplateDetails: (state) => {
+      state.workflowDefinition = undefined;
+      state.manifest = undefined;
+      state.workflowName = undefined;
+      state.kind = undefined;
+      state.parameters = {
+        definitions: {},
+        validationErrors: {},
+      };
+      state.connections = {};
     },
   },
   extraReducers: (builder) => {
@@ -150,6 +179,7 @@ export const templateSlice = createSlice({
         state.manifest = action.payload.manifest;
         state.parameters = action.payload.parameters;
         state.connections = action.payload.connections;
+        state.images = action.payload.images;
       }
     });
 
@@ -170,7 +200,14 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { changeCurrentTemplateName, updateWorkflowName, updateKind, updateTemplateParameterValue } = templateSlice.actions;
+export const {
+  changeCurrentTemplateName,
+  updateWorkflowName,
+  updateKind,
+  updateTemplateParameterValue,
+  validateParameters,
+  clearTemplateDetails,
+} = templateSlice.actions;
 export default templateSlice.reducer;
 
 const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {
@@ -181,6 +218,12 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
 
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
+
+    const images: Record<string, any> = {};
+    for (const key of Object.keys(templateManifest.images)) {
+      images[key] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images[key]}`)).default;
+    }
+
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -193,12 +236,13 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      kind: templateManifest.kinds.length === 1 ? templateManifest.kinds[0] : undefined,
+      kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},
       },
       connections: templateManifest.connections,
+      images,
     };
   } catch (ex) {
     console.error(ex);

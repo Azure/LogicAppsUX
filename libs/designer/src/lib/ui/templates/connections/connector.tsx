@@ -1,5 +1,11 @@
-import { Icon, ImageFit, Spinner, SpinnerSize, Text } from '@fluentui/react';
+import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fluentui/react';
+import { Icon, ImageFit, Shimmer, ShimmerElementType, Spinner, SpinnerSize, Text, css } from '@fluentui/react';
 import { useConnectorOnly } from '../../../core/state/connection/connectionSelector';
+import type { Connector, Template } from '@microsoft/logic-apps-shared';
+import { useIntl } from 'react-intl';
+import { getConnectorAllCategories } from '@microsoft/designer-ui';
+import { useConnectionsForConnector } from '../../../core/queries/connections';
+import { getConnectorResources } from '../../../core/templates/utils/helper';
 
 const iconStyles = {
   root: {
@@ -8,43 +14,123 @@ const iconStyles = {
   },
 };
 
-export const ConnectorIcon = ({ connectorId }: { connectorId: string }) => {
+export const ConnectorIcon = ({
+  connectorId,
+  styles,
+  classes,
+}: { connectorId: string; classes: Record<string, string>; styles?: IStyleFunctionOrObject<IImageStyleProps, IImageStyles> }) => {
   const { data: connector, isLoading, isError } = useConnectorOnly(connectorId);
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
 
   return (
-    <Icon
-      className="msla-template-connector-icon"
-      imageProps={{
-        styles: iconStyles,
-        src: connector.properties.iconUrl ?? connector.properties.iconUri,
-        imageFit: ImageFit.centerContain,
-      }}
-    />
+    <div className={classes['root']}>
+      <Icon
+        className={classes['icon']}
+        imageProps={{
+          styles: styles ?? iconStyles,
+          src: connector.properties.iconUrl ?? connector.properties.iconUri,
+          imageFit: ImageFit.centerContain,
+        }}
+      />
+    </div>
   );
 };
 
-export const ConnectorIconWithName = ({ connectorId }: { connectorId: string }) => {
-  const { data: connector, isLoading, isError } = useConnectorOnly(connectorId);
-  const icon = isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
+export const ConnectorIconWithName = ({
+  connectorId,
+  classes,
+  showProgress,
+  onConnectorLoaded,
+}: {
+  connectorId: string;
+  classes: Record<string, string>;
+  showProgress?: boolean;
+  onConnectorLoaded?: (connector: Connector) => void;
+}) => {
+  const { data: connector, isLoading } = useConnectorOnly(connectorId);
+
+  if (showProgress && isLoading) {
+    return (
+      <div className={css(classes['root'], 'msla-template-create-progress-connector')}>
+        <Shimmer
+          className={classes['icon']}
+          style={{ width: '20px', height: '20px', marginTop: 5 }}
+          shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+        <Shimmer
+          className={classes['text']}
+          style={{ width: '70px', marginTop: 10 }}
+          shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+      </div>
+    );
+  }
+
+  if (onConnectorLoaded && connector) {
+    onConnectorLoaded(connector);
+  }
 
   return (
-    <div className="msla-template-connector-menuitem">
-      {connector ? (
-        <Icon
-          className="msla-template-connector-menuitem-icon"
-          imageProps={{
-            styles: iconStyles,
-            src: connector.properties.iconUrl ?? connector.properties.iconUri,
-            imageFit: ImageFit.centerContain,
-          }}
-        />
-      ) : (
-        icon
-      )}
-      <Text className="msla-template-connector-menuitem-text">{connector?.properties.displayName}</Text>
+    <div className={classes['root']}>
+      <img className={classes['icon']} src={connector?.properties.iconUrl ?? connector?.properties.iconUri} />
+      <Text className={classes['text']}>{connector?.properties.displayName}</Text>
+    </div>
+  );
+};
+
+const textStyles = {
+  connectorSubDetails: {
+    fontSize: 13,
+    color: '#8b8b8b',
+    minWidth: 'fit-content',
+  },
+};
+
+export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection) => {
+  const { data: connector, isLoading, isError } = useConnectorOnly(connectorId);
+  const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
+  const intl = useIntl();
+
+  if (!connector) {
+    return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
+  }
+
+  const allCategories = getConnectorAllCategories();
+  const text = getConnectorResources(intl);
+  return (
+    <div className="msla-template-connector">
+      <ConnectorIcon
+        connectorId={connectorId}
+        classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
+        styles={{ root: { width: 50, height: 50 }, image: { width: 'calc(60%)', height: 'calc(60%)' } }}
+      />
+      <div className="msla-template-connector-details">
+        <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+        <div className="msla-template-connector-type">
+          <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
+            {allCategories[kind ?? ''] ?? kind}
+          </Text>
+          <Icon style={{ padding: 5, color: '#8b8b8b', fontSize: 7 }} iconName="LocationDot" />
+          {isConnectionsLoading ? (
+            <Shimmer
+              className="msla-template-card-tag"
+              style={{ width: '70px', marginTop: 5 }}
+              shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+              size={SpinnerSize.xSmall}
+            />
+          ) : (connections ?? []).length > 0 ? (
+            <Text style={{ ...textStyles.connectorSubDetails, color: '#50821b' }}>{text.connected}</Text>
+          ) : (
+            <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
+              {text.notConnected}
+            </Text>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

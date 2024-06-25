@@ -5,6 +5,8 @@ import { type RootState, setupStore, type AppStore } from '../../state/templates
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { TemplatesDesignerProvider } from '../TemplatesDesignerProvider';
 import { ReactQueryProvider } from '../../ReactQueryProvider';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('templates/TemplatesDataProvider', () => {
   let store: AppStore;
@@ -16,6 +18,7 @@ describe('templates/TemplatesDataProvider', () => {
         subscriptionId: '',
         resourceGroup: '',
         location: '',
+        connections: { references: {}, mapping: {}},
       },
       template: {
         workflowDefinition: undefined,
@@ -43,12 +46,14 @@ describe('templates/TemplatesDataProvider', () => {
       <ReactQueryProvider>
         <TemplatesDesignerProvider locale="en-US" theme={'light'}>
           <TemplatesDataProvider
-            resourceDetails={{subscriptionId: 'sub', resourceGroup: 'rg', location: 'us'}}
+            resourceDetails={{ subscriptionId: 'sub', resourceGroup: 'rg', location: 'us' }}
             isConsumption={false}
             existingWorkflowName={'workflowName'}
+            connectionReferences={{}}
             services={{
               connectionService: {} as any,
               oAuthService: {} as any,
+              workflowService: {} as any,
             }}
           >
             <div>{'Children'}</div>

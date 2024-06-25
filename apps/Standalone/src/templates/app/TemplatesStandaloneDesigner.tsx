@@ -1,12 +1,12 @@
 import { useMemo, type ReactNode } from 'react';
-import { ReactQueryProvider, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { BaseGatewayService, StandardConnectionService } from '@microsoft/logic-apps-shared';
+import { BaseGatewayService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
 import {
   useAppSettings,
   useConnectionsData,
@@ -25,7 +25,7 @@ import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/H
 // import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 // import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import { useNavigate } from 'react-router-dom';
-import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
@@ -46,7 +46,7 @@ export const TemplatesStandaloneDesigner = () => {
   const navigate = useNavigate();
 
   // const navigate = useNavigate();
-
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
 
@@ -161,27 +161,26 @@ export const TemplatesStandaloneDesigner = () => {
   );
   const resourceDetails = new ArmParser(appId ?? '');
   return (
-    <ReactQueryProvider>
-      <LoadWhenArmTokenIsLoaded>
-        <DevToolbox />
-        {workflowAppData ? (
-          <TemplatesDesignerProvider locale="en-US" theme={theme}>
-            <TemplatesDataProvider
-              resourceDetails={{
-                subscriptionId: resourceDetails.subscriptionId,
-                resourceGroup: resourceDetails.resourceGroup,
-                location: canonicalLocation,
-              }}
-              services={services}
-              isConsumption={isConsumption}
-              existingWorkflowName={existingWorkflowName}
-            >
-              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
-            </TemplatesDataProvider>
-          </TemplatesDesignerProvider>
-        ) : null}
-      </LoadWhenArmTokenIsLoaded>
-    </ReactQueryProvider>
+    <LoadWhenArmTokenIsLoaded>
+      <DevToolbox />
+      {workflowAppData ? (
+        <TemplatesDesignerProvider locale="en-US" theme={theme}>
+          <TemplatesDataProvider
+            resourceDetails={{
+              subscriptionId: resourceDetails.subscriptionId,
+              resourceGroup: resourceDetails.resourceGroup,
+              location: canonicalLocation,
+            }}
+            connectionReferences={connectionReferences}
+            services={services}
+            isConsumption={isConsumption}
+            existingWorkflowName={existingWorkflowName}
+          >
+            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+          </TemplatesDataProvider>
+        </TemplatesDesignerProvider>
+      ) : null}
+    </LoadWhenArmTokenIsLoaded>
   );
 };
 
@@ -225,6 +224,11 @@ const getServices = (
       gateway: '2016-06-01',
     },
   });
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2017-08-01',
+  });
   const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
@@ -234,10 +238,16 @@ const getServices = (
     tenantId,
     objectId,
   });
+  const workflowService: IWorkflowService = {
+    getCallbackUrl: () => Promise.resolve({} as any),
+    getAppIdentity: () => workflowApp?.identity as any,
+  };
 
   return {
     connectionService,
     gatewayService,
+    tenantService,
     oAuthService,
+    workflowService,
   };
 };
