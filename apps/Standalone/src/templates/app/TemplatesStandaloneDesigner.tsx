@@ -20,7 +20,7 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
 import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
-import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
@@ -38,7 +38,7 @@ export const TemplatesStandaloneDesigner = () => {
   const { data: objectId } = useCurrentObjectId();
   const { data: connectionsData } = useConnectionsData(appId);
   const { data: settingsData } = useAppSettings(appId as string);
-
+  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
 
@@ -159,6 +159,7 @@ export const TemplatesStandaloneDesigner = () => {
               resourceGroup: resourceDetails.resourceGroup,
               location: canonicalLocation,
             }}
+            connectionReferences={connectionReferences}
             services={services}
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
@@ -225,6 +226,10 @@ const getServices = (
     tenantId,
     objectId,
   });
+  const workflowService: IWorkflowService = {
+    getCallbackUrl: () => Promise.resolve({} as any),
+    getAppIdentity: () => workflowApp?.identity as any,
+  };
 
   const templateService = new BaseTemplateService({
     baseUrl: armUrl,
@@ -245,5 +250,6 @@ const getServices = (
     tenantService,
     oAuthService,
     templateService,
+    workflowService,
   };
 };

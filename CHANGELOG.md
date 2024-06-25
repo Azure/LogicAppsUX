@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [4.33.0](https://github.com/Azure/LogicAppsUX/compare/v4.32.0...v4.33.0) (2024-06-24)
+
+
+### Features
+
+* **Data Mapper:** Drag functions onto canvas ([#5001](https://github.com/Azure/LogicAppsUX/issues/5001)) ([ccf276f](https://github.com/Azure/LogicAppsUX/commit/ccf276f73d949e934759d25da01eecffd73f6482))
+* **designer-ui:** Improve connection selector table UI ([#5012](https://github.com/Azure/LogicAppsUX/issues/5012)) ([a8eaf4c](https://github.com/Azure/LogicAppsUX/commit/a8eaf4c4b47d31e5ae6f00a1300335e2ec1b0e0e))
+* **templates:** Adding connections list in create panel and component for create connection ([#5013](https://github.com/Azure/LogicAppsUX/issues/5013)) ([afe3cd3](https://github.com/Azure/LogicAppsUX/commit/afe3cd3a8825e92ae3f182e50dbe5ceca394a3fb))
+
+
+### Bug Fixes
+
+* **designer:** Non-string literal values are casted as Strings Literals ([#4977](https://github.com/Azure/LogicAppsUX/issues/4977)) ([486b749](https://github.com/Azure/LogicAppsUX/commit/486b749f54558550b321b70d48d7622ae9959a30))
+
 ## [4.32.0](https://github.com/Azure/LogicAppsUX/compare/v4.31.0...v4.32.0) (2024-06-20)
 
 
