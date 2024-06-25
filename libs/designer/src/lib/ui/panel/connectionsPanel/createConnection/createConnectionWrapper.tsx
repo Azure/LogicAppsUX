@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
-import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
   getApiHubAuthentication,
   getConnectionMetadata,
@@ -13,6 +12,7 @@ import {
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
   useConnectorByNodeId,
+  useConnectorOnly,
   useGatewayServiceConfig,
   useGateways,
   useSubscriptions,
@@ -34,6 +34,7 @@ import {
   WorkflowService,
   getIconUriFromConnector,
   getRecordEntry,
+  type ConnectionMetadata,
   type ConnectionCreationInfo,
   type ConnectionParametersMetadata,
   type Connection,
@@ -45,59 +46,112 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import type { AssistedConnectionProps } from '@microsoft/designer-ui';
+import type { ApiHubAuthentication } from 'lib/common/models/workflow';
 
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const intl = useIntl();
   const nodeId: string = useSelectedNodeId();
   const nodeIds = useSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
-  const iconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
 
-  const subscriptionsQuery = useSubscriptions();
-  const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
-  const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
-  const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
-  const gatewayServiceConfig = useGatewayServiceConfig();
-
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
-
-  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
-
-  const applyNewConnection = useCallback(
-    (_nodeId: string, newConnection: Connection, selectedIdentity?: string) => {
-      const payload: ConnectionPayload = {
-        nodeId: _nodeId,
-        connection: newConnection,
-        connector: connector as Connector,
-      };
-
-      if (selectedIdentity) {
-        const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
-        payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
-        payload.authentication = getApiHubAuthentication(userAssignedIdentity);
-      }
-
-      dispatch(updateNodeConnection(payload));
-    },
-    [connector, dispatch]
-  );
 
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
     [connector, operationManifest]
   );
 
+  const referencePanelMode = useReferencePanelMode();
+  const closeConnectionsFlow = useCallback(() => {
+    const panelMode = referencePanelMode ?? 'Operation';
+    const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
+    dispatch(setIsCreatingConnection(false));
+    dispatch(openPanel({ nodeId, panelMode }));
+  }, [dispatch, referencePanelMode, nodeIds]);
+
+  const updateConnectionInState = useCallback(
+    (payload: CreatedConnectionPayload) => {
+      for (const nodeId of nodeIds) {
+        dispatch(updateNodeConnection({ ...payload, nodeId }));
+      }
+    },
+    [dispatch, nodeIds]
+  );
+
+  return (
+    <CreateConnectionInternal
+      connectorId={connector?.id ?? ''}
+      operationType={operationInfo?.type}
+      existingReferences={existingReferences}
+      nodeIds={nodeIds}
+      assistedConnectionProps={assistedConnectionProps}
+      connectionMetadata={connectionMetadata}
+      showActionBar={true}
+      hideCancelButton={!hasExistingConnection}
+      updateConnectionInState={updateConnectionInState}
+      onConnectionCreated={() => closeConnectionsFlow()}
+    />
+  );
+};
+
+export interface CreatedConnectionPayload {
+  connector: Connector;
+  connection: Connection;
+  connectionProperties?: Record<string, any>;
+  authentication?: ApiHubAuthentication;
+}
+
+export const CreateConnectionInternal = (props: {
+  classes?: Record<string, string>;
+  connectorId: string;
+  operationType: string;
+  existingReferences: string[];
+  hideCancelButton: boolean;
+  showActionBar: boolean;
+  updateConnectionInState: (payload: CreatedConnectionPayload) => void;
+  onConnectionCreated: (connection: Connection) => void;
+  onConnectionCancelled?: () => void;
+  description?: string;
+  nodeIds?: string[];
+  assistedConnectionProps?: AssistedConnectionProps;
+  connectionMetadata?: ConnectionMetadata;
+}) => {
+  const {
+    classes,
+    connectorId,
+    description,
+    operationType,
+    assistedConnectionProps,
+    existingReferences,
+    connectionMetadata,
+    nodeIds = [],
+    hideCancelButton,
+    showActionBar,
+    updateConnectionInState,
+    onConnectionCreated,
+    onConnectionCancelled,
+  } = props;
+  const dispatch = useDispatch<AppDispatch>();
+
+  const intl = useIntl();
+  const { data: connector } = useConnectorOnly(connectorId);
+  const iconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
+  const subscriptionsQuery = useSubscriptions();
+  const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
+  const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
+  const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
+  const gatewayServiceConfig = useGatewayServiceConfig();
+  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
+
+  const [isCreating, setIsCreating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [selectedResourceId, setSelectedResourceId] = useState<string>('');
   const [selectedSubResource, setSelectedSubResource] = useState<any | undefined>();
 
@@ -120,16 +174,8 @@ export const CreateConnectionWrapper = () => {
       }
     : undefined;
 
-  const referencePanelMode = useReferencePanelMode();
-  const closeConnectionsFlow = useCallback(() => {
-    const panelMode = referencePanelMode ?? 'Operation';
-    const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
-    dispatch(setIsCreatingConnection(false));
-    dispatch(openPanel({ nodeId, panelMode }));
-  }, [dispatch, referencePanelMode, nodeIds]);
-
   const queryClient = useQueryClient();
-  const updateNewConnection = useCallback(
+  const updateNewConnectionInCache = useCallback(
     async (newConnection: Connection) => {
       return queryClient.setQueryData<Connection[]>(
         ['connections', connector?.id?.toLowerCase()],
@@ -138,6 +184,26 @@ export const CreateConnectionWrapper = () => {
     },
     [connector?.id, queryClient]
   );
+
+  const applyNewConnection = useCallback(
+    (newConnection: Connection, selectedIdentity?: string) => {
+      const payload: CreatedConnectionPayload = {
+        connection: newConnection,
+        connector: connector as Connector,
+      };
+
+      if (selectedIdentity) {
+        const userAssignedIdentity = selectedIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY ? selectedIdentity : undefined;
+        payload.connectionProperties = getConnectionProperties(connector as Connector, userAssignedIdentity);
+        payload.authentication = getApiHubAuthentication(userAssignedIdentity);
+      }
+
+      updateConnectionInState(payload);
+      onConnectionCreated(newConnection);
+    },
+    [connector, onConnectionCreated, updateConnectionInState]
+  );
+
   const createConnectionCallback = useCallback(
     async (
       displayName?: string,
@@ -152,7 +218,7 @@ export const CreateConnectionWrapper = () => {
         return;
       }
 
-      setIsLoading(true);
+      setIsCreating(true);
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
@@ -185,7 +251,7 @@ export const CreateConnectionWrapper = () => {
         // Assign connection parameters from resource selector experience
         if (assistedConnectionProps) {
           outputParameterValues = await getConnectionParametersForAzureConnection(
-            operationManifest?.properties.connection?.type,
+            connectionMetadata?.type,
             selectedSubResource,
             outputParameterValues,
             !!selectedParameterSet // TODO: Should remove this when backend updates all connection parameters for functions and apim
@@ -203,7 +269,7 @@ export const CreateConnectionWrapper = () => {
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
-          connectionMetadata: connectionMetadata,
+          connectionMetadata,
           connectionParameterSet: selectedParameterSet,
           connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
         };
@@ -228,11 +294,8 @@ export const CreateConnectionWrapper = () => {
         }
 
         if (connection) {
-          updateNewConnection(connection);
-          for (const nodeId of nodeIds) {
-            applyNewConnection(nodeId, connection, identitySelected);
-          }
-          closeConnectionsFlow();
+          updateNewConnectionInCache(connection);
+          applyNewConnection(connection, identitySelected);
         } else if (err) {
           setErrorMessage(String(err));
         }
@@ -246,25 +309,25 @@ export const CreateConnectionWrapper = () => {
           error: error instanceof Error ? error : undefined,
         });
       }
-      setIsLoading(false);
+      setIsCreating(false);
     },
     [
-      connector,
+      applyNewConnection,
       assistedConnectionProps,
       connectionMetadata,
-      operationManifest?.properties.connection?.type,
-      selectedSubResource,
-      closeConnectionsFlow,
-      nodeIds,
-      applyNewConnection,
+      connector,
       existingReferences,
-      updateNewConnection,
+      selectedSubResource,
+      updateNewConnectionInCache,
     ]
   );
 
   const cancelCallback = useCallback(() => {
     dispatch(setIsCreatingConnection(false));
-  }, [dispatch]);
+    if (onConnectionCancelled) {
+      onConnectionCancelled();
+    }
+  }, [dispatch, onConnectionCancelled]);
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
@@ -284,17 +347,20 @@ export const CreateConnectionWrapper = () => {
     <CreateConnection
       nodeIds={nodeIds}
       iconUri={iconUri}
+      showActionBar={showActionBar}
+      classes={classes}
       connector={connector}
       connectionParameterSets={getSupportedParameterSets(
         connector.properties.connectionParameterSets,
-        operationInfo.type,
+        operationType,
         connector.properties.capabilities
       )}
+      description={description}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
-      isLoading={isLoading}
+      isLoading={isCreating}
       cancelCallback={cancelCallback}
-      hideCancelButton={!hasExistingConnection}
+      hideCancelButton={hideCancelButton}
       errorMessage={errorMessage}
       clearErrorCallback={() => setErrorMessage(undefined)}
       selectSubscriptionCallback={(subscriptionId: string) => setSelectedSubscriptionId(subscriptionId)}

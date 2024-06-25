@@ -4,9 +4,16 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests, setFilteredTemplateNames } from '../state/templates/manifestSlice';
-import { type ResourceDetails, setConsumption, setExistingWorkflowName, setResourceDetails } from '../state/templates/workflowSlice';
+import {
+  type ResourceDetails,
+  setConsumption,
+  setExistingWorkflowName,
+  setResourceDetails,
+  initializeConnectionReferences,
+} from '../state/templates/workflowSlice';
 import { initializeTemplateServices } from '../state/templates/templateSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
+import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 
 export interface TemplatesDataProviderProps {
@@ -14,6 +21,7 @@ export interface TemplatesDataProviderProps {
   existingWorkflowName: string | undefined;
   resourceDetails: ResourceDetails;
   services: TemplateServiceOptions;
+  connectionReferences: ConnectionReferences;
   children?: React.ReactNode;
 }
 
@@ -68,7 +76,8 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     }
 
     dispatch(setResourceDetails(props.resourceDetails));
-  }, [dispatch, servicesInitialized, props.services, props.resourceDetails]);
+    dispatch(initializeConnectionReferences(props.connectionReferences));
+  }, [dispatch, servicesInitialized, props.services, props.resourceDetails, props.connectionReferences]);
 
   if (!servicesInitialized) {
     return null;

@@ -84,4 +84,19 @@ export const getFilteredTemplates = (
     });
     return hasDetailFilters;
   });
+}
+
+export const getConnectorResources = (intl: IntlShape) => {
+  return {
+    connected: intl.formatMessage({
+      defaultMessage: 'Connected',
+      id: 'oOGTSo',
+      description: 'Connected text',
+    }),
+    notConnected: intl.formatMessage({
+      defaultMessage: 'Not Connected',
+      id: '3HrFPS',
+      description: 'Not Connected text',
+    }),
+  };
 };
