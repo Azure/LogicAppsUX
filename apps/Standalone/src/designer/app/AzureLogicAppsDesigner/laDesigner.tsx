@@ -24,7 +24,7 @@ import {
   useWorkflowApp,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
-import { WorkflowUtility } from './Utilities/Workflow';
+import { WorkflowUtility, addConnectionData } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
@@ -123,9 +123,8 @@ const DesignerEditor = () => {
     [originalConnectionsData, parameters, settingsData?.properties]
   );
 
-  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
-    addConnectionInJson(connectionAndSetting, connectionsData ?? {});
-    addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
+  const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+    addConnectionData(connectionAndSetting, connectionsData ?? {}, settingsData ?? {});
   };
 
   const getConnectionConfiguration = async (connectionId: string): Promise<any> => {
@@ -168,7 +167,7 @@ const DesignerEditor = () => {
         equals(workflow?.kind, 'stateful'),
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
-        addConnectionData,
+        addConnectionDataInternal,
         getConnectionConfiguration,
         tenantId,
         objectId,
@@ -714,43 +713,6 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
   };
-};
-
-const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): void => {
-  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
-
-  let pathToSetConnectionsData: any = connectionsJson;
-
-  for (const path of pathLocation) {
-    if (!pathToSetConnectionsData[path]) {
-      pathToSetConnectionsData[path] = {};
-    }
-
-    pathToSetConnectionsData = pathToSetConnectionsData[path];
-  }
-
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
-    // TODO: To show this in a notification of info bar on the blade.
-    // const message = 'ConnectionKeyAlreadyExist - Connection key \'{0}\' already exists.'.format(connectionKey);
-    return;
-  }
-
-  pathToSetConnectionsData[connectionKey] = connectionData;
-};
-
-const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> => {
-  const settingsToAdd = Object.keys(settings);
-
-  for (const settingKey of settingsToAdd) {
-    if (originalSettings[settingKey]) {
-      // TODO: To show this in a notification of info bar on the blade that key will be overriden.
-    }
-
-    // eslint-disable-next-line no-param-reassign
-    originalSettings[settingKey] = settings[settingKey];
-  }
-
-  return originalSettings;
 };
 
 const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {
