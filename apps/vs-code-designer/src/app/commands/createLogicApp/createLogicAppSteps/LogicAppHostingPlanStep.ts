@@ -5,7 +5,7 @@
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
-import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
+// import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
@@ -31,11 +31,11 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
     return !wizardContext.customLocation && wizardContext.useConsumptionPlan === undefined;
   }
 
-  public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
-    const { suppressCreate, useConsumptionPlan } = wizardContext;
-    if (!useConsumptionPlan) {
-      return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
-    }
+  public async getSubWizard(_wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
+    // const { suppressCreate, useConsumptionPlan } = wizardContext;
+    // if (!useConsumptionPlan) {
+    //   return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
+    // }
     return undefined;
   }
 }

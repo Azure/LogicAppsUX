@@ -8,13 +8,13 @@ import { ext } from '../../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../workflows/switchDebugMode/switchDebugMode';
 import type { File } from '../../utils/codeless/common';
-import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject } from '../../utils/codeless/common';
-import { connectionsFileName, hostFileName, parametersFileName, workflowFileName } from '../../../constants';
+import { getWorkflowsPathInLocalProject } from '../../utils/codeless/common';
+import { artifactsDirectory, connectionsFileName, hostFileName, parametersFileName, workflowFileName } from '../../../constants';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 
 export const deployToFileShare = async (context: IActionContext, node: SlotTreeItem) => {
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
-    const message: string = localize('uploadingFileShare', 'Uploading files to File Share...');
+    const message: string = localize('uploadingFileShare', 'Uploading files to logic app SMB storage...');
     ext.outputChannel.appendLog(message);
     progress.report({ message });
 
@@ -24,22 +24,29 @@ export const deployToFileShare = async (context: IActionContext, node: SlotTreeI
 
       const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
       await executeCommand(undefined, undefined, `net use ${hostName}/${fileSharePath} ${password} /user:${userName}`);
-      await uploadRootFiles(projectPath, hostName, fileSharePath);
-      await uploadWorkflowsFiles(projectPath, hostName, fileSharePath);
-      await uploadeArtifactsFiles(projectPath, hostName, fileSharePath);
+      await uploadRootFiles(projectPath);
+      await uploadWorkflowsFiles(projectPath);
+      await uploadArtifactFiles(projectPath);
     } catch (error) {
       console.error(`Error deploying to file share: ${error.message}`);
+    } finally {
+      await executeCommand(undefined, undefined, 'net use X: /delete');
     }
   });
 };
 
-const uploadFiles = async (files: File[], hostName: string, fileSharePath: string) => {
+const uploadFiles = async (files: File[]) => {
   for (const file of files) {
-    await fse.copy(file.path, `${hostName}/${fileSharePath}`, { overwrite: true });
+    try {
+      await fse.copy(file.path, `X:\\${file.name}`, { overwrite: true });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 };
 
-const uploadRootFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
+const uploadRootFiles = async (projectPath: string | undefined) => {
   const hostJsonPath: string = path.join(projectPath, hostFileName);
   const parametersJsonPath: string = path.join(projectPath, parametersFileName);
   const connectionsJsonPath: string = path.join(projectPath, connectionsFileName);
@@ -50,26 +57,24 @@ const uploadRootFiles = async (projectPath: string | undefined, hostName: string
   ];
   for (const rootFile of rootFiles) {
     if (await fse.pathExists(rootFile.path)) {
-      await uploadFiles([{ path: rootFile.path, name: rootFile.name }], hostName, fileSharePath);
+      await uploadFiles([{ path: rootFile.path, name: rootFile.name }]);
     }
   }
 };
 
-const uploadWorkflowsFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
+const uploadWorkflowsFiles = async (projectPath: string | undefined) => {
   const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
   for (const workflowFile of workflowFiles) {
-    await uploadFiles([{ ...workflowFile, name: workflowFileName }], hostName, fileSharePath);
+    await uploadFiles([{ ...workflowFile, name: `${workflowFile.name}\\${workflowFileName}` }]);
   }
 };
 
-const uploadeArtifactsFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
-  const artifactsFiles = await getArtifactsPathInLocalProject(projectPath);
-
-  if (artifactsFiles.maps.length > 0) {
-    await uploadFiles(artifactsFiles.maps, hostName, fileSharePath);
-  }
-
-  if (artifactsFiles.schemas.length > 0) {
-    await uploadFiles(artifactsFiles.schemas, hostName, fileSharePath);
+const uploadArtifactFiles = async (projectPath: string | undefined) => {
+  try {
+    const artifactsPath = path.join(projectPath, artifactsDirectory);
+    await fse.copy(artifactsPath, `X:\\${artifactsDirectory}`);
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 };

@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getIconPath } from '../../utils/tree/assets';
-import { LogicAppResourceTree } from '../LogicAppResourceTree';
+// import { getIconPath } from '../../utils/tree/assets';
+import type { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import type { RemoteWorkflowTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import type {
@@ -32,6 +32,7 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public site: ParsedSite;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
   public customLocation?: CustomLocation;
+  public containerAppName?: string;
   public fileShare?: {
     hostName?: string;
     path?: string;
@@ -46,13 +47,13 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
     super(parent);
     this.resourceTree = resourceTree;
     // this is for the slotContextValue because it never gets resolved by the Resources extension
-    const slotContextValue = this.resourceTree.site.isSlot
-      ? LogicAppResourceTree.slotContextValue
-      : LogicAppResourceTree.productionContextValue;
-    const contextValues = [slotContextValue, 'slot'];
-    this.contextValue = Array.from(new Set(contextValues)).sort().join(';');
-    this.site = this.resourceTree.site;
-    this.iconPath = getIconPath(slotContextValue);
+    // const slotContextValue = this.resourceTree?.site.isSlot
+    //   ? LogicAppResourceTree.slotContextValue
+    //   : LogicAppResourceTree.productionContextValue;
+    // const contextValues = [slotContextValue, 'slot'];
+    // this.contextValue = Array.from(new Set(contextValues)).sort().join(';');
+    // this.site = this.resourceTree.site;
+    // this.iconPath = getIconPath(slotContextValue);
   }
 
   public get id(): string {

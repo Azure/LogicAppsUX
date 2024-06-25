@@ -11,6 +11,7 @@ export class SQLStringNameStep extends AzureWizardPromptStep<ILogicAppWizardCont
     wizardContext.sqlConnectionString = await wizardContext.ui.showInputBox({
       placeHolder: localize('sqlConnectionPlaceholder', 'SQL connection string'),
       prompt: localize('sqlConnectionPrompt', 'Provide your SQL connection string'),
+      password: true,
       validateInput: async (connectionString: string): Promise<string | undefined> => await validateSQLConnectionString(connectionString),
     });
   }

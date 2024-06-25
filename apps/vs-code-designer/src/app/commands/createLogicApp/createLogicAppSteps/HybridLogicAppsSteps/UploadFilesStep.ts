@@ -8,19 +8,18 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
 import type { Progress } from 'vscode';
 import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
-import { createContainerApp, createLogicAppExtension } from '../../../../utils/codeless/containerApp';
+// import { deployToFileShare } from '../../../deploy/deployToFileShare';
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
-  public priority = 120;
+export class UploadFileStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
+  public priority = 130;
 
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {
-      const message: string = localize('creatingNewApp', 'Creating container app "{0}"...', context.newSiteName);
+      const message: string = localize('uploadingFiles', 'Uploading files to the logic app storage "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
-      const response = await createContainerApp(context);
-      await createLogicAppExtension(context);
-      console.log(response);
+      // const response = await deployToFileShare(context);
+      // console.log(response);
     } catch (error) {
       return undefined;
     }
