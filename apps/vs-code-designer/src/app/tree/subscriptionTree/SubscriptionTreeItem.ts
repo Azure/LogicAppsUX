@@ -2,18 +2,19 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { LogicAppResolver } from '../../../LogicAppResolver';
-import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
+// import { LogicAppResolver } from '../../../LogicAppResolver';
+import { projectLanguageSetting, workflowappRuntime } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
 import { ConnectedEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectedEnvironmentStep';
 import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
-import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
+// import { UploadFileStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/UploadFilesStep';
+//import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
-import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
+// import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
 import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
-import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
+// import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { createActivityContext } from '../../utils/activityUtils';
 import { createWebSiteClient } from '../../utils/azureClients';
 import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
@@ -26,26 +27,26 @@ import { SlotTreeItem } from '../slotsTree/SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
-  AppInsightsCreateStep,
-  AppInsightsListStep,
+  // AppInsightsCreateStep,
+  // AppInsightsListStep,
   AppKind,
   CustomLocationListStep,
-  ParsedSite,
+  // ParsedSite,
   SiteNameStep,
   WebsiteOS,
 } from '@microsoft/vscode-azext-azureappservice';
-import type { IAppServiceWizardContext, SiteClient } from '@microsoft/vscode-azext-azureappservice';
+import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
 import {
   ResourceGroupListStep,
-  StorageAccountCreateStep,
+  // StorageAccountCreateStep,
   StorageAccountKind,
   StorageAccountListStep,
   StorageAccountPerformance,
   StorageAccountReplication,
   SubscriptionTreeItemBase,
   uiUtils,
-  VerifyProvidersStep,
+  // VerifyProvidersStep,
   storageAccountNamingRules,
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
@@ -145,28 +146,34 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
           learnMoreLink: 'https://aka.ms/Cfqnrc',
         })
       );
-      promptSteps.push(new AzureStorageAccountStep());
-      promptSteps.push(new AppInsightsListStep());
+      //promptSteps.push(new AzureStorageAccountStep());
+      //promptSteps.push(new AppInsightsListStep());
     } else {
       wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-      executeSteps.push(new AppInsightsCreateStep());
+      //executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      //executeSteps.push(new AppInsightsCreateStep());
     }
 
-    executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
-    executeSteps.push(new LogicAppCreateStep());
+    //executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
+    //executeSteps.push(new LogicAppCreateStep());
+
     executeSteps.push(new ConnectEnvironmentStep());
     executeSteps.push(new ContainerAppCreateStep());
+    //executeSteps.push(new UploadFileStep())
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
     await wizard.prompt();
 
-    if (wizardContext.customLocation) {
-      setSiteOS(wizardContext);
-      executeSteps.pop();
-    }
+    // if (wizardContext.customLocation) {
+    //   setSiteOS(wizardContext);
+    //   executeSteps.pop();
+    // }
+    // if (wizardContext.customLocation) {
+    //   setSiteOS(wizardContext);
+    //   executeSteps.unshift(new AppServicePlanCreateStep());
+    // }
 
     wizardContext.activityTitle = localize(
       'logicAppCreateActivityTitle',
@@ -206,22 +213,23 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     await wizard.execute();
 
-    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
-    const client: SiteClient = await site.createClient(context);
+    // const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+    // const client: SiteClient = await site.createClient(context);
 
-    if (!client.isLinux) {
-      try {
-        await enableFileLogging(client);
-      } catch (error) {
-        context.telemetry.properties.fileLoggingError = parseError(error).message;
-      }
-    }
+    // if (!client.isLinux) {
+    //   try {
+    //     await enableFileLogging(client);
+    //   } catch (error) {
+    //     context.telemetry.properties.fileLoggingError = parseError(error).message;
+    //   }
+    // }
 
-    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
-    await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
-    await ext.rgApi.appResourceTree.refresh(context);
-    const slotTreeItem = new SlotTreeItem(subscription, resolved);
-    slotTreeItem.customLocation = wizardContext.customLocation;
+    //const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+    // await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
+    // await ext.rgApi.appResourceTree.refresh(context);
+    const slotTreeItem = new SlotTreeItem(subscription, null);
+    // slotTreeItem.customLocation = wizardContext.customLocation;
+    slotTreeItem.containerAppName = wizardContext.newSiteName;
     slotTreeItem.fileShare = wizardContext.fileShare;
     return slotTreeItem;
   }
