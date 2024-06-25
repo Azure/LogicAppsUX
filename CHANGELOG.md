@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.31.1](https://github.com/Azure/LogicAppsUX/compare/v4.31.0...v4.31.1) (2024-06-25)
+
+
+### Bug Fixes
+
+* **vscode:** Update bundle dependencies to dotnetVersions  ([#5019](https://github.com/Azure/LogicAppsUX/issues/5019)) ([2330c66](https://github.com/Azure/LogicAppsUX/commit/2330c669033b40f25ad33b0dc448f646010d3849))
+
 ## [4.31.0](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v4.31.0) (2024-06-19)
 
 
