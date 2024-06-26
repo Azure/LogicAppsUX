@@ -62,15 +62,17 @@ describe('ui/templates/displayConnections', () => {
     store = setupStore(minimalStoreData);
 
     InitConnectionService({
-      getConnector: async () => Promise.resolve({ id: '/serviceProviders/abc', properties: { iconUrl: 'iconUrl', displayName: 'AB C' }})
-    }  as any);
+      getConnector: async () => Promise.resolve({ id: '/serviceProviders/abc', properties: { iconUrl: 'iconUrl', displayName: 'AB C' } }),
+    } as any);
   });
 
   beforeEach(() => {
     renderWithProviders(
       <ReactQueryProvider>
         <DisplayConnections connections={template1Manifest.connections} />
-      </ReactQueryProvider>, { store });
+      </ReactQueryProvider>,
+      { store }
+    );
   });
 
   it('should render the connection ids for connections', async () => {

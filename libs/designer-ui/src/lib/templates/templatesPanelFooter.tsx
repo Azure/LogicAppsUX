@@ -1,27 +1,23 @@
 import { DefaultButton, PrimaryButton } from '@fluentui/react';
 import type { ReactNode } from 'react';
-import { useIntl } from 'react-intl';
 
 export interface TemplatePanelFooterProps {
   primaryButtonText: string | ReactNode;
   primaryButtonOnClick: () => void | Promise<void>;
   primaryButtonDisabled?: boolean;
-  onClose: () => void;
+  secondaryButtonText: string;
+  secondaryButtonOnClick: () => void;
+  secondaryButtonDisabled?: boolean;
 }
 
 export const TemplatesPanelFooter = ({
   primaryButtonText,
   primaryButtonDisabled,
   primaryButtonOnClick,
-  onClose,
+  secondaryButtonText,
+  secondaryButtonOnClick,
+  secondaryButtonDisabled = false,
 }: TemplatePanelFooterProps) => {
-  const intl = useIntl();
-  const CLOSE = intl.formatMessage({
-    defaultMessage: 'Close',
-    id: 'FTrMxN',
-    description: 'Button text for closing the panel',
-  });
-
   return (
     <div className="msla-templates-panel-footer">
       <PrimaryButton
@@ -33,12 +29,13 @@ export const TemplatesPanelFooter = ({
         {primaryButtonText}
       </PrimaryButton>
       <DefaultButton
-        onClick={onClose}
+        onClick={secondaryButtonOnClick}
         style={{
           marginLeft: '8px',
         }}
+        disabled={secondaryButtonDisabled}
       >
-        {CLOSE}
+        {secondaryButtonText}
       </DefaultButton>
     </div>
   );

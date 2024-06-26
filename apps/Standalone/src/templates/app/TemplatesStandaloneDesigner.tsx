@@ -6,7 +6,7 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { BaseGatewayService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
+import { BaseGatewayService, StandardTemplateService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
 import {
   useAppSettings,
   useConnectionsData,
@@ -20,11 +20,6 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
 import { WorkflowUtility, addConnectionData } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
-// import { useNavigate } from 'react-router-dom';
-// import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-// import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-// import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
-import { useNavigate } from 'react-router-dom';
 import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
@@ -43,9 +38,6 @@ export const TemplatesStandaloneDesigner = () => {
   const { data: objectId } = useCurrentObjectId();
   const { data: connectionsData } = useConnectionsData(appId);
   const { data: settingsData } = useAppSettings(appId as string);
-  const navigate = useNavigate();
-
-  // const navigate = useNavigate();
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const sanitizeParameterName = (parameterName: string, workflowName: string) =>
     parameterName.replace('_#workflowname#', `_${workflowName}`);
@@ -58,10 +50,6 @@ export const TemplatesStandaloneDesigner = () => {
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
-    const callBack = () => {
-      console.log('Created workflow, TODO: now redirect');
-      navigate('/');
-    };
     if (appId) {
       if (isConsumption) {
         console.log('Consumption is not ready yet!');
@@ -142,7 +130,7 @@ export const TemplatesStandaloneDesigner = () => {
             updatedParametersData,
             undefined,
             undefined,
-            callBack,
+            () => {},
             true
           );
         } catch (error) {
@@ -160,7 +148,15 @@ export const TemplatesStandaloneDesigner = () => {
 
   const services = useMemo(
     () =>
-      getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, addConnectionDataInternal, tenantId, objectId, canonicalLocation),
+      getServices(
+        isConsumption,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        tenantId,
+        objectId,
+        canonicalLocation
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
   );
@@ -255,6 +251,7 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const getServices = (
+  isConsumption: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -312,11 +309,27 @@ const getServices = (
     getAppIdentity: () => workflowApp?.identity as any,
   };
 
+  const templateService = isConsumption
+    ? undefined
+    : new StandardTemplateService({
+        baseUrl: armUrl,
+        appId: siteResourceId,
+        httpClient,
+        apiVersions: {
+          subscription: apiVersion,
+          gateway: '2018-11-01',
+        },
+        openBladeAfterCreate: () => {
+          console.log('Open blade after create');
+        },
+      });
+
   return {
     connectionService,
     gatewayService,
     tenantService,
     oAuthService,
+    templateService,
     workflowService,
   };
 };
