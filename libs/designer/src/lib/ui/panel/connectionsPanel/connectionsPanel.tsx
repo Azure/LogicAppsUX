@@ -55,6 +55,11 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     id: 'NdOhXD',
     description: 'Header for the create connection panel',
   });
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close connections panel',
+    id: 'A3SsLM',
+    description: 'Aria label for the close button in the connections panel',
+  });
 
   const panelHeaderText = useMemo(() => {
     switch (panelStatus) {
@@ -82,7 +87,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     <>
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
-        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button appearance="subtle" aria-label={closeButtonAriaLabel} onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
     </>
