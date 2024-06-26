@@ -43,7 +43,7 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
           }}
         />
       </div>
-      <div className="msla-templates-filters-pills">
+      <div>
         {connectors && (
           <TemplatesFilterPill
             filterName={intlText.CONNECTORS}
