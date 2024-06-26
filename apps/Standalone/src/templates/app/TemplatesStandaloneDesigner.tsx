@@ -158,7 +158,7 @@ export const TemplatesStandaloneDesigner = () => {
         canonicalLocation
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, settingsData, workflowAppData, appId, tenantId, canonicalLocation]
+    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
   );
   const resourceDetails = new ArmParser(appId ?? '');
   return (
