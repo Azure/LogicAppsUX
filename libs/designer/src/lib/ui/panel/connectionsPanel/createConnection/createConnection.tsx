@@ -7,7 +7,7 @@ import LegacyManagedIdentityDropdown from './formInputs/legacyManagedIdentityPic
 import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMultiAuth';
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
-import type { IDropdownOption } from '@fluentui/react';
+import { css, type IDropdownOption } from '@fluentui/react';
 import { Body1Strong, Button, Divider, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
@@ -47,10 +47,12 @@ import TenantPicker from './formInputs/tenantPicker';
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
 export interface CreateConnectionProps {
+  classes?: Record<string, string>;
   nodeIds?: string[];
   iconUri?: string;
   connector: Connector;
   connectionParameterSets?: ConnectionParameterSets;
+  description?: string;
   identity?: ManagedIdentity;
   isLoading?: boolean;
   createConnectionCallback?: (
@@ -78,11 +80,13 @@ export interface CreateConnectionProps {
 
 export const CreateConnection = (props: CreateConnectionProps) => {
   const {
+    classes,
     nodeIds = [],
     showActionBar = true,
     iconUri = '',
     connector,
     connectionParameterSets: _connectionParameterSets,
+    description,
     identity,
     isLoading = false,
     createConnectionCallback,
@@ -573,13 +577,17 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // RENDER
 
   return (
-    <div className="msla-edit-connection-container">
+    <div className={classes?.['root'] ? css('msla-edit-connection-container', classes?.['root']) : 'msla-edit-connection-container'}>
       {showActionBar ? <ActionList nodeIds={nodeIds} iconUri={iconUri} /> : null}
-      <Divider />
+      {showActionBar ? <Divider /> : null}
 
-      <Body1Strong>{componentDescription}</Body1Strong>
+      <Body1Strong>{description ?? componentDescription}</Body1Strong>
 
-      <div className="msla-create-connection-container">
+      <div
+        className={
+          classes?.['content'] ? css('msla-create-connection-container', classes?.['content']) : 'msla-create-connection-container'
+        }
+      >
         {/* Error Bar */}
         {errorMessage && (
           <MessageBar intent={'error'} style={{ width: '100%' }}>
