@@ -1,4 +1,11 @@
-import { HostService, getAllConnectorProperties, isBuiltInConnectorId, isCustomConnectorId, isString } from '@microsoft/logic-apps-shared';
+import {
+  HostService,
+  getAllConnectorProperties,
+  isBuiltInConnectorId,
+  isCustomConnectorId,
+  isSharedManagedConnectorId,
+  isString,
+} from '@microsoft/logic-apps-shared';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 
 export const isBuiltInConnector = (connector: Connector | OperationApi | string): boolean => {
@@ -21,4 +28,15 @@ export const isCustomConnector = (connector: Connector | OperationApi | string):
 
   const connectorId = isString(connector) ? connector : connector.id;
   return isCustomConnectorId(connectorId);
+};
+
+export const isPremiumConnector = (connector: Connector | OperationApi | string): boolean => {
+  const hostIsCustomConnectorFn = HostService()?.isPremiumConnector;
+  if (hostIsCustomConnectorFn) {
+    const connectorParameter = isString(connector) ? connector : getAllConnectorProperties(connector);
+    return hostIsCustomConnectorFn(connectorParameter);
+  }
+  //
+  const connectorId = isString(connector) ? connector : connector.id;
+  return isSharedManagedConnectorId(connectorId.toLocaleLowerCase());
 };
