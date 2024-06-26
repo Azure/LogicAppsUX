@@ -1,5 +1,5 @@
 import { SearchBox } from '@fluentui/react';
-import { type FilterObject, TemplatesFilterPill } from '@microsoft/designer-ui';
+import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-ui';
 import type { AppDispatch } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -43,9 +43,9 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
           }}
         />
       </div>
-      <div>
+      <div className="msla-templates-filters-dropdowns">
         {connectors && (
-          <TemplatesFilterPill
+          <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
             items={connectors}
             onApplyButtonClick={(filterItems) => {
@@ -54,7 +54,7 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
           />
         )}
         {Object.keys(detailFilters).map((filterName, index) => (
-          <TemplatesFilterPill
+          <TemplatesFilterDropdown
             key={index}
             filterName={filterName}
             items={detailFilters[filterName]}

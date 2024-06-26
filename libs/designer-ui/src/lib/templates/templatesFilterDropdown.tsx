@@ -13,7 +13,7 @@ interface TemplatesFilterPillProps {
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
 }
 
-export const TemplatesFilterPill = ({ filterName, items, onApplyButtonClick }: TemplatesFilterPillProps) => {
+export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick }: TemplatesFilterPillProps) => {
   const intl = useIntl();
   const [selected, setSelected] = useState<FilterObject[] | undefined>();
 
