@@ -212,7 +212,10 @@ export async function getConnectionsAndSettingsToUpdate(
         settingsToAdd,
         parametersFromDefinition
       );
-    } else if (settings.Values[referenceKey] && isKeyExpired(jwtTokenHelper, settings.Values[referenceKey], 3)) {
+    } else if (
+      settings.Values[`${referenceKey}-connectionKey`] &&
+      isKeyExpired(jwtTokenHelper, settings.Values[`${referenceKey}-connectionKey`], 192)
+    ) {
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
