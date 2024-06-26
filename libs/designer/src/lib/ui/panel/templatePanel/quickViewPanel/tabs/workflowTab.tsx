@@ -4,8 +4,9 @@ import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { useTheme, Image } from '@fluentui/react';
 import { useMemo } from 'react';
-import { openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const WorkflowPanel: React.FC = () => {
   const { manifest, images } = useSelector((state: RootState) => state.template);
@@ -44,5 +45,14 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
       dispatch(openCreateWorkflowPanelView());
     },
     primaryButtonDisabled: false,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
   },
 });
