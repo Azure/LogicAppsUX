@@ -407,8 +407,8 @@ export const getConnectorAllCategories = (): Record<string, string> => {
   });
   const premiumText = intl.formatMessage({
     defaultMessage: 'Premium',
-    id: 'dvDN03',
-    description: 'Custom category name text',
+    id: 'cuKbLw',
+    description: 'Premium category name text',
   });
 
   return { inapp: builtInText, shared: azureText, custom: customText, premium: premiumText };

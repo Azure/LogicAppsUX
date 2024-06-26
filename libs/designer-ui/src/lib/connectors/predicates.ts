@@ -36,7 +36,7 @@ export const isPremiumConnector = (connector: Connector | OperationApi | string)
     const connectorParameter = isString(connector) ? connector : getAllConnectorProperties(connector);
     return hostIsCustomConnectorFn(connectorParameter);
   }
-  //
+
   const connectorId = isString(connector) ? connector : connector.id;
   return isSharedManagedConnectorId(connectorId.toLocaleLowerCase());
 };
