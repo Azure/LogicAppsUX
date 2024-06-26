@@ -84,7 +84,7 @@ export const getFilteredTemplates = (
     });
     return hasDetailFilters;
   });
-}
+};
 
 export const getConnectorResources = (intl: IntlShape) => {
   return {

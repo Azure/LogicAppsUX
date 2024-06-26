@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
@@ -8,15 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { TemplateService, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
-export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): TemplatePanelTab[] => {
+export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const selectedManifest = useSelector((state: RootState) => state.template.manifest);
-  const { workflowName, kind, parameters } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
 
   const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
@@ -30,10 +30,17 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
   );
   const missingWorkflowName = isUndefinedOrEmptyString(existingWorkflowName ?? workflowName);
 
+  useEffect(() => {
+    setIsLoadingCreate(false);
+    setIsCreated(false);
+  }, [selectedManifest]);
+
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
     await onCreateClick();
     setIsLoadingCreate(false);
+    setIsCreated(true);
+    TemplateService()?.openBladeAfterCreate();
   }, [onCreateClick]);
 
   const connectionsTabItem = useMemo(
@@ -49,26 +56,38 @@ export const useCreateWorkflowPanelTabs = (onCreateClick: () => Promise<void>): 
 
   const parametersTabItem = useMemo(
     () => ({
-      ...parametersTab(intl, dispatch, hasParametersValidationErrors, missingRequiredParameters),
+      ...parametersTab(intl, dispatch, {
+        hasParametersValidationErrors,
+        missingRequiredParameters,
+        previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : undefined,
+      }),
     }),
-    [intl, dispatch, hasParametersValidationErrors, missingRequiredParameters]
+    [intl, dispatch, hasParametersValidationErrors, missingRequiredParameters, connectionsExist]
   );
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch, missingWorkflowName || !kind),
+      ...nameStateTab(intl, dispatch, {
+        primaryButtonDisabled: missingWorkflowName || !kind,
+        previousTabId: parametersExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+          : connectionsExist
+            ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+            : undefined,
+      }),
     }),
-    [intl, dispatch, missingWorkflowName, kind]
+    [intl, dispatch, missingWorkflowName, kind, connectionsExist, parametersExist]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
-        isLoading: isLoadingCreate,
-        isButtonDisabled: missingWorkflowName || !kind,
+        isLoadingCreate,
+        isPrimaryButtonDisabled: missingWorkflowName || !kind,
+        isCreated,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated]
   );
 
   const tabs = useMemo(() => {
