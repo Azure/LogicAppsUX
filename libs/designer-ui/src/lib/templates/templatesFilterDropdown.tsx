@@ -13,9 +13,11 @@ interface TemplatesFilterPillProps {
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
 }
 
+const allOptionId = 'all';
+
 export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick }: TemplatesFilterPillProps) => {
   const intl = useIntl();
-  const [selected, setSelected] = useState<FilterObject[] | undefined>();
+  const [selectedItems, setSelectedItems] = useState<FilterObject[] | undefined>();
 
   return (
     <Dropdown
@@ -27,7 +29,7 @@ export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick 
       multiSelect
       options={[
         {
-          key: 'all',
+          key: allOptionId,
           text: intl.formatMessage({
             defaultMessage: 'All',
             id: 'eaEXYa',
@@ -37,20 +39,21 @@ export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick 
         ...items.map((item) => ({ key: item.value, text: item.displayName })),
       ]}
       label={filterName}
-      selectedKeys={selected?.map((i) => i.value) ?? ['all']}
+      selectedKeys={selectedItems?.map((i) => i.value) ?? [allOptionId]}
       onChange={(_e, item, index) => {
-        const filterObjectItem = index ? items[index - 1] : undefined;
-
         let newSelected = undefined;
-        if (index === 0) {
-          // setSelected(undefined);
-        } else if (item?.selected && filterObjectItem) {
-          newSelected = selected ? [...selected, filterObjectItem] : [filterObjectItem];
-        } else {
-          const updatedSelected = selected?.filter((i) => i.value !== item?.key) ?? [];
-          newSelected = updatedSelected?.length > 0 ? updatedSelected : undefined;
+
+        if (index && index > 0) {
+          if (item?.selected) {
+            const filterObjectItem = items[index - 1]; // -1 to account for the 'All' option
+            newSelected = selectedItems ? [...selectedItems, filterObjectItem] : [filterObjectItem];
+          } else {
+            const updatedSelected = selectedItems?.filter((selectedItem) => selectedItem.value !== item?.key) ?? [];
+            newSelected = updatedSelected?.length > 0 ? updatedSelected : undefined;
+          }
         }
-        setSelected(newSelected);
+
+        setSelectedItems(newSelected);
         onApplyButtonClick(newSelected);
       }}
     />
