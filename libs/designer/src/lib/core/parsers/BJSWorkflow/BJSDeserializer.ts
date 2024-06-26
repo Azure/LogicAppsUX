@@ -244,12 +244,16 @@ export const deserializeUnitTestDefinition = (
 
     const actionResult = unitTestDefinition.actionMocks[actionName].properties?.status;
 
-    if (supportedAction && (actionResult === ActionResults.SUCCESS || actionResult === ActionResults.FAILED)) {
-      mockResults[actionName] = {
-        actionResult: unitTestDefinition.actionMocks[actionName].properties?.status ?? ActionResults.SUCCESS,
-        output: parseOutputsToValueSegment(mockOutputs),
-        isCompleted: !isNullOrEmpty(mockOutputs),
-      };
+    if (supportedAction) {
+      if (actionResult === ActionResults.SUCCESS || actionResult === ActionResults.FAILED) {
+        mockResults[actionName] = {
+          actionResult: actionResult,
+          output: parseOutputsToValueSegment(mockOutputs),
+          isCompleted: !isNullOrEmpty(mockOutputs),
+        };
+      } else {
+        delete mockResults[actionName];
+      }
     }
   });
 
