@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplateFilters, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -14,11 +14,11 @@ import {
   useCurrentTenantId,
   useWorkflowApp,
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-import type { ConnectionsData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionsData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
-import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { WorkflowUtility, addConnectionData } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 // import { useNavigate } from 'react-router-dom';
 // import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -154,8 +154,13 @@ export const TemplatesStandaloneDesigner = () => {
     }
   };
 
+  const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+    addConnectionData(connectionAndSetting, connectionsData ?? {}, settingsData ?? {});
+  };
+
   const services = useMemo(
-    () => getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, tenantId, objectId, canonicalLocation),
+    () =>
+      getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, addConnectionDataInternal, tenantId, objectId, canonicalLocation),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
   );
@@ -176,6 +181,68 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
+            <TemplateFilters
+              connectors={[
+                {
+                  value: 'azureaisearch',
+                  displayName: 'Azure AI Search',
+                },
+                {
+                  value: 'openai',
+                  displayName: 'Open AI',
+                },
+                {
+                  value: 'sql',
+                  displayName: 'SQL',
+                },
+                {
+                  value: 'amazon',
+                  displayName: 'Amazon',
+                },
+              ]}
+              detailFilters={{
+                Trigger: [
+                  {
+                    value: 'Request',
+                    displayName: 'Request',
+                  },
+                  {
+                    value: 'Instant',
+                    displayName: 'Instant',
+                  },
+                ],
+                By: [
+                  {
+                    value: 'Microsoft',
+                    displayName: 'Microsoft',
+                  },
+                  {
+                    value: 'Other',
+                    displayName: 'Other',
+                  },
+                ],
+                Type: [
+                  {
+                    value: 'Workflow',
+                    displayName: 'Workflow',
+                  },
+                  {
+                    value: 'Other',
+                    displayName: 'Other',
+                  },
+                ],
+                Industry: [
+                  {
+                    value: 'Analytics',
+                    displayName: 'Analytics',
+                  },
+                  {
+                    value: 'IT',
+                    displayName: 'IT',
+                  },
+                ],
+              }}
+            />
             <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
@@ -190,6 +257,7 @@ const httpClient = new HttpClient();
 const getServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
+  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string
@@ -215,6 +283,7 @@ const getServices = (
     },
     workflowAppDetails: { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
+    writeConnection: addConnection as any,
   });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,
