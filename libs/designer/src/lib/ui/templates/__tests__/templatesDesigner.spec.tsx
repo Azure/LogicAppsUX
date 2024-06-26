@@ -5,6 +5,10 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { TemplatesDesigner } from '../TemplatesDesigner';
 import { screen } from '@testing-library/react';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { getReactQueryClient } from '../../../core';
 
 describe('ui/templates/templatesDesigner', () => {
   let store: AppStore;
@@ -58,15 +62,26 @@ describe('ui/templates/templatesDesigner', () => {
     minimalStoreData = {
       manifest: {
         availableTemplateNames: ['template1', 'template2'],
+        filteredTemplateNames: ['template1', 'template2'],
         availableTemplates: {
           template1: template1Manifest,
           template2: template2Manifest,
+        },
+        filters: {
+          connectors: undefined,
+          detailFilters: {},
         },
       },
     };
     store = setupStore(minimalStoreData);
 
-    renderWithProviders(<TemplatesDesigner createWorkflowCall={createWorkflowCall} />, { store });
+    const queryClient = getReactQueryClient();
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+      </QueryClientProvider>,
+      { store }
+    );
 
     expect(screen.getByText(/Template 1/i)).toBeDefined();
     expect(screen.getByText(/Template 2/i)).toBeDefined();

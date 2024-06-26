@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplateFilters, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
+  StandardTemplateService,
   BaseTenantService,
   StandardConnectionService,
   clone,
@@ -29,11 +30,6 @@ import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/A
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
-// import { useNavigate } from 'react-router-dom';
-// import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-// import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-// import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
-import { useNavigate } from 'react-router-dom';
 import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
@@ -54,9 +50,7 @@ export const TemplatesStandaloneDesigner = () => {
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: settingsData } = useAppSettings(appId as string);
-  const navigate = useNavigate();
 
-  // const navigate = useNavigate();
   const connectionsData = useMemo(() => {
     return JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {})));
   }, [originalConnectionsData]);
@@ -69,27 +63,9 @@ export const TemplatesStandaloneDesigner = () => {
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
-    const callBack = () => {
-      console.log('Created workflow, TODO: now redirect');
-      navigate('/');
-    };
     if (appId) {
       if (isConsumption) {
         console.log('Consumption is not ready yet!');
-        // await saveWorkflowConsumption({
-        //   id: appId,
-        //   name: workflowNameToUse,
-        //   type: "json", //TODO: figure out what this type is and replace it
-        //   kind: workflowKind,
-        //   properties: {
-        //     files: {
-        //       [Artifact.WorkflowFile]: workflow,
-        //       [Artifact.ParametersFile]: parametersData as ParametersData,
-        //       [Artifact.ConnectionsFile]: _connectionsData
-        //     },
-        //     health: {},
-        //   }
-        // }, workflow);
       } else {
         let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
         const sanitizedParameterData: ParametersData = {};
@@ -164,7 +140,7 @@ export const TemplatesStandaloneDesigner = () => {
             updatedParametersData,
             updatedSettingProperties,
             undefined,
-            callBack,
+            () => {},
             true
           );
         } catch (error) {
@@ -183,7 +159,15 @@ export const TemplatesStandaloneDesigner = () => {
 
   const services = useMemo(
     () =>
-      getServices(connectionsData ?? {}, workflowAppData as WorkflowApp, addConnectionDataInternal, tenantId, objectId, canonicalLocation),
+      getServices(
+        isConsumption,
+        connectionsData ?? {},
+        workflowAppData as WorkflowApp,
+        addConnectionDataInternal,
+        tenantId,
+        objectId,
+        canonicalLocation
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
   );
@@ -204,6 +188,68 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
+            <TemplateFilters
+              connectors={[
+                {
+                  value: 'azureaisearch',
+                  displayName: 'Azure AI Search',
+                },
+                {
+                  value: 'openai',
+                  displayName: 'Open AI',
+                },
+                {
+                  value: 'sql',
+                  displayName: 'SQL',
+                },
+                {
+                  value: 'amazon',
+                  displayName: 'Amazon',
+                },
+              ]}
+              detailFilters={{
+                Trigger: [
+                  {
+                    value: 'Request',
+                    displayName: 'Request',
+                  },
+                  {
+                    value: 'Instant',
+                    displayName: 'Instant',
+                  },
+                ],
+                By: [
+                  {
+                    value: 'Microsoft',
+                    displayName: 'Microsoft',
+                  },
+                  {
+                    value: 'Other',
+                    displayName: 'Other',
+                  },
+                ],
+                Type: [
+                  {
+                    value: 'Workflow',
+                    displayName: 'Workflow',
+                  },
+                  {
+                    value: 'Other',
+                    displayName: 'Other',
+                  },
+                ],
+                Industry: [
+                  {
+                    value: 'Analytics',
+                    displayName: 'Analytics',
+                  },
+                  {
+                    value: 'IT',
+                    displayName: 'IT',
+                  },
+                ],
+              }}
+            />
             <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
@@ -216,6 +262,7 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const getServices = (
+  isConsumption: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => void,
@@ -273,11 +320,27 @@ const getServices = (
     getAppIdentity: () => workflowApp?.identity as any,
   };
 
+  const templateService = isConsumption
+    ? undefined
+    : new StandardTemplateService({
+        baseUrl: armUrl,
+        appId: siteResourceId,
+        httpClient,
+        apiVersions: {
+          subscription: apiVersion,
+          gateway: '2018-11-01',
+        },
+        openBladeAfterCreate: () => {
+          console.log('Open blade after create');
+        },
+      });
+
   return {
     connectionService,
     gatewayService,
     tenantService,
     oAuthService,
+    templateService,
     workflowService,
   };
 };

@@ -258,14 +258,6 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
 
   return (
     <div className="msla-template-create-tabs">
-      <Text className="msla-template-create-tabs-description">
-        {intl.formatMessage({
-          defaultMessage:
-            'Configure connections to authenticate the following services and link your workflows with various services and applications, enabling seamless data integration and automation. Connections are required.',
-          id: 'Xld9qI',
-          description: 'Message to describe the connections tab',
-        })}
-      </Text>
       <DetailsList
         setKey="key"
         items={connectionsList()}
