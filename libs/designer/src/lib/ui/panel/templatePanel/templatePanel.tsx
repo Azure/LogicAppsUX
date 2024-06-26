@@ -9,7 +9,8 @@ import { type TemplatePanelTab, TemplatesPanelFooter, TemplatesPanelHeader } fro
 import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
-import { getQuickViewTabs, useExistingWorkflowNames } from '../../../core/templates/utils/helper';
+import { getQuickViewTabs } from '../../../core/templates/utils/helper';
+import { useExistingWorkflowNames } from '../../../core/queries/template';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();

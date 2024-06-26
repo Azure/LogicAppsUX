@@ -7,8 +7,8 @@ import { updateKind, updateWorkflowName, clearTemplateDetails } from '../../../.
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
-import { useExistingWorkflowNames } from '../../../../../core/templates/utils/helper';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();

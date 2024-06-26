@@ -1,9 +1,8 @@
-import { type Template, isArmResourceId, isUndefinedOrEmptyString, TemplateService } from '@microsoft/logic-apps-shared';
+import { type Template, isArmResourceId, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { overviewTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/overviewTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
-import { useQuery } from '@tanstack/react-query';
 import type { FilterObject } from '@microsoft/designer-ui';
 
 export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
@@ -100,10 +99,4 @@ export const getConnectorResources = (intl: IntlShape) => {
       description: 'Not Connected text',
     }),
   };
-};
-
-export const useExistingWorkflowNames = () => {
-  return useQuery(['getExistingWorkflowNames'], async () => {
-    return await TemplateService()?.getExistingWorkflowNames();
-  });
 };
