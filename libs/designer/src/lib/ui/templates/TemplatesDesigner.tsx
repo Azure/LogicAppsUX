@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { TemplateCard } from './cards/templateCard';
 import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ConnectionMapping } from '../../core/state/templates/workflowSlice';
 
 export const TemplatesDesigner = ({
   createWorkflowCall,
@@ -11,11 +12,11 @@ export const TemplatesDesigner = ({
     workflowName: string,
     workflowKind: string,
     workflow: LogicAppsV2.WorkflowDefinition,
-    connectionsData: any,
+    connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => Promise<void>;
 }) => {
-  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
   const { workflowName, kind, workflowDefinition, parameters } = useSelector((state: RootState) => state.template);
   const availableTemplatesNames = useSelector((state: RootState) => state.manifest.availableTemplateNames);
 
@@ -31,13 +32,7 @@ export const TemplatesDesigner = ({
       console.log('Error checking conditions before calling createWorkflowCall');
       return;
     }
-    await createWorkflowCall(
-      workflowNameToUse,
-      kind,
-      workflowDefinition,
-      /*change this after connnections is done*/ null,
-      parameters.definitions
-    );
+    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameters.definitions);
   };
 
   return (

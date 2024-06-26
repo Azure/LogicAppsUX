@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { getConnectorResources } from '../../../core/templates/utils/helper';
+import { useEffect } from 'react';
 
 const iconStyles = {
   root: {
@@ -51,6 +52,12 @@ export const ConnectorIconWithName = ({
 }) => {
   const { data: connector, isLoading } = useConnectorOnly(connectorId);
 
+  useEffect(() => {
+    if (onConnectorLoaded && connector) {
+      onConnectorLoaded(connector);
+    }
+  }, [connector, onConnectorLoaded]);
+
   if (showProgress && isLoading) {
     return (
       <div className={css(classes['root'], 'msla-template-create-progress-connector')}>
@@ -68,10 +75,6 @@ export const ConnectorIconWithName = ({
         />
       </div>
     );
-  }
-
-  if (onConnectorLoaded && connector) {
-    onConnectorLoaded(connector);
   }
 
   return (

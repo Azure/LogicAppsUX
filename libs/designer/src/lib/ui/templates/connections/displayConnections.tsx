@@ -2,16 +2,18 @@ import type { IColumn, IDetailsRowProps } from '@fluentui/react';
 import { DetailsList, DetailsRow, Icon, Link, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
 import type { Connection, Connector, Template } from '@microsoft/logic-apps-shared';
-import { getObjectPropertyValue } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../../core/state/templates/store';
+import { ConnectionService, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getConnectorResources, normalizeConnectorId } from '../../../core/templates/utils/helper';
 import { type IntlShape, useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ConnectorIconWithName } from './connector';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import { CreateConnectionInTemplate } from '../../panel/templatePanel/createConnection';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
+import { getConnector } from '../../../core/queries/operation';
 
 const createPlaceholderKey = '##create##';
 const connectionStatus: Record<string, any> = {
@@ -24,13 +26,31 @@ const connectionStatus: Record<string, any> = {
     color: '#e00b1ccf',
   },
 };
+
+interface ConnectionItem {
+  key: string;
+  connectorId: string;
+  connectorDisplayName?: string;
+  connection?: {
+    id: string;
+    displayName?: string;
+  };
+  hasConnection?: boolean;
+  allConnections?: Connection[];
+}
+
 export interface DisplayConnectionsProps {
   connections: Record<string, Template.Connection>;
 }
 
 export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => {
   const intl = useIntl();
-  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    subscriptionId,
+    location,
+    connections: { references, mapping },
+  } = useSelector((state: RootState) => state.workflow);
   const columnsNames = {
     name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
     status: intl.formatMessage({ defaultMessage: 'Status', id: 't7ytOJ', description: 'Column name for connection status' }),
@@ -41,6 +61,8 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     Object.keys(connections).map((key) => ({
       key,
       connectorId: normalizeConnectorId(connections[key].connectorId, subscriptionId, location),
+      hasConnection: mapping[key] !== undefined,
+      connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
     }))
   );
 
@@ -105,6 +127,26 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
       onColumnClick: _onColumnClick,
     },
   ]);
+
+  const onConnectionsLoaded = async (connections: Connection[], item: ConnectionItem): Promise<void> => {
+    const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
+    const connectionToUse = itemHasConnection ? connections.find((connection) => connection.id === item.connection?.id) : connections[0];
+    const hasConnection = connections.length > 0;
+    updateItemInConnectionsList(item.key, {
+      ...item,
+      allConnections: connections,
+      hasConnection,
+      connection: connectionToUse
+        ? { id: connectionToUse.id, displayName: connectionToUse.properties.displayName ?? connectionToUse.id.split('/').slice(-1)[0] }
+        : undefined,
+    });
+
+    if (!itemHasConnection && connectionToUse) {
+      await ConnectionService().setupConnectionIfNeeded(connectionToUse);
+      const connector = await getConnector(item.connectorId);
+      dispatch(updateTemplateConnection({ connector, connection: connectionToUse, nodeId: item.key }));
+    }
+  };
 
   const completeConnectionCreate = (): void => {
     setConnectionInCreate(false);
@@ -197,25 +239,14 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
           />
         );
 
-      case '$status': {
-        return item.allConnections === undefined ? (
+      case '$status':
+        return (
           <ConnectionStatusWithProgress
             item={item}
             intl={intl}
-            onConnectionLoaded={(connections) => {
-              const hasConnection = connections.length > 0;
-              updateItemInConnectionsList(item.key, {
-                ...item,
-                allConnections: connections,
-                hasConnection,
-                connection: hasConnection ? getConnectionDetails(connections[0]) : undefined,
-              });
-            }}
+            onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
           />
-        ) : (
-          <ConnectionStatus hasConnection={!!item.hasConnection} intl={intl} />
         );
-      }
 
       case '$connection':
         return <ConnectionName item={item} intl={intl} disabled={isConnectionInCreate} onCreate={handleConnectionCreateClick} />;
@@ -252,15 +283,17 @@ const ConnectionStatusWithProgress = ({
   item,
   intl,
   onConnectionLoaded,
-}: { item: ConnectionItem; intl: IntlShape; onConnectionLoaded?: (connections: Connection[]) => void }): JSX.Element => {
+}: { item: ConnectionItem; intl: IntlShape; onConnectionLoaded: (connections: Connection[]) => void }): JSX.Element => {
   const { data } = useConnectionsForConnector(item.connectorId, /* shouldNotRefetch */ true);
 
-  if (data && onConnectionLoaded) {
-    onConnectionLoaded(data);
-  }
+  useEffect(() => {
+    if (data && item.allConnections === undefined) {
+      onConnectionLoaded(data);
+    }
+  }, [data, item.allConnections, onConnectionLoaded]);
 
-  return data ? (
-    <ConnectionStatus hasConnection={data.length > 0} intl={intl} />
+  return item.hasConnection !== undefined ? (
+    <ConnectionStatus hasConnection={item.hasConnection} intl={intl} />
   ) : (
     <Shimmer
       className="msla-template-connection-status"
@@ -307,26 +340,6 @@ const ConnectionName = ({
     </Link>
   );
 };
-
-interface ConnectionItem {
-  key: string;
-  connectorId: string;
-  connectorDisplayName?: string;
-  connection?: {
-    id: string;
-    displayName: string;
-  };
-  hasConnection?: boolean;
-  allConnections?: Connection[];
-}
-
-// TODO: Update the connection in store or the reference.
-function getConnectionDetails(connection: Connection): { id: string; referenceKey?: string; displayName: string } {
-  return {
-    id: connection.id,
-    displayName: connection.properties.displayName ?? connection.name,
-  };
-}
 
 function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] {
   const keyPath =
