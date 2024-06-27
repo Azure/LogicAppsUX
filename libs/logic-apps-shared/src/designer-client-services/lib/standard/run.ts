@@ -15,6 +15,7 @@ import {
   isBoolean,
 } from '../../../utils/src';
 import { isNumber } from '../../../parsers';
+import { isHybridLogicApp } from './hybrid';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -113,7 +114,7 @@ export class StandardRunService implements IRunService {
     let uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
-      if (uri.toLowerCase().includes('microsoft.app')) {
+      if (isHybridLogicApp(uri)) {
         uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`;
 
         const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
