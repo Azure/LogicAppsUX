@@ -5,8 +5,8 @@ export const useIsLocal = () => {
   return useSelector((state: RootState) => state.workflowLoader.isLocal);
 };
 
-export const useIsConsumption = () => {
-  return useSelector((state: RootState) => state.workflowLoader.isConsumption);
+export const useHostingPlan = () => {
+  return useSelector((state: RootState) => state.workflowLoader.hostingPlan);
 };
 
 export const useIsDarkMode = () => {
