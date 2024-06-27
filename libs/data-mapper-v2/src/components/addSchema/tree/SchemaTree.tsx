@@ -1,7 +1,7 @@
 import { type SchemaExtended, SchemaType, equals } from '@microsoft/logic-apps-shared';
 import { Tree, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useState, useMemo, useRef, useLayoutEffect } from 'react';
+import { useState, useMemo, useLayoutEffect, useRef, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { flattenSchemaNodeMap } from '../../../utils';
@@ -24,15 +24,26 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
-  const [updatedNodes, setUpdatedNodes] = useState<Record<string, Node>>({});
+  const updatedNodesRef = useRef<Record<string, Node>>({});
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const treeRef = useRef<HTMLDivElement | null>(null);
   const flattenedScehmaMap = useMemo(() => flattenSchemaNodeMap(schemaTreeRoot), [schemaTreeRoot]);
+
   const totalNodes = useMemo(() => Object.keys(flattenedScehmaMap).length, [flattenedScehmaMap]);
+
   const { nodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-  const updatedNodesLength = useMemo(() => Object.keys(updatedNodes).length, [updatedNodes]);
+
+  const setUpdatedNode = useCallback(
+    (node: Node) => {
+      updatedNodesRef.current = {
+        ...updatedNodesRef.current,
+        [node.id]: node,
+      };
+    },
+    [updatedNodesRef]
+  );
 
   const treeAriaLabel = intl.formatMessage({
     defaultMessage: 'Schema tree',
@@ -41,10 +52,19 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   });
 
   useLayoutEffect(() => {
+    const updatedNodes = updatedNodesRef.current;
     const keys = Object.keys(updatedNodes);
 
+    console.log(
+      'Keys: ',
+      Object.values(updatedNodes).map((node) => ({
+        id: node.id,
+        p: node.position,
+      }))
+    );
+
     // NOTE: Update the nodes when all the updated position has been fetched for the keys
-    if (updatedNodesLength === totalNodes) {
+    if (keys.length === totalNodes) {
       const currentNodesMap: Record<string, Node> = {};
       for (const node of nodes) {
         currentNodesMap[node.id] = node;
@@ -72,11 +92,11 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
       if (nodeChanges.length > 0) {
         const newNodes = applyNodeChanges(nodeChanges, nodes);
-        setUpdatedNodes({});
+        updatedNodesRef.current = {};
         dispatch(updateReactFlowNodes(newNodes));
       }
     }
-  }, [nodes, updatedNodes, totalNodes, updatedNodesLength, dispatch]);
+  }, [nodes, updatedNodesRef, updatedNodesRef.current, totalNodes, dispatch]);
 
   useLayoutEffect(() => {
     setOpenKeys(new Set<string>(Object.keys(flattenedScehmaMap).filter((key) => flattenedScehmaMap[key].children.length > 0)));
@@ -93,7 +113,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         setOpenKeys={setOpenKeys}
         openKeys={openKeys}
         flattenedScehmaMap={flattenedScehmaMap}
-        setUpdatedNodes={setUpdatedNodes}
+        setUpdatedNode={setUpdatedNode}
       />
     </Tree>
   ) : null;

@@ -26,7 +26,7 @@ function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKey
 
 const useNodePosition = (props: NodePositionProps) => {
   const { schemaMap, openKeys, key, isLeftDirection, nodeY = -1 } = props;
-  const [position, setPosition] = useState<XYPosition>({ x: -1, y: -1 });
+  const [position, setPosition] = useState<XYPosition>();
 
   const {
     canvasBounds: { y: canvasY = -1, width: canvasWidth = -1 } = {},

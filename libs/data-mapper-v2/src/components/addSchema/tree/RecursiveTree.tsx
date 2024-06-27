@@ -10,19 +10,19 @@ type RecursiveTreeProps = {
   root: SchemaNodeExtended;
   isLeftDirection: boolean;
   openKeys: Set<string>;
-  setOpenKeys: (openKeys: Set<string>) => void;
+  setOpenKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   flattenedScehmaMap: Record<string, SchemaNodeExtended>;
-  setUpdatedNodes: React.Dispatch<React.SetStateAction<Record<string, Node>>>;
+  setUpdatedNode: (node: Node) => void;
 };
 
 const RecursiveTree = (props: RecursiveTreeProps) => {
-  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNodes } = props;
+  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNode } = props;
   const { key } = root;
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
 
   const {
-    position: { x, y },
+    position: { x, y } = { x: undefined, y: undefined },
   } = useNodePosition({
     key: key,
     openKeys: openKeys,
@@ -34,48 +34,35 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
 
   const onOpenChange = useCallback(
     (_e: any, data: TreeItemOpenChangeData) => {
-      const newOpenKeys = new Set(openKeys);
-      const value = data.value as string;
-      if (newOpenKeys.has(value)) {
-        newOpenKeys.delete(value);
-      } else {
-        newOpenKeys.add(value);
-      }
-      setOpenKeys(newOpenKeys);
+      setOpenKeys((prev) => {
+        const newOpenKeys = new Set(prev);
+        const value = data.value as string;
+        if (newOpenKeys.has(value)) {
+          newOpenKeys.delete(value);
+        } else {
+          newOpenKeys.add(value);
+        }
+        return newOpenKeys;
+      });
     },
-    [openKeys, setOpenKeys]
+    [setOpenKeys]
   );
 
   useLayoutEffect(() => {
     const nodeId = getReactFlowNodeId(root.key, isLeftDirection);
-    const node = {
-      id: nodeId,
-      selectable: true,
-      data: {
-        ...root,
-        isLeftDirection: isLeftDirection,
-      },
-      type: 'schemaNode',
-      position: { x, y },
-    };
-
-    // Remove the current node from the updated nodes if it exists
-    setUpdatedNodes((prev) => {
-      const updatedNodes = { ...prev };
-      if (updatedNodes[nodeId]) {
-        delete updatedNodes[nodeId];
-        return updatedNodes;
-      }
-      return prev;
-    });
-
-    // Add the current node back to the map
-    setUpdatedNodes((prev) => {
-      const updatedNodes = { ...prev };
-      updatedNodes[nodeId] = node;
-      return updatedNodes;
-    });
-  }, [isLeftDirection, x, y, root, setUpdatedNodes]);
+    if (x !== undefined && y !== undefined) {
+      setUpdatedNode({
+        id: nodeId,
+        selectable: true,
+        data: {
+          ...root,
+          isLeftDirection: isLeftDirection,
+        },
+        type: 'schemaNode',
+        position: { x, y },
+      });
+    }
+  }, [isLeftDirection, x, y, root, setUpdatedNode]);
 
   if (root.children.length === 0) {
     return (
@@ -99,7 +86,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
               openKeys={openKeys}
               setOpenKeys={setOpenKeys}
               flattenedScehmaMap={flattenedScehmaMap}
-              setUpdatedNodes={setUpdatedNodes}
+              setUpdatedNode={setUpdatedNode}
             />
           </span>
         ))}
