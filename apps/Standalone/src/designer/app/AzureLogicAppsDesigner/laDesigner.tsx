@@ -24,7 +24,7 @@ import {
   useWorkflowApp,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
-import { WorkflowUtility, addConnectionData } from './Utilities/Workflow';
+import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
@@ -124,7 +124,8 @@ const DesignerEditor = () => {
   );
 
   const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
-    addConnectionData(connectionAndSetting, connectionsData ?? {}, settingsData ?? {});
+    addConnectionInJson(connectionAndSetting, connectionsData ?? {});
+    addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
 
   const getConnectionConfiguration = async (connectionId: string): Promise<any> => {

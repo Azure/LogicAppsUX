@@ -6,8 +6,18 @@ import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
-import { BaseGatewayService, StandardTemplateService, BaseTenantService, StandardConnectionService } from '@microsoft/logic-apps-shared';
 import {
+  BaseGatewayService,
+  StandardTemplateService,
+  BaseTenantService,
+  StandardConnectionService,
+  clone,
+  escapeSpecialChars,
+  isArmResourceId,
+  optional,
+} from '@microsoft/logic-apps-shared';
+import {
+  getConnectionStandard,
   useAppSettings,
   useConnectionsData,
   useCurrentObjectId,
@@ -18,13 +28,15 @@ import type { ConnectionAndAppSetting, ConnectionsData } from '../../designer/ap
 import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
-import { WorkflowUtility, addConnectionData } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
+import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
 
+const workflowIdentifier = '#workflowname#';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
   return isLoading ? null : <>{children}</>;
@@ -36,37 +48,26 @@ export const TemplatesStandaloneDesigner = () => {
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const { data: connectionsData } = useConnectionsData(appId);
+  const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: settingsData } = useAppSettings(appId as string);
+
+  const connectionsData = useMemo(() => {
+    return JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {})));
+  }, [originalConnectionsData]);
+
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
-  const sanitizeParameterName = (parameterName: string, workflowName: string) =>
-    parameterName.replace('_#workflowname#', `_${workflowName}`);
 
   const createWorkflowCall = async (
     workflowName: string,
     workflowKind: string,
     workflowDefinition: LogicAppsV2.WorkflowDefinition,
-    _connectionsData: any,
+    connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
       if (isConsumption) {
         console.log('Consumption is not ready yet!');
-        // await saveWorkflowConsumption({
-        //   id: appId,
-        //   name: workflowNameToUse,
-        //   type: "json", //TODO: figure out what this type is and replace it
-        //   kind: workflowKind,
-        //   properties: {
-        //     files: {
-        //       [Artifact.WorkflowFile]: workflow,
-        //       [Artifact.ParametersFile]: parametersData as ParametersData,
-        //       [Artifact.ConnectionsFile]: _connectionsData
-        //     },
-        //     health: {},
-        //   }
-        // }, workflow);
       } else {
         let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
         const sanitizedParameterData: ParametersData = {};
@@ -74,7 +75,7 @@ export const TemplatesStandaloneDesigner = () => {
         // Sanitizing parameter name & body
         Object.keys(parametersData).forEach((key) => {
           const parameter = parametersData[key];
-          const sanitizedParameterName = sanitizeParameterName(parameter.name, workflowName);
+          const sanitizedParameterName = replaceWithWorkflowName(parameter.name, workflowName);
           sanitizedParameterData[sanitizedParameterName] = {
             type: parameter.type,
             description: parameter?.description,
@@ -86,10 +87,21 @@ export const TemplatesStandaloneDesigner = () => {
           );
         });
 
+        const {
+          connectionsData: updatedConnectionsData,
+          settingProperties: updatedSettingProperties,
+          workflowJsonString: updatedWorkflowJsonString,
+        } = await updateConnectionsDataWithNewConnections(
+          connectionsData,
+          settingsData?.properties,
+          connectionsMapping,
+          sanitizedWorkflowDefinitionString,
+          workflowName
+        );
+        sanitizedWorkflowDefinitionString = updatedWorkflowJsonString;
+
         const workflow = {
           definition: JSON.parse(sanitizedWorkflowDefinitionString),
-          connectionReferences: undefined, //TODO: change this after connections is done
-          parameters: sanitizedParameterData,
           kind: workflowKind,
         };
 
@@ -126,9 +138,9 @@ export const TemplatesStandaloneDesigner = () => {
             appId,
             workflowNameToUse,
             workflow,
-            undefined,
+            updatedConnectionsData,
             updatedParametersData,
-            undefined,
+            updatedSettingProperties,
             undefined,
             () => {},
             true
@@ -143,7 +155,8 @@ export const TemplatesStandaloneDesigner = () => {
   };
 
   const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
-    addConnectionData(connectionAndSetting, connectionsData ?? {}, settingsData ?? {});
+    addConnectionInJson(connectionAndSetting, connectionsData ?? {});
+    addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
 
   const services = useMemo(
@@ -332,4 +345,109 @@ const getServices = (
     templateService,
     workflowService,
   };
+};
+
+const replaceWithWorkflowName = (content: string, workflowName: string) => content.replaceAll(workflowIdentifier, workflowName);
+
+const updateConnectionsDataWithNewConnections = async (
+  originalConnectionsData: ConnectionsData,
+  settingProperties: Record<string, string>,
+  connections: ConnectionMapping,
+  workflowJsonString: string,
+  workflowName: string
+): Promise<{ connectionsData: ConnectionsData; settingProperties: Record<string, string>; workflowJsonString: string }> => {
+  const { references, mapping } = connections;
+  let updatedSettings = { ...settingProperties };
+  const updatedConnectionsData = { ...originalConnectionsData };
+  let updatedWorkflowJsonString = workflowJsonString;
+  let updatedConnectionsJsonString = JSON.stringify(updatedConnectionsData);
+  const referencesToProcess: string[] = [];
+
+  for (const connectionKey of Object.keys(mapping)) {
+    const referenceKey = mapping[connectionKey];
+    if (connectionKey === referenceKey) {
+      referencesToProcess.push(referenceKey);
+    } else {
+      updatedWorkflowJsonString = updatedWorkflowJsonString.replaceAll(connectionKey, referenceKey);
+    }
+  }
+
+  if (referencesToProcess.length) {
+    const newManagedApiConnections = updatedConnectionsData.managedApiConnections ?? {};
+    const referencesToNormalize: string[] = [];
+    await Promise.all(
+      referencesToProcess.map(async (referenceKey) => {
+        const reference = references[referenceKey];
+        const normalizedReferenceKey = replaceWithWorkflowName(referenceKey, workflowName);
+        if (isArmResourceId(reference?.connection?.id)) {
+          // Managed API Connection
+          const {
+            api: { id: apiId },
+            connection: { id: connectionId },
+            connectionProperties,
+          } = reference;
+          const connection = await getConnectionStandard(connectionId);
+          const userIdentity = connectionProperties?.authentication?.identity;
+          const newConnectionObj = {
+            api: { id: apiId },
+            connection: { id: connectionId },
+            authentication: {
+              type: 'ManagedServiceIdentity',
+              ...optional('identity', userIdentity),
+            },
+            connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
+            connectionProperties,
+          };
+
+          newManagedApiConnections[normalizedReferenceKey] = newConnectionObj;
+        } else {
+          referencesToNormalize.push(referenceKey);
+        }
+
+        updatedWorkflowJsonString = updatedWorkflowJsonString.replaceAll(referenceKey, normalizedReferenceKey);
+      })
+    );
+    updatedConnectionsData.managedApiConnections = newManagedApiConnections;
+
+    updatedConnectionsJsonString = JSON.stringify(updatedConnectionsData);
+    for (const referenceKey of referencesToNormalize) {
+      const normalizedReferenceKey = replaceWithWorkflowName(referenceKey, workflowName);
+      const escapedReferenceKeyForSettings = escapeSpecialChars(referenceKey);
+      const normalizedEscapedReferenceKeyForSettings = replaceWithWorkflowName(escapedReferenceKeyForSettings, workflowName);
+
+      updatedConnectionsJsonString = updatedConnectionsJsonString.replaceAll(referenceKey, normalizedReferenceKey);
+      updatedConnectionsJsonString = updatedConnectionsJsonString.replaceAll(
+        escapedReferenceKeyForSettings,
+        normalizedEscapedReferenceKeyForSettings
+      );
+      updatedSettings = updateSettingsKeyWithWorkflowName(
+        updatedSettings,
+        escapedReferenceKeyForSettings,
+        normalizedEscapedReferenceKeyForSettings
+      );
+    }
+  }
+
+  return {
+    connectionsData: JSON.parse(updatedConnectionsJsonString),
+    settingProperties: updatedSettings,
+    workflowJsonString: updatedWorkflowJsonString,
+  };
+};
+
+const updateSettingsKeyWithWorkflowName = (
+  settingProperties: Record<string, string>,
+  referenceKey: string,
+  normalizedReferenceKey: string
+): Record<string, string> => {
+  const updatedSettings = { ...settingProperties };
+  for (const key of Object.keys(settingProperties)) {
+    if (key.includes(referenceKey)) {
+      const normalizedKey = key.replace(referenceKey, normalizedReferenceKey);
+      updatedSettings[normalizedKey] = settingProperties[key];
+      delete updatedSettings[key];
+    }
+  }
+
+  return updatedSettings;
 };

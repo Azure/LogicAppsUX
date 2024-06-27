@@ -103,11 +103,11 @@ export const getFilteredTemplates = (
     }
 
     const hasDetailFilters = Object.entries(filters.detailFilters).every(([filterName, filterItems]) => {
-      const templateManifestDetailValue = templateManifest.details?.[filterName];
+      const templateManifestDetailValue = templateManifest.details?.[filterName]?.split(',');
       if (!templateManifestDetailValue) {
         return false;
       }
-      return filterItems.some((filterItem) => filterItem.value === templateManifestDetailValue);
+      return filterItems.some((filterItem) => templateManifestDetailValue.includes(filterItem.value));
     });
     return hasDetailFilters;
   });
@@ -135,4 +135,18 @@ export const getConnectorResources = (intl: IntlShape) => {
       description: 'Not Connected text',
     }),
   };
+};
+
+export const validateConnections = (
+  manifestConnections: Record<string, Template.Connection>,
+  connectionsMapping: Record<string, string>,
+  intl: IntlShape
+): string | undefined => {
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'All connections must be connected for workflow creation',
+    id: 'fNlJSh',
+    description: 'Error message to show when all connections are not connected',
+  });
+
+  return Object.keys(manifestConnections).some((connectionKey) => !connectionsMapping[connectionKey]) ? errorMessage : undefined;
 };
