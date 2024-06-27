@@ -5,6 +5,7 @@ import { type TemplatePanelTab, TemplatesPanelContent } from '@microsoft/designe
 import { validateParameters, validateWorkflowName } from '../../../../core/state/templates/templateSlice';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { useEffect } from 'react';
+import constants from '../../../../common/constants';
 
 export const CreateWorkflowPanel = ({
   panelTabs,
@@ -20,8 +21,15 @@ export const CreateWorkflowPanel = ({
   };
 
   useEffect(() => {
-    dispatch(validateWorkflowName(existingWorkflowNames ?? []));
-    dispatch(validateParameters());
+    if (
+      selectedTabId === constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE ||
+      selectedTabId === constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE
+    ) {
+      dispatch(validateParameters());
+      if (selectedTabId === constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
+        dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+      }
+    }
   }, [dispatch, existingWorkflowNames, selectedTabId]);
 
   return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} isSequence={true} />;

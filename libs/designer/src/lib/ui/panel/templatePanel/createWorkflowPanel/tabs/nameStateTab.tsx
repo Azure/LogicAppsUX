@@ -17,7 +17,7 @@ import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, workflowNameValidation, kind } = useSelector((state: RootState) => state.template);
+  const { workflowName, workflowNameValidationError, kind } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { manifest } = useSelector((state: RootState) => state.template);
@@ -125,7 +125,7 @@ export const NameStatePanel: React.FC = () => {
         onBlur={() => {
           dispatch(validateWorkflowName(existingWorkflowNames ?? []));
         }}
-        errorMessage={workflowNameValidation}
+        errorMessage={workflowNameValidationError}
       />
       <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
         {intlText.STATE_TYPE}

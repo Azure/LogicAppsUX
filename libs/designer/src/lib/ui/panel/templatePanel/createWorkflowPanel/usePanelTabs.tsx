@@ -13,7 +13,7 @@ import { TemplateService } from '@microsoft/logic-apps-shared';
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowNameValidation, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
+  const { workflowNameValidationError, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
@@ -65,21 +65,21 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
           : connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
             : undefined,
-        hasError: !!workflowNameValidation || !kind,
+        hasError: !!workflowNameValidationError || !kind,
       }),
     }),
-    [intl, dispatch, workflowNameValidation, kind, connectionsExist, parametersExist]
+    [intl, dispatch, workflowNameValidationError, kind, connectionsExist, parametersExist]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
-        isPrimaryButtonDisabled: !!workflowNameValidation || !kind || hasParametersValidationErrors, //TODO: add connections validations
+        isPrimaryButtonDisabled: !!workflowNameValidationError || !kind || hasParametersValidationErrors, //TODO: add connections validations
         isCreated,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, workflowNameValidation, kind, isCreated, hasParametersValidationErrors]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, workflowNameValidationError, kind, isCreated, hasParametersValidationErrors]
   );
 
   const tabs = useMemo(() => {

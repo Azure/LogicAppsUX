@@ -28,7 +28,7 @@ interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
   workflowName: string | undefined;
-  workflowNameValidation: string | undefined;
+  workflowNameValidationError: string | undefined;
   kind: string | undefined;
   parameters: {
     definitions: Record<string, Template.ParameterDefinition>;
@@ -47,7 +47,7 @@ const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
   workflowName: undefined,
-  workflowNameValidation: undefined,
+  workflowNameValidationError: undefined,
   kind: undefined,
   parameters: {
     definitions: {},
@@ -189,7 +189,7 @@ export const templateSlice = createSlice({
     },
     validateWorkflowName: (state, action: PayloadAction<string[]>) => {
       const validationError = _validateWorkflowName(state.workflowName, action.payload);
-      state.workflowNameValidation = validationError;
+      state.workflowNameValidationError = validationError;
     },
     updateKind: (state, action: PayloadAction<string>) => {
       state.kind = action.payload;
@@ -296,7 +296,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      workflowNameValidation: undefined,
+      workflowNameValidationError: undefined,
       kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,

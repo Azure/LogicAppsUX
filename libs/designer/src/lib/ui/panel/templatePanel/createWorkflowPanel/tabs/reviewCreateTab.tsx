@@ -52,6 +52,11 @@ export const ReviewCreatePanel = () => {
       id: 'LVeWG7',
       description: 'Accessibility label for state kind',
     }),
+    PLACEHOLDER: intl.formatMessage({
+      defaultMessage: '----',
+      id: 'wPi8wS',
+      description: 'Accessibility label indicating that the value is not set',
+    }),
   };
   return (
     <div className="msla-templates-tab">
@@ -65,27 +70,33 @@ export const ReviewCreatePanel = () => {
         </div>
         <div className="msla-templates-tab-review-section-details">
           <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{existingWorkflowName ?? workflowName}</Text>
+          <Text className="msla-templates-tab-review-section-details-value">
+            {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
+          </Text>
         </div>
         <div className="msla-templates-tab-review-section-details">
           <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{kind}</Text>
+          <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
         </div>
       </div>
 
-      <Label className="msla-templates-tab-label" htmlFor={'connectionsLabel'}>
-        {intlText.CONNECTIONS}
-      </Label>
-      <div className="msla-templates-tab-review-section">
-        {Object.keys(manifest?.connections ?? {}).map((connectionKey) => (
-          <ConnectorConnectionStatus
-            key={connectionKey}
-            connectorId={normalizeConnectorId(manifest?.connections[connectionKey].connectorId ?? '', subscriptionId, location)}
-            hasConnection={mapping[connectionKey] !== undefined}
-            intl={intl}
-          />
-        ))}
-      </div>
+      {Object.keys(manifest?.connections ?? {}).length > 0 && (
+        <>
+          <Label className="msla-templates-tab-label" htmlFor={'connectionsLabel'}>
+            {intlText.CONNECTIONS}
+          </Label>
+          <div className="msla-templates-tab-review-section">
+            {Object.keys(manifest?.connections ?? {}).map((connectionKey) => (
+              <ConnectorConnectionStatus
+                key={connectionKey}
+                connectorId={normalizeConnectorId(manifest?.connections[connectionKey].connectorId ?? '', subscriptionId, location)}
+                hasConnection={mapping[connectionKey] !== undefined}
+                intl={intl}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
       {Object.keys(parameters.definitions).length > 0 && (
         <>
@@ -95,8 +106,8 @@ export const ReviewCreatePanel = () => {
           <div className="msla-templates-tab-review-section">
             {Object.values(parameters.definitions)?.map((parameter) => (
               <div key={parameter.name} className="msla-templates-tab-review-section-details">
-                <Text className="msla-templates-tab-review-section-details-title">{parameter.name}</Text>
-                <Text className="msla-templates-tab-review-section-details-value">{parameter.value}</Text>
+                <Text className="msla-templates-tab-review-section-details-title">{parameter.displayName}</Text>
+                <Text className="msla-templates-tab-review-section-details-value">{parameter.value ?? intlText.PLACEHOLDER}</Text>
               </div>
             ))}
           </div>
