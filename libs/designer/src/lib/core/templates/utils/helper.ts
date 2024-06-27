@@ -39,6 +39,47 @@ export const normalizeConnectorId = (connectorId: string, subscriptionId: string
   return result.replaceAll('#location#', location);
 };
 
+const templateSearchOptions = {
+  isCaseSensitive: false,
+  includeScore: false,
+  threshold: 0,
+  ignoreLocation: true,
+  keys: [
+    'title',
+    'description',
+    {
+      name: 'manifest',
+      weight: 2,
+      getFn: ([_name, template]: [string, Template.Manifest]) => [
+        ...template.skus,
+        ...(template.tags ?? []),
+        ...(template.kinds ?? []),
+        ...Object.values(template.details),
+      ],
+    },
+    {
+      name: 'parameters',
+      weight: 3,
+      getFn: ([_name, template]: [string, Template.Manifest]) =>
+        template.parameters?.reduce((acc: string[], parameter) => acc.concat([parameter.displayName, parameter.description]), []),
+    },
+    {
+      name: 'connections',
+      weight: 3,
+      getFn: ([_name, template]: [string, Template.Manifest]) =>
+        template.connections
+          ? Object.values(template.connections)?.reduce(
+              (acc: string[], connection) =>
+                acc.concat([
+                  connection.connectorId, // TODO: change after PR (connection name to be stored in the state)
+                ]),
+              []
+            )
+          : [],
+    },
+  ],
+};
+
 export const getFilteredTemplates = (
   templates: Record<string, Template.Manifest>,
   filters: {
@@ -75,55 +116,14 @@ export const getFilteredTemplates = (
     return hasDetailFilters;
   });
 
-  const searchOptions = {
-    isCaseSensitive: false,
-    includeScore: false,
-    threshold: 0,
-    ignoreLocation: true,
-    keys: [
-      'title',
-      'description',
-      {
-        name: 'manifest',
-        weight: 2,
-        getFn: ([_name, template]: [string, Template.Manifest]) => [
-          ...template.skus,
-          ...(template.tags ?? []),
-          ...(template.kinds ?? []),
-          ...Object.values(template.details),
-        ],
-      },
-      {
-        name: 'parameters',
-        weight: 3,
-        getFn: ([_name, template]: [string, Template.Manifest]) =>
-          template.parameters?.reduce((acc: string[], parameter) => acc.concat([parameter.displayName, parameter.description]), []),
-      },
-      {
-        name: 'connections',
-        weight: 3,
-        getFn: ([_name, template]: [string, Template.Manifest]) =>
-          template.connections
-            ? Object.values(template.connections)?.reduce(
-                (acc: string[], connection) =>
-                  acc.concat([
-                    connection.connectorId, // TODO: change after PR (connection name to be stored in the state)
-                  ]),
-                []
-              )
-            : [],
-      },
-    ],
-  };
-
   if (!filters.keyword) {
     return Object.keys(Object.fromEntries(filteredTemplateEntries));
   }
 
-  const fuse = new Fuse(filteredTemplateEntries, searchOptions);
-  const searchedResults = fuse.search(filters.keyword).map(({ item }) => item[0]);
+  const fuse = new Fuse(filteredTemplateEntries, templateSearchOptions);
+  const searchedTemplateNames = fuse.search(filters.keyword).map(({ item }) => item[0]);
 
-  return searchedResults;
+  return searchedTemplateNames;
 };
 
 export const getConnectorResources = (intl: IntlShape) => {
