@@ -107,13 +107,30 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
   const text = getConnectorResources(intl);
   return (
     <div className="msla-template-connector">
-      <ConnectorIcon
-        connectorId={connectorId}
-        classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
-        styles={{ root: { width: 50, height: 50 }, image: { width: 'calc(60%)', height: 'calc(60%)' } }}
-      />
+      {isLoading ? (
+        <Shimmer
+          className="msla-template-connector-box"
+          shimmerElements={[{ type: ShimmerElementType.line, height: 50, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+      ) : (
+        <ConnectorIcon
+          connectorId={connectorId}
+          classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
+          styles={{ root: { width: 50, height: 50 }, image: { width: 'calc(60%)', height: 'calc(60%)' } }}
+        />
+      )}
       <div className="msla-template-connector-details">
-        <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+        {isLoading ? (
+          <Shimmer
+            className="msla-template-connector-name"
+            style={{ width: '70%', marginTop: 10 }}
+            shimmerElements={[{ type: ShimmerElementType.line, height: 12, verticalAlign: 'bottom', width: '100%' }]}
+            size={SpinnerSize.xSmall}
+          />
+        ) : (
+          <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+        )}
         <div className="msla-template-connector-type">
           <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
             {allCategories[kind ?? ''] ?? kind}

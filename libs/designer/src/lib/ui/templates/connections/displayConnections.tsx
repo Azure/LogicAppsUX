@@ -61,7 +61,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     Object.keys(connections).map((key) => ({
       key,
       connectorId: normalizeConnectorId(connections[key].connectorId, subscriptionId, location),
-      hasConnection: mapping[key] !== undefined,
+      hasConnection: mapping[key] !== undefined ? true : undefined,
       connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
     }))
   );
