@@ -8,11 +8,18 @@ import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/reac
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
+import { normalizeConnectorId } from '../../../../../core/templates/utils/helper';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
   const { workflowName, kind, manifest, parameters } = useSelector((state: RootState) => state.template);
-  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const {
+    existingWorkflowName,
+    connections: { mapping },
+    subscriptionId,
+    location,
+  } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
     DETAILS: intl.formatMessage({
@@ -46,7 +53,6 @@ export const ReviewCreatePanel = () => {
       description: 'Accessibility label for state kind',
     }),
   };
-
   return (
     <div className="msla-templates-tab">
       <Label className="msla-templates-tab-label" htmlFor={'detailsLabel'}>
@@ -70,7 +76,16 @@ export const ReviewCreatePanel = () => {
       <Label className="msla-templates-tab-label" htmlFor={'connectionsLabel'}>
         {intlText.CONNECTIONS}
       </Label>
-      <div className="msla-templates-tab-review-section">TODO</div>
+      <div className="msla-templates-tab-review-section">
+        {Object.keys(manifest?.connections ?? {}).map((connectionKey) => (
+          <ConnectorConnectionStatus
+            key={connectionKey}
+            connectorId={normalizeConnectorId(manifest?.connections[connectionKey].connectorId ?? '', subscriptionId, location)}
+            hasConnection={mapping[connectionKey] !== undefined}
+            intl={intl}
+          />
+        ))}
+      </div>
 
       {Object.keys(parameters.definitions).length > 0 && (
         <>

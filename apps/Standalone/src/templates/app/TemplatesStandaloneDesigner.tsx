@@ -54,7 +54,9 @@ export const TemplatesStandaloneDesigner = () => {
   const connectionsData = useMemo(() => {
     return JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {})));
   }, [originalConnectionsData]);
+
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+
   const createWorkflowCall = async (
     workflowName: string,
     workflowKind: string,
@@ -152,7 +154,7 @@ export const TemplatesStandaloneDesigner = () => {
     }
   };
 
-  const addConnectionDataInternal = (connectionAndSetting: ConnectionAndAppSetting) => {
+  const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
@@ -265,7 +267,7 @@ const getServices = (
   isConsumption: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
-  addConnection: (data: ConnectionAndAppSetting) => void,
+  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string
@@ -440,9 +442,11 @@ const updateSettingsKeyWithWorkflowName = (
 ): Record<string, string> => {
   const updatedSettings = { ...settingProperties };
   for (const key of Object.keys(settingProperties)) {
-    const normalizedKey = key.includes(referenceKey) ? key.replace(referenceKey, normalizedReferenceKey) : key;
-    updatedSettings[normalizedKey] = settingProperties[key];
-    delete updatedSettings[key];
+    if (key.includes(referenceKey)) {
+      const normalizedKey = key.replace(referenceKey, normalizedReferenceKey);
+      updatedSettings[normalizedKey] = settingProperties[key];
+      delete updatedSettings[key];
+    }
   }
 
   return updatedSettings;
