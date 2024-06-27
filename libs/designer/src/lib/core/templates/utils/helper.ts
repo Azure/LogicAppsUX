@@ -69,10 +69,7 @@ const templateSearchOptions = {
       getFn: ([_name, template]: [string, Template.Manifest]) =>
         template.connections
           ? Object.values(template.connections)?.reduce(
-              (acc: string[], connection) =>
-                acc.concat([
-                  connection.connectorId, // TODO: change after PR (connection name to be stored in the state)
-                ]),
+              (acc: string[], connection) => acc.concat([connection.connectorId.split('/').slice(-1)[0]]),
               []
             )
           : [],
@@ -96,10 +93,9 @@ export const getFilteredTemplates = (
 
     const hasConnectors =
       filters?.connectors?.some((connector) =>
-        Object.values(templateManifest.connections)?.some((connection) => {
-          const connectiorIdArray = connection.connectorId.split('/');
-          return connector.value === connectiorIdArray[connectiorIdArray.length - 1];
-        })
+        Object.values(templateManifest.connections)?.some(
+          (connection) => connector.value === connection.connectorId.split('/').slice(-1)[0]
+        )
       ) ?? true;
 
     if (!hasConnectors) {
