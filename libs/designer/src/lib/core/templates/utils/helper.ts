@@ -76,11 +76,11 @@ export const getFilteredTemplates = (
     }
 
     const hasDetailFilters = Object.entries(filters.detailFilters).every(([filterName, filterItems]) => {
-      const templateManifestDetailValue = templateManifest.details?.[filterName];
+      const templateManifestDetailValue = templateManifest.details?.[filterName]?.split(',');
       if (!templateManifestDetailValue) {
         return false;
       }
-      return filterItems.some((filterItem) => filterItem.value === templateManifestDetailValue);
+      return filterItems.some((filterItem) => templateManifestDetailValue.includes(filterItem.value));
     });
     return hasDetailFilters;
   });
