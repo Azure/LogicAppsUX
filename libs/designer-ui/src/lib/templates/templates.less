@@ -34,11 +34,10 @@
             justify-content: center;
             align-items: center;
             border-radius: 100%;
-            border: 1px solid #57A300;
-            background-color: #57A300;
+            border: 1px solid #424242;
             font-size: 10px;
             font-weight: 600;
-            color: white;
+            color: #424242;
             margin-right: 8px;
         }
 
@@ -53,6 +52,7 @@
             .msla-templates-panel-tabName-index {
                 border-color: #0078D4;
                 background-color: #0078D4;
+                color: white;
             }
             
             .msla-templates-panel-tabName-title {
@@ -60,13 +60,19 @@
             }
         }
 
-        &:not(.selected) {
-            box-shadow: none;
-
+        &.error {
             .msla-templates-panel-tabName-index {
-                background-color: transparent;
-                border-color: #949494;
-                color: #949494;
+                background-color: red;
+                border-color: red;
+                color: white;
+            }
+        }
+
+        &.completed {
+            .msla-templates-panel-tabName-index {
+                background-color: #57A300;
+                border-color: #57A300;
+                color: white;
             }
         }
     }

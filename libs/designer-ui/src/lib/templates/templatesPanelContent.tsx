@@ -1,7 +1,8 @@
-import { Icon, css } from '@fluentui/react';
+import { css } from '@fluentui/react';
 import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplatePanelTab } from './model';
+import { Checkmark12Filled, Dismiss12Filled } from '@fluentui/react-icons';
 
 export interface TemplatesPanelContentProps {
   className?: string;
@@ -33,19 +34,21 @@ export const TemplatesPanelContent = ({
   return (
     <div className="msla-templates-panel">
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
-        {tabs.map(({ id, title, order }, index) => (
+        {tabs.map(({ id, title, order, hasError = false }, index) => (
           <Tab
             key={id}
             id={id}
             data-testid={id}
-            className={css('msla-templates-panel-tabName', id === selectedTabId && 'selected')}
+            className={css(
+              'msla-templates-panel-tabName',
+              id === selectedTabId ? 'selected' : order < selectedTabOrder && (hasError ? 'error' : 'completed')
+            )}
             value={id}
             role={'tab'}
-            // disabled={isSequence && order > selectedTabOrder}
           >
             {isSequence && (
               <Text className="msla-templates-panel-tabName-index">
-                {order < selectedTabOrder ? <Icon iconName="accept" /> : index + 1}
+                {order < selectedTabOrder ? hasError ? <Dismiss12Filled /> : <Checkmark12Filled /> : index + 1}
               </Text>
             )}
             <Text className="msla-templates-panel-tabName-title">{title}</Text>
