@@ -171,7 +171,6 @@ export const AzureStandardLogicAppSelector = () => {
               )
             );
             dispatch(setWorkflowName(option?.key as string));
-            dispatch(setResourcePath(`${appId}/workflows/${option?.key}`));
           }}
         />
         {isWorkflowsLoading ? (
