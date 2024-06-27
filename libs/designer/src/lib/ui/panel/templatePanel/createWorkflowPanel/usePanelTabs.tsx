@@ -9,11 +9,16 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { TemplateService } from '@microsoft/logic-apps-shared';
+import { useExistingWorkflowNames } from '../../../../core/queries/template';
+import { validateParameters, validateWorkflowName } from '../../../../core/state/templates/templateSlice';
 
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { workflowNameValidationError, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
+  const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId);
+  const [showStateTypeUnselectedError, setShowStateTypeUnselectedError] = useState(false);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
@@ -28,6 +33,19 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     setIsLoadingCreate(false);
     setIsCreated(false);
   }, [selectedManifest]);
+
+  useEffect(() => {
+    if (
+      selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE ||
+      selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE
+    ) {
+      dispatch(validateParameters());
+      if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
+        dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+        setShowStateTypeUnselectedError(!kind);
+      }
+    }
+  }, [dispatch, existingWorkflowNames, selectedTabId, kind]);
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
@@ -66,9 +84,10 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
             : undefined,
         hasError: !!workflowNameValidationError || !kind,
+        showStateTypeUnselectedError: showStateTypeUnselectedError,
       }),
     }),
-    [intl, dispatch, workflowNameValidationError, kind, connectionsExist, parametersExist]
+    [intl, dispatch, workflowNameValidationError, kind, connectionsExist, parametersExist, showStateTypeUnselectedError]
   );
 
   const reviewCreateTabItem = useMemo(

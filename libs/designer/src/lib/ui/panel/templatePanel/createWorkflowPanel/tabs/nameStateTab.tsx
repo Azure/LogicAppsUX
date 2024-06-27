@@ -15,7 +15,7 @@ import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
-export const NameStatePanel: React.FC = () => {
+export const NameStatePanel = ({ showStateTypeUnselectedError }: { showStateTypeUnselectedError: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflowName, workflowNameValidationError, kind } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
@@ -127,28 +127,30 @@ export const NameStatePanel: React.FC = () => {
         }}
         errorMessage={workflowNameValidationError}
       />
-      <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
-        {intlText.STATE_TYPE}
-      </Label>
-      <Text className="msla-templates-tab-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
-      <ChoiceGroup
-        className="msla-templates-tab-choiceGroup"
-        options={[
-          { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
-          {
-            key: 'stateless',
-            text: intlText.STATELESS,
-            onRenderLabel: onRenderStatelessField,
-          },
-        ]}
-        onChange={(_, option) => {
-          if (option?.key) {
-            dispatch(updateKind(option?.key));
-          }
-        }}
-        selectedKey={kind}
-        disabled={manifest?.kinds?.length === 1}
-      />
+      <div className={showStateTypeUnselectedError ? 'msla-templates-tab-stateType-error' : ''}>
+        <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
+          {intlText.STATE_TYPE}
+        </Label>
+        <Text className="msla-templates-tab-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
+        <ChoiceGroup
+          className="msla-templates-tab-choiceGroup"
+          options={[
+            { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
+            {
+              key: 'stateless',
+              text: intlText.STATELESS,
+              onRenderLabel: onRenderStatelessField,
+            },
+          ]}
+          onChange={(_, option) => {
+            if (option?.key) {
+              dispatch(updateKind(option?.key));
+            }
+          }}
+          selectedKey={kind}
+          disabled={manifest?.kinds?.length === 1}
+        />
+      </div>
     </div>
   );
 };
@@ -159,9 +161,11 @@ export const nameStateTab = (
   {
     previousTabId,
     hasError,
+    showStateTypeUnselectedError,
   }: {
     previousTabId: string | undefined;
     hasError: boolean;
+    showStateTypeUnselectedError: boolean;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
@@ -177,7 +181,7 @@ export const nameStateTab = (
   }),
   hasError: hasError,
   order: 2,
-  content: <NameStatePanel />,
+  content: <NameStatePanel showStateTypeUnselectedError={showStateTypeUnselectedError} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
