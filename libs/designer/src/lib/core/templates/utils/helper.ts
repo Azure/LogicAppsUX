@@ -1,9 +1,10 @@
-import { type Template, isArmResourceId, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { type Template, isArmResourceId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { overviewTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/overviewTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
+import Fuse from 'fuse.js';
 
 export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
   return [workflowTab(intl, dispatch), overviewTab(intl, dispatch)];
@@ -47,19 +48,8 @@ export const getFilteredTemplates = (
   },
   isConsumption: boolean
 ): string[] => {
-  return Object.keys(templates).filter((templateName) => {
-    const templateManifest = templates[templateName];
-
+  const filteredTemplateEntries = Object.entries(templates).filter(([_templateName, templateManifest]) => {
     if (!templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')) {
-      return false;
-    }
-
-    const hasKeyword =
-      !filters.keyword ||
-      (!isUndefinedOrEmptyString(filters.keyword) &&
-        (templateManifest.title.includes(filters.keyword) || templateManifest.description.includes(filters.keyword)));
-
-    if (!hasKeyword) {
       return false;
     }
 
@@ -84,6 +74,56 @@ export const getFilteredTemplates = (
     });
     return hasDetailFilters;
   });
+
+  const searchOptions = {
+    isCaseSensitive: false,
+    includeScore: false,
+    threshold: 0,
+    ignoreLocation: true,
+    keys: [
+      'title',
+      'description',
+      {
+        name: 'manifest',
+        weight: 2,
+        getFn: ([_name, template]: [string, Template.Manifest]) => [
+          ...template.skus,
+          ...(template.tags ?? []),
+          ...(template.kinds ?? []),
+          ...Object.values(template.details),
+        ],
+      },
+      {
+        name: 'parameters',
+        weight: 3,
+        getFn: ([_name, template]: [string, Template.Manifest]) =>
+          template.parameters?.reduce((acc: string[], parameter) => acc.concat([parameter.displayName, parameter.description]), []),
+      },
+      {
+        name: 'connections',
+        weight: 3,
+        getFn: ([_name, template]: [string, Template.Manifest]) =>
+          template.connections
+            ? Object.values(template.connections)?.reduce(
+                (acc: string[], connection) =>
+                  acc.concat([
+                    connection.connectorId, // TODO: change after PR (connection name to be stored in the state)
+                  ]),
+                []
+              )
+            : [],
+      },
+    ],
+  };
+
+  if (!filters.keyword) {
+    return Object.keys(Object.fromEntries(filteredTemplateEntries));
+  }
+
+  const fuse = new Fuse(filteredTemplateEntries, searchOptions);
+  const searchedResults = fuse.search(filters.keyword).map(({ item }) => item[0]);
+
+  return searchedResults;
 };
 
 export const getConnectorResources = (intl: IntlShape) => {
