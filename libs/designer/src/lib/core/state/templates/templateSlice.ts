@@ -28,6 +28,7 @@ interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
   workflowName: string | undefined;
+  workflowNameValidation: string | undefined;
   kind: string | undefined;
   parameters: {
     definitions: Record<string, Template.ParameterDefinition>;
@@ -46,6 +47,7 @@ const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
   workflowName: undefined,
+  workflowNameValidation: undefined,
   kind: undefined,
   parameters: {
     definitions: {},
@@ -144,6 +146,37 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
   return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
+export const _validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
+  const intl = getIntl();
+
+  if (!workflowName) {
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for workflow name.',
+      id: 'sKy720',
+      description: 'Error message when the workflow name is empty.',
+    });
+  }
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Name does not match the given pattern.',
+      id: 'zMKxg9',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  if (existingWorkflowNames.includes(workflowName)) {
+    return intl.formatMessage(
+      {
+        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+        id: '7F4Bzv',
+        description: 'Error message when the workflow name already exists.',
+      },
+      { workflowName }
+    );
+  }
+  return undefined;
+};
+
 export const templateSlice = createSlice({
   name: 'template',
   initialState,
@@ -151,8 +184,12 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    updateWorkflowName: (state, action: PayloadAction<string>) => {
+    updateWorkflowName: (state, action: PayloadAction<string | undefined>) => {
       state.workflowName = action.payload;
+    },
+    validateWorkflowName: (state, action: PayloadAction<string[]>) => {
+      const validationError = _validateWorkflowName(state.workflowName, action.payload);
+      state.workflowNameValidation = validationError;
     },
     updateKind: (state, action: PayloadAction<string>) => {
       state.kind = action.payload;
@@ -225,6 +262,7 @@ export const templateSlice = createSlice({
 export const {
   changeCurrentTemplateName,
   updateWorkflowName,
+  validateWorkflowName,
   updateKind,
   updateTemplateParameterValue,
   validateParameters,
@@ -258,6 +296,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
+      workflowNameValidation: undefined,
       kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
       parameters: {
         definitions: parametersDefinitions,

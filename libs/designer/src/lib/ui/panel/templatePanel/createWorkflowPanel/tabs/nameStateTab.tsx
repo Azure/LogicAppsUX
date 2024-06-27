@@ -3,21 +3,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
-import { updateKind, updateWorkflowName, clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import {
+  updateKind,
+  updateWorkflowName,
+  clearTemplateDetails,
+  validateWorkflowName,
+} from '../../../../../core/state/templates/templateSlice';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
 export const NameStatePanel: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, kind } = useSelector((state: RootState) => state.template);
+  const { workflowName, workflowNameValidation, kind } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();
-  const [validationError, setValidationError] = useState('');
 
   const intlText = useMemo(
     () => ({
@@ -102,44 +106,6 @@ export const NameStatePanel: React.FC = () => {
     [intlText]
   );
 
-  const testRegex = () => {
-    if (!workflowName) {
-      setValidationError(
-        intl.formatMessage({
-          defaultMessage: 'Must provide value for workflow name.',
-          id: 'sKy720',
-          description: 'Error message when the workflow name is empty.',
-        })
-      );
-      return;
-    }
-    const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
-    if (!regex.test(workflowName)) {
-      setValidationError(
-        intl.formatMessage({
-          defaultMessage: 'Name does not match the given pattern.',
-          id: 'zMKxg9',
-          description: 'Error message when the workflow name is invalid regex.',
-        })
-      );
-      return;
-    }
-    if (existingWorkflowNames?.includes(workflowName)) {
-      setValidationError(
-        intl.formatMessage(
-          {
-            defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-            id: '7F4Bzv',
-            description: 'Error message when the workflow name already exists.',
-          },
-          { workflowName }
-        )
-      );
-      return;
-    }
-    setValidationError('');
-  };
-
   return (
     <div className="msla-templates-tab">
       <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
@@ -153,11 +119,13 @@ export const NameStatePanel: React.FC = () => {
         ariaLabel={intlText.WORKFLOW_NAME}
         value={existingWorkflowName ?? workflowName}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName(newValue ?? ''))
+          dispatch(updateWorkflowName(newValue))
         }
         disabled={!!existingWorkflowName}
-        onBlur={testRegex}
-        errorMessage={validationError}
+        onBlur={() => {
+          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+        }}
+        errorMessage={workflowNameValidation}
       />
       <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
         {intlText.STATE_TYPE}

@@ -8,13 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
-import { TemplateService, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { TemplateService } from '@microsoft/logic-apps-shared';
 
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
-  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { workflowNameValidation, kind, parameters, manifest: selectedManifest } = useSelector((state: RootState) => state.template);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
@@ -24,7 +23,6 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     () => Object.values(parameters.validationErrors).some((error) => !!error),
     [parameters.validationErrors]
   );
-  const missingWorkflowName = isUndefinedOrEmptyString(existingWorkflowName ?? workflowName);
 
   useEffect(() => {
     setIsLoadingCreate(false);
@@ -67,21 +65,21 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
           : connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
             : undefined,
-        hasError: missingWorkflowName || !kind, //TODO: Elaina: add workflow name validation
+        hasError: !!workflowNameValidation || !kind,
       }),
     }),
-    [intl, dispatch, missingWorkflowName, kind, connectionsExist, parametersExist]
+    [intl, dispatch, workflowNameValidation, kind, connectionsExist, parametersExist]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
-        isPrimaryButtonDisabled: missingWorkflowName || !kind || hasParametersValidationErrors, //TODO: add connections validations
+        isPrimaryButtonDisabled: !!workflowNameValidation || !kind || hasParametersValidationErrors, //TODO: add connections validations
         isCreated,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated, hasParametersValidationErrors]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, workflowNameValidation, kind, isCreated, hasParametersValidationErrors]
   );
 
   const tabs = useMemo(() => {
