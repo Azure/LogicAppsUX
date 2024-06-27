@@ -150,7 +150,6 @@
 
 * **designer:** Adding support for dynamic input schema in dynamic parameters ([#4844](https://github.com/Azure/LogicAppsUX/issues/4844)) ([caa69b6](https://github.com/Azure/LogicAppsUX/commit/caa69b62489df9aba149306134ae920ef5da272c))
 
-## [0.3.0](https://github.com/Azure/LogicAppsUX/compare/v4.21.0...v0.3.0) (2024-05-28)
 ## [4.23.0](https://github.com/Azure/LogicAppsUX/compare/v4.22.0...v4.23.0) (2024-05-31)
 
 
