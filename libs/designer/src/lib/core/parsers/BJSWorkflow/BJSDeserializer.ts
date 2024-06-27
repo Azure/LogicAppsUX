@@ -232,11 +232,29 @@ export const deserializeUnitTestDefinition = (
 
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
     const mockOutputs = unitTestDefinition.actionMocks[actionName].outputs ?? {};
-    mockResults[actionName] = {
-      actionResult: unitTestDefinition.actionMocks[actionName].properties?.status ?? ActionResults.SUCCESS,
-      output: parseOutputsToValueSegment(mockOutputs),
-      isCompleted: !isNullOrEmpty(mockOutputs),
-    };
+    const action = definition.actions && definition.actions[actionName];
+    const type = action?.type?.toLowerCase();
+    const supportedAction =
+      type === 'http' ||
+      type === 'invokefunction' ||
+      type === ConnectionType.ServiceProvider ||
+      type === ConnectionType.Function ||
+      type === ConnectionType.ApiManagement ||
+      type === ConnectionType.ApiConnection;
+
+    const actionResult = unitTestDefinition.actionMocks[actionName].properties?.status;
+
+    if (supportedAction) {
+      if (actionResult === ActionResults.SUCCESS || actionResult === ActionResults.FAILED) {
+        mockResults[actionName] = {
+          actionResult: actionResult,
+          output: parseOutputsToValueSegment(mockOutputs),
+          isCompleted: !isNullOrEmpty(mockOutputs),
+        };
+      } else {
+        delete mockResults[actionName];
+      }
+    }
   });
 
   // deserialize assertions
