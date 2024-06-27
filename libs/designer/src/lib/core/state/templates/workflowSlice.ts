@@ -10,16 +10,18 @@ export interface ResourceDetails {
   location: string;
 }
 
+export interface ConnectionMapping {
+  references: ConnectionReferences;
+  mapping: Record<string, string>;
+}
+
 export interface WorkflowState {
   existingWorkflowName?: string;
   isConsumption: boolean;
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-  connections: {
-    references: ConnectionReferences;
-    mapping: Record<string, string>;
-  };
+  connections: ConnectionMapping;
 }
 
 const initialState: WorkflowState = {
@@ -55,10 +57,6 @@ export const workflowSlice = createSlice({
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferences>) => {
       const references = action.payload;
       state.connections.references = references;
-      state.connections.mapping = Object.keys(references).reduce((result: Record<string, string>, key: string) => {
-        result[key] = key;
-        return result;
-      }, {});
     },
     changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
       const { nodeId: key, connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = action.payload;
