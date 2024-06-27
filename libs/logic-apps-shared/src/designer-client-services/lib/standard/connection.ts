@@ -24,6 +24,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
+import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 
 interface ConnectionAcl {
   id: string;
@@ -135,9 +136,21 @@ export class StandardConnectionService extends BaseConnectionService implements 
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this._options;
-      const response = await httpClient.get<Connector>({
-        uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
-      });
+
+      let response = null;
+      if (isHybridLogicApp(baseUrl)) {
+        response = await httpClient.post<any, null>({
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+          headers: {
+            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId.split('/').at(-1)}/`,
+            'x-ms-logicapps-proxy-method': 'GET',
+          },
+        });
+      } else {
+        response = await httpClient.get<Connector>({
+          uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
+        });
+      }
 
       return response;
     }
