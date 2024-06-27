@@ -145,6 +145,12 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.cloudToLocal",
+        "title": "Create new logic app workspace from package...",
+        "category": "Azure Logic Apps",
+        "preview": true
+      },
+      {
         "command": "azureLogicAppsStandard.exportLogicApp",
         "title": "Export logic app...",
         "category": "Azure Logic Apps",
@@ -382,8 +388,12 @@
           "group": "1_create@2"
         },
         {
-          "command": "azureLogicAppsStandard.createCodeless",
+          "command": "azureLogicAppsStandard.cloudToLocal",
           "group": "1_create@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
+          "group": "1_create@4"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
@@ -391,7 +401,7 @@
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "group": "3_export@1"
+          "group": "4_export@1"
         }
       ],
       "view/title": [
@@ -980,6 +990,7 @@
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
+    "onCommand:azureLogicAppsStandard.cloudToLocal",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",
