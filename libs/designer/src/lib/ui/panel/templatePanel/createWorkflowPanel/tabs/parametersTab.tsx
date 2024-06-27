@@ -4,7 +4,7 @@ import constants from '../../../../../common/constants';
 import { DisplayParameters } from '../../../../templates/parameters/displayParameters';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { clearTemplateDetails, validateParameters } from '../../../../../core/state/templates/templateSlice';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const ParametersPanel: React.FC = () => {
   return <DisplayParameters />;
@@ -43,7 +43,6 @@ export const parametersTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      dispatch(validateParameters());
       dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
     },
     secondaryButtonText: previousTabId

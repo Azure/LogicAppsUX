@@ -77,11 +77,11 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
-        isPrimaryButtonDisabled: missingWorkflowName || !kind, //TODO: Elaina: make sure if parameters and connections are empty
+        isPrimaryButtonDisabled: missingWorkflowName || !kind || hasParametersValidationErrors, //TODO: add connections validations
         isCreated,
       }),
     }),
-    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, missingWorkflowName, kind, isCreated, hasParametersValidationErrors]
   );
 
   const tabs = useMemo(() => {
