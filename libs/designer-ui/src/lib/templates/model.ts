@@ -6,7 +6,7 @@ export type TemplatePanelTabFn = (intl: IntlShape) => TemplatePanelTab;
 export interface TemplatePanelTab {
   id: string;
   title: string;
-  description: string | ReactNode;
+  description?: string | ReactNode;
   visible?: boolean;
   order: number;
   content: React.ReactElement;
