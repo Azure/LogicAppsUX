@@ -2,10 +2,12 @@ import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fl
 import { Icon, ImageFit, Shimmer, ShimmerElementType, Spinner, SpinnerSize, Text, css } from '@fluentui/react';
 import { useConnectorOnly } from '../../../core/state/connection/connectionSelector';
 import type { Connector, Template } from '@microsoft/logic-apps-shared';
+import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { getConnectorResources } from '../../../core/templates/utils/helper';
+import { useEffect } from 'react';
 
 const iconStyles = {
   root: {
@@ -51,6 +53,12 @@ export const ConnectorIconWithName = ({
 }) => {
   const { data: connector, isLoading } = useConnectorOnly(connectorId);
 
+  useEffect(() => {
+    if (onConnectorLoaded && connector) {
+      onConnectorLoaded(connector);
+    }
+  }, [connector, onConnectorLoaded]);
+
   if (showProgress && isLoading) {
     return (
       <div className={css(classes['root'], 'msla-template-create-progress-connector')}>
@@ -68,10 +76,6 @@ export const ConnectorIconWithName = ({
         />
       </div>
     );
-  }
-
-  if (onConnectorLoaded && connector) {
-    onConnectorLoaded(connector);
   }
 
   return (
@@ -103,13 +107,30 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
   const text = getConnectorResources(intl);
   return (
     <div className="msla-template-connector">
-      <ConnectorIcon
-        connectorId={connectorId}
-        classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
-        styles={{ root: { width: 50, height: 50 }, image: { width: 'calc(60%)', height: 'calc(60%)' } }}
-      />
+      {isLoading ? (
+        <Shimmer
+          className="msla-template-connector-box"
+          shimmerElements={[{ type: ShimmerElementType.line, height: 50, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+      ) : (
+        <ConnectorIcon
+          connectorId={connectorId}
+          classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
+          styles={{ root: { width: 50, height: 50 }, image: { width: 'calc(60%)', height: 'calc(60%)' } }}
+        />
+      )}
       <div className="msla-template-connector-details">
-        <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+        {isLoading ? (
+          <Shimmer
+            className="msla-template-connector-name"
+            style={{ width: '70%', marginTop: 10 }}
+            shimmerElements={[{ type: ShimmerElementType.line, height: 12, verticalAlign: 'bottom', width: '100%' }]}
+            size={SpinnerSize.xSmall}
+          />
+        ) : (
+          <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+        )}
         <div className="msla-template-connector-type">
           <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
             {allCategories[kind ?? ''] ?? kind}
@@ -131,6 +152,35 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+export const ConnectorConnectionStatus = ({
+  connectorId,
+  hasConnection,
+  intl,
+}: { connectorId: string; hasConnection: boolean; intl: IntlShape }) => {
+  const { data: connector, isLoading } = useConnectorOnly(connectorId);
+  const texts = getConnectorResources(intl);
+  const fontStyle = { color: hasConnection ? '#50821b' : '#8b8b8b' };
+
+  return (
+    <div className="msla-templates-tab-review-section-details">
+      {isLoading ? (
+        <div className="msla-templates-tab-review-section-details-title">
+          <Shimmer
+            style={{ width: '70%', marginTop: 5 }}
+            shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+            size={SpinnerSize.xSmall}
+          />
+        </div>
+      ) : (
+        <Text className="msla-templates-tab-review-section-details-title">{connector?.properties.displayName}</Text>
+      )}
+      <Text style={fontStyle} className="msla-templates-tab-review-section-details-value">
+        {hasConnection ? texts.connected : texts.notConnected}
+      </Text>
     </div>
   );
 };

@@ -103,11 +103,6 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     id: '+YyHKB',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  description: intl.formatMessage({
-    defaultMessage: 'Overview Tab',
-    id: 'EJj4E0',
-    description: 'An accessability label that describes the oveview tab',
-  }),
   visible: true,
   content: <OverviewPanel />,
   order: 1,

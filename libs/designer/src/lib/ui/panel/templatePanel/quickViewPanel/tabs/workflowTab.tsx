@@ -27,11 +27,6 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     id: '1nykVf',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  description: intl.formatMessage({
-    defaultMessage: 'Workflow preview tab',
-    id: 'EJnXVY',
-    description: 'An accessability label that describes the oveview tab',
-  }),
   visible: true,
   content: <WorkflowPanel />,
   order: 0,

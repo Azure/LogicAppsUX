@@ -109,6 +109,7 @@ export interface CreatedConnectionPayload {
 
 export const CreateConnectionInternal = (props: {
   classes?: Record<string, string>;
+  connectionName?: string;
   connectorId: string;
   operationType: string;
   existingReferences: string[];
@@ -124,6 +125,7 @@ export const CreateConnectionInternal = (props: {
 }) => {
   const {
     classes,
+    connectionName,
     connectorId,
     description,
     operationType,
@@ -277,7 +279,7 @@ export const CreateConnectionInternal = (props: {
         let connection: Connection | undefined;
         let err: string | undefined;
 
-        const newName = await getUniqueConnectionName(connector.id, existingReferences);
+        const newName = connectionName ? connectionName : await getUniqueConnectionName(connector.id, existingReferences);
         if (isOAuthConnection) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
@@ -315,6 +317,7 @@ export const CreateConnectionInternal = (props: {
       applyNewConnection,
       assistedConnectionProps,
       connectionMetadata,
+      connectionName,
       connector,
       existingReferences,
       selectedSubResource,

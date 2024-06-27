@@ -123,16 +123,7 @@ function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: strin
   }
 }
 
-export async function addConnectionData(
-  connectionAndSetting: ConnectionAndAppSetting,
-  connectionsData: ConnectionsData,
-  settings: any
-): Promise<void> {
-  addConnectionInJson(connectionAndSetting, connectionsData ?? {});
-  addOrUpdateAppSettings(connectionAndSetting.settings, settings?.properties ?? {});
-}
-
-function addConnectionInJson(connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): void {
+export function addConnectionInJson(connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): void {
   const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
 
   let pathToSetConnectionsData: any = connectionsJson;
@@ -154,7 +145,7 @@ function addConnectionInJson(connectionAndSetting: ConnectionAndAppSetting, conn
   pathToSetConnectionsData[connectionKey] = connectionData;
 }
 
-function addOrUpdateAppSettings(settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> {
+export function addOrUpdateAppSettings(settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> {
   const settingsToAdd = Object.keys(settings);
 
   for (const settingKey of settingsToAdd) {

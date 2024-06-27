@@ -753,7 +753,7 @@ function createLocalConnectionsData(
   return result;
 }
 
-function escapeSpecialChars(value: string): string {
+export function escapeSpecialChars(value: string): string {
   const escapedUnderscore = value.replace(/_/g, '__');
   return escapedUnderscore.replace(/-/g, '_1');
 }

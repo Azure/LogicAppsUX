@@ -1,4 +1,4 @@
-export { StandardConnectionService } from './connection';
+export { StandardConnectionService, escapeSpecialChars } from './connection';
 export { StandardConnectorService } from './connector';
 export { StandardOperationManifestService, isServiceProviderOperation } from './operationmanifest';
 export { StandardSearchService } from './search';
