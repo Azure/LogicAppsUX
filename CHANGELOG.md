@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.30.1](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v4.30.1) (2024-06-27)
+
+
+### Bug Fixes
+
+* **designer:** Revert "Prevent parent node from being dragged below dependent node ([#4973](https://github.com/Azure/LogicAppsUX/issues/4973))" ([#5037](https://github.com/Azure/LogicAppsUX/issues/5037)) ([5011fdb](https://github.com/Azure/LogicAppsUX/commit/5011fdb51843af1ed6373abde6b84d2b40dc539a))
+
 ## [4.30.0](https://github.com/Azure/LogicAppsUX/compare/v4.29.0...v4.30.0) (2024-06-17)
 
 
