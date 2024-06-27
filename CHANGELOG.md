@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.35.0](https://github.com/Azure/LogicAppsUX/compare/v4.34.0...v4.35.0) (2024-06-27)
+
+
+### Features
+
+* **templates:** Add newly created connections in workflow create payload ([#5026](https://github.com/Azure/LogicAppsUX/issues/5026)) ([9519522](https://github.com/Azure/LogicAppsUX/commit/95195226046f483ee11bacd603e527bb3f9209cc))
+* **Templates:** Updating CreateWorkflow panel with latest UI + Logic ([#5004](https://github.com/Azure/LogicAppsUX/issues/5004)) ([673e1e6](https://github.com/Azure/LogicAppsUX/commit/673e1e61f65ee90edd33dd2943f8a4f563e5f4e6))
+
+
+### Bug Fixes
+
+* **designer:** Add aria label for close button on connections panel ([#5021](https://github.com/Azure/LogicAppsUX/issues/5021)) ([dcce4bf](https://github.com/Azure/LogicAppsUX/commit/dcce4bf1011158787c86080cb18b90b4ea43290d))
+
 ## [4.34.0](https://github.com/Azure/LogicAppsUX/compare/v4.33.0...v4.34.0) (2024-06-26)
 
 
