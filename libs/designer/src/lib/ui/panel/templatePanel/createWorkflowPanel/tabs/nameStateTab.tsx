@@ -189,11 +189,11 @@ export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    primaryButtonDisabled,
     previousTabId,
+    hasError,
   }: {
-    primaryButtonDisabled: boolean;
     previousTabId: string | undefined;
+    hasError: boolean;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
@@ -207,7 +207,7 @@ export const nameStateTab = (
     id: 'ZXyMDQ',
     description: 'An accessability label that describes the objective of name and state tab',
   }),
-  visible: true,
+  hasError: hasError,
   order: 2,
   content: <NameStatePanel />,
   footerContent: {
@@ -217,11 +217,8 @@ export const nameStateTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      if (!primaryButtonDisabled) {
-        dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
-      }
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
     },
-    primaryButtonDisabled: primaryButtonDisabled,
     secondaryButtonText: previousTabId
       ? intl.formatMessage({
           defaultMessage: 'Previous',

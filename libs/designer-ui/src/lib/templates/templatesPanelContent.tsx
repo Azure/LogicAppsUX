@@ -41,7 +41,7 @@ export const TemplatesPanelContent = ({
             className={css('msla-templates-panel-tabName', id === selectedTabId && 'selected')}
             value={id}
             role={'tab'}
-            disabled={isSequence && order > selectedTabOrder}
+            // disabled={isSequence && order > selectedTabOrder}
           >
             {isSequence && (
               <Text className="msla-templates-panel-tabName-index">

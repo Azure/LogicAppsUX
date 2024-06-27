@@ -14,13 +14,11 @@ export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    hasParametersValidationErrors,
-    missingRequiredParameters,
     previousTabId,
+    hasError,
   }: {
-    hasParametersValidationErrors: boolean;
-    missingRequiredParameters: boolean;
     previousTabId: string | undefined;
+    hasError: boolean;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
@@ -35,7 +33,7 @@ export const parametersTab = (
     id: 'oG8Tky',
     description: 'An accessability label that describes the objective of parameters tab',
   }),
-  visible: true,
+  hasError: hasError,
   order: 1,
   content: <ParametersPanel />,
   footerContent: {
@@ -46,11 +44,8 @@ export const parametersTab = (
     }),
     primaryButtonOnClick: () => {
       dispatch(validateParameters());
-      if (!missingRequiredParameters && !hasParametersValidationErrors) {
-        dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
-      }
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
     },
-    primaryButtonDisabled: hasParametersValidationErrors,
     secondaryButtonText: previousTabId
       ? intl.formatMessage({
           defaultMessage: 'Previous',

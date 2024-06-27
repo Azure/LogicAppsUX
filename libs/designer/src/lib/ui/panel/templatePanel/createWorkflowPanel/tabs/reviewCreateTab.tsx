@@ -142,7 +142,7 @@ export const reviewCreateTab = (
       description: 'An accessability label that describes the objective of review and create tab',
     })
   ),
-  visible: true,
+  hasError: false,
   order: 3,
   content: <ReviewCreatePanel />,
   footerContent: {

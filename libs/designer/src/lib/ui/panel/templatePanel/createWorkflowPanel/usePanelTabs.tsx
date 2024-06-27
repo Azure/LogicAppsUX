@@ -24,10 +24,6 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     () => Object.values(parameters.validationErrors).some((error) => !!error),
     [parameters.validationErrors]
   );
-  const missingRequiredParameters = useMemo(
-    () => Object.values(parameters.definitions).some((param) => param.required && !param.value),
-    [parameters.definitions]
-  );
   const missingWorkflowName = isUndefinedOrEmptyString(existingWorkflowName ?? workflowName);
 
   useEffect(() => {
@@ -45,11 +41,10 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
 
   const connectionsTabItem = useMemo(
     () => ({
-      ...connectionsTab(
-        intl,
-        dispatch,
-        parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE
-      ),
+      ...connectionsTab(intl, dispatch, {
+        nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+        hasError: false, //TODO: change when connections validation is implemented
+      }),
     }),
     [intl, dispatch, parametersExist]
   );
@@ -57,23 +52,22 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const parametersTabItem = useMemo(
     () => ({
       ...parametersTab(intl, dispatch, {
-        hasParametersValidationErrors,
-        missingRequiredParameters,
         previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : undefined,
+        hasError: hasParametersValidationErrors,
       }),
     }),
-    [intl, dispatch, hasParametersValidationErrors, missingRequiredParameters, connectionsExist]
+    [intl, dispatch, hasParametersValidationErrors, connectionsExist]
   );
 
   const nameStateTabItem = useMemo(
     () => ({
       ...nameStateTab(intl, dispatch, {
-        primaryButtonDisabled: missingWorkflowName || !kind,
         previousTabId: parametersExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
             : undefined,
+        hasError: missingWorkflowName || !kind, //TODO: Elaina: add workflow name validation
       }),
     }),
     [intl, dispatch, missingWorkflowName, kind, connectionsExist, parametersExist]
@@ -83,7 +77,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
-        isPrimaryButtonDisabled: missingWorkflowName || !kind,
+        isPrimaryButtonDisabled: missingWorkflowName || !kind, //TODO: Elaina: make sure if parameters and connections are empty
         isCreated,
       }),
     }),
