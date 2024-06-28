@@ -4,7 +4,7 @@ import { setupStore } from '../../../../core/state/templates/store';
 import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
-import { updateKind, type TemplateState } from '../../../../core/state/templates/templateSlice';
+import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
 import { TemplatePanel } from '../templatePanel';
@@ -75,7 +75,9 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
     templateSliceData = {
       workflowName: '',
+      workflowNameValidationError: undefined,
       kind: undefined,
+      kindError: undefined,
       templateName: template1Manifest.title,
       manifest: template1Manifest,
       workflowDefinition: {
@@ -140,27 +142,10 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
   });
 
-  it('Ensure clicking on next tab button for sequential ordering does not work', async () => {
+  it('Ensure clicking on next tab button for sequential ordering works', async () => {
     screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE).click();
-    expect(store.getState().panel.selectedTabId).toBe(undefined);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
     screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE).click();
-    expect(store.getState().panel.selectedTabId).toBe(undefined);
-  });
-
-  it('Ensure clicking on primary button moves onto next tab only with no missing info', async () => {
-    screen.getByTestId('template-footer-primary-button').click(); // no missing info (no required parameters)
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
-    screen.getByTestId('template-footer-primary-button').click(); // missing info (kind), should not move to next tab
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
-  });
-
-  it('Ensure clicking on primary button moves onto next tab when missing info is filled', async () => {
-    screen.getByTestId('template-footer-primary-button').click(); // no missing info (no required parameters)
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
-    store.dispatch(updateKind('stateful'));
-    expect(store.getState().template.kind).toEqual('stateful');
-    expect(store.getState().template.workflowName).toEqual(''); // Empty string is considered as missing info
-    screen.getByTestId('template-footer-primary-button').click();
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE);
   });
 });
