@@ -120,22 +120,23 @@ export const getFilteredTemplates = (
     return searchedTemplateNames;
   }
 
-  let sortedFilteredTemplateEntries = filteredTemplateEntries;
-  switch (filters.sortKey) {
-    case 'a-to-z': {
-      sortedFilteredTemplateEntries = filteredTemplateEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
+  const sortedFilteredTemplateEntries = _sortTemplateManifestEntriesByTitle(filters.sortKey, filteredTemplateEntries);
+  return Object.keys(Object.fromEntries(sortedFilteredTemplateEntries));
+};
+
+const _sortTemplateManifestEntriesByTitle = (sortKey: string | undefined, templateManifestEntries: [string, Template.Manifest][]) => {
+  switch (sortKey) {
+    case 'a-to-z':
+      return templateManifestEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
         manifest2?.title > manifest1?.title ? -1 : manifest2?.title < manifest1?.title ? 1 : 0
       );
-      break;
-    }
-    case 'z-to-a': {
-      sortedFilteredTemplateEntries = filteredTemplateEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
+    case 'z-to-a':
+      return templateManifestEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
         manifest1?.title > manifest2?.title ? -1 : manifest1?.title < manifest2?.title ? 1 : 0
       );
-      break;
-    }
+    default:
+      return templateManifestEntries;
   }
-  return Object.keys(Object.fromEntries(sortedFilteredTemplateEntries));
 };
 
 export const getConnectorResources = (intl: IntlShape) => {
