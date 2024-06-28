@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.31.3](https://github.com/Azure/LogicAppsUX/compare/v4.31.2...v4.31.3) (2024-06-28)
+
+
+### Bug Fixes
+
+* **designer:** Cherry picking changes for dynamic parameter value load and adding new data operations ([#5044](https://github.com/Azure/LogicAppsUX/issues/5044)) ([25a90dc](https://github.com/Azure/LogicAppsUX/commit/25a90dcb598ca9256af6d9ceaaf2d138c56cf406)), closes [#5041](https://github.com/Azure/LogicAppsUX/issues/5041)
+
 ### [4.31.2](https://github.com/Azure/LogicAppsUX/compare/v4.31.1...v4.31.2) (2024-06-27)
 
 
