@@ -30,6 +30,7 @@ interface TemplateData {
   workflowName: string | undefined;
   workflowNameValidationError: string | undefined;
   kind: string | undefined;
+  kindError: string | undefined;
   parameters: {
     definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
@@ -49,6 +50,7 @@ const initialState: TemplateState = {
   workflowName: undefined,
   workflowNameValidationError: undefined,
   kind: undefined,
+  kindError: undefined,
   parameters: {
     definitions: {},
     validationErrors: {},
@@ -193,6 +195,17 @@ export const templateSlice = createSlice({
     },
     updateKind: (state, action: PayloadAction<string>) => {
       state.kind = action.payload;
+      state.kindError = undefined;
+    },
+    validateKind: (state) => {
+      if (!state.kind) {
+        const intl = getIntl();
+        state.kindError = intl.formatMessage({
+          defaultMessage: 'The value must not be empty.',
+          id: 'JzvOUc',
+          description: 'Error message when the stage progressed without selecting kind.',
+        });
+      }
     },
     updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
@@ -223,7 +236,9 @@ export const templateSlice = createSlice({
       state.workflowDefinition = undefined;
       state.manifest = undefined;
       state.workflowName = undefined;
+      state.workflowNameValidationError = undefined;
       state.kind = undefined;
+      state.kindError = undefined;
       state.parameters = {
         definitions: {},
         validationErrors: {},
@@ -264,6 +279,7 @@ export const {
   updateWorkflowName,
   validateWorkflowName,
   updateKind,
+  validateKind,
   updateTemplateParameterValue,
   validateParameters,
   clearTemplateDetails,
@@ -298,6 +314,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowName: templateManifest.title,
       workflowNameValidationError: undefined,
       kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
+      kindError: undefined,
       parameters: {
         definitions: parametersDefinitions,
         validationErrors: {},

@@ -15,9 +15,9 @@ import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
-export const NameStatePanel = ({ showStateTypeUnselectedError }: { showStateTypeUnselectedError: boolean }) => {
+export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, workflowNameValidationError, kind } = useSelector((state: RootState) => state.template);
+  const { workflowName, workflowNameValidationError, kind, kindError } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { manifest } = useSelector((state: RootState) => state.template);
@@ -127,7 +127,7 @@ export const NameStatePanel = ({ showStateTypeUnselectedError }: { showStateType
         }}
         errorMessage={workflowNameValidationError}
       />
-      <div className={showStateTypeUnselectedError ? 'msla-templates-tab-stateType-error' : ''}>
+      <div className={kindError ? 'msla-templates-tab-stateType-error' : ''}>
         <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
           {intlText.STATE_TYPE}
         </Label>
@@ -151,6 +151,7 @@ export const NameStatePanel = ({ showStateTypeUnselectedError }: { showStateType
           disabled={manifest?.kinds?.length === 1}
         />
       </div>
+      {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}
     </div>
   );
 };
@@ -161,11 +162,9 @@ export const nameStateTab = (
   {
     previousTabId,
     hasError,
-    showStateTypeUnselectedError,
   }: {
     previousTabId: string | undefined;
     hasError: boolean;
-    showStateTypeUnselectedError: boolean;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
@@ -181,7 +180,7 @@ export const nameStateTab = (
   }),
   hasError: hasError,
   order: 2,
-  content: <NameStatePanel showStateTypeUnselectedError={showStateTypeUnselectedError} />,
+  content: <NameStatePanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
