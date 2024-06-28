@@ -6,10 +6,10 @@ export const composeOperation = {
     api: {
       id: 'connectionProviders/dataOperationNew',
       name: 'dataOperationNew',
-      displayName: 'Data Operations new',
+      displayName: 'Data Operations',
       iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
       brandColor: '#8c6cff',
-      description: 'Data Operations new',
+      description: 'Data Operations',
     },
     summary: 'Compose',
     description: "Constructs an arbitrary object from the action's inputs.",
