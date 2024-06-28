@@ -1,4 +1,4 @@
-import { isBuiltInConnector, isCustomConnector } from '../connectors';
+import { isBuiltInConnector, isCustomConnector, isPremiumConnector } from '../connectors';
 import Constants from '../constants';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
@@ -373,7 +373,19 @@ export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, 
 export const getConnectorCategoryString = (connector: Connector | OperationApi | string): string => {
   const allStrings = getConnectorAllCategories();
 
-  return isBuiltInConnector(connector) ? allStrings['inapp'] : isCustomConnector(connector) ? allStrings['custom'] : allStrings['shared'];
+  let connectorCategory: string;
+
+  if (isBuiltInConnector(connector)) {
+    connectorCategory = allStrings['inapp'];
+  } else if (isCustomConnector(connector)) {
+    connectorCategory = allStrings['custom'];
+  } else if (isPremiumConnector(connector)) {
+    connectorCategory = allStrings['premium'];
+  } else {
+    connectorCategory = allStrings['shared'];
+  }
+
+  return connectorCategory;
 };
 
 export const getConnectorAllCategories = (): Record<string, string> => {
@@ -393,8 +405,13 @@ export const getConnectorAllCategories = (): Record<string, string> => {
     id: 'nRpM02',
     description: 'Custom category name text',
   });
+  const premiumText = intl.formatMessage({
+    defaultMessage: 'Premium',
+    id: 'cuKbLw',
+    description: 'Premium category name text',
+  });
 
-  return { inapp: builtInText, shared: azureText, custom: customText };
+  return { inapp: builtInText, shared: azureText, custom: customText, premium: premiumText };
 };
 
 export const getPreviewTag = (status: string | undefined): string | undefined => {
