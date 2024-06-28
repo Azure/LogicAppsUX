@@ -212,7 +212,10 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         }
 
         for (const node of upstreamNodes) {
-          if (upstreamNodesDependencies[node].has(item.id) || upstreamNodesDependencies[item.id].has(node)) {
+          if (
+            upstreamNodesDependencies[node].has(item.id) ||
+            (upstreamNodesDependencies[item.id] && upstreamNodesDependencies[item.id].has(node))
+          ) {
             return false;
           }
         }
