@@ -90,6 +90,7 @@
   "1hHFdx": "(UTC-01:00) Azores",
   "1hPZqe": "The number of times to retry the request",
   "1htSs7": "Off",
+  "1jf3Dq": "Z to A, descending",
   "1jhzOM": "Required. The object to check if it is less than value being compared to.",
   "1nODUD": "Hide functions",
   "1nvvw1": "Enter the value of the Authorization header",
@@ -1042,6 +1043,7 @@
   "_1hHFdx.comment": "Time zone value ",
   "_1hPZqe.comment": "description of retry count setting",
   "_1htSs7.comment": "label when setting is off",
+  "_1jf3Dq.comment": "Sort by dropdown option of Z to A descending",
   "_1jhzOM.comment": "Required object parameter to compare to in greater function",
   "_1nODUD.comment": "Label to close Functions list",
   "_1nvvw1.comment": "Raw Value Placeholder Text",
@@ -2580,6 +2582,7 @@
   "_znGyyU.comment": "Label for description of custom addToTime Function",
   "_zsPNYN.comment": "Required. The number parameter to sum in the 'add' function.",
   "_zsc+jp.comment": "Functions",
+  "_zxF7g+.comment": "Sort by dropdown option of A to Z ascending",
   "_zxe9hh.comment": "Required integer parameter to subtract minutes from time",
   "a7j3gS": "Required. The number to divide by the Divisor.",
   "aAXnqw": "Required. The number of the occurrence of the substring to find.",
@@ -3258,5 +3261,6 @@
   "znGyyU": "Adds an integer number of a specified unit of time to a string timestamp passed in",
   "zsPNYN": "Required. The number to add to Summand 1.",
   "zsc+jp": "Functions",
+  "zxF7g+": "A to Z, ascending",
   "zxe9hh": "Required. The number of minutes to add. Can be negative to subtract minutes."
 }
