@@ -165,7 +165,7 @@ export const LocalDesigner = () => {
     isReadOnly,
     isMonitoringView,
     isDarkMode,
-    isConsumption,
+    hostingPlan,
     connections,
     runInstance,
     workflowKind,
@@ -177,6 +177,7 @@ export const LocalDesigner = () => {
   } = useSelector((state: RootState) => state.workflowLoader);
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
+  const isConsumption = hostingPlan === 'consumption';
   const designerProviderProps = {
     services: {
       connectionService: isConsumption ? connectionServiceConsumption : connectionServiceStandard,
