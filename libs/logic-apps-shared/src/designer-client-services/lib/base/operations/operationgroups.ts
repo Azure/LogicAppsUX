@@ -75,8 +75,8 @@ export const dataOperationsGroup = {
   name: 'dataOperationNew',
   properties: {
     brandColor: '#8c6cff',
-    description: 'Data Operations new',
-    displayName: 'Data Operations new',
+    description: 'Data Operations',
+    displayName: 'Data Operations',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
     capabilities: ['actions'],
   },
