@@ -45,8 +45,16 @@ const templateSearchOptions = {
   threshold: 0,
   ignoreLocation: true,
   keys: [
-    'title',
-    'description',
+    {
+      name: 'title',
+      weight: 1,
+      getFn: ([_name, template]: [string, Template.Manifest]) => template.title,
+    },
+    {
+      name: 'description',
+      weight: 1,
+      getFn: ([_name, template]: [string, Template.Manifest]) => template.description,
+    },
     {
       name: 'manifest',
       weight: 2,
