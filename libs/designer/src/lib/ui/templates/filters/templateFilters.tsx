@@ -4,15 +4,17 @@ import type { AppDispatch } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { setConnectorsFilters, setDetailsFilters, setKeywordFilter } from '../../../core/state/templates/manifestSlice';
+import { useAllConnectors } from '../../../core/queries/browse';
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
   detailFilters: Record<string, FilterObject[]>;
 }
 
-export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersProps) => {
+export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+  const { data: allConnectors } = useAllConnectors();
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -44,10 +46,13 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {connectors && (
+        {allConnectors && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={connectors}
+            items={allConnectors?.map((connector) => ({
+              value: connector.name,
+              displayName: connector.properties.displayName,
+            }))}
             onApplyButtonClick={(filterItems) => {
               dispatch(setConnectorsFilters(filterItems));
             }}

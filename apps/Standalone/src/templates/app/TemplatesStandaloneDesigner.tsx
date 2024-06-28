@@ -15,6 +15,7 @@ import {
   escapeSpecialChars,
   isArmResourceId,
   optional,
+  StandardSearchService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -44,7 +45,7 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowAppData } = useWorkflowApp(appId as string);
+  const { data: workflowAppData } = useWorkflowApp(appId as string, isConsumption ? 'consumption' : 'standard');
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
@@ -191,24 +192,6 @@ export const TemplatesStandaloneDesigner = () => {
             existingWorkflowName={existingWorkflowName}
           >
             <TemplateFilters
-              connectors={[
-                {
-                  value: 'azureaisearch',
-                  displayName: 'Azure AI Search',
-                },
-                {
-                  value: 'openai',
-                  displayName: 'Open AI',
-                },
-                {
-                  value: 'sql',
-                  displayName: 'SQL',
-                },
-                {
-                  value: 'amazon',
-                  displayName: 'Amazon',
-                },
-              ]}
               detailFilters={{
                 Trigger: [
                   {
@@ -322,6 +305,20 @@ const getServices = (
     getAppIdentity: () => workflowApp?.identity as any,
   };
 
+  const searchService = isConsumption
+    ? undefined
+    : new StandardSearchService({
+        baseUrl: armUrl,
+        apiHubServiceDetails: {
+          apiVersion: '2018-07-01-preview',
+          subscriptionId,
+          location,
+        },
+        apiVersion: '2018-07-01-preview',
+        showStatefulOperations: true,
+        httpClient,
+      });
+
   const templateService = isConsumption
     ? undefined
     : new StandardTemplateService({
@@ -342,6 +339,7 @@ const getServices = (
     gatewayService,
     tenantService,
     oAuthService,
+    searchService,
     templateService,
     workflowService,
   };
