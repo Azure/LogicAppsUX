@@ -43,11 +43,9 @@ export const TemplatesDesigner = ({
   return (
     <>
       <TemplatePanel onCreateClick={onCreateClick} />
-      <div className="msla-templates-list">
-        {availableTemplatesNames?.map((templateName: string) => (
-          <TemplateCard key={templateName} templateName={templateName} />
-        ))}
-      </div>
+      {availableTemplatesNames?.map((templateName: string) => (
+        <TemplateCard key={templateName} templateName={templateName} />
+      ))}
     </>
   );
 };

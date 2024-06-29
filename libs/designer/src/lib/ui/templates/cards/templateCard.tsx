@@ -6,7 +6,8 @@ import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice
 import { DocumentCard, type IContextualMenuItem, type IContextualMenuProps, IconButton } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
-import { getUniqueConnectors } from '../../../core/templates/utils/helper';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { normalizeConnectorId } from '../../../core/templates/utils/helper';
 
 interface TemplateCardProps {
   templateName: string;
@@ -34,14 +35,14 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   }
 
   const { title, details, connections } = templateManifest as Manifest;
-  const connectors = getUniqueConnectors(connections, subscriptionId, location);
-  const showOverflow = connectors.length > maxConnectorsToShow;
-  const connectorsToShow = showOverflow ? connectors.slice(0, maxConnectorsToShow) : connectors;
-  const overflowList = showOverflow ? connectors.slice(maxConnectorsToShow) : [];
+  const connectorIds = getUniqueConnectorIds(connections, subscriptionId, location);
+  const showOverflow = connectorIds.length > maxConnectorsToShow;
+  const connectorsToShow = showOverflow ? connectorIds.slice(0, maxConnectorsToShow) : connectorIds;
+  const overflowList = showOverflow ? connectorIds.slice(maxConnectorsToShow) : [];
   const onRenderMenuItem = (item: IContextualMenuItem) => <ConnectorIconWithName connectorId={item.key} />;
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
-    items: overflowList.map((connector) => ({ key: connector.connectorId, text: connector.connectorId, onRender: onRenderMenuItem })),
+    items: overflowList.map((connectorId) => ({ key: connectorId, text: connectorId, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
   };
@@ -53,13 +54,15 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
           {title}
         </Text>
         <div className="msla-template-card-tags">
-          {Object.keys(details).map((key: string) => {
-            return (
-              <Text key={key} size={300} className="msla-template-card-tag">
-                {key}: {details[key]}
-              </Text>
-            );
-          })}
+          <Text size={300} className="msla-template-card-tag">
+            By: {details['By']}
+          </Text>
+          <Text size={300} className="msla-template-card-tag">
+            Type: {details['Type']}
+          </Text>
+          <Text size={300} className="msla-template-card-tag">
+            Trigger: {details['Trigger']}
+          </Text>
         </div>
       </div>
       <hr className="msla-templates-break" />
@@ -69,12 +72,10 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
           Connectors
         </Text>
         <div className="msla-template-card-connectors-list">
-          {connectorsToShow.map((connector) => (
-            <ConnectorIcon
-              key={connector.connectorId}
-              connectorId={connector.connectorId}
-              classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
-            />
+          {connectorsToShow.map((connectorId) => (
+            <div key={connectorId} className="msla-template-card-connector">
+              <ConnectorIcon connectorId={connectorId} />
+            </div>
           ))}
           {showOverflow ? (
             <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
@@ -83,4 +84,19 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       </div>
     </DocumentCard>
   );
+};
+
+const getUniqueConnectorIds = (connections: Record<string, Template.Connection>, subscriptionId: string, location: string): string[] => {
+  const result: string[] = [];
+  const allConnectorIds = Object.values(connections).map((connection) => connection.connectorId);
+
+  while (allConnectorIds.length > 0) {
+    const connectorId = allConnectorIds.shift() as string;
+    const normalizedConnectorId = normalizeConnectorId(connectorId, subscriptionId, location).toLowerCase();
+    if (!result.includes(normalizedConnectorId)) {
+      result.push(normalizedConnectorId);
+    }
+  }
+
+  return result;
 };

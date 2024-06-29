@@ -4,29 +4,29 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
-import { QuickViewPanel, QuickViewPanelHeader } from './quickViewPanel/quickViewPanel';
+import { QuickViewPanel } from './quickViewPanel/quickViewPanel';
 import { type TemplatePanelTab, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
+import { useQuickViewPanelTabs } from './quickViewPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
-import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
-  const manifest = useSelector((state: RootState) => state.template?.manifest);
-  const templateTitle = manifest?.title ?? '';
-  const templateDescription = manifest?.description ?? '';
+  const templateTitle = useSelector((state: RootState) => state.template?.manifest?.title) ?? '';
+  const templateDescription = useSelector((state: RootState) => state.template?.manifest?.description) ?? '';
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
     dispatch(clearTemplateDetails());
   }, [dispatch]);
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs(onCreateClick);
+  const quickViewPanelTabs = useQuickViewPanelTabs();
 
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
-    () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : getQuickViewTabs(intl, dispatch)),
-    [currentPanelView, createWorkflowPanelTabs, intl, dispatch]
+    () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : currentPanelView === 'quickView' ? quickViewPanelTabs : []),
+    [currentPanelView, createWorkflowPanelTabs, quickViewPanelTabs]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -47,16 +47,13 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
   }, [intl]);
 
   const onRenderHeaderContent = useCallback(
-    () =>
-      currentPanelView === 'quickView' ? (
-        <QuickViewPanelHeader title={templateTitle} description={templateDescription} details={manifest?.details ?? {}} />
-      ) : (
-        <TemplatesPanelHeader
-          title={currentPanelView === 'createWorkflow' ? intlText.CREATE_WORKFLOW : templateTitle}
-          description={currentPanelView === 'createWorkflow' ? templateDescription : intlText.BY_MICROSOFT}
-        />
-      ),
-    [currentPanelView, templateTitle, templateDescription, manifest?.details, intlText.CREATE_WORKFLOW, intlText.BY_MICROSOFT]
+    () => (
+      <TemplatesPanelHeader
+        title={currentPanelView === 'createWorkflow' ? intlText.CREATE_WORKFLOW : templateTitle}
+        description={currentPanelView === 'createWorkflow' ? templateDescription : intlText.BY_MICROSOFT}
+      />
+    ),
+    [templateTitle, templateDescription, currentPanelView, intlText]
   );
   const onRenderFooterContent = useCallback(
     () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} onClose={dismissPanel} /> : null),
@@ -65,7 +62,6 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px' }, content: { paddingLeft: '0px' } }}
       isLightDismiss
       type={PanelType.medium}
       isOpen={isOpen}
@@ -78,7 +74,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       {currentPanelView === 'createWorkflow' ? (
         <CreateWorkflowPanel panelTabs={createWorkflowPanelTabs} />
       ) : currentPanelView === 'quickView' ? (
-        <QuickViewPanel />
+        <QuickViewPanel panelTabs={quickViewPanelTabs} />
       ) : null}
     </Panel>
   );
