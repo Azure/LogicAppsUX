@@ -46,7 +46,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allConnectors && (
+        {allConnectors && allConnectors.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
             items={allConnectors?.map((connector) => ({
@@ -56,6 +56,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
             onApplyButtonClick={(filterItems) => {
               dispatch(setConnectorsFilters(filterItems));
             }}
+            isSearchable
           />
         )}
         {Object.keys(detailFilters).map((filterName, index) => (
