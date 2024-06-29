@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [0.4.5](https://github.com/Azure/LogicAppsUX/compare/v0.4.4...v0.4.5) (2024-06-29)
+
+
+### Features
+
+* **Data Mapper:** Handle Node connections and state management ([#4990](https://github.com/Azure/LogicAppsUX/issues/4990)) ([1adac1c](https://github.com/Azure/LogicAppsUX/commit/1adac1cf5d972c2a95b1035dac443d48304625c0))
+
 ### [0.4.4](https://github.com/Azure/LogicAppsUX/compare/v4.31.3...v0.4.4) (2024-06-29)
 
 
