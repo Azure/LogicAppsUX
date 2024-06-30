@@ -10,7 +10,12 @@ import {
   useMocksByOperation,
   useNodeType,
 } from '../../../../../core/state/unitTest/unitTestSelectors';
-import { updateActionResult, updateMock } from '../../../../../core/state/unitTest/unitTestSlice';
+import {
+  updateMockSuccess,
+  updateMockFailure,
+  updateActionResultFailure,
+  updateActionResultSuccess,
+} from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
@@ -21,12 +26,13 @@ import {
   type ChangeState,
   ArrayType,
   type OutputsField,
+  ActionResults,
 } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFilteredOutputs } from './helper';
 
-export const MockResultsTab = () => {
+const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const nodeType = useNodeType(nodeId);
@@ -37,7 +43,15 @@ export const MockResultsTab = () => {
   const mocks = useMocksByOperation(nodeName);
   const mocksValidationErrors = useMocksValidationErrors();
 
+  const [errorMessage, setErrorMessage] = useState<string>(mocks.errorMessage || '');
+  const [errorCode, setErrorCode] = useState<string>(mocks.errorCode || '');
+
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
+
+  useEffect(() => {
+    console.log('Component rendered with mocks:', mocks);
+  }, [mocks]);
+
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
       const { value, viewModel } = newState;
@@ -45,16 +59,70 @@ export const MockResultsTab = () => {
       if (!isNullOrUndefined(viewModel) && viewModel.arrayType === ArrayType.COMPLEX) {
         propertiesToUpdate.value = viewModel.uncastedValue;
       }
-      dispatch(updateMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id, completed: true, type: type }));
+
+      console.log('Mock Update Triggered:', {
+        nodeName,
+        actionResult: mocks.actionResult,
+        id,
+        value: propertiesToUpdate.value,
+        type,
+      });
+
+      if (mocks.actionResult === ActionResults.FAILED) {
+        console.log('Dispatching updateMockFailure');
+        dispatch(
+          updateMockFailure({
+            operationName: nodeName,
+            outputs: propertiesToUpdate.value ?? [],
+            outputId: id,
+            completed: true,
+            type: type,
+            errorMessage,
+            errorCode,
+          })
+        );
+      } else {
+        console.log('Dispatching updateMockSuccess');
+        dispatch(
+          updateMockSuccess({
+            operationName: nodeName,
+            outputs: propertiesToUpdate.value ?? [],
+            outputId: id,
+            completed: true,
+            type: type,
+          })
+        );
+      }
     },
-    [nodeName, dispatch]
+    [nodeName, dispatch, errorMessage, errorCode, mocks.actionResult]
   );
 
   const onActionResultUpdate = useCallback(
     (newState: ActionResultUpdateEvent): void => {
-      dispatch(updateActionResult({ operationName: nodeName, actionResult: newState.actionResult, completed: true }));
+      console.log('Action Result Update Triggered:', newState);
+      if (newState.actionResult === ActionResults.FAILED) {
+        console.log('Setting action result to FAILED');
+        dispatch(
+          updateActionResultFailure({
+            operationName: nodeName,
+            actionResult: newState.actionResult,
+            completed: true,
+            errorMessage,
+            errorCode,
+          })
+        );
+      } else {
+        console.log('Setting action result to SUCCESS');
+        dispatch(
+          updateActionResultSuccess({
+            operationName: nodeName,
+            actionResult: newState.actionResult,
+            completed: true,
+          })
+        );
+      }
     },
-    [nodeName, dispatch]
+    [nodeName, dispatch, errorMessage, errorCode]
   );
 
   const outputs: OutputsField[] = filteredOutputs.map((output: OutputInfo) => {
@@ -80,7 +148,10 @@ export const MockResultsTab = () => {
       tokenMapping: {},
       validationErrors,
       suppressCastingForSerialize: false,
-      onValueChange: (newState: ChangeState) => onMockUpdate(id, newState, type),
+      onValueChange: (newState: ChangeState) => {
+        console.log('Value Change Detected for ID:', id, 'New State:', newState);
+        onMockUpdate(id, newState, type);
+      },
     };
   });
 
@@ -91,6 +162,11 @@ export const MockResultsTab = () => {
       onActionResultUpdate={onActionResultUpdate}
       outputs={outputs}
       mocks={mocks}
+      errorMessage={errorMessage}
+      onErrorMessageChange={setErrorMessage}
+      errorCode={errorCode}
+      onErrorCodeChange={setErrorCode}
+      onMockUpdate={onMockUpdate}
     />
   );
 };
@@ -105,8 +181,8 @@ export const mockResultsTab: PanelTabFn = (intl) => ({
   name: constants.PANEL_TAB_NAMES.MOCK_RESULTS,
   description: intl.formatMessage({
     defaultMessage: 'Mocked Results Tab',
-    id: 'R/UPRD',
-    description: 'An accessability label that describes the mocked results tab',
+    id: 'U7UAV0',
+    description: 'An accessibility label that describes the mocked results tab',
   }),
   visible: true,
   content: <MockResultsTab />,

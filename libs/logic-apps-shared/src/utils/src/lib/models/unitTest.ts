@@ -1,8 +1,10 @@
 export interface OperationMock {
-  outputs?: Record<string, any>;
-  properties?: {
+  properties: {
     status: string;
+    errorCode?: string; // Adding optional errorCode property
+    errorMessage?: string; // Adding optional errorMessage property
   };
+  [key: string]: any;
 }
 
 export interface Assertion {

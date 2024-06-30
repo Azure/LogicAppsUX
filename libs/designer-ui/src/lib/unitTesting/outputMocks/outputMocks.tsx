@@ -7,6 +7,7 @@ import './outputMocks.less';
 import { Divider, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import type { SettingProps } from '../../settings/settingsection';
+import ErrorDetails from './ErrorDetails';
 
 export interface MockUpdateEvent {
   outputId: string;
@@ -21,24 +22,12 @@ export interface OutputMock {
   output: Record<string, ValueSegment[]>;
   actionResult: string;
   isCompleted?: boolean;
+  errorMessage?: string;
+  errorCode?: string;
 }
 
 export type MockUpdateHandler = EventHandler<MockUpdateEvent>;
-
 export type ActionResultUpdateHandler = EventHandler<ActionResultUpdateEvent>;
-
-export interface OutputMocksProps {
-  isMockSupported: boolean;
-  nodeId: string;
-  onActionResultUpdate: ActionResultUpdateHandler;
-  outputs: OutputsField[];
-  mocks: OutputMock;
-}
-
-export const ActionResults = {
-  SUCCESS: 'Succeeded',
-  FAILED: 'Failed',
-};
 
 export interface OutputsField extends SettingProps {
   id?: string;
@@ -59,7 +48,36 @@ export interface OutputsField extends SettingProps {
   onValueChange?: ChangeHandler;
 }
 
-export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, outputs, mocks }: OutputMocksProps) => {
+export interface OutputMocksProps {
+  isMockSupported: boolean;
+  nodeId: string;
+  onActionResultUpdate: ActionResultUpdateHandler;
+  outputs: OutputsField[];
+  mocks: OutputMock;
+  errorMessage: string;
+  onErrorMessageChange: (value: string) => void;
+  errorCode: string;
+  onErrorCodeChange: (value: string) => void;
+  onMockUpdate: any;
+}
+
+export const ActionResults = {
+  SUCCESS: 'Succeeded',
+  FAILED: 'Failed',
+};
+
+export const OutputMocks: React.FC<OutputMocksProps> = ({
+  isMockSupported,
+  nodeId,
+  onActionResultUpdate,
+  outputs,
+  mocks,
+  errorMessage,
+  onErrorMessageChange,
+  errorCode,
+  onErrorCodeChange,
+  onMockUpdate, // Added prop
+}) => {
   const intl = useIntl();
 
   const intlText = {
@@ -75,7 +93,22 @@ export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, out
     <>
       <ActionResult nodeId={nodeId} onActionResultUpdate={onActionResultUpdate} actionResult={mocks.actionResult} />
       <Divider style={{ padding: '16px 0px' }} />
-      <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
+      {mocks.actionResult === ActionResults.SUCCESS || mocks.actionResult === ActionResults.FAILED ? (
+        <>
+          <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
+          {mocks.actionResult === ActionResults.FAILED && (
+            <ErrorDetails
+              errorMessage={errorMessage}
+              onErrorMessageChange={onErrorMessageChange}
+              errorCode={errorCode}
+              onErrorCodeChange={onErrorCodeChange}
+              onMockUpdate={onMockUpdate} // Pass down onMockUpdate
+            />
+          )}
+        </>
+      ) : (
+        <Text>{intlText.UNSUPPORTED_MOCKS}</Text>
+      )}
     </>
   ) : (
     <Text>{intlText.UNSUPPORTED_MOCKS}</Text>
