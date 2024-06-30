@@ -1180,8 +1180,10 @@ const getTriggerActionMocks = (
       const operationMock: OperationMock = {
         properties: {
           status: outputMock.actionResult,
-          errorCode: outputMock.errorCode, // Ensure this line is present
-          errorMessage: outputMock.errorMessage, // Ensure this line is present
+        },
+        error: {
+          code: outputMock.errorCode,
+          message: outputMock.errorMessage,
         },
         ...outputsValue,
       };

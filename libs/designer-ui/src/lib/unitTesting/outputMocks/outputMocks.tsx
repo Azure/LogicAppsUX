@@ -7,7 +7,7 @@ import './outputMocks.less';
 import { Divider, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import type { SettingProps } from '../../settings/settingsection';
-import ErrorDetails from './ErrorDetails';
+import ErrorDetails from './errorDetails';
 
 export interface MockUpdateEvent {
   outputId: string;
@@ -93,19 +93,16 @@ export const OutputMocks: React.FC<OutputMocksProps> = ({
     <>
       <ActionResult nodeId={nodeId} onActionResultUpdate={onActionResultUpdate} actionResult={mocks.actionResult} />
       <Divider style={{ padding: '16px 0px' }} />
-      {mocks.actionResult === ActionResults.SUCCESS || mocks.actionResult === ActionResults.FAILED ? (
-        <>
-          <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
-          {mocks.actionResult === ActionResults.FAILED && (
-            <ErrorDetails
-              errorMessage={errorMessage}
-              onErrorMessageChange={onErrorMessageChange}
-              errorCode={errorCode}
-              onErrorCodeChange={onErrorCodeChange}
-              onMockUpdate={onMockUpdate} // Pass down onMockUpdate
-            />
-          )}
-        </>
+      {mocks.actionResult === ActionResults.SUCCESS ? (
+        <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
+      ) : mocks.actionResult === ActionResults.FAILED ? (
+        <ErrorDetails
+          errorMessage={errorMessage}
+          onErrorMessageChange={onErrorMessageChange}
+          errorCode={errorCode}
+          onErrorCodeChange={onErrorCodeChange}
+          onMockUpdate={onMockUpdate} // Pass down onMockUpdate
+        />
       ) : (
         <Text>{intlText.UNSUPPORTED_MOCKS}</Text>
       )}
