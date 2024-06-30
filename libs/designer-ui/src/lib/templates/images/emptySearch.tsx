@@ -1,21 +1,6 @@
-import { useIntl } from 'react-intl';
-
 export const EmptySearch: React.FC = () => {
-  const intl = useIntl();
-
   return (
-    <svg
-      width="98"
-      height="100"
-      viewBox="0 0 98 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label={intl.formatMessage({
-        defaultMessage: 'Aria label for the empty search image',
-        id: 'fP3/Oc',
-        description: 'Aria label for the empty search image',
-      })}
-    >
+    <svg width="98" height="100" viewBox="0 0 98 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
       <g id="e958cf41 a31a 426c 90ab 58b20591ece8">
         <g id="Group">
           <g id="Vector" filter="url(#filter0_ii_1245_146389)">
