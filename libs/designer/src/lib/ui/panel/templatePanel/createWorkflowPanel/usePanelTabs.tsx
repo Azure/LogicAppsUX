@@ -28,10 +28,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
   const hasConnectionsValidationErrors = false; //TODO: change when connections validation is implemented
-  const hasParametersValidationErrors = useMemo(
-    () => Object.values(parameterErrors).some((error) => !!error),
-    [parameterErrors]
-  );
+  const hasParametersValidationErrors = useMemo(() => Object.values(parameterErrors).some((error) => !!error), [parameterErrors]);
 
   useEffect(() => {
     setIsLoadingCreate(false);

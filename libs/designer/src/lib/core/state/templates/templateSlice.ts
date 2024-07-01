@@ -37,7 +37,7 @@ interface TemplateData {
     kind: string | undefined;
     parameters: Record<string, string | undefined>;
     connections: Record<string, string | undefined>;
-  }
+  };
 }
 
 export interface TemplateState extends TemplateData {
@@ -234,6 +234,11 @@ export const templateSlice = createSlice({
       });
       state.errors.parameters = parametersValidationErrors;
     },
+    // validateConnections: (state) => {
+    //   if (state.manifest?.connections) {
+    //     validateConnections(state.manifest?.connections, state.connections);
+    //   }
+    // },
     clearTemplateDetails: (state) => {
       state.workflowDefinition = undefined;
       state.manifest = undefined;
@@ -321,7 +326,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
         kind: undefined,
         parameters: {},
         connections: {},
-      }
+      },
     };
   } catch (ex) {
     console.error(ex);

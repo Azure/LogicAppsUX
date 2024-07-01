@@ -12,7 +12,7 @@ export interface ResourceDetails {
 
 export interface ConnectionMapping {
   references: ConnectionReferences;
-  mapping: Record<string, string>;
+  mapping: Record<string, string>; //TODO: ConnectionsMapping
 }
 
 export interface WorkflowState {

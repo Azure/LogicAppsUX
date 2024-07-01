@@ -36,13 +36,13 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
       manifest: undefined,
       workflowDefinition: undefined,
       parameterDefinitions: parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
-          result[parameter.name] = {
-            ...parameter,
-            value: parameter.default,
-          };
-          return result;
-        }, {}),
-        validationErrors: {},
+        result[parameter.name] = {
+          ...parameter,
+          value: parameter.default,
+        };
+        return result;
+      }, {}),
+      validationErrors: {},
       connections: {},
       servicesInitialized: false,
       errors: {

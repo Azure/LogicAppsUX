@@ -1,4 +1,4 @@
-import { type Template, isArmResourceId } from '@microsoft/logic-apps-shared';
+import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { overviewTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/overviewTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -139,9 +139,9 @@ export const getConnectorResources = (intl: IntlShape) => {
 
 export const validateConnections = (
   manifestConnections: Record<string, Template.Connection>,
-  connectionsMapping: Record<string, string>,
-  intl: IntlShape
+  connectionsMapping: Record<string, string | undefined>
 ): string | undefined => {
+  const intl = getIntl();
   const errorMessage = intl.formatMessage({
     defaultMessage: 'All connections must be connected for workflow creation',
     id: 'fNlJSh',

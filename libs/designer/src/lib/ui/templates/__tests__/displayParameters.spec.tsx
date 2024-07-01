@@ -69,12 +69,12 @@ describe('ui/templates/DisplayParameters', () => {
         contentVersion: '',
       },
       parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
-          result[parameter.name] = {
-            ...parameter,
-            value: parameter.default,
-          };
-          return result;
-        }, {}),
+        result[parameter.name] = {
+          ...parameter,
+          value: parameter.default,
+        };
+        return result;
+      }, {}),
       connections: template1Manifest.connections,
       servicesInitialized: false,
       workflowName: undefined,

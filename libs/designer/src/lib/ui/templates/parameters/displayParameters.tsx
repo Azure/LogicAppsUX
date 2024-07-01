@@ -8,7 +8,10 @@ import type { Template } from '@microsoft/logic-apps-shared';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { parameterDefinitions, errors: { parameters: parameterErrors } } = useSelector((state: RootState) => state.template);
+  const {
+    parameterDefinitions,
+    errors: { parameters: parameterErrors },
+  } = useSelector((state: RootState) => state.template);
 
   const onUpdateParameterValue = (event: TemplatesParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
 

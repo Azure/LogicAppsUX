@@ -17,7 +17,12 @@ import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, errors: { workflow: workflowError, kind: kindError }, kind, manifest } = useSelector((state: RootState) => state.template);
+  const {
+    workflowName,
+    errors: { workflow: workflowError, kind: kindError },
+    kind,
+    manifest,
+  } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const intl = useIntl();

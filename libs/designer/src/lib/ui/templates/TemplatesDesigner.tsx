@@ -17,9 +17,13 @@ export const TemplatesDesigner = ({
   ) => Promise<void>;
 }) => {
   const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
-  const { workflowName, kind, workflowDefinition, parameterDefinitions,
-    errors: { workflow: workflowError, kind: kindError, parameters: parametersError }
-   } = useSelector((state: RootState) => state.template);
+  const {
+    workflowName,
+    kind,
+    workflowDefinition,
+    parameterDefinitions,
+    errors: { workflow: workflowError, kind: kindError, parameters: parametersError },
+  } = useSelector((state: RootState) => state.template);
   const filteredTemplateNames = useSelector((state: RootState) => state.manifest.filteredTemplateNames);
 
   const onCreateClick = async () => {
