@@ -17,7 +17,7 @@ import {
 } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { AddRegular, DeleteRegular, ReOrderRegular } from '@fluentui/react-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { RootState } from '../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
@@ -25,12 +25,13 @@ import { UnboundedInput } from '../../constants/FunctionConstants';
 import type { InputConnection } from '../../models/Connection';
 import { deleteFunction, setConnectionInput } from '../../core/state/DataMapSlice';
 import { isSchemaNodeExtended } from '../../utils';
+import { useIntl } from 'react-intl';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
 }
 
-type TabTypes = 'input' | 'output' | 'description';
+type TabTypes = 'input' | 'output' | 'details';
 
 export const FunctionConfigurationPopover = (props: FunctionConfigurationPopoverProps) => {
   const dispatch = useDispatch();
@@ -39,6 +40,28 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
   const func = useSelector((state: RootState) => {
     return state.dataMap.present.curDataMapOperation.functionNodes[props.functionId];
   });
+  const intl = useIntl();
+
+  const stringResources = useMemo(
+    () => ({
+      OUTPUT: intl.formatMessage({
+        defaultMessage: 'Output',
+        id: 'fAB0Ww',
+        description: 'output for the function',
+      }),
+      INPUT: intl.formatMessage({
+        defaultMessage: 'Input',
+        id: 't+h+KW',
+        description: 'Inputs for the function',
+      }),
+      DETAILS: intl.formatMessage({
+        defaultMessage: 'Details',
+        id: 'EoRB1V',
+        description: 'details about the function',
+      }),
+    }),
+    [intl]
+  );
 
   const tab = (selectedTab: string) => {
     switch (selectedTab) {
@@ -46,7 +69,7 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
         return <InputTabContents func={func} functionKey={props.functionId} />;
       case 'output':
         return <OutputTabContents func={func} functionId={props.functionId} />;
-      case 'description':
+      case 'details':
         return <DetailsTabContents func={func} />;
       default:
         return null;
@@ -71,11 +94,11 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
           />
         </div>
         <TabList onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
-          <Tab className={styles.detailsButton} value="description">
-            Details
+          <Tab className={styles.detailsButton} value="details">
+            {stringResources.DETAILS}
           </Tab>
-          <Tab value="input">Input</Tab>
-          <Tab value="output">Output</Tab>
+          <Tab value="input">{stringResources.INPUT}</Tab>
+          <Tab value="output">{stringResources.OUTPUT}</Tab>
         </TabList>
         {tab(selectedTab)}
       </PopoverSurface>
@@ -157,7 +180,7 @@ const InputTabContents = (props: {
         <TableBody>
           {inputs.map((input, index) => (
             <TableRow key={input.name + index}>
-              <TableCell style={{ width: '200px' }}>
+              <TableCell>
                 <TableCellLayout>
                   <Dropdown>{}</Dropdown>
                 </TableCellLayout>
@@ -194,7 +217,6 @@ const OutputTabContents = (props: {
   func: FunctionData;
   functionId: string;
 }) => {
-  // const outputType = func.outputValueType;
   const columns = [
     { columnKey: 'destination', label: 'Destination' },
     { columnKey: 'type', label: 'Output Type' },
@@ -226,15 +248,13 @@ const OutputTabContents = (props: {
               </TableRow>
             );
           }
-          // const outputFunc = connections[output.reactFlowKey];
-          // const funcInputSlot = outputFunc.inputs[output.reactFlowKey];
           return (
             <TableRow key={output.reactFlowKey}>
               <TableCell>
                 <TableCellLayout>{`${output.node.displayName}`}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{'abcd'}</TableCellLayout>
+                <TableCellLayout>placeholder</TableCellLayout>
               </TableCell>
             </TableRow>
           );
