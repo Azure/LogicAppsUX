@@ -10,6 +10,7 @@ export interface ManifestState {
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
     keyword?: string;
+    sortKey: string;
     connectors: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
@@ -20,6 +21,7 @@ type ManifestName = string;
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
   filters: {
+    sortKey: 'a-to-z',
     connectors: undefined,
     detailFilters: {},
   },
@@ -67,6 +69,9 @@ export const manifestSlice = createSlice({
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
       state.filters.keyword = action.payload;
     },
+    setSortKey: (state, action: PayloadAction<string>) => {
+      state.filters.sortKey = action.payload;
+    },
     setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
     },
@@ -112,6 +117,7 @@ export const {
   setavailableTemplates,
   setFilteredTemplateNames,
   setKeywordFilter,
+  setSortKey,
   setConnectorsFilters,
   setDetailsFilters,
 } = manifestSlice.actions;
