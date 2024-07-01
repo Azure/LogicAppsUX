@@ -17,22 +17,26 @@ export const TemplatesDesigner = ({
   ) => Promise<void>;
 }) => {
   const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
-  const { workflowName, kind, workflowDefinition, parameters } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, workflowDefinition, parameterDefinitions,
+    errors: { workflow: workflowError, kind: kindError, parameters: parametersError }
+   } = useSelector((state: RootState) => state.template);
   const filteredTemplateNames = useSelector((state: RootState) => state.manifest.filteredTemplateNames);
 
   const onCreateClick = async () => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (
       !workflowNameToUse ||
+      workflowError ||
       !kind ||
+      kindError ||
       !workflowDefinition ||
-      Object.values(parameters.validationErrors)?.filter((error) => error).length > 0
+      Object.values(parametersError)?.filter((error) => error).length > 0
     ) {
       // TODO: Show error message
       console.log('Error checking conditions before calling createWorkflowCall');
       return;
     }
-    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameters.definitions);
+    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
   };
 
   return (

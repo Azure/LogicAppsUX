@@ -8,8 +8,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { parameters } = useSelector((state: RootState) => state.template);
-  const validationErrors = parameters.validationErrors;
+  const { parameterDefinitions, errors: { parameters: parameterErrors } } = useSelector((state: RootState) => state.template);
 
   const onUpdateParameterValue = (event: TemplatesParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
 
@@ -23,13 +22,13 @@ export const DisplayParameters = () => {
       <TemplatesParameterField
         key={item?.name}
         definition={item}
-        validationError={validationErrors[item?.name ?? '']}
+        validationError={parameterErrors[item?.name ?? '']}
         onChange={onUpdateParameterValue}
         required={item?.required ?? false}
       />
     );
   };
 
-  return <List className="msla-templates-parameters" items={Object.values(parameters.definitions)} onRenderCell={renderParameter} />;
+  return <List className="msla-templates-parameters" items={Object.values(parameterDefinitions)} onRenderCell={renderParameter} />;
 };
 0;

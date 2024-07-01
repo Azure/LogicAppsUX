@@ -75,27 +75,28 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
     templateSliceData = {
       workflowName: '',
-      workflowNameValidationError: undefined,
       kind: undefined,
-      kindError: undefined,
       templateName: template1Manifest.title,
       manifest: template1Manifest,
       workflowDefinition: {
         $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '',
       },
-      parameters: {
-        definitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+      parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
           result[parameter.name] = {
             ...parameter,
             value: parameter.default,
           };
           return result;
         }, {}),
-        validationErrors: {},
-      },
       connections: template1Manifest.connections,
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: {},
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -124,8 +125,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(store.getState().template.kind).toBe(undefined);
     expect(store.getState().template.templateName).toBe(template1Manifest.title);
     expect(store.getState().template.manifest).toBe(template1Manifest);
-    expect(store.getState().template.parameters.definitions).toBeDefined();
-    expect(store.getState().template.parameters.validationErrors).toEqual({});
+    expect(store.getState().template.parameterDefinitions).toBeDefined();
+    expect(store.getState().template.errors.parameters).toEqual({});
     expect(store.getState().template.connections).toBe(template1Manifest.connections);
   });
 

@@ -79,6 +79,10 @@ describe('ui/templates/templatesDesigner', () => {
           template1: template1Manifest,
           template2: template2Manifest,
         },
+        filters: {
+          connectors: undefined,
+          detailFilters: {},
+        },
       },
     };
     store = setupStore(minimalStoreData);
@@ -98,6 +102,10 @@ describe('ui/templates/templatesDesigner', () => {
           template1: template1Manifest,
           template2: template2Manifest,
           template3: template3Manifest,
+        },
+        filters: {
+          connectors: undefined,
+          detailFilters: {},
         },
       },
     };

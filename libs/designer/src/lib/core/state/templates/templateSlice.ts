@@ -28,15 +28,16 @@ interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
   workflowName: string | undefined;
-  workflowNameValidationError: string | undefined;
   kind: string | undefined;
-  kindError: string | undefined;
-  parameters: {
-    definitions: Record<string, Template.ParameterDefinition>;
-    validationErrors: Record<string, string | undefined>;
-  };
+  parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
   images?: Record<string, any>;
+  errors: {
+    workflow: string | undefined;
+    kind: string | undefined;
+    parameters: Record<string, string | undefined>;
+    connections: Record<string, string | undefined>;
+  }
 }
 
 export interface TemplateState extends TemplateData {
@@ -48,16 +49,17 @@ const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
   workflowName: undefined,
-  workflowNameValidationError: undefined,
   kind: undefined,
-  kindError: undefined,
-  parameters: {
-    definitions: {},
-    validationErrors: {},
-  },
+  parameterDefinitions: {},
   connections: {},
   servicesInitialized: false,
   images: {},
+  errors: {
+    workflow: undefined,
+    kind: undefined,
+    parameters: {},
+    connections: {},
+  },
 };
 
 export const initializeTemplateServices = createAsyncThunk(
@@ -191,16 +193,16 @@ export const templateSlice = createSlice({
     },
     validateWorkflowName: (state, action: PayloadAction<string[]>) => {
       const validationError = _validateWorkflowName(state.workflowName, action.payload);
-      state.workflowNameValidationError = validationError;
+      state.errors.workflow = validationError;
     },
     updateKind: (state, action: PayloadAction<string>) => {
       state.kind = action.payload;
-      state.kindError = undefined;
+      state.errors.kind = undefined;
     },
     validateKind: (state) => {
       if (!state.kind) {
         const intl = getIntl();
-        state.kindError = intl.formatMessage({
+        state.errors.kind = intl.formatMessage({
           defaultMessage: 'The value must not be empty.',
           id: 'JzvOUc',
           description: 'Error message when the stage progressed without selecting kind.',
@@ -214,15 +216,15 @@ export const templateSlice = createSlice({
 
       const validationError = validateParameterValue({ type, value: value }, required);
 
-      state.parameters.definitions[name] = {
-        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
+      state.parameterDefinitions[name] = {
+        ...(getRecordEntry(state.parameterDefinitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[name] = validationError;
+      state.errors.parameters[name] = validationError;
     },
     validateParameters: (state) => {
-      const parametersDefinition = { ...state.parameters.definitions };
-      const parametersValidationErrors = { ...state.parameters.validationErrors };
+      const parametersDefinition = { ...state.parameterDefinitions };
+      const parametersValidationErrors = { ...state.errors.parameters };
       Object.keys(parametersDefinition).forEach((parameterName) => {
         const thisParameter = parametersDefinition[parameterName];
         parametersValidationErrors[parameterName] = validateParameterValue(
@@ -230,20 +232,21 @@ export const templateSlice = createSlice({
           thisParameter.required
         );
       });
-      state.parameters.validationErrors = parametersValidationErrors;
+      state.errors.parameters = parametersValidationErrors;
     },
     clearTemplateDetails: (state) => {
       state.workflowDefinition = undefined;
       state.manifest = undefined;
       state.workflowName = undefined;
-      state.workflowNameValidationError = undefined;
       state.kind = undefined;
-      state.kindError = undefined;
-      state.parameters = {
-        definitions: {},
-        validationErrors: {},
-      };
+      state.parameterDefinitions = {};
       state.connections = {};
+      state.errors = {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: {},
+      };
     },
   },
   extraReducers: (builder) => {
@@ -251,7 +254,7 @@ export const templateSlice = createSlice({
       if (action.payload) {
         state.workflowDefinition = action.payload.workflowDefinition;
         state.manifest = action.payload.manifest;
-        state.parameters = action.payload.parameters;
+        state.parameterDefinitions = action.payload.parameterDefinitions;
         state.connections = action.payload.connections;
         state.images = action.payload.images;
       }
@@ -261,10 +264,7 @@ export const templateSlice = createSlice({
       // TODO change to null for error handling case
       state.workflowDefinition = undefined;
       state.manifest = undefined;
-      state.parameters = {
-        definitions: {},
-        validationErrors: {},
-      };
+      state.parameterDefinitions = {};
       state.connections = {};
     });
 
@@ -312,15 +312,16 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      workflowNameValidationError: undefined,
       kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
-      kindError: undefined,
-      parameters: {
-        definitions: parametersDefinitions,
-        validationErrors: {},
-      },
+      parameterDefinitions: parametersDefinitions,
       connections: templateManifest.connections,
       images,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: {},
+      }
     };
   } catch (ex) {
     console.error(ex);

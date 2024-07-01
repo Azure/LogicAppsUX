@@ -17,10 +17,9 @@ import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, workflowNameValidationError, kind, kindError } = useSelector((state: RootState) => state.template);
+  const { workflowName, errors: { workflow: workflowError, kind: kindError }, kind, manifest } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
-  const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();
 
   const intlText = useMemo(
@@ -125,7 +124,7 @@ export const NameStatePanel = () => {
         onBlur={() => {
           dispatch(validateWorkflowName(existingWorkflowNames ?? []));
         }}
-        errorMessage={workflowNameValidationError}
+        errorMessage={workflowError}
       />
       <div className={kindError ? 'msla-templates-tab-stateType-error' : ''}>
         <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>

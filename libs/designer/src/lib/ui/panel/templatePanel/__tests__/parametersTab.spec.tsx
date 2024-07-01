@@ -35,8 +35,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
       templateName: 'title',
       manifest: undefined,
       workflowDefinition: undefined,
-      parameters: {
-        definitions: parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+      parameterDefinitions: parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
           result[parameter.name] = {
             ...parameter,
             value: parameter.default,
@@ -44,9 +43,14 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
           return result;
         }, {}),
         validationErrors: {},
-      },
       connections: {},
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: {},
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -65,8 +69,8 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
 
   it('Shows Parameters Tab values displayed', async () => {
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS);
-    expect(store.getState().template.parameters.definitions['param1'].type).toBe('string');
-    expect(store.getState().template.parameters.definitions['param2'].type).toBe('object');
+    expect(store.getState().template.parameterDefinitions['param1'].type).toBe('string');
+    expect(store.getState().template.parameterDefinitions['param2'].type).toBe('object');
     expect(screen.getAllByText(param1.displayName)).toBeDefined();
     expect(screen.getAllByText(`Value (${param1.type})`)).toBeDefined();
     expect(screen.getAllByText(param1.description)).toBeDefined();

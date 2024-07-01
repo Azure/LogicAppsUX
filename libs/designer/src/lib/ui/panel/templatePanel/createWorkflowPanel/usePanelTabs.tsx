@@ -17,10 +17,8 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const {
-    workflowNameValidationError,
+    errors: { workflow: workflowError, kind: kindError, parameters: parameterErrors },
     kind,
-    kindError,
-    parameters,
     manifest: selectedManifest,
   } = useSelector((state: RootState) => state.template);
   const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId);
@@ -31,8 +29,8 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
   const hasConnectionsValidationErrors = false; //TODO: change when connections validation is implemented
   const hasParametersValidationErrors = useMemo(
-    () => Object.values(parameters.validationErrors).some((error) => !!error),
-    [parameters.validationErrors]
+    () => Object.values(parameterErrors).some((error) => !!error),
+    [parameterErrors]
   );
 
   useEffect(() => {
@@ -89,17 +87,17 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
           : connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
             : undefined,
-        hasError: !!workflowNameValidationError || !!kindError,
+        hasError: !!workflowError || !!kindError,
       }),
     }),
-    [intl, dispatch, workflowNameValidationError, kindError, connectionsExist, parametersExist]
+    [intl, dispatch, workflowError, kindError, connectionsExist, parametersExist]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
-        isPrimaryButtonDisabled: !!workflowNameValidationError || !kind || hasConnectionsValidationErrors || hasParametersValidationErrors,
+        isPrimaryButtonDisabled: !!workflowError || !kind || hasConnectionsValidationErrors || hasParametersValidationErrors,
         isCreated,
       }),
     }),
@@ -108,7 +106,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       dispatch,
       handleCreateClick,
       isLoadingCreate,
-      workflowNameValidationError,
+      workflowError,
       kind,
       isCreated,
       hasConnectionsValidationErrors,

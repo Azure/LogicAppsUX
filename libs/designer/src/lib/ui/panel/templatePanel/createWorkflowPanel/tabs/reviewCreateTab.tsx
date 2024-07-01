@@ -13,7 +13,7 @@ import { normalizeConnectorId } from '../../../../../core/templates/utils/helper
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { workflowName, kind, manifest, parameters } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, manifest, parameterDefinitions } = useSelector((state: RootState) => state.template);
   const {
     existingWorkflowName,
     connections: { mapping },
@@ -98,13 +98,13 @@ export const ReviewCreatePanel = () => {
         </>
       )}
 
-      {Object.keys(parameters.definitions).length > 0 && (
+      {Object.keys(parameterDefinitions).length > 0 && (
         <>
           <Label className="msla-templates-tab-label" htmlFor={'parametersLabel'}>
             {intlText.PARAMETERS}
           </Label>
           <div className="msla-templates-tab-review-section">
-            {Object.values(parameters.definitions)?.map((parameter) => (
+            {Object.values(parameterDefinitions)?.map((parameter) => (
               <div key={parameter.name} className="msla-templates-tab-review-section-details">
                 <Text className="msla-templates-tab-review-section-details-title">{parameter.displayName}</Text>
                 <Text className="msla-templates-tab-review-section-details-value">{parameter.value ?? intlText.PLACEHOLDER}</Text>
