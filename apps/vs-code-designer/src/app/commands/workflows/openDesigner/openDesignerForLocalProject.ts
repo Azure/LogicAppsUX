@@ -12,7 +12,6 @@ import {
 } from '../../../utils/codeless/common';
 import {
   addConnectionData,
-  containsApiHubConnectionReference,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getLogicAppProjectRoot,
@@ -255,20 +254,17 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         workflow.definition = definitionToSave;
 
         if (connectionReferences) {
+          const projectPath = await getLogicAppProjectRoot(this.context, filePath);
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
             this.context,
-            filePath,
+            projectPath,
             connectionReferences,
             azureTenantId,
             workflowBaseManagementUri,
             parametersFromDefinition
           );
 
-          await saveConnectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
-
-          if (containsApiHubConnectionReference(connectionReferences)) {
-            window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
-          }
+          await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
         }
 
         if (parametersFromDefinition) {
