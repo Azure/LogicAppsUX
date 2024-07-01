@@ -21,9 +21,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
-import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
-import { validateConnectionsValue } from '../../../core/templates/utils/helper';
+import { validateConnectionsValue, validateParameterValue } from '../../../core/templates/utils/helper';
 
 interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
@@ -131,25 +130,6 @@ export const loadTemplate = createAsyncThunk(
     return undefined;
   }
 );
-
-export const validateParameterValue = (data: { type: string; value?: string }, required = true): string | undefined => {
-  const intl = getIntl();
-
-  const { value: valueToValidate, type } = data;
-
-  if (valueToValidate === '' || valueToValidate === undefined) {
-    if (!required) {
-      return undefined;
-    }
-    return intl.formatMessage({
-      defaultMessage: 'Must provide value for parameter.',
-      id: 'VL9wOu',
-      description: 'Error message when the workflow parameter value is empty.',
-    });
-  }
-
-  return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
-};
 
 export const _validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
   const intl = getIntl();

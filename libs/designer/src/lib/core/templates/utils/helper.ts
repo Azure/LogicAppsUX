@@ -5,6 +5,7 @@ import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
+import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
 export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
   return [workflowTab(intl, dispatch), overviewTab(intl, dispatch)];
@@ -160,6 +161,25 @@ export const getConnectorResources = (intl: IntlShape) => {
       description: 'Not Connected text',
     }),
   };
+};
+
+export const validateParameterValue = (data: { type: string; value?: string }, required = true): string | undefined => {
+  const intl = getIntl();
+
+  const { value: valueToValidate, type } = data;
+
+  if (valueToValidate === '' || valueToValidate === undefined) {
+    if (!required) {
+      return undefined;
+    }
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for parameter.',
+      id: 'VL9wOu',
+      description: 'Error message when the workflow parameter value is empty.',
+    });
+  }
+
+  return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
 export const validateConnectionsValue = (
