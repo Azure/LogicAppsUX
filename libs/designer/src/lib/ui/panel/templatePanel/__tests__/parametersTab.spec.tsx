@@ -49,7 +49,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
         workflow: undefined,
         kind: undefined,
         parameters: {},
-        connections: {},
+        connections: undefined,
       },
     };
     const minimalStoreData = {

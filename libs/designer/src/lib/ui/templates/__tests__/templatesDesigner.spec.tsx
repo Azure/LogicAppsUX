@@ -68,6 +68,7 @@ describe('ui/templates/templatesDesigner', () => {
           template2: template2Manifest,
         },
         filters: {
+          sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
         },

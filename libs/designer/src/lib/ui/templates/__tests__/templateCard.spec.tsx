@@ -5,6 +5,8 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { TemplateCard } from '../cards/templateCard';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('ui/templates/templatesDesigner', () => {
   let store: AppStore;
@@ -80,6 +82,7 @@ describe('ui/templates/templatesDesigner', () => {
           template2: template2Manifest,
         },
         filters: {
+          sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
         },
@@ -104,6 +107,7 @@ describe('ui/templates/templatesDesigner', () => {
           template3: template3Manifest,
         },
         filters: {
+          sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
         },

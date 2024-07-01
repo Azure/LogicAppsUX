@@ -6,6 +6,8 @@ import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { DisplayParameters } from '../parameters/displayParameters';
 import { updateTemplateParameterValue, type TemplateState } from '../../../core/state/templates/templateSlice';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('ui/templates/DisplayParameters', () => {
   let store: AppStore;
@@ -83,7 +85,7 @@ describe('ui/templates/DisplayParameters', () => {
         workflow: undefined,
         kind: undefined,
         parameters: {},
-        connections: {},
+        connections: undefined,
       },
     };
     const minimalStoreData = {
