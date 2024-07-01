@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.31.4](https://github.com/Azure/LogicAppsUX/compare/v4.31.3...v4.31.4) (2024-07-01)
+
+
+### Bug Fixes
+
+* **designer:** Object inputs must be retained when do not have leaf properties ([#5055](https://github.com/Azure/LogicAppsUX/issues/5055)) ([93a05dd](https://github.com/Azure/LogicAppsUX/commit/93a05dd43f34ac45eafd20fc60ad3fac53263ff3)), closes [#5054](https://github.com/Azure/LogicAppsUX/issues/5054)
+
 ### [4.31.3](https://github.com/Azure/LogicAppsUX/compare/v4.31.2...v4.31.3) (2024-06-28)
 
 
