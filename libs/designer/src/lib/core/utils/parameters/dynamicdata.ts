@@ -638,10 +638,14 @@ function removeParentObjectInputsIfNotNeeded(inputs: InputParameter[]): InputPar
       return !objectInputKeysWithExpressionValues.some((parentInputKey) => input.key.startsWith(`${parentInputKey}.`));
     }
 
-    return isTemplateExpression(input.value);
+    return isTemplateExpression(input.value) || !objectHasLeafProperties(inputs, input.key);
   });
 
   return filteredInputs;
+}
+
+function objectHasLeafProperties(allInputs: InputParameter[], key: string): boolean {
+  return allInputs.some((input) => input.key.startsWith(`${key}.`));
 }
 
 function loadUnknownManifestBasedParameters(

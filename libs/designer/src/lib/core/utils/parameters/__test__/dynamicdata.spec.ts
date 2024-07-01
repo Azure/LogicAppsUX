@@ -92,5 +92,49 @@ describe('DynamicData', () => {
         ])
       );
     });
+
+    test('should return object parameter in dynamic schema if it does not contain leaf properties', async () => {
+      InitOperationManifestService(manifestService);
+      const schema = {
+        type: 'object',
+        properties: {
+          details: { type: 'object', properties: {} },
+          id: { type: 'string' },
+        },
+      };
+
+      const dynamicInputs = await getDynamicInputsFromSchema(
+        schema,
+        dynamicParameter,
+        { connectorId: '/connectionProviders/test', operationId: 'test', type: 'ApiManagement' },
+        ['inputs.$.operationId'],
+        { inputs: { operationId: 'SomeValue', dynamicData: { id: 'abc', details: { name: 'test', code: 123 } } } }
+      );
+
+      expect(dynamicInputs).toBeDefined();
+      expect(dynamicInputs.length).toEqual(2);
+      expect(dynamicInputs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ key: 'inputs.$.dynamicData.details', value: { name: 'test', code: 123 } }),
+          expect.objectContaining({ key: 'inputs.$.dynamicData.id', value: 'SomeValue' }),
+        ])
+      );
+
+      const dynamicInputsWithDefinition = await getDynamicInputsFromSchema(
+        schema,
+        dynamicParameter,
+        { connectorId: '/connectionProviders/test', operationId: 'test', type: 'ApiManagement' },
+        ['inputs.$.operationId']
+      );
+
+      expect(dynamicInputs).toBeDefined();
+      expect(dynamicInputs.length).toEqual(2);
+      expect(dynamicInputs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ key: 'inputs.$.dynamicData.details' }),
+          expect.objectContaining({ key: 'inputs.$.dynamicData.id' }),
+        ])
+      );
+    });
   });
 });
