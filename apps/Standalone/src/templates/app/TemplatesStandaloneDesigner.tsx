@@ -44,7 +44,7 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowAppData } = useWorkflowApp(appId as string);
+  const { data: workflowAppData } = useWorkflowApp(appId as string, isConsumption ? 'consumption' : 'standard');
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
@@ -190,69 +190,75 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
-            <TemplateFilters
-              connectors={[
-                {
-                  value: 'azureaisearch',
-                  displayName: 'Azure AI Search',
-                },
-                {
-                  value: 'openai',
-                  displayName: 'Open AI',
-                },
-                {
-                  value: 'sql',
-                  displayName: 'SQL',
-                },
-                {
-                  value: 'amazon',
-                  displayName: 'Amazon',
-                },
-              ]}
-              detailFilters={{
-                Trigger: [
-                  {
-                    value: 'Request',
-                    displayName: 'Request',
-                  },
-                  {
-                    value: 'Instant',
-                    displayName: 'Instant',
-                  },
-                ],
-                By: [
-                  {
-                    value: 'Microsoft',
-                    displayName: 'Microsoft',
-                  },
-                  {
-                    value: 'Other',
-                    displayName: 'Other',
-                  },
-                ],
-                Type: [
-                  {
-                    value: 'Workflow',
-                    displayName: 'Workflow',
-                  },
-                  {
-                    value: 'Other',
-                    displayName: 'Other',
-                  },
-                ],
-                Industry: [
-                  {
-                    value: 'Analytics',
-                    displayName: 'Analytics',
-                  },
-                  {
-                    value: 'IT',
-                    displayName: 'IT',
-                  },
-                ],
+            <div
+              style={{
+                margin: '20px',
               }}
-            />
-            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+            >
+              <TemplateFilters
+                connectors={[
+                  {
+                    value: 'azureaisearch',
+                    displayName: 'Azure AI Search',
+                  },
+                  {
+                    value: 'openai',
+                    displayName: 'Open AI',
+                  },
+                  {
+                    value: 'sql',
+                    displayName: 'SQL',
+                  },
+                  {
+                    value: 'amazon',
+                    displayName: 'Amazon',
+                  },
+                ]}
+                detailFilters={{
+                  Trigger: [
+                    {
+                      value: 'Request',
+                      displayName: 'Request',
+                    },
+                    {
+                      value: 'Instant',
+                      displayName: 'Instant',
+                    },
+                  ],
+                  By: [
+                    {
+                      value: 'Microsoft',
+                      displayName: 'Microsoft',
+                    },
+                    {
+                      value: 'Other',
+                      displayName: 'Other',
+                    },
+                  ],
+                  Type: [
+                    {
+                      value: 'Workflow',
+                      displayName: 'Workflow',
+                    },
+                    {
+                      value: 'Other',
+                      displayName: 'Other',
+                    },
+                  ],
+                  Industry: [
+                    {
+                      value: 'Analytics',
+                      displayName: 'Analytics',
+                    },
+                    {
+                      value: 'IT',
+                      displayName: 'IT',
+                    },
+                  ],
+                }}
+              />
+              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+            </div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       ) : null}
