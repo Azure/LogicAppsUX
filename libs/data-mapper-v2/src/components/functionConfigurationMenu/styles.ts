@@ -18,6 +18,9 @@ export const useStyles = makeStyles({
   deleteButton: {
     marginLeft: 'auto',
   },
+  unlimitedInputHeaderCell: {
+    width: '150px',
+  },
   headerRow: {
     display: 'flex',
     flexDirection: 'row',

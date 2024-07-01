@@ -78,9 +78,6 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
           <Tab value="output">Output</Tab>
         </TabList>
         {tab(selectedTab)}
-        <div>
-          <Button appearance="primary">Save</Button>
-        </div>
       </PopoverSurface>
     )
   );
@@ -94,11 +91,6 @@ const InputTabContents = (props: {
   func: FunctionData;
   functionKey: string;
 }) => {
-  const columns = [
-    { columnKey: 'input', label: 'Input' },
-    { columnKey: 'name', label: 'Name' },
-    { columnKey: 'types', label: 'Accepted Types' },
-  ];
   const styles = useStyles();
   const inputs = props.func.inputs;
   const dispatch = useDispatch();
@@ -150,35 +142,31 @@ const InputTabContents = (props: {
     table = <div>{tableContents}</div>;
   } else {
     table = (
-      <Table size="extra-small">
+      <Table size="medium">
         <TableHeader>
           <TableRow>
-            {columns.map((column) => (
-              <TableHeaderCell key={column.columnKey}>{column.label}</TableHeaderCell>
-            ))}
+            <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
+              {props.func.inputs[0].name}
+            </TableHeaderCell>
+            <TableHeaderCell
+              className={styles.unlimitedInputHeaderCell}
+              key="input-name"
+            >{`Accepted types: ${props.func.inputs[0].allowedTypes}`}</TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
           {inputs.map((input, index) => (
             <TableRow key={input.name + index}>
-              <TableCell>
+              <TableCell style={{ width: '200px' }}>
                 <TableCellLayout>
                   <Dropdown>{}</Dropdown>
                 </TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{input.name}</TableCellLayout>
+                <TableCellLayout>
+                  <Button appearance="transparent" icon={<ReOrderRegular />} />
+                </TableCellLayout>
               </TableCell>
-              <TableCell>
-                <TableCellLayout>{input.allowedTypes.join(', ')}</TableCellLayout>
-              </TableCell>
-              {props.func.maxNumberOfInputs === UnboundedInput && (
-                <TableCell>
-                  <TableCellLayout>
-                    <Button appearance="transparent" icon={<ReOrderRegular />} />
-                  </TableCellLayout>
-                </TableCell>
-              )}
             </TableRow>
           ))}
         </TableBody>
