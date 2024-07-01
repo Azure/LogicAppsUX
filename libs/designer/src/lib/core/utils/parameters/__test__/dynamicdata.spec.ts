@@ -116,7 +116,7 @@ describe('DynamicData', () => {
       expect(dynamicInputsWithDefinition).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ key: 'inputs.$.dynamicData.details', value: expect.objectContaining({ code: 123, name: 'test' }) }),
-          expect.objectContaining({ key: 'inputs.$.dynamicData.id', value: 'SomeValue' }),
+          expect.objectContaining({ key: 'inputs.$.dynamicData.id', value: 'abc' }),
         ])
       );
 
