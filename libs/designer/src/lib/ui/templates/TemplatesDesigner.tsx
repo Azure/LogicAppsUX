@@ -22,7 +22,7 @@ export const TemplatesDesigner = ({
     kind,
     workflowDefinition,
     parameterDefinitions,
-    errors: { workflow: workflowError, kind: kindError, parameters: parametersError },
+    errors: { workflow: workflowError, kind: kindError, parameters: parametersError, connections: connectionsError },
   } = useSelector((state: RootState) => state.template);
   const filteredTemplateNames = useSelector((state: RootState) => state.manifest.filteredTemplateNames);
 
@@ -34,6 +34,7 @@ export const TemplatesDesigner = ({
       !kind ||
       kindError ||
       !workflowDefinition ||
+      connectionsError ||
       Object.values(parametersError)?.filter((error) => error).length > 0
     ) {
       // TODO: Show error message

@@ -137,9 +137,9 @@ export const getConnectorResources = (intl: IntlShape) => {
   };
 };
 
-export const validateConnections = (
+export const validateConnectionsValue = (
   manifestConnections: Record<string, Template.Connection>,
-  connectionsMapping: Record<string, string | undefined>
+  connectionsMapping: Record<string, string>
 ): string | undefined => {
   const intl = getIntl();
   const errorMessage = intl.formatMessage({

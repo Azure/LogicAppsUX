@@ -10,24 +10,29 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { TemplateService } from '@microsoft/logic-apps-shared';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
-import { validateKind, validateParameters, validateWorkflowName } from '../../../../core/state/templates/templateSlice';
+import {
+  validateConnections,
+  validateKind,
+  validateParameters,
+  validateWorkflowName,
+} from '../../../../core/state/templates/templateSlice';
 
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const {
-    errors: { workflow: workflowError, kind: kindError, parameters: parameterErrors },
+    errors: { workflow: workflowError, kind: kindError, parameters: parameterErrors, connections: connectionsError },
     kind,
     manifest: selectedManifest,
   } = useSelector((state: RootState) => state.template);
+  const { mapping } = useSelector((state: RootState) => state.workflow.connections);
   const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId);
   const [isLoadingCreate, setIsLoadingCreate] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
 
   const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
-  const hasConnectionsValidationErrors = false; //TODO: change when connections validation is implemented
   const hasParametersValidationErrors = useMemo(() => Object.values(parameterErrors).some((error) => !!error), [parameterErrors]);
 
   useEffect(() => {
@@ -36,6 +41,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   }, [selectedManifest]);
 
   useEffect(() => {
+    dispatch(validateConnections(mapping));
     if (
       selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE ||
       selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE
@@ -46,7 +52,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
         dispatch(validateKind());
       }
     }
-  }, [dispatch, existingWorkflowNames, selectedTabId, kind]);
+  }, [dispatch, mapping, existingWorkflowNames, selectedTabId, kind]);
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
@@ -60,10 +66,10 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     () => ({
       ...connectionsTab(intl, dispatch, {
         nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
-        hasError: hasConnectionsValidationErrors,
+        hasError: !!connectionsError,
       }),
     }),
-    [intl, dispatch, hasConnectionsValidationErrors, parametersExist]
+    [intl, dispatch, connectionsError, parametersExist]
   );
 
   const parametersTabItem = useMemo(
@@ -94,21 +100,11 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     () => ({
       ...reviewCreateTab(intl, dispatch, handleCreateClick, {
         isLoadingCreate,
-        isPrimaryButtonDisabled: !!workflowError || !kind || hasConnectionsValidationErrors || hasParametersValidationErrors,
+        isPrimaryButtonDisabled: !!workflowError || !kind || !!connectionsError || hasParametersValidationErrors,
         isCreated,
       }),
     }),
-    [
-      intl,
-      dispatch,
-      handleCreateClick,
-      isLoadingCreate,
-      workflowError,
-      kind,
-      isCreated,
-      hasConnectionsValidationErrors,
-      hasParametersValidationErrors,
-    ]
+    [intl, dispatch, handleCreateClick, isLoadingCreate, workflowError, kind, isCreated, connectionsError, hasParametersValidationErrors]
   );
 
   const tabs = useMemo(() => {

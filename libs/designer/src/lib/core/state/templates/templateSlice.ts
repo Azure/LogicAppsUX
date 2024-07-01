@@ -23,6 +23,7 @@ import { templatesPathFromState, type RootState } from './store';
 import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
+import { validateConnectionsValue } from '../../../core/templates/utils/helper';
 
 interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
@@ -36,7 +37,7 @@ interface TemplateData {
     workflow: string | undefined;
     kind: string | undefined;
     parameters: Record<string, string | undefined>;
-    connections: Record<string, string | undefined>;
+    connections: string | undefined;
   };
 }
 
@@ -58,7 +59,7 @@ const initialState: TemplateState = {
     workflow: undefined,
     kind: undefined,
     parameters: {},
-    connections: {},
+    connections: undefined,
   },
 };
 
@@ -234,11 +235,11 @@ export const templateSlice = createSlice({
       });
       state.errors.parameters = parametersValidationErrors;
     },
-    // validateConnections: (state) => {
-    //   if (state.manifest?.connections) {
-    //     validateConnections(state.manifest?.connections, state.connections);
-    //   }
-    // },
+    validateConnections: (state, action: PayloadAction<Record<string, string>>) => {
+      if (state.manifest?.connections) {
+        state.errors.connections = validateConnectionsValue(state.manifest?.connections, action.payload);
+      }
+    },
     clearTemplateDetails: (state) => {
       state.workflowDefinition = undefined;
       state.manifest = undefined;
@@ -250,7 +251,7 @@ export const templateSlice = createSlice({
         workflow: undefined,
         kind: undefined,
         parameters: {},
-        connections: {},
+        connections: undefined,
       };
     },
   },
@@ -287,6 +288,7 @@ export const {
   validateKind,
   updateTemplateParameterValue,
   validateParameters,
+  validateConnections,
   clearTemplateDetails,
 } = templateSlice.actions;
 export default templateSlice.reducer;
@@ -325,7 +327,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
         workflow: undefined,
         kind: undefined,
         parameters: {},
-        connections: {},
+        connections: undefined,
       },
     };
   } catch (ex) {
