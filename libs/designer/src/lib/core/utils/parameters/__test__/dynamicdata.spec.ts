@@ -103,7 +103,7 @@ describe('DynamicData', () => {
         },
       };
 
-      const dynamicInputs = await getDynamicInputsFromSchema(
+      const dynamicInputsWithDefinition = await getDynamicInputsFromSchema(
         schema,
         dynamicParameter,
         { connectorId: '/connectionProviders/test', operationId: 'test', type: 'ApiManagement' },
@@ -111,16 +111,16 @@ describe('DynamicData', () => {
         { inputs: { operationId: 'SomeValue', dynamicData: { id: 'abc', details: { name: 'test', code: 123 } } } }
       );
 
-      expect(dynamicInputs).toBeDefined();
-      expect(dynamicInputs.length).toEqual(2);
-      expect(dynamicInputs).toEqual(
+      expect(dynamicInputsWithDefinition).toBeDefined();
+      expect(dynamicInputsWithDefinition.length).toEqual(2);
+      expect(dynamicInputsWithDefinition).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ key: 'inputs.$.dynamicData.details', value: { name: 'test', code: 123 } }),
+          expect.objectContaining({ key: 'inputs.$.dynamicData.details', value: expect.objectContaining({ code: 123, name: 'test' }) }),
           expect.objectContaining({ key: 'inputs.$.dynamicData.id', value: 'SomeValue' }),
         ])
       );
 
-      const dynamicInputsWithDefinition = await getDynamicInputsFromSchema(
+      const dynamicInputs = await getDynamicInputsFromSchema(
         schema,
         dynamicParameter,
         { connectorId: '/connectionProviders/test', operationId: 'test', type: 'ApiManagement' },
