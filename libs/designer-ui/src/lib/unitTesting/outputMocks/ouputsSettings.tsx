@@ -1,8 +1,6 @@
 import { SettingTokenField } from '../../settings/settingsection';
 import { ActionResults, type OutputsField } from './outputMocks';
-import { Text } from '@fluentui/react-components';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useIntl } from 'react-intl';
 
 export interface OutputsSettingsProps {
   outputs: OutputsField[];
@@ -13,17 +11,7 @@ export interface OutputsSettingsProps {
 const VALUE_KEY = 'value';
 
 export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, outputs, actionResult }): JSX.Element => {
-  const intl = useIntl();
-  const hasMockOutputs = actionResult === ActionResults.SUCCESS;
-
-  const intlText = {
-    NO_OUTPUTS: intl.formatMessage({
-      defaultMessage:
-        'Skipped, timed out, or failed actions do not support mocking outputs. Mocking is only supported for successful actions.',
-      id: 'Sm3qmB',
-      description: 'Unsupported message for actions output mocks',
-    }),
-  };
+  const hasMockOutputs = actionResult === ActionResults.SUCCESS || ActionResults.FAILED;
 
   return hasMockOutputs ? (
     <>
@@ -39,6 +27,7 @@ export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, output
       ))}
     </>
   ) : (
-    <Text>{intlText.NO_OUTPUTS}</Text>
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <></> // Render nothing when action result is not SUCCESS
   );
 };

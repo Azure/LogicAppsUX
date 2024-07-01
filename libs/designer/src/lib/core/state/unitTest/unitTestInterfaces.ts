@@ -4,6 +4,8 @@ export interface updateMockResultPayload {
   operationName: string;
   actionResult: string;
   completed: boolean;
+  errorMessage?: string;
+  errorCode?: string;
 }
 
 export interface updateMockPayload {
@@ -12,9 +14,13 @@ export interface updateMockPayload {
   outputId: string;
   completed: boolean;
   type: string;
+  errorMessage?: string;
+  errorCode?: string;
 }
 
 export interface OutputMock {
+  errorCode?: string;
+  errorMessage?: string;
   output: Record<string, ValueSegment[]>;
   actionResult: string;
   isCompleted?: boolean;

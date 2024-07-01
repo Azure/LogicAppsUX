@@ -1177,14 +1177,24 @@ const getTriggerActionMocks = (
     const outputMock = mockResults[key];
     if (outputMock) {
       const outputsValue = parseOutputMock(outputMock.output);
+      const operationMock: OperationMock = {
+        properties: {
+          status: outputMock.actionResult,
+        },
+        error: {
+          code: outputMock.errorCode,
+          message: outputMock.errorMessage,
+        },
+        ...outputsValue,
+      };
+
       if (key.charAt(0) === '&') {
         const triggerName = key.substring(1);
-        triggerMocks[triggerName] = { properties: { status: outputMock.actionResult }, ...outputsValue };
+        triggerMocks[triggerName] = operationMock;
       } else {
-        actionMocks[key] = { properties: { status: outputMock.actionResult }, ...outputsValue };
+        actionMocks[key] = operationMock;
       }
     }
   });
   return { triggerMocks, actionMocks };
 };
-//#endregion
