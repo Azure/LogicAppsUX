@@ -163,6 +163,7 @@ export const AzureStandardLogicAppSelector = () => {
           disabled={workflowOptions.length === 0 || !appId || isWorkflowsLoading}
           defaultValue={workflowName}
           onChange={(_, option) => {
+            dispatch(setWorkflowName(option?.key as string));
             dispatch(
               setResourcePath(
                 hostingPlan === 'hybrid'
@@ -170,7 +171,6 @@ export const AzureStandardLogicAppSelector = () => {
                   : `${appId}/workflows/${option?.key}`
               )
             );
-            dispatch(setWorkflowName(option?.key as string));
           }}
         />
         {isWorkflowsLoading ? (
