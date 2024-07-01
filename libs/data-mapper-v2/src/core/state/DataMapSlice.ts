@@ -210,6 +210,17 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
     },
 
+    setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      applyConnectionValue(newState.dataMapConnections, action.payload);
+
+      doDataMapOperation(state, newState, 'Set connection input value');
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -329,6 +340,30 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = newState;
     },
+
+    deleteFunction: (state, action: PayloadAction<string>) => {
+      const reactFlowKey = action.payload;
+      const currentDataMap = state.curDataMapOperation;
+      const functionNode = currentDataMap.functionNodes[reactFlowKey];
+      const newFunctionsState = { ...currentDataMap.functionNodes };
+      if (functionNode) {
+        delete newFunctionsState[reactFlowKey];
+
+        const newConnections = deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
+
+        doDataMapOperation(
+          state,
+          {
+            ...currentDataMap,
+            functionNodes: newFunctionsState,
+            dataMapConnections: newConnections,
+          },
+          'Delete function by key'
+        );
+        return;
+      }
+    },
+
     updateReactFlowEdges: (state, action: PayloadAction<Edge[]>) => {
       const currentState = state.curDataMapOperation;
       const newState = {
@@ -377,7 +412,9 @@ export const {
   updateReactFlowNodes,
   makeConnection,
   saveDataMap,
+  setConnectionInput,
   addFunctionNode,
+  deleteFunction,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
