@@ -1,9 +1,10 @@
 import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClasses } from '@fluentui/react-components';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useRef } from 'react';
 import { useStyles } from './styles';
 import type { Node } from 'reactflow';
 import useNodePosition from './useNodePosition';
+import { addReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -44,7 +45,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   );
 
   useEffect(() => {
-    const nodeId = `reactflow_${isLeftDirection ? 'source' : 'target'}_${root.key}`;
+    const nodeId = addReactFlowPrefix(root.key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
 
     setUpdatedNode({
       ...{

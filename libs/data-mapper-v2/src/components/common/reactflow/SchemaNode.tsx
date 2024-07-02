@@ -20,8 +20,6 @@ const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
         type={isLeftDirection ? 'source' : 'target'}
         position={Position.Left}
         className={mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
-        isConnectableStart={isLeftDirection}
-        isConnectableEnd={!isLeftDirection}
         style={{ left: '-7px' }}
       />
     </div>

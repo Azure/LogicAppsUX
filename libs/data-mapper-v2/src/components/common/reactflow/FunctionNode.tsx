@@ -1,19 +1,13 @@
-import { customTokens } from "../../../core";
-import type { FunctionData } from "../../../models";
-import { FunctionIcon } from "../../functionIcon/FunctionIcon";
-import {
-  Button,
-  Caption1,
-  tokens,
-  Popover,
-  PopoverTrigger,
-} from "@fluentui/react-components";
-import { useCardContextMenu } from "@microsoft/designer-ui";
+import { customTokens } from '../../../core';
+import type { FunctionData } from '../../../models';
+import { FunctionIcon } from '../../functionIcon/FunctionIcon';
+import { Button, Caption1, tokens, Popover, PopoverTrigger } from '@fluentui/react-components';
+import { useCardContextMenu } from '@microsoft/designer-ui';
 
-import type { NodeProps } from "reactflow";
-import { useStyles } from "./styles";
-import { getFunctionBrandingForCategory } from "../../../utils/Function.Utils";
-import { FunctionConfigurationPopover } from "../../functionConfigurationMenu/functionConfigurationPopover";
+import { Handle, Position, type NodeProps } from 'reactflow';
+import { useStyles } from './styles';
+import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
+import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/functionConfigurationPopover';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -36,12 +30,15 @@ export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
+      <Handle
+        type={'target'}
+        position={Position.Left}
+        className={styles.handleWrapper} //{mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
+        style={{ left: '-7px' }}
+      />
       <Popover>
         <PopoverTrigger>
-          <Button
-            disabled={!!disabled}
-            className={styles.functionButton}
-          >
+          <Button disabled={!!disabled} className={styles.functionButton}>
             <div
               className={styles.iconContainer}
               style={{
@@ -63,6 +60,11 @@ export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
+      <Handle
+        type={'source'}
+        position={Position.Right}
+        className={styles.handleWrapper} //{mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
+      />
     </div>
   );
 };
