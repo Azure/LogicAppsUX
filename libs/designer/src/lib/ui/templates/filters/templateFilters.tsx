@@ -9,7 +9,6 @@ import { getUniqueConnectorsFromConnections } from '../../../core/templates/util
 import { useConnectorsOnly } from '../../../core/state/connection/connectionSelector';
 
 export interface TemplateFiltersProps {
-  connectors?: FilterObject[];
   detailFilters: Record<string, FilterObject[]>;
 }
 
