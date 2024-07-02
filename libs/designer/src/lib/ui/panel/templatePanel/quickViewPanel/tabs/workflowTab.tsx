@@ -27,7 +27,7 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     id: '1nykVf',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  visible: true,
+  hasError: false,
   content: <WorkflowPanel />,
   order: 0,
   footerContent: {
@@ -39,7 +39,6 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     primaryButtonOnClick: () => {
       dispatch(openCreateWorkflowPanelView());
     },
-    primaryButtonDisabled: false,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
       id: 'FTrMxN',

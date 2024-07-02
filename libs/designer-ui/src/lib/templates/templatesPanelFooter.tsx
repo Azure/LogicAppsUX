@@ -12,7 +12,7 @@ export interface TemplatePanelFooterProps {
 
 export const TemplatesPanelFooter = ({
   primaryButtonText,
-  primaryButtonDisabled,
+  primaryButtonDisabled = false,
   primaryButtonOnClick,
   secondaryButtonText,
   secondaryButtonOnClick,

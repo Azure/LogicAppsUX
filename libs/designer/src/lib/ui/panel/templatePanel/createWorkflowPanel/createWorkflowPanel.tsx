@@ -14,6 +14,5 @@ export const CreateWorkflowPanel = ({
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
   };
-
   return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} isSequence={true} />;
 };

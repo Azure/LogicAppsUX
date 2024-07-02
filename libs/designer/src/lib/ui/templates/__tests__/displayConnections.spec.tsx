@@ -49,12 +49,15 @@ describe('ui/templates/displayConnections', () => {
         $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '',
       },
-      parameters: {
-        definitions: {},
-        validationErrors: {},
-      },
+      parameterDefinitions: {},
       connections: template1Manifest.connections,
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: undefined,
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
