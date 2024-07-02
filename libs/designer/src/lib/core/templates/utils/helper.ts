@@ -1,10 +1,11 @@
-import { type Template, isArmResourceId } from '@microsoft/logic-apps-shared';
+import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { overviewTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/overviewTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
+import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
 export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
   return [workflowTab(intl, dispatch), overviewTab(intl, dispatch)];
@@ -170,11 +171,30 @@ export const getConnectorResources = (intl: IntlShape) => {
   };
 };
 
-export const validateConnections = (
+export const validateParameterValue = (data: { type: string; value?: string }, required = true): string | undefined => {
+  const intl = getIntl();
+
+  const { value: valueToValidate, type } = data;
+
+  if (valueToValidate === '' || valueToValidate === undefined) {
+    if (!required) {
+      return undefined;
+    }
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for parameter.',
+      id: 'VL9wOu',
+      description: 'Error message when the workflow parameter value is empty.',
+    });
+  }
+
+  return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
+};
+
+export const validateConnectionsValue = (
   manifestConnections: Record<string, Template.Connection>,
-  connectionsMapping: Record<string, string>,
-  intl: IntlShape
+  connectionsMapping: Record<string, string>
 ): string | undefined => {
+  const intl = getIntl();
   const errorMessage = intl.formatMessage({
     defaultMessage: 'All connections must be connected for workflow creation',
     id: 'fNlJSh',

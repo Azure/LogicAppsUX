@@ -14,7 +14,7 @@ import { clearTemplateDetails } from '../../../../../core/state/templates/templa
 export const OverviewPanel: React.FC = () => {
   const intl = useIntl();
   const { manifest } = useSelector((state: RootState) => state.template);
-
+  const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
       defaultMessage: 'Solution type',
@@ -36,14 +36,20 @@ export const OverviewPanel: React.FC = () => {
   return isNullOrUndefined(manifest) ? null : (
     <div className="msla-template-overview">
       <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title">
-          {intl.formatMessage({
-            defaultMessage: 'Connections included in this template',
-            id: 'TnwRGo',
-            description: 'Title for the connections section in the template overview tab',
-          })}
+        <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
+          {templateHasConnections
+            ? intl.formatMessage({
+                defaultMessage: 'Connections included in this template',
+                id: 'TnwRGo',
+                description: 'Title for the connections section in the template overview tab',
+              })
+            : intl.formatMessage({
+                defaultMessage: 'No connections are needed in this template',
+                id: 'j2v8BE',
+                description: 'Text to show no connections present in the template.',
+              })}
         </Text>
-        <Connections connections={manifest.connections} />
+        {templateHasConnections ? <Connections connections={manifest.connections} /> : null}
       </div>
       {manifest.prerequisites ? (
         <div className="msla-template-overview-section">
@@ -103,7 +109,7 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     id: '+YyHKB',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  visible: true,
+  hasError: false,
   content: <OverviewPanel />,
   order: 1,
   footerContent: {
@@ -115,7 +121,6 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     primaryButtonOnClick: () => {
       dispatch(openCreateWorkflowPanelView());
     },
-    primaryButtonDisabled: false,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
       id: 'FTrMxN',
