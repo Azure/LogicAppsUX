@@ -16,6 +16,7 @@ import {
   type ILoggerService,
   DevLogger,
   InitLoggerService,
+  InitOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -66,6 +67,7 @@ export const initializeTemplateServices = createAsyncThunk(
   'initializeTemplateServices',
   async ({
     connectionService,
+    operationManifestService,
     workflowService,
     oAuthService,
     gatewayService,
@@ -78,6 +80,7 @@ export const initializeTemplateServices = createAsyncThunk(
     loggerService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
+    InitOperationManifestService(operationManifestService);
     InitOAuthService(oAuthService);
     InitWorkflowService(workflowService);
 
