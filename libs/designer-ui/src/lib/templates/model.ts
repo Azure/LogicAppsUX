@@ -7,7 +7,7 @@ export interface TemplatePanelTab {
   id: string;
   title: string;
   description?: string | ReactNode;
-  visible?: boolean;
+  hasError?: boolean;
   order: number;
   content: React.ReactElement;
   footerContent: TemplatePanelFooterProps;

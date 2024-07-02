@@ -3,21 +3,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
-import { updateKind, updateWorkflowName, clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import {
+  updateKind,
+  updateWorkflowName,
+  clearTemplateDetails,
+  validateWorkflowName,
+} from '../../../../../core/state/templates/templateSlice';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 
-export const NameStatePanel: React.FC = () => {
+export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowName, kind } = useSelector((state: RootState) => state.template);
+  const {
+    workflowName,
+    errors: { workflow: workflowError, kind: kindError },
+    kind,
+    manifest,
+  } = useSelector((state: RootState) => state.template);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
-  const { manifest } = useSelector((state: RootState) => state.template);
   const intl = useIntl();
-  const [validationError, setValidationError] = useState('');
 
   const intlText = useMemo(
     () => ({
@@ -102,44 +110,6 @@ export const NameStatePanel: React.FC = () => {
     [intlText]
   );
 
-  const testRegex = () => {
-    if (!workflowName) {
-      setValidationError(
-        intl.formatMessage({
-          defaultMessage: 'Must provide value for workflow name.',
-          id: 'sKy720',
-          description: 'Error message when the workflow name is empty.',
-        })
-      );
-      return;
-    }
-    const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
-    if (!regex.test(workflowName)) {
-      setValidationError(
-        intl.formatMessage({
-          defaultMessage: 'Name does not match the given pattern.',
-          id: 'zMKxg9',
-          description: 'Error message when the workflow name is invalid regex.',
-        })
-      );
-      return;
-    }
-    if (existingWorkflowNames?.includes(workflowName)) {
-      setValidationError(
-        intl.formatMessage(
-          {
-            defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-            id: '7F4Bzv',
-            description: 'Error message when the workflow name already exists.',
-          },
-          { workflowName }
-        )
-      );
-      return;
-    }
-    setValidationError('');
-  };
-
   return (
     <div className="msla-templates-tab">
       <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
@@ -153,34 +123,39 @@ export const NameStatePanel: React.FC = () => {
         ariaLabel={intlText.WORKFLOW_NAME}
         value={existingWorkflowName ?? workflowName}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName(newValue ?? ''))
+          dispatch(updateWorkflowName(newValue))
         }
         disabled={!!existingWorkflowName}
-        onBlur={testRegex}
-        errorMessage={validationError}
-      />
-      <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
-        {intlText.STATE_TYPE}
-      </Label>
-      <Text className="msla-templates-tab-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
-      <ChoiceGroup
-        className="msla-templates-tab-choiceGroup"
-        options={[
-          { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
-          {
-            key: 'stateless',
-            text: intlText.STATELESS,
-            onRenderLabel: onRenderStatelessField,
-          },
-        ]}
-        onChange={(_, option) => {
-          if (option?.key) {
-            dispatch(updateKind(option?.key));
-          }
+        onBlur={() => {
+          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
         }}
-        selectedKey={kind}
-        disabled={manifest?.kinds?.length === 1}
+        errorMessage={workflowError}
       />
+      <div className={kindError ? 'msla-templates-tab-stateType-error' : ''}>
+        <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
+          {intlText.STATE_TYPE}
+        </Label>
+        <Text className="msla-templates-tab-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
+        <ChoiceGroup
+          className="msla-templates-tab-choiceGroup"
+          options={[
+            { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
+            {
+              key: 'stateless',
+              text: intlText.STATELESS,
+              onRenderLabel: onRenderStatelessField,
+            },
+          ]}
+          onChange={(_, option) => {
+            if (option?.key) {
+              dispatch(updateKind(option?.key));
+            }
+          }}
+          selectedKey={kind}
+          disabled={manifest?.kinds?.length === 1}
+        />
+      </div>
+      {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}
     </div>
   );
 };
@@ -189,11 +164,11 @@ export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    primaryButtonDisabled,
     previousTabId,
+    hasError,
   }: {
-    primaryButtonDisabled: boolean;
     previousTabId: string | undefined;
+    hasError: boolean;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
@@ -207,7 +182,7 @@ export const nameStateTab = (
     id: 'ZXyMDQ',
     description: 'An accessability label that describes the objective of name and state tab',
   }),
-  visible: true,
+  hasError: hasError,
   order: 2,
   content: <NameStatePanel />,
   footerContent: {
@@ -217,11 +192,8 @@ export const nameStateTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      if (!primaryButtonDisabled) {
-        dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
-      }
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
     },
-    primaryButtonDisabled: primaryButtonDisabled,
     secondaryButtonText: previousTabId
       ? intl.formatMessage({
           defaultMessage: 'Previous',

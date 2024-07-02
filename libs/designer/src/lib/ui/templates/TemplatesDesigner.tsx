@@ -21,7 +21,13 @@ export const TemplatesDesigner = ({
 }) => {
   const intl = useIntl();
   const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
-  const { workflowName, kind, workflowDefinition, parameters } = useSelector((state: RootState) => state.template);
+  const {
+    workflowName,
+    kind,
+    workflowDefinition,
+    parameterDefinitions,
+    errors: { workflow: workflowError, kind: kindError, parameters: parametersError, connections: connectionsError },
+  } = useSelector((state: RootState) => state.template);
   const filteredTemplateNames = useSelector((state: RootState) => state.manifest.filteredTemplateNames);
 
   const intlText = {
@@ -41,15 +47,18 @@ export const TemplatesDesigner = ({
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (
       !workflowNameToUse ||
+      workflowError ||
       !kind ||
+      kindError ||
       !workflowDefinition ||
-      Object.values(parameters.validationErrors)?.filter((error) => error).length > 0
+      connectionsError ||
+      Object.values(parametersError)?.filter((error) => error).length > 0
     ) {
       // TODO: Show error message
       console.log('Error checking conditions before calling createWorkflowCall');
       return;
     }
-    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameters.definitions);
+    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
   };
 
   return (
