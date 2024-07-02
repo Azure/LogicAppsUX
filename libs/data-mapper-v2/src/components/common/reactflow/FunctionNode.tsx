@@ -1,13 +1,15 @@
 import { customTokens } from '../../../core';
 import type { FunctionData } from '../../../models';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
-import { Button, Caption1, tokens, Popover, PopoverTrigger } from '@fluentui/react-components';
+import { Button, Caption1, tokens, Popover, PopoverTrigger, mergeClasses } from '@fluentui/react-components';
 import { useCardContextMenu } from '@microsoft/designer-ui';
 
 import { Handle, Position, type NodeProps } from 'reactflow';
 import { useStyles } from './styles';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/functionConfigurationPopover';
+import type { RootState } from '../../../core/state/Store';
+import { useSelector } from 'react-redux';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -23,17 +25,21 @@ export interface CardProps {
 
 export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, disabled, dataTestId } = props.data;
+  const connection = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
+
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
-
   const contextMenu = useCardContextMenu();
+
+  const isLeftConnected = connection.inputs[0].length > 0;
+  const isRightConnected = connection.outputs.length > 0;
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
       <Handle
         type={'target'}
         position={Position.Left}
-        className={styles.handleWrapper} //{mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
+        className={mergeClasses(styles.handleWrapper, isLeftConnected ? styles.handleConnected : '')}
         style={{ left: '-7px' }}
       />
       <Popover>
@@ -63,7 +69,7 @@ export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
       <Handle
         type={'source'}
         position={Position.Right}
-        className={styles.handleWrapper} //{mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
+        className={mergeClasses(styles.handleWrapper, isRightConnected ? styles.handleConnected : '')}
       />
     </div>
   );
