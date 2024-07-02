@@ -30,6 +30,25 @@ export const getUniqueConnectors = (
   return result;
 };
 
+export const getUniqueConnectorsFromConnections = (
+  allConnections: Template.Connection[],
+  subscriptionId: string,
+  location: string
+): Template.Connection[] => {
+  const result: Template.Connection[] = [];
+  const finalConnectorIds: string[] = [];
+
+  while (allConnections.length > 0) {
+    const connection = allConnections.shift() as Template.Connection;
+    const normalizedConnectorId = normalizeConnectorId(connection.connectorId, subscriptionId, location).toLowerCase();
+    if (!finalConnectorIds.includes(normalizedConnectorId)) {
+      result.push({ ...connection, connectorId: normalizedConnectorId });
+    }
+  }
+
+  return result;
+};
+
 export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
   if (!isArmResourceId(connectorId)) {
     return connectorId;

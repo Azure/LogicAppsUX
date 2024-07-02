@@ -1,10 +1,13 @@
 import { SearchBox } from '@fluentui/react';
 import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-ui';
-import type { AppDispatch } from '../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setConnectorsFilters, setDetailsFilters, setKeywordFilter } from '../../../core/state/templates/manifestSlice';
-import { useAllConnectors } from '../../../core/queries/browse';
+import { useMemo } from 'react';
+import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
+import { useConnectorsOnly } from '../../../core/state/connection/connectionSelector';
+import { useUniqueConnectorsIds } from '../../../core/queries/template';
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
@@ -14,7 +17,19 @@ export interface TemplateFiltersProps {
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { data: allConnectors } = useAllConnectors();
+  const { subscriptionId, location } = useSelector((state: RootState) => ({
+    availableTemplates: state.manifest.availableTemplates ?? {},
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
+  }));
+  const availableTemplates = useSelector((state: RootState) => state.manifest.availableTemplates) ?? {};
+
+  const templateConnectorsUseMemo = useMemo(() => {
+    const allConnectors = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
+    return getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location);
+  }, [availableTemplates, location, subscriptionId]);
+
+  const { data: allTemplateConnectorsWithDisplayName } = useConnectorsOnly(useUniqueConnectorsIds(templateConnectorsUseMemo));
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -46,10 +61,10 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allConnectors && allConnectors.length > 0 && (
+        {allTemplateConnectorsWithDisplayName && allTemplateConnectorsWithDisplayName.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={allConnectors?.map((connector) => ({
+            items={allTemplateConnectorsWithDisplayName?.map((connector) => ({
               value: connector.name,
               displayName: connector.properties.displayName,
             }))}

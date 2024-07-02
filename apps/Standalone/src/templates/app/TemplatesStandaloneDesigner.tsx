@@ -193,16 +193,6 @@ export const TemplatesStandaloneDesigner = () => {
           >
             <TemplateFilters
               detailFilters={{
-                Trigger: [
-                  {
-                    value: 'Request',
-                    displayName: 'Request',
-                  },
-                  {
-                    value: 'Instant',
-                    displayName: 'Instant',
-                  },
-                ],
                 By: [
                   {
                     value: 'Microsoft',
