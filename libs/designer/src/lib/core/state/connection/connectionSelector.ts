@@ -40,12 +40,22 @@ export const useConnectorOnly = (connectorId: string | undefined, enabled = true
 };
 
 export const useConnectorsOnly = (connectorIds?: string[]): UseQueryResult<Connector[] | undefined, unknown> => {
-  return useQuery(['apiOnly', connectorIds], async () => {
-    if (!connectorIds) {
-      return null;
+  return useQuery(
+    ['apiOnly', connectorIds],
+    async () => {
+      if (!connectorIds) {
+        return null;
+      }
+      return await Promise.all(connectorIds.map(async (connectorId) => await ConnectionService().getConnector(connectorId)));
+    },
+    {
+      enabled: !!connectorIds,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
-    return await Promise.all(connectorIds.map(async (connectorId) => await ConnectionService().getConnector(connectorId)));
-  });
+  );
 };
 
 export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {

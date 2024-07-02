@@ -7,7 +7,6 @@ import { setConnectorsFilters, setDetailsFilters, setKeywordFilter } from '../..
 import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnectorsOnly } from '../../../core/state/connection/connectionSelector';
-import { useUniqueConnectorsIds } from '../../../core/queries/template';
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
@@ -17,19 +16,18 @@ export interface TemplateFiltersProps {
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { subscriptionId, location } = useSelector((state: RootState) => ({
+  const { availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
     availableTemplates: state.manifest.availableTemplates ?? {},
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
   }));
-  const availableTemplates = useSelector((state: RootState) => state.manifest.availableTemplates) ?? {};
-
-  const templateConnectorsUseMemo = useMemo(() => {
-    const allConnectors = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
-    return getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location);
+  const allTemplatesUniqueConnectorIds = useMemo(() => {
+    const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
+    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
+    const uniqueConnectorsIds = [...new Set(uniqueConnectorsFromConnections.map((connector) => connector.connectorId))];
+    return uniqueConnectorsIds;
   }, [availableTemplates, location, subscriptionId]);
-
-  const { data: allTemplateConnectorsWithDisplayName } = useConnectorsOnly(useUniqueConnectorsIds(templateConnectorsUseMemo));
+  const { data: allUniqueConnectors } = useConnectorsOnly(allTemplatesUniqueConnectorIds);
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -61,10 +59,10 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allTemplateConnectorsWithDisplayName && allTemplateConnectorsWithDisplayName.length > 0 && (
+        {allUniqueConnectors && allUniqueConnectors.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={allTemplateConnectorsWithDisplayName?.map((connector) => ({
+            items={allUniqueConnectors?.map((connector) => ({
               value: connector.name,
               displayName: connector.properties.displayName,
             }))}

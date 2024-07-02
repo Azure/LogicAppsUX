@@ -26,7 +26,3 @@ export const useTemplateConnectors = (availableTemplates: Record<string, Templat
     }
   );
 };
-
-export const useUniqueConnectorsIds = (connectors: Template.Connection[]) => {
-  return [...new Set(connectors.map((connector) => connector.connectorId))]; // id or name?
-};
