@@ -8,6 +8,7 @@ import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import { getBuiltInOperationInfo, isBuiltInOperation } from '@microsoft/logic-apps-shared';
 
 interface TemplateCardProps {
@@ -33,11 +34,18 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   };
 
   if (!templateManifest) {
-    return <DocumentCard className="msla-template-card-wrapper">{intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk'})}</DocumentCard>;
+    return (
+      <DocumentCard className="msla-template-card-wrapper">
+        {intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' })}
+      </DocumentCard>
+    );
   }
 
   const { title, details, featuredOperations, connections } = templateManifest as Manifest;
-  const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map(connection => connection.connectorId);
+  const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map((connection) => ({
+    connectorId: connection.connectorId,
+    operationId: undefined,
+  })) as { connectorId: string; operationId: string | undefined }[];
   const connectorsFeatured = getFeaturedConnectors(featuredOperations);
   const allConnectors = connectorsFromConnections.concat(connectorsFeatured);
   const showOverflow = allConnectors.length > maxConnectorsToShow;
@@ -46,6 +54,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const onRenderMenuItem = (item: IContextualMenuItem) => (
     <ConnectorIconWithName
       connectorId={item.key}
+      operationId={item.data.operationId}
       classes={{
         root: 'msla-template-connector-menuitem',
         icon: 'msla-template-connector-menuitem-icon',
@@ -55,7 +64,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
-    items: overflowList.map(connectorId => ({ key: connectorId, text: connectorId, onRender: onRenderMenuItem })),
+    items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
   };
@@ -80,13 +89,14 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
 
       <div className="msla-template-card-connectors">
         <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
-          {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag'})}
+          {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
         </Text>
         <div className="msla-template-card-connectors-list">
-          {connectorsToShow.map(connectorId => (
+          {connectorsToShow.map((info) => (
             <ConnectorIcon
-              key={connectorId}
-              connectorId={connectorId}
+              key={info.connectorId}
+              connectorId={info.connectorId}
+              operationId={info.operationId}
               classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
             />
           ))}
@@ -99,13 +109,14 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
 };
 
-const getFeaturedConnectors = (operationInfos: { type: string; kind?: string; }[] = []): string[] => {
-  return (operationInfos.map(info => {
-    if (isBuiltInOperation(info)) {
-      const { connectorId } = getBuiltInOperationInfo(info, /* isTrigger */false);
-      return connectorId
-    }
+const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
+  return operationInfos
+    .map((info) => {
+      if (isBuiltInOperation(info)) {
+        return getBuiltInOperationInfo(info, /* isTrigger */ false);
+      }
 
-    return undefined;
-  })).filter(connectorId => connectorId !== undefined) as string[];
-}
+      return undefined;
+    })
+    .filter((info) => info !== undefined) as OperationInfo[];
+};
