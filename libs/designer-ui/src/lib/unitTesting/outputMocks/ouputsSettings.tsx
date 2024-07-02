@@ -10,10 +10,14 @@ export interface OutputsSettingsProps {
 
 const VALUE_KEY = 'value';
 
-export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, outputs, actionResult }): JSX.Element => {
+export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, outputs, actionResult }): JSX.Element | null => {
   const hasMockOutputs = actionResult === ActionResults.SUCCESS || ActionResults.FAILED;
 
-  return hasMockOutputs ? (
+  if (!hasMockOutputs) {
+    return null; // Return null when there are no mock outputs to render
+  }
+
+  return (
     <>
       {outputs.map((output: any) => (
         <div key={`${nodeId}-${output.id}`}>
@@ -26,8 +30,5 @@ export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, output
         </div>
       ))}
     </>
-  ) : (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <></> // Render nothing when action result is not SUCCESS
   );
 };

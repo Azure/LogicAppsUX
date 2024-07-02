@@ -1,5 +1,5 @@
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
-import type { ChangeHandler } from '../../editor/base';
+import type { ChangeHandler, ChangeState } from '../../editor/base';
 import type { EventHandler } from '../../eventhandler';
 import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
@@ -58,7 +58,7 @@ export interface OutputMocksProps {
   onErrorMessageChange: (value: string) => void;
   errorCode: string;
   onErrorCodeChange: (value: string) => void;
-  onMockUpdate: any;
+  onMockUpdate: (id: string, newState: ChangeState, type: string) => void;
 }
 
 export const ActionResults = {
@@ -73,13 +73,10 @@ export const OutputMocks: React.FC<OutputMocksProps> = ({
   outputs,
   mocks,
   errorMessage,
-  onErrorMessageChange,
   errorCode,
-  onErrorCodeChange,
-  onMockUpdate, // Added prop
+  onMockUpdate,
 }) => {
   const intl = useIntl();
-
   const intlText = {
     UNSUPPORTED_MOCKS: intl.formatMessage({
       defaultMessage:
@@ -96,13 +93,7 @@ export const OutputMocks: React.FC<OutputMocksProps> = ({
       {mocks.actionResult === ActionResults.SUCCESS ? (
         <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
       ) : mocks.actionResult === ActionResults.FAILED ? (
-        <ErrorDetails
-          errorMessage={errorMessage}
-          onErrorMessageChange={onErrorMessageChange}
-          errorCode={errorCode}
-          onErrorCodeChange={onErrorCodeChange}
-          onMockUpdate={onMockUpdate} // Pass down onMockUpdate
-        />
+        <ErrorDetails errorMessage={errorMessage} errorCode={errorCode} onMockUpdate={onMockUpdate} />
       ) : (
         <Text>{intlText.UNSUPPORTED_MOCKS}</Text>
       )}

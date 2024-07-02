@@ -1128,7 +1128,7 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
 const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
   const outputValues: Record<string, any> = {};
   for (const [key, value] of Object.entries(outputs)) {
-    if (value[0]) {
+    if (value && value.length > 0) {
       outputValues[key] = value[0].value;
     }
   }
@@ -1181,12 +1181,16 @@ const getTriggerActionMocks = (
         properties: {
           status: outputMock.actionResult,
         },
-        error: {
-          code: outputMock.errorCode,
-          message: outputMock.errorMessage,
-        },
         ...outputsValue,
       };
+
+      // Only add error property if errorCode or errorMessage exists
+      if (outputMock.errorCode || outputMock.errorMessage) {
+        operationMock.error = {
+          ...(outputMock.errorCode && { code: outputMock.errorCode }),
+          ...(outputMock.errorMessage && { message: outputMock.errorMessage }),
+        };
+      }
 
       if (key.charAt(0) === '&') {
         const triggerName = key.substring(1);

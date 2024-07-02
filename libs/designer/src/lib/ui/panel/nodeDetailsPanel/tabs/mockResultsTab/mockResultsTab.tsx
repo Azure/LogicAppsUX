@@ -49,7 +49,8 @@ const MockResultsTab = () => {
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
 
   useEffect(() => {
-    console.log('Component rendered with mocks:', mocks);
+    setErrorMessage(mocks.errorMessage || '');
+    setErrorCode(mocks.errorCode || '');
   }, [mocks]);
 
   const onMockUpdate = useCallback(
@@ -60,29 +61,25 @@ const MockResultsTab = () => {
         propertiesToUpdate.value = viewModel.uncastedValue;
       }
 
-      console.log('Mock Update Triggered:', {
-        nodeName,
-        actionResult: mocks.actionResult,
-        id,
-        value: propertiesToUpdate.value,
-        type,
-      });
+      if (id === 'errorMessage') {
+        setErrorMessage(value as unknown as string);
+      } else if (id === 'errorCode') {
+        setErrorCode(value as unknown as string);
+      }
 
       if (mocks.actionResult === ActionResults.FAILED) {
-        console.log('Dispatching updateMockFailure');
         dispatch(
           updateMockFailure({
             operationName: nodeName,
-            outputs: propertiesToUpdate.value ?? [],
+            outputs: id === 'errorMessage' || id === 'errorCode' ? [] : propertiesToUpdate.value ?? [],
             outputId: id,
             completed: true,
             type: type,
-            errorMessage,
-            errorCode,
+            errorMessage: id === 'errorMessage' ? (value as unknown as string) : errorMessage,
+            errorCode: id === 'errorCode' ? (value as unknown as string) : errorCode,
           })
         );
       } else {
-        console.log('Dispatching updateMockSuccess');
         dispatch(
           updateMockSuccess({
             operationName: nodeName,
@@ -99,9 +96,7 @@ const MockResultsTab = () => {
 
   const onActionResultUpdate = useCallback(
     (newState: ActionResultUpdateEvent): void => {
-      console.log('Action Result Update Triggered:', newState);
       if (newState.actionResult === ActionResults.FAILED) {
-        console.log('Setting action result to FAILED');
         dispatch(
           updateActionResultFailure({
             operationName: nodeName,
@@ -112,7 +107,6 @@ const MockResultsTab = () => {
           })
         );
       } else {
-        console.log('Setting action result to SUCCESS');
         dispatch(
           updateActionResultSuccess({
             operationName: nodeName,
@@ -120,6 +114,9 @@ const MockResultsTab = () => {
             completed: true,
           })
         );
+        // Clear error message and code when switching to success
+        setErrorMessage('');
+        setErrorCode('');
       }
     },
     [nodeName, dispatch, errorMessage, errorCode]
