@@ -12,7 +12,7 @@ import type {
 import { ActionResults } from '@microsoft/designer-ui';
 import {
   type Assertion,
-  type AssertionDefintion,
+  type AssertionDefinition,
   guid,
   isNullOrUndefined,
   equals,
@@ -39,7 +39,7 @@ export const initialUnitTestState: UnitTestState = {
   },
 };
 
-const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
+const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefinition> => {
   return assertions.reduce((acc, assertion) => {
     const { name, description, assertionString } = assertion;
     const id = guid();
@@ -52,14 +52,14 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
  * @param {string} id - The ID of the assertion.
  * @param  {{ name?: string; expression?: Record<string, any> }} data - The data object containing the assertion name and expression.
  * @param {string} keyToValidate - The key to validate ('name' or 'expression').
- * @param  {Record<string, AssertionDefintion>} allDefinitions - The record of all assertion definitions.
+ * @param  {Record<string, AssertionDefinition>} allDefinitions - The record of all assertion definitions.
  * @returns A string with an error message if the assertion is invalid, otherwise undefined.
  */
 const validateAssertion = (
   id: string,
   data: { name?: string; expression?: string },
   keyToValidate: string,
-  allDefinitions: Record<string, AssertionDefintion>
+  allDefinitions: Record<string, AssertionDefinition>
 ): string | undefined => {
   const intl = getIntl();
 
@@ -205,12 +205,13 @@ export const unitTestSlice = createSlice({
     },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
-      const { name, id, description, assertionString } = assertionToUpdate;
+      const { name, id, description, assertionString, isEditable } = assertionToUpdate;
       state.assertions[id] = {
         ...state.assertions[id],
         name,
         description,
         assertionString,
+        isEditable,
       };
       checkAssertionsErrors(state);
     },

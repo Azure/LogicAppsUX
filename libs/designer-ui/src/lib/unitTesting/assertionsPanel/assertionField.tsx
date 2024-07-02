@@ -2,7 +2,7 @@ import constants from '../../constants';
 import type { GetConditionExpressionHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, TextField } from '@fluentui/react';
-import { type AssertionDefintion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { type AssertionDefinition, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { MediumText } from '../../text';
 import { useIntl } from 'react-intl';
 
@@ -39,10 +39,10 @@ export interface ParameterFieldDetails {
 
 export interface AssertionFieldProps {
   id: string;
-  assertion: AssertionDefintion;
+  assertion: AssertionDefinition;
   isExpanded: boolean;
   getConditionExpression: GetConditionExpressionHandler;
-  handleUpdate: (newAssertion: AssertionDefintion) => void;
+  handleUpdate: (newAssertion: AssertionDefinition) => void;
   validationErrors?: Record<string, string | undefined>;
 }
 

@@ -66,7 +66,7 @@ import type {
   OperationManifest,
   SubGraphDetail,
   OperationMock,
-  AssertionDefintion,
+  AssertionDefinition,
   Assertion,
   UnitTestDefinition,
 } from '@microsoft/logic-apps-shared';
@@ -1103,10 +1103,10 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
 
 /**
  * Retrieves an array of Assertion objects based on the provided Assertion definitions.
- * @param {Record<string, AssertionDefintion>} assertions - The Assertion definitions.
+ * @param {Record<string, AssertionDefinition>} assertions - The Assertion definitions.
  * @returns An array of Assertion objects.
  */
-const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
+const getAssertions = (assertions: Record<string, AssertionDefinition>): Assertion[] => {
   return Object.values(assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
     const assertionValueSegment = createTokenValueSegment(

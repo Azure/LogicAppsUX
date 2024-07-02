@@ -1,4 +1,4 @@
-import type { ValueSegment, Assertion, AssertionDefintion } from '@microsoft/logic-apps-shared';
+import type { ValueSegment, Assertion, AssertionDefinition } from '@microsoft/logic-apps-shared';
 
 export interface updateMockResultPayload {
   operationName: string;
@@ -26,7 +26,7 @@ export interface InitDefintionPayload {
 }
 
 export interface AddAssertionPayload {
-  assertion: AssertionDefintion;
+  assertion: AssertionDefinition;
 }
 
 export interface DeleteAssertionsPayload {
@@ -34,7 +34,7 @@ export interface DeleteAssertionsPayload {
 }
 
 export interface UpdateAssertionPayload {
-  assertionToUpdate: AssertionDefintion;
+  assertionToUpdate: AssertionDefinition;
 }
 
 export interface UpdateAssertioExpressionPayload {
@@ -44,7 +44,7 @@ export interface UpdateAssertioExpressionPayload {
 
 export interface UnitTestState {
   mockResults: Record<string, OutputMock>;
-  assertions: Record<string, AssertionDefintion>;
+  assertions: Record<string, AssertionDefinition>;
   validationErrors: {
     assertions: Record<string, Record<string, string | undefined>>;
     mocks: Record<string, Record<string, string | undefined>>;

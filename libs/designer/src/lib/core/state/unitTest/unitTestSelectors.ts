@@ -2,7 +2,7 @@ import type { RootState } from '../../store';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
 import type { OutputMock, UnitTestState } from './unitTestInterfaces';
-import { getRecordEntry, type AssertionDefintion, ConnectionType } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, type AssertionDefinition, ConnectionType } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -72,7 +72,7 @@ export const useNodeType = (nodeId: string) => {
  * Custom hook that returns the assertions from the unit test state.
  * @returns An object containing the assertions.
  */
-export const useAssertions = (): Record<string, AssertionDefintion> => {
+export const useAssertions = (): Record<string, AssertionDefinition> => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
       return state.assertions;
