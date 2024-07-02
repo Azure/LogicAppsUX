@@ -17,7 +17,7 @@ export interface UnitTestDefinition {
   assertions: Assertion[];
 }
 
-export interface AssertionDefintion extends Assertion {
+export interface AssertionDefinition extends Assertion {
   id: string;
   isEditable: boolean;
 }

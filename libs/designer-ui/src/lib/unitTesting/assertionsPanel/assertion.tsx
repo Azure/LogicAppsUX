@@ -4,7 +4,7 @@ import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
-import { RUN_AFTER_COLORS, type AssertionDefintion } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_COLORS, type AssertionDefinition } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -42,7 +42,7 @@ export type GetConditionExpressionHandler = (
 
 export interface AssertionProps {
   id: string;
-  assertion: AssertionDefintion;
+  assertion: AssertionDefinition;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   getConditionExpression: GetConditionExpressionHandler;
@@ -75,7 +75,7 @@ export function Assertion({
     setExpanded(!expanded);
   };
 
-  const handleUpdate = (newAssertion: AssertionDefintion) => {
+  const handleUpdate = (newAssertion: AssertionDefinition) => {
     onAssertionUpdate({ ...newAssertion });
   };
 

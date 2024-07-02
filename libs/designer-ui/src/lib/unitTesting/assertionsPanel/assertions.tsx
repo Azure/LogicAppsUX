@@ -9,7 +9,7 @@ import {
 import { List, useTheme } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
-import type { AssertionDefintion } from '@microsoft/logic-apps-shared';
+import type { AssertionDefinition } from '@microsoft/logic-apps-shared';
 import { XLargeText } from '../../text';
 import { useIntl } from 'react-intl';
 
@@ -18,7 +18,7 @@ const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export interface AssertionsProps {
-  assertions: AssertionDefintion[];
+  assertions: AssertionDefinition[];
   onDismiss: OnClickHandler;
   onAssertionAdd: AssertionAddHandler;
   onAssertionUpdate: AssertionUpdateHandler;
@@ -65,7 +65,7 @@ export function Assertions({
     }
   };
 
-  const renderAssertion = (item?: AssertionDefintion): JSX.Element | null => {
+  const renderAssertion = (item?: AssertionDefinition): JSX.Element | null => {
     if (!item) {
       return null;
     }
