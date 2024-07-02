@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { Icon } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-//import { TemplatesPanelContent, type TemplatePanelTab } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { TemplatesPanelContent } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
@@ -27,15 +26,13 @@ export const QuickViewPanel = () => {
   };
 
   return (
-    <div>
-      <TemplatesPanelContent
-        className="msla-template-quickview-tabs"
-        isSequence={false}
-        tabs={panelTabs}
-        selectedTab={selectedTabId}
-        selectTab={onTabSelected}
-      />
-    </div>
+    <TemplatesPanelContent
+      className="msla-template-quickview-tabs"
+      isSequence={false}
+      tabs={panelTabs}
+      selectedTab={selectedTabId}
+      selectTab={onTabSelected}
+    />
   );
 };
 

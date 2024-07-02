@@ -103,7 +103,7 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     id: '+YyHKB',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  visible: true,
+  hasError: false,
   content: <OverviewPanel />,
   order: 1,
   footerContent: {
@@ -115,7 +115,6 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     primaryButtonOnClick: () => {
       dispatch(openCreateWorkflowPanelView());
     },
-    primaryButtonDisabled: false,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
       id: 'FTrMxN',

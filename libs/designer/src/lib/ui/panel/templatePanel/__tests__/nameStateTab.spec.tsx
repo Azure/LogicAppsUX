@@ -21,12 +21,15 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
       templateName: 'title',
       manifest: undefined,
       workflowDefinition: undefined,
-      parameters: {
-        definitions: {},
-        validationErrors: {},
-      },
+      parameterDefinitions: {},
       connections: {},
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: undefined,
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
