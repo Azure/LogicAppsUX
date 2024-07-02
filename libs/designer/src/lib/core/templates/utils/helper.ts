@@ -53,8 +53,16 @@ const templateSearchOptions = {
   threshold: 0,
   ignoreLocation: true,
   keys: [
-    'title',
-    'description',
+    {
+      name: 'title',
+      weight: 1,
+      getFn: ([_name, template]: [string, Template.Manifest]) => template.title,
+    },
+    {
+      name: 'description',
+      weight: 1,
+      getFn: ([_name, template]: [string, Template.Manifest]) => template.description,
+    },
     {
       name: 'manifest',
       weight: 2,
@@ -89,6 +97,7 @@ export const getFilteredTemplates = (
   templates: Record<string, Template.Manifest>,
   filters: {
     keyword?: string;
+    sortKey: string;
     connectors?: FilterObject[];
     detailFilters: Record<string, FilterObject[]>;
   },
@@ -120,14 +129,30 @@ export const getFilteredTemplates = (
     return hasDetailFilters;
   });
 
-  if (!filters.keyword) {
-    return Object.keys(Object.fromEntries(filteredTemplateEntries));
+  if (filters.keyword) {
+    const fuse = new Fuse(filteredTemplateEntries, templateSearchOptions);
+    const searchedTemplateNames = fuse.search(filters.keyword).map(({ item }) => item[0]);
+
+    return searchedTemplateNames;
   }
 
-  const fuse = new Fuse(filteredTemplateEntries, templateSearchOptions);
-  const searchedTemplateNames = fuse.search(filters.keyword).map(({ item }) => item[0]);
+  const sortedFilteredTemplateEntries = _sortTemplateManifestEntriesByTitle(filters.sortKey, filteredTemplateEntries);
+  return Object.keys(Object.fromEntries(sortedFilteredTemplateEntries));
+};
 
-  return searchedTemplateNames;
+const _sortTemplateManifestEntriesByTitle = (sortKey: string | undefined, templateManifestEntries: [string, Template.Manifest][]) => {
+  switch (sortKey) {
+    case 'a-to-z':
+      return templateManifestEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
+        manifest2?.title > manifest1?.title ? -1 : manifest2?.title < manifest1?.title ? 1 : 0
+      );
+    case 'z-to-a':
+      return templateManifestEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
+        manifest1?.title > manifest2?.title ? -1 : manifest1?.title < manifest2?.title ? 1 : 0
+      );
+    default:
+      return templateManifestEntries;
+  }
 };
 
 export const getConnectorResources = (intl: IntlShape) => {

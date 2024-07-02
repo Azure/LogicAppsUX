@@ -1,9 +1,9 @@
-import { SearchBox } from '@fluentui/react';
+import { Dropdown, SearchBox } from '@fluentui/react';
 import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-ui';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { setConnectorsFilters, setDetailsFilters, setKeywordFilter } from '../../../core/state/templates/manifestSlice';
+import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
 import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnectorsOnly } from '../../../core/state/connection/connectionSelector';
@@ -15,6 +15,7 @@ export interface TemplateFiltersProps {
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const sortKey = useSelector((state: RootState) => state?.manifest?.filters?.sortKey);
   const intl = useIntl();
   const { availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
     availableTemplates: state.manifest.availableTemplates ?? {},
@@ -46,6 +47,25 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       description: 'Label text for type filter',
     }),
   };
+
+  const templateDropdownOptions = [
+    {
+      key: 'a-to-z',
+      text: intl.formatMessage({
+        defaultMessage: 'A to Z, ascending',
+        id: 'zxF7g+',
+        description: 'Sort by dropdown option of A to Z ascending',
+      }),
+    },
+    {
+      key: 'z-to-a',
+      text: intl.formatMessage({
+        defaultMessage: 'Z to A, descending',
+        id: '1jf3Dq',
+        description: 'Sort by dropdown option of Z to A descending',
+      }),
+    },
+  ];
 
   return (
     <div className="msla-templates-filters">
@@ -82,6 +102,18 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
             }}
           />
         ))}
+      </div>
+      <div className="msla-templates-filters-sort">
+        <Dropdown
+          className="msla-templates-filters-sort-dropdown"
+          options={templateDropdownOptions}
+          selectedKey={sortKey as string}
+          onChange={(_e, item) => {
+            if (item?.key) {
+              dispatch(setSortKey(item?.key as string));
+            }
+          }}
+        />
       </div>
     </div>
   );

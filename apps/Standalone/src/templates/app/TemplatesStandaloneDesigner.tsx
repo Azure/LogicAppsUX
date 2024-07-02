@@ -191,41 +191,47 @@ export const TemplatesStandaloneDesigner = () => {
             isConsumption={isConsumption}
             existingWorkflowName={existingWorkflowName}
           >
-            <TemplateFilters
-              detailFilters={{
-                By: [
-                  {
-                    value: 'Microsoft',
-                    displayName: 'Microsoft',
-                  },
-                  {
-                    value: 'Other',
-                    displayName: 'Other',
-                  },
-                ],
-                Type: [
-                  {
-                    value: 'Workflow',
-                    displayName: 'Workflow',
-                  },
-                  {
-                    value: 'Other',
-                    displayName: 'Other',
-                  },
-                ],
-                Industry: [
-                  {
-                    value: 'Analytics',
-                    displayName: 'Analytics',
-                  },
-                  {
-                    value: 'IT',
-                    displayName: 'IT',
-                  },
-                ],
+            <div
+              style={{
+                margin: '20px',
               }}
-            />
-            <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+            >
+              <TemplateFilters
+                detailFilters={{
+                  By: [
+                    {
+                      value: 'Microsoft',
+                      displayName: 'Microsoft',
+                    },
+                    {
+                      value: 'Other',
+                      displayName: 'Other',
+                    },
+                  ],
+                  Type: [
+                    {
+                      value: 'Workflow',
+                      displayName: 'Workflow',
+                    },
+                    {
+                      value: 'Other',
+                      displayName: 'Other',
+                    },
+                  ],
+                  Industry: [
+                    {
+                      value: 'Analytics',
+                      displayName: 'Analytics',
+                    },
+                    {
+                      value: 'IT',
+                      displayName: 'IT',
+                    },
+                  ],
+                }}
+              />
+              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
+            </div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       ) : null}
