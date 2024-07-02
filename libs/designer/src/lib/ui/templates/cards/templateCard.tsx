@@ -7,15 +7,19 @@ import { DocumentCard, type IContextualMenuItem, type IContextualMenuProps, Icon
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
+import { useIntl } from 'react-intl';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import { getBuiltInOperationInfo, isBuiltInOperation } from '@microsoft/logic-apps-shared';
 
 interface TemplateCardProps {
   templateName: string;
 }
 
-const maxConnectorsToShow = 1;
+const maxConnectorsToShow = 5;
 
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const { templates, subscriptionId, location } = useSelector((state: RootState) => ({
     templates: state.manifest.availableTemplates,
     subscriptionId: state.workflow.subscriptionId,
@@ -30,17 +34,27 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   };
 
   if (!templateManifest) {
-    return <DocumentCard className="msla-template-card-wrapper">Loading....</DocumentCard>;
+    return (
+      <DocumentCard className="msla-template-card-wrapper">
+        {intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' })}
+      </DocumentCard>
+    );
   }
 
-  const { title, details, connections } = templateManifest as Manifest;
-  const connectors = getUniqueConnectors(connections, subscriptionId, location);
-  const showOverflow = connectors.length > maxConnectorsToShow;
-  const connectorsToShow = showOverflow ? connectors.slice(0, maxConnectorsToShow) : connectors;
-  const overflowList = showOverflow ? connectors.slice(maxConnectorsToShow) : [];
+  const { title, details, featuredOperations, connections } = templateManifest as Manifest;
+  const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map((connection) => ({
+    connectorId: connection.connectorId,
+    operationId: undefined,
+  })) as { connectorId: string; operationId: string | undefined }[];
+  const connectorsFeatured = getFeaturedConnectors(featuredOperations);
+  const allConnectors = connectorsFromConnections.concat(connectorsFeatured);
+  const showOverflow = allConnectors.length > maxConnectorsToShow;
+  const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
+  const overflowList = showOverflow ? allConnectors.slice(maxConnectorsToShow) : [];
   const onRenderMenuItem = (item: IContextualMenuItem) => (
     <ConnectorIconWithName
       connectorId={item.key}
+      operationId={item.data.operationId}
       classes={{
         root: 'msla-template-connector-menuitem',
         icon: 'msla-template-connector-menuitem-icon',
@@ -50,7 +64,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
-    items: overflowList.map((connector) => ({ key: connector.connectorId, text: connector.connectorId, onRender: onRenderMenuItem })),
+    items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
   };
@@ -75,13 +89,14 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
 
       <div className="msla-template-card-connectors">
         <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
-          Connectors
+          {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
         </Text>
         <div className="msla-template-card-connectors-list">
-          {connectorsToShow.map((connector) => (
+          {connectorsToShow.map((info) => (
             <ConnectorIcon
-              key={connector.connectorId}
-              connectorId={connector.connectorId}
+              key={info.connectorId}
+              connectorId={info.connectorId}
+              operationId={info.operationId}
               classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
             />
           ))}
@@ -92,4 +107,16 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       </div>
     </DocumentCard>
   );
+};
+
+const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
+  return operationInfos
+    .map((info) => {
+      if (isBuiltInOperation(info)) {
+        return getBuiltInOperationInfo(info, /* isTrigger */ false);
+      }
+
+      return undefined;
+    })
+    .filter((info) => info !== undefined) as OperationInfo[];
 };

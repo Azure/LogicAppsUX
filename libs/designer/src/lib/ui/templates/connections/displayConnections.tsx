@@ -1,7 +1,7 @@
 import type { IColumn, IDetailsRowProps } from '@fluentui/react';
 import { DetailsList, DetailsRow, Icon, Link, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
-import type { Connection, Connector, Template } from '@microsoft/logic-apps-shared';
+import type { Connection, Template } from '@microsoft/logic-apps-shared';
 import { ConnectionService, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getConnectorResources, normalizeConnectorId } from '../../../core/templates/utils/helper';
@@ -14,6 +14,7 @@ import { CreateConnectionInTemplate } from '../../panel/templatePanel/createConn
 import { useEffect, useState } from 'react';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getConnector } from '../../../core/queries/operation';
+import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 
 const createPlaceholderKey = '##create##';
 const connectionStatus: Record<string, any> = {
@@ -233,8 +234,8 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
             onConnectorLoaded={
               item.connectorDisplayName
                 ? undefined
-                : (connector: Connector) =>
-                    updateItemInConnectionsList(item.key, { ...item, connectorDisplayName: connector.properties.displayName })
+                : (connector: ConnectorInfo) =>
+                    updateItemInConnectionsList(item.key, { ...item, connectorDisplayName: connector.displayName })
             }
           />
         );

@@ -15,6 +15,7 @@ import {
   escapeSpecialChars,
   isArmResourceId,
   optional,
+  StandardOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -323,6 +324,7 @@ const getServices = (
     tenantId,
     objectId,
   });
+  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const workflowService: IWorkflowService = {
     getCallbackUrl: () => Promise.resolve({} as any),
     getAppIdentity: () => workflowApp?.identity as any,
@@ -348,6 +350,7 @@ const getServices = (
     gatewayService,
     tenantService,
     oAuthService,
+    operationManifestService,
     templateService,
     workflowService,
   };
