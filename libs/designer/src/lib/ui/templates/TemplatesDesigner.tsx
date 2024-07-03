@@ -71,10 +71,10 @@ export const TemplatesDesigner = ({
           ))}
           {/* TODO: Delete this, for testing purposes only */}
           {filteredTemplateNames.map((templateName: string) => (
-            <TemplateCard key={templateName} templateName={templateName} />
+            <TemplateCard key={`${templateName}2`} templateName={templateName} />
           ))}
           {filteredTemplateNames.map((templateName: string) => (
-            <TemplateCard key={templateName} templateName={templateName} />
+            <TemplateCard key={`${templateName}3`} templateName={templateName} />
           ))}
         </div>
       ) : (

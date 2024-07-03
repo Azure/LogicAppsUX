@@ -90,24 +90,37 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
           })}
         </div>
       </div>
+
       <hr className="msla-templates-break" />
 
-      <div className="msla-template-card-connectors">
-        <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
-          {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
-        </Text>
-        <div className="msla-template-card-connectors-list">
-          {connectorsToShow.map((info) => (
-            <ConnectorIcon
-              key={info.connectorId}
-              connectorId={info.connectorId}
-              operationId={info.operationId}
-              classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
-            />
-          ))}
-          {showOverflow ? (
-            <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
-          ) : null}
+      <div className="msla-template-card-connectors-wrapper">
+        <div className="msla-template-card-connectors">
+          <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
+            {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
+          </Text>
+          <div className="msla-template-card-connectors-list">
+            {connectorsToShow.length > 0 ? (
+              connectorsToShow.map((info) => (
+                <ConnectorIcon
+                  key={info.connectorId}
+                  connectorId={info.connectorId}
+                  operationId={info.operationId}
+                  classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
+                />
+              ))
+            ) : (
+              <Text className="msla-template-card-connectors-emptyText">
+                {intl.formatMessage({
+                  defaultMessage: 'This template does not have connectors',
+                  description: 'Accessibility text to inform user this template does not contain connectors',
+                  id: 'aI9W5L',
+                })}
+              </Text>
+            )}
+            {showOverflow ? (
+              <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+            ) : null}
+          </div>
         </div>
       </div>
     </DocumentCard>
