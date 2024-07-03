@@ -10,7 +10,7 @@ import {
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -28,27 +28,28 @@ import {
   useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
-import type { AppDispatch } from '../../core/store';
+import type { AppDispatch, RootState } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService, removeIdTag } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, removeIdTag } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
 import { CopyMenuItem } from '../menuItems';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -63,6 +64,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
+  const rootState = useSelector((state: RootState) => state);
   const metadata = useNodeMetadata(scopeId);
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
@@ -72,6 +74,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+  const panelTabName = 'SETTINGS';
 
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
@@ -193,14 +197,30 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
 
+  const runAfterClick = useCallback(() => {
+    dispatch(changePanelNode(scopeId));
+    dispatch(selectPanelTab(panelTabName));
+  }, [dispatch, scopeId]);
+
+  const shouldDisplayRunAfter = (operation: LogicAppsV2.ActionDefinition): boolean => {
+    if (!operation || !operation.runAfter) {
+      return false;
+    }
+    return Object.keys(operation.runAfter).length > 0;
+  };
+
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, scopeId) as LogicAppsV2.OperationDefinition;
+  const runAfter = isTrigger ? false : shouldDisplayRunAfter(operationFromWorkflow);
+
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
       <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
+      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
     ],
-    [deleteClick, copyClick, runData?.canResubmit, resubmitClick]
+    [deleteClick, copyClick, runData?.canResubmit, resubmitClick, runAfterClick, runAfter]
   );
 
   const opQuery = useOperationQuery(scopeId);
