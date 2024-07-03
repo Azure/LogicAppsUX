@@ -20,6 +20,7 @@ import { ZipFileStep } from '../createNewProject/createProjectSteps/ZipFileStep'
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
+import { deepMerge } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
@@ -50,19 +51,6 @@ function createAdmZipInstance(zipFilePath: string) {
 function getZipEntries(zipFilePath: string) {
   const zip = createAdmZipInstance(zipFilePath);
   return zip.getEntries();
-}
-
-// Function to deep merge objects
-function deepMergeObjects(target: any, source: any): any {
-  const result = { ...target };
-  for (const key of Object.keys(source)) {
-    if (source[key] instanceof Object && key in target) {
-      result[key] = deepMergeObjects(target[key], source[key]);
-    } else {
-      result[key] = source[key];
-    }
-  }
-  return result;
 }
 
 // Function to extract connection details
@@ -215,7 +203,7 @@ export async function cloudToLocalInternal(
     }
   }
 
-  localSettings = deepMergeObjects(zipSettings, localSettings);
+  deepMerge(localSettings, zipSettings);
   await mergeAndWriteConnections();
   const instance = new ZipFileStep();
   const connection = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);

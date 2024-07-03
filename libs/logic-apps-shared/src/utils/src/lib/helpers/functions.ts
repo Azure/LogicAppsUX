@@ -358,7 +358,7 @@ export function safeSetObjectPropertyValue(
  * @arg {any} target The target location to be merged at.
  * @arg {any} The source location to be merged from.
  */
-function deepMerge(target: any, source: any) {
+export function deepMerge(target: any, source: any) {
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key) && key !== '__proto__' && key !== 'constructor') {
       if (source[key] instanceof Object && !(source[key] instanceof Function)) {
