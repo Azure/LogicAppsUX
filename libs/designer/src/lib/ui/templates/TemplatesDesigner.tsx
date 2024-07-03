@@ -69,13 +69,6 @@ export const TemplatesDesigner = ({
           {filteredTemplateNames.map((templateName: string) => (
             <TemplateCard key={templateName} templateName={templateName} />
           ))}
-          {/* TODO: Delete this, for testing purposes only */}
-          {filteredTemplateNames.map((templateName: string) => (
-            <TemplateCard key={`${templateName}2`} templateName={templateName} />
-          ))}
-          {filteredTemplateNames.map((templateName: string) => (
-            <TemplateCard key={`${templateName}3`} templateName={templateName} />
-          ))}
         </div>
       ) : (
         <div className="msla-templates-empty-list">
