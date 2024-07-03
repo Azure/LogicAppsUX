@@ -258,6 +258,7 @@ export const TemplatesStandaloneDesigner = () => {
                   ],
                 }}
               />
+              <br />
               <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
             </div>
           </TemplatesDataProvider>

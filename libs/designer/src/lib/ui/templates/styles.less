@@ -2,8 +2,9 @@
 @import '../panel/templatePanel/panel.less';
 
 .msla-templates-list {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
 }
 
 .msla-templates-empty-list {

@@ -3,7 +3,8 @@ import { changeCurrentTemplateName, loadTemplate } from '../../../core/state/tem
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
-import { DocumentCard, type IContextualMenuItem, type IContextualMenuProps, IconButton } from '@fluentui/react';
+import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
+import { DocumentCard, IconButton } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
@@ -69,8 +70,12 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     className: 'msla-template-card-connector-menu-box',
   };
 
+  const cardStyles: IDocumentCardStyles = {
+    root: { display: 'inline-block', maxWidth: 1000 },
+  };
+
   return (
-    <DocumentCard className="msla-template-card-wrapper" onClick={onSelectTemplate} aria-label={title}>
+    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onSelectTemplate} aria-label={title}>
       <div className="msla-template-card-data">
         <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
           {title}
