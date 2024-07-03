@@ -247,7 +247,12 @@ const getUnitTestResultPick = async (testResultsDirectory: string) => {
  * @param {string} testResultsDirectory - The directory where the unit test results are stored.
  * @returns A Promise that resolves to the latest unit test result.
  */
-export const getLatestUnitTest = async (testResultsDirectory: string): Promise<{ label: string; data: UnitTestResult; }> => {
-  const unitTestList = await getUnitTestResultsList(testResultsDirectory);
-  return unitTestList.pop();
+export const getLatestUnitTest = async (testResultsDirectory: string): Promise<{ label: string; data: UnitTestResult }> => {
+  const unitTestResultFiles = await fse.readdir(testResultsDirectory);
+  unitTestResultFiles.sort((a, b) => a.localeCompare(b));
+  const latestUnitTestFile = unitTestResultFiles.pop();
+  return {
+    label: latestUnitTestFile.split('.')[0],
+    data: fse.readJsonSync(path.join(testResultsDirectory, latestUnitTestFile)),
+  };
 };
