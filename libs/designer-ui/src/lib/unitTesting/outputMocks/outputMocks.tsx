@@ -1,5 +1,5 @@
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
-import type { ChangeHandler } from '../../editor/base';
+import type { ChangeHandler, ChangeState } from '../../editor/base';
 import type { EventHandler } from '../../eventhandler';
 import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
@@ -7,6 +7,7 @@ import './outputMocks.less';
 import { Divider, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import type { SettingProps } from '../../settings/settingsection';
+import ErrorDetails from './errorDetails';
 
 export interface MockUpdateEvent {
   outputId: string;
@@ -21,24 +22,12 @@ export interface OutputMock {
   output: Record<string, ValueSegment[]>;
   actionResult: string;
   isCompleted?: boolean;
+  errorMessage?: string;
+  errorCode?: string;
 }
 
 export type MockUpdateHandler = EventHandler<MockUpdateEvent>;
-
 export type ActionResultUpdateHandler = EventHandler<ActionResultUpdateEvent>;
-
-export interface OutputMocksProps {
-  isMockSupported: boolean;
-  nodeId: string;
-  onActionResultUpdate: ActionResultUpdateHandler;
-  outputs: OutputsField[];
-  mocks: OutputMock;
-}
-
-export const ActionResults = {
-  SUCCESS: 'Succeeded',
-  FAILED: 'Failed',
-};
 
 export interface OutputsField extends SettingProps {
   id?: string;
@@ -59,9 +48,33 @@ export interface OutputsField extends SettingProps {
   onValueChange?: ChangeHandler;
 }
 
-export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, outputs, mocks }: OutputMocksProps) => {
-  const intl = useIntl();
+export interface OutputMocksProps {
+  isMockSupported: boolean;
+  nodeId: string;
+  onActionResultUpdate: ActionResultUpdateHandler;
+  outputs: OutputsField[];
+  mocks: OutputMock;
+  errorMessage: string;
+  errorCode: string;
+  onMockUpdate: (id: string, newState: ChangeState, type: string) => void;
+}
 
+export const ActionResults = {
+  SUCCESS: 'Succeeded',
+  FAILED: 'Failed',
+};
+
+export const OutputMocks: React.FC<OutputMocksProps> = ({
+  isMockSupported,
+  nodeId,
+  onActionResultUpdate,
+  outputs,
+  mocks,
+  errorMessage,
+  errorCode,
+  onMockUpdate,
+}) => {
+  const intl = useIntl();
   const intlText = {
     UNSUPPORTED_MOCKS: intl.formatMessage({
       defaultMessage:
@@ -75,7 +88,13 @@ export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, out
     <>
       <ActionResult nodeId={nodeId} onActionResultUpdate={onActionResultUpdate} actionResult={mocks.actionResult} />
       <Divider style={{ padding: '16px 0px' }} />
-      <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
+      {mocks.actionResult === ActionResults.SUCCESS ? (
+        <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
+      ) : mocks.actionResult === ActionResults.FAILED ? (
+        <ErrorDetails errorMessage={errorMessage} errorCode={errorCode} onMockUpdate={onMockUpdate} />
+      ) : (
+        <Text>{intlText.UNSUPPORTED_MOCKS}</Text>
+      )}
     </>
   ) : (
     <Text>{intlText.UNSUPPORTED_MOCKS}</Text>

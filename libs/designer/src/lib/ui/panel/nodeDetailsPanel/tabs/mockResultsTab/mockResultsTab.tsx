@@ -10,7 +10,12 @@ import {
   useMocksByOperation,
   useNodeType,
 } from '../../../../../core/state/unitTest/unitTestSelectors';
-import { updateActionResult, updateMock } from '../../../../../core/state/unitTest/unitTestSlice';
+import {
+  updateMockSuccess,
+  updateMockFailure,
+  updateActionResultFailure,
+  updateActionResultSuccess,
+} from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
@@ -21,12 +26,13 @@ import {
   type ChangeState,
   ArrayType,
   type OutputsField,
+  ActionResults,
 } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFilteredOutputs } from './helper';
 
-export const MockResultsTab = () => {
+const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const nodeType = useNodeType(nodeId);
@@ -38,6 +44,7 @@ export const MockResultsTab = () => {
   const mocksValidationErrors = useMocksValidationErrors();
 
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
+
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
       const { value, viewModel } = newState;
@@ -45,16 +52,57 @@ export const MockResultsTab = () => {
       if (!isNullOrUndefined(viewModel) && viewModel.arrayType === ArrayType.COMPLEX) {
         propertiesToUpdate.value = viewModel.uncastedValue;
       }
-      dispatch(updateMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id, completed: true, type: type }));
+
+      if (mocks.actionResult === ActionResults.FAILED) {
+        dispatch(
+          updateMockFailure({
+            operationName: nodeName,
+            outputs: id === 'errorMessage' || id === 'errorCode' ? [] : propertiesToUpdate.value ?? [],
+            outputId: id,
+            completed: true,
+            type: type,
+            errorMessage: id === 'errorMessage' ? (value as unknown as string) : mocks.errorMessage,
+            errorCode: id === 'errorCode' ? (value as unknown as string) : mocks.errorCode,
+          })
+        );
+      } else {
+        dispatch(
+          updateMockSuccess({
+            operationName: nodeName,
+            outputs: propertiesToUpdate.value ?? [],
+            outputId: id,
+            completed: true,
+            type: type,
+          })
+        );
+      }
     },
-    [nodeName, dispatch]
+    [nodeName, dispatch, mocks.actionResult, mocks.errorMessage, mocks.errorCode]
   );
 
   const onActionResultUpdate = useCallback(
     (newState: ActionResultUpdateEvent): void => {
-      dispatch(updateActionResult({ operationName: nodeName, actionResult: newState.actionResult, completed: true }));
+      if (newState.actionResult === ActionResults.FAILED) {
+        dispatch(
+          updateActionResultFailure({
+            operationName: nodeName,
+            actionResult: newState.actionResult,
+            completed: true,
+            errorMessage: mocks.errorMessage,
+            errorCode: mocks.errorCode,
+          })
+        );
+      } else {
+        dispatch(
+          updateActionResultSuccess({
+            operationName: nodeName,
+            actionResult: newState.actionResult,
+            completed: true,
+          })
+        );
+      }
     },
-    [nodeName, dispatch]
+    [nodeName, dispatch, mocks.errorMessage, mocks.errorCode]
   );
 
   const outputs: OutputsField[] = filteredOutputs.map((output: OutputInfo) => {
@@ -91,6 +139,9 @@ export const MockResultsTab = () => {
       onActionResultUpdate={onActionResultUpdate}
       outputs={outputs}
       mocks={mocks}
+      errorMessage={mocks.errorMessage ?? ''}
+      errorCode={mocks.errorCode ?? ''}
+      onMockUpdate={onMockUpdate}
     />
   );
 };
@@ -105,8 +156,8 @@ export const mockResultsTab: PanelTabFn = (intl) => ({
   name: constants.PANEL_TAB_NAMES.MOCK_RESULTS,
   description: intl.formatMessage({
     defaultMessage: 'Mocked Results Tab',
-    id: 'R/UPRD',
-    description: 'An accessability label that describes the mocked results tab',
+    id: 'U7UAV0',
+    description: 'An accessibility label that describes the mocked results tab',
   }),
   visible: true,
   content: <MockResultsTab />,
