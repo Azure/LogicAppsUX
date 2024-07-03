@@ -49,12 +49,15 @@ describe('ui/templates/displayConnections', () => {
         $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '',
       },
-      parameters: {
-        definitions: {},
-        validationErrors: {},
-      },
+      parameterDefinitions: {},
       connections: template1Manifest.connections,
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: undefined,
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -62,15 +65,17 @@ describe('ui/templates/displayConnections', () => {
     store = setupStore(minimalStoreData);
 
     InitConnectionService({
-      getConnector: async () => Promise.resolve({ id: '/serviceProviders/abc', properties: { iconUrl: 'iconUrl', displayName: 'AB C' }})
-    }  as any);
+      getConnector: async () => Promise.resolve({ id: '/serviceProviders/abc', properties: { iconUrl: 'iconUrl', displayName: 'AB C' } }),
+    } as any);
   });
 
   beforeEach(() => {
     renderWithProviders(
       <ReactQueryProvider>
         <DisplayConnections connections={template1Manifest.connections} />
-      </ReactQueryProvider>, { store });
+      </ReactQueryProvider>,
+      { store }
+    );
   });
 
   it('should render the connection ids for connections', async () => {

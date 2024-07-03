@@ -10,7 +10,7 @@ export const setStateHistory = (state: WorkflowLoadingState): void => {
       runId: state.runId,
       language: state.language,
       isLocal: state.isLocal,
-      isConsumption: state.isConsumption,
+      hostingPlan: state.hostingPlan,
       isDarkMode: state.isDarkMode,
       isReadOnly: state.isReadOnly,
       isMonitoringView: state.isMonitoringView,
