@@ -204,8 +204,13 @@ const unitTestSlice = createSlice({
     },
     updateActionResultSuccess: (state: UnitTestState, action: PayloadAction<updateMockResultPayload>) => {
       const { operationName, actionResult, completed } = action.payload;
-      state.mockResults[operationName].actionResult = actionResult;
-      state.mockResults[operationName].isCompleted = completed;
+      state.mockResults[operationName] = {
+        ...state.mockResults[operationName],
+        actionResult,
+        isCompleted: completed,
+        errorMessage: undefined, // Clear error message
+        errorCode: undefined, // Clear error code
+      };
     },
     updateActionResultFailure: (state: UnitTestState, action: PayloadAction<updateMockResultPayload>) => {
       const { operationName, actionResult, completed, errorMessage, errorCode } = action.payload;

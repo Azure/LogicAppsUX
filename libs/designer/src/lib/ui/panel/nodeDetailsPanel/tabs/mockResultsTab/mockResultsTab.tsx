@@ -28,7 +28,7 @@ import {
   type OutputsField,
   ActionResults,
 } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFilteredOutputs } from './helper';
 
@@ -43,15 +43,7 @@ const MockResultsTab = () => {
   const mocks = useMocksByOperation(nodeName);
   const mocksValidationErrors = useMocksValidationErrors();
 
-  const [errorMessage, setErrorMessage] = useState<string>(mocks.errorMessage || '');
-  const [errorCode, setErrorCode] = useState<string>(mocks.errorCode || '');
-
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
-
-  useEffect(() => {
-    setErrorMessage(mocks.errorMessage || '');
-    setErrorCode(mocks.errorCode || '');
-  }, [mocks]);
 
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
@@ -59,12 +51,6 @@ const MockResultsTab = () => {
       const propertiesToUpdate = { value };
       if (!isNullOrUndefined(viewModel) && viewModel.arrayType === ArrayType.COMPLEX) {
         propertiesToUpdate.value = viewModel.uncastedValue;
-      }
-
-      if (id === 'errorMessage') {
-        setErrorMessage(value as unknown as string);
-      } else if (id === 'errorCode') {
-        setErrorCode(value as unknown as string);
       }
 
       if (mocks.actionResult === ActionResults.FAILED) {
@@ -75,8 +61,8 @@ const MockResultsTab = () => {
             outputId: id,
             completed: true,
             type: type,
-            errorMessage: id === 'errorMessage' ? (value as unknown as string) : errorMessage,
-            errorCode: id === 'errorCode' ? (value as unknown as string) : errorCode,
+            errorMessage: id === 'errorMessage' ? (value as unknown as string) : mocks.errorMessage,
+            errorCode: id === 'errorCode' ? (value as unknown as string) : mocks.errorCode,
           })
         );
       } else {
@@ -91,7 +77,7 @@ const MockResultsTab = () => {
         );
       }
     },
-    [nodeName, dispatch, errorMessage, errorCode, mocks.actionResult]
+    [nodeName, dispatch, mocks.actionResult, mocks.errorMessage, mocks.errorCode]
   );
 
   const onActionResultUpdate = useCallback(
@@ -102,8 +88,8 @@ const MockResultsTab = () => {
             operationName: nodeName,
             actionResult: newState.actionResult,
             completed: true,
-            errorMessage,
-            errorCode,
+            errorMessage: mocks.errorMessage,
+            errorCode: mocks.errorCode,
           })
         );
       } else {
@@ -114,12 +100,9 @@ const MockResultsTab = () => {
             completed: true,
           })
         );
-        // Clear error message and code when switching to success
-        setErrorMessage('');
-        setErrorCode('');
       }
     },
-    [nodeName, dispatch, errorMessage, errorCode]
+    [nodeName, dispatch, mocks.errorMessage, mocks.errorCode]
   );
 
   const outputs: OutputsField[] = filteredOutputs.map((output: OutputInfo) => {
@@ -145,10 +128,7 @@ const MockResultsTab = () => {
       tokenMapping: {},
       validationErrors,
       suppressCastingForSerialize: false,
-      onValueChange: (newState: ChangeState) => {
-        console.log('Value Change Detected for ID:', id, 'New State:', newState);
-        onMockUpdate(id, newState, type);
-      },
+      onValueChange: (newState: ChangeState) => onMockUpdate(id, newState, type),
     };
   });
 
@@ -159,10 +139,8 @@ const MockResultsTab = () => {
       onActionResultUpdate={onActionResultUpdate}
       outputs={outputs}
       mocks={mocks}
-      errorMessage={errorMessage}
-      onErrorMessageChange={setErrorMessage}
-      errorCode={errorCode}
-      onErrorCodeChange={setErrorCode}
+      errorMessage={mocks.errorMessage ?? ''}
+      errorCode={mocks.errorCode ?? ''}
       onMockUpdate={onMockUpdate}
     />
   );

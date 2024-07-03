@@ -55,9 +55,7 @@ export interface OutputMocksProps {
   outputs: OutputsField[];
   mocks: OutputMock;
   errorMessage: string;
-  onErrorMessageChange: (value: string) => void;
   errorCode: string;
-  onErrorCodeChange: (value: string) => void;
   onMockUpdate: (id: string, newState: ChangeState, type: string) => void;
 }
 
