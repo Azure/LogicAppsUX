@@ -27,11 +27,11 @@ export const getUniqueConnectorsFromConnections = (
 ): Template.Connection[] => {
   const result: Template.Connection[] = [];
   const finalConnectorIds: string[] = [];
-
   while (allConnections.length > 0) {
     const connection = allConnections.shift() as Template.Connection;
     const normalizedConnectorId = normalizeConnectorId(connection.connectorId, subscriptionId, location).toLowerCase();
     if (!finalConnectorIds.includes(normalizedConnectorId)) {
+      finalConnectorIds.push(normalizedConnectorId);
       result.push({ ...connection, connectorId: normalizedConnectorId });
     }
   }

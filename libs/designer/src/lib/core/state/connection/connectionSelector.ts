@@ -39,14 +39,14 @@ export const useConnectorOnly = (connectorId: string | undefined, enabled = true
   );
 };
 
-export const useConnectorsOnly = (connectorIds?: string[]): UseQueryResult<Connector[] | undefined, unknown> => {
+export const useConnectorsOnly = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> => {
   return useQuery(
-    ['apiOnly', connectorIds],
+    ['useConnectors', connectorIds],
     async () => {
       if (!connectorIds) {
         return null;
       }
-      return await Promise.all(connectorIds.map(async (connectorId) => await ConnectionService().getConnector(connectorId)));
+      return await Promise.all(connectorIds.map(async (connectorId) => [connectorId, await ConnectionService().getConnector(connectorId)]));
     },
     {
       enabled: !!connectorIds,

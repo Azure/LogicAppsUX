@@ -10,7 +10,6 @@ import type {
   IOAuthService,
   ITemplateService,
   IWorkflowService,
-  ISearchService,
   IOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import { createContext } from 'react';
@@ -31,7 +30,6 @@ export interface TemplateServiceOptions {
   functionService?: IFunctionService;
   appServiceService?: IAppServiceService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
-  searchService?: ISearchService;
   templateService?: ITemplateService;
 }
 

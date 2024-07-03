@@ -24,10 +24,9 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const allTemplatesUniqueConnectorIds = useMemo(() => {
     const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
-    const uniqueConnectorsIds = [...new Set(uniqueConnectorsFromConnections.map((connector) => connector.connectorId))];
-    return uniqueConnectorsIds;
+    return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
   }, [availableTemplates, location, subscriptionId]);
-  const { data: allUniqueConnectors } = useConnectorsOnly(allTemplatesUniqueConnectorIds);
+  const { data: allUniqueConnectorsEntries } = useConnectorsOnly(allTemplatesUniqueConnectorIds);
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -78,11 +77,11 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allUniqueConnectors && allUniqueConnectors.length > 0 && (
+        {allUniqueConnectorsEntries && allUniqueConnectorsEntries.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={allUniqueConnectors?.map((connector) => ({
-              value: connector.name,
+            items={allUniqueConnectorsEntries?.map(([connectorId, connector]) => ({
+              value: connectorId,
               displayName: connector.properties.displayName,
             }))}
             onApplyButtonClick={(filterItems) => {

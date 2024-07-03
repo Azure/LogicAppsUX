@@ -15,7 +15,6 @@ import {
   escapeSpecialChars,
   isArmResourceId,
   optional,
-  StandardSearchService,
   StandardOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import {
@@ -303,20 +302,6 @@ const getServices = (
     getAppIdentity: () => workflowApp?.identity as any,
   };
 
-  const searchService = isConsumption
-    ? undefined
-    : new StandardSearchService({
-        baseUrl: armUrl,
-        apiHubServiceDetails: {
-          apiVersion: '2018-07-01-preview',
-          subscriptionId,
-          location,
-        },
-        apiVersion: '2018-07-01-preview',
-        showStatefulOperations: true,
-        httpClient,
-      });
-
   const templateService = isConsumption
     ? undefined
     : new StandardTemplateService({
@@ -337,7 +322,6 @@ const getServices = (
     gatewayService,
     tenantService,
     oAuthService,
-    searchService,
     operationManifestService,
     templateService,
     workflowService,
