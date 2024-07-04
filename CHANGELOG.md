@@ -1,4 +1,27 @@
 # Logic Apps Designer
+## [4.37.0](https://github.com/Azure/LogicAppsUX/compare/v4.36.0...v4.37.0) (2024-07-04)
+
+
+### Features
+
+* **Data Mapper:** Created function panel ([#5056](https://github.com/Azure/LogicAppsUX/issues/5056)) ([86d72ea](https://github.com/Azure/LogicAppsUX/commit/86d72ea9d6bde64cd539c8d47c819a44bb494f5d))
+* **designer:** Adding new operations in data operations ([#5043](https://github.com/Azure/LogicAppsUX/issues/5043)) ([84b6d7d](https://github.com/Azure/LogicAppsUX/commit/84b6d7d3e965f26d23d10df8f8aa10b45cb23bcc))
+* **Templates:** Display errors in panels and disable creates ([#5039](https://github.com/Azure/LogicAppsUX/issues/5039)) ([67c4be1](https://github.com/Azure/LogicAppsUX/commit/67c4be11856f63dca89e7e1ee6e177daa3b92bd6))
+* **templates:** Read featured connectors from manifest to include in Connectors list in template card ([#5061](https://github.com/Azure/LogicAppsUX/issues/5061)) ([3658b43](https://github.com/Azure/LogicAppsUX/commit/3658b4301858a0fc5125e9f0664c6658bdf02788))
+* **Templates:** Sorting Dropdown + Functionality ([#5040](https://github.com/Azure/LogicAppsUX/issues/5040)) ([9936c6f](https://github.com/Azure/LogicAppsUX/commit/9936c6fcf95f563d924c04d0c523ff05b92d0ce5))
+* **Templates:** Use fuse for search operations in templates page ([#5029](https://github.com/Azure/LogicAppsUX/issues/5029)) ([a6e6e39](https://github.com/Azure/LogicAppsUX/commit/a6e6e39c750e5c4f13ffc5f09b589c2d634fb00f))
+
+
+### Bug Fixes
+
+* **designer:** Designer removes object type dynmic parameter when only template expressions are present ([#5041](https://github.com/Azure/LogicAppsUX/issues/5041)) ([fcfcd98](https://github.com/Azure/LogicAppsUX/commit/fcfcd98dff4e97a3be6a031e43c254fc661ec0df))
+* **designer:** Fix deserialization issue in maxWaitingRun ([#5067](https://github.com/Azure/LogicAppsUX/issues/5067)) ([2a05d2d](https://github.com/Azure/LogicAppsUX/commit/2a05d2db051ace55204bb775f7d8a4a199fe90d7))
+* **designer:** Fix issue show premium label for premium connectors (WIP) ([#4926](https://github.com/Azure/LogicAppsUX/issues/4926)) ([48652ff](https://github.com/Azure/LogicAppsUX/commit/48652ff4beac6ec715bb15502614d802119b6016))
+* **designer:** Object inputs must be retained when do not have leaf properties ([#5054](https://github.com/Azure/LogicAppsUX/issues/5054)) ([f2dc328](https://github.com/Azure/LogicAppsUX/commit/f2dc3284fa1a1546a9766c689f8d33b29f0eb5cd))
+* **designer:** Prevent parent node from being dragged below dependent node ([#5047](https://github.com/Azure/LogicAppsUX/issues/5047)) ([ea8387a](https://github.com/Azure/LogicAppsUX/commit/ea8387afee059f1dff00828146c7090b5b3d75f0))
+* **designer:** Revert "Prevent parent node from being dragged below dependent node ([#4973](https://github.com/Azure/LogicAppsUX/issues/4973)) ([#5038](https://github.com/Azure/LogicAppsUX/issues/5038)) ([3a9a73b](https://github.com/Azure/LogicAppsUX/commit/3a9a73b21c9360e8caaac4492581b5973bd81e0e))
+* **designer:** Use Reusable function in Hybrid ([#5035](https://github.com/Azure/LogicAppsUX/issues/5035)) ([f821c0e](https://github.com/Azure/LogicAppsUX/commit/f821c0ec6292109c0b4caa73bdaaf4e0774bdff8))
+
 ## [4.36.0](https://github.com/Azure/LogicAppsUX/compare/v4.35.0...v4.36.0) (2024-06-27)
 
 
