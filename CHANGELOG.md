@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.31.5](https://github.com/Azure/LogicAppsUX/compare/v4.31.4...v4.31.5) (2024-07-05)
+
+
+### Bug Fixes
+
+* **designer:** Fix deserialization issue in maxWaitingRun ([#5068](https://github.com/Azure/LogicAppsUX/issues/5068)) ([af8ed5e](https://github.com/Azure/LogicAppsUX/commit/af8ed5e33101cb4419073257c37a2bb24e89d137)), closes [#5067](https://github.com/Azure/LogicAppsUX/issues/5067)
+
 ### [4.31.4](https://github.com/Azure/LogicAppsUX/compare/v4.31.3...v4.31.4) (2024-07-01)
 
 
