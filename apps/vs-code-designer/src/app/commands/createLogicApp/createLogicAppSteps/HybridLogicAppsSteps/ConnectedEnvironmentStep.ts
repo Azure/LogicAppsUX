@@ -27,7 +27,7 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
     const connectedEnvironment = (await wizardContext.ui.showQuickPick(this.getPicks(wizardContext), { placeHolder })).data;
 
     wizardContext.connectedEnvironment = connectedEnvironment;
-    wizardContext.telemetry.properties.connectedEnvironment = wizardContext.containerApp?.name;
+    wizardContext.telemetry.properties.connectedEnvironment = wizardContext.connectedEnvironment.name;
   }
 
   /**

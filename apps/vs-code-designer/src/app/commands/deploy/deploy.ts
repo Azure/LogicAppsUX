@@ -48,6 +48,7 @@ import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLangu
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
+import { deployToFileShare } from './deployToFileShare';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -100,6 +101,7 @@ async function deploy(
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
+  const isDeployingToFileShare = !!node.customLocation;
   const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
 
   context.telemetry.properties.projectLanguage = language;
@@ -181,7 +183,15 @@ async function deploy(
       : undefined;
 
     try {
-      await innerDeploy(node.site, deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath, context);
+      if (isDeployingToFileShare) {
+        await deployToFileShare(context, node);
+      } else {
+        await innerDeploy(
+          node.site,
+          deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath,
+          context
+        );
+      }
     } finally {
       if (deployProjectPathForWorkflowApp !== undefined) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);

@@ -8,6 +8,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
 import { ConnectedEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectedEnvironmentStep';
+import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
@@ -28,7 +29,6 @@ import {
   AppInsightsCreateStep,
   AppInsightsListStep,
   AppKind,
-  AppServicePlanCreateStep,
   CustomLocationListStep,
   ParsedSite,
   SiteNameStep,
@@ -156,6 +156,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
     executeSteps.push(new LogicAppCreateStep());
     executeSteps.push(new ConnectEnvironmentStep());
+    executeSteps.push(new ContainerAppCreateStep());
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
@@ -164,7 +165,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     if (wizardContext.customLocation) {
       setSiteOS(wizardContext);
-      executeSteps.unshift(new AppServicePlanCreateStep());
+      executeSteps.pop();
     }
 
     wizardContext.activityTitle = localize(
@@ -219,7 +220,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
     await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
     await ext.rgApi.appResourceTree.refresh(context);
-    return new SlotTreeItem(subscription, resolved);
+    const slotTreeItem = new SlotTreeItem(subscription, resolved);
+    slotTreeItem.customLocation = wizardContext.customLocation;
+    slotTreeItem.fileShare = wizardContext.fileShare;
+    return slotTreeItem;
   }
 
   public isAncestorOfImpl(contextValue: string | RegExp): boolean {
