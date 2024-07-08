@@ -10,6 +10,7 @@ import { List } from '@fluentui/react';
 import { ConnectorWithDetails } from '../../../../../ui/templates/connections/connector';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import Markdown from 'react-markdown';
 
 export const OverviewPanel: React.FC = () => {
   const intl = useIntl();
@@ -32,21 +33,22 @@ export const OverviewPanel: React.FC = () => {
       description: 'Name of the organization that published this template',
     }),
   };
-  
+
   return isNullOrUndefined(manifest) ? null : (
     <div className="msla-template-overview">
       <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px'}}>
+        <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
           {templateHasConnections
             ? intl.formatMessage({
-              defaultMessage: 'Connections included in this template',
-              id: 'TnwRGo',
-              description: 'Title for the connections section in the template overview tab',
-            }): intl.formatMessage({
-              defaultMessage: 'No connections are needed in this template',
-              id: 'j2v8BE',
-              description: 'Text to show no connections present in the template.'
-            })}
+                defaultMessage: 'Connections included in this template',
+                id: 'TnwRGo',
+                description: 'Title for the connections section in the template overview tab',
+              })
+            : intl.formatMessage({
+                defaultMessage: 'No connections are needed in this template',
+                id: 'j2v8BE',
+                description: 'Text to show no connections present in the template.',
+              })}
         </Text>
         {templateHasConnections ? <Connections connections={manifest.connections} /> : null}
       </div>
@@ -59,9 +61,9 @@ export const OverviewPanel: React.FC = () => {
               description: 'Title for the prerequisites section in the template overview tab',
             })}
           </Text>
-          <Text align="start" className="msla-template-overview-connections">
+          <Markdown className="msla-template-overview-markdown" linkTarget="_blank">
             {manifest.prerequisites}
-          </Text>
+          </Markdown>
         </div>
       ) : null}
       <div className="msla-template-overview-section">

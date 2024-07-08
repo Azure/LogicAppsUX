@@ -25,6 +25,7 @@
     "react-dnd-multi-backend": "8.0.0",
     "react-hotkeys-hook": "4.3.8",
     "react-intl": "6.3.0",
+    "react-markdown": "8.0.5",
     "react-redux": "8.0.2",
     "reactflow": "11.11.1",
     "redux-thunk": "2.4.2",
