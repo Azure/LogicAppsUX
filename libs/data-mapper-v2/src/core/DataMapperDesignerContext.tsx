@@ -2,7 +2,10 @@ import { createContext } from 'react';
 
 export interface DataMapperDesignerContext {
   readOnly?: boolean;
-  canvasBounds?: DOMRect;
+  canvasBounds?: {
+    width: number;
+    height: number;
+  };
 }
 
 export const DataMapperWrappedContext = createContext<DataMapperDesignerContext>({});
