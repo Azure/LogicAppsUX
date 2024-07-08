@@ -35,17 +35,21 @@ export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
     return;
   }
 
-  const isLeftConnected = functionWithConnections.inputs[0].length > 0;
+  const isLeftConnected = functionWithConnections.inputs[0] && functionWithConnections.inputs[0].length > 0;
   const isRightConnected = functionWithConnections.outputs.length > 0;
+
+  const funcitonHasInputs = functionData.maxNumberOfInputs !== 0;
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
-      <Handle
-        type={'target'}
-        position={Position.Left}
-        className={mergeClasses(styles.handleWrapper, isLeftConnected ? styles.handleConnected : '')}
-        style={{ left: '-7px' }}
-      />
+      {funcitonHasInputs && (
+        <Handle
+          type={'target'}
+          position={Position.Left}
+          className={mergeClasses(styles.handleWrapper, isLeftConnected ? styles.handleConnected : '')}
+          style={{ left: '-7px' }}
+        />
+      )}
       <Popover>
         <PopoverTrigger>
           <Button disabled={!!disabled} className={styles.functionButton}>
