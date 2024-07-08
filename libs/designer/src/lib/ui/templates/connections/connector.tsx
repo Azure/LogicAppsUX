@@ -119,7 +119,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
         <ConnectorIcon
           connectorId={connectorId}
           classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
-          styles={{ root: { width: 50, height: 50 }, image: { width: 'calc(60%)', height: 'calc(60%)' } }}
+          styles={{ root: { width: 50, height: 50 } }}
         />
       )}
       <div className="msla-template-connector-details">
