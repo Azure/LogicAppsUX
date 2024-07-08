@@ -65,7 +65,7 @@ import type { NodeProps } from 'reactflow';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
-import { shouldDisplayRunAfter } from '../connections/helpers';
+import { shouldDisplayRunAfter } from './helpers';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();

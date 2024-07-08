@@ -51,7 +51,7 @@ import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
-import { shouldDisplayRunAfter } from '../connections/helpers';
+import { shouldDisplayRunAfter } from './helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
