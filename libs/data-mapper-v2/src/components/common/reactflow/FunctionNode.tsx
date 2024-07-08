@@ -25,14 +25,18 @@ export interface CardProps {
 
 export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
   const { functionData, disabled, dataTestId } = props.data;
-  const connection = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
+  const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
 
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
-  const isLeftConnected = connection.inputs[0].length > 0;
-  const isRightConnected = connection.outputs.length > 0;
+  if (!functionWithConnections) {
+    return;
+  }
+
+  const isLeftConnected = functionWithConnections.inputs[0].length > 0;
+  const isRightConnected = functionWithConnections.outputs.length > 0;
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
