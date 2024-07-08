@@ -9,7 +9,14 @@ import { getUniqueConnectorsFromConnections } from '../../../core/templates/util
 import { useConnectorsOnly } from '../../../core/state/connection/connectionSelector';
 
 export interface TemplateFiltersProps {
-  detailFilters: Record<string, FilterObject[]>;
+  connectors?: FilterObject[];
+  detailFilters: Record<
+    string,
+    {
+      displayName: string;
+      items: FilterObject[];
+    }
+  >;
 }
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
@@ -93,8 +100,8 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         {Object.keys(detailFilters).map((filterName, index) => (
           <TemplatesFilterDropdown
             key={index}
-            filterName={filterName}
-            items={detailFilters[filterName]}
+            filterName={detailFilters[filterName].displayName}
+            items={detailFilters[filterName].items}
             onApplyButtonClick={(filterItems) => {
               dispatch(setDetailsFilters({ filterName, filters: filterItems }));
             }}

@@ -10,6 +10,7 @@ import { List } from '@fluentui/react';
 import { ConnectorWithDetails } from '../../../../../ui/templates/connections/connector';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import Markdown from 'react-markdown';
 
 export const OverviewPanel: React.FC = () => {
   const intl = useIntl();
@@ -60,9 +61,9 @@ export const OverviewPanel: React.FC = () => {
               description: 'Title for the prerequisites section in the template overview tab',
             })}
           </Text>
-          <Text align="start" className="msla-template-overview-connections">
+          <Markdown className="msla-template-overview-markdown" linkTarget="_blank">
             {manifest.prerequisites}
-          </Text>
+          </Markdown>
         </div>
       ) : null}
       <div className="msla-template-overview-section">
