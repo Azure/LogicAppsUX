@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
@@ -20,14 +20,7 @@ interface DataMapperDesignerProps {
 export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
-  const ref = useRef<HTMLDivElement | null>(null);
   const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
-
-  const updateCanvasBounds = useCallback(() => {
-    if (ref?.current) {
-      setCanvasBounds(ref.current.getBoundingClientRect());
-    }
-  }, [ref]);
 
   if (fileService) {
     InitDataMapperFileService(fileService);
@@ -41,7 +34,7 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       <div className={styles.dataMapperShell}>
         <FunctionPanel />
         <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
-        <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBounds={updateCanvasBounds} canvasBounds={canvasBounds} />
+        <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} canvasBounds={canvasBounds} />
         <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
         <CodeView />
       </div>

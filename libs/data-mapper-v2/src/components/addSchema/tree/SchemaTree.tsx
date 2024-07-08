@@ -46,6 +46,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     [setUpdatedNodes]
   );
 
+  // danielle test this
   useEffect(() => {
     const keys = Object.keys(updatedNodes);
     if (keys.length === totalNodes) {

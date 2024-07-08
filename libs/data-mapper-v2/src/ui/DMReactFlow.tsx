@@ -14,11 +14,11 @@ import { useDrop } from 'react-dnd';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
-  updateCanvasBounds: () => void;
+  updateCanvasBoundsParent: (bounds: DOMRect | undefined) => void;
   canvasBounds: DOMRect | undefined;
 }
 
-export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBounds, canvasBounds }: DMReactFlowProps) => {
+export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent, canvasBounds }: DMReactFlowProps) => {
   useStaticStyles();
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
@@ -26,7 +26,25 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBounds, canvasBoun
   const dispatch = useDispatch<AppDispatch>();
   const [allNodes, setAllNodes] = useState<Node[]>([]);
 
-  const resizeObserver = useMemo(() => new ResizeObserver((_) => updateCanvasBounds()), [updateCanvasBounds]);
+  const setCanvasBounds = useCallback(() => {
+    if (ref?.current) {
+      const bounds = ref.current.getBoundingClientRect();
+      updateCanvasBoundsParent(bounds);
+    }
+  }, [ref, updateCanvasBoundsParent]);
+
+  const resizeObserver = useMemo(() => new ResizeObserver((_) => setCanvasBounds()), [setCanvasBounds]);
+
+  useEffect(() => {
+    if (ref?.current) {
+      resizeObserver.observe(ref.current);
+      setCanvasBounds();
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [ref, resizeObserver, setCanvasBounds]);
 
   const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
@@ -134,13 +152,13 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBounds, canvasBoun
   useEffect(() => {
     if (ref?.current) {
       resizeObserver.observe(ref.current);
-      updateCanvasBounds();
+      setCanvasBounds();
     }
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [ref, resizeObserver, updateCanvasBounds]);
+  }, [ref, resizeObserver, setCanvasBounds]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
