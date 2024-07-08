@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
@@ -9,18 +9,15 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useIntl } from 'react-intl';
-import { Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
-import { Link } from '@fluentui/react';
 
 export const CreateConnectionInTemplate = (props: {
   connectorId: string;
   connectionKey: string;
-  onConnectionCreateClick: () => void;
   onConnectionCreated: (connection: Connection) => void;
-  disabled: boolean;
+  onConnectionCancelled: () => void;
 }) => {
   const intl = useIntl();
-  const { connectorId, connectionKey, onConnectionCreated, onConnectionCreateClick, disabled } = props;
+  const { connectorId, connectionKey, onConnectionCreated, onConnectionCancelled } = props;
   const dispatch = useDispatch<AppDispatch>();
   const { data: connector } = useConnectorOnly(connectorId);
 
@@ -40,8 +37,6 @@ export const CreateConnectionInTemplate = (props: {
     [connectionKey, dispatch]
   );
 
-  const [isOpen, setIsOpen] = useState(false);
-
   const description = intl.formatMessage(
     {
       defaultMessage: 'Fill out the fields below to create a connection for {connectorName}',
@@ -51,30 +46,19 @@ export const CreateConnectionInTemplate = (props: {
     { connectorName: connector?.properties.displayName ?? '' }
   );
   return (
-    <Popover onOpenChange={(_, data) => setIsOpen(data.open)} open={isOpen} withArrow={true} positioning="below">
-      <PopoverTrigger disableButtonEnhancement={true}>
-        <Link className="msla-template-connection-text" disabled={disabled} onClick={onConnectionCreateClick}>
-          {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })}
-        </Link>
-      </PopoverTrigger>
-      <PopoverSurface>
-        <CreateConnectionInternal
-          classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
-          connectionName={isInAppConnector ? connectionKey : undefined}
-          connectorId={connectorId}
-          description={description}
-          operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
-          existingReferences={references}
-          assistedConnectionProps={assistedConnectionProps}
-          showActionBar={false}
-          hideCancelButton={false}
-          updateConnectionInState={updateConnectionInState}
-          onConnectionCreated={onConnectionCreated}
-          onConnectionCancelled={() => {
-            setIsOpen(false);
-          }}
-        />
-      </PopoverSurface>
-    </Popover>
+    <CreateConnectionInternal
+      classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
+      connectionName={isInAppConnector ? connectionKey : undefined}
+      connectorId={connectorId}
+      description={description}
+      operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
+      existingReferences={references}
+      assistedConnectionProps={assistedConnectionProps}
+      showActionBar={false}
+      hideCancelButton={false}
+      updateConnectionInState={updateConnectionInState}
+      onConnectionCreated={onConnectionCreated}
+      onConnectionCancelled={onConnectionCancelled}
+    />
   );
 };

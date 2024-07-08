@@ -1,5 +1,5 @@
-import type { IColumn } from '@fluentui/react';
-import { DetailsList, Icon, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
+import type { IColumn, IDetailsRowProps } from '@fluentui/react';
+import { DetailsList, DetailsRow, Icon, Link, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
 import { ConnectionService, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
@@ -149,23 +149,74 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     }
   };
 
+  const completeConnectionCreate = (): void => {
+    setConnectionInCreate(false);
+    setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: true, onColumnClick: _onColumnClick })));
+  };
+
   const updateItemInConnectionsList = (key: string, item: ConnectionItem) => {
     const newList = connectionsList().map((connection: ConnectionItem) => (connection.key === key ? item : connection));
     setConnectionsList(newList);
   };
 
-  const handleConnectionCreated = (item: ConnectionItem, connection: Connection) => {
-    const newListItems = connectionsList().map((current) =>
-      current.key === item.key
-        ? {
-            ...current,
-            allConnections: [...(current.allConnections ?? []), connection],
-            connection: { id: connection.id, displayName: connection.properties.displayName },
-            hasConnection: true,
-          }
-        : current
-    );
+  const handleConnectionCancelled = (key: string): void => {
+    setConnectionsList(connectionsList().filter((current: ConnectionItem) => current.key !== key));
+    completeConnectionCreate();
+  };
+
+  const handleConnectionCreate = (item: ConnectionItem, connection: Connection) => {
+    const actualItemKey = item.key.replace(createPlaceholderKey, '');
+    const newListItems = connectionsList()
+      .filter((current: ConnectionItem) => current.key !== item.key)
+      .map((current) =>
+        current.key === actualItemKey
+          ? {
+              ...current,
+              allConnections: [...(current.allConnections ?? []), connection],
+              connection: { id: connection.id, displayName: connection.properties.displayName },
+              hasConnection: true,
+            }
+          : current
+      );
     setConnectionsList(newListItems);
+    completeConnectionCreate();
+  };
+
+  const handleConnectionCreateClick = (item: ConnectionItem) => {
+    const newListItems = connectionsList().reduce((result: ConnectionItem[], current: ConnectionItem) => {
+      result.push(current);
+      if (current.key === item.key) {
+        result.push({ ...current, key: `${createPlaceholderKey}${current.key}` });
+      }
+
+      return result;
+    }, []);
+
+    setConnectionsList(newListItems);
+    setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
+    setConnectionInCreate(true);
+  };
+
+  const onRenderRow = (props: IDetailsRowProps | undefined) => {
+    if (props) {
+      const {
+        item,
+        item: { key, connectorId },
+      } = props;
+      if (key.startsWith(createPlaceholderKey)) {
+        return (
+          <CreateConnectionInTemplate
+            connectorId={connectorId}
+            connectionKey={key.replace(createPlaceholderKey, '')}
+            onConnectionCreated={(connection) => handleConnectionCreate(item, connection)}
+            onConnectionCancelled={() => handleConnectionCancelled(key)}
+          />
+        );
+      }
+
+      return <DetailsRow {...props} />;
+    }
+    return null;
   };
 
   const onRenderItemColumn = (item: ConnectionItem, _index: number | undefined, column: IColumn | undefined) => {
@@ -199,14 +250,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
         );
 
       case '$connection':
-        return (
-          <ConnectionName
-            item={item}
-            disabled={isConnectionInCreate}
-            onConnectionCreateClick={() => setConnectionInCreate(true)}
-            onConnectionCreated={(connection) => handleConnectionCreated(item, connection)}
-          />
-        );
+        return <ConnectionName item={item} intl={intl} disabled={isConnectionInCreate} onCreate={handleConnectionCreateClick} />;
 
       default:
         return null;
@@ -220,6 +264,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
         items={connectionsList()}
         columns={columns()}
         compact={true}
+        onRenderRow={onRenderRow}
         onRenderItemColumn={onRenderItemColumn}
         selectionMode={SelectionMode.none}
       />
@@ -270,28 +315,22 @@ const ConnectionStatus = ({ hasConnection, intl }: { hasConnection: boolean; int
 
 const ConnectionName = ({
   item,
+  intl,
   disabled,
-  onConnectionCreateClick,
-  onConnectionCreated,
-}: {
-  item: ConnectionItem;
-  disabled: boolean;
-  onConnectionCreateClick: () => void;
-  onConnectionCreated: (connection: Connection) => void;
-}): JSX.Element => {
+  onCreate,
+}: { item: ConnectionItem; intl: IntlShape; disabled: boolean; onCreate: (item: ConnectionItem) => void }): JSX.Element => {
   const { connection } = item;
   if (connection?.id) {
     return <Text className="msla-template-connection-text">{connection.displayName}</Text>;
   }
 
+  const onCreateConnection = () => {
+    onCreate(item);
+  };
   return (
-    <CreateConnectionInTemplate
-      connectorId={item.connectorId}
-      connectionKey={item.key.replace(createPlaceholderKey, '')}
-      onConnectionCreateClick={onConnectionCreateClick}
-      onConnectionCreated={onConnectionCreated}
-      disabled={disabled}
-    />
+    <Link className="msla-template-connection-text" disabled={disabled} onClick={onCreateConnection}>
+      {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })}
+    </Link>
   );
 };
 
