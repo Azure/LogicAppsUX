@@ -25,6 +25,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
   const updatedNodesRef = useRef<Record<string, Node>>({});
+  const [totalUpdatedNodes, setTotalUpdatedNodes] = useState(0);
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -37,10 +38,12 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   const setUpdatedNode = useCallback(
     (node: Node) => {
+      const existingNodes = updatedNodesRef.current;
       updatedNodesRef.current = {
-        ...updatedNodesRef.current,
+        ...existingNodes,
         [node.id]: node,
       };
+      setTotalUpdatedNodes((prev) => (existingNodes[node.id] ? prev : prev + 1));
     },
     [updatedNodesRef]
   );
@@ -52,19 +55,10 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   });
 
   useLayoutEffect(() => {
-    const updatedNodes = updatedNodesRef.current;
-    const keys = Object.keys(updatedNodes);
-
-    console.log(
-      'Keys: ',
-      Object.values(updatedNodes).map((node) => ({
-        id: node.id,
-        p: node.position,
-      }))
-    );
-
     // NOTE: Update the nodes when all the updated position has been fetched for the keys
-    if (keys.length === totalNodes) {
+    if (totalUpdatedNodes === totalNodes) {
+      const updatedNodes = updatedNodesRef.current;
+      const keys = Object.keys(updatedNodes);
       const currentNodesMap: Record<string, Node> = {};
       for (const node of nodes) {
         currentNodesMap[node.id] = node;
@@ -93,10 +87,11 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       if (nodeChanges.length > 0) {
         const newNodes = applyNodeChanges(nodeChanges, nodes);
         updatedNodesRef.current = {};
+        setTotalUpdatedNodes(0);
         dispatch(updateReactFlowNodes(newNodes));
       }
     }
-  }, [nodes, updatedNodesRef, updatedNodesRef.current, totalNodes, dispatch]);
+  }, [nodes, updatedNodesRef, totalNodes, dispatch, setTotalUpdatedNodes, totalUpdatedNodes]);
 
   useLayoutEffect(() => {
     setOpenKeys(new Set<string>(Object.keys(flattenedScehmaMap).filter((key) => flattenedScehmaMap[key].children.length > 0)));
