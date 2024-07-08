@@ -1,4 +1,41 @@
 # Logic Apps Designer
+## [4.36.0](https://github.com/Azure/LogicAppsUX/compare/v4.35.0...v4.36.0) (2024-06-27)
+
+
+### Features
+
+* **designer:** Hybrid Work on Designer ([#5033](https://github.com/Azure/LogicAppsUX/issues/5033)) ([a3edd5d](https://github.com/Azure/LogicAppsUX/commit/a3edd5daa9a9e972b7292be65f08b3e8601de840))
+* **docs:** Add sanitizing instructions to HAR file ([#5034](https://github.com/Azure/LogicAppsUX/issues/5034)) ([68cdd46](https://github.com/Azure/LogicAppsUX/commit/68cdd464642a04f12a693b0ace40d04a223bf402))
+* **Templates:** Replace Filter Pills With Multi Dropdown ([#5027](https://github.com/Azure/LogicAppsUX/issues/5027)) ([27ce576](https://github.com/Azure/LogicAppsUX/commit/27ce576c2dfba258692d659356c343103a11d55e))
+
+## [4.35.0](https://github.com/Azure/LogicAppsUX/compare/v4.34.0...v4.35.0) (2024-06-27)
+
+
+### Features
+
+* **templates:** Add newly created connections in workflow create payload ([#5026](https://github.com/Azure/LogicAppsUX/issues/5026)) ([9519522](https://github.com/Azure/LogicAppsUX/commit/95195226046f483ee11bacd603e527bb3f9209cc))
+* **Templates:** Updating CreateWorkflow panel with latest UI + Logic ([#5004](https://github.com/Azure/LogicAppsUX/issues/5004)) ([673e1e6](https://github.com/Azure/LogicAppsUX/commit/673e1e61f65ee90edd33dd2943f8a4f563e5f4e6))
+
+
+### Bug Fixes
+
+* **designer:** Add aria label for close button on connections panel ([#5021](https://github.com/Azure/LogicAppsUX/issues/5021)) ([dcce4bf](https://github.com/Azure/LogicAppsUX/commit/dcce4bf1011158787c86080cb18b90b4ea43290d))
+
+## [4.34.0](https://github.com/Azure/LogicAppsUX/compare/v4.33.0...v4.34.0) (2024-06-26)
+
+
+### Features
+
+* **Templates:** Added Filter and Search UI + Functionality ([#5011](https://github.com/Azure/LogicAppsUX/issues/5011)) ([b843710](https://github.com/Azure/LogicAppsUX/commit/b843710eb31e035f7c486034df3109aec3fa4b8c))
+* **templates:** Adding connection create UI in list grid ([#5022](https://github.com/Azure/LogicAppsUX/issues/5022)) ([ea3d271](https://github.com/Azure/LogicAppsUX/commit/ea3d271b2a907e976bc4bc4ddf5d671272ffd07a))
+
+
+### Bug Fixes
+
+* **designer:** Ensure OpenAPI token keys are normalized ([#5023](https://github.com/Azure/LogicAppsUX/issues/5023)) ([c6a1341](https://github.com/Azure/LogicAppsUX/commit/c6a1341ffa19a1fd30df7e968a2db73716d39b60))
+* **designer:** Hide requestOptions for consumption SKU users ([#5017](https://github.com/Azure/LogicAppsUX/issues/5017)) ([81cc703](https://github.com/Azure/LogicAppsUX/commit/81cc703f222fd0691c2957cc5398ab46c49e66e1))
+* **vscode:** Update bundle dependencies to dotnetVersions ([#5014](https://github.com/Azure/LogicAppsUX/issues/5014)) ([77edd5a](https://github.com/Azure/LogicAppsUX/commit/77edd5ae08c71e063f441bd7546594d5169d1069))
+
 ## [4.33.0](https://github.com/Azure/LogicAppsUX/compare/v4.32.0...v4.33.0) (2024-06-24)
 
 

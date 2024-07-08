@@ -274,7 +274,7 @@ export const General = ({
           min: maximumWaitingRunsMetadata.min,
           type: 'number',
         },
-        visible: concurrency?.isSupported && concurrency?.value?.enabled,
+        visible: isTrigger && concurrency?.isSupported && concurrency?.value?.enabled,
       },
       {
         settingType: 'MultiAddExpressionEditor',

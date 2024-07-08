@@ -2,7 +2,7 @@
 export { BaseSearchService, getClientBuiltInOperations, getClientBuiltInConnectors } from './search';
 export type { BaseSearchServiceOptions } from './search';
 // Manifests
-export { BaseOperationManifestService, foreachOperationInfo, supportedBaseManifestObjects } from './operationmanifest';
+export { BaseOperationManifestService, foreachOperationInfo, supportedBaseManifestObjects, isBuiltInOperation, getBuiltInOperationInfo } from './operationmanifest';
 export type { BaseOperationManifestServiceOptions } from './operationmanifest';
 export { frequencyValues } from './manifests/schedule';
 // Connector
@@ -30,6 +30,8 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// Template
+export type { TemplateServiceOptions } from './template';
 // Tenant
 export { BaseTenantService } from './tenant';
 export type { BaseTenantServiceOptions } from './tenant';

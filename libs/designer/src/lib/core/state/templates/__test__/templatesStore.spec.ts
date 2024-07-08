@@ -2,6 +2,7 @@ import { describe, beforeAll, it, expect } from 'vitest';
 import { AppStore, setupStore } from '../store';
 import { changeCurrentTemplateName, updateKind, updateWorkflowName } from '../templateSlice';
 import { manifestSlice, setavailableTemplates, setavailableTemplatesNames } from '../manifestSlice';
+import { SkuType, WorkflowKindType } from '../../../../../../../logic-apps-shared/src/utils/src/lib/models/template';
 
 describe('template store reducers', () => {
   let store: AppStore;
@@ -14,14 +15,23 @@ describe('template store reducers', () => {
         templateName: '',
         manifest: undefined,
         workflowDefinition: undefined,
-        parameters: {
-          definitions: {},
-          validationErrors: {},
+        parameterDefinitions: {},
+        connections: {},
+        servicesInitialized: false,
+        errors: {
+          workflow: undefined,
+          kind: undefined,
+          parameters: {},
+          connections: undefined,
         },
-        connections: [],
       },
       manifest: {
         availableTemplateNames: undefined,
+        filters: {
+          sortKey: 'a-to-z',
+          connectors: undefined,
+          detailFilters: {},
+        },
       },
     });
   });
@@ -49,11 +59,13 @@ describe('template store reducers', () => {
     const manifest1 = {
       title: 'title',
       description: 'description',
-      skus: ['sku1'],
-      kinds: ['kind1'],
+      skus: ['standard' as SkuType],
+      kinds: ['kind1' as WorkflowKindType],
+      details: {},
       artifacts: [],
+      images: {},
       parameters: [],
-      connections: [],
+      connections: {},
     };
     store.dispatch(
       setavailableTemplates({

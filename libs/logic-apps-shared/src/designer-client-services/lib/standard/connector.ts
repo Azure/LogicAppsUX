@@ -3,6 +3,7 @@ import { ArgumentException, UnsupportedException } from '../../../utils/src';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
+import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
@@ -64,11 +65,26 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
+    let response = null;
+    if (isHybridLogicApp(uri)) {
+      response = await httpClient.post({
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        headers: {
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
+            .split('/')
+            .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
+          'x-ms-logicapps-proxy-method': 'POST',
+        },
+        content: { parameters: invokeParameters, configuration },
+      });
+    } else {
+      response = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content: { parameters: invokeParameters, configuration },
+      });
+    }
+
     return this._getResponseFromDynamicApi(response, uri);
   }
 
@@ -101,11 +117,27 @@ export class StandardConnectorService extends BaseConnectorService {
     }
 
     const uri = `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`;
-    const response = await httpClient.post({
-      uri,
-      queryParameters: { 'api-version': apiVersion },
-      content: { parameters: invokeParameters, configuration },
-    });
+
+    let response = null;
+    if (isHybridLogicApp(uri)) {
+      response = await httpClient.post({
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        headers: {
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
+            .split('/')
+            .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+        content: { parameters: invokeParameters, configuration },
+      });
+    } else {
+      response = await httpClient.post({
+        uri,
+        queryParameters: { 'api-version': apiVersion },
+        content: { parameters: invokeParameters, configuration },
+      });
+    }
+
     return this._getResponseFromDynamicApi(response, uri);
   }
 
