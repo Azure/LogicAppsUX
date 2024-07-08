@@ -6,7 +6,7 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 ## Azure Logic Apps - Introducing Azure Logic Apps Rules Engine (preview)
 
-Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces Rules Engine which is a decision management inference engine that provides the capability for customers to build Standard workflows in Azure Logic Apps and integrate readable, declarative, and semantically rich rules that operate on multiple data sources. The native data sources available today for the Rules Engine are XML and .NET objects. For more information, see [Decision management and business logic integration using the Azure Logic Apps Rules Engine (Preview)](https://go.microsoft.com/fwlink/?linkid=2279508).
+Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces the Rules Engine, a decision management inference engine. This engine allows customers to build Standard workflows in Azure Logic Apps and integrate readable, declarative, and semantically rich rules that operate on multiple data sources. Currently, the native data sources available for the Rules Engine are XML and .NET objects. For more information, see [Decision management and business logic integration using the Azure Logic Apps Rules Engine (Preview)](https://go.microsoft.com/fwlink/?linkid=2279508).
 
 ## Azure Logic Apps - Introducing .NET 8 Custom Code support (preview)
 
