@@ -20,8 +20,8 @@ export const RunAfterMenuItem = (props: RunAfterMenuItemProps) => {
 
   const runAfterMessage = intl.formatMessage({
     defaultMessage: 'Run After',
-    id: 'rioocq',
-    description: 'Run After text',
+    id: 'lXIgtx',
+    description: 'Button label for checking the action that this operation runs after',
   });
 
   const titleText = runAfterMessage;
@@ -33,7 +33,7 @@ export const RunAfterMenuItem = (props: RunAfterMenuItemProps) => {
         area: 'RunAfterMenuItem:onRunAfterClick',
         args: [isScope ? 'scope' : isTrigger ? 'trigger' : 'action'],
         level: LogEntryLevel.Verbose,
-        message: 'Clicked Run After.',
+        message: 'Clicked Run After In Context Menu.',
       });
     },
     [isScope, isTrigger, onClick]

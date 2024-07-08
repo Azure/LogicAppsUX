@@ -50,6 +50,8 @@ import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
+import { RUN_AFTER_PANEL_TAB } from './constants';
+import { shouldDisplayRunAfter } from '../connections/helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -75,7 +77,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
-  const panelTabName = 'SETTINGS';
 
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
@@ -199,18 +200,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const runAfterClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
-    dispatch(selectPanelTab(panelTabName));
+    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
   }, [dispatch, scopeId]);
 
-  const shouldDisplayRunAfter = (operation: LogicAppsV2.ActionDefinition): boolean => {
-    if (!operation || !operation.runAfter) {
-      return false;
-    }
-    return Object.keys(operation.runAfter).length > 0;
-  };
-
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, scopeId) as LogicAppsV2.OperationDefinition;
-  const runAfter = isTrigger ? false : shouldDisplayRunAfter(operationFromWorkflow);
+  const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(

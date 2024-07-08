@@ -64,6 +64,8 @@ import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
+import { RUN_AFTER_PANEL_TAB } from './constants';
+import { shouldDisplayRunAfter } from '../connections/helpers';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -88,7 +90,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
-  const panelTabName = 'SETTINGS';
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -222,7 +223,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const runAfterClick = useCallback(() => {
     handleNodeSelection();
-    dispatch(selectPanelTab(panelTabName));
+    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
   }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {
@@ -242,15 +243,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
 
-  const shouldDisplayRunAfter = (operation: LogicAppsV2.ActionDefinition): boolean => {
-    if (!operation || !operation.runAfter) {
-      return false;
-    }
-    return Object.keys(operation.runAfter).length > 0;
-  };
-
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, id) as LogicAppsV2.OperationDefinition;
-  const runAfter = isTrigger ? false : shouldDisplayRunAfter(operationFromWorkflow);
+  const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(
