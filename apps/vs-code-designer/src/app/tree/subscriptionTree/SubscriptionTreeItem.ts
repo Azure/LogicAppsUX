@@ -7,7 +7,6 @@ import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvide
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
-import { ConnectedEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectedEnvironmentStep';
 import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
@@ -126,9 +125,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     promptSteps.push(new SiteNameStep());
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
-    promptSteps.push(new ResourceGroupListStep());
     promptSteps.push(new CustomLocationStorageAccountStep());
-    promptSteps.push(new ConnectedEnvironmentStep());
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,

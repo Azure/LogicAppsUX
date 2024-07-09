@@ -101,10 +101,6 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
   private async getNewSiteConfig(context: ILogicAppWizardContext): Promise<SiteConfig> {
     const newSiteConfig: SiteConfig = {};
     if (context.newSiteOS === WebsiteOS.linux) {
-      if (context.useConsumptionPlan) {
-        newSiteConfig.use32BitWorkerProcess = false;
-      }
-
       if (context.customLocation) {
         newSiteConfig.alwaysOn = true;
       }
