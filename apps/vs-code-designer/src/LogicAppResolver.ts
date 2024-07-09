@@ -68,9 +68,11 @@ export class LogicAppResolver implements AppResourceResolver {
     const hybridLogicAppsSites = ext.hybridLogicAppSitesMap.get(subContext.subscriptionId);
 
     if (!logicAppsSites || !hybridLogicAppsSites) {
-      const sites = await LogicAppResolver.getSubscriptionSites(context, subContext);
-      return new Map([...sites.logicApps, ...(sites.hybridLogicApps as unknown as Map<string, Site>)]);
+      return await LogicAppResolver.getSubscriptionSites(context, subContext);
     }
-    return new Map([...logicAppsSites, ...hybridLogicAppsSites]);
+    return {
+      logicApps: logicAppsSites,
+      hybridLogicApps: hybridLogicAppsSites,
+    };
   }
 }

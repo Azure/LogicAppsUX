@@ -36,7 +36,7 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
    * @returns {boolean} - True if this step should be prompted, false otherwise.
    */
   public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.customLocation;
+    return !!wizardContext.customLocation && !wizardContext.useWorkflowStandard;
   }
 
   /**
@@ -46,7 +46,10 @@ export class ConnectedEnvironmentStep extends AzureWizardPromptStep<ILogicAppWiz
    */
   private async getPicks(wizardContext: ILogicAppWizardContext): Promise<IAzureQuickPickItem<ContainerApp>[]> {
     const client = await createContainerClient(wizardContext);
-    const sitesList = await uiUtils.listAllIterator(client.connectedEnvironments.listBySubscription());
+    const customLocation = wizardContext.customLocation.kubeEnvironment.location.replace(/[()]/g, '');
+    const sitesList = (await uiUtils.listAllIterator(client.connectedEnvironments.listBySubscription())).filter(
+      (connectedEnvironment) => connectedEnvironment.location === customLocation
+    );
     const picks = sitesList.map((site) => {
       return { label: site.name, data: site };
     });

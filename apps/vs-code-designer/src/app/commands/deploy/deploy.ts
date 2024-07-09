@@ -227,9 +227,16 @@ async function getLogicAppsPicks(
   context: IActionContext,
   subContext: ISubscriptionContext
 ): Promise<IAzureQuickPickItem<[Site | undefined, boolean]>[]> {
-  const listOfLogicApps = await LogicAppResolver.getAppResourceSiteBySubscription(context, subContext);
-  const picks: { label: string; data: [Site, boolean]; description?: string }[] = Array.from(listOfLogicApps).map(([_id, site]) => {
-    return { label: site.name, data: [site, false] };
+  const sites = await LogicAppResolver.getAppResourceSiteBySubscription(context, subContext);
+  const picks: { label: string; data: [Site, boolean]; description?: string }[] = [];
+  sites.logicApps;
+
+  Array.from(sites.logicApps).forEach(([_id, site]) => {
+    picks.push({ label: site.name, data: [site, false] });
+  });
+
+  Array.from(sites.hybridLogicApps).forEach(([_id, site]) => {
+    picks.push({ label: `${site.name} (Hybrid)`, data: [site as unknown as Site, false] });
   });
 
   picks.sort((a, b) => a.label.localeCompare(b.label));
