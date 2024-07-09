@@ -6,7 +6,7 @@ export interface Manifest {
   title: string;
   description: string;
   skus: SkuType[];
-  kinds: WorkflowKindType[];
+  kinds?: WorkflowKindType[];
   details: Record<string, string>;
   tags?: string[];
   artifacts: Artifact[];
@@ -14,6 +14,7 @@ export interface Manifest {
   prerequisites?: string;
   parameters: Parameter[];
   connections: Record<string, Connection>;
+  featuredOperations?: { type: string; kind?: string; }[];
 }
 
 export interface Artifact {

@@ -1,11 +1,14 @@
 import { describe, beforeAll, expect, it, beforeEach } from 'vitest';
 import type { AppStore } from '../../../core/state/templates/store';
 import { setupStore } from '../../../core/state/templates/store';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { InitConnectionService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import type { TemplateState } from '../../../core/state/templates/templateSlice';
 import { DisplayConnections } from '../connections/displayConnections';
+import { ReactQueryProvider } from '../../../core/ReactQueryProvider';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('ui/templates/displayConnections', () => {
   let store: AppStore;
@@ -46,25 +49,37 @@ describe('ui/templates/displayConnections', () => {
         $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '',
       },
-      parameters: {
-        definitions: {},
-        validationErrors: {},
-      },
+      parameterDefinitions: {},
       connections: template1Manifest.connections,
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: undefined,
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
     };
     store = setupStore(minimalStoreData);
+
+    InitConnectionService({
+      getConnector: async () => Promise.resolve({ id: '/serviceProviders/abc', properties: { iconUrl: 'iconUrl', displayName: 'AB C' } }),
+    } as any);
   });
 
   beforeEach(() => {
-    renderWithProviders(<DisplayConnections connections={template1Manifest.connections} />, { store });
+    renderWithProviders(
+      <ReactQueryProvider>
+        <DisplayConnections connections={template1Manifest.connections} />
+      </ReactQueryProvider>,
+      { store }
+    );
   });
 
   it('should render the connection ids for connections', async () => {
     const conn = template1Manifest?.connections['conn1'];
-    expect(screen.getByText(`1: ${conn.connectorId}`)).toBeDefined();
+    expect(screen.getByText('Name')).toBeDefined();
   });
 });

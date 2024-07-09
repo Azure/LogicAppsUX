@@ -1,32 +1,23 @@
-import type { AppDispatch, RootState } from "../core/state/Store";
-import { useEffect, useMemo, useCallback, useRef } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { useSelector, useDispatch } from "react-redux";
-import type {
-  Connection,
-  Node,
-  Edge,
-  ConnectionLineComponent,
-} from "reactflow";
-import ReactFlow, { ReactFlowProvider, addEdge } from "reactflow";
-import { AddSchemaDrawer } from "../components/addSchema/AddSchemaPanel";
-import { SchemaType } from "@microsoft/logic-apps-shared";
-import { EditorCommandBar } from "../components/commandBar/EditorCommandBar";
-import { reactFlowStyle, useStaticStyles, useStyles } from "./styles";
-import { Panel as FunctionPanel } from "../components/functionsPanel/Panel";
-import SchemaNode from "../components/common/reactflow/SchemaNode";
-import ConnectionLine from "../components/common/reactflow/ConnectionLine";
-import ConnectedEdge from "../components/common/reactflow/ConnectedEdge";
-import type { ConnectionAction } from "../core/state/DataMapSlice";
-import {
-  makeConnection,
-  updateReactFlowEdges,
-  updateReactFlowNodes,
-} from "../core/state/DataMapSlice";
-import type { IDataMapperFileService } from "../core";
-import { DataMapperWrappedContext, InitDataMapperFileService } from "../core";
-import { CodeView } from "../components/codeView/CodeView";
+import type { AppDispatch, RootState } from '../core/state/Store';
+import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
+import { useDrop } from 'react-dnd';
+import { useSelector, useDispatch } from 'react-redux';
+import type { Connection, Node, Edge, ConnectionLineComponent } from 'reactflow';
+import ReactFlow, { addEdge, useReactFlow } from 'reactflow';
+import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
+import { SchemaType } from '@microsoft/logic-apps-shared';
+import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
+import { Panel as FunctionPanel } from '../components/functionsPanel/Panel';
+import SchemaNode from '../components/common/reactflow/SchemaNode';
+import ConnectionLine from '../components/common/reactflow/ConnectionLine';
+import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
+import type { ConnectionAction } from '../core/state/DataMapSlice';
+import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import type { IDataMapperFileService } from '../core';
+import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
+import { CodeView } from '../components/codeView/CodeView';
+import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import useResizeObserver from "use-resize-observer";
 
 interface DataMapperDesignerProps {
@@ -49,6 +40,8 @@ export const DataMapperDesigner = ({
   const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
   });
+  const reactFlowInstance = useReactFlow();
+  const [allNodes, setAllNodes] = useState<Node[]>([]);
 
   const canvasRect = useMemo(() => ref.current?.getBoundingClientRect(), [ref]);
 
@@ -56,16 +49,25 @@ export const DataMapperDesigner = ({
     InitDataMapperFileService(fileService);
   }
 
-  const { nodes, edges } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
-  const isMapStateDirty = useSelector(
-    (state: RootState) => state.dataMap.present.isDirty
-  );
+  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+
+  useEffect(() => {
+    const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
+      id: node[0],
+      type: 'functionNode',
+      data: { functionData: node[1] },
+      position: node[1].position || { x: 10, y: 200 },
+      draggable: true,
+    }));
+    setAllNodes(nodes.concat(newNodes));
+  }, [nodes, functionNodes]);
+
+  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
   const nodeTypes = useMemo(
     () => ({
       schemaNode: SchemaNode,
+      functionNode: FunctionNode,
     }),
     []
   );
@@ -169,71 +171,80 @@ export const DataMapperDesigner = ({
     }
   }, [isMapStateDirty, setIsMapStateDirty]);
 
+  const [, drop] = useDrop(
+    () => ({
+      accept: 'function',
+      drop: (item, monitor) => {
+        const xyPosition = monitor.getClientOffset();
+        if (xyPosition) {
+          if (reactFlowInstance) {
+            const position = reactFlowInstance.screenToFlowPosition({
+              x: xyPosition.x,
+              y: xyPosition.y,
+            });
+            // middle of node is placed where pointer is
+            position.x -= 20;
+            position.y -= 20;
+            return { position };
+          }
+          return { position: xyPosition };
+        }
+        return { position: { x: 0, y: 0 } };
+      },
+    }),
+    [reactFlowInstance]
+  );
+
   return (
-    <DndProvider backend={HTML5Backend}>
-      <ReactFlowProvider>
-        <DataMapperWrappedContext.Provider
-          value={{
-            canvasBounds: { width, height, x: canvasRect?.x, y: canvasRect?.y },
-          }}
-        >
-          <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
-          <div className={styles.dataMapperShell}>
-            <FunctionPanel />
-            <AddSchemaDrawer
-              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-              schemaType={SchemaType.Source}
-            />
-            <div ref={ref} id="editorView" className={styles.canvasWrapper}>
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                nodesDraggable={false}
-                selectNodesOnDrag={false}
-                onlyRenderVisibleElements={false}
-                zoomOnScroll={false}
-                zoomOnPinch={false}
-                nodesConnectable={true}
-                zoomOnDoubleClick={false}
-                nodeTypes={nodeTypes}
-                edgeTypes={edgeTypes}
-                preventScrolling={false}
-                minZoom={1}
-                elementsSelectable={false}
-                maxZoom={1}
-                autoPanOnConnect={false}
-                snapToGrid={true}
-                panOnScroll={false}
-                panOnDrag={false}
-                style={reactFlowStyle}
-                proOptions={{
-                  account: "paid-sponsor",
-                  hideAttribution: true,
-                }}
-                isValidConnection={isValidConnection}
-                onConnect={onEdgeConnect}
-                onEdgeUpdate={onEdgeUpdate}
-                connectionLineComponent={
-                  ConnectionLine as ConnectionLineComponent | undefined
-                }
-                translateExtent={
-                  canvasRect
-                    ? [
-                        [0, 0],
-                        [canvasRect.right, canvasRect.bottom],
-                      ]
-                    : undefined
-                }
-              />
-            </div>
-            <AddSchemaDrawer
-              onSubmitSchemaFileSelection={(schema) => console.log(schema)}
-              schemaType={SchemaType.Target}
-            />
-            <CodeView />
-          </div>
-        </DataMapperWrappedContext.Provider>
-      </ReactFlowProvider>
-    </DndProvider>
+    <DataMapperWrappedContext.Provider value={{ canvasBounds: { width, height, x: canvasRect?.x, y: canvasRect?.y }, }}>
+      <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
+      <div className={styles.dataMapperShell}>
+        <FunctionPanel />
+        <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
+        <div ref={ref} id="editorView" className={styles.canvasWrapper}>
+          <ReactFlow
+            ref={drop}
+            nodes={allNodes}
+            edges={edges}
+            nodesDraggable={false}
+            selectNodesOnDrag={false}
+            onlyRenderVisibleElements={false}
+            zoomOnScroll={false}
+            zoomOnPinch={false}
+            nodesConnectable={true}
+            zoomOnDoubleClick={false}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            preventScrolling={false}
+            minZoom={1}
+            elementsSelectable={false}
+            maxZoom={1}
+            autoPanOnConnect={false}
+            snapToGrid={true}
+            panOnScroll={false}
+            panOnDrag={false}
+            style={reactFlowStyle}
+            proOptions={{
+              account: 'paid-sponsor',
+              hideAttribution: true,
+            }}
+            isValidConnection={isValidConnection}
+            onConnect={onEdgeConnect}
+            onEdgeUpdate={onEdgeUpdate}
+            connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
+            translateExtent={
+              canvasRect
+                ? [
+                    [0, 0],
+                    [canvasRect.right, canvasRect.bottom],
+                  ]
+                : undefined
+            }
+          />
+        </div>
+        <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
+        <CodeView />
+      </div>
+    </DataMapperWrappedContext.Provider>
   );
 };

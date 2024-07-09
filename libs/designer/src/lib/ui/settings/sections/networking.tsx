@@ -6,6 +6,7 @@ import type { Settings, SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import { useLegacyWorkflowParameters } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 export interface NetworkingSectionProps extends SectionProps {
   chunkedTransferMode: boolean;
@@ -63,6 +64,7 @@ export const Networking = ({
 }: NetworkingSectionProps): JSX.Element => {
   const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
   const maximumSize = uploadChunkMetadata?.maximumSize ?? downloadChunkMetadata?.maximumSize;
+  const useLegacyConsumptionCheck = !!useLegacyWorkflowParameters();
 
   const intl = useIntl();
   const asyncPatternTitle = intl.formatMessage({
@@ -328,7 +330,7 @@ export const Networking = ({
         onValueChange: (_, newVal) => onRequestOptionsChange(newVal as string),
         ariaLabel: requestOptionsTitle,
       },
-      visible: requestOptions?.isSupported,
+      visible: requestOptions?.isSupported && !useLegacyConsumptionCheck,
     };
   };
 
