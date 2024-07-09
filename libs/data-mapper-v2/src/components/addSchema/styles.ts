@@ -1,55 +1,56 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands } from "@fluentui/react-components";
 
 export const useStyles = makeStyles({
   drawerWrapper: {
-    display: 'flex',
+    display: "flex",
   },
   drawerRoot: {
-    backgroundColor: '#fff',
-    maxWidth: '480px',
-    minWidth: '319px',
-    height: '100%',
+    backgroundColor: "#fff",
+    maxWidth: "480px",
+    minWidth: "319px",
+    height: "100%",
   },
   defaultDrawerwrapper: {
-    width: '100%',
+    width: "100%",
   },
   headerWrapper: {
-    display: 'flex',
-    width: '100%',
-    marginTop: '20px',
-    marginBottom: '10px',
+    display: "flex",
+    width: "100%",
+    marginTop: "20px",
+    marginBottom: "10px",
   },
   rightCustomHeader: {
-    alignSelf: 'center',
-    marginLeft: 'auto',
-    marginRight: '10px',
+    alignSelf: "center",
+    marginLeft: "auto",
+    marginRight: "10px",
   },
   header: {
-    paddingLeft: '20px',
-    fontWeight: 'initial',
-    fontSize: '20px',
+    paddingLeft: "20px",
+    fontWeight: "initial",
+    fontSize: "20px",
   },
   bodyWrapper: {
-    display: 'flex',
-    width: '100%',
-    flexDirection: 'column',
+    display: "flex",
+    width: "100%",
+    flexDirection: "column",
+    height: "100%",
   },
   selectSchemaWrapper: {
-    paddingLeft: '20px',
-    display: 'flex',
-    flexDirection: 'column',
+    paddingLeft: "20px",
+    display: "flex",
+    flexDirection: "column",
   },
   root: {
-    display: 'flex',
-    height: '100%',
+    display: "flex",
+    height: "100%",
   },
   fileSelectedDrawer: {
-    backgroundColor: '#F6FAFE',
+    backgroundColor: "#F6FAFE",
   },
   leftDrawer: {
-    ...shorthands.borderRight('1px', 'solid', '#ddd'),
+    ...shorthands.borderRight("1px", "solid", "#ddd"),
   },
   rightDrawer: {
-    ...shorthands.borderLeft('1px', 'solid', '#ddd'),
+    ...shorthands.borderLeft("1px", "solid", "#ddd"),
   },
 });

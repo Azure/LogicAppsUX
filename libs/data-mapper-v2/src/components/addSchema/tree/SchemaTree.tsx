@@ -1,14 +1,18 @@
-import { type SchemaExtended, SchemaType, equals } from '@microsoft/logic-apps-shared';
-import { Tree, mergeClasses } from '@fluentui/react-components';
-import { useStyles } from './styles';
-import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useIntl } from 'react-intl';
-import RecursiveTree from './RecursiveTree';
-import { flattenSchemaNodeMap } from '../../../utils';
-import { type Node, applyNodeChanges, type NodeChange } from 'reactflow';
-import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateReactFlowNodes } from '../../../core/state/DataMapSlice';
+import {
+  type SchemaExtended,
+  SchemaType,
+  equals,
+} from "@microsoft/logic-apps-shared";
+import { Tree, mergeClasses } from "@fluentui/react-components";
+import { useStyles } from "./styles";
+import { useState, useMemo, useLayoutEffect, useRef, useCallback } from "react";
+import { useIntl } from "react-intl";
+import RecursiveTree from "./RecursiveTree";
+import { flattenSchemaNodeMap } from "../../../utils";
+import { type Node, applyNodeChanges, type NodeChange } from "reactflow";
+import type { AppDispatch, RootState } from "../../../core/state/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { updateReactFlowNodes } from "../../../core/state/DataMapSlice";
 
 export type SchemaTreeProps = {
   schemaType?: SchemaType;
@@ -22,33 +26,56 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     schema: { schemaTreeRoot },
   } = props;
 
-  const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
+  const isLeftDirection = useMemo(
+    () => equals(schemaType, SchemaType.Source),
+    [schemaType]
+  );
   const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
-  const [updatedNodes, setUpdatedNodes] = useState<Record<string, Node>>({});
+  const updatedNodesRef = useRef<Record<string, Node>>({});
+  const [totalUpdatedNodes, setTotalUpdatedNodes] = useState(0);
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const treeRef = useRef<HTMLDivElement | null>(null);
-  const flattenedScehmaMap = useMemo(() => flattenSchemaNodeMap(schemaTreeRoot), [schemaTreeRoot]);
-  const totalNodes = useMemo(() => Object.keys(flattenedScehmaMap).length, [flattenedScehmaMap]);
-  const { nodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const flattenedScehmaMap = useMemo(
+    () => flattenSchemaNodeMap(schemaTreeRoot),
+    [schemaTreeRoot]
+  );
 
-  const treeAriaLabel = intl.formatMessage({
-    defaultMessage: 'Schema tree',
-    id: 't2Xi1/',
-    description: 'tree showing schema nodes',
-  });
+  const totalNodes = useMemo(
+    () => Object.keys(flattenedScehmaMap).length,
+    [flattenedScehmaMap]
+  );
+
+  const { nodes } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
 
   const setUpdatedNode = useCallback(
     (node: Node) => {
-      setUpdatedNodes((prev) => ({ ...prev, [node.id]: node }));
+      const existingNodes = updatedNodesRef.current;
+      setTotalUpdatedNodes((prev) =>
+        existingNodes[node.id] ? prev : prev + 1
+      );
+      updatedNodesRef.current = {
+        ...existingNodes,
+        [node.id]: node,
+      };
     },
-    [setUpdatedNodes]
+    [updatedNodesRef]
   );
 
-  useEffect(() => {
-    const keys = Object.keys(updatedNodes);
-    if (keys.length === totalNodes) {
+  const treeAriaLabel = intl.formatMessage({
+    defaultMessage: "Schema tree",
+    id: "t2Xi1/",
+    description: "tree showing schema nodes",
+  });
+
+  useLayoutEffect(() => {
+    // NOTE: Update the nodes when all the updated position has been fetched for the keys
+    if (totalUpdatedNodes === totalNodes) {
+      const updatedNodes = updatedNodesRef.current;
+      const keys = Object.keys(updatedNodes);
       const currentNodesMap: Record<string, Node> = {};
       for (const node of nodes) {
         currentNodesMap[node.id] = node;
@@ -61,14 +88,17 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
         if (updatedNode.position.x < 0 && updatedNode.position.y < 0) {
           if (currentNode) {
-            nodeChanges.push({ id: key, type: 'remove' });
+            nodeChanges.push({ id: key, type: "remove" });
           }
         } else if (!currentNode) {
-          nodeChanges.push({ type: 'add', item: updatedNode });
-        } else if (currentNode.position.x !== updatedNode.position.x && currentNode.position.y !== updatedNode.position.y) {
+          nodeChanges.push({ type: "add", item: updatedNode });
+        } else if (
+          currentNode.position.x !== updatedNode.position.x ||
+          currentNode.position.y !== updatedNode.position.y
+        ) {
           nodeChanges.push({
             id: key,
-            type: 'position',
+            type: "position",
             position: updatedNode.position,
           });
         }
@@ -76,19 +106,37 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
       if (nodeChanges.length > 0) {
         const newNodes = applyNodeChanges(nodeChanges, nodes);
-        setUpdatedNodes({});
         dispatch(updateReactFlowNodes(newNodes));
       }
+      updatedNodesRef.current = {};
+      setTotalUpdatedNodes(0);
     }
-  }, [nodes, updatedNodes, totalNodes, dispatch]);
+  }, [
+    nodes,
+    updatedNodesRef,
+    totalNodes,
+    dispatch,
+    setTotalUpdatedNodes,
+    totalUpdatedNodes,
+  ]);
 
-  useEffect(() => {
-    setOpenKeys(new Set<string>(Object.keys(flattenedScehmaMap).filter((key) => flattenedScehmaMap[key].children.length > 0)));
+  useLayoutEffect(() => {
+    setOpenKeys(
+      new Set<string>(
+        Object.keys(flattenedScehmaMap).filter(
+          (key) => flattenedScehmaMap[key].children.length > 0
+        )
+      )
+    );
   }, [flattenedScehmaMap, setOpenKeys]);
   return schemaTreeRoot ? (
     <Tree
       ref={treeRef}
-      className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
+      className={
+        isLeftDirection
+          ? mergeClasses(styles.leftWrapper, styles.wrapper)
+          : mergeClasses(styles.rightWrapper, styles.wrapper)
+      }
       aria-label={treeAriaLabel}
     >
       <RecursiveTree

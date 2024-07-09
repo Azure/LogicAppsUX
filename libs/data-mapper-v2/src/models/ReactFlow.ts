@@ -10,5 +10,4 @@ export interface ViewportCoords {
 export type SchemaNodeReactFlowDataProps = SchemaNodeExtended & {
   isLeftDirection: boolean;
   id: string;
-  isConnected?: boolean;
 };

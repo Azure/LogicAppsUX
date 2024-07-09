@@ -1,9 +1,5 @@
-// import type { FilteredDataTypesDict } from '../components/tree/SchemaTreeSearchbar';
-// import { arrayType } from '../components/tree/SchemaTreeSearchbar';
-// import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from "../constants/MapDefinitionConstants";
 import { sourcePrefix, targetPrefix } from "../constants/ReactFlowConstants";
-//import { getLoopTargetNodeWithJson } from '../mapDefinitions';
 import type { FunctionData } from "../models/Function";
 import { LogCategory, LogService } from "./Logging.Utils";
 import type {
@@ -19,6 +15,13 @@ import {
   SchemaNodeProperty,
   SchemaType,
 } from "@microsoft/logic-apps-shared";
+import { addReactFlowPrefix } from "./ReactFlow.Util";
+
+export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
+  addReactFlowPrefix(
+    key,
+    isLeftDirection ? SchemaType.Source : SchemaType.Target
+  );
 
 export const convertSchemaToSchemaExtended = (
   schema: DataMapSchema
