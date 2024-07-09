@@ -11,13 +11,6 @@ import { useEffect } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
 
-export const iconStyles = {
-  root: {
-    width: 20,
-    height: 20,
-  },
-};
-
 export const ConnectorIcon = ({
   connectorId,
   operationId,
