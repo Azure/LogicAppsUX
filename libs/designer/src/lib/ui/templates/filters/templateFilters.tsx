@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
 import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
-import { useConnectorsOnly } from '../../../core/state/connection/connectionSelector';
+import { useConnectors } from '../../../core/state/connection/connectionSelector';
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
@@ -33,7 +33,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
   }, [availableTemplates, location, subscriptionId]);
-  const { data: allUniqueConnectorsEntries } = useConnectorsOnly(allTemplatesUniqueConnectorIds);
+  const { data: allUniqueConnectorsEntries } = useConnectors(allTemplatesUniqueConnectorIds);
 
   const intlText = {
     SEARCH: intl.formatMessage({

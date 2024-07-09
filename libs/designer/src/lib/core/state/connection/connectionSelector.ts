@@ -39,9 +39,9 @@ export const useConnectorOnly = (connectorId: string | undefined, enabled = true
   );
 };
 
-export const useConnectorsOnly = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> => {
+export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> => {
   return useQuery(
-    ['useConnectors', connectorIds],
+    ['connectors', connectorIds],
     async () => {
       if (!connectorIds) {
         return null;
