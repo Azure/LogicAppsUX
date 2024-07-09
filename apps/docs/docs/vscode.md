@@ -44,9 +44,8 @@ For more information, see [debugging Visual Studio Code extensions](https://code
 
 To build a private vsix from the compiled project, follow these steps:
 
-1.  Follow steps 1-3 from Run (Dev/Debug) section. This will compile the project and will update the latest changes for the vsix creation.
-2.  Run the following command: `npm run vscode:designer:pack` in the root folder. This will create a vsix file in `dist` root folder.
-3.  After running the command, you will see the following message: `Packaged: /<repo-path>/LogicAppsUX/apps/vs-code-designer/dist/vscode-azurelogicapps-<extension-version>.vsix` with the exact path where the vsix file is located.
+1.  Run the following command: `pnpm run vscode:designer:pack` in the root folder. This will compile the project and pack it in a vsix file.
+2.  After running the command, you will see the following message: `Packaged: /<repo-path>/LogicAppsUX/apps/vs-code-designer/dist/vscode-azurelogicapps-<extension-version>.vsix` with the exact path where the vsix file is located.
 
 ## App architecture
 
