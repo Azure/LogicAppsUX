@@ -406,22 +406,15 @@ const getConcurrency = (
     }
 
     let concurrencyRepetitions: number | undefined;
-    let maximumWaitingRuns: number | undefined;
     if (definition) {
       const runtimeConfiguration = getObjectPropertyValue(definition as any, [Constants.SETTINGS.PROPERTY_NAMES.RUNTIME_CONFIGURATION]);
       concurrencyRepetitions = getObjectPropertyValue(runtimeConfiguration, [
         Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
         Constants.SETTINGS.PROPERTY_NAMES.REPETITIONS,
       ]);
-      concurrencyRepetitions = getObjectPropertyValue(runtimeConfiguration, [
-        Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
-        Constants.SETTINGS.PROPERTY_NAMES.MAXIMUM_WAITING_RUNS,
-      ]);
     }
 
-    return typeof concurrencyRepetitions === 'number'
-      ? { enabled: true, runs: concurrencyRepetitions, maximumWaitingRuns }
-      : { enabled: false };
+    return typeof concurrencyRepetitions === 'number' ? { enabled: true, runs: concurrencyRepetitions } : { enabled: false };
   }
   if (isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, operationOptions)) {
     return {

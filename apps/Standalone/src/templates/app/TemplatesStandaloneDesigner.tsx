@@ -15,6 +15,7 @@ import {
   escapeSpecialChars,
   isArmResourceId,
   optional,
+  StandardOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -215,48 +216,48 @@ export const TemplatesStandaloneDesigner = () => {
                   },
                 ]}
                 detailFilters={{
-                  Trigger: [
-                    {
-                      value: 'Request',
-                      displayName: 'Request',
-                    },
-                    {
-                      value: 'Instant',
-                      displayName: 'Instant',
-                    },
-                  ],
-                  By: [
-                    {
-                      value: 'Microsoft',
-                      displayName: 'Microsoft',
-                    },
-                    {
-                      value: 'Other',
-                      displayName: 'Other',
-                    },
-                  ],
-                  Type: [
-                    {
-                      value: 'Workflow',
-                      displayName: 'Workflow',
-                    },
-                    {
-                      value: 'Other',
-                      displayName: 'Other',
-                    },
-                  ],
-                  Industry: [
-                    {
-                      value: 'Analytics',
-                      displayName: 'Analytics',
-                    },
-                    {
-                      value: 'IT',
-                      displayName: 'IT',
-                    },
-                  ],
+                  By: {
+                    displayName: 'By',
+                    items: [
+                      {
+                        value: 'Microsoft',
+                        displayName: 'Microsoft',
+                      },
+                      {
+                        value: 'Other',
+                        displayName: 'Other',
+                      },
+                    ],
+                  },
+                  Type: {
+                    displayName: 'Type',
+                    items: [
+                      {
+                        value: 'Workflow',
+                        displayName: 'Workflow',
+                      },
+                      {
+                        value: 'Other',
+                        displayName: 'Other',
+                      },
+                    ],
+                  },
+                  Industry: {
+                    displayName: 'Categories',
+                    items: [
+                      {
+                        value: 'Analytics',
+                        displayName: 'Analytics',
+                      },
+                      {
+                        value: 'IT',
+                        displayName: 'IT',
+                      },
+                    ],
+                  },
                 }}
               />
+              <br />
               <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
             </div>
           </TemplatesDataProvider>
@@ -323,6 +324,7 @@ const getServices = (
     tenantId,
     objectId,
   });
+  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const workflowService: IWorkflowService = {
     getCallbackUrl: () => Promise.resolve({} as any),
     getAppIdentity: () => workflowApp?.identity as any,
@@ -348,6 +350,7 @@ const getServices = (
     gatewayService,
     tenantService,
     oAuthService,
+    operationManifestService,
     templateService,
     workflowService,
   };

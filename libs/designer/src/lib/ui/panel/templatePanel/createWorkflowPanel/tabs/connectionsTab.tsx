@@ -13,7 +13,11 @@ export const ConnectionsPanel: React.FC = () => {
   return <DisplayConnections connections={connections} />;
 };
 
-export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId: string): TemplatePanelTab => ({
+export const connectionsTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  { nextTabId, hasError }: { nextTabId: string; hasError: boolean }
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
@@ -26,7 +30,7 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId
     id: '2zqm3d',
     description: 'An accessability label that describes the objective of connections tab',
   }),
-  visible: true,
+  hasError: hasError,
   order: 0,
   content: <ConnectionsPanel />,
   footerContent: {
@@ -38,7 +42,6 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId
     primaryButtonOnClick: () => {
       dispatch(selectPanelTab(nextTabId));
     },
-    primaryButtonDisabled: false,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
       id: 'FTrMxN',

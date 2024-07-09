@@ -29,7 +29,8 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
   return (
-    <DataMapperWrappedContext.Provider value={{ canvasBounds: canvasBounds }}>
+    // danielle rename back and add width and height
+    <DataMapperWrappedContext.Provider value={{ canvasBounds: { x: canvasBounds?.x, y: canvasBounds?.y } }}>
       <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
       <div className={styles.dataMapperShell}>
         <FunctionPanel />

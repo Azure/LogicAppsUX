@@ -33,6 +33,7 @@ export const useStyles = makeStyles({
     display: 'flex',
     width: '100%',
     flexDirection: 'column',
+    height: '100%',
   },
   selectSchemaWrapper: {
     paddingLeft: '20px',

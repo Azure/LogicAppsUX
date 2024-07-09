@@ -1,16 +1,16 @@
 import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClasses } from '@fluentui/react-components';
-import { SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useRef } from 'react';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useStyles } from './styles';
 import type { Node } from 'reactflow';
 import useNodePosition from './useNodePosition';
-import { addReactFlowPrefix } from '../../../utils/ReactFlow.Util';
+import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
   isLeftDirection: boolean;
   openKeys: Set<string>;
-  setOpenKeys: (openKeys: Set<string>) => void;
+  setOpenKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   flattenedScehmaMap: Record<string, SchemaNodeExtended>;
   setUpdatedNode: (node: Node) => void;
 };
@@ -21,7 +21,9 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
 
-  const nodePosition = useNodePosition({
+  const {
+    position: { x, y } = { x: undefined, y: undefined },
+  } = useNodePosition({
     key: key,
     openKeys: openKeys,
     schemaMap: flattenedScehmaMap,
@@ -32,23 +34,24 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
 
   const onOpenChange = useCallback(
     (_e: any, data: TreeItemOpenChangeData) => {
-      const newOpenKeys = new Set(openKeys);
-      const value = data.value as string;
-      if (newOpenKeys.has(value)) {
-        newOpenKeys.delete(value);
-      } else {
-        newOpenKeys.add(value);
-      }
-      setOpenKeys(newOpenKeys);
+      setOpenKeys((prev) => {
+        const newOpenKeys = new Set(prev);
+        const value = data.value as string;
+        if (newOpenKeys.has(value)) {
+          newOpenKeys.delete(value);
+        } else {
+          newOpenKeys.add(value);
+        }
+        return newOpenKeys;
+      });
     },
-    [openKeys, setOpenKeys]
+    [setOpenKeys]
   );
 
-  useEffect(() => {
-    const nodeId = addReactFlowPrefix(root.key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
-
-    setUpdatedNode({
-      ...{
+  useLayoutEffect(() => {
+    const nodeId = getReactFlowNodeId(root.key, isLeftDirection);
+    if (x !== undefined && y !== undefined) {
+      setUpdatedNode({
         id: nodeId,
         selectable: true,
         data: {
@@ -56,10 +59,10 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
           isLeftDirection: isLeftDirection,
         },
         type: 'schemaNode',
-        position: nodePosition,
-      },
-    });
-  }, [isLeftDirection, nodePosition, root, setUpdatedNode]);
+        position: { x, y },
+      });
+    }
+  }, [isLeftDirection, x, y, root, setUpdatedNode]);
 
   if (root.children.length === 0) {
     return (
