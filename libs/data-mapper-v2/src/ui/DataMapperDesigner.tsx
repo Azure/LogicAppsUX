@@ -1,11 +1,5 @@
 import type { AppDispatch, RootState } from "../core/state/Store";
-import {
-  useEffect,
-  useMemo,
-  useCallback,
-  useState,
-  useLayoutEffect,
-} from "react";
+import { useEffect, useMemo, useCallback, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useSelector, useDispatch } from "react-redux";
@@ -49,13 +43,14 @@ export const DataMapperDesigner = ({
   setIsMapStateDirty,
 }: DataMapperDesignerProps) => {
   useStaticStyles();
+  const ref = useRef<HTMLDivElement>(null);
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const {
+  const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
-    canvasWidth = -1,
-    canvasHeight = -1,
-  } = useResizeObserver<HTMLDivElement>();
+  });
+
+  const canvasRect = useMemo(() => ref.current?.getBoundingClientRect(), [ref]);
 
   if (fileService) {
     InitDataMapperFileService(fileService);
@@ -178,7 +173,9 @@ export const DataMapperDesigner = ({
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
         <DataMapperWrappedContext.Provider
-          value={{ canvasBounds: { width: canvasWidth, height: canvasHeight } }}
+          value={{
+            canvasBounds: { width, height, x: canvasRect?.x, y: canvasRect?.y },
+          }}
         >
           <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
           <div className={styles.dataMapperShell}>
@@ -220,10 +217,10 @@ export const DataMapperDesigner = ({
                   ConnectionLine as ConnectionLineComponent | undefined
                 }
                 translateExtent={
-                  canvasBounds
+                  canvasRect
                     ? [
                         [0, 0],
-                        [canvasBounds.right, canvasBounds.bottom],
+                        [canvasRect.right, canvasRect.bottom],
                       ]
                     : undefined
                 }
