@@ -61,6 +61,16 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`
     );
 
+    const swaUrl = callbackInfo.value.replace(/7071/g, '4280');
+    if (callbackInfo.relativePath) {
+      const regex = /invoke\b/g;
+
+      const result = swaUrl.replace(regex, `invoke${callbackInfo.relativePath}`);
+      vscode.window.showInformationMessage(`[View Static Web App](${result}) `);
+    } else {
+      vscode.window.showInformationMessage(`[View Static Web App](${swaUrl}) `);
+    }
+
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
     isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);

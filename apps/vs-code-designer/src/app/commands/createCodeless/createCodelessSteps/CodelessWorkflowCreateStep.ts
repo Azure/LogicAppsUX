@@ -49,7 +49,12 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     // Check if the user chose to initialize a static web app
     if (context.initializeStaticWebApp) {
       context.telemetry.properties.initializeStaticWebApp = 'true';
-      vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp');
+      vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp', undefined, undefined, {
+        backendResourceId:
+          '/subscriptions/3621a0b9-af9a-4007-b5b7-691fdc8b599f/resourcegroups/alainLA5/providers/Microsoft.Web/sites/alainLA5',
+        region: 'East US',
+        name: 'alainLA5',
+      });
     } else {
       context.telemetry.properties.initializeStaticWebApp = 'false';
     }
@@ -71,12 +76,40 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const emptyStatelessDefinition: StandardApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {},
+        actions: {
+          Compose: {
+            type: 'Compose',
+            inputs: {
+              status: 'Hello from Logic App',
+            },
+            runAfter: {},
+          },
+          Response: {
+            type: 'Response',
+            kind: 'Http',
+            inputs: {
+              statusCode: 200,
+              body: "@outputs('Compose')",
+            },
+            runAfter: {
+              Compose: ['SUCCEEDED'],
+            },
+          },
+        },
         contentVersion: '1.0.0.0',
         outputs: {},
-        triggers: {},
+        triggers: {
+          When_a_HTTP_request_is_received: {
+            type: 'Request',
+            kind: 'Http',
+            inputs: {
+              method: 'GET',
+              relativePath: '/api/message',
+            },
+          },
+        },
       },
-      kind: 'Stateless',
+      kind: 'Stateful',
     };
 
     const codelessDefinition: StandardApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;
