@@ -1,11 +1,7 @@
-// import type { FilteredDataTypesDict } from '../components/tree/SchemaTreeSearchbar';
-// import { arrayType } from '../components/tree/SchemaTreeSearchbar';
-// import type { ITreeNode } from '../components/tree/Tree';
-import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-//import { getLoopTargetNodeWithJson } from '../mapDefinitions';
-import type { FunctionData } from '../models/Function';
-import { LogCategory, LogService } from './Logging.Utils';
+import { mapNodeParams } from "../constants/MapDefinitionConstants";
+import { sourcePrefix, targetPrefix } from "../constants/ReactFlowConstants";
+import type { FunctionData } from "../models/Function";
+import { LogCategory, LogService } from "./Logging.Utils";
 import type {
   PathItem,
   DataMapSchema,
@@ -13,19 +9,34 @@ import type {
   SchemaNode,
   SchemaNodeDictionary,
   SchemaNodeExtended,
-} from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+} from "@microsoft/logic-apps-shared";
+import {
+  NormalizedDataType,
+  SchemaNodeProperty,
+  SchemaType,
+} from "@microsoft/logic-apps-shared";
+import { addReactFlowPrefix } from "./ReactFlow.Util";
 
-export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) => `reactflow_${isLeftDirection ? 'source' : 'target'}_${key}`;
+export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
+  addReactFlowPrefix(
+    key,
+    isLeftDirection ? SchemaType.Source : SchemaType.Target
+  );
 
-export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExtended => {
+export const convertSchemaToSchemaExtended = (
+  schema: DataMapSchema
+): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
     ...schema,
-    schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
+    schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(
+      schema.schemaTreeRoot,
+      undefined,
+      []
+    ),
   };
 
-  LogService.log(LogCategory.SchemaUtils, 'convertSchemaToSchemaExtended', {
-    message: 'Schema converted',
+  LogService.log(LogCategory.SchemaUtils, "convertSchemaToSchemaExtended", {
+    message: "Schema converted",
     data: {
       schemaFileFormat: schema.type,
       largestNode: telemetryLargestNode(extendedSchema),
@@ -40,9 +51,12 @@ export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExte
 };
 
 export const getFileNameAndPath = (fullPath: string): [string, string] => {
-  const normalizedPath = fullPath.replaceAll('\\', '/');
-  const lastIndexOfSlash = normalizedPath.lastIndexOf('/');
-  const fileName = lastIndexOfSlash !== -1 ? normalizedPath.slice(lastIndexOfSlash + 1, normalizedPath.length + 1) : normalizedPath;
+  const normalizedPath = fullPath.replaceAll("\\", "/");
+  const lastIndexOfSlash = normalizedPath.lastIndexOf("/");
+  const fileName =
+    lastIndexOfSlash !== -1
+      ? normalizedPath.slice(lastIndexOfSlash + 1, normalizedPath.length + 1)
+      : normalizedPath;
   const filePath = normalizedPath.slice(0, lastIndexOfSlash + 1);
   return [fileName, filePath];
 };
@@ -52,7 +66,9 @@ const convertSchemaNodeToSchemaNodeExtended = (
   parentKey: string | undefined,
   parentPath: PathItem[]
 ): SchemaNodeExtended => {
-  const nodeProperties = parsePropertiesIntoNodeProperties(schemaNode.properties);
+  const nodeProperties = parsePropertiesIntoNodeProperties(
+    schemaNode.properties
+  );
   const pathToRoot: PathItem[] = [
     ...parentPath,
     {
@@ -67,30 +83,48 @@ const convertSchemaNodeToSchemaNodeExtended = (
     ...schemaNode,
     nodeProperties,
     children: schemaNode.children
-      ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, schemaNode.key, pathToRoot))
+      ? schemaNode.children.map((child) =>
+          convertSchemaNodeToSchemaNodeExtended(
+            child,
+            schemaNode.key,
+            pathToRoot
+          )
+        )
       : [],
     pathToRoot: pathToRoot,
     parentKey,
-    arrayItemIndex: nodeProperties.find((prop) => prop === SchemaNodeProperty.ArrayItem) ? 0 : undefined,
+    arrayItemIndex: nodeProperties.find(
+      (prop) => prop === SchemaNodeProperty.ArrayItem
+    )
+      ? 0
+      : undefined,
   };
 
   return extendedSchemaNode;
 };
 
 // Exported for testing purposes
-export const parsePropertiesIntoNodeProperties = (propertiesString: string): SchemaNodeProperty[] => {
+export const parsePropertiesIntoNodeProperties = (
+  propertiesString: string
+): SchemaNodeProperty[] => {
   if (propertiesString) {
-    return propertiesString.split(',').map((propertyString) => {
-      return SchemaNodeProperty[propertyString.trim() as keyof typeof SchemaNodeProperty];
+    return propertiesString.split(",").map((propertyString) => {
+      return SchemaNodeProperty[
+        propertyString.trim() as keyof typeof SchemaNodeProperty
+      ];
     });
   }
 
   return [];
 };
 
-export const flattenSchemaIntoDictionary = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
+export const flattenSchemaIntoDictionary = (
+  schema: SchemaExtended,
+  schemaType: SchemaType
+): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
-  const idPrefix = schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;
+  const idPrefix =
+    schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
 
   schemaNodeArray.reduce((dict, node) => {
@@ -102,18 +136,26 @@ export const flattenSchemaIntoDictionary = (schema: SchemaExtended, schemaType: 
   return result;
 };
 
-export const flattenSchemaIntoSortArray = (schemaNode: SchemaNodeExtended): string[] => {
+export const flattenSchemaIntoSortArray = (
+  schemaNode: SchemaNodeExtended
+): string[] => {
   return flattenSchemaNode(schemaNode).map((node) => node.key);
 };
 
-export const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
+export const flattenSchemaNode = (
+  schemaNode: SchemaNodeExtended
+): SchemaNodeExtended[] => {
   const result: SchemaNodeExtended[] = [schemaNode];
-  const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
+  const childArray = schemaNode.children.flatMap((childNode) =>
+    flattenSchemaNode(childNode)
+  );
 
   return result.concat(childArray);
 };
 
-export const flattenSchemaNodeMap = (schemaNode: SchemaNodeExtended): Record<string, SchemaNodeExtended> => {
+export const flattenSchemaNodeMap = (
+  schemaNode: SchemaNodeExtended
+): Record<string, SchemaNodeExtended> => {
   const flattenedSchema = flattenSchemaNode(schemaNode);
   const result: Record<string, SchemaNodeExtended> = {};
   for (const node of flattenedSchema) {
@@ -122,7 +164,8 @@ export const flattenSchemaNodeMap = (schemaNode: SchemaNodeExtended): Record<str
   return result;
 };
 
-export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
+export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean =>
+  schemaNode.children.length < 1;
 
 /**
  * Finds a node for a key, searching within a given schema structure
@@ -140,15 +183,18 @@ export const findNodeForKey = (
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
     const layeredArrayItemForRegex = new RegExp(/\$for\([^)]*(?:\/\*){2,}\)/g);
-    tempKey = nodeKey.replaceAll(layeredArrayItemForRegex, '');
+    tempKey = nodeKey.replaceAll(layeredArrayItemForRegex, "");
 
     const forRegex = new RegExp(/\$for\([^)]+\)/g);
     // ArrayItems will have an * instead of a key name
     // And that * is stripped out during serialization
-    tempKey = tempKey.replaceAll(forRegex, nodeKey.indexOf('*') !== -1 ? '*' : '');
+    tempKey = tempKey.replaceAll(
+      forRegex,
+      nodeKey.indexOf("*") !== -1 ? "*" : ""
+    );
 
-    while (tempKey.indexOf('//') !== -1) {
-      tempKey = tempKey.replaceAll('//', '/');
+    while (tempKey.indexOf("//") !== -1) {
+      tempKey = tempKey.replaceAll("//", "/");
     }
   }
 
@@ -162,20 +208,23 @@ export const findNodeForKey = (
     return result;
   }
 
-  let lastInstanceOfMultiLoop = tempKey.lastIndexOf('*/*');
+  let lastInstanceOfMultiLoop = tempKey.lastIndexOf("*/*");
   while (lastInstanceOfMultiLoop > -1 && !result) {
     const start = tempKey.substring(0, lastInstanceOfMultiLoop);
     const end = tempKey.substring(lastInstanceOfMultiLoop + 2);
     tempKey = start + end;
 
     result = searchChildrenNodeForKey(tempKey, schemaNode);
-    lastInstanceOfMultiLoop = tempKey.lastIndexOf('*/*');
+    lastInstanceOfMultiLoop = tempKey.lastIndexOf("*/*");
   }
 
   return result;
 };
 
-const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+const searchChildrenNodeForKey = (
+  key: string,
+  schemaNode: SchemaNodeExtended
+): SchemaNodeExtended | undefined => {
   if (schemaNode.key === key) {
     return schemaNode;
   }
@@ -192,18 +241,23 @@ const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): 
   return result;
 };
 
-export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended =>
-  Object.keys(node ?? {}).includes('pathToRoot');
+export const isSchemaNodeExtended = (
+  node: SchemaNodeExtended | FunctionData
+): node is SchemaNodeExtended => Object.keys(node ?? {}).includes("pathToRoot");
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
-  nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;
+  nodeType === NormalizedDataType.Complex ||
+  nodeType === NormalizedDataType.Object;
 
 export const telemetryLargestNode = (schema: SchemaExtended): number => {
   return Math.max(...maxProperties(schema.schemaTreeRoot));
 };
 
 const maxProperties = (schemaNode: SchemaNodeExtended): number[] => {
-  return [schemaNode.children.length, ...schemaNode.children.flatMap((childNode) => maxProperties(childNode))];
+  return [
+    schemaNode.children.length,
+    ...schemaNode.children.flatMap((childNode) => maxProperties(childNode)),
+  ];
 };
 
 export const telemetryDeepestNodeChild = (schema: SchemaExtended): number => {
@@ -211,7 +265,10 @@ export const telemetryDeepestNodeChild = (schema: SchemaExtended): number => {
 };
 
 const deepestNode = (schemaNode: SchemaNodeExtended): number[] => {
-  return [schemaNode.pathToRoot.length, ...schemaNode.children.flatMap((childNode) => maxProperties(childNode))];
+  return [
+    schemaNode.pathToRoot.length,
+    ...schemaNode.children.flatMap((childNode) => maxProperties(childNode)),
+  ];
 };
 
 export const telemetrySchemaNodeCount = (schema: SchemaExtended): number => {
@@ -228,6 +285,6 @@ const nodeCount = (schemaNode: SchemaNodeExtended): number => {
 };
 
 export const removePrefixFromNodeID = (nodeID: string): string => {
-  const splitID = nodeID.split('-');
+  const splitID = nodeID.split("-");
   return splitID[1];
 };
