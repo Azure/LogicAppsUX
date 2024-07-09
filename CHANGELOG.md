@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [0.3.2](https://github.com/Azure/LogicAppsUX/compare/v4.37.0...v0.3.2) (2024-07-09)
+
+
+### Features
+
+* **Data Mapper:** Smooth out the node connections and handle states ([#5092](https://github.com/Azure/LogicAppsUX/issues/5092)) ([6abd885](https://github.com/Azure/LogicAppsUX/commit/6abd885b407ab2e977ff9f4b579609e352a3c7bd))
+* **Templates:** UI Sanitary Check, Ensuring Consistency ([#5070](https://github.com/Azure/LogicAppsUX/issues/5070)) ([3de7c6d](https://github.com/Azure/LogicAppsUX/commit/3de7c6d854525809d4909fc4ef916a8ae448af67))
+
 ## [4.37.0](https://github.com/Azure/LogicAppsUX/compare/v4.36.0...v4.37.0) (2024-07-04)
 
 
