@@ -216,48 +216,48 @@ export const TemplatesStandaloneDesigner = () => {
                   },
                 ]}
                 detailFilters={{
-                  Trigger: [
-                    {
-                      value: 'Request',
-                      displayName: 'Request',
-                    },
-                    {
-                      value: 'Instant',
-                      displayName: 'Instant',
-                    },
-                  ],
-                  By: [
-                    {
-                      value: 'Microsoft',
-                      displayName: 'Microsoft',
-                    },
-                    {
-                      value: 'Other',
-                      displayName: 'Other',
-                    },
-                  ],
-                  Type: [
-                    {
-                      value: 'Workflow',
-                      displayName: 'Workflow',
-                    },
-                    {
-                      value: 'Other',
-                      displayName: 'Other',
-                    },
-                  ],
-                  Industry: [
-                    {
-                      value: 'Analytics',
-                      displayName: 'Analytics',
-                    },
-                    {
-                      value: 'IT',
-                      displayName: 'IT',
-                    },
-                  ],
+                  By: {
+                    displayName: 'By',
+                    items: [
+                      {
+                        value: 'Microsoft',
+                        displayName: 'Microsoft',
+                      },
+                      {
+                        value: 'Other',
+                        displayName: 'Other',
+                      },
+                    ],
+                  },
+                  Type: {
+                    displayName: 'Type',
+                    items: [
+                      {
+                        value: 'Workflow',
+                        displayName: 'Workflow',
+                      },
+                      {
+                        value: 'Other',
+                        displayName: 'Other',
+                      },
+                    ],
+                  },
+                  Industry: {
+                    displayName: 'Categories',
+                    items: [
+                      {
+                        value: 'Analytics',
+                        displayName: 'Analytics',
+                      },
+                      {
+                        value: 'IT',
+                        displayName: 'IT',
+                      },
+                    ],
+                  },
                 }}
               />
+              <br />
               <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
             </div>
           </TemplatesDataProvider>

@@ -7,7 +7,13 @@ import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey }
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
-  detailFilters: Record<string, FilterObject[]>;
+  detailFilters: Record<
+    string,
+    {
+      displayName: string;
+      items: FilterObject[];
+    }
+  >;
 }
 
 export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersProps) => {
@@ -76,8 +82,8 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
         {Object.keys(detailFilters).map((filterName, index) => (
           <TemplatesFilterDropdown
             key={index}
-            filterName={filterName}
-            items={detailFilters[filterName]}
+            filterName={detailFilters[filterName].displayName}
+            items={detailFilters[filterName].items}
             onApplyButtonClick={(filterItems) => {
               dispatch(setDetailsFilters({ filterName, filters: filterItems }));
             }}

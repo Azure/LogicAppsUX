@@ -3,7 +3,8 @@ import { changeCurrentTemplateName, loadTemplate } from '../../../core/state/tem
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
-import { DocumentCard, type IContextualMenuItem, type IContextualMenuProps, IconButton } from '@fluentui/react';
+import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
+import { DocumentCard, IconButton } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
@@ -69,8 +70,12 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     className: 'msla-template-card-connector-menu-box',
   };
 
+  const cardStyles: IDocumentCardStyles = {
+    root: { display: 'inline-block', maxWidth: 1000 },
+  };
+
   return (
-    <DocumentCard className="msla-template-card-wrapper" onClick={onSelectTemplate} aria-label={title}>
+    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onSelectTemplate} aria-label={title}>
       <div className="msla-template-card-data">
         <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
           {title}
@@ -85,24 +90,37 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
           })}
         </div>
       </div>
+
       <hr className="msla-templates-break" />
 
-      <div className="msla-template-card-connectors">
-        <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
-          {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
-        </Text>
-        <div className="msla-template-card-connectors-list">
-          {connectorsToShow.map((info) => (
-            <ConnectorIcon
-              key={info.connectorId}
-              connectorId={info.connectorId}
-              operationId={info.operationId}
-              classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
-            />
-          ))}
-          {showOverflow ? (
-            <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
-          ) : null}
+      <div className="msla-template-card-connectors-wrapper">
+        <div className="msla-template-card-connectors">
+          <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
+            {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
+          </Text>
+          <div className="msla-template-card-connectors-list">
+            {connectorsToShow.length > 0 ? (
+              connectorsToShow.map((info) => (
+                <ConnectorIcon
+                  key={info.connectorId}
+                  connectorId={info.connectorId}
+                  operationId={info.operationId}
+                  classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
+                />
+              ))
+            ) : (
+              <Text className="msla-template-card-connectors-emptyText">
+                {intl.formatMessage({
+                  defaultMessage: 'This template does not have connectors',
+                  description: 'Accessibility text to inform user this template does not contain connectors',
+                  id: 'aI9W5L',
+                })}
+              </Text>
+            )}
+            {showOverflow ? (
+              <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+            ) : null}
+          </div>
         </div>
       </div>
     </DocumentCard>
