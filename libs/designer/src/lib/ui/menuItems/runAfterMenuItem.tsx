@@ -1,10 +1,10 @@
 import { MenuItem } from '@fluentui/react-components';
-import { bundleIcon, Copy24Filled, Copy24Regular } from '@fluentui/react-icons';
+import { bundleIcon, BranchFork24Filled, BranchFork24Regular } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
-const RunAfterIcon = bundleIcon(Copy24Filled, Copy24Regular);
+const RunAfterIcon = bundleIcon(BranchFork24Filled, BranchFork24Regular);
 
 export interface RunAfterMenuItemProps {
   onClick: (e: unknown) => void;
