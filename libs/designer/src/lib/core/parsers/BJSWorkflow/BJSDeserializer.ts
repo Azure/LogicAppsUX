@@ -260,8 +260,12 @@ export const deserializeUnitTestDefinition = (
   // deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
-    const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
-    return { name, description, assertionString: uncastAssertionString.expression };
+    try {
+      const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
+      return { name, description, assertionString: uncastAssertionString.expression };
+    } catch (ParserException) {
+      return { name, description, assertionString: '' };
+    }
   });
 
   return { mockResults, assertions: assertions };
