@@ -45,6 +45,11 @@ export const NameStatePanel = () => {
         id: 'ixEnhz',
         description: 'Description for state type choice group.',
       }),
+      LEARN_MORE: intl.formatMessage({
+        defaultMessage: 'Learn More',
+        id: 'Kxq/yR',
+        description: 'Link to learn more about state type',
+      }),
       STATEFUL: intl.formatMessage({
         defaultMessage: 'Stateful',
         id: 'kU4VfD',
@@ -135,7 +140,17 @@ export const NameStatePanel = () => {
         <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
           {intlText.STATE_TYPE}
         </Label>
-        <Text className="msla-templates-tab-label-description">{intlText.STATE_TYPE_DESCRIPTION}</Text>
+        <Text className="msla-templates-tab-label-description">
+          {intlText.STATE_TYPE_DESCRIPTION}{' '}
+          <a
+            href={'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless'}
+            target="_blank"
+            rel="noreferrer"
+            style={{ display: 'inline' }}
+          >
+            {intlText.LEARN_MORE}
+          </a>
+        </Text>
         <ChoiceGroup
           className="msla-templates-tab-choiceGroup"
           options={[
