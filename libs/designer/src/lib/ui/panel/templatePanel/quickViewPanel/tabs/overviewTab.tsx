@@ -3,17 +3,19 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { Text } from '@fluentui/react-components';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
-import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { Text } from '@fluentui/react-components';
 import { getUniqueConnectors } from '../../../../../core/templates/utils/helper';
 import { List } from '@fluentui/react';
 import { ConnectorWithDetails } from '../../../../../ui/templates/connections/connector';
+import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import Markdown from 'react-markdown';
 
 export const OverviewPanel: React.FC = () => {
   const intl = useIntl();
   const { manifest } = useSelector((state: RootState) => state.template);
-
+  const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
       defaultMessage: 'Solution type',
@@ -35,14 +37,20 @@ export const OverviewPanel: React.FC = () => {
   return isNullOrUndefined(manifest) ? null : (
     <div className="msla-template-overview">
       <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title">
-          {intl.formatMessage({
-            defaultMessage: 'Connections included in this template',
-            id: 'TnwRGo',
-            description: 'Title for the connections section in the template overview tab',
-          })}
+        <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
+          {templateHasConnections
+            ? intl.formatMessage({
+                defaultMessage: 'Connections included in this template',
+                id: 'TnwRGo',
+                description: 'Title for the connections section in the template overview tab',
+              })
+            : intl.formatMessage({
+                defaultMessage: 'No connections are needed in this template',
+                id: 'j2v8BE',
+                description: 'Text to show no connections present in the template.',
+              })}
         </Text>
-        <Connections connections={manifest.connections} />
+        {templateHasConnections ? <Connections connections={manifest.connections} /> : null}
       </div>
       {manifest.prerequisites ? (
         <div className="msla-template-overview-section">
@@ -53,9 +61,9 @@ export const OverviewPanel: React.FC = () => {
               description: 'Title for the prerequisites section in the template overview tab',
             })}
           </Text>
-          <Text align="start" className="msla-template-overview-connections">
+          <Markdown className="msla-template-overview-markdown" linkTarget="_blank">
             {manifest.prerequisites}
-          </Text>
+          </Markdown>
         </div>
       ) : null}
       <div className="msla-template-overview-section">
@@ -95,19 +103,14 @@ export const OverviewPanel: React.FC = () => {
   );
 };
 
-export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
+export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Overview',
     id: '+YyHKB',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  description: intl.formatMessage({
-    defaultMessage: 'Overview Tab',
-    id: 'EJj4E0',
-    description: 'An accessability label that describes the oveview tab',
-  }),
-  visible: true,
+  hasError: false,
   content: <OverviewPanel />,
   order: 1,
   footerContent: {
@@ -119,8 +122,12 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch) => ({
     primaryButtonOnClick: () => {
       dispatch(openCreateWorkflowPanelView());
     },
-    primaryButtonDisabled: false,
-    onClose: () => {
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
       dispatch(closePanel());
       dispatch(clearTemplateDetails());
     },

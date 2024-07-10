@@ -4,7 +4,8 @@ import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayConnections } from '../../../../templates/connections/displayConnections';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections } = useSelector((state: RootState) => state.template);
@@ -12,7 +13,11 @@ export const ConnectionsPanel: React.FC = () => {
   return <DisplayConnections connections={connections} />;
 };
 
-export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId: string): TemplatePanelTab => ({
+export const connectionsTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  { nextTabId, hasError }: { nextTabId: string; hasError: boolean }
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
@@ -20,11 +25,12 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId
     description: 'The tab label for the monitoring connections tab on the create workflow panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Connections Tab',
-    id: 'hsZ7em',
-    description: 'An accessability label that describes the connections tab',
+    defaultMessage:
+      'Configure connections to authenticate the following services and link your workflows with various services and applications, enabling seamless data integration and automation. Connections are required.',
+    id: '2zqm3d',
+    description: 'An accessability label that describes the objective of connections tab',
   }),
-  visible: true,
+  hasError: hasError,
   order: 0,
   content: <ConnectionsPanel />,
   footerContent: {
@@ -36,6 +42,14 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch, nextTabId
     primaryButtonOnClick: () => {
       dispatch(selectPanelTab(nextTabId));
     },
-    primaryButtonDisabled: false,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
   },
 });
