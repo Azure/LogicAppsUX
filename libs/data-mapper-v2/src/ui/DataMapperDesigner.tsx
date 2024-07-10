@@ -30,12 +30,14 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
 
   return (
     // danielle rename back and add width and height
-    <DataMapperWrappedContext.Provider value={{ canvasBounds: { ...canvasBounds } }}>
+    <DataMapperWrappedContext.Provider
+      value={{ canvasBounds: { x: canvasBounds?.x, y: canvasBounds?.y, height: canvasBounds?.height, width: canvasBounds?.width } }}
+    >
       <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
       <div className={styles.dataMapperShell}>
         <FunctionPanel />
         <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
-        <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} canvasBounds={canvasBounds} />
+        <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
         <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
         <CodeView />
       </div>

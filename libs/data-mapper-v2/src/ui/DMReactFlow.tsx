@@ -16,10 +16,9 @@ import useResizeObserver from 'use-resize-observer';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   updateCanvasBoundsParent: (bounds: DOMRect | undefined) => void;
-  canvasBounds: DOMRect | undefined;
 }
 
-export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent, canvasBounds }: DMReactFlowProps) => {
+export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DMReactFlowProps) => {
   useStaticStyles();
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
@@ -34,7 +33,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent, canv
   useEffect(() => {
     if (ref?.current) {
       const bounds = ref.current.getBoundingClientRect();
-      updateCanvasBoundsParent({ ...bounds, width, height });
+      bounds.width = width;
+      bounds.height = height;
+      updateCanvasBoundsParent(bounds);
     }
   }, [ref, updateCanvasBoundsParent, width, height]);
 
@@ -219,10 +220,10 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent, canv
         onEdgeUpdate={onEdgeUpdate}
         connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
         translateExtent={
-          canvasBounds
+          ref?.current?.getBoundingClientRect()
             ? [
                 [0, 0],
-                [canvasBounds.right, canvasBounds.bottom],
+                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
               ]
             : undefined
         }
