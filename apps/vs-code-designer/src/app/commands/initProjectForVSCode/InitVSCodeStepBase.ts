@@ -129,22 +129,11 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
           },
           "group": "build"
       },
-  {
-          "label": "Init SWA",
-          "type": "shell",
-          "command": "swa init",
-    "dependsOn": "Install Node Modules",
-          "problemMatcher": [],
-    "options": {
-              "cwd": "\${workspaceFolder}/static-web-app"
-          },
-          "group": "build"
-      },
       {
           "label": "Build SWA",
-    "dependsOn": "Init SWA",
+    "dependsOn": "Install Node Modules",
           "type": "shell",
-          "command": "swa build",
+          "command": "npm run build",
           "problemMatcher": [],
     "options": {
               "cwd": "\${workspaceFolder}/static-web-app"

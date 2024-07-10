@@ -51,9 +51,9 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
       context.telemetry.properties.initializeStaticWebApp = 'true';
       vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp', undefined, undefined, {
         backendResourceId:
-          '/subscriptions/3621a0b9-af9a-4007-b5b7-691fdc8b599f/resourcegroups/alainLA5/providers/Microsoft.Web/sites/alainLA5',
-        region: 'East US',
-        name: 'alainLA5',
+          '/subscriptions/3621a0b9-af9a-4007-b5b7-691fdc8b599f/resourcegroups/alainzla-demo-v/providers/Microsoft.Web/sites/alainzla-demo-v',
+        region: 'eastus',
+        name: 'alainzla-demo-v',
       });
     } else {
       context.telemetry.properties.initializeStaticWebApp = 'false';
@@ -65,10 +65,38 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const emptyStatefulDefinition: StandardApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {},
+        actions: {
+          Compose: {
+            type: 'Compose',
+            inputs: {
+              status: 'Hello from Logic App',
+            },
+            runAfter: {},
+          },
+          Response: {
+            type: 'Response',
+            kind: 'Http',
+            inputs: {
+              statusCode: 200,
+              body: "@outputs('Compose')",
+            },
+            runAfter: {
+              Compose: ['SUCCEEDED'],
+            },
+          },
+        },
         contentVersion: '1.0.0.0',
         outputs: {},
-        triggers: {},
+        triggers: {
+          When_a_HTTP_request_is_received: {
+            type: 'Request',
+            kind: 'Http',
+            inputs: {
+              method: 'GET',
+              relativePath: '/api/message',
+            },
+          },
+        },
       },
       kind: 'Stateful',
     };
