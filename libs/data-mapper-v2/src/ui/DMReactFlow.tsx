@@ -11,6 +11,7 @@ import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
+import useResizeObserver from 'use-resize-observer';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -22,29 +23,20 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent, canv
   useStaticStyles();
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [allNodes, setAllNodes] = useState<Node[]>([]);
 
-  const setCanvasBounds = useCallback(() => {
-    if (ref?.current) {
-      const bounds = ref.current.getBoundingClientRect();
-      updateCanvasBoundsParent(bounds);
-    }
-  }, [ref, updateCanvasBoundsParent]);
-
-  const resizeObserver = useMemo(() => new ResizeObserver((_) => setCanvasBounds()), [setCanvasBounds]);
+  const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
+    ref,
+  });
 
   useEffect(() => {
     if (ref?.current) {
-      resizeObserver.observe(ref.current);
-      setCanvasBounds();
+      const bounds = ref.current.getBoundingClientRect();
+      updateCanvasBoundsParent({ ...bounds, width, height });
     }
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [ref, resizeObserver, setCanvasBounds]);
+  }, [ref, updateCanvasBoundsParent, width, height]);
 
   const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
@@ -148,17 +140,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent, canv
     },
     [edges]
   );
-
-  useEffect(() => {
-    if (ref?.current) {
-      resizeObserver.observe(ref.current);
-      setCanvasBounds();
-    }
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [ref, resizeObserver, setCanvasBounds]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
