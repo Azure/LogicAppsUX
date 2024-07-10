@@ -32,6 +32,7 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public site: ParsedSite;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
   public customLocation?: CustomLocation;
+  public isHybridLogicApp?: boolean;
   public fileShare?: {
     hostName?: string;
     path?: string;
