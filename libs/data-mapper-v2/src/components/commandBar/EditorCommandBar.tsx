@@ -1,6 +1,6 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup } from '@fluentui/react-components';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch } from '@fluentui/react-components';
 import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,9 +25,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
 
   const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
+  const { sourceSchema, targetSchema, xsltFilename } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
@@ -40,11 +40,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     if (sourceSchema && targetSchema) {
       try {
         const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
-
-        // this can be added later
-        // if (saveDraftStateCall) {
-        //   saveDraftStateCall(newDataMapDefinition);
-        // }
 
         return newDataMapDefinition;
       } catch (error) {
@@ -67,19 +62,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
 
   const onSaveClick = useCallback(() => {
-    //const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
-
-    // save until we discuss error notifications
-    // if (errors.length > 0) {
-    //   dispatch(
-    //     showNotification({
-    //       type: NotificationTypes.MapHasErrorsAtSave,
-    //       msgParam: errors.length,
-    //       autoHideDurationMs: errorNotificationAutoHideDuration,
-    //     })
-    //   );
-    // }
-
     const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
 
     DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
@@ -100,8 +82,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   useEffect(() => {
     if (isDiscardConfirmed) {
       console.log('Discard confirmed');
-      //   dispatch(discardDataMap());
-      //   dispatch(closeModal());
     }
   }, [dispatch, isDiscardConfirmed]);
 
@@ -132,6 +112,11 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         id: 'iy8rNf',
         description: 'Button text for running test',
       }),
+      VIEW_CODE: intl.formatMessage({
+        defaultMessage: 'View Code',
+        id: '/4vB3J',
+        description: 'Button for View Code',
+      }),
     }),
     [intl]
   );
@@ -139,9 +124,9 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const toolbarStyles = useStyles();
   const bothSchemasDefined = sourceSchema && targetSchema;
 
-  const toggleCodeViewClick = () => {
+  const toggleCodeViewClick = useCallback(() => {
     dispatch(toggleCodeView());
-  };
+  }, [dispatch]);
 
   return (
     <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
@@ -171,7 +156,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         </ToolbarButton>
       </ToolbarGroup>
       <ToolbarGroup>
-        <ToolbarButton onClick={toggleCodeViewClick}>Code View</ToolbarButton>
+        <Switch label={Resources.VIEW_CODE} onChange={toggleCodeViewClick} checked={isCodeViewOpen} />
       </ToolbarGroup>
     </Toolbar>
   );
