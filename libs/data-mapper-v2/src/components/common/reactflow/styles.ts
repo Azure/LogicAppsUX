@@ -1,4 +1,6 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+
+const fnIconSize = '17px';
 
 export const useStyles = makeStyles({
   wrapper: {
@@ -30,5 +32,33 @@ export const useStyles = makeStyles({
   handleConnected: {
     backgroundColor: '#C6DEEE',
     ...shorthands.border('1px', 'solid', '#C6DEEE'),
+  },
+  nodeWrapper: {
+    width: '10px',
+    height: '10px',
+    backgroundColor: 'transparent',
+  },
+  functionButton: {
+    ...shorthands.borderRadius('16px'),
+    height: '26px',
+    minWidth: '80px',
+    display: 'inline-flex',
+    justifyContent: 'left',
+    paddingRight: '20px'
+  },
+  functionName: {
+    textWrap: 'nowrap',
+    display: 'inline-table'
+  },
+  iconContainer: {
+    display: 'inline-flex',
+    height: fnIconSize,
+    flexShrink: '0 !important',
+    flexBasis: fnIconSize,
+    ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    color: tokens.colorNeutralBackground1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '3px'
   },
 });

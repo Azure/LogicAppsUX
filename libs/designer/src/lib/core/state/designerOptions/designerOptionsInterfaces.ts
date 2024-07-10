@@ -3,6 +3,7 @@ import type {
   IConnectionService,
   IConnectorService,
   IGatewayService,
+  ITenantService,
   ILoggerService,
   IOperationManifestService,
   ISearchService,
@@ -20,6 +21,7 @@ import type {
   LogicApps,
   ICopilotService,
 } from '@microsoft/logic-apps-shared';
+import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 
@@ -36,6 +38,7 @@ export interface DesignerOptionsState {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
     recurrenceInterval?: LogicApps.Recurrence;
+    maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
     forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
@@ -52,6 +55,7 @@ export interface ServiceOptions {
   searchService: ISearchService;
   connectorService?: IConnectorService;
   gatewayService?: IGatewayService;
+  tenantService?: ITenantService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;

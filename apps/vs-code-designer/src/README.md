@@ -4,6 +4,14 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Azure Logic Apps - Introducing Azure Logic Apps Rules Engine (preview)
+
+Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces the Rules Engine, a decision management inference engine. This engine allows customers to build Standard workflows in Azure Logic Apps and integrate readable, declarative, and semantically rich rules that operate on multiple data sources. Currently, the native data sources available for the Rules Engine are XML and .NET objects. For more information, see [Decision management and business logic integration using the Azure Logic Apps Rules Engine (Preview)](https://go.microsoft.com/fwlink/?linkid=2279508).
+
+## Azure Logic Apps - Introducing .NET 8 Custom Code support (preview)
+
+Starting with version 4.25.1, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the integration of .NET 8 custom code into Logic Apps workspaces. This update allows for a smooth transition to the latest .NET version while maintaining compatibility with existing workflows. Developers can now easily develop and debug custom code within the Logic Apps environment, accelerating the development process and leveraging the advancements of .NET 8 technology. This empowers users to build more robust and efficient workflows using the most up-to-date tools and capabilities. For more information, see [Introducing .NET 8 Custom Code support for Azure Logic Apps (Standard) - Preview](https://go.microsoft.com/fwlink/?linkid=2279312).
+
 ## Azure Logic Apps - Automated Deployment Scripts Generation (preview)
 
 Starting with version 4.4.3, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the ability to generate ARM templates for Logic Apps Standard applications and Azure Managed Connections. It will also support the generation of Azure DevOps YAML pipelines, sppeding up the move from Local development to cloud using DevOps best practics. For more information, see [Automate build and deployment for Standard logic app workflows with Azure DevOps (preview)](https://go.microsoft.com/fwlink/?linkid=2268158).

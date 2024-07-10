@@ -1,4 +1,3 @@
-import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
@@ -8,14 +7,7 @@ import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import type {
-  FilePickerInfo,
-  InputParameter,
-  OutputParameter,
-  SwaggerParser,
-  OpenAPIV2,
-  OperationInfo,
-} from '@microsoft/logic-apps-shared';
+import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
@@ -184,14 +176,14 @@ export interface ClearDynamicIOPayload {
   nodeIds?: string[];
   inputs?: boolean;
   outputs?: boolean;
+  dynamicParameterKeys?: string[];
 }
 
 interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
   inputs: ParameterInfo[];
-  newInputs: InputParameter[];
-  swagger?: SwaggerParser;
+  dependencies?: Record<string, DependencyInfo>;
 }
 
 export interface UpdateParametersPayload {
@@ -251,26 +243,15 @@ export const operationMetadataSlice = createSlice({
       });
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
-      const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;
+      const { nodeId, groupId, inputs, dependencies } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId) ?? {
         parameterGroups: {},
       };
-      const parameterGroups = getRecordEntry(inputParameters?.parameterGroups, groupId);
-      if (parameterGroups) {
-        const { parameters } = parameterGroups;
-        const newParameters = [...parameters];
-        for (const input of inputs) {
-          const index = newParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
-          if (index > -1) {
-            newParameters.splice(index, 1, input);
-          } else {
-            newParameters.push(input);
-          }
-        }
-        parameterGroups.parameters = newParameters;
+      const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (parameterGroup) {
+        parameterGroup.parameters = inputs;
       }
 
-      const dependencies = getInputDependencies(inputParameters, rawInputs, swagger);
       if (dependencies) {
         state.dependencies[nodeId].inputs = {
           ...state.dependencies[nodeId].inputs,
@@ -288,7 +269,7 @@ export const operationMetadataSlice = createSlice({
       updateExistingInputTokenTitles(state, action.payload);
     },
     clearDynamicIO: (state, action: PayloadAction<ClearDynamicIOPayload>) => {
-      const { nodeId, nodeIds: _nodeIds, inputs = true, outputs = true } = action.payload;
+      const { nodeId, nodeIds: _nodeIds, inputs = true, outputs = true, dynamicParameterKeys = [] } = action.payload;
       const nodeIds = _nodeIds ?? [nodeId];
       for (const nodeId of nodeIds) {
         const nodeErrors = getRecordEntry(state.errors, nodeId);
@@ -297,15 +278,26 @@ export const operationMetadataSlice = createSlice({
           delete nodeErrors?.[ErrorLevel.DynamicInputs];
 
           const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+          const deletedDynamicParameters: string[] = [];
           if (inputParameters) {
             for (const group of Object.values(inputParameters.parameterGroups)) {
-              group.parameters = group.parameters.filter((parameter) => !parameter.info.isDynamic);
+              group.parameters = group.parameters.filter((parameter) => {
+                const shouldDelete =
+                  parameter.info.isDynamic &&
+                  (!dynamicParameterKeys.length || dynamicParameterKeys.includes(parameter.info.dynamicParameterReference ?? ''));
+                if (shouldDelete) {
+                  deletedDynamicParameters.push(parameter.parameterKey);
+                  return false;
+                }
+
+                return true;
+              });
             }
           }
 
           const inputDependencies = getRecordEntry(state.dependencies, nodeId)?.inputs as WritableDraft<Record<string, DependencyInfo>>;
           for (const inputKey of Object.keys(inputDependencies ?? {})) {
-            if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
+            if (inputDependencies[inputKey].parameter?.isDynamic && deletedDynamicParameters.includes(inputKey)) {
               delete getRecordEntry(state.dependencies, nodeId)?.inputs[inputKey];
             }
           }
@@ -550,7 +542,8 @@ const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPay
 
   const tokenTitles: Record<string, string> = {};
   for (const outputValue of Object.values(outputs)) {
-    tokenTitles[outputValue.key] = getTokenTitle(outputValue);
+    const normalizedKey = normalizeKey(outputValue.key);
+    tokenTitles[normalizedKey] = getTokenTitle(outputValue);
   }
 
   Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {

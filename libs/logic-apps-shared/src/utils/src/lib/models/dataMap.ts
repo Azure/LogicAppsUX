@@ -10,6 +10,14 @@ export interface FunctionPositionMetadata {
 export interface FunctionMetadata {
   reactFlowGuid: string;
   functionKey: string;
+  position: XYPosition;
+  connections: ConnectionAndOrder[];
+  connectionShorthand: string;
+}
+
+export interface FunctionMetadataV1 {
+  reactFlowGuid: string;
+  functionKey: string;
   positions: FunctionPositionMetadata[];
   connections: ConnectionAndOrder[];
   connectionShorthand: string;
@@ -22,4 +30,22 @@ export interface ConnectionAndOrder {
 
 export interface MapMetadata {
   functionNodes: FunctionMetadata[];
+}
+
+// For Schema File System
+export type IFileSysTreeItem = ITreeDirectory | ITreeFile;
+
+export interface ITreeDirectory {
+  name: string;
+  type: 'directory';
+  children: IFileSysTreeItem[];
+}
+
+export interface ITreeFile {
+  name: string;
+  type: 'file';
+  fullPath?: string;
+}
+export interface MapMetadataV1 {
+  functionNodes: FunctionMetadataV1[];
 }

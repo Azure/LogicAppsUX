@@ -154,7 +154,12 @@ export async function getDynamicSchema(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
-  const emptySchema = { ...parameter?.schema };
+  const emptySchema = {
+    title: parameter?.schema?.title,
+    description: parameter?.schema?.description,
+    summary: parameter?.schema?.summary,
+    name: parameter?.schema?.name,
+  };
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
@@ -275,11 +280,13 @@ export async function getDynamicInputsFromSchema(
     useAliasedIndexing: true,
     excludeAdvanced: false,
     excludeInternal: false,
+    includeParentObject: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
     ...toInputParameter(schemaProperty),
     isDynamic: true,
+    dynamicParameterReference: dynamicParameter.key,
     in: dynamicParameter.in,
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
@@ -307,7 +314,7 @@ export async function getDynamicInputsFromSchema(
 
   if (!operationDefinition) {
     loadParameterValuesFromDefault(map(dynamicInputs, 'key'));
-    return dynamicInputs;
+    return removeParentObjectInputsIfNotNeeded(dynamicInputs);
   }
 
   if (!schemaProperties.length) {
@@ -536,7 +543,7 @@ async function getManagedIdentityRequestProperties(
   return managedIdentityRequestProperties;
 }
 
-function getManifestBasedInputParameters(
+export function getManifestBasedInputParameters(
   dynamicInputs: InputParameter[],
   dynamicParameter: InputParameter,
   allInputKeys: string[],
@@ -595,6 +602,8 @@ function getManifestBasedInputParameters(
     }
   }
 
+  result = removeParentObjectInputsIfNotNeeded(result);
+
   if (
     !operationDefinition.metadata?.noUnknownParametersWithManifest &&
     stepInputs !== undefined &&
@@ -602,7 +611,7 @@ function getManifestBasedInputParameters(
   ) {
     // load unknown inputs not in the schema by key.
     const resultParameters = map(result, 'key');
-    loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys);
+    loadUnknownManifestBasedParameters(keyPrefix, '', stepInputs, resultParameters, new Set<string>(), knownKeys, dynamicParameter.key);
     result = unmap(resultParameters);
   }
 
@@ -619,13 +628,34 @@ function getManifestBasedInputParameters(
   return result;
 }
 
+function removeParentObjectInputsIfNotNeeded(inputs: InputParameter[]): InputParameter[] {
+  const objectInputKeysWithExpressionValues = inputs
+    .filter((input) => input.type === Constants.SWAGGER.TYPE.OBJECT && isTemplateExpression(input.value))
+    .map((input) => input.key);
+
+  const filteredInputs = inputs.filter((input) => {
+    if (input.type !== Constants.SWAGGER.TYPE.OBJECT) {
+      return !objectInputKeysWithExpressionValues.some((parentInputKey) => input.key.startsWith(`${parentInputKey}.`));
+    }
+
+    return isTemplateExpression(input.value) || !objectHasLeafProperties(inputs, input.key);
+  });
+
+  return filteredInputs;
+}
+
+function objectHasLeafProperties(allInputs: InputParameter[], key: string): boolean {
+  return allInputs.some((input) => input.key.startsWith(`${key}.`));
+}
+
 function loadUnknownManifestBasedParameters(
   keyPrefix: string,
   previousKeyPath: string,
   input: any,
   result: Record<string, InputParameter>,
   seenKeys: Set<string>,
-  knownKeys: Set<string>
+  knownKeys: Set<string>,
+  dynamicParameterReference: string
 ) {
   if (seenKeys.has(keyPrefix)) {
     return;
@@ -646,6 +676,7 @@ function loadUnknownManifestBasedParameters(
         required: false,
         value: input,
         isDynamic: true,
+        dynamicParameterReference,
         isUnknown: true,
       } as ResolvedParameter;
       knownKeys.add(keyPrefix);
@@ -661,7 +692,8 @@ function loadUnknownManifestBasedParameters(
         input[key],
         result,
         seenKeys,
-        knownKeys
+        knownKeys,
+        dynamicParameterReference
       );
     });
   }
@@ -696,12 +728,14 @@ function getSwaggerBasedInputParameters(
     propertyNames,
     getObjectPropertyValue(operationDefinition.inputs, propertyNames)
   );
-  const dynamicInputParameters = loadInputValuesFromDefinition(
+  let dynamicInputParameters = loadInputValuesFromDefinition(
     dynamicInputDefinition as Record<string, any>,
     isNested ? [dynamicParameter] : inputs,
     operationPath,
     basePath as string
   );
+
+  dynamicInputParameters = removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
 
   if (isNested) {
     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);

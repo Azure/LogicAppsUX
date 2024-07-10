@@ -1,6 +1,6 @@
 //import { MapDefinitionDeserializer } from '../mapDefinitions';
+import { ReactFlowProvider } from 'reactflow';
 import type { FunctionData } from '../models/Function';
-import type { IFileSysTreeItem } from '../models/Tree';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
@@ -8,7 +8,7 @@ import { setInitialSchema, setXsltContent, setXsltFilename, setInitialDataMap } 
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import type { MapMetadata, MapDefinitionEntry, DataMapSchema } from '@microsoft/logic-apps-shared';
+import type { MapMetadata, MapDefinitionEntry, DataMapSchema, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect, useMemo } from 'react';
@@ -115,5 +115,9 @@ export const DataMapDataProvider = (props: DataMapDataProviderProps) => {
     throw new Error('DataMapDataProvider must be used inside of a DataMapperWrappedContext');
   }
 
-  return <DataProviderInner {...props} />;
+  return (
+    <ReactFlowProvider>
+      <DataProviderInner {...props} />
+    </ReactFlowProvider>
+  );
 };

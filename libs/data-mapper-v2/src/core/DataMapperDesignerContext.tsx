@@ -1,8 +1,13 @@
-import { createContext, type MutableRefObject } from 'react';
+import { createContext } from 'react';
 
 export interface DataMapperDesignerContext {
   readOnly?: boolean;
-  canvasRef?: MutableRefObject<HTMLDivElement | null>;
+  canvasBounds?: {
+    width?: number;
+    height?: number;
+    x?: number;
+    y?: number;
+  };
 }
 
-export const DataMapperWrappedContext = createContext<DataMapperDesignerContext | null>(null);
+export const DataMapperWrappedContext = createContext<DataMapperDesignerContext>({});

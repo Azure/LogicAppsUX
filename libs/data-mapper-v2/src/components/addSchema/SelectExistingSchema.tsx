@@ -1,19 +1,20 @@
 import { DropdownTree } from '../common/DropdownTree';
-import type { ITreeFile, IFileSysTreeItem } from 'models/Tree';
+import type { ITreeFile, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import type { RootState } from '../../core/state/Store';
 import { useSelector } from 'react-redux';
+import { DataMapperFileService } from '../../core';
 
 export type SelectExistingSchemaProps = {
   schemaType?: SchemaType;
   errorMessage: string;
   setSelectedSchema: (item: SchemaFile) => void;
-  getUpdatedSchemaFiles: () => void;
 };
 
 export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+  const fileService = DataMapperFileService();
 
   return (
     <DropdownTree
@@ -25,7 +26,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
           type: props.schemaType ?? SchemaType.Source,
         });
       }}
-      onDropdownOpenClose={props.getUpdatedSchemaFiles}
+      onDropdownOpenClose={fileService.readCurrentSchemaOptions ? fileService.readCurrentSchemaOptions : () => null}
     />
   );
 };

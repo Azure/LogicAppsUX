@@ -9,8 +9,8 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
     const connectionIdMetadata = generateFunctionConnectionMetadata(functionKey, connections);
     functionMetadata.push({
       reactFlowGuid: functionKey,
-      functionKey: functionValue.functionData.key,
-      positions: functionValue.functionData.positions || [],
+      functionKey: functionValue.key,
+      position: functionValue.position || { x: 0, y: 0 },
       connections: connectionIdMetadata,
       connectionShorthand: convertConnectionShorthandToId(connectionIdMetadata),
     });

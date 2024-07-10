@@ -1,37 +1,18 @@
-import { useIntl } from 'react-intl';
-import type { RootState } from '../../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
-import { DisplayConnections } from '../../../templates/connections/displayConnections';
-import { DisplayParameters } from '../../../templates/parameters/displayParameters';
+import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
+import { type TemplatePanelTab, TemplatesPanelContent } from '@microsoft/designer-ui';
 
-export const CreateWorkflowPanel = () => {
-  const intl = useIntl();
-  const { parameters, connections } = useSelector((state: RootState) => state.template);
+export const CreateWorkflowPanel = ({
+  panelTabs,
+}: {
+  panelTabs: TemplatePanelTab[];
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId) ?? panelTabs[0]?.id;
 
-  const intlText = {
-    CREATE_NEW_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Create New Workflow',
-      id: '/G8rbe',
-      description: 'Create new workflow description',
-    }),
-    CONFIGURE_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Configure Connections',
-      id: 'D6Gabc',
-      description: 'Configure Connections description',
-    }),
+  const handleSelectTab = (tabId: string): void => {
+    dispatch(selectPanelTab(tabId));
   };
-
-  return (
-    <>
-      <div>
-        <b>{intlText.CREATE_NEW_WORKFLOW}</b>
-      </div>
-      <div>
-        <b>Placeholder 1. {intlText.CONFIGURE_CONNECTIONS}</b>
-      </div>
-
-      {connections ? <DisplayConnections connections={connections} /> : <>PLACEHOLDER: no connections to be made</>}
-      {parameters ? <DisplayParameters /> : <>PLACEHOLDER: no parameters</>}
-    </>
-  );
+  return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} isSequence={true} />;
 };

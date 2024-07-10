@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
+import { createArtifactsFolder } from '../../utils/codeless/artifacts';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from './OpenBehaviorStep';
@@ -81,11 +82,6 @@ export async function createNewProjectInternal(context: IActionContext, options:
   await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
-}
-
-async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
-  fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
 }
 
 async function createLibFolder(context: IFunctionWizardContext): Promise<void> {

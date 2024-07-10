@@ -4,7 +4,7 @@ import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
 import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
-import { CustomCodeService, LogEntryLevel, LoggerService, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
+import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
@@ -12,20 +12,56 @@ import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
+import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
+import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
+const hybridApiVersion = '2024-02-02-preview';
 const consumptionApiVersion = '2019-05-01';
+
+export const useConnectionsData = (appId?: string) => {
+  return useQuery(
+    ['getConnectionsData', appId],
+    async () => {
+      const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
+      try {
+        const response = await axios.get(uri, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        });
+        const { files, health } = response.data.properties;
+        if (equals(health.state, 'healthy')) {
+          return files['connections.json'];
+        }
+        const { error } = health;
+        throw new Error(error.message);
+      } catch (error) {
+        return {};
+      }
+    },
+    {
+      enabled: !!appId,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
 
 export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   return useQuery(
     ['workflowArtifactsStandard', workflowId],
     async () => {
       const artifacts = [Artifact.ConnectionsFile, Artifact.ParametersFile];
-      const uri = `${baseUrl}${validateResourceId(workflowId)}?api-version=${standardApiVersion}&$expand=${artifacts.join(',')}`;
+      const uri = `${baseUrl}${validateResourceId(workflowId)}?api-version=${
+        HybridAppUtility.isHybridLogicApp(workflowId) ? hybridApiVersion : standardApiVersion
+      }&$expand=${artifacts.join(',')}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
+          'if-match': '*',
         },
       });
 
@@ -39,13 +75,17 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
   );
 };
 
-export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => {
-  return useQuery(['workflowCustomCode', appId, workflowName], async () => await getAllCustomCodeFiles(appId, workflowName), {
-    enabled: !!appId && !!workflowName,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+export const useAllCustomCodeFiles = (appId?: string, workflowName?: string, isHybridLogicApp?: boolean) => {
+  return useQuery(
+    ['workflowCustomCode', appId, workflowName],
+    async () => await getAllCustomCodeFiles(appId, workflowName, isHybridLogicApp),
+    {
+      enabled: !!appId && !!workflowName,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 };
 
 interface HostJSON {
@@ -97,7 +137,14 @@ export const getCustomCodeAppFiles = async (
   return appFiles;
 };
 
-const getAllCustomCodeFiles = async (appId?: string, workflowName?: string): Promise<Record<string, string>> => {
+const getAllCustomCodeFiles = async (
+  appId?: string,
+  workflowName?: string,
+  isHybridLogicApp?: boolean
+): Promise<Record<string, string>> => {
+  if (isHybridLogicApp) {
+    return {};
+  }
   const customCodeFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
   const vfsObjects: VFSObject[] = (await fetchFilesFromFolder(uri)).filter((file) => file.name !== Artifact.WorkflowFile);
@@ -143,6 +190,19 @@ export const useRunInstanceStandard = (
   return useQuery(
     ['getRunInstance', appId, workflowName, runId],
     async () => {
+      if (!appId) {
+        return;
+      }
+      if (HybridAppUtility.isHybridLogicApp(appId)) {
+        return HybridAppUtility.getProxy<LogicAppsV2.RunInstanceDefinition>(
+          `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+          null,
+          {
+            Authorization: `Bearer ${environment.armToken}`,
+          }
+        );
+      }
+
       const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
         `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
         {
@@ -199,16 +259,23 @@ export const listCallbackUrl = async (
 ): Promise<CallbackInfo> => {
   let callbackInfo: any;
   if (triggerName) {
-    const result = await axios.post(
-      `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      }
-    );
-    callbackInfo = result.data;
+    const authToken = {
+      Authorization: `Bearer ${environment.armToken}`,
+    };
+    if (HybridAppUtility.isHybridLogicApp(workflowId)) {
+      callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+    } else {
+      const result = await axios.post(
+        `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
+        null,
+        {
+          headers: {
+            ...authToken,
+          },
+        }
+      );
+      callbackInfo = result.data;
+    }
   } else {
     callbackInfo = {
       basePath: '',
@@ -232,11 +299,16 @@ export const listCallbackUrl = async (
   };
 };
 
-export const useWorkflowApp = (siteResourceId: string, isConsumption = false) => {
+export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}?api-version=${isConsumption ? '2016-10-01' : '2018-11-01'}`;
+      const apiVersions = {
+        consumption: '2016-10-01',
+        standard: '2018-11-01',
+        hybrid: '2023-11-02-preview',
+      };
+      const uri = `${baseUrl}${siteResourceId}?api-version=${apiVersions[hostingPlan] || '2018-11-01'}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -257,14 +329,30 @@ export const useAppSettings = (siteResourceId: string) => {
   return useQuery(
     ['appSettings', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
-      const response = await axios.post(uri, null, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      });
+      if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+        const containerAppInfo = (
+          await axios.get(`${baseUrl}${siteResourceId}?api-version=2024-02-02-preview`, {
+            headers: {
+              Authorization: `Bearer ${environment.armToken}`,
+            },
+          })
+        ).data;
+        containerAppInfo.properties = containerAppInfo.properties.template.containers[0].env;
+        containerAppInfo.properties = containerAppInfo.properties.reduce((acc: any, cur: any) => {
+          acc[cur.name] = cur.value;
+          return acc;
+        }, {});
+        return containerAppInfo;
+      }
 
-      return response.data;
+      const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
+      return (
+        await axios.post(uri, null, {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        })
+      ).data;
     },
     {
       refetchOnMount: false,
@@ -374,7 +462,8 @@ export const saveWorkflowStandard = async (
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
-  clearDirtyState: () => void
+  clearDirtyState: () => void,
+  skipValidation?: boolean
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -395,11 +484,13 @@ export const saveWorkflowStandard = async (
   }
 
   try {
-    try {
-      await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
-    } catch (error: any) {
-      if (error.status !== 404) {
-        return;
+    if (!skipValidation) {
+      try {
+        await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
+      } catch (error: any) {
+        if (error.status !== 404) {
+          return;
+        }
       }
     }
 
@@ -407,13 +498,23 @@ export const saveWorkflowStandard = async (
     // the host to go soft restart. We may need to look into if there's a race case where this may still happen
     // eventually we want to move this logic to the backend to happen with deployWorkflowArtifacts
     saveCustomCodeStandard(customCodeData);
-    const response = await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
+
+    let url = null;
+    if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+      url = `${baseUrl}${HybridAppUtility.getHybridAppBaseRelativeUrl(
+        siteResourceId
+      )}/deployWorkflowArtifacts?api-version=${hybridApiVersion}`;
+    } else {
+      url = `${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`;
+    }
+    const response = await axios.post(url, data, {
       headers: {
         'If-Match': '*',
         'Content-Type': 'application/json',
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
+
     if (!isSuccessResponse(response.status)) {
       alert('Failed to save workflow');
       return;
@@ -471,18 +572,29 @@ const validateWorkflow = async (
     requestPayload.properties.appsettings = { Values: settings };
   }
 
-  const response = await axios.post(
-    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
-      isConsumption ? consumptionApiVersion : standardApiVersion
-    }`,
-    requestPayload,
-    {
-      headers: {
-        'Content-Type': 'application/json',
+  let response = null;
+  if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+    response = await HybridAppUtility.postProxyResponse(
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate`,
+      requestPayload,
+      {
         Authorization: `Bearer ${environment.armToken}`,
-      },
-    }
-  );
+      }
+    );
+  } else {
+    response = await axios.post(
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
+        isConsumption ? consumptionApiVersion : standardApiVersion
+      }`,
+      requestPayload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      }
+    );
+  }
 
   if (response.status !== 200) {
     return Promise.reject(response);

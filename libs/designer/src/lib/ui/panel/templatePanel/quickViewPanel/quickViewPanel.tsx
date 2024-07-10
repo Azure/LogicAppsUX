@@ -1,38 +1,64 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { usePanelTabs } from './usePanelTabs';
-import { TabList, Tab, OverflowItem } from '@fluentui/react-components';
-import type { SelectTabData } from '@fluentui/react-components';
-import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
+import { Text } from '@fluentui/react-components';
+import { Icon } from '@fluentui/react';
+import { useIntl } from 'react-intl';
+import { useState } from 'react';
+import { TemplatesPanelContent } from '@microsoft/designer-ui';
+import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const templateName = useSelector((state: RootState) => state.template.templateName);
-  const panelTabs = usePanelTabs();
-  const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId) ?? panelTabs[0]?.id;
+  const intl = useIntl();
+  const { manifest } = useSelector((state: RootState) => ({
+    manifest: state.template.manifest,
+    templateName: state.template.templateName,
+  }));
+  const panelTabs = getQuickViewTabs(intl, dispatch);
+  const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
-  const onTabSelected = (_: unknown, data?: SelectTabData): void => {
-    if (data) {
-      const itemKey = data.value as string;
-      dispatch(selectPanelTab(itemKey));
-    }
+  if (!manifest) {
+    return null;
+  }
+
+  const onTabSelected = (tabId: string): void => {
+    setSelectedTabId(tabId);
   };
 
   return (
-    <>
-      <b>{templateName}</b>
-      <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
-        {panelTabs.map(({ id, visible, title }) =>
-          visible ? (
-            <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
-              <Tab value={id} role={'tab'}>
-                {title}
-              </Tab>
-            </OverflowItem>
-          ) : null
-        )}
-      </TabList>
-      <div className="msla-panel-content-container">{panelTabs.find((tab) => tab.id === selectedTabId)?.content}</div>
-    </>
+    <TemplatesPanelContent
+      className="msla-template-quickview-tabs"
+      isSequence={false}
+      tabs={panelTabs}
+      selectedTab={selectedTabId}
+      selectTab={onTabSelected}
+    />
+  );
+};
+
+export const QuickViewPanelHeader = ({
+  title,
+  description,
+  details,
+}: { title: string; description: string; details: Record<string, string> }) => {
+  return (
+    <div className="msla-template-quickview-header">
+      <Text className="msla-template-panel-header">{title}</Text>
+      <div className="msla-template-quickview-tags">
+        {Object.keys(details).map((key: string, index: number, array: any[]) => {
+          return (
+            <div key={key}>
+              <Text className="msla-template-card-tag">
+                {key}: {details[key]}
+              </Text>
+              {index !== array.length - 1 ? (
+                <Icon style={{ padding: '3px 10px 3px 10px', color: '#dedede', fontSize: 10 }} iconName="LocationDot" />
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
+      <Text className="msla-template-description">{description}</Text>
+    </div>
   );
 };

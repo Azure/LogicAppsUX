@@ -2,17 +2,29 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
+import type { FilterObject } from '@microsoft/designer-ui';
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
-  //TODO: rename this to availableTemplateManifests
+  filteredTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
+  filters: {
+    keyword?: string;
+    sortKey: string;
+    connectors: FilterObject[] | undefined;
+    detailFilters: Record<string, FilterObject[]>;
+  };
 }
 
 type ManifestName = string;
 
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
+  filters: {
+    sortKey: 'a-to-z',
+    connectors: undefined,
+    detailFilters: {},
+  },
 };
 
 export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', async () => {
@@ -49,6 +61,35 @@ export const manifestSlice = createSlice({
         state.availableTemplates = action.payload;
       }
     },
+    setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
+      if (action.payload) {
+        state.filteredTemplateNames = action.payload;
+      }
+    },
+    setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
+      state.filters.keyword = action.payload;
+    },
+    setSortKey: (state, action: PayloadAction<string>) => {
+      state.filters.sortKey = action.payload;
+    },
+    setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
+      state.filters.connectors = action.payload;
+    },
+    setDetailsFilters: (
+      state,
+      action: PayloadAction<{
+        filterName: string;
+        filters: FilterObject[] | undefined;
+      }>
+    ) => {
+      const currentDetailFilters = { ...state.filters.detailFilters };
+      if (action.payload.filters) {
+        currentDetailFilters[action.payload.filterName] = action.payload.filters;
+      } else {
+        delete currentDetailFilters[action.payload.filterName];
+      }
+      state.filters.detailFilters = currentDetailFilters;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadManifestNames.fulfilled, (state, action) => {
@@ -70,6 +111,17 @@ export const manifestSlice = createSlice({
     });
   },
 });
+
+export const {
+  setavailableTemplatesNames,
+  setavailableTemplates,
+  setFilteredTemplateNames,
+  setKeywordFilter,
+  setSortKey,
+  setConnectorsFilters,
+  setDetailsFilters,
+} = manifestSlice.actions;
+export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {

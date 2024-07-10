@@ -33,6 +33,7 @@ export const useStyles = makeStyles({
     display: 'flex',
     width: '100%',
     flexDirection: 'column',
+    height: '100%',
   },
   selectSchemaWrapper: {
     paddingLeft: '20px',
@@ -41,7 +42,7 @@ export const useStyles = makeStyles({
   },
   root: {
     display: 'flex',
-    height: '100vh',
+    height: '100%',
   },
   fileSelectedDrawer: {
     backgroundColor: '#F6FAFE',
@@ -51,15 +52,5 @@ export const useStyles = makeStyles({
   },
   rightDrawer: {
     ...shorthands.borderLeft('1px', 'solid', '#ddd'),
-  },
-  searchBox: {
-    width: '85%',
-    alignSelf: 'center',
-  },
-  treeWrapper: {
-    display: 'flex',
-    width: '100%',
-    justifyContent: 'center',
-    flexDirection: 'column',
   },
 });

@@ -5,7 +5,9 @@ import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserial
 import { getConnection } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
+import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
@@ -14,7 +16,6 @@ import {
 } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
-import { getAllVariables } from '../../utils/variables';
 import type {
   IOperationManifestService,
   Connection,
@@ -55,6 +56,25 @@ export interface UpdateConnectionPayload {
   connectionRuntimeUrl?: string;
 }
 
+export const updateTemplateConnection = createAsyncThunk(
+  'updateTemplateConnection',
+  async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
+    const { nodeId, connector, connection, connectionProperties, authentication } = payload;
+    dispatch(
+      changeTemplateConnectionMapping({
+        nodeId,
+        connectorId: connector.id,
+        connectionId: connection.id,
+        authentication: authentication ?? getApiHubAuthenticationIfRequired(),
+        connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
+        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as TemplateRootState).template.workflowDefinition)
+          ? connection.properties.connectionRuntimeUrl
+          : undefined,
+      })
+    );
+  }
+);
+
 export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
@@ -89,13 +109,11 @@ const updateNodeConnectionAndProperties = async (
   const newState = getState() as RootState;
   const operationInfo = getRecordEntry(newState.operations.operationInfo, nodeId);
   const dependencies = getRecordEntry(newState.operations.dependencies, nodeId);
-  const inputParameters = getRecordEntry(newState.operations.inputParameters, nodeId);
-  const settings = getRecordEntry(newState.operations.settings, nodeId);
   const newlyAddedOperations = getRecordEntry(newState.workflow.newlyAddedOperations, nodeId);
   const operation = getRecordEntry(newState.workflow.operations, nodeId);
 
   // Shouldn't happen, but required for type checking
-  if (!operationInfo || !dependencies || !inputParameters || !settings) {
+  if (!operationInfo || !dependencies) {
     return;
   }
 
@@ -105,9 +123,6 @@ const updateNodeConnectionAndProperties = async (
     operationInfo,
     getConnectionReference(newState.connections, nodeId),
     dependencies,
-    inputParameters,
-    settings,
-    getAllVariables(newState.tokens.variables),
     dispatch,
     getState,
     newlyAddedOperations ? undefined : operation

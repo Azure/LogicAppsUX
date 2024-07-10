@@ -1,4 +1,123 @@
 .msla-template-card-wrapper {
-    width: 500px;
-    border: 1px solid black;
+    min-width: 250px;
+    border: 1px solid #d9d1d1;
+    border-radius: 2px;
+
+    padding: 16px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.msla-template-card-data, .msla-templates-break, .msla-template-card-connectors {
+    width: 95%;
+    display: flex;
+}
+
+.msla-template-card-data {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.msla-template-card-title {
+    padding-bottom: 10px;
+}
+
+.msla-template-card-tags {
+    display: flex;
+    flex-direction: row;
+    color: grey;
+
+    .msla-template-card-tag {
+        margin-right: 14px;
+        color: grey;
+    }
+}
+
+.msla-templates-break {
+    color: rgb(146, 145, 145);
+    background-color: rgba(214, 213, 213, 0.5);
+    height: 1px;
+    border: none;
+
+    margin: 20px 0px 10px 0px;
+}
+
+.msla-template-card-connectors-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.msla-template-card-connectors {
+    height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .msla-template-card-connectors-title {
+        margin-bottom: 8px;
+    }
+
+    .msla-template-card-connectors-list {
+        display: flex;
+        height: 52px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .msla-template-card-connector, .msla-template-card-connector-overflow {
+            border: solid 1px #d9d1d1;
+            border-radius: 5px;
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+        }
+
+        .msla-template-card-connector-overflow {
+            width: 32px;
+            height: 32px;
+        }
+
+        .msla-template-card-connectors-emptyText {
+            color: grey;
+        }
+    }
+}
+
+.msla-template-card-connector-menu-box {
+    display: contents;
+
+    .msla-template-connector-menuitem {
+        overflow: hidden;
+        position: relative;
+        bottom: 5px;
+        min-width: 150px;
+    
+        .msla-template-connector-menuitem-icon {
+            padding: 5px;
+            position: relative;
+            top: 10px;
+            width: 20px;
+            height: 20px;
+        }  
+    }
+}
+
+.msla-template-card-connector, .msla-template-card-connector-overflow, .msla-template-connector-box {
+    border: solid 1px #d9d1d1;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .msla-template-card-connector-icon {
+        width: 60%;
+        height: 60%;
+    }
 }

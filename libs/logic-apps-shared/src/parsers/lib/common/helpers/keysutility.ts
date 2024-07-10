@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { isNullOrUndefined } from '../../../../utils/src';
+import { OutputSource } from '../constants';
 
 const _separator = '.';
 const _subSegmentSeparator = '/';
@@ -195,4 +196,8 @@ function _isIndexSegment(segment: string): boolean {
 // after applying the regex with escaping using \\.
 function _replaceCharacter(value: string, charToReplace: string, replacedChar: string): string {
   return value.replace(new RegExp(`\\${charToReplace}`, 'g'), replacedChar);
+}
+
+export function isBodySegment(segment?: Segment) {
+  return segment?.value?.toString()?.toLowerCase() === OutputSource.Body;
 }

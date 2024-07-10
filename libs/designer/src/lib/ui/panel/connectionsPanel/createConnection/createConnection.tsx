@@ -7,9 +7,8 @@ import LegacyManagedIdentityDropdown from './formInputs/legacyManagedIdentityPic
 import LegacyMultiAuth, { LegacyMultiAuthOptions } from './formInputs/legacyMultiAuth';
 import type { ConnectionParameterProps } from './formInputs/universalConnectionParameter';
 import { UniversalConnectionParameter } from './formInputs/universalConnectionParameter';
-import type { IDropdownOption } from '@fluentui/react';
-import { MessageBarType, MessageBar } from '@fluentui/react';
-import { Body1Strong, Button, Divider } from '@fluentui/react-components';
+import { css, type IDropdownOption } from '@fluentui/react';
+import { Body1Strong, Button, Divider, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import {
   ConnectionParameterEditorService,
   ConnectionService,
@@ -21,6 +20,8 @@ import {
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
+  isUsingAadAuthentication,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -32,6 +33,7 @@ import type {
   Gateway,
   ManagedIdentity,
   Subscription,
+  Connector,
 } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker, Label } from '@microsoft/designer-ui';
@@ -39,18 +41,18 @@ import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { DismissRegular } from '@fluentui/react-icons';
+import TenantPicker from './formInputs/tenantPicker';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
 export interface CreateConnectionProps {
+  classes?: Record<string, string>;
   nodeIds?: string[];
   iconUri?: string;
-  connectorId: string;
-  connectorDisplayName: string;
-  connectorCapabilities?: string[];
-  connectionParameters?: Record<string, ConnectionParameter>;
+  connector: Connector;
   connectionParameterSets?: ConnectionParameterSets;
-  connectionAlternativeParameters?: Record<string, ConnectionParameter>;
+  description?: string;
   identity?: ManagedIdentity;
   isLoading?: boolean;
   createConnectionCallback?: (
@@ -64,6 +66,7 @@ export interface CreateConnectionProps {
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
+  showActionBar?: boolean;
   errorMessage?: string;
   clearErrorCallback?: () => void;
   selectSubscriptionCallback?: (subscriptionId: string) => void;
@@ -77,14 +80,13 @@ export interface CreateConnectionProps {
 
 export const CreateConnection = (props: CreateConnectionProps) => {
   const {
+    classes,
     nodeIds = [],
+    showActionBar = true,
     iconUri = '',
-    connectorId,
-    connectorDisplayName,
-    connectorCapabilities,
-    connectionParameters,
+    connector,
     connectionParameterSets: _connectionParameterSets,
-    connectionAlternativeParameters,
+    description,
     identity,
     isLoading = false,
     createConnectionCallback,
@@ -101,6 +103,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   } = props;
 
   const intl = useIntl();
+
+  const connectorId = connector?.id;
+
+  const {
+    connectionParameters,
+    connectionAlternativeParameters,
+    capabilities: connectorCapabilities,
+    displayName: connectorDisplayName,
+  } = connector.properties;
 
   const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
@@ -282,6 +293,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [hasOAuth, servicePrincipalSelected, legacyManagedIdentitySelected]
   );
 
+  const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
+  const showTenantIdSelection = useMemo(
+    () =>
+      usingAadConnection &&
+      isUsingOAuth &&
+      Object.keys(connectionParameters ?? {}).some((key) => equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)),
+    [connectionParameters, isUsingOAuth, usingAadConnection]
+  );
+
   // Don't show name for simple connections
   const showNameInput = useMemo(
     () =>
@@ -314,6 +334,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const submitCallback = useCallback(() => {
     const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
+
+    // The OAuth tenant ID is passed a little strange, we need to manually add it here
+    const oauthTenantId = additionalParameterValues?.[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID];
+    if (showTenantIdSelection && oauthTenantId) {
+      visibleParameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID] = oauthTenantId;
+    }
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     if (
@@ -353,6 +379,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     isUsingOAuth,
     capabilityEnabledParameters,
     servicePrincipalSelected,
+    showTenantIdSelection,
   ]);
 
   // INTL STRINGS
@@ -550,22 +577,31 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // RENDER
 
   return (
-    <div className="msla-edit-connection-container">
-      <ActionList nodeIds={nodeIds} iconUri={iconUri} />
-      <Divider />
+    <div className={classes?.['root'] ? css('msla-edit-connection-container', classes?.['root']) : 'msla-edit-connection-container'}>
+      {showActionBar ? <ActionList nodeIds={nodeIds} iconUri={iconUri} /> : null}
+      {showActionBar ? <Divider /> : null}
 
-      <Body1Strong>{componentDescription}</Body1Strong>
+      <Body1Strong>{description ?? componentDescription}</Body1Strong>
 
-      <div className="msla-create-connection-container">
+      <div
+        className={
+          classes?.['content'] ? css('msla-create-connection-container', classes?.['content']) : 'msla-create-connection-container'
+        }
+      >
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar
-            messageBarType={MessageBarType.error}
-            isMultiline={true}
-            onDismiss={clearErrorCallback}
-            dismissButtonAriaLabel={closeErrorButtonAriaLabel}
-          >
-            {errorMessage}
+          <MessageBar intent={'error'} style={{ width: '100%' }}>
+            <MessageBarBody>{errorMessage}</MessageBarBody>
+            <MessageBarActions
+              containerAction={
+                <Button
+                  aria-label={closeErrorButtonAriaLabel}
+                  appearance="transparent"
+                  icon={<DismissRegular />}
+                  onClick={clearErrorCallback}
+                />
+              }
+            />
           </MessageBar>
         )}
 
@@ -626,6 +662,18 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
+            />
+          )}
+
+          {/* OAuth tenant ID selection */}
+          {showTenantIdSelection && (
+            <TenantPicker
+              data-testId={'connection-param-oauth-tenants'}
+              isLoading={isLoading}
+              value={parameterValues[SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]}
+              setValue={(val: string) =>
+                setParameterValues({ ...parameterValues, [SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID]: val })
+              }
             />
           )}
 
