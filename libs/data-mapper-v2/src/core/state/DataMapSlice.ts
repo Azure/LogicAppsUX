@@ -411,6 +411,7 @@ export const {
   updateReactFlowEdges,
   updateReactFlowNodes,
   makeConnection,
+  updateDataMapLML,
   saveDataMap,
   setConnectionInput,
   addFunctionNode,

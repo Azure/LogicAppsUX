@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 export interface DataMapperDesignerContext {
   readOnly?: boolean;
@@ -10,5 +10,4 @@ export interface DataMapperDesignerContext {
   };
 }
 
-export const DataMapperWrappedContext =
-  createContext<DataMapperDesignerContext>({});
+export const DataMapperWrappedContext = createContext<DataMapperDesignerContext>({});

@@ -14,7 +14,7 @@ export interface Manifest {
   prerequisites?: string;
   parameters: Parameter[];
   connections: Record<string, Connection>;
-  featuredOperations?: { type: string; kind?: string; }[];
+  featuredOperations?: { type: string; kind?: string }[];
 }
 
 export interface Artifact {

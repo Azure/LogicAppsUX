@@ -1,5 +1,4 @@
 import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
-import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { reactPlugin } from './services/appInsights/AppInsights';
 import { store } from './state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -51,17 +50,11 @@ export interface DataMapperDesignerProviderProps {
   children: React.ReactNode;
 }
 
-export const DataMapperDesignerProvider = ({
-  theme = ThemeType.Light,
-  locale = 'en',
-  options,
-  children,
-}: DataMapperDesignerProviderProps) => {
+export const DataMapperDesignerProvider = ({ theme = ThemeType.Light, locale = 'en', children }: DataMapperDesignerProviderProps) => {
   return (
     <DndProvider backend={HTML5Backend}>
-    <AppInsightsContext.Provider value={reactPlugin}>
-      <ReduxProvider store={store}>
-        <DataMapperWrappedContext.Provider value={options}>
+      <AppInsightsContext.Provider value={reactPlugin}>
+        <ReduxProvider store={store}>
           <ThemeProvider
             theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
             style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
@@ -90,9 +83,8 @@ export const DataMapperDesignerProvider = ({
               </PortalCompatProvider>
             </FluentProvider>
           </ThemeProvider>
-        </DataMapperWrappedContext.Provider>
-      </ReduxProvider>
-    </AppInsightsContext.Provider>
+        </ReduxProvider>
+      </AppInsightsContext.Provider>
     </DndProvider>
   );
 };
