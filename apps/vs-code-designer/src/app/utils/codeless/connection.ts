@@ -14,9 +14,7 @@ import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
-import { JwtTokenHelper, JwtTokenConstants } from '../../../../../vs-code-react/src/app/designer/services/JwtHelper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { WorkflowUtility } from '../../../../../Standalone/src/designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import type {
   ILocalSettingsJson,
   ServiceProviderConnectionModel,
@@ -27,6 +25,7 @@ import type {
   ConnectionAndAppSetting,
   Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
+import { JwtTokenHelper, JwtTokenConstants, WorkflowUtility } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -126,9 +125,9 @@ async function addConnectionDataInJson(
   }
 }
 
-function isKeyExpired(jwtTokenHelper: JwtTokenHelper, connectionKey: string, bufferInHours: number): boolean {
+export function isKeyExpired(jwtTokenHelper: JwtTokenHelper, date: number, connectionKey: string, bufferInHours: number): boolean {
   const payload: Record<string, any> = jwtTokenHelper.extractJwtTokenPayload(connectionKey);
-  const secondsSinceEpoch = Math.round(Date.now() / 1000);
+  const secondsSinceEpoch = Math.round(date / 1000);
   const buffer = bufferInHours * 3600; // convert to seconds
   const expiry = payload[JwtTokenConstants.expiry];
 
@@ -223,7 +222,7 @@ export async function getConnectionsAndSettingsToUpdate(
       );
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
-      isKeyExpired(jwtTokenHelper, localSettings.Values[`${referenceKey}-connectionKey`], 192)
+      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 42)
     ) {
       const resolvedConnectionReference = WorkflowUtility.resolveConnectionsReferences(
         JSON.stringify(reference),
