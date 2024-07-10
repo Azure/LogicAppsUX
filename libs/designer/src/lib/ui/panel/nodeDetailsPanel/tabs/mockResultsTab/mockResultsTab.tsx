@@ -77,7 +77,7 @@ const MockResultsTab = () => {
         );
       }
     },
-    [nodeName, dispatch, mocks.actionResult, mocks.errorMessage, mocks.errorCode]
+    [dispatch, mocks?.actionResult, mocks?.errorCode, mocks?.errorMessage, nodeName]
   );
 
   const onActionResultUpdate = useCallback(
@@ -102,7 +102,7 @@ const MockResultsTab = () => {
         );
       }
     },
-    [nodeName, dispatch, mocks.errorMessage, mocks.errorCode]
+    [nodeName, dispatch, mocks?.errorMessage, mocks?.errorCode]
   );
 
   const outputs: OutputsField[] = filteredOutputs.map((output: OutputInfo) => {
@@ -139,8 +139,8 @@ const MockResultsTab = () => {
       onActionResultUpdate={onActionResultUpdate}
       outputs={outputs}
       mocks={mocks}
-      errorMessage={mocks.errorMessage ?? ''}
-      errorCode={mocks.errorCode ?? ''}
+      errorMessage={mocks?.errorMessage ?? ''}
+      errorCode={mocks?.errorCode ?? ''}
       onMockUpdate={onMockUpdate}
     />
   );
