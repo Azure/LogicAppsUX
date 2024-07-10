@@ -16,7 +16,7 @@ import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
-import { Panel as CodeViewPanel } from '../components/codeView/Panel';
+import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import useResizeObserver from 'use-resize-observer';
 
