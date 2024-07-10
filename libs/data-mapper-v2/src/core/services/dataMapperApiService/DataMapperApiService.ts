@@ -53,6 +53,7 @@ export class DataMapperApiService {
     const filename = schemaFilename.substring(0, schemaFilename.lastIndexOf('.'));
     const formattedFilePath = schemaFilePath.replace(schemaFilename, '');
     const queryParams = schemaFilePath === schemaFilename ? '' : `?relativePath=${formattedFilePath}`;
+    console.log(`${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${filename}/contents/schemaTree${queryParams}`);
     return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${filename}/contents/schemaTree${queryParams}`;
   };
   private getFunctionsManifestUri = () =>
