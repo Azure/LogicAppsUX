@@ -78,6 +78,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
     //creating all .vscode files in the root of the workspace
+    //TODO add flag here for initial creation
     context.workspacePath = path.join(context.workspacePath, '../..');
     const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
     await fse.ensureDir(vscodePath);

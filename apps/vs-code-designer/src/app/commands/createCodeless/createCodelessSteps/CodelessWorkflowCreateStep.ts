@@ -49,11 +49,12 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     // Check if the user chose to initialize a static web app
     if (context.initializeStaticWebApp) {
       context.telemetry.properties.initializeStaticWebApp = 'true';
+      //call SWA extension
       vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp', undefined, undefined, {
         backendResourceId:
-          '/subscriptions/3621a0b9-af9a-4007-b5b7-691fdc8b599f/resourcegroups/alainzla-demo-v/providers/Microsoft.Web/sites/alainzla-demo-v',
+          '/subscriptions/3621a0b9-af9a-4007-b5b7-691fdc8b599f/resourcegroups/alainzla-demo-v/providers/Microsoft.Web/sites/mylacodereview',
         region: 'eastus',
-        name: 'alainzla-demo-v',
+        name: 'mylacodereview',
       });
     } else {
       context.telemetry.properties.initializeStaticWebApp = 'false';
@@ -61,83 +62,69 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
 
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
-
-    const emptyStatefulDefinition: StandardApp = {
-      definition: {
-        $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {
-          Compose: {
-            type: 'Compose',
-            inputs: {
-              status: 'Hello from Logic App',
+    let emptyStatefulDefinition: StandardApp;
+    if (context.initializeStaticWebApp) {
+      //initiate basic logic app which can be called from SWA
+      emptyStatefulDefinition = {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          actions: {
+            Compose: {
+              type: 'Compose',
+              inputs: {
+                status: 'Hello from Logic App',
+              },
+              runAfter: {},
             },
-            runAfter: {},
+            Response: {
+              type: 'Response',
+              kind: 'Http',
+              inputs: {
+                statusCode: 200,
+                body: "@outputs('Compose')",
+              },
+              runAfter: {
+                Compose: ['SUCCEEDED'],
+              },
+            },
           },
-          Response: {
-            type: 'Response',
-            kind: 'Http',
-            inputs: {
-              statusCode: 200,
-              body: "@outputs('Compose')",
-            },
-            runAfter: {
-              Compose: ['SUCCEEDED'],
+          contentVersion: '1.0.0.0',
+          outputs: {},
+          triggers: {
+            When_a_HTTP_request_is_received: {
+              type: 'Request',
+              kind: 'Http',
+              inputs: {
+                method: 'GET',
+                relativePath: '/api/message',
+              },
             },
           },
         },
-        contentVersion: '1.0.0.0',
-        outputs: {},
-        triggers: {
-          When_a_HTTP_request_is_received: {
-            type: 'Request',
-            kind: 'Http',
-            inputs: {
-              method: 'GET',
-              relativePath: '/api/message',
-            },
-          },
+        kind: 'Stateful',
+      };
+    } else {
+      emptyStatefulDefinition = {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          actions: {},
+          contentVersion: '1.0.0.0',
+          outputs: {},
+          triggers: {},
         },
-      },
-      kind: 'Stateful',
-    };
+        kind: 'Stateful',
+      };
+    }
 
     const emptyStatelessDefinition: StandardApp = {
       definition: {
         $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-        actions: {
-          Compose: {
-            type: 'Compose',
-            inputs: {
-              status: 'Hello from Logic App',
-            },
-            runAfter: {},
-          },
-          Response: {
-            type: 'Response',
-            kind: 'Http',
-            inputs: {
-              statusCode: 200,
-              body: "@outputs('Compose')",
-            },
-            runAfter: {
-              Compose: ['SUCCEEDED'],
-            },
-          },
-        },
+        actions: {},
         contentVersion: '1.0.0.0',
         outputs: {},
-        triggers: {
-          When_a_HTTP_request_is_received: {
-            type: 'Request',
-            kind: 'Http',
-            inputs: {
-              method: 'GET',
-              relativePath: '/api/message',
-            },
-          },
-        },
+        triggers: {},
       },
-      kind: 'Stateful',
+      kind: 'Stateless',
     };
 
     const codelessDefinition: StandardApp = template?.id === workflowType.stateful ? emptyStatefulDefinition : emptyStatelessDefinition;

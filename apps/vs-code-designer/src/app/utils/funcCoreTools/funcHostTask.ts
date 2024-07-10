@@ -20,6 +20,7 @@ export interface IRunningFuncTask {
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
 
+//TODO add new function which verifies SWA start and revert this one to original. call dynamically based off of whether swa init
 /**
  * Returns whether the task is an SWA start task.
  * @param {vscode.Task} task - Function task.

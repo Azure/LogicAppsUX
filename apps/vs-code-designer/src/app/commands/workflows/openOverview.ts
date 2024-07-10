@@ -61,6 +61,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`
     );
 
+    //TODO this is a temporary fix as we figure out SWA local emulator needing SAS
     const swaUrl = callbackInfo.value.replace(/7071/g, '4280');
     if (callbackInfo.relativePath) {
       const regex = /invoke\b/g;
