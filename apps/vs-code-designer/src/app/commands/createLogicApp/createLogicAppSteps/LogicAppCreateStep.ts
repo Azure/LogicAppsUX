@@ -50,7 +50,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
   }
 
   public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !wizardContext.site;
+    return !wizardContext.useHybrid && !wizardContext.site;
   }
 
   private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {

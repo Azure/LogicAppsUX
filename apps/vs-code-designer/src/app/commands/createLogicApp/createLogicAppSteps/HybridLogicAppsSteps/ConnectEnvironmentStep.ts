@@ -26,6 +26,6 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
   }
 
   public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.customLocation && !!wizardContext.connectedEnvironment && !!wizardContext.fileShare;
+    return !!wizardContext.customLocation && !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
   }
 }
