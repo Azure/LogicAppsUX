@@ -16,6 +16,7 @@ import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import { JwtTokenHelper, JwtTokenConstants } from '../../../../../vs-code-react/src/app/designer/services/JwtHelper';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { WorkflowUtility } from '../../../../../Standalone/src/designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import type {
   ILocalSettingsJson,
   ServiceProviderConnectionModel,
@@ -179,8 +180,6 @@ async function getConnectionReference(
     });
 }
 
-//change workflow file path to project root
-
 export async function getConnectionsAndSettingsToUpdate(
   context: IActionContext,
   projectPath: string,
@@ -192,7 +191,7 @@ export async function getConnectionsAndSettingsToUpdate(
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
@@ -213,13 +212,18 @@ export async function getConnectionsAndSettingsToUpdate(
         parametersFromDefinition
       );
     } else if (
-      settings.Values[`${referenceKey}-connectionKey`] &&
-      isKeyExpired(jwtTokenHelper, settings.Values[`${referenceKey}-connectionKey`], 192)
+      localSettings.Values[`${referenceKey}-connectionKey`] &&
+      isKeyExpired(jwtTokenHelper, localSettings.Values[`${referenceKey}-connectionKey`], 192)
     ) {
+      const resolvedConnectionReference = WorkflowUtility.resolveConnectionsReferences(
+        JSON.stringify(reference),
+        undefined,
+        localSettings.Values
+      );
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
-        reference,
+        resolvedConnectionReference,
         accessToken,
         workflowBaseManagementUri,
         settingsToAdd,
