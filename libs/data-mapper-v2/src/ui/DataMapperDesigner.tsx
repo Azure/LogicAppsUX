@@ -7,7 +7,7 @@ import { Panel as FunctionPanel } from '../components/functionsPanel/Panel';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
 import { CodeView } from '../components/codeView/CodeView';
-import { DMReactFlow } from './DMReactFlow';
+import { DMReactFlow } from './ReactFlow';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
