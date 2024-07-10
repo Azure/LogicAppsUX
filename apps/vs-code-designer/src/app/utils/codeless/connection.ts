@@ -135,6 +135,16 @@ function isKeyExpired(jwtTokenHelper: JwtTokenHelper, connectionKey: string, buf
   return expiry - buffer <= secondsSinceEpoch;
 }
 
+function formatSetting(setting: string): string {
+  if (setting.endsWith('/')) {
+    setting = setting.substring(0, setting.length - 1);
+  }
+  if (setting.startsWith('/')) {
+    setting = setting.substring(1);
+  }
+  return setting;
+}
+
 async function getConnectionReference(
   referenceKey: string,
   reference: any,
@@ -151,7 +161,7 @@ async function getConnectionReference(
 
   return axios
     .post(
-      `${workflowBaseManagementUri}/${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+      `${formatSetting(workflowBaseManagementUri)}/${formatSetting(connectionId)}/listConnectionKeys?api-version=2018-07-01-preview`,
       { validityTimeSpan: '7' },
       { headers: { authorization: accessToken } }
     )
