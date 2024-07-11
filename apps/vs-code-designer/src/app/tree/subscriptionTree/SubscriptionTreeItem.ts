@@ -7,7 +7,7 @@ import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvide
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
-import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
+import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/HybridAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
@@ -155,7 +155,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     if (wizardContext.useHybrid) {
       executeSteps.push(new ConnectEnvironmentStep());
-      executeSteps.push(new ContainerAppCreateStep());
+      executeSteps.push(new HybridAppCreateStep());
     } else {
       executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
       executeSteps.push(new AppInsightsCreateStep());

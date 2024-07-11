@@ -8,24 +8,24 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
 import type { Progress } from 'vscode';
 import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
-import { createContainerApp } from '../../../../utils/codeless/containerApp';
+import { createHybridApp, createLogicAppExtension } from '../../../../utils/codeless/hybridApp';
 
-export class ContainerAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
+export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 120;
 
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {
-      const message: string = localize('creatingNewApp', 'Creating container app "{0}"...', context.newSiteName);
+      const message: string = localize('creatingNewHybridApp', 'Creating hybrid app "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
-      const response = await createContainerApp(context);
-      console.log(response);
+      await createHybridApp(context);
+      await createLogicAppExtension(context);
     } catch (error) {
-      return undefined;
+      throw new Error(error);
     }
   }
 
   public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.customLocation && !!wizardContext.connectedEnvironment && !!wizardContext.fileShare;
+    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare;
   }
 }
