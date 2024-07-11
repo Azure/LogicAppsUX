@@ -1,29 +1,27 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { Button } from '@fluentui/react-components';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState, AppDispatch } from '../../core/state/Store';
 import { Code24Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
-import { MonacoEditor, type MonacoProps } from '@microsoft/designer-ui';
+import { MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
+import { toggleCodeView } from '../../core/state/PanelSlice';
 
 type CodeViewPanelProps = {};
-
-export const commonCodeEditorProps: Partial<MonacoProps> = {
-  lineNumbers: 'on',
-  scrollbar: { horizontal: 'hidden', vertical: 'auto' },
-  height: '650px',
-  wordWrap: 'on',
-  wrappingIndent: 'same',
-};
 
 export const CodeViewPanel = (_props: CodeViewPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
+  const dispatch = useDispatch<AppDispatch>();
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
   const dataMapDefinition = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
+
+  const closeCodeView = useCallback(() => {
+    dispatch(toggleCodeView());
+  }, []);
 
   const resources = useMemo(
     () => ({
@@ -53,7 +51,9 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
       title={{
         text: resources.CODE_VIEW,
         icon: Code24Regular,
-        rightAction: <Button appearance="subtle" aria-label={resources.CLOSE_CODE_VIEW} icon={<Dismiss20Regular />} />,
+        rightAction: (
+          <Button appearance="transparent" aria-label={resources.CLOSE_CODE_VIEW} icon={<Dismiss20Regular />} onClick={closeCodeView} />
+        ),
         size: 500,
       }}
       body={
@@ -69,7 +69,11 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
             language={EditorLanguage.yaml}
             value={dataMapDefinition === '' ? resources.EMPTY_MAP_DEFINITION : dataMapDefinition}
             className={styles.editorStyle}
-            {...commonCodeEditorProps}
+            lineNumbers={'on'}
+            scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+            height="650px"
+            wordWrap="on"
+            wrappingIndent="same"
             readOnly
           />
         </div>

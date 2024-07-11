@@ -57,6 +57,7 @@ export const Panel = (props: PanelProps) => {
               placeholder={search.placeholder}
               className={mergeClasses(defaultStyles.search, styles?.search)}
               value={search.text}
+              size="small"
               onChange={(_e, data: InputOnChangeData) => {
                 search.onChange(data?.value);
               }}

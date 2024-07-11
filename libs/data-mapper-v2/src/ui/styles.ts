@@ -12,7 +12,7 @@ export const useStyles = makeStyles({
   canvasWrapper: {
     height: '100%',
     display: 'flex',
-    backgroundColor: tokens.colorNeutralBackground4,
+    backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.flex(1, 1, '1px'),
   },
   reactFlow: {

@@ -4,6 +4,7 @@ export const useStyles = makeStyles({
   root: {
     backgroundColor: '#E8F3FE',
     ...shorthands.borderLeft('1px', 'solid', '#ddd'),
+    ...shorthands.borderRight('1px', 'solid', '#ddd'),
     width: '350px',
   },
   header: {
@@ -20,5 +21,6 @@ export const useStyles = makeStyles({
   },
   body: {
     backgroundColor: '#E8F3FE',
+    backgroundImage: 'none',
   },
 });
