@@ -20,7 +20,7 @@ export const useStyles = makeStyles({
     alignSelf: 'center',
   },
   body: {
-    backgroundColor: '#E8F3FE',
+    backgroundColor: 'transparent',
     backgroundImage: 'none',
   },
 });

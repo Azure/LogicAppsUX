@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
+import { SchemaPanel } from '../components/addSchema/SchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
@@ -43,9 +43,9 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
       <div className={styles.dataMapperShell}>
         <FunctionPanel />
-        <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
+        <SchemaPanel onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
         <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
-        <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
+        <SchemaPanel onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
         <CodeViewPanel />
       </div>
     </DataMapperWrappedContext.Provider>

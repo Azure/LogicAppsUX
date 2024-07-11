@@ -5,7 +5,7 @@ export const useStyles = makeStyles({
     marginTop: '10px',
     fontSize: '18px',
     height: '100%',
-    ...shorthands.overflow('hidden', 'scroll'),
+    ...shorthands.overflow('scroll', 'scroll'),
   },
   leftWrapper: {
     marginLeft: '23px',

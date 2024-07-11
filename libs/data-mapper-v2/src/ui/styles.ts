@@ -17,7 +17,7 @@ export const useStyles = makeStyles({
   },
   reactFlow: {
     height: '100%',
-    backgroundColor: tokens.colorNeutralBackground4,
+    backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.overflow('visible'),
   },
   dataMapperFunctionPanel: {
@@ -30,7 +30,7 @@ export const useStyles = makeStyles({
 
 export const reactFlowStyle: CSSProperties = {
   height: '100%',
-  backgroundColor: tokens.colorNeutralBackground4,
+  backgroundColor: tokens.colorNeutralBackground1,
 };
 
 export const useStaticStyles = makeStaticStyles({
