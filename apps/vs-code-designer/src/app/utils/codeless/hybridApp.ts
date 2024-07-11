@@ -7,7 +7,14 @@ import { getWorkspaceFolder } from '../workspace';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import path from 'path';
-import { localSettingsFileName } from '../../../constants';
+import {
+  appKindSetting,
+  extensionVersionKey,
+  localSettingsFileName,
+  logicAppKind,
+  sqlStorageConnectionStringKey,
+} from '../../../constants';
+import { localize } from '../../../localize';
 
 const getAppSettingsFromLocal = async (context) => {
   const appSettingsToskip = ['AzureWebJobsStorage', 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
@@ -30,15 +37,15 @@ const getAppSettingsFromLocal = async (context) => {
 export const createHybridApp = async (context: ILogicAppWizardContext): Promise<void> => {
   const defaultAppSettings = [
     {
-      name: 'Workflows.Sql.ConnectionString',
-      value: context.sqlConnectionString, //TODO: generate new
+      name: sqlStorageConnectionStringKey,
+      value: context.sqlConnectionString,
     },
     {
-      name: 'APP_KIND',
-      value: 'workflowApp',
+      name: appKindSetting,
+      value: logicAppKind,
     },
     {
-      name: 'FUNCTIONS_EXTENSION_VERSION',
+      name: extensionVersionKey,
       value: '~4',
     },
     {
@@ -54,8 +61,8 @@ export const createHybridApp = async (context: ILogicAppWizardContext): Promise<
   const appSettings = (await getAppSettingsFromLocal(context)).concat(defaultAppSettings);
   const containerAppPayload = {
     type: 'Microsoft.App/containerApps',
-    kind: 'workflowapp',
-    location: context._location,
+    kind: logicAppKind,
+    location: context._location.name,
     extendedLocation: context.connectedEnvironment.extendedLocation,
     properties: {
       environmentId: context.connectedEnvironment.id,
@@ -116,7 +123,7 @@ export const createHybridApp = async (context: ILogicAppWizardContext): Promise<
       headers: options.headers,
     });
   } catch (error) {
-    throw new Error(`Error in getting connection - ${error.message}`);
+    throw new Error(`${localize('errorCreatingHybrid', 'Error in creating hybrid logic app')} - ${error.message}`);
   }
 };
 

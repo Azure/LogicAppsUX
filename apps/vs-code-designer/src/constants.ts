@@ -218,6 +218,7 @@ export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
+export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -300,8 +301,6 @@ export const kubernetesKind = 'kubernetes';
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
-
-export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 
 export const logicAppFilter = {
   type: 'microsoft.web/sites',

@@ -14,7 +14,7 @@ import { updateSMBConnectedEnvironment } from '../../../../utils/codeless/connec
  * Represents a step in the hybrid logic app creation process that connects the SMB to a connected environment.
  */
 export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
-  public priority = 110;
+  public priority = 120;
 
   /**
    * Executes the step to connect to the environment.

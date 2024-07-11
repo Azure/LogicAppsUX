@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { ConnectedEnvironment } from '@azure/arm-appcontainers';
 import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
@@ -33,6 +34,7 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
   public customLocation?: CustomLocation;
   public isHybridLogicApp?: boolean;
+  public connectedEnvironment?: ConnectedEnvironment;
   public fileShare?: {
     hostName?: string;
     path?: string;

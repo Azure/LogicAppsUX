@@ -8,8 +8,7 @@ export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardCont
   const { connectedEnvironment, subscriptionId } = context;
   const resourceGroup = connectedEnvironment.id.split('/')[4];
 
-  const storage = context.newSiteName;
-  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${storage}?api-version=2024-02-02-preview`;
+  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${context.newSiteName}?api-version=2024-02-02-preview`;
 
   try {
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();

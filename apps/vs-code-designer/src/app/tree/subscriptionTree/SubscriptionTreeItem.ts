@@ -163,7 +163,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       executeSteps.push(new LogicAppCreateStep());
     }
 
-    if (wizardContext.customLocation) {
+    if (wizardContext.customLocation && !wizardContext.useHybrid) {
       setSiteOS(wizardContext);
       executeSteps.pop();
     }
@@ -224,6 +224,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     slotTreeItem.customLocation = wizardContext.customLocation;
     slotTreeItem.fileShare = wizardContext.fileShare;
     slotTreeItem.isHybridLogicApp = wizardContext.useHybrid;
+    slotTreeItem.connectedEnvironment = wizardContext.connectedEnvironment;
     return slotTreeItem;
   }
 
