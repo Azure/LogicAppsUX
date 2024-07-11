@@ -218,11 +218,11 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
 
     const images: Record<string, any> = {};
     if (templateManifest.images?.['light']) {
-      images['light'] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images['light']}`)).default;
+      images['light'] = (await import(`${templatesPathFromState}/${templateName}/snapshot_light.png`)).default;
     }
 
     if (templateManifest.images?.['dark']) {
-      images['dark'] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images['dark']}`)).default;
+      images['dark'] = (await import(`${templatesPathFromState}/${templateName}/snapshot_dark.png`)).default;
     }
 
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
