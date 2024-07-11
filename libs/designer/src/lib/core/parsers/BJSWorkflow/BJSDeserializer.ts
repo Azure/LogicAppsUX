@@ -179,12 +179,13 @@ export const deserializeUnitTestDefinition = (
   mockResults: Record<string, OutputMock>;
 } | null => {
   const { definition } = workflowDefinition;
-  const actionsKeys = Object.keys(definition.actions ?? {});
   const triggersKeys = Object.keys(definition.triggers ?? {});
 
   // Build mock output for all actions and triggers
-  const mockActions: Record<string, OutputMock> = actionsKeys.reduce((acc, key) => {
-    const action = definition.actions && definition.actions[key];
+  const mockResults: Record<string, OutputMock> = {};
+
+  // Helper function to add mock result for an action
+  const addMockResult = (key: string, action: LogicAppsV2.ActionDefinition) => {
     const type = action?.type?.toLowerCase();
     const supportedAction =
       type === 'http' ||
@@ -194,31 +195,60 @@ export const deserializeUnitTestDefinition = (
       type === ConnectionType.ApiManagement ||
       type === ConnectionType.ApiConnection;
 
-    return supportedAction
-      ? Object.assign({}, acc, {
-          [key]: {
-            actionResult: ActionResults.SUCCESS,
-            output: {},
-          },
-        })
-      : acc;
-  }, {});
-
-  const mockTriggers: Record<string, OutputMock> = triggersKeys.reduce((acc, key) => {
-    return Object.assign({}, acc, {
-      [`&${key}`]: {
+    if (supportedAction) {
+      mockResults[key] = {
         actionResult: ActionResults.SUCCESS,
         output: {},
-      },
-    });
-  }, {});
+      };
+    }
+  };
 
-  const mockResults = Object.assign({}, mockActions, mockTriggers);
+  // Recursively process all actions, including nested ones
+  const processActions = (actions: LogicAppsV2.Actions | undefined) => {
+    if (!actions) {
+      return;
+    }
+    for (const [key, action] of Object.entries(actions)) {
+      addMockResult(key, action);
+      if (isScopeAction(action)) {
+        if (action.actions) {
+          processActions(action.actions);
+        }
+        if (isIfAction(action) && action.else?.actions) {
+          processActions(action.else.actions);
+        }
+        if (isSwitchAction(action)) {
+          if (action.default?.actions) {
+            processActions(action.default.actions);
+          }
+          if (action.cases) {
+            for (const caseAction of Object.values(action.cases)) {
+              if (caseAction.actions) {
+                processActions(caseAction.actions);
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Process all actions in the workflow
+  processActions(definition.actions);
+
+  // Process triggers
+  triggersKeys.forEach((key) => {
+    mockResults[`&${key}`] = {
+      actionResult: ActionResults.SUCCESS,
+      output: {},
+    };
+  });
 
   if (isNullOrUndefined(unitTestDefinition)) {
     return { assertions: [], mockResults };
   }
-  // deserialize mocks
+
+  // Deserialize mocks
   const triggerName = triggersKeys[0]; // only 1 trigger
 
   if (triggerName) {
@@ -230,34 +260,70 @@ export const deserializeUnitTestDefinition = (
     };
   }
 
-  Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
-    const mockOutputs = unitTestDefinition.actionMocks[actionName].outputs ?? {};
-    const action = definition.actions && definition.actions[actionName];
-    const type = action?.type?.toLowerCase();
-    const supportedAction =
-      type === 'http' ||
-      type === 'invokefunction' ||
-      type === ConnectionType.ServiceProvider ||
-      type === ConnectionType.Function ||
-      type === ConnectionType.ApiManagement ||
-      type === ConnectionType.ApiConnection;
+  // Recursively process action mocks, including nested ones
+  const processActionMocks = (actions: LogicAppsV2.Actions | undefined, mocks: Record<string, any>) => {
+    if (!actions || !mocks) {
+      return;
+    }
+    for (const [actionName, action] of Object.entries(actions)) {
+      if (mocks[actionName]) {
+        const mockOutputs = mocks[actionName].outputs ?? {};
+        const type = action?.type?.toLowerCase();
+        const supportedAction =
+          type === 'http' ||
+          type === 'invokefunction' ||
+          type === ConnectionType.ServiceProvider ||
+          type === ConnectionType.Function ||
+          type === ConnectionType.ApiManagement ||
+          type === ConnectionType.ApiConnection;
 
-    const actionResult = unitTestDefinition.actionMocks[actionName].properties?.status;
+        const actionResult = mocks[actionName].properties?.status;
 
-    if (supportedAction) {
-      if (actionResult === ActionResults.SUCCESS || actionResult === ActionResults.FAILED) {
-        mockResults[actionName] = {
-          actionResult: actionResult,
-          output: parseOutputsToValueSegment(mockOutputs),
-          isCompleted: !isNullOrEmpty(mockOutputs),
-        };
-      } else {
-        delete mockResults[actionName];
+        if (supportedAction) {
+          if (actionResult === ActionResults.SUCCESS || actionResult === ActionResults.FAILED) {
+            mockResults[actionName] = {
+              actionResult: actionResult,
+              output: parseOutputsToValueSegment(mockOutputs),
+              isCompleted: !isNullOrEmpty(mockOutputs),
+            };
+          } else {
+            delete mockResults[actionName];
+          }
+        }
+      }
+
+      if (isScopeAction(action)) {
+        if (action.actions) {
+          processActionMocks(action.actions, mocks[actionName]?.actions ?? {});
+        }
+        if (isIfAction(action)) {
+          if (action.actions) {
+            processActionMocks(action.actions, mocks[actionName]?.actions ?? {});
+          }
+          if (action.else?.actions) {
+            processActionMocks(action.else.actions, mocks[actionName]?.else?.actions ?? {});
+          }
+        }
+        if (isSwitchAction(action)) {
+          if (action.default?.actions) {
+            processActionMocks(action.default.actions, mocks[actionName]?.default?.actions ?? {});
+          }
+          if (action.cases) {
+            for (const [caseName, caseAction] of Object.entries(action.cases)) {
+              if (caseAction.actions) {
+                processActionMocks(caseAction.actions, mocks[actionName]?.cases?.[caseName]?.actions ?? {});
+              }
+            }
+          }
+        }
       }
     }
-  });
+  };
 
-  // deserialize assertions
+  // Process all action mocks
+  processActionMocks(definition.actions, unitTestDefinition.actionMocks);
+
+  // Deserialize assertions
   const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
     try {
