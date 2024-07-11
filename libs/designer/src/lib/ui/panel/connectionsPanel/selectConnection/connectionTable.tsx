@@ -73,9 +73,16 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
   );
 
+  const statusColumnWidth = 36;
+  const statusColumnName = 'status';
+  const displayNameColumnWidth = 420;
+  const displayNameColumnName = 'displayName';
+  const detailsColumnWidth = 48;
+  const detailsColumnName = 'details';
+
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
     createTableColumn({
-      columnId: 'status',
+      columnId: statusColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Status',
@@ -98,7 +105,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'displayName',
+      columnId: displayNameColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Display Name',
@@ -123,7 +130,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'details',
+      columnId: detailsColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Details',
@@ -134,21 +141,17 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     }),
   ];
 
-  const statusColumnWidth = 36;
-  const displayNameColumnWidth = 420;
-  const detailsColumnWidth = 48;
-
   const columnSizingOptions: TableColumnSizingOptions = {
-    status: {
+    [statusColumnName]: {
       defaultWidth: statusColumnWidth,
       idealWidth: statusColumnWidth,
       minWidth: statusColumnWidth,
     },
-    displayName: {
+    [displayNameColumnName]: {
       defaultWidth: displayNameColumnWidth,
       idealWidth: displayNameColumnWidth,
     },
-    details: {
+    [detailsColumnName]: {
       defaultWidth: detailsColumnWidth,
       idealWidth: detailsColumnWidth,
       minWidth: detailsColumnWidth,
