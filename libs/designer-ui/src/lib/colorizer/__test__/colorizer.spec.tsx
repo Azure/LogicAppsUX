@@ -33,7 +33,7 @@ describe('lib/colorizer', () => {
     const buttons = colorizer.props.children[0].props.children;
 
     const utcButton = buttons[0];
-    expect(utcButton.props.title).toBe(`Switch '${minimal.ariaLabel}' to the UTC time format`);
+    expect(utcButton.props.title).toBe(`Switch '${minimal.ariaLabel}' to the local time`);
   });
 
   it('should call toggleUTC function when UTC button is clicked', () => {
