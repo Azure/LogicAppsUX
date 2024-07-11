@@ -217,9 +217,9 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
 
     const images: Record<string, any> = {};
-    /*for (const key of Object.keys(templateManifest.images)) {
+    for (const key of Object.keys(templateManifest.images)) {
       images[key] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images[key]}`)).default;
-    }*/
+    }
 
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
