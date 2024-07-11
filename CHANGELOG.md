@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [0.3.6](https://github.com/Azure/LogicAppsUX/compare/v4.31.0...v0.3.6) (2024-07-11)
+
+
+### Features
+
+* **designer-ui:** Allow makers to use `class` attributes and `table` styling in raw HTML ([#5000](https://github.com/Azure/LogicAppsUX/issues/5000)) ([3446119](https://github.com/Azure/LogicAppsUX/commit/344611928460671e46ae740923c0869d2732a606))
+* **template:** Updating quickview panel with latest UI ([#4994](https://github.com/Azure/LogicAppsUX/issues/4994)) ([4704eaf](https://github.com/Azure/LogicAppsUX/commit/4704eafc0dcce8c7026beba7cfe0e6715a49a25a))
+
 ## [0.3.5](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v0.3.5) (2024-06-19)
 
 
