@@ -31,11 +31,7 @@ export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardCont
       uri: url,
     };
 
-    const response = await axios.put(options.uri, options.body, {
-      headers: options.headers,
-    });
-
-    console.log(response);
+    await axios.put(options.uri, options.body, { headers: options.headers });
   } catch (error) {
     throw new Error(`Error in getting connection - ${error.message}`);
   }

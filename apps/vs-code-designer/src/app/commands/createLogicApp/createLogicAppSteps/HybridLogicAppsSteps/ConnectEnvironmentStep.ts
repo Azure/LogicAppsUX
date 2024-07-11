@@ -18,18 +18,17 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
 
   /**
    * Executes the step to connect to the environment.
-   * @param context The logic app wizard context.
-   * @param progress The progress object to report progress and messages.
+   * @param {ILogicAppWizardContext} context - The logic app wizard context.
+   * @param {Progress} progress - The progress object to report progress and messages.
    */
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {
       const message: string = localize('linkingSMBEnvironment', 'Linking SMB to connected environment  "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
-      const response = await updateSMBConnectedEnvironment(context);
-      console.log(response);
+      await updateSMBConnectedEnvironment(context);
     } catch (error) {
-      return undefined;
+      throw new Error(error);
     }
   }
 
