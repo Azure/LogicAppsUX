@@ -84,10 +84,10 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
       <div className="buttons">
         {utcProps ? (
           <IconButton
-            ariaLabel={toggleUTCLabel}
+            ariaLabel={utcProps?.showUTC ? toggleLocalLabel : toggleUTCLabel}
             iconProps={{ iconName: 'DateTime' }}
             onClick={() => utcProps?.toggleUTC((prevState) => !prevState)}
-            title={utcProps?.showUTC ? toggleUTCLabel : toggleLocalLabel}
+            title={utcProps?.showUTC ? toggleLocalLabel : toggleUTCLabel}
           />
         ) : null}
         <IconButton ariaLabel={selectAria} iconProps={{ iconName: 'SelectAll' }} onClick={selectText} title={selectAria} />

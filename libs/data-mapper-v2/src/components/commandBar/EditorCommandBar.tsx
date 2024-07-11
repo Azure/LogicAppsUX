@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
 import { DataMapperFileService } from '../../core';
-import { saveDataMap } from '../../core/state/DataMapSlice';
+import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView } from '../../core/state/PanelSlice';
@@ -41,6 +41,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       try {
         const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
 
+        dispatch(updateDataMapLML(newDataMapDefinition));
+
         return newDataMapDefinition;
       } catch (error) {
         let errorMessage = '';
@@ -59,7 +61,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     }
 
     return '';
-  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
+  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, dispatch]);
 
   const onSaveClick = useCallback(() => {
     const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
