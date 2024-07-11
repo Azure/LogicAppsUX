@@ -50,12 +50,8 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     if (context.initializeStaticWebApp) {
       context.telemetry.properties.initializeStaticWebApp = 'true';
       //call SWA extension
-      vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp', undefined, undefined, {
-        backendResourceId:
-          '/subscriptions/3621a0b9-af9a-4007-b5b7-691fdc8b599f/resourcegroups/alainzla-demo-v/providers/Microsoft.Web/sites/mylacodereview',
-        region: 'eastus',
-        name: 'mylacodereview',
-      });
+
+      vscodeExtension.commands.executeCommand('azureLogicAppsStandard.deploy');
     } else {
       context.telemetry.properties.initializeStaticWebApp = 'false';
     }

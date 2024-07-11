@@ -48,6 +48,7 @@ import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLangu
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
+import * as vscodeExtension from 'vscode';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -190,6 +191,14 @@ async function deploy(
   });
 
   await node.loadAllChildren(context);
+
+  const suffix = '/config/web';
+  const logicAppBackendResourceId = siteConfig.id.substring(0, siteConfig.id.length - suffix.length);
+  vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp', undefined, undefined, {
+    backendResourceId: logicAppBackendResourceId,
+    region: 'eastus',
+    name: siteConfig.name,
+  });
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
 }
 

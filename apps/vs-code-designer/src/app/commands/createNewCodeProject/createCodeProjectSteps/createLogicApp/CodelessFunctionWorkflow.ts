@@ -32,7 +32,6 @@ import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardAp
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
-import * as vscodeExtension from 'vscode';
 import { validateDotNetIsInstalled } from '../../../dotnet/validateDotNetInstalled';
 
 // This class creates a new workflow for a codeless Azure Function project
@@ -59,14 +58,6 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
     const methodName = context.methodName;
-
-    // Check if the user chose to initialize a static web app
-    if (context.initializeStaticWebApp) {
-      context.telemetry.properties.initializeStaticWebApp = 'true';
-      vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp');
-    } else {
-      context.telemetry.properties.initializeStaticWebApp = 'false';
-    }
 
     // Create empty stateful and stateless definition objects
     const emptyStatefulDefinition: StandardApp = {
