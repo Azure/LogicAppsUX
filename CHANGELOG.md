@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.38.0](https://github.com/Azure/LogicAppsUX/compare/v4.37.0...v4.38.0) (2024-07-11)
+
+
+### Features
+
+* **Data Mapper:** Drag functions and connect them ([#5094](https://github.com/Azure/LogicAppsUX/issues/5094)) ([add402f](https://github.com/Azure/LogicAppsUX/commit/add402f9d1e2883b2edbeaf5b5ba1ba8934ca9ea))
+* **Data Mapper:** Smooth out the node connections and handle states ([#5092](https://github.com/Azure/LogicAppsUX/issues/5092)) ([6abd885](https://github.com/Azure/LogicAppsUX/commit/6abd885b407ab2e977ff9f4b579609e352a3c7bd))
+* **designer:** Adding RunAfter button for right clicking on actions ([#5071](https://github.com/Azure/LogicAppsUX/issues/5071)) ([b47c782](https://github.com/Azure/LogicAppsUX/commit/b47c782ac4fc83394f38a3c8a21d7f9d6f21136a))
+* **Templates:** UI Sanitary Check, Ensuring Consistency ([#5070](https://github.com/Azure/LogicAppsUX/issues/5070)) ([3de7c6d](https://github.com/Azure/LogicAppsUX/commit/3de7c6d854525809d4909fc4ef916a8ae448af67))
+
+
+### Bug Fixes
+
+* **designer:** Flip the text on toggle for date time UTC or local ([#5102](https://github.com/Azure/LogicAppsUX/issues/5102)) ([cb80fac](https://github.com/Azure/LogicAppsUX/commit/cb80facbf06bef7380be0738d7b416a981d8ae3c))
+* **vscode:** Update node version and add APP_KIND to default settings ([#5095](https://github.com/Azure/LogicAppsUX/issues/5095)) ([f37afa8](https://github.com/Azure/LogicAppsUX/commit/f37afa8c481948c21ae1a52d4d75d05969c15db2))
+
 ## [4.37.0](https://github.com/Azure/LogicAppsUX/compare/v4.36.0...v4.37.0) (2024-07-04)
 
 
