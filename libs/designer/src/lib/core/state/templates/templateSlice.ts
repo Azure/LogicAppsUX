@@ -111,7 +111,6 @@ export const initializeTemplateServices = createAsyncThunk(
     if (connectionParameterEditorService) {
       InitConnectionParameterEditorService(connectionParameterEditorService);
     }
-
     if (templateService) {
       InitTemplateService(templateService);
     }

@@ -16,14 +16,22 @@ export const getUniqueConnectors = (
   subscriptionId: string,
   location: string
 ): Template.Connection[] => {
+  const allConnections = Object.values(connections);
+  return getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
+};
+
+export const getUniqueConnectorsFromConnections = (
+  allConnections: Template.Connection[],
+  subscriptionId: string,
+  location: string
+): Template.Connection[] => {
   const result: Template.Connection[] = [];
   const finalConnectorIds: string[] = [];
-  const allConnections = Object.values(connections);
-
   while (allConnections.length > 0) {
     const connection = allConnections.shift() as Template.Connection;
     const normalizedConnectorId = normalizeConnectorId(connection.connectorId, subscriptionId, location).toLowerCase();
     if (!finalConnectorIds.includes(normalizedConnectorId)) {
+      finalConnectorIds.push(normalizedConnectorId);
       result.push({ ...connection, connectorId: normalizedConnectorId });
     }
   }
