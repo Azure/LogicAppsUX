@@ -1,4 +1,4 @@
-import type { XYPosition } from 'reactflow';
+import type { Dimensions, XYPosition } from 'reactflow';
 
 export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[] };
 
@@ -26,6 +26,11 @@ export interface FunctionMetadataV1 {
 export interface ConnectionAndOrder {
   name: string;
   inputOrder: number;
+}
+
+export interface MapMetadataV2 {
+  canvasDimensions: Dimensions;
+  functionNodes: FunctionMetadata[];
 }
 
 export interface MapMetadata {
