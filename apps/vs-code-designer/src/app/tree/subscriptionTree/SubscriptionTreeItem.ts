@@ -6,8 +6,8 @@ import { LogicAppResolver } from '../../../LogicAppResolver';
 import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-// import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
-// import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
+import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
+import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
@@ -146,19 +146,22 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       promptSteps.push(new AppInsightsListStep());
     } else {
       wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-      executeSteps.push(new AppInsightsCreateStep());
     }
-
-    executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
-    executeSteps.push(new LogicAppCreateStep());
-    // executeSteps.push(new ConnectEnvironmentStep());
-    // executeSteps.push(new ContainerAppCreateStep());
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
     await wizard.prompt();
+
+    if (wizardContext.useHybrid) {
+      executeSteps.push(new ConnectEnvironmentStep());
+      executeSteps.push(new ContainerAppCreateStep());
+    } else {
+      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      executeSteps.push(new AppInsightsCreateStep());
+      executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
+      executeSteps.push(new LogicAppCreateStep());
+    }
 
     if (wizardContext.customLocation) {
       setSiteOS(wizardContext);

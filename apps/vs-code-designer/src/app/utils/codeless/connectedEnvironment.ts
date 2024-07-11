@@ -14,7 +14,6 @@ export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardCont
   try {
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
     const accessToken = await getAuthorizationToken(credentials);
-    //const response = await sendAzureRequest(url, context, HTTP_METHODS.PUT);
 
     const options = {
       headers: { authorization: accessToken },

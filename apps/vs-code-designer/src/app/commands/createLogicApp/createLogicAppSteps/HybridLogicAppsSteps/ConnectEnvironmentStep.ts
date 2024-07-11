@@ -10,12 +10,20 @@ import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
 import { updateSMBConnectedEnvironment } from '../../../../utils/codeless/connectedEnvironment';
 
+/**
+ * Represents a step in the hybrid logic app creation process that connects the SMB to a connected environment.
+ */
 export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 110;
 
+  /**
+   * Executes the step to connect to the environment.
+   * @param context The logic app wizard context.
+   * @param progress The progress object to report progress and messages.
+   */
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {
-      const message: string = localize('creatingNewApp', 'Updating SMB to connected environment  "{0}"...', context.newSiteName);
+      const message: string = localize('linkingSMBEnvironment', 'Linking SMB to connected environment  "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
       const response = await updateSMBConnectedEnvironment(context);
@@ -25,7 +33,12 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
     }
   }
 
+  /**
+   * Determines whether this step should be executed based on the wizard context.
+   * @param wizardContext The logic app wizard context.
+   * @returns A boolean indicating whether this step should be executed.
+   */
   public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !!wizardContext.customLocation && !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
+    return !!wizardContext.connectedEnvironment && !!wizardContext.fileShare && !!wizardContext.useHybrid;
   }
 }

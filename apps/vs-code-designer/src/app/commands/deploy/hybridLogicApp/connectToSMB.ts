@@ -10,9 +10,10 @@ import type { File } from '../../../utils/codeless/common';
 import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
 import { connectionsFileName, hostFileName, parametersFileName, Platform, workflowFileName } from '../../../../constants';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export const connectToSMB = async (context: IActionContext, node: SlotTreeItem) => {
-  const message: string = localize('uploadingFileShare', 'Uploading files to File Share...');
+  const message: string = localize('connectingToMSB', 'Connecting to SMB...');
   ext.outputChannel.appendLog(message);
 
   try {
@@ -20,6 +21,7 @@ export const connectToSMB = async (context: IActionContext, node: SlotTreeItem) 
     const { hostName, path: fileSharePath, userName, password } = node.fileShare || {};
     await mountSMB(hostName, fileSharePath, userName, password);
     const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+    await fse.mkdir(path.join(projectPath, `${node.site.siteName}-${guid()}`));
     await uploadRootFiles(projectPath, hostName, fileSharePath);
     await uploadWorkflowsFiles(projectPath, hostName, fileSharePath);
     await uploadeArtifactsFiles(projectPath, hostName, fileSharePath);
@@ -29,11 +31,13 @@ export const connectToSMB = async (context: IActionContext, node: SlotTreeItem) 
 };
 
 const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string) => {
+  let mountCommand: string;
   if (process.platform === Platform.windows) {
-    await executeCommand(undefined, undefined, `net use ${hostName}/${fileSharePath} ${password} /user:${userName}`);
+    mountCommand = `net use ${hostName}/${fileSharePath} ${password} /user:${userName}`;
+  } else {
+    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/cifs -o username=${userName},password=${password}`;
   }
-  //mount -t cifs //fileshare.domain.io /shareName /mnt/cifs -o username=shareuser,password=sharepassword,domain=domain
-  //-t cifs //storageaccountname.file.core.windows.net/filesharename /mnt/azurefileshare -o vers=3.0,username=storageaccountname,password=storageaccountkey,dir_mode=0777,file_mode=0777,serverino
+  await executeCommand(undefined, undefined, mountCommand);
 };
 
 const uploadFiles = async (files: File[], hostName: string, fileSharePath: string) => {

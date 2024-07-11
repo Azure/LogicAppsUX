@@ -143,7 +143,12 @@ async function deploy(
   const siteConfig: SiteConfigResource = await client.getSiteConfig();
   const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
+  if (
+    getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) &&
+    !context.isNewApp &&
+    isZipDeploy &&
+    !isHybridLogicApp
+  ) {
     const warning: string = localize(
       'confirmDeploy',
       'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
