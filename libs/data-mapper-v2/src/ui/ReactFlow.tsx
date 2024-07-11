@@ -8,7 +8,7 @@ import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { makeConnection, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import { makeConnection, updateFunctionPosition, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
@@ -178,13 +178,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     setAllNodes([...unaffectedNodes, node]);
   };
 
-  //   const onFunctionNodeDragStop: NodeDragHandler = (event, node, _nodes) => {
-  //     const positionMetadata: FunctionPositionMetadata = {
-  //       targetKey: currentTargetSchemaNode?.key || '',
-  //       position: node.position,
-  //     };
-  //     dispatch(updateFunctionPosition({ id: node.id, positionMetadata }));
-  //   };
+  const onFunctionNodeDragStop: NodeDragHandler = (event, node, _nodes) => {
+    dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
+  };
 
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
@@ -214,7 +210,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           hideAttribution: true,
         }}
         onNodeDrag={onFunctionNodeDrag}
-        //onNodeDragStop={onFunctionNodeDragStop}
+        onNodeDragStop={onFunctionNodeDragStop}
         isValidConnection={isValidConnection}
         onConnect={onEdgeConnect}
         onEdgeUpdate={onEdgeUpdate}
@@ -227,7 +223,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
               ]
             : undefined
         }
-      />
+      ></ReactFlow>
     </div>
   );
 };
