@@ -157,14 +157,14 @@ exports[`lib/colorizer > should render when utc time format props are given 1`] 
     className="buttons"
   >
     <CustomizedIconButton
-      ariaLabel="Switch 'start time' to the UTC time format"
+      ariaLabel="Switch 'start time' to the local time"
       iconProps={
         {
           "iconName": "DateTime",
         }
       }
       onClick={[Function]}
-      title="Switch 'start time' to the UTC time format"
+      title="Switch 'start time' to the local time"
     />
     <CustomizedIconButton
       ariaLabel="Select all text in 'start time'"
