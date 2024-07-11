@@ -134,18 +134,24 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     }),
   ];
 
+  const statusColumnWidth = 36;
+  const displayNameColumnWidth = 420;
+  const detailsColumnWidth = 48;
+
   const columnSizingOptions: TableColumnSizingOptions = {
     status: {
-      defaultWidth: 36,
-      idealWidth: 36,
+      defaultWidth: statusColumnWidth,
+      idealWidth: statusColumnWidth,
+      minWidth: statusColumnWidth,
     },
     displayName: {
-      defaultWidth: 420,
-      idealWidth: 420,
+      defaultWidth: displayNameColumnWidth,
+      idealWidth: displayNameColumnWidth,
     },
     details: {
-      defaultWidth: 48,
-      idealWidth: 48,
+      defaultWidth: detailsColumnWidth,
+      idealWidth: detailsColumnWidth,
+      minWidth: detailsColumnWidth,
     },
   };
 
