@@ -197,24 +197,6 @@ export const TemplatesStandaloneDesigner = () => {
               }}
             >
               <TemplateFilters
-                connectors={[
-                  {
-                    value: 'azureaisearch',
-                    displayName: 'Azure AI Search',
-                  },
-                  {
-                    value: 'openai',
-                    displayName: 'Open AI',
-                  },
-                  {
-                    value: 'sql',
-                    displayName: 'SQL',
-                  },
-                  {
-                    value: 'amazon',
-                    displayName: 'Amazon',
-                  },
-                ]}
                 detailFilters={{
                   By: {
                     displayName: 'By',
