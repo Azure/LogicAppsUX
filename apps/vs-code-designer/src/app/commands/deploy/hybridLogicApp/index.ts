@@ -3,7 +3,7 @@ import { ProgressLocation, window } from 'vscode';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
-import { cleanSMB } from './cleanResources';
+import { cleanSMB, unMountSMB } from './cleanResources';
 
 export const deployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem) => {
   await window.withProgress(
@@ -17,6 +17,7 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
       progress.report({ increment: 10, message: 'Connecting to SMB' });
       await connectToSMB(context, node);
       await cleanSMB(context, node);
+      await unMountSMB(node.fileShare.hostName);
     }
   );
 };

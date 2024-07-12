@@ -11,7 +11,7 @@ import { ext } from '../../../../../extensionVariables';
 import { createHybridApp, createLogicAppExtension } from '../../../../utils/codeless/hybridApp';
 
 export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
-  public priority = 100;
+  public priority = 120;
 
   public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     try {

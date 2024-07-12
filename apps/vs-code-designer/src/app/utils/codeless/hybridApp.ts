@@ -1,4 +1,4 @@
-import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { isSuccessResponse, type ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import axios from 'axios';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
@@ -34,7 +34,7 @@ const getAppSettingsFromLocal = async (context) => {
  * @param context - The context object containing the necessary information for creating the hybrid app.
  * @returns A Promise that resolves when the hybrid app is created.
  */
-export const createHybridApp = async (context: ILogicAppWizardContext): Promise<void> => {
+export const createHybridApp = async (context: ILogicAppWizardContext) => {
   const defaultAppSettings = [
     {
       name: sqlStorageConnectionStringKey,
@@ -119,9 +119,13 @@ export const createHybridApp = async (context: ILogicAppWizardContext): Promise<
       uri: url,
     };
 
-    await axios.put(options.uri, options.body, {
+    const response = await axios.put(options.uri, options.body, {
       headers: options.headers,
     });
+
+    if (!isSuccessResponse(response.status)) {
+      throw new Error(response.statusText);
+    }
   } catch (error) {
     throw new Error(`${localize('errorCreatingHybrid', 'Error in creating hybrid logic app')} - ${error.message}`);
   }
@@ -133,7 +137,7 @@ export const createHybridApp = async (context: ILogicAppWizardContext): Promise<
  * @returns A promise that resolves when the Logic App extension is created.
  * @throws An error if there is an issue in getting the connection.
  */
-export const createLogicAppExtension = async (context: ILogicAppWizardContext): Promise<void> => {
+export const createLogicAppExtension = async (context: ILogicAppWizardContext) => {
   const url = `https://management.azure.com/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup.name}/providers/Microsoft.App/containerApps/${context.newSiteName}/providers/Microsoft.App/logicApps/${context.newSiteName}?api-version=2024-02-02-preview`;
 
   try {
@@ -144,16 +148,18 @@ export const createLogicAppExtension = async (context: ILogicAppWizardContext): 
       headers: { authorization: accessToken },
       body: {
         type: 'Microsoft.App/logicApps',
-        location: context._location,
-        properties: {},
+        location: context._location.name,
       },
       uri: url,
     };
 
-    await axios.put(options.uri, options.body, {
+    const response = await axios.put(options.uri, options.body, {
       headers: options.headers,
     });
+    if (!isSuccessResponse(response.status)) {
+      throw new Error(response.statusText);
+    }
   } catch (error) {
-    throw new Error(`Error in getting connection - ${error.message}`);
+    throw new Error(`${localize('errorCreatingLogicAppExtension', 'Error in creating logic app extension')} - ${error.message}`);
   }
 };

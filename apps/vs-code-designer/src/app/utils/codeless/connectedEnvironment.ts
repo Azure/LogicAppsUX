@@ -1,10 +1,11 @@
-import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { isSuccessResponse, type ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import axios from 'axios';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getAccountCredentials } from '../credentials';
+import { localize } from '../../../localize';
 
-export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardContext): Promise<void> => {
+export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardContext) => {
   const { connectedEnvironment, subscriptionId } = context;
   const resourceGroup = connectedEnvironment.id.split('/')[4];
 
@@ -30,8 +31,11 @@ export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardCont
       uri: url,
     };
 
-    await axios.put(options.uri, options.body, { headers: options.headers });
+    const response = await axios.put(options.uri, options.body, { headers: options.headers });
+    if (!isSuccessResponse(response.status)) {
+      throw new Error(response.statusText);
+    }
   } catch (error) {
-    throw new Error(`Error in getting connection - ${error.message}`);
+    throw new Error(`${localize('errorConnectingSMB', 'Error in connecting smb environment')} - ${error.message}`);
   }
 };

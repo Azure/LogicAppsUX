@@ -5,7 +5,13 @@ import { getAccountCredentials } from '../../../utils/credentials';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
-
+import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
+import { Platform } from '../../../../constants';
+import * as fse from 'fs-extra';
+import * as path from 'path';
+import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
+import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
+import { guid } from '@microsoft/logic-apps-shared';
 /**
  * Creates a hybrid app using the provided context.
  * @param context - The context object containing the necessary information for creating the hybrid app.
@@ -29,4 +35,24 @@ export const cleanSMB = async (context: IActionContext, node: SlotTreeItem): Pro
   } catch (error) {
     throw new Error(`${localize('errorCleaningSMB', 'Error in cleaning SMB')} - ${error.message}`);
   }
+};
+
+export const deleteSMBFolder = async (context: IActionContext, node: SlotTreeItem) => {
+  try {
+    const workspaceFolder = await getWorkspaceFolderPath(context);
+    const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+    await fse.mkdir(path.join(projectPath, `${node.site.siteName}-${guid()}`));
+  } catch (error) {
+    console.error(`Error deploying to file share: ${error.message}`);
+  }
+};
+
+export const unMountSMB = async (hostName: string) => {
+  let mountCommand: string;
+  if (process.platform === Platform.windows) {
+    mountCommand = `net use ${hostName} /delete`;
+  } else {
+    mountCommand = `umount -f /mnt//${hostName}`;
+  }
+  await executeCommand(undefined, undefined, mountCommand);
 };
