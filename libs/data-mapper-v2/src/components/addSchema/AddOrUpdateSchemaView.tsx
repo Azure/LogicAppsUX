@@ -102,6 +102,11 @@ export const AddOrUpdateSchemaView = ({
     [stringResources]
   );
 
+  const onSchemaSelected = (schema: SchemaFile) => {
+    setSelectSchemaVisible(false);
+    setSelectedSchemaFile(schema);
+  };
+
   return (
     <div
       className={mergeClasses(
@@ -131,19 +136,12 @@ export const AddOrUpdateSchemaView = ({
               <UploadNewSchema
                 acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
                 selectedSchemaFile={selectedSchemaFile}
-                setSelectedSchemaFile={setSelectedSchemaFile}
+                setSelectedSchemaFile={onSchemaSelected}
                 schemaType={schemaType}
               />
             )}
             {uploadType === UploadSchemaTypes.SelectFrom && (
-              <SelectExistingSchema
-                errorMessage={errorMessage}
-                schemaType={schemaType}
-                setSelectedSchema={(schema: SchemaFile) => {
-                  setSelectSchemaVisible(false);
-                  setSelectedSchemaFile(schema);
-                }}
-              />
+              <SelectExistingSchema errorMessage={errorMessage} schemaType={schemaType} setSelectedSchema={onSchemaSelected} />
             )}
           </div>
         ) : (

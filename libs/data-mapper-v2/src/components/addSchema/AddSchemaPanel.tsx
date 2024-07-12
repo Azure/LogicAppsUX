@@ -46,11 +46,12 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
     [selectedSchemaFile],
     async () => {
       if (selectedSchema && selectedSchemaFile) {
-        console.log("in fetched source schema");
         const [fileName, filePath] = getFileNameAndPath(selectedSchemaFile?.path);
-        return await getSelectedSchema(fileName ?? '', filePath);
+        const schema = await getSelectedSchema(fileName ?? '', filePath);
+        return schema;
       }
-      return await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      const schema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      return schema;
     },
     {
       ...schemaFileQuerySettings,
@@ -59,11 +60,11 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
   );
 
   useEffect(() => {
-    if (fetchedSourceSchema.data && schemaType) {
+    if (fetchedSourceSchema.isSuccess && fetchedSourceSchema.data && schemaType) {
       const extendedSchema = convertSchemaToSchemaExtended(fetchedSourceSchema.data);
       dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
     }
-  }, [dispatch, schemaType, fetchedSourceSchema] )
+  }, [dispatch, schemaType, fetchedSourceSchema.data, fetchedSourceSchema.isSuccess]);
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
