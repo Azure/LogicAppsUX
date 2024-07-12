@@ -9,6 +9,7 @@ import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { DMReactFlow } from './ReactFlow';
 import { TestPanel } from '../components/test/TestPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
+import type { SchemaFile } from '../models/Schema';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -44,9 +45,9 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
       <EditorCommandBar onUndoClick={() => {}} />
       <div className={styles.dataMapperShell}>
         <FunctionPanel />
-        <SchemaPanel onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
+        <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Source} />
         <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
-        <SchemaPanel onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
+        <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Target} />
         <CodeViewPanel />
         <TestPanel />
       </div>

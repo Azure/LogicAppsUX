@@ -13,7 +13,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useStyles } from './styles';
 import { Panel } from '../../components/common/panel/Panel';
-import { type SchemaFile, SchemaPanelBody, UploadSchemaTypes } from './SchemaPanelBody';
+import { SchemaPanelBody } from './SchemaPanelBody';
+import { type SchemaFile, UploadSchemaTypes } from '../../models/Schema';
+
 import { mergeClasses } from '@fluentui/react-components';
 
 const schemaFileQuerySettings = {

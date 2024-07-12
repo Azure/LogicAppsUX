@@ -7,23 +7,9 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { SchemaItemView } from '../schemaView/schemaView';
+import { type SchemaFile, UploadSchemaTypes } from '../../models/Schema';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
-
-export const UploadSchemaTypes = {
-  UploadNew: 'upload-new',
-  SelectFrom: 'select-from',
-} as const;
-export type UploadSchemaTypes = (typeof UploadSchemaTypes)[keyof typeof UploadSchemaTypes];
-
-export interface FileWithVsCodePath extends File {
-  path?: string;
-}
-export interface SchemaFile {
-  name: string;
-  path: string;
-  type: SchemaType;
-}
 
 export interface SchemaPanelBodyProps {
   schemaType?: SchemaType;
