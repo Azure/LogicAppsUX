@@ -19,9 +19,9 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
   const dataMapDefinition = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
 
-  const closeCodeView = useCallback(() => {
+  const onCloseClick = useCallback(() => {
     dispatch(toggleCodeView());
-  }, []);
+  }, [dispatch]);
 
   const resources = useMemo(
     () => ({
@@ -52,7 +52,13 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
         text: resources.CODE_VIEW,
         icon: Code24Regular,
         rightAction: (
-          <Button appearance="transparent" aria-label={resources.CLOSE_CODE_VIEW} icon={<Dismiss20Regular />} onClick={closeCodeView} />
+          <Button
+            className={styles.closeButton}
+            appearance="transparent"
+            aria-label={resources.CLOSE_CODE_VIEW}
+            icon={<Dismiss20Regular />}
+            onClick={onCloseClick}
+          />
         ),
         size: 500,
       }}

@@ -50,6 +50,7 @@ export const FunctionPanel = (_props: PanelProps) => {
         rightAction: (
           <Button
             appearance="transparent"
+            className={styles.collapseChevronButton}
             aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
             icon={<ChevronDoubleLeftRegular fontSize={18} />}
             onClick={() => {

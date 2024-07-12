@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SchemaPanel } from '../components/addSchema/SchemaPanel';
-import { SchemaType } from '@microsoft/logic-apps-shared';
+import { SchemaPanel } from '../components/schema/SchemaPanel';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
 import { FunctionPanel } from '../components/functionsPanel/FunctionPanel';
@@ -8,6 +7,8 @@ import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
 import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { DMReactFlow } from './ReactFlow';
+import { TestPanel } from '../components/test/TestPanel';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -40,13 +41,14 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
         },
       }}
     >
-      <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
+      <EditorCommandBar onUndoClick={() => {}} />
       <div className={styles.dataMapperShell}>
         <FunctionPanel />
         <SchemaPanel onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
         <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
         <SchemaPanel onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
         <CodeViewPanel />
+        <TestPanel />
       </div>
     </DataMapperWrappedContext.Provider>
   );

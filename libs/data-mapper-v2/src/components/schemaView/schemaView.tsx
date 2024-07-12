@@ -1,4 +1,4 @@
-import { SchemaTree } from '../addSchema/tree/SchemaTree';
+import { SchemaTree } from '../schema/tree/SchemaTree';
 import { useStyles } from './styles';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';

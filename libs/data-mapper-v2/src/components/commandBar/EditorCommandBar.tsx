@@ -10,23 +10,22 @@ import { DataMapperFileService } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
-import { toggleCodeView } from '../../core/state/PanelSlice';
+import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 
 export interface EditorCommandBarProps {
   onUndoClick: () => void;
-  onTestClick: () => void;
 }
 
 export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onUndoClick, onTestClick } = props;
+  const { onUndoClick } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
-  const { sourceSchema, targetSchema, xsltFilename } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -62,6 +61,14 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
 
     return '';
   }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, dispatch]);
+
+  const onTestClick = useCallback(() => {
+    dispatch(toggleTestPanel());
+  }, [dispatch]);
+
+  const onCodeViewClick = useCallback(() => {
+    dispatch(toggleCodeView());
+  }, [dispatch]);
 
   const onSaveClick = useCallback(() => {
     const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
@@ -124,11 +131,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   );
 
   const toolbarStyles = useStyles();
-  const bothSchemasDefined = sourceSchema && targetSchema;
-
-  const toggleCodeViewClick = useCallback(() => {
-    dispatch(toggleCodeView());
-  }, [dispatch]);
+  const bothSchemasDefined = useMemo(() => sourceSchema && targetSchema, [sourceSchema, targetSchema]);
 
   return (
     <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
@@ -153,12 +156,12 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {Resources.DISCARD}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!xsltFilename} onClick={onTestClick}>
+        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!bothSchemasDefined} onClick={onTestClick}>
           {Resources.RUN_TEST}
         </ToolbarButton>
       </ToolbarGroup>
       <ToolbarGroup>
-        <Switch label={Resources.VIEW_CODE} onChange={toggleCodeViewClick} checked={isCodeViewOpen} />
+        <Switch label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
       </ToolbarGroup>
     </Toolbar>
   );

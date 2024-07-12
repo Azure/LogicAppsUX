@@ -33,4 +33,8 @@ export const useStyles = makeStyles({
   root: {
     width: '240px',
   },
+  collapseChevronButton: {
+    paddingBottom: '0px',
+    paddingTop: '0px',
+  },
 });
