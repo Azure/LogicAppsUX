@@ -19,7 +19,10 @@ export const useStyles = makeStyles({
   },
   functionTree: {
     backgroundColor: '#E8F3FE',
-    width: '100%',
+    height: '100%',
+    marginLeft: '15px',
+    marginRight: '10px',
+    ...shorthands.overflow('srcoll', 'scroll'),
   },
   functionTreeItem: {
     backgroundColor: '#E8F3FE',

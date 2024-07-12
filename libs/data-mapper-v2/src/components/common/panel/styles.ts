@@ -6,6 +6,7 @@ export const useStyles = makeStyles({
     ...shorthands.borderLeft('1px', 'solid', '#ddd'),
     ...shorthands.borderRight('1px', 'solid', '#ddd'),
     width: '350px',
+    height: '100%',
   },
   header: {
     paddingTop: '15px',
@@ -20,7 +21,10 @@ export const useStyles = makeStyles({
     alignSelf: 'center',
   },
   body: {
+    height: '100%',
     backgroundColor: 'transparent',
     backgroundImage: 'none',
+    paddingRight: '5px',
+    paddingLeft: '10px',
   },
 });

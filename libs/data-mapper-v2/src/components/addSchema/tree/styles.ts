@@ -8,10 +8,10 @@ export const useStyles = makeStyles({
     ...shorthands.overflow('scroll', 'scroll'),
   },
   leftWrapper: {
-    marginLeft: '23px',
+    marginLeft: '15px',
   },
   rightWrapper: {
-    marginRight: '23px',
+    marginRight: '15px',
   },
   rootNode: {
     fontWeight: '600',

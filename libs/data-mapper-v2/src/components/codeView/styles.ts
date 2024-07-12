@@ -5,7 +5,7 @@ export const useStyles = makeStyles({
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     ...shorthands.padding('10px'),
-    background: 'white',
+    backgroundColor: '#fff',
   },
   root: {
     width: '400px',
