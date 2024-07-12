@@ -152,7 +152,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const [, drop] = useDrop(
     () => ({
       accept: 'function',
-      drop: (item, monitor) => {
+      drop: (_item, monitor) => {
         const xyPosition = monitor.getClientOffset();
         if (xyPosition) {
           if (reactFlowInstance) {
@@ -177,14 +177,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     const unaffectedNodes = allNodes.filter((nodeFromState) => nodeFromState.id !== node.id);
     setAllNodes([...unaffectedNodes, node]);
   };
-
-  //   const onFunctionNodeDragStop: NodeDragHandler = (event, node, _nodes) => {
-  //     const positionMetadata: FunctionPositionMetadata = {
-  //       targetKey: currentTargetSchemaNode?.key || '',
-  //       position: node.position,
-  //     };
-  //     dispatch(updateFunctionPosition({ id: node.id, positionMetadata }));
-  //   };
 
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
