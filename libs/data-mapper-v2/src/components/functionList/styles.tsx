@@ -3,34 +3,50 @@ import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/reac
 const fnIconSize = '17px';
 
 export const useStyles = makeStyles({
+  headerRoot: {
+    marginTop: '5px',
+    marginBottom: '5px',
+  },
   headerText: {
     ...typographyStyles.caption1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     paddingLeft: tokens.spacingHorizontalXS,
-    fontSize: '13px',
-    marginTop: '8px',
-    marginBottom: '8px',
+    fontSize: '14px',
+    fontWeight: 600,
   },
   functionSearchBox: {
     width: '100%',
   },
   functionTree: {
     backgroundColor: '#E8F3FE',
-    width: '100%',
+    height: '100%',
+    marginLeft: '15px',
+    marginRight: '10px',
+    ...shorthands.overflow('srcoll', 'scroll'),
   },
   functionTreeItem: {
     backgroundColor: '#E8F3FE',
     paddingLeft: '10px',
+    ':hover': {
+      backgroundColor: '#D5E4FF',
+      ...shorthands.borderRadius(tokens.borderRadiusCircular),
+      width: '105%',
+    },
+    ':active': {
+      backgroundColor: '#D5E4FF',
+      ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    },
+  },
+  dragWrapper: {
+    // allows for oval shape without background during drag
+    opacity: 0.99,
   },
   listButton: {
     height: '30px',
     width: '100%',
-    backgroundColor: '#E8F3FE',
+    backgroundColor: 'inherit',
     ...shorthands.border('0px'),
     ...shorthands.padding('1px 4px 1px 4px'),
-    ':hover': {
-      backgroundColor: '#E8F3FE',
-    },
     display: 'flex',
     alignItems: 'center',
   },

@@ -1,4 +1,5 @@
 # Logic Apps Designer
+<<<<<<< HEAD
 ### [0.3.10](https://github.com/Azure/LogicAppsUX/compare/v0.3.9...v0.3.10) (2024-07-12)
 
 ### [0.3.9](https://github.com/Azure/LogicAppsUX/compare/v0.3.8...v0.3.9) (2024-07-11)
@@ -8,14 +9,129 @@
 ### [0.3.7](https://github.com/Azure/LogicAppsUX/compare/v0.3.6...v0.3.7) (2024-07-11)
 
 ### [0.3.6](https://github.com/Azure/LogicAppsUX/compare/v4.31.0...v0.3.6) (2024-07-11)
+=======
+### [4.38.1](https://github.com/Azure/LogicAppsUX/compare/v4.38.0...v4.38.1) (2024-07-12)
+>>>>>>> main
 
 
 ### Features
 
+<<<<<<< HEAD
 * **designer-ui:** Allow makers to use `class` attributes and `table` styling in raw HTML ([#5000](https://github.com/Azure/LogicAppsUX/issues/5000)) ([3446119](https://github.com/Azure/LogicAppsUX/commit/344611928460671e46ae740923c0869d2732a606))
 * **template:** Updating quickview panel with latest UI ([#4994](https://github.com/Azure/LogicAppsUX/issues/4994)) ([4704eaf](https://github.com/Azure/LogicAppsUX/commit/4704eafc0dcce8c7026beba7cfe0e6715a49a25a))
 
 ## [0.3.5](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v0.3.5) (2024-06-19)
+=======
+* **Data Mapper:** Able to update and save metadata ([#5105](https://github.com/Azure/LogicAppsUX/issues/5105)) ([0e15edb](https://github.com/Azure/LogicAppsUX/commit/0e15edb3feeecf1b7903530ab567354290fd921d))
+* **Templates:** Connector Filter Dropdown to Fetch Service & Make Searchable ([#5049](https://github.com/Azure/LogicAppsUX/issues/5049)) ([980b20a](https://github.com/Azure/LogicAppsUX/commit/980b20abbb657acd5ef20542c0c915a8eb400856))
+
+
+### Bug Fixes
+
+* **designer:** Fix min width on status & details connections table columns ([#5108](https://github.com/Azure/LogicAppsUX/issues/5108)) ([d679208](https://github.com/Azure/LogicAppsUX/commit/d679208c871d6dabcc39403e9ea7dd55ed456af5))
+* **templates:** Fixing dynamic imports of workflow images to always contain hard coded extension ([#5111](https://github.com/Azure/LogicAppsUX/issues/5111)) ([854e202](https://github.com/Azure/LogicAppsUX/commit/854e202ac63dc7399fb3014ef6111095a16d3414))
+
+## [4.38.0](https://github.com/Azure/LogicAppsUX/compare/v4.37.0...v4.38.0) (2024-07-11)
+
+
+### Features
+
+* **Data Mapper:** Drag functions and connect them ([#5094](https://github.com/Azure/LogicAppsUX/issues/5094)) ([add402f](https://github.com/Azure/LogicAppsUX/commit/add402f9d1e2883b2edbeaf5b5ba1ba8934ca9ea))
+* **Data Mapper:** Smooth out the node connections and handle states ([#5092](https://github.com/Azure/LogicAppsUX/issues/5092)) ([6abd885](https://github.com/Azure/LogicAppsUX/commit/6abd885b407ab2e977ff9f4b579609e352a3c7bd))
+* **designer:** Adding RunAfter button for right clicking on actions ([#5071](https://github.com/Azure/LogicAppsUX/issues/5071)) ([b47c782](https://github.com/Azure/LogicAppsUX/commit/b47c782ac4fc83394f38a3c8a21d7f9d6f21136a))
+* **Templates:** UI Sanitary Check, Ensuring Consistency ([#5070](https://github.com/Azure/LogicAppsUX/issues/5070)) ([3de7c6d](https://github.com/Azure/LogicAppsUX/commit/3de7c6d854525809d4909fc4ef916a8ae448af67))
+
+
+### Bug Fixes
+
+* **designer:** Flip the text on toggle for date time UTC or local ([#5102](https://github.com/Azure/LogicAppsUX/issues/5102)) ([cb80fac](https://github.com/Azure/LogicAppsUX/commit/cb80facbf06bef7380be0738d7b416a981d8ae3c))
+* **vscode:** Update node version and add APP_KIND to default settings ([#5095](https://github.com/Azure/LogicAppsUX/issues/5095)) ([f37afa8](https://github.com/Azure/LogicAppsUX/commit/f37afa8c481948c21ae1a52d4d75d05969c15db2))
+
+## [4.37.0](https://github.com/Azure/LogicAppsUX/compare/v4.36.0...v4.37.0) (2024-07-04)
+
+
+### Features
+
+* **Data Mapper:** Created function panel ([#5056](https://github.com/Azure/LogicAppsUX/issues/5056)) ([86d72ea](https://github.com/Azure/LogicAppsUX/commit/86d72ea9d6bde64cd539c8d47c819a44bb494f5d))
+* **designer:** Adding new operations in data operations ([#5043](https://github.com/Azure/LogicAppsUX/issues/5043)) ([84b6d7d](https://github.com/Azure/LogicAppsUX/commit/84b6d7d3e965f26d23d10df8f8aa10b45cb23bcc))
+* **Templates:** Display errors in panels and disable creates ([#5039](https://github.com/Azure/LogicAppsUX/issues/5039)) ([67c4be1](https://github.com/Azure/LogicAppsUX/commit/67c4be11856f63dca89e7e1ee6e177daa3b92bd6))
+* **templates:** Read featured connectors from manifest to include in Connectors list in template card ([#5061](https://github.com/Azure/LogicAppsUX/issues/5061)) ([3658b43](https://github.com/Azure/LogicAppsUX/commit/3658b4301858a0fc5125e9f0664c6658bdf02788))
+* **Templates:** Sorting Dropdown + Functionality ([#5040](https://github.com/Azure/LogicAppsUX/issues/5040)) ([9936c6f](https://github.com/Azure/LogicAppsUX/commit/9936c6fcf95f563d924c04d0c523ff05b92d0ce5))
+* **Templates:** Use fuse for search operations in templates page ([#5029](https://github.com/Azure/LogicAppsUX/issues/5029)) ([a6e6e39](https://github.com/Azure/LogicAppsUX/commit/a6e6e39c750e5c4f13ffc5f09b589c2d634fb00f))
+
+
+### Bug Fixes
+
+* **designer:** Designer removes object type dynmic parameter when only template expressions are present ([#5041](https://github.com/Azure/LogicAppsUX/issues/5041)) ([fcfcd98](https://github.com/Azure/LogicAppsUX/commit/fcfcd98dff4e97a3be6a031e43c254fc661ec0df))
+* **designer:** Fix deserialization issue in maxWaitingRun ([#5067](https://github.com/Azure/LogicAppsUX/issues/5067)) ([2a05d2d](https://github.com/Azure/LogicAppsUX/commit/2a05d2db051ace55204bb775f7d8a4a199fe90d7))
+* **designer:** Fix issue show premium label for premium connectors (WIP) ([#4926](https://github.com/Azure/LogicAppsUX/issues/4926)) ([48652ff](https://github.com/Azure/LogicAppsUX/commit/48652ff4beac6ec715bb15502614d802119b6016))
+* **designer:** Object inputs must be retained when do not have leaf properties ([#5054](https://github.com/Azure/LogicAppsUX/issues/5054)) ([f2dc328](https://github.com/Azure/LogicAppsUX/commit/f2dc3284fa1a1546a9766c689f8d33b29f0eb5cd))
+* **designer:** Prevent parent node from being dragged below dependent node ([#5047](https://github.com/Azure/LogicAppsUX/issues/5047)) ([ea8387a](https://github.com/Azure/LogicAppsUX/commit/ea8387afee059f1dff00828146c7090b5b3d75f0))
+* **designer:** Revert "Prevent parent node from being dragged below dependent node ([#4973](https://github.com/Azure/LogicAppsUX/issues/4973)) ([#5038](https://github.com/Azure/LogicAppsUX/issues/5038)) ([3a9a73b](https://github.com/Azure/LogicAppsUX/commit/3a9a73b21c9360e8caaac4492581b5973bd81e0e))
+* **designer:** Use Reusable function in Hybrid ([#5035](https://github.com/Azure/LogicAppsUX/issues/5035)) ([f821c0e](https://github.com/Azure/LogicAppsUX/commit/f821c0ec6292109c0b4caa73bdaaf4e0774bdff8))
+
+## [4.36.0](https://github.com/Azure/LogicAppsUX/compare/v4.35.0...v4.36.0) (2024-06-27)
+
+
+### Features
+
+* **designer:** Hybrid Work on Designer ([#5033](https://github.com/Azure/LogicAppsUX/issues/5033)) ([a3edd5d](https://github.com/Azure/LogicAppsUX/commit/a3edd5daa9a9e972b7292be65f08b3e8601de840))
+* **docs:** Add sanitizing instructions to HAR file ([#5034](https://github.com/Azure/LogicAppsUX/issues/5034)) ([68cdd46](https://github.com/Azure/LogicAppsUX/commit/68cdd464642a04f12a693b0ace40d04a223bf402))
+* **Templates:** Replace Filter Pills With Multi Dropdown ([#5027](https://github.com/Azure/LogicAppsUX/issues/5027)) ([27ce576](https://github.com/Azure/LogicAppsUX/commit/27ce576c2dfba258692d659356c343103a11d55e))
+
+## [4.35.0](https://github.com/Azure/LogicAppsUX/compare/v4.34.0...v4.35.0) (2024-06-27)
+
+
+### Features
+
+* **templates:** Add newly created connections in workflow create payload ([#5026](https://github.com/Azure/LogicAppsUX/issues/5026)) ([9519522](https://github.com/Azure/LogicAppsUX/commit/95195226046f483ee11bacd603e527bb3f9209cc))
+* **Templates:** Updating CreateWorkflow panel with latest UI + Logic ([#5004](https://github.com/Azure/LogicAppsUX/issues/5004)) ([673e1e6](https://github.com/Azure/LogicAppsUX/commit/673e1e61f65ee90edd33dd2943f8a4f563e5f4e6))
+
+
+### Bug Fixes
+
+* **designer:** Add aria label for close button on connections panel ([#5021](https://github.com/Azure/LogicAppsUX/issues/5021)) ([dcce4bf](https://github.com/Azure/LogicAppsUX/commit/dcce4bf1011158787c86080cb18b90b4ea43290d))
+
+## [4.34.0](https://github.com/Azure/LogicAppsUX/compare/v4.33.0...v4.34.0) (2024-06-26)
+
+
+### Features
+
+* **Templates:** Added Filter and Search UI + Functionality ([#5011](https://github.com/Azure/LogicAppsUX/issues/5011)) ([b843710](https://github.com/Azure/LogicAppsUX/commit/b843710eb31e035f7c486034df3109aec3fa4b8c))
+* **templates:** Adding connection create UI in list grid ([#5022](https://github.com/Azure/LogicAppsUX/issues/5022)) ([ea3d271](https://github.com/Azure/LogicAppsUX/commit/ea3d271b2a907e976bc4bc4ddf5d671272ffd07a))
+
+
+### Bug Fixes
+
+* **designer:** Ensure OpenAPI token keys are normalized ([#5023](https://github.com/Azure/LogicAppsUX/issues/5023)) ([c6a1341](https://github.com/Azure/LogicAppsUX/commit/c6a1341ffa19a1fd30df7e968a2db73716d39b60))
+* **designer:** Hide requestOptions for consumption SKU users ([#5017](https://github.com/Azure/LogicAppsUX/issues/5017)) ([81cc703](https://github.com/Azure/LogicAppsUX/commit/81cc703f222fd0691c2957cc5398ab46c49e66e1))
+* **vscode:** Update bundle dependencies to dotnetVersions ([#5014](https://github.com/Azure/LogicAppsUX/issues/5014)) ([77edd5a](https://github.com/Azure/LogicAppsUX/commit/77edd5ae08c71e063f441bd7546594d5169d1069))
+
+## [4.33.0](https://github.com/Azure/LogicAppsUX/compare/v4.32.0...v4.33.0) (2024-06-24)
+
+
+### Features
+
+* **Data Mapper:** Drag functions onto canvas ([#5001](https://github.com/Azure/LogicAppsUX/issues/5001)) ([ccf276f](https://github.com/Azure/LogicAppsUX/commit/ccf276f73d949e934759d25da01eecffd73f6482))
+* **designer-ui:** Improve connection selector table UI ([#5012](https://github.com/Azure/LogicAppsUX/issues/5012)) ([a8eaf4c](https://github.com/Azure/LogicAppsUX/commit/a8eaf4c4b47d31e5ae6f00a1300335e2ec1b0e0e))
+* **templates:** Adding connections list in create panel and component for create connection ([#5013](https://github.com/Azure/LogicAppsUX/issues/5013)) ([afe3cd3](https://github.com/Azure/LogicAppsUX/commit/afe3cd3a8825e92ae3f182e50dbe5ceca394a3fb))
+
+
+### Bug Fixes
+
+* **designer:** Non-string literal values are casted as Strings Literals ([#4977](https://github.com/Azure/LogicAppsUX/issues/4977)) ([486b749](https://github.com/Azure/LogicAppsUX/commit/486b749f54558550b321b70d48d7622ae9959a30))
+
+## [4.32.0](https://github.com/Azure/LogicAppsUX/compare/v4.31.0...v4.32.0) (2024-06-20)
+
+
+### Features
+
+* **Data Mapper:** Handle Node connections and state management ([#4990](https://github.com/Azure/LogicAppsUX/issues/4990)) ([dd0c2b8](https://github.com/Azure/LogicAppsUX/commit/dd0c2b86674068a94eebe1a011b50d9001ee764f))
+* **designer-ui:** Allow makers to use `class` attributes and `table` styling in raw HTML ([#5000](https://github.com/Azure/LogicAppsUX/issues/5000)) ([3446119](https://github.com/Azure/LogicAppsUX/commit/344611928460671e46ae740923c0869d2732a606))
+* **template:** Updating quickview panel with latest UI ([#4994](https://github.com/Azure/LogicAppsUX/issues/4994)) ([4704eaf](https://github.com/Azure/LogicAppsUX/commit/4704eafc0dcce8c7026beba7cfe0e6715a49a25a))
+
+## [4.31.0](https://github.com/Azure/LogicAppsUX/compare/v4.30.0...v4.31.0) (2024-06-19)
+>>>>>>> main
 
 
 ### Features

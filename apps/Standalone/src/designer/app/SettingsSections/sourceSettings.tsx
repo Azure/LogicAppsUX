@@ -1,8 +1,8 @@
 import { environment } from '../../../environments/environment';
 import { getStateHistory } from '../../state/historyHelpers';
 import type { AppDispatch } from '../../state/store';
-import { useIsLocal, useIsConsumption, useResourcePath } from '../../state/workflowLoadingSelectors';
-import { loadLastWorkflow, setConsumption, setIsLocalSelected } from '../../state/workflowLoadingSlice';
+import { useIsLocal, useHostingPlan, useResourcePath } from '../../state/workflowLoadingSelectors';
+import { type HostingPlanTypes, loadLastWorkflow, setHostingPlan, setIsLocalSelected } from '../../state/workflowLoadingSlice';
 import { ChoiceGroup, IconButton } from '@fluentui/react';
 import { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,7 +12,7 @@ const SourceSettings = ({
   showHistoryButton = true,
 }: { showEnvironment?: boolean; showHistoryButton?: boolean }) => {
   const isLocal = useIsLocal();
-  const isConsumption = useIsConsumption();
+  const hostingPlan = useHostingPlan();
   const dispatch = useDispatch<AppDispatch>();
 
   const resourcePath = useResourcePath();
@@ -43,9 +43,10 @@ const SourceSettings = ({
         options={[
           { key: 'standard', text: 'Standard' },
           { key: 'consumption', text: 'Consumption' },
+          { key: 'hybrid', text: 'Hybrid' },
         ]}
-        onChange={(_, option) => dispatch(setConsumption(option?.key === 'consumption'))}
-        selectedKey={isConsumption ? 'consumption' : 'standard'}
+        onChange={(_, option) => dispatch(setHostingPlan((option?.key as HostingPlanTypes) || 'standard'))}
+        selectedKey={hostingPlan}
       />
       {/* History Button to load last loaded workflow */}
       {showHistoryButton && !resourcePath && stateHistory ? (

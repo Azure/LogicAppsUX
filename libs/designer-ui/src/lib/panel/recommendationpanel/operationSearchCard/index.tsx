@@ -20,7 +20,17 @@ export interface CommonCardProps {
 
 export const OperationSearchCard = (props: OperationSearchCardProps) => {
   const { operationActionData, onClick, showImage = false, style, displayRuntimeInfo } = props;
-  const { title, description, category, isBuiltIn, isTrigger, brandColor = '#000', iconUri, releaseStatus } = operationActionData;
+  const {
+    title,
+    description,
+    category,
+    isBuiltIn,
+    isPremium,
+    isTrigger,
+    brandColor = '#000',
+    iconUri,
+    releaseStatus,
+  } = operationActionData;
 
   const intl = useIntl();
   const previewTag = getPreviewTag(releaseStatus);
@@ -56,6 +66,10 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
           ) : null}
           {isBuiltIn && category ? (
             <Badge appearance="outline" shape="rounded">
+              {category}
+            </Badge>
+          ) : isPremium && category ? (
+            <Badge color="success" appearance="outline" shape="square">
               {category}
             </Badge>
           ) : null}

@@ -68,10 +68,10 @@ export const useAllConnections = (): UseQueryResult<Connection[], unknown> => {
   });
 };
 
-export const useConnectionsForConnector = (connectorId: string) => {
+export const useConnectionsForConnector = (connectorId: string, shouldNotRefetch?: boolean) => {
   return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
     enabled: !!connectorId,
-    refetchOnMount: true,
+    refetchOnMount: !shouldNotRefetch && true,
     cacheTime: 0,
     staleTime: 0,
   });

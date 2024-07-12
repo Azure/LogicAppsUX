@@ -1,7 +1,7 @@
 import { DropdownTree } from '../common/DropdownTree';
 import type { ITreeFile, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
-import type { SchemaFile } from './AddOrUpdateSchemaView';
+import type { SchemaFile } from '../../models/Schema';
 import type { RootState } from '../../core/state/Store';
 import { useSelector } from 'react-redux';
 import { DataMapperFileService } from '../../core';

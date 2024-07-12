@@ -7,11 +7,9 @@ import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import type { TreeItemValue, TreeOpenChangeData, TreeOpenChangeEvent } from '@fluentui/react-components';
 import { Tree } from '@fluentui/react-components';
-import { SearchBox } from '@fluentui/react-search';
 import Fuse from 'fuse.js';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useStyles } from './styles';
-import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
@@ -30,31 +28,22 @@ export interface FunctionDataTreeItem extends FunctionData {
   children: FunctionDataTreeItem[];
 }
 
-export const FunctionList = () => {
-  const styles = useStyles();
-  const intl = useIntl();
+export type FunctionListProps = {
+  searchTerm?: string;
+};
 
-  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory));
-  const handleOpenChange = (event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
+export const FunctionList = (props: FunctionListProps) => {
+  const { searchTerm } = props;
+  const styles = useStyles();
+
+  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory).slice(0, 2));
+  const handleOpenChange = (_event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
     setOpenItems(data.openItems);
   };
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
   const inlineFunctionInputOutputKeys = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
-  );
-
-  const [searchTerm, setSearchTerm] = useState<string>('');
-
-  const stringResources = useMemo(
-    () => ({
-      SEARCH_FUNCTIONS: intl.formatMessage({
-        defaultMessage: 'Search Functions',
-        id: '2xQWRt',
-        description: 'Search Functions',
-      }),
-    }),
-    [intl]
   );
 
   const functionListTree = useMemo(() => {
@@ -127,31 +116,29 @@ export const FunctionList = () => {
     }
 
     return newFunctionListTree;
-  }, [functionData, searchTerm, inlineFunctionInputOutputKeys]);
+  }, [functionData, searchTerm, inlineFunctionInputOutputKeys, openItems]);
 
-  const treeItems = functionListTree.children.map((node) => {
+  const treeItems = functionListTree.children.map((node, index) => {
     return node.key.startsWith(functionCategoryItemKeyPrefix) ? (
-      <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} functions={node} />
+      <FunctionListHeader
+        key={`function-header-${index}`}
+        category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory}
+        functions={node}
+      />
     ) : (
-      <FunctionListItem functionData={node as FunctionData} />
+      <FunctionListItem key={`function-item-${index}`} functionData={node as FunctionData} />
     );
   });
 
   return (
-    <>
-      <span style={{ position: 'sticky', top: 0, zIndex: 2 }}>
-        <SearchBox
-          placeholder={stringResources.SEARCH_FUNCTIONS}
-          className={styles.functionSearchBox}
-          value={searchTerm}
-          size="small"
-          onChange={(_e, data) => setSearchTerm(data.value ?? '')}
-        />
-      </span>
-
-      <Tree appearance="transparent" className={styles.functionTree} onOpenChange={handleOpenChange} openItems={openItems}>
-        {treeItems}
-      </Tree>
-    </>
+    <Tree
+      appearance="transparent"
+      className={styles.functionTree}
+      onOpenChange={handleOpenChange}
+      openItems={openItems}
+      aria-label="function-tree"
+    >
+      {treeItems}
+    </Tree>
   );
 };

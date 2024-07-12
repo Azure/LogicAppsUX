@@ -1,4 +1,4 @@
-import type { XYPosition } from 'reactflow';
+import type { Dimensions, XYPosition } from 'reactflow';
 
 export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[] };
 
@@ -10,6 +10,14 @@ export interface FunctionPositionMetadata {
 export interface FunctionMetadata {
   reactFlowGuid: string;
   functionKey: string;
+  position: XYPosition;
+  connections: ConnectionAndOrder[];
+  connectionShorthand: string;
+}
+
+export interface FunctionMetadataV1 {
+  reactFlowGuid: string;
+  functionKey: string;
   positions: FunctionPositionMetadata[];
   connections: ConnectionAndOrder[];
   connectionShorthand: string;
@@ -18,6 +26,11 @@ export interface FunctionMetadata {
 export interface ConnectionAndOrder {
   name: string;
   inputOrder: number;
+}
+
+export interface MapMetadataV2 {
+  canvasDimensions: Dimensions;
+  functionNodes: FunctionMetadata[];
 }
 
 export interface MapMetadata {
@@ -37,4 +50,7 @@ export interface ITreeFile {
   name: string;
   type: 'file';
   fullPath?: string;
+}
+export interface MapMetadataV1 {
+  functionNodes: FunctionMetadataV1[];
 }
