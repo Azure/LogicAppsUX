@@ -35,7 +35,7 @@ const mountSMB = async (hostName: string, fileSharePath: string, userName: strin
   if (process.platform === Platform.windows) {
     mountCommand = `net use ${hostName}/${fileSharePath} ${password} /user:${userName}`;
   } else {
-    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/cifs -o username=${userName},password=${password}`;
+    mountCommand = `mount -t cifs ${hostName}/${fileSharePath} /mnt/cifs -o username=${userName},password=${password}`;
   }
   await executeCommand(undefined, undefined, mountCommand);
 };

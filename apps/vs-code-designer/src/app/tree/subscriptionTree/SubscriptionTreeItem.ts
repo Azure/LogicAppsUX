@@ -224,11 +224,13 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       await ext.rgApi.appResourceTree.refresh(context);
     }
 
-    const slotTreeItem = new SlotTreeItem(subscription, resolved);
-    slotTreeItem.customLocation = wizardContext.customLocation;
-    slotTreeItem.fileShare = wizardContext.fileShare;
-    slotTreeItem.isHybridLogicApp = wizardContext.useHybrid;
-    slotTreeItem.connectedEnvironment = wizardContext.connectedEnvironment;
+    const slotTreeItem = new SlotTreeItem(subscription, resolved, {
+      isHybridLogiApp: wizardContext.useHybrid,
+      hybridSite: wizardContext.hybridSite,
+      customLocation: wizardContext.customLocation,
+      fileShare: wizardContext.fileShare,
+      connectedEnvironment: wizardContext.connectedEnvironment,
+    });
     return slotTreeItem;
   }
 

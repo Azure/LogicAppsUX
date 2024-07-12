@@ -36,6 +36,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
     const { suppressCreate, useHybrid } = wizardContext;
     if (useHybrid) {
+      wizardContext.newSiteName = wizardContext.newSiteName.toLowerCase();
       return { promptSteps: [new ResourceGroupListStep(), new ConnectedEnvironmentStep()] };
     }
     return { promptSteps: [new AppServicePlanListStep(suppressCreate), new ResourceGroupListStep()] };
