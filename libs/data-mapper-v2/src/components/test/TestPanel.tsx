@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
-import { Code24Regular, Dismiss20Regular } from '@fluentui/react-icons';
+import { Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
 import { toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
@@ -42,7 +42,6 @@ export const TestPanel = (_props: TestPanelProps) => {
       isOpen={isTestPanelOpen}
       title={{
         text: resources.TEST_MAP,
-        icon: Code24Regular,
         rightAction: (
           <Button
             className={styles.closeButton}
