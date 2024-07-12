@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   connectionsFileName,
+  parametersFileName,
   funcIgnoreFileName,
   funcVersionSetting,
   hostFileName,
@@ -252,6 +253,10 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
     if (file === connectionsFileName) {
       artifactDict['connections'].push(connectionsFileName);
       continue;
+    }
+
+    if (file === parametersFileName) {
+      artifactDict['connections'].push(parametersFileName);
     }
 
     if (file === 'Artifacts') {
