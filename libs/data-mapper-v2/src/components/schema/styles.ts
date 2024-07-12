@@ -1,17 +1,15 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
-  drawerWrapper: {
-    display: 'flex',
-  },
-  drawerRoot: {
-    backgroundColor: '#fff',
-    maxWidth: '480px',
-    minWidth: '319px',
+  root: {
+    width: '300px',
     height: '100%',
   },
-  defaultDrawerwrapper: {
-    width: '100%',
+  rootWithSchemaSelection: {
+    backgroundColor: '#fff',
+  },
+  rootWithSchemaTree: {
+    backgroundColor: '#F6FAFE',
   },
   headerWrapper: {
     display: 'flex',
@@ -39,10 +37,6 @@ export const useStyles = makeStyles({
     paddingLeft: '20px',
     display: 'flex',
     flexDirection: 'column',
-  },
-  root: {
-    display: 'flex',
-    height: '100%',
   },
   fileSelectedDrawer: {
     backgroundColor: '#F6FAFE',

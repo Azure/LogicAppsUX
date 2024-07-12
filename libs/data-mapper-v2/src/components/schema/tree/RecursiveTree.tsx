@@ -94,5 +94,4 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     </TreeItem>
   );
 };
-
 export default RecursiveTree;

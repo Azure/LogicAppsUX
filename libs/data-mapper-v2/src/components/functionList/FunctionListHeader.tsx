@@ -20,7 +20,7 @@ const FunctionListHeader = ({ category, functions }: FunctionListHeaderProps) =>
   });
 
   return (
-    <TreeItem key={category} value={category} itemType="branch">
+    <TreeItem key={category} value={category} itemType="branch" className={styles.headerRoot}>
       <TreeItemLayout>
         <Text className={styles.headerText}>{categoryName}</Text>
       </TreeItemLayout>

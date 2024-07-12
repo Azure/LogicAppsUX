@@ -152,7 +152,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const [, drop] = useDrop(
     () => ({
       accept: 'function',
-      drop: (item, monitor) => {
+      drop: (_item, monitor) => {
         const xyPosition = monitor.getClientOffset();
         if (xyPosition) {
           if (reactFlowInstance) {
@@ -223,7 +223,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
               ]
             : undefined
         }
-      ></ReactFlow>
+      />
     </div>
   );
 };

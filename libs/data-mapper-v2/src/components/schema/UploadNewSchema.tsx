@@ -1,4 +1,4 @@
-import type { FileWithVsCodePath, SchemaFile } from './AddOrUpdateSchemaView';
+import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import { Button, Input } from '@fluentui/react-components';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
 import type { SchemaType } from '@microsoft/logic-apps-shared';

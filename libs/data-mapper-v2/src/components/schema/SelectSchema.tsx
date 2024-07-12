@@ -1,14 +1,11 @@
 import { SelectExistingSchema } from './SelectExistingSchema';
 import { UploadNewSchema } from './UploadNewSchema';
-import { ChoiceGroup, Text } from '@fluentui/react';
+import { ChoiceGroup } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
-import { SchemaType, equals } from '@microsoft/logic-apps-shared';
-import type React from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import type { SchemaType } from '@microsoft/logic-apps-shared';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
-import { mergeClasses } from '@fluentui/react-components';
-import { SchemaItemView } from '../schemaView/schemaView';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
@@ -27,7 +24,7 @@ export interface SchemaFile {
   type: SchemaType;
 }
 
-export interface AddOrUpdateSchemaViewProps {
+export interface SelectSchemaProps {
   schemaType?: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
@@ -35,21 +32,20 @@ export interface AddOrUpdateSchemaViewProps {
   errorMessage: string;
   uploadType: UploadSchemaTypes;
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
-  customHeaderChildren?: React.ReactElement;
+  setSelectSchemaVisible: (visible: boolean) => void;
 }
 
-export const AddOrUpdateSchemaView = ({
+export const SelectSchema = ({
   schemaType,
   selectedSchemaFile,
   setSelectedSchemaFile,
   errorMessage,
   uploadType,
   setUploadType,
-  customHeaderChildren,
-}: AddOrUpdateSchemaViewProps) => {
+  setSelectSchemaVisible,
+}: SelectSchemaProps) => {
   const intl = useIntl();
   const styles = useStyles();
-  const [selectSchemaVisible, setSelectSchemaVisible] = useState<boolean>(true);
 
   const stringResources = useMemo(
     () => ({
@@ -103,53 +99,32 @@ export const AddOrUpdateSchemaView = ({
   );
 
   return (
-    <div
-      className={mergeClasses(
-        styles.drawerRoot,
-        selectedSchemaFile ? styles.fileSelectedDrawer : '',
-        schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer
+    <div className={styles.selectSchemaWrapper}>
+      <ChoiceGroup
+        className="choice-group"
+        selectedKey={uploadType}
+        options={uploadSchemaOptions}
+        onChange={(_e, option) => onChangeUploadType(option)}
+        required={true}
+      />
+      {uploadType === UploadSchemaTypes.UploadNew && (
+        <UploadNewSchema
+          acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
+          selectedSchemaFile={selectedSchemaFile}
+          setSelectedSchemaFile={setSelectedSchemaFile}
+          schemaType={schemaType}
+        />
       )}
-    >
-      <div className={styles.headerWrapper}>
-        <Text className={styles.header}>
-          {equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION}
-        </Text>
-        {customHeaderChildren && <div className={styles.rightCustomHeader}>{customHeaderChildren}</div>}
-      </div>
-
-      <div className={styles.bodyWrapper}>
-        {!selectedSchemaFile || selectSchemaVisible ? (
-          <div className={styles.selectSchemaWrapper}>
-            <ChoiceGroup
-              className="choice-group"
-              selectedKey={uploadType}
-              options={uploadSchemaOptions}
-              onChange={(_e, option) => onChangeUploadType(option)}
-              required={true}
-            />
-            {uploadType === UploadSchemaTypes.UploadNew && (
-              <UploadNewSchema
-                acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
-                selectedSchemaFile={selectedSchemaFile}
-                setSelectedSchemaFile={setSelectedSchemaFile}
-                schemaType={schemaType}
-              />
-            )}
-            {uploadType === UploadSchemaTypes.SelectFrom && (
-              <SelectExistingSchema
-                errorMessage={errorMessage}
-                schemaType={schemaType}
-                setSelectedSchema={(schema: SchemaFile) => {
-                  setSelectSchemaVisible(false);
-                  setSelectedSchemaFile(schema);
-                }}
-              />
-            )}
-          </div>
-        ) : (
-          <SchemaItemView schemaType={schemaType} />
-        )}
-      </div>
+      {uploadType === UploadSchemaTypes.SelectFrom && (
+        <SelectExistingSchema
+          errorMessage={errorMessage}
+          schemaType={schemaType}
+          setSelectedSchema={(schema: SchemaFile) => {
+            setSelectSchemaVisible(false);
+            setSelectedSchemaFile(schema);
+          }}
+        />
+      )}
     </div>
   );
 };
