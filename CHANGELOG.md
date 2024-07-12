@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [4.38.1](https://github.com/Azure/LogicAppsUX/compare/v4.38.0...v4.38.1) (2024-07-12)
+
+
+### Features
+
+* **Data Mapper:** Able to update and save metadata ([#5105](https://github.com/Azure/LogicAppsUX/issues/5105)) ([0e15edb](https://github.com/Azure/LogicAppsUX/commit/0e15edb3feeecf1b7903530ab567354290fd921d))
+* **Templates:** Connector Filter Dropdown to Fetch Service & Make Searchable ([#5049](https://github.com/Azure/LogicAppsUX/issues/5049)) ([980b20a](https://github.com/Azure/LogicAppsUX/commit/980b20abbb657acd5ef20542c0c915a8eb400856))
+
+
+### Bug Fixes
+
+* **designer:** Fix min width on status & details connections table columns ([#5108](https://github.com/Azure/LogicAppsUX/issues/5108)) ([d679208](https://github.com/Azure/LogicAppsUX/commit/d679208c871d6dabcc39403e9ea7dd55ed456af5))
+* **templates:** Fixing dynamic imports of workflow images to always contain hard coded extension ([#5111](https://github.com/Azure/LogicAppsUX/issues/5111)) ([854e202](https://github.com/Azure/LogicAppsUX/commit/854e202ac63dc7399fb3014ef6111095a16d3414))
+
 ## [4.38.0](https://github.com/Azure/LogicAppsUX/compare/v4.37.0...v4.38.0) (2024-07-11)
 
 
