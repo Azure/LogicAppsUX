@@ -63,6 +63,7 @@ export const convertEditorState = (
       // Create a temporary DOM element to parse the HTML string
       const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
+      let idValue = '';
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
       // biome-ignore lint/style/useForOf: Node List isn't iterable
@@ -76,7 +77,7 @@ export const convertEditorState = (
           }
           if (attribute.name === 'id' && !isValuePlaintext) {
             // If we're in the rich HTML editor, encoding occurs at the element level since they are all wrapped in <span>.
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
             const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
             element.setAttribute('id', encodedIdValue);
             continue;
@@ -95,14 +96,25 @@ export const convertEditorState = (
 
       // Replace `<span id="..."></span>` with the captured `id` value if it is found in the viable IDs map.
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
-      const noTokenSpansString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
-        if (nodeMap.get(idValue)) {
-          return idValue;
-        }
-        return match;
-      });
-      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
+      let noTokenSpansString = decodedLexicalString;
+      const decodedLexicalStringWithoutNewlines = decodedLexicalString.replace(/\n/g, '');
+      if (canReplaceSpanWithId2(idValue, nodeMap)) {
+        noTokenSpansString = decodedLexicalStringWithoutNewlines.replace(spanIdPattern, idValue);
+      }
+      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true }, true);
       resolve(valueSegments);
     });
   });
+};
+
+export const canReplaceSpanWithId2 = (idValue: string, nodeMap: Map<string, ValueSegment>): boolean => {
+  const copyOfIdValue = idValue;
+  const processedId = copyOfIdValue.replace(/\n/g, '');
+  for (const [key, value] of nodeMap) {
+    const processedKey = key.replace(/[\n\r]/g, '');
+    if (processedId === processedKey && value !== undefined) {
+      return true;
+    }
+  }
+  return false;
 };
