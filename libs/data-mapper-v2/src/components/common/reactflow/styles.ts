@@ -24,7 +24,7 @@ export const useStyles = makeStyles({
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
   },
   handleWrapper: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     width: '14px',
     height: '14px',
     ...shorthands.border('1px', 'solid', '#ddd'),
@@ -44,11 +44,11 @@ export const useStyles = makeStyles({
     minWidth: '80px',
     display: 'inline-flex',
     justifyContent: 'left',
-    paddingRight: '20px'
+    paddingRight: '20px',
   },
   functionName: {
     textWrap: 'nowrap',
-    display: 'inline-table'
+    display: 'inline-table',
   },
   iconContainer: {
     display: 'inline-flex',
@@ -59,6 +59,6 @@ export const useStyles = makeStyles({
     color: tokens.colorNeutralBackground1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: '3px'
+    marginRight: '3px',
   },
 });
