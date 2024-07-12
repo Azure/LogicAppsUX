@@ -205,21 +205,25 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     await wizard.execute();
+    let resolved: LogicAppResourceTree | null = null;
 
-    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
-    const client: SiteClient = await site.createClient(context);
+    if (!wizardContext.useHybrid) {
+      const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+      const client: SiteClient = await site.createClient(context);
 
-    if (!client.isLinux) {
-      try {
-        await enableFileLogging(client);
-      } catch (error) {
-        context.telemetry.properties.fileLoggingError = parseError(error).message;
+      if (!client.isLinux) {
+        try {
+          await enableFileLogging(client);
+        } catch (error) {
+          context.telemetry.properties.fileLoggingError = parseError(error).message;
+        }
       }
+
+      resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+      await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
+      await ext.rgApi.appResourceTree.refresh(context);
     }
 
-    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
-    await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
-    await ext.rgApi.appResourceTree.refresh(context);
     const slotTreeItem = new SlotTreeItem(subscription, resolved);
     slotTreeItem.customLocation = wizardContext.customLocation;
     slotTreeItem.fileShare = wizardContext.fileShare;

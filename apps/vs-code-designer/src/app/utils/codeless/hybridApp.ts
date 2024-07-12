@@ -126,6 +126,7 @@ export const createHybridApp = async (context: ILogicAppWizardContext) => {
     if (!isSuccessResponse(response.status)) {
       throw new Error(response.statusText);
     }
+    context.hybridSite = response.data;
   } catch (error) {
     throw new Error(`${localize('errorCreatingHybrid', 'Error in creating hybrid logic app')} - ${error.message}`);
   }
