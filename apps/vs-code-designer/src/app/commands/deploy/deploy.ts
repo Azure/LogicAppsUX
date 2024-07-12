@@ -48,7 +48,7 @@ import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLangu
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
-import { deployToFileShare } from './deployToFileShare';
+import { deployHybridLogicApp } from './hybridLogicApp';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -101,7 +101,7 @@ async function deploy(
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
-  const isDeployingToFileShare = !!node.customLocation;
+  const isHybridLogicApp = !!node.isHybridLogicApp;
   const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
 
   context.telemetry.properties.projectLanguage = language;
@@ -143,7 +143,12 @@ async function deploy(
   const siteConfig: SiteConfigResource = await client.getSiteConfig();
   const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
+  if (
+    getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) &&
+    !context.isNewApp &&
+    isZipDeploy &&
+    !isHybridLogicApp
+  ) {
     const warning: string = localize(
       'confirmDeploy',
       'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
@@ -183,8 +188,8 @@ async function deploy(
       : undefined;
 
     try {
-      if (isDeployingToFileShare) {
-        await deployToFileShare(context, node);
+      if (isHybridLogicApp) {
+        await deployHybridLogicApp(context, node);
       } else {
         await innerDeploy(
           node.site,

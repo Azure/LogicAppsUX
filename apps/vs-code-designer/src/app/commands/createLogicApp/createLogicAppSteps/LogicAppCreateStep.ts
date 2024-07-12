@@ -11,6 +11,7 @@ import {
   functionAppKind,
   logicAppKind,
   logicAppKindAppSetting,
+  sqlStorageConnectionStringKey,
   webhookRedirectHostUri,
   workerRuntimeKey,
 } from '../../../../constants';
@@ -50,7 +51,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
   }
 
   public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
-    return !wizardContext.site;
+    return !wizardContext.useHybrid && !wizardContext.site;
   }
 
   private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {
@@ -137,7 +138,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
     if (context.storageType === StorageOptions.SQL) {
       appSettings.push(
         {
-          name: 'Workflows.Sql.ConnectionString',
+          name: sqlStorageConnectionStringKey,
           value: storageConnectionString.sqlConnectionStringValue,
         },
         {

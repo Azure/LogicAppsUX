@@ -18,6 +18,7 @@ export class PasswordStep extends AzureWizardPromptStep<ILogicAppWizardContext> 
     const passwordFileShare = await wizardContext.ui.showInputBox({
       placeHolder: localize('passwordFileShare', 'Password'),
       prompt: localize('passwordPrompt', 'Provide the password for File share authentication.'),
+      password: true,
       validateInput: async (input: string): Promise<string | undefined> => await this.validatePassword(input),
     });
 

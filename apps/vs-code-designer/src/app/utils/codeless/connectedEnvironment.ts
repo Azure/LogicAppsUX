@@ -1,20 +1,19 @@
-import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { isSuccessResponse, type ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import axios from 'axios';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getAccountCredentials } from '../credentials';
+import { localize } from '../../../localize';
 
-export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardContext): Promise<void> => {
+export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardContext) => {
   const { connectedEnvironment, subscriptionId } = context;
   const resourceGroup = connectedEnvironment.id.split('/')[4];
 
-  const storage = context.newSiteName;
-  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${storage}?api-version=2024-02-02-preview`;
+  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${context.newSiteName}?api-version=2024-02-02-preview`;
 
   try {
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
     const accessToken = await getAuthorizationToken(credentials);
-    //const response = await sendAzureRequest(url, context, HTTP_METHODS.PUT);
 
     const options = {
       headers: { authorization: accessToken },
@@ -32,12 +31,11 @@ export const updateSMBConnectedEnvironment = async (context: ILogicAppWizardCont
       uri: url,
     };
 
-    const response = await axios.put(options.uri, options.body, {
-      headers: options.headers,
-    });
-
-    console.log(response);
+    const response = await axios.put(options.uri, options.body, { headers: options.headers });
+    if (!isSuccessResponse(response.status)) {
+      throw new Error(response.statusText);
+    }
   } catch (error) {
-    throw new Error(`Error in getting connection - ${error.message}`);
+    throw new Error(`${localize('errorConnectingSMB', 'Error in connecting smb environment')} - ${error.message}`);
   }
 };

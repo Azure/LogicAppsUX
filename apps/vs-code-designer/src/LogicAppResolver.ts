@@ -28,11 +28,12 @@ export class LogicAppResolver implements AppResourceResolver {
   static async getSubscriptionSites(context: IActionContext, subContext: ISubscriptionContext) {
     const client = await createWebSiteClient({ ...context, ...subContext });
     const clientContainer = await createContainerClient({ ...context, ...subContext });
-    const listOfSites: Site[] = await uiUtils.listAllIterator(client.webApps.list());
-    const listOfHybridSites = (await uiUtils.listAllIterator(clientContainer.containerApps.listBySubscription())).filter(
-      (site) => site.managedEnvironmentId === null && site.extendedLocation
-    );
+    const [listOfSites, listOfContainerSites] = await Promise.all([
+      uiUtils.listAllIterator(client.webApps.list()),
+      uiUtils.listAllIterator(clientContainer.containerApps.listBySubscription()),
+    ]);
 
+    const listOfHybridSites = listOfContainerSites.filter((site) => site.managedEnvironmentId === null && site.extendedLocation);
     const subscriptionSites = new Map<string, Site>();
     const subscriptionHybridSites = new Map<string, ContainerApp>();
 

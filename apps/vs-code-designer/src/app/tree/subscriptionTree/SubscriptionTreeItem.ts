@@ -7,7 +7,7 @@ import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvide
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
-import { ContainerAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ContainerAppCreateStep';
+import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/HybridAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
@@ -146,21 +146,24 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       promptSteps.push(new AppInsightsListStep());
     } else {
       wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-      executeSteps.push(new AppInsightsCreateStep());
     }
-
-    executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
-    executeSteps.push(new LogicAppCreateStep());
-    executeSteps.push(new ConnectEnvironmentStep());
-    executeSteps.push(new ContainerAppCreateStep());
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
     await wizard.prompt();
 
-    if (wizardContext.customLocation) {
+    if (wizardContext.useHybrid) {
+      executeSteps.push(new ConnectEnvironmentStep());
+      executeSteps.push(new HybridAppCreateStep());
+    } else {
+      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      executeSteps.push(new AppInsightsCreateStep());
+      executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
+      executeSteps.push(new LogicAppCreateStep());
+    }
+
+    if (wizardContext.customLocation && !wizardContext.useHybrid) {
       setSiteOS(wizardContext);
       executeSteps.pop();
     }
@@ -202,24 +205,30 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     await wizard.execute();
+    let resolved: LogicAppResourceTree | null = null;
 
-    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
-    const client: SiteClient = await site.createClient(context);
+    if (!wizardContext.useHybrid) {
+      const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+      const client: SiteClient = await site.createClient(context);
 
-    if (!client.isLinux) {
-      try {
-        await enableFileLogging(client);
-      } catch (error) {
-        context.telemetry.properties.fileLoggingError = parseError(error).message;
+      if (!client.isLinux) {
+        try {
+          await enableFileLogging(client);
+        } catch (error) {
+          context.telemetry.properties.fileLoggingError = parseError(error).message;
+        }
       }
+
+      resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+      await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
+      await ext.rgApi.appResourceTree.refresh(context);
     }
 
-    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
-    await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
-    await ext.rgApi.appResourceTree.refresh(context);
     const slotTreeItem = new SlotTreeItem(subscription, resolved);
     slotTreeItem.customLocation = wizardContext.customLocation;
     slotTreeItem.fileShare = wizardContext.fileShare;
+    slotTreeItem.isHybridLogicApp = wizardContext.useHybrid;
+    slotTreeItem.connectedEnvironment = wizardContext.connectedEnvironment;
     return slotTreeItem;
   }
 

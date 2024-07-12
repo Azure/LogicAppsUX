@@ -1,6 +1,6 @@
 import type { StorageOptions } from './connection';
 import type { FuncVersion } from './functions';
-import type { ConnectedEnvironment } from '@azure/arm-appcontainers';
+import type { ConnectedEnvironment, ContainerApp } from '@azure/arm-appcontainers';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import type { ExecuteActivityContext, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
@@ -28,7 +28,8 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   };
   suppressCreate?: boolean;
   fileShareName?: string;
-  useWorkflowStandard?: boolean;
+  useHybrid?: boolean;
+  hybridSite?: ContainerApp;
   _location?: Record<string, any>;
 }
 
