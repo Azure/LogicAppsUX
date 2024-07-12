@@ -2,11 +2,11 @@ import { WarningModalState, openDiscardWarningModal } from '../../core/state/Mod
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Toolbar, ToolbarButton, ToolbarGroup, Switch } from '@fluentui/react-components';
 import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService } from '../../core';
+import { DataMapperFileService, DataMapperWrappedContext } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
@@ -70,8 +70,19 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     dispatch(toggleCodeView());
   }, [dispatch]);
 
+  const { canvasBounds } = useContext(DataMapperWrappedContext);
+
   const onSaveClick = useCallback(() => {
-    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
+    if (!canvasBounds || !canvasBounds.width || !canvasBounds.height) {
+      throw new Error('Canvas bounds are not defined, cannot save map metadata.');
+    }
+
+    const mapMetadata = JSON.stringify(
+      generateMapMetadata(functions, currentConnections, {
+        width: canvasBounds.width,
+        height: canvasBounds.height,
+      })
+    );
 
     DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 
@@ -81,7 +92,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         targetSchemaExtended: targetSchema,
       })
     );
-  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch]);
+  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasBounds]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());

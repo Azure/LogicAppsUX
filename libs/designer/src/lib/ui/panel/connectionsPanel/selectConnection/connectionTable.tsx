@@ -73,9 +73,16 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
   );
 
+  const statusColumnWidth = 36;
+  const statusColumnName = 'status';
+  const displayNameColumnWidth = 420;
+  const displayNameColumnName = 'displayName';
+  const detailsColumnWidth = 48;
+  const detailsColumnName = 'details';
+
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
     createTableColumn({
-      columnId: 'status',
+      columnId: statusColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Status',
@@ -98,7 +105,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'displayName',
+      columnId: displayNameColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Display Name',
@@ -123,7 +130,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'details',
+      columnId: detailsColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Details',
@@ -135,17 +142,19 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   ];
 
   const columnSizingOptions: TableColumnSizingOptions = {
-    status: {
-      defaultWidth: 36,
-      idealWidth: 36,
+    [statusColumnName]: {
+      defaultWidth: statusColumnWidth,
+      idealWidth: statusColumnWidth,
+      minWidth: statusColumnWidth,
     },
-    displayName: {
-      defaultWidth: 420,
-      idealWidth: 420,
+    [displayNameColumnName]: {
+      defaultWidth: displayNameColumnWidth,
+      idealWidth: displayNameColumnWidth,
     },
-    details: {
-      defaultWidth: 48,
-      idealWidth: 48,
+    [detailsColumnName]: {
+      defaultWidth: detailsColumnWidth,
+      idealWidth: detailsColumnWidth,
+      minWidth: detailsColumnWidth,
     },
   };
 
