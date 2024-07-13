@@ -1,8 +1,13 @@
+import type { Dimensions } from 'reactflow';
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { ConnectionAndOrder, FunctionMetadata, MapMetadata } from '@microsoft/logic-apps-shared';
+import type { ConnectionAndOrder, FunctionMetadata, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 
-export const generateMapMetadata = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadata => {
+export const generateMapMetadata = (
+  functionDictionary: FunctionDictionary,
+  connections: ConnectionDictionary,
+  canvasDimensions: Dimensions
+): MapMetadataV2 => {
   const functionMetadata: FunctionMetadata[] = [];
 
   Object.entries(functionDictionary).forEach(([functionKey, functionValue]) => {
@@ -18,6 +23,7 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
 
   return {
     functionNodes: functionMetadata,
+    canvasDimensions,
   };
 };
 

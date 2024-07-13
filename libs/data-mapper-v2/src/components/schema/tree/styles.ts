@@ -4,12 +4,14 @@ export const useStyles = makeStyles({
   wrapper: {
     marginTop: '10px',
     fontSize: '18px',
+    height: '100%',
+    ...shorthands.overflow('scroll', 'scroll'),
   },
   leftWrapper: {
-    marginLeft: '23px',
+    marginLeft: '15px',
   },
   rightWrapper: {
-    marginRight: '23px',
+    marginRight: '15px',
   },
   rootNode: {
     fontWeight: '600',

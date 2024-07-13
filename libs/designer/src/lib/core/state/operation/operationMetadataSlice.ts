@@ -542,7 +542,8 @@ const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPay
 
   const tokenTitles: Record<string, string> = {};
   for (const outputValue of Object.values(outputs)) {
-    tokenTitles[outputValue.key] = getTokenTitle(outputValue);
+    const normalizedKey = normalizeKey(outputValue.key);
+    tokenTitles[normalizedKey] = getTokenTitle(outputValue);
   }
 
   Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {

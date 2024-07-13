@@ -3,20 +3,26 @@ import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/reac
 const fnIconSize = '17px';
 
 export const useStyles = makeStyles({
+  headerRoot: {
+    marginTop: '5px',
+    marginBottom: '5px',
+  },
   headerText: {
     ...typographyStyles.caption1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     paddingLeft: tokens.spacingHorizontalXS,
-    fontSize: '13px',
-    marginTop: '8px',
-    marginBottom: '8px',
+    fontSize: '14px',
+    fontWeight: 600,
   },
   functionSearchBox: {
     width: '100%',
   },
   functionTree: {
     backgroundColor: '#E8F3FE',
-    width: '100%',
+    height: '100%',
+    marginLeft: '15px',
+    marginRight: '10px',
+    ...shorthands.overflow('srcoll', 'scroll'),
   },
   functionTreeItem: {
     backgroundColor: '#E8F3FE',
@@ -24,6 +30,7 @@ export const useStyles = makeStyles({
     ':hover': {
       backgroundColor: '#D5E4FF',
       ...shorthands.borderRadius(tokens.borderRadiusCircular),
+      width: '105%',
     },
     ':active': {
       backgroundColor: '#D5E4FF',

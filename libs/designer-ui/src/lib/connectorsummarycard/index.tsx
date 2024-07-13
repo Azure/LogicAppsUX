@@ -1,4 +1,4 @@
-import { isBuiltInConnector } from '../connectors/predicates';
+import { isBuiltInConnector, isPremiumConnector } from '../connectors/predicates';
 import { InfoDot } from '../infoDot';
 import { css } from '@fluentui/react';
 import { Badge, Text } from '@fluentui/react-components';
@@ -35,6 +35,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   }, [connectorName, iconUrl, isCard]);
 
   const isBuiltIn = isBuiltInConnector(connector);
+  const isPremium = isPremiumConnector(connector);
 
   const Content = () => (
     <>
@@ -52,6 +53,10 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
         <div className="msla-connector-summary-labels">
           {isBuiltIn ? (
             <Badge style={pseudoBadgeStyles} appearance="outline">
+              {category}
+            </Badge>
+          ) : isPremium ? (
+            <Badge style={pseudoBadgeStyles} appearance="outline" shape="square" color="success">
               {category}
             </Badge>
           ) : null}
