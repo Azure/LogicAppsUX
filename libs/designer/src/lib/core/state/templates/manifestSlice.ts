@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
+import ManifestNames from './../../templates/templateFiles/manifest.json';
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
@@ -125,8 +126,7 @@ export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
-    const manifestNames: ManifestName[] = await import('./../../templates/templateFiles/manifest.json');
-    return (manifestNames as any)?.default ?? manifestNames;
+    return ManifestNames;
   } catch (ex) {
     console.error(ex);
     return undefined;
