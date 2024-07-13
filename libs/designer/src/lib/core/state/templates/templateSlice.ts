@@ -24,7 +24,6 @@ import type { RootState } from './store';
 import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
 import { validateConnectionsValue, validateParameterValue } from '../../../core/templates/utils/helper';
-//import ManifestData from '../../../core/templates/templateFiles/ExampleTemplate/manifest.json';
 
 interface TemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
