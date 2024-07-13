@@ -66,7 +66,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri): Pr
 /**
  * Runs a unit test for a given unit test item in the Logic Apps designer.
  * @param {IActionContext} context -  The action context.
- * @param {vscode.TestItem} unitTestPath - The filesystem path to the unit test file.
+ * @param {string} unitTestPath - The filesystem path to the unit test file.
  * @returns A Promise that resolves to the UnitTestResult object.
  */
 export async function runUnitTestFromPath(context: IActionContext, unitTestPath: string): Promise<UnitTestExecutionResult> {
