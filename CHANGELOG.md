@@ -1,5 +1,26 @@
 # Logic Apps Designer
-<<<<<<< HEAD
+### [0.3.11](https://github.com/Azure/LogicAppsUX/compare/v4.38.1...v0.3.11) (2024-07-13)
+
+
+### Features
+
+* **Data Mapper:** Create a Standard panel and move all panels to re-use this ([#5109](https://github.com/Azure/LogicAppsUX/issues/5109)) ([5761eb5](https://github.com/Azure/LogicAppsUX/commit/5761eb5e65fd2f523814862e7afb1ff2a00a5a26))
+
+
+### Bug Fixes
+
+* **vscode:** Add Parameters.json in .Net project conversion ([#5110](https://github.com/Azure/LogicAppsUX/issues/5110)) ([19de272](https://github.com/Azure/LogicAppsUX/commit/19de272c86a9378ae2ba1bdf9dc1c675eac802fa))
+
+### [0.3.10](https://github.com/Azure/LogicAppsUX/compare/v0.3.9...v0.3.10) (2024-07-12)
+
+### [0.3.9](https://github.com/Azure/LogicAppsUX/compare/v0.3.8...v0.3.9) (2024-07-11)
+
+### [0.3.8](https://github.com/Azure/LogicAppsUX/compare/v0.3.7...v0.3.8) (2024-07-11)
+
+### [0.3.7](https://github.com/Azure/LogicAppsUX/compare/v0.3.6...v0.3.7) (2024-07-11)
+
+### [0.3.6](https://github.com/Azure/LogicAppsUX/compare/v4.38.0...v0.3.6) (2024-07-11)
+
 ### [0.3.10](https://github.com/Azure/LogicAppsUX/compare/v0.3.9...v0.3.10) (2024-07-12)
 
 ### [0.3.9](https://github.com/Azure/LogicAppsUX/compare/v0.3.8...v0.3.9) (2024-07-11)
