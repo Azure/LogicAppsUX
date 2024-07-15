@@ -12,7 +12,7 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { getConnectedSourceSchema, isFunctionData } from '../../utils/Function.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
   flattenSchemaIntoDictionary,
@@ -50,8 +50,6 @@ export interface DataMapOperationState {
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
   targetSchemaOrdering: string[];
-  currentSourceSchemaNodes: SchemaNodeExtended[];
-  currentTargetSchemaNode?: SchemaNodeExtended;
   functionNodes: FunctionDictionary;
   selectedItemKey?: string;
   selectedItemConnectedNodes: ConnectionUnit[];
@@ -67,7 +65,6 @@ export interface DataMapOperationState {
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   dataMapLML: '',
-  currentSourceSchemaNodes: [],
   functionNodes: {},
   flattenedSourceSchema: {},
   sourceSchemaOrdering: [],
@@ -166,7 +163,6 @@ export const dataMapSlice = createSlice({
         currentState.targetSchema = action.payload.schema;
         currentState.flattenedTargetSchema = flattenedSchema;
         currentState.targetSchemaOrdering = targetSchemaSortArray;
-        currentState.currentTargetSchemaNode = undefined;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
@@ -177,10 +173,6 @@ export const dataMapSlice = createSlice({
 
       // NOTE: Reset ReactFlow edges
       currentState.edges = [];
-
-      if (state.curDataMapOperation.sourceSchema && state.curDataMapOperation.targetSchema) {
-        currentState.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
-      }
 
       state.curDataMapOperation = { ...currentState };
     },
@@ -195,7 +187,6 @@ export const dataMapSlice = createSlice({
 
       //let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
       //functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
-      const connectedFlattenedSourceSchema = getConnectedSourceSchema(dataMapConnections, flattenedSourceSchema);
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -207,8 +198,6 @@ export const dataMapSlice = createSlice({
         functionNodes: {},
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
-        currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
-        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
         loadedMapMetadata: metadata,
       };
 

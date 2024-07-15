@@ -43,9 +43,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [selectedSchema, setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
-  const [selectSchemaVisible, setSelectSchemaVisible] = useState<boolean>(true);
+  const schemaFromStore = useSelector((state: RootState) => {
+    return schemaType === SchemaType.Source
+      ? state.dataMap.present.curDataMapOperation.sourceSchema
+      : state.dataMap.present.curDataMapOperation.targetSchema;
+  });
 
-  const showScehmaSelection = useMemo(() => !selectedSchemaFile || selectSchemaVisible, [selectedSchemaFile, selectSchemaVisible]);
+  // danielle remove this logic and replace
+  const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
 
   const fetchedSourceSchema = useQuery(
     [selectedSchemaFile],
@@ -70,7 +75,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
     }
   }, [dispatch, schemaType, fetchedSourceSchema.data, fetchedSourceSchema.isSuccess]);
-  
+
   const stringResources = useMemo(
     () => ({
       ADD_NEW: intl.formatMessage({
@@ -284,7 +289,6 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
           errorMessage={errorMessage}
           uploadType={uploadType}
           setUploadType={setUploadType}
-          setSelectSchemaVisible={setSelectSchemaVisible}
           showScehmaSelection={showScehmaSelection}
         />
       }
