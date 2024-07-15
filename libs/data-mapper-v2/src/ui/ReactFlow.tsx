@@ -30,11 +30,21 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     ref,
   });
 
+  if (reactFlowInstance) {
+    console.log('reactFlowInstance', reactFlowInstance);
+  }
+
+  if (width !== -1 || height !== -1) {
+    console.log('width', width);
+    console.log('height', height);
+  }
+
   useEffect(() => {
     if (ref?.current) {
       const bounds = ref.current.getBoundingClientRect();
       bounds.width = width;
       bounds.height = height;
+      console.log('bounds updated', bounds);
       updateCanvasBoundsParent(bounds);
     }
   }, [ref, updateCanvasBoundsParent, width, height]);
@@ -153,6 +163,8 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     () => ({
       accept: 'function',
       drop: (_item, monitor) => {
+        console.log('reactFlowInstance', reactFlowInstance);
+        console.log('instance: ', reactFlowInstance === undefined);
         const xyPosition = monitor.getClientOffset();
         if (xyPosition) {
           if (reactFlowInstance) {
@@ -185,6 +197,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
       <ReactFlow
+        id="dm-react-flow"
         ref={drop}
         nodes={allNodes}
         edges={edges}

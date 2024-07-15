@@ -204,13 +204,16 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes: {}, //functionNodes,
+        functionNodes: {},
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
         currentTargetSchemaNode: targetSchema.schemaTreeRoot,
         loadedMapMetadata: metadata,
       };
+
+      console.log(newState);
+      console.log(JSON.stringify(newState));
 
       state.curDataMapOperation = newState;
       state.pristineDataMap = newState;

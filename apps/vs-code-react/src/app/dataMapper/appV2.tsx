@@ -146,27 +146,30 @@ export const DataMapperAppV2 = () => {
   }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
-    <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
-      <DataMapDataProvider
-        dataMapMetadata={mapMetadata}
-        xsltFilename={xsltFilename}
-        xsltContent={xsltContent}
-        mapDefinition={mapDefinition}
-        sourceSchema={sourceSchema}
-        targetSchema={targetSchema}
-        availableSchemas={schemaFileList}
-        customXsltPaths={customXsltPathsList}
-        fetchedFunctions={fetchedFunctions}
-        // Passed in here too so it can be managed in the Redux store so components can track the current theme
-        theme={theme}
-      >
-        <div style={{ height: '100vh', overflow: 'hidden' }}>
-          <DataMapperDesigner
-            fileService={dataMapperFileService}
-            setIsMapStateDirty={setIsMapStateDirty}
-          />
-        </div>
-      </DataMapDataProvider>
-    </DataMapperDesignerProvider>
+    <div
+      style={{
+        height: 'inherit',
+      }}
+    >
+      <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
+        <DataMapDataProvider
+          dataMapMetadata={mapMetadata}
+          xsltFilename={xsltFilename}
+          xsltContent={xsltContent}
+          mapDefinition={mapDefinition}
+          sourceSchema={sourceSchema}
+          targetSchema={targetSchema}
+          availableSchemas={schemaFileList}
+          customXsltPaths={customXsltPathsList}
+          fetchedFunctions={fetchedFunctions}
+          // Passed in here too so it can be managed in the Redux store so components can track the current theme
+          theme={theme}
+        >
+          <div style={{ height: '100vh', overflow: 'hidden' }}>
+            <DataMapperDesigner fileService={dataMapperFileService} setIsMapStateDirty={setIsMapStateDirty} />
+          </div>
+        </DataMapDataProvider>
+      </DataMapperDesignerProvider>
+    </div>
   );
 };

@@ -34,7 +34,6 @@ export const dataMapSlice = createSlice({
   initialState,
   reducers: {
     changeRuntimePort: (state, action: PayloadAction<string>) => {
-      console.log('changeRuntimePort', action.payload);
       state.runtimePort = action.payload;
     },
     changeArmToken: (state, action: PayloadAction<string>) => {
