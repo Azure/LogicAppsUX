@@ -286,7 +286,7 @@ const loadTemplateFromGithub = async (
 
     // const templateManifest: Template.Manifest =
     //   manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
-    const templateManifestDefault = (await import('../../templates/templateFiles/ConnectionOnlyTemplate/manifest.json')).default;
+    const templateManifestDefault = (await import('./../../templates/templateFiles/ConnectionOnlyTemplate/manifest.json')).default;
     const templateManifest: Template.Manifest = {
       ...templateManifestDefault,
       skus: templateManifestDefault?.skus as Template.SkuType[],
