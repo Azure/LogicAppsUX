@@ -79,7 +79,7 @@
     }
   },
   "scripts": {
-    "prebuild:lib": "git submodule init && git submodule update && cd ./src/lib/core/templates/templateFiles && npm install",
+    "prebuild:lib": "git submodule init && git submodule update && cd ./src/lib/core/templates/templateFiles && rm ./validate_templates.ts",
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
     "test:lib": "vitest --retry=3",
