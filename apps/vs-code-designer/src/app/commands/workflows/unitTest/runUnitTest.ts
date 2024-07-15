@@ -30,7 +30,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri): Pr
     const unitTest = await pickUnitTest(context, testsDirectory.fsPath);
     unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
   } else {
-    throw new Error(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
+    throw new Error(localize('expectedWorkspace', 'In order to run unit tests, you must have a workspace open.'));
   }
 
   const workspaceName = unitTestPath.split(path.sep).slice(-5)[0];
