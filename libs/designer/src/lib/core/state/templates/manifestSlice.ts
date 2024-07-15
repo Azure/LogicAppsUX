@@ -127,8 +127,7 @@ export default manifestSlice.reducer;
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
     const justForTheSake = 'templateFiles';
-    const manifestNames: ManifestName[] = await import(`./../../templates/${justForTheSake}/manifest.json`);
-    return (manifestNames as any)?.default ?? manifestNames;
+    return (await import(`./../../templates/${justForTheSake}/manifest.json`)).default;
   } catch (ex) {
     console.error(ex);
     return undefined;
@@ -136,6 +135,5 @@ const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined
 };
 
 const loadManifestsFromGithub = async (resourcePath: string): Promise<Template.Manifest> => {
-  const manifestDetail: ManifestName[] = await import(`./../../templates/templateFiles/${resourcePath}/manifest.json`);
-  return (manifestDetail as any)?.default ?? manifestDetail;
+  return (await import(`./../../templates/templateFiles/${resourcePath}/manifest.json`)).default;
 };
