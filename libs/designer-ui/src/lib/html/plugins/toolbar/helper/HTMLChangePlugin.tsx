@@ -18,6 +18,7 @@ import { $generateHtmlFromNodes } from '@lexical/html';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState, LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
+import { removeAllNewlines } from '../../../../utils';
 
 export interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
@@ -116,10 +117,9 @@ export const convertEditorState = (
 };
 
 export const canReplaceSpanWithId = (idValue: string, nodeMap: Map<string, ValueSegment>): boolean => {
-  const copyOfIdValue = idValue;
-  const processedId = copyOfIdValue.replace(/\n/g, '');
+  const processedId = removeAllNewlines(idValue);
   for (const [key, value] of nodeMap) {
-    const processedKey = key.replace(/[\n\r]/g, '');
+    const processedKey = removeAllNewlines(key);
     if (processedId === processedKey && value !== undefined) {
       return true;
     }

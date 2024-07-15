@@ -6,6 +6,7 @@ import type { SegmentParserOptions } from './parsesegments';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
+import { removeAllNewlines, removeAllSpaces } from '../../../utils';
 
 export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
   const segments: ValueSegment[] = [];
@@ -165,17 +166,8 @@ const collapseLiteralSegments = (segments: ValueSegment[]): void => {
 };
 
 const removeNewlinesAndSpaces = (inputStr: string): string => {
-  return inputStr.replace(/\s+/g, '').replaceAll(/\n/g, '').replaceAll(/\r/g, '');
-};
+  const noSpaces = removeAllSpaces(inputStr);
+  const noNewlinesAndNoSpaces = removeAllNewlines(noSpaces);
 
-export const getTokenFromNodeMap = (segmentSoFar: string, nodeMap: Map<string, ValueSegment>): string | undefined => {
-  const copyOfSegment = segmentSoFar;
-  const processedId = copyOfSegment.replace(/\n/g, '');
-  for (const [key, value] of nodeMap) {
-    const processedKey = key.replace(/[\n\r]/g, '');
-    if (processedId === processedKey && value !== undefined) {
-      return value.value;
-    }
-  }
-  return undefined;
+  return noNewlinesAndNoSpaces;
 };

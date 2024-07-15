@@ -407,3 +407,11 @@ export const getPreviewTag = (status: string | undefined): string | undefined =>
       })
     : undefined;
 };
+
+export const removeAllNewlines = (inputStr: string): string => {
+  return inputStr.replace(/\n/g, '').replace(/\r/g, '');
+};
+
+export const removeAllSpaces = (inputStr: string): string => {
+  return inputStr.replace(/\s+/g, '');
+};
