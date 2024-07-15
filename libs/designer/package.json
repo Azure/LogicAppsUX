@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "0.401.4",
+  "version": "0.401.5",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -79,7 +79,7 @@
     }
   },
   "scripts": {
-    "prebuild:lib": "git submodule init && git submodule update",
+    "prebuild:lib": "git submodule init && git submodule update && cd ./src/lib/core/templates/templateFiles && npm install",
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
     "test:lib": "vitest --retry=3",
