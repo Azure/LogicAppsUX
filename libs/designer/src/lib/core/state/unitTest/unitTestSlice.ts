@@ -134,6 +134,11 @@ const checkAssertionsErrors = (state: UnitTestState) => {
   }
 };
 
+/**
+ * Revalidates all assertions in the unit test state.
+ * This function clears existing validation errors and performs a fresh validation on all assertions.
+ * @param {UnitTestState} state - The current unit test state.
+ */
 const revalidateAllAssertions = (state: UnitTestState) => {
   state.validationErrors.assertions = {};
   Object.values(state.assertions).forEach((assertion) => {
