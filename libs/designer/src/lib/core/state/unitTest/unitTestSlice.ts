@@ -143,19 +143,20 @@ const unitTestSlice = createSlice({
         const { mockResults, assertions } = action.payload;
         state.assertions = parseAssertions(assertions);
         state.mockResults = mockResults;
+        checkAssertionsErrors(state);
       }
     },
     updateMockSuccess: (state: UnitTestState, action: PayloadAction<updateMockPayload>) => {
       const { operationName, outputs, outputId, completed, type } = action.payload;
       const operationOutputs = state.mockResults[operationName]?.output || {};
       const operationOutputId = `${operationName}-${outputId}`;
-      const validationErrors = {
+      const validationResults = {
         value: validateParameter(outputId, { type: type, value: outputs[0]?.value ?? undefined }, 'value', {}, false),
       };
 
       const newErrorObj = {
         ...(getRecordEntry(state.validationErrors.mocks, operationOutputId) ?? {}),
-        ...validationErrors,
+        ...validationResults,
       };
       if (!newErrorObj.value) {
         delete newErrorObj.value;
@@ -234,6 +235,7 @@ const unitTestSlice = createSlice({
       if (state.validationErrors.assertions[assertionId]) {
         delete state.validationErrors.assertions[assertionId];
       }
+      checkAssertionsErrors(state);
     },
     updateAssertionExpression: (state: UnitTestState, action: PayloadAction<UpdateAssertioExpressionPayload>) => {
       const { id, assertionString } = action.payload;
