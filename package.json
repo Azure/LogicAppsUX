@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "0.401.7",
+  "version": "0.401.8",
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "@eslint/eslintrc": "^3.0.2",
@@ -73,6 +73,7 @@
   },
   "private": true,
   "scripts": {
+    "prebuild": "git submodule init && git submodule update && rimraf ./libs/designer/src/lib/core/templates/templateFiles/validate_templates.ts",
     "build": "turbo run build",
     "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
