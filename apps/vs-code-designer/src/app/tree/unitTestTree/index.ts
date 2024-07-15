@@ -145,7 +145,10 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
     watcher.onDidChange(async (uri) => {
       fileChangedEmitter.fire(uri);
     });
-    watcher.onDidDelete((uri) => controller.items.delete(uri.toString()));
+    watcher.onDidDelete((uri) => {
+      deleteFile(controller, uri);
+      fileChangedEmitter.fire(uri);
+    });
 
     findInitialFiles(controller, pattern);
 
@@ -219,6 +222,9 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
       const testName = getUnitTestName(uri.fsPath);
       const unitTestFileName = path.basename(uri.fsPath);
       const fileTestItem = controller.createTestItem(`${workspaceName}/${workflowName}/${unitTestFileName}`, testName, uri);
+      controller.items.add(fileTestItem);
+      const data = new TestFile();
+      ext.testData.set(fileTestItem, data);
       existingWorkflowTest.children.add(fileTestItem);
       return {};
     }
@@ -242,6 +248,23 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
   }
 
   return {};
+};
+
+/**
+ * Removes a test for deleted file based on the provided URI.
+ * @param {TestController} controller - The test controller.
+ * @param {Uri} uri - The URI of the file.
+ */
+const deleteFile = async (controller: TestController, uri: Uri) => {
+  const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
+  const workflowName = path.basename(path.dirname(uri.fsPath));
+  const existingWorkspaceTest = controller.items.get(workspaceName);
+  const existingWorkflowTest = existingWorkspaceTest.children.get(`${workspaceName}/${workflowName}`);
+  const unitTestFileName = path.basename(uri.fsPath);
+  const fileTestItem = existingWorkflowTest.children.get(`${workspaceName}/${workflowName}/${unitTestFileName}`);
+  existingWorkflowTest.children.delete(fileTestItem.id);
+  ext.testData.delete(fileTestItem);
+  controller.items.delete(fileTestItem.id);
 };
 
 /**
