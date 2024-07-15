@@ -1,10 +1,6 @@
-import type { IDataMapperFileService, SchemaFile } from "@microsoft/logic-apps-data-mapper-v2";
-import type { SchemaType } from "@microsoft/logic-apps-shared";
-import type {
-  MessageToVsix} from "@microsoft/vscode-extension-logic-apps";
-import {
-  ExtensionCommand
-} from "@microsoft/vscode-extension-logic-apps";
+import type { IDataMapperFileService } from '@microsoft/logic-apps-data-mapper-v2';
+import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 
 export class DataMapperFileService implements IDataMapperFileService {
   private sendMsgToVsix: (msg: MessageToVsix) => void;
@@ -13,10 +9,7 @@ export class DataMapperFileService implements IDataMapperFileService {
     this.sendMsgToVsix = sendMsgToVsix;
   }
 
-  public saveMapDefinitionCall = (
-    dataMapDefinition: string,
-    mapMetadata: string
-  ) => {
+  public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.saveDataMapDefinition,
       data: dataMapDefinition,

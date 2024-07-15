@@ -11,10 +11,14 @@ export type ConfigPanelView = (typeof ConfigPanelView)[keyof typeof ConfigPanelV
 export interface PanelState {
   currentPanelView?: ConfigPanelView;
   schemaType?: SchemaType;
+  isCodeViewOpen: boolean;
+  isTestPanelOpen: boolean;
 }
 
 const initialState: PanelState = {
   currentPanelView: ConfigPanelView.AddSchema,
+  isCodeViewOpen: false,
+  isTestPanelOpen: false,
 };
 
 export const panelSlice = createSlice({
@@ -25,6 +29,22 @@ export const panelSlice = createSlice({
     openDefaultConfigPanelView: (state) => {
       state.schemaType = undefined;
       state.currentPanelView = ConfigPanelView.DefaultConfig;
+    },
+
+    toggleCodeView: (state) => {
+      // Close test panel first if code view needs to open
+      if (!state.isCodeViewOpen && state.isTestPanelOpen) {
+        state.isTestPanelOpen = false;
+      }
+      state.isCodeViewOpen = !state.isCodeViewOpen;
+    },
+
+    toggleTestPanel: (state) => {
+      // Close code view first if test panel needs to open
+      if (!state.isTestPanelOpen && state.isCodeViewOpen) {
+        state.isCodeViewOpen = false;
+      }
+      state.isTestPanelOpen = !state.isTestPanelOpen;
     },
 
     openAddSourceSchemaPanelView: (state) => {
@@ -61,6 +81,8 @@ export const {
   openAddTargetSchemaPanelView,
   openUpdateTargetSchemaPanelView,
   closePanel,
+  toggleCodeView,
+  toggleTestPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

@@ -59,7 +59,7 @@ export abstract class BaseSearchService implements ISearchService {
     uri: string,
     queryParams?: any,
     pageNumber = 0,
-    pageSize = 2500
+    pageSize = 5000
   ): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) {
       return { value: [], hasMore: false };

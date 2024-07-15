@@ -1,4 +1,4 @@
-import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
+import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler, MaximumWaitingRunsMetadata } from '..';
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
@@ -10,10 +10,13 @@ import { SettingsSection } from '../settingsection';
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import type { FormEvent } from 'react';
 
 export interface GeneralSectionProps extends SectionProps {
+  maximumWaitingRunsMetadata: MaximumWaitingRunsMetadata;
   onConcurrencyToggle: ToggleHandler;
-  onConcurrencyValueChange: NumberChangeHandler;
+  onConcurrencyRunValueChange: NumberChangeHandler;
+  onConcurrencyMaxWaitRunChange: NumberChangeHandler;
   onInvokerConnectionToggle: ToggleHandler;
   onSplitOnToggle: ToggleHandler;
   onSplitOnSelectionChanged: DropdownSelectionChangeHandler;
@@ -31,8 +34,10 @@ export const General = ({
   concurrency,
   conditionExpressions,
   invokerConnection,
+  maximumWaitingRunsMetadata,
   onConcurrencyToggle,
-  onConcurrencyValueChange,
+  onConcurrencyRunValueChange,
+  onConcurrencyMaxWaitRunChange,
   onInvokerConnectionToggle,
   onSplitOnToggle,
   onSplitOnSelectionChanged,
@@ -90,7 +95,6 @@ export const General = ({
     id: 'ZM1mRy',
     description: 'title for concurrency setting',
   });
-
   const concurrencyTooltipText = intl.formatMessage({
     defaultMessage: 'Control how new runs are queued',
     id: '2MOA1x',
@@ -106,6 +110,25 @@ export const General = ({
     id: 'g7/EKC',
     description: 'sublabel for concurrency limit toggle button',
   });
+  const maxWaitingRunsTitle = intl.formatMessage({
+    defaultMessage: 'Maximum Waiting Runs',
+    id: 'ei1KmG',
+    description: 'Label for maximum waiting runs',
+  });
+  const maximumWaitingRunsTooltipText = intl.formatMessage({
+    defaultMessage:
+      'The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances.',
+    id: 'Eyxa6q',
+    description: 'tooltip of maximum waiting runs setting',
+  });
+  const maximumWaitingDescription = intl.formatMessage(
+    {
+      defaultMessage: 'Enter a positive integer between {min} and {max}',
+      id: 'MtWzvX',
+      description: 'descriptio of maximum waiting runs setting',
+    },
+    { max: maximumWaitingRunsMetadata.max, min: maximumWaitingRunsMetadata.min }
+  );
   const triggerConditionsTitle = intl.formatMessage({
     defaultMessage: 'Trigger conditions',
     id: 'YDoc9z',
@@ -229,14 +252,29 @@ export const General = ({
           maxVal: isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.MAX : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MAX,
           minVal: isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.MIN : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MIN,
           value:
-            concurrency?.value?.value ??
+            concurrency?.value?.runs ??
             (isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.DEFAULT : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT),
-          onValueChange: onConcurrencyValueChange,
+          onValueChange: onConcurrencyRunValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,
           ariaLabel: concurrencyTitle,
         },
         visible: concurrency?.isSupported && concurrency?.value?.enabled,
+      },
+      {
+        settingType: 'SettingTextField',
+        settingProp: {
+          readOnly,
+          value: concurrency?.value?.maximumWaitingRuns ?? 10,
+          placeholder: maximumWaitingDescription,
+          customLabel: getSettingLabel(maxWaitingRunsTitle, maximumWaitingRunsTooltipText),
+          onValueChange: (_e: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) =>
+            onConcurrencyMaxWaitRunChange(Number(newValue)),
+          max: maximumWaitingRunsMetadata.max,
+          min: maximumWaitingRunsMetadata.min,
+          type: 'number',
+        },
+        visible: isTrigger && concurrency?.isSupported && concurrency?.value?.enabled,
       },
       {
         settingType: 'MultiAddExpressionEditor',

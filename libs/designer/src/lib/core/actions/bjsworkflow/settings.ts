@@ -49,6 +49,12 @@ export interface SimpleSetting<T> {
   value?: T;
 }
 
+interface ConcurrencySettings {
+  enabled: boolean;
+  runs?: number;
+  maximumWaitingRuns?: number;
+}
+
 interface CorrelationSettings {
   clientTrackingId?: string;
 }
@@ -86,7 +92,7 @@ export interface Settings {
   disableAutomaticDecompression?: SettingData<boolean>;
   splitOn?: SettingData<SimpleSetting<string>>;
   retryPolicy?: SettingData<RetryPolicy>;
-  concurrency?: SettingData<SimpleSetting<number>>;
+  concurrency?: SettingData<ConcurrencySettings>;
   requestOptions?: SettingData<RequestOptions>;
   sequential?: boolean; // NOTE: This should be removed when logs indicate that none has the definition in the old format.
   singleInstance?: boolean; // NOTE: This should be removed when logs indicate that none has the definition in the old format.
@@ -384,7 +390,7 @@ const getConcurrency = (
   nodeType: string,
   manifest?: OperationManifest,
   definition?: LogicAppsV2.OperationDefinition
-): SimpleSetting<number> | undefined => {
+): ConcurrencySettings | undefined => {
   if (!isConcurrencySupported(isTrigger, nodeType, manifest)) {
     return undefined;
   }
@@ -395,7 +401,7 @@ const getConcurrency = (
     if (isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SEQUENTIAL, operationOptions)) {
       return {
         enabled: true,
-        value: 1,
+        runs: 1,
       };
     }
 
@@ -408,24 +414,29 @@ const getConcurrency = (
       ]);
     }
 
-    return typeof concurrencyRepetitions === 'number' ? { enabled: true, value: concurrencyRepetitions } : { enabled: false };
+    return typeof concurrencyRepetitions === 'number' ? { enabled: true, runs: concurrencyRepetitions } : { enabled: false };
   }
   if (isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, operationOptions)) {
     return {
       enabled: true,
-      value: 1,
+      runs: 1,
     };
   }
 
   let concurrencyRuns: number | undefined;
+  let maximumWaitingRuns: number | undefined;
   if (definition) {
     concurrencyRuns = getObjectPropertyValue(getRuntimeConfiguration(definition), [
       Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
       Constants.SETTINGS.PROPERTY_NAMES.RUNS,
     ]);
+    maximumWaitingRuns = getObjectPropertyValue(getRuntimeConfiguration(definition), [
+      Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY,
+      Constants.SETTINGS.PROPERTY_NAMES.MAXIMUM_WAITING_RUNS,
+    ]);
   }
 
-  return typeof concurrencyRuns === 'number' ? { enabled: true, value: concurrencyRuns } : { enabled: false };
+  return typeof concurrencyRuns === 'number' ? { enabled: true, runs: concurrencyRuns, maximumWaitingRuns } : { enabled: false };
 };
 
 const isConcurrencySupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {

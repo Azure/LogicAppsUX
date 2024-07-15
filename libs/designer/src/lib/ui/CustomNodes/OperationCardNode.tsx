@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
-import type { AppDispatch } from '../../core';
+import type { AppDispatch, RootState } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
@@ -21,7 +21,7 @@ import {
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
   useConnectorName,
@@ -52,17 +52,20 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
+import { RUN_AFTER_PANEL_TAB } from './constants';
+import { shouldDisplayRunAfter } from './helpers';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -70,6 +73,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
+  const rootState = useSelector((state: RootState) => state);
   const operationsInfo = useAllOperations();
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
@@ -202,7 +206,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }, [showCopyCallout]),
   });
 
-  const nodeClick = useCallback(() => {
+  const handleNodeSelection = useCallback(() => {
     if (nodeSelectCallbackOverride) {
       nodeSelectCallbackOverride(id);
     }
@@ -212,6 +216,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       dispatch(changePanelNode(id));
     }
   }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
+
+  const nodeClick = useCallback(() => {
+    handleNodeSelection();
+  }, [handleNodeSelection]);
+
+  const runAfterClick = useCallback(() => {
+    handleNodeSelection();
+    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
+  }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {
     dispatch(setSelectedNodeId(id));
@@ -229,14 +242,19 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
+
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, id) as LogicAppsV2.OperationDefinition;
+  const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
+
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
       <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
+      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
     ],
-    [copyClick, deleteClick, isTrigger, resubmitClick, runData?.canResubmit]
+    [copyClick, deleteClick, isTrigger, resubmitClick, runData?.canResubmit, runAfterClick, runAfter]
   );
 
   const opQuery = useOperationQuery(id);

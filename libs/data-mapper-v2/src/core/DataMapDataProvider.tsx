@@ -1,4 +1,5 @@
 //import { MapDefinitionDeserializer } from '../mapDefinitions';
+import { ReactFlowProvider } from 'reactflow';
 import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
@@ -114,5 +115,9 @@ export const DataMapDataProvider = (props: DataMapDataProviderProps) => {
     throw new Error('DataMapDataProvider must be used inside of a DataMapperWrappedContext');
   }
 
-  return <DataProviderInner {...props} />;
+  return (
+    <ReactFlowProvider>
+      <DataProviderInner {...props} />
+    </ReactFlowProvider>
+  );
 };

@@ -40,7 +40,7 @@ export const workflowLoaderSlice = createSlice({
       state.runId = undefined;
       state.resourcePath = '';
     },
-    setConsumption: (state, action: PayloadAction<boolean>) => {
+    setHostingPlan: (state, action: PayloadAction<boolean>) => {
       state.isConsumption = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
@@ -52,7 +52,7 @@ export const workflowLoaderSlice = createSlice({
   },
 });
 
-export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setConsumption, changeRunId } =
+export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId } =
   workflowLoaderSlice.actions;
 
 export default workflowLoaderSlice.reducer;
