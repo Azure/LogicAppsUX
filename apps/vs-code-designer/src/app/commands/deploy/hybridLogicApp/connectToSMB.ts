@@ -13,7 +13,7 @@ import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { guid } from '@microsoft/logic-apps-shared';
 
 export const connectToSMB = async (context: IActionContext, node: SlotTreeItem) => {
-  const message: string = localize('connectingToMSB', 'Connecting to SMB...');
+  const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');
   ext.outputChannel.appendLog(message);
 
   try {
@@ -21,10 +21,11 @@ export const connectToSMB = async (context: IActionContext, node: SlotTreeItem) 
     const { hostName, path: fileSharePath, userName, password } = node.fileShare || {};
     await mountSMB(hostName, fileSharePath, userName, password);
     const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-    await fse.mkdir(path.join(projectPath, `${node.site.siteName}-${guid()}`));
+    const smbFoldername = `${node.hybridSite.name}-${guid()}`;
+    await fse.mkdir(path.join(projectPath, smbFoldername));
     await uploadRootFiles(projectPath, hostName, fileSharePath);
     await uploadWorkflowsFiles(projectPath, hostName, fileSharePath);
-    await uploadeArtifactsFiles(projectPath, hostName, fileSharePath);
+    await uploadArtifactsFiles(projectPath, hostName, fileSharePath);
   } catch (error) {
     console.error(`Error deploying to file share: ${error.message}`);
   }
@@ -34,8 +35,10 @@ const mountSMB = async (hostName: string, fileSharePath: string, userName: strin
   let mountCommand: string;
   if (process.platform === Platform.windows) {
     mountCommand = `net use ${hostName}/${fileSharePath} ${password} /user:${userName}`;
+  } else if (process.platform === Platform.mac) {
+    mountCommand = `open smb://${userName}:${password}@${hostName}/${fileSharePath}`;
   } else {
-    mountCommand = `mount -t cifs ${hostName}/${fileSharePath} /mnt/cifs -o username=${userName},password=${password}`;
+    mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},password=${password},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
   }
   await executeCommand(undefined, undefined, mountCommand);
 };
@@ -69,7 +72,7 @@ const uploadWorkflowsFiles = async (projectPath: string | undefined, hostName: s
   }
 };
 
-const uploadeArtifactsFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
+const uploadArtifactsFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
   const artifactsFiles = await getArtifactsPathInLocalProject(projectPath);
 
   if (artifactsFiles.maps.length > 0) {

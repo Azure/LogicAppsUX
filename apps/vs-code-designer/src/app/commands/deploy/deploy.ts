@@ -197,7 +197,7 @@ async function deploy(
         );
       }
     } finally {
-      if (deployProjectPathForWorkflowApp !== undefined) {
+      if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
       }
     }

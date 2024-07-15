@@ -39,6 +39,7 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public fileShare?: {
     hostName?: string;
     path?: string;
+    localPath?: string;
     userName?: string;
     password?: string;
   };
