@@ -21,6 +21,7 @@ export async function verifyLocalConnectionKeys(context: IActionContext): Promis
       try {
         const connectionsJson = await getConnectionsJson(projectPath);
         if (isEmptyString(connectionsJson)) {
+          ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found to verify'));
           return;
         }
         const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
