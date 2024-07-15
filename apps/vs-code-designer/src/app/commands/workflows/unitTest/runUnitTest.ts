@@ -13,15 +13,63 @@ import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 import { activateAzurite } from '../../../utils/azurite/activateAzurite';
+import type { TestFile } from '../../../tree/unitTestTree/testFile';
 import type { UnitTestExecutionResult } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
+ * @param context - The action context.
+ * @param node - The URI representing the node to run the unit test for.
+ */
+export async function runUnitTest(context: IActionContext, node: vscode.Uri): Promise<void> {
+  let unitTestPath: string;
+  if (node && node instanceof vscode.Uri) {
+    unitTestPath = node.fsPath;
+  } else if (isMultiRootWorkspace()) {
+    const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
+    const unitTest = await pickUnitTest(context, testsDirectory.fsPath);
+    unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
+  } else {
+    throw new Error(localize('expectedWorkspace', 'In order to run unit tests, you must have a workspace open.'));
+  }
+
+  const workspaceName = unitTestPath.split(path.sep).slice(-5)[0];
+  const workflowName = path.basename(path.dirname(unitTestPath));
+  const unitTestFileName = path.basename(unitTestPath);
+
+  const workspaceItem = ext.unitTestController.items.get(workspaceName);
+  const workflowItem = workspaceItem?.children.get(`${workspaceName}/${workflowName}`);
+  const testItem = workflowItem?.children.get(`${workspaceName}/${workflowName}/${unitTestFileName}`);
+  const testFile = ext.testData.get(testItem) as TestFile;
+
+  if (testFile) {
+    // test item exists in test blade, update test blade with result
+    const simRequest = new vscode.TestRunRequest([testItem]);
+    const run = ext.unitTestController.createTestRun(simRequest, localize('runLogicApps', 'Run logic apps standard'), true);
+
+    run.appendOutput(`Running ${testItem.label}\r\n`);
+    if (run.token.isCancellationRequested) {
+      run.skipped(testItem);
+    } else {
+      run.started(testItem);
+      await testFile.run(testItem, run, context);
+    }
+
+    run.appendOutput(`Completed ${testItem.label}\r\n`);
+    run.end();
+  } else {
+    // test item doesn't exist in test blade, run without updating test blade result
+    await runUnitTestFromPath(context, unitTestPath);
+  }
+}
+
+/**
+ * Runs a unit test for a given unit test item in the Logic Apps designer.
  * @param {IActionContext} context -  The action context.
- * @param {vscode.Uri | vscode.TestItem} node - The URI or TestItem representing the node to run the unit test for.
+ * @param {string} unitTestPath - The filesystem path to the unit test file.
  * @returns A Promise that resolves to the UnitTestResult object.
  */
-export async function runUnitTest(context: IActionContext, node: vscode.Uri | vscode.TestItem): Promise<UnitTestExecutionResult> {
+export async function runUnitTestFromPath(context: IActionContext, unitTestPath: string): Promise<UnitTestExecutionResult> {
   return await callWithTelemetryAndErrorHandling(runUnitTestEvent, async () => {
     const options: vscode.ProgressOptions = {
       location: vscode.ProgressLocation.Notification,
@@ -39,19 +87,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
 
       const start = Date.now();
       try {
-        let unitTestPath: string;
         const testsDirectory = getTestsDirectory(vscode.workspace.workspaceFolders[0].uri.fsPath);
-
-        if (node && node instanceof vscode.Uri) {
-          unitTestPath = node.fsPath;
-        } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
-          unitTestPath = node.uri.fsPath;
-        } else if (isMultiRootWorkspace()) {
-          const unitTest = await pickUnitTest(context, testsDirectory.fsPath);
-          unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
-        } else {
-          throw new Error(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
-        }
 
         await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
         const duration = Date.now() - start;
@@ -127,6 +163,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           unitTestPath,
           results: testResult,
         });
+
         return testResult;
       } catch (error) {
         vscode.window.showErrorMessage(`${localize('runFailure', 'Error Running Unit Test.')} ${error.message}`, localize('OK', 'OK'));
