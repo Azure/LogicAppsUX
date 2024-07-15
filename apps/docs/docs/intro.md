@@ -30,16 +30,6 @@ Or you can just install using npm:
 npm install -g pnpm
 ```
 
-### Turbo Installation
-
-Check here for package manager specific ways to install: [Turbo installation](https://turbo.build/repo/docs/installing)
-
-Or you can just install using pnpm:
-
-```bash
-pnpm install -g turbo
-```
-
 ## Running the Code
 
 First, navigate to the root level of the repository and run:
