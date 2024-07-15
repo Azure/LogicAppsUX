@@ -1,49 +1,36 @@
-import { internalsSymbol, useNodes, type ConnectionLineComponentProps, type XYPosition, type HandleElement } from 'reactflow';
+import { getStraightPath, BaseEdge, EdgeLabelRenderer, type ConnectionLineComponentProps } from 'reactflow';
 
-type Bounds = {
-  id: string;
-  positionAbsolute: XYPosition;
-  bounds: HandleElement;
-};
+const ConnectionLineComponent = (props: ConnectionLineComponentProps) => {
+  const { fromX, fromY, toX, toY, fromNode } = props;
 
-export default (props: ConnectionLineComponentProps) => {
-  const { fromNode, toX, toY } = props;
-  const handleBounds: Bounds[] = useNodes().flatMap((node) => {
-    if (fromNode && node.id !== fromNode.id && !node.selected) {
-      return [];
-    }
-
-    // we only want to draw a connection line from a source handle
-    if (!node[internalsSymbol]?.handleBounds?.source) {
-      return [];
-    }
-
-    return node[internalsSymbol].handleBounds.source.map((bounds) => ({
-      id: node.id,
-      positionAbsolute: node.positionAbsolute ?? { x: 0, y: 0 },
-      bounds,
-    }));
+  const [path, labelX, labelY] = getStraightPath({
+    sourceX: fromX,
+    sourceY: fromY,
+    targetX: toX,
+    targetY: toY,
   });
 
-  return handleBounds
-    ? handleBounds.map(({ id, positionAbsolute, bounds }) => {
-        const fromHandleX = bounds.x + bounds.width / 2;
-        const fromHandleY = bounds.y + bounds.height / 2;
-        const fromX = positionAbsolute.x + fromHandleX;
-        const fromY = positionAbsolute.y + fromHandleY;
-
-        return (
-          <g key={`${id}-${bounds.id}`}>
-            <path
-              fill="none"
-              strokeWidth={6}
-              className="animated"
-              stroke="#62AAD8"
-              d={`M${fromX},${fromY} C ${fromX} ${toY} ${fromX} ${toY} ${toX},${toY}`}
-            />
-            <circle cx={toX} cy={toY} fill="#fff" r={3} stroke="#62AAD8" strokeWidth={8} />
-          </g>
-        );
-      })
-    : undefined;
+  return (
+    <>
+      <BaseEdge id={`${fromNode?.id}_custom_connectionLine`} path={path} />
+      <EdgeLabelRenderer>
+        <div
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            background: '#ffcc00',
+            padding: 10,
+            borderRadius: 5,
+            fontSize: 12,
+            fontWeight: 700,
+          }}
+          className="nodrag nopan"
+        >
+          {'+'}
+        </div>
+      </EdgeLabelRenderer>
+    </>
+  );
 };
+
+export default ConnectionLineComponent;

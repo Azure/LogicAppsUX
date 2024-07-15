@@ -27,6 +27,7 @@ export const useStyles = makeStyles({
     backgroundColor: '#fff',
     width: '14px',
     height: '14px',
+    left: '-7px',
     ...shorthands.border('1px', 'solid', '#ddd'),
   },
   handleConnected: {
@@ -34,8 +35,8 @@ export const useStyles = makeStyles({
     ...shorthands.border('1px', 'solid', '#C6DEEE'),
   },
   nodeWrapper: {
-    width: '10px',
-    height: '10px',
+    width: '14px',
+    height: '14px',
     backgroundColor: 'transparent',
   },
   functionButton: {
