@@ -134,6 +134,20 @@ const checkAssertionsErrors = (state: UnitTestState) => {
   }
 };
 
+const revalidateAllAssertions = (state: UnitTestState) => {
+  state.validationErrors.assertions = {};
+  Object.values(state.assertions).forEach((assertion) => {
+    const { name, id, assertionString } = assertion;
+    const validationErrors = {
+      name: validateAssertion(id, { name }, 'name', state.assertions),
+      expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
+    };
+    if (validationErrors.name || validationErrors.expression) {
+      state.validationErrors.assertions[id] = validationErrors;
+    }
+  });
+};
+
 const unitTestSlice = createSlice({
   name: 'unitTest',
   initialState: initialUnitTestState,
@@ -231,6 +245,8 @@ const unitTestSlice = createSlice({
     deleteAssertion: (state: UnitTestState, action: PayloadAction<DeleteAssertionsPayload>) => {
       const { assertionId } = action.payload;
       delete state.assertions[assertionId];
+      revalidateAllAssertions(state);
+      //only runs if there are validation errors for that specific assertion
       if (state.validationErrors.assertions[assertionId]) {
         delete state.validationErrors.assertions[assertionId];
       }
