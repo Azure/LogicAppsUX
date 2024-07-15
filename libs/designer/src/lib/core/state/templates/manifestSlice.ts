@@ -1,7 +1,7 @@
 import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from './store';
+// import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
 export interface ManifestState {
@@ -31,12 +31,13 @@ export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', 
   return loadManifestNamesFromGithub();
 });
 
-export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
+export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_: unknown, _thunkAPI) => {
+  // const currentState: RootState = thunkAPI.getState() as RootState;
+  // const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
 
   try {
-    const manifestPromises = manifestResourcePaths.map((resourcePath) =>
+    const hardCodedResourcePaths = ['ExampleTemplate', 'ConnectionTemplate', 'ConnectionOnlyTemplate'];
+    const manifestPromises = hardCodedResourcePaths.map((resourcePath) =>
       loadManifestsFromGithub(resourcePath).then((response) => [resourcePath, response])
     );
     const manifestsArray = await Promise.all(manifestPromises);
