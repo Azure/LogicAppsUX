@@ -134,25 +134,6 @@ const checkAssertionsErrors = (state: UnitTestState) => {
   }
 };
 
-/**
- * Revalidates all assertions in the unit test state.
- * This function clears existing validation errors and performs a fresh validation on all assertions.
- * @param {UnitTestState} state - The current unit test state.
- */
-const revalidateAllAssertions = (state: UnitTestState) => {
-  state.validationErrors.assertions = {};
-  Object.values(state.assertions).forEach((assertion) => {
-    const { name, id, assertionString } = assertion;
-    const validationErrors = {
-      name: validateAssertion(id, { name }, 'name', state.assertions),
-      expression: validateAssertion(id, { expression: assertionString }, 'expression', state.assertions),
-    };
-    if (validationErrors.name || validationErrors.expression) {
-      state.validationErrors.assertions[id] = validationErrors;
-    }
-  });
-};
-
 const unitTestSlice = createSlice({
   name: 'unitTest',
   initialState: initialUnitTestState,
@@ -162,19 +143,20 @@ const unitTestSlice = createSlice({
         const { mockResults, assertions } = action.payload;
         state.assertions = parseAssertions(assertions);
         state.mockResults = mockResults;
+        checkAssertionsErrors(state);
       }
     },
     updateMockSuccess: (state: UnitTestState, action: PayloadAction<updateMockPayload>) => {
       const { operationName, outputs, outputId, completed, type } = action.payload;
       const operationOutputs = state.mockResults[operationName]?.output || {};
       const operationOutputId = `${operationName}-${outputId}`;
-      const validationErrors = {
+      const validationResults = {
         value: validateParameter(outputId, { type: type, value: outputs[0]?.value ?? undefined }, 'value', {}, false),
       };
 
       const newErrorObj = {
         ...(getRecordEntry(state.validationErrors.mocks, operationOutputId) ?? {}),
-        ...validationErrors,
+        ...validationResults,
       };
       if (!newErrorObj.value) {
         delete newErrorObj.value;
@@ -250,11 +232,10 @@ const unitTestSlice = createSlice({
     deleteAssertion: (state: UnitTestState, action: PayloadAction<DeleteAssertionsPayload>) => {
       const { assertionId } = action.payload;
       delete state.assertions[assertionId];
-      revalidateAllAssertions(state);
-      //only runs if there are validation errors for that specific assertion
       if (state.validationErrors.assertions[assertionId]) {
         delete state.validationErrors.assertions[assertionId];
       }
+      checkAssertionsErrors(state);
     },
     updateAssertionExpression: (state: UnitTestState, action: PayloadAction<UpdateAssertioExpressionPayload>) => {
       const { id, assertionString } = action.payload;
