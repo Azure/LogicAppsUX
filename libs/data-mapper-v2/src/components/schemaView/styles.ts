@@ -6,6 +6,7 @@ export const useStyles = makeStyles({
     width: '100%',
     justifyContent: 'center',
     flexDirection: 'column',
+    height: '100%',
   },
   searchBox: {
     width: '85%',

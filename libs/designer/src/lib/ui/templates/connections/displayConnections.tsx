@@ -1,18 +1,22 @@
-import type { IColumn } from '@fluentui/react';
-import { DetailsList, Icon, Link, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
+import type { IColumn, IDetailsRowProps } from '@fluentui/react';
+import { DetailsList, DetailsRow, Icon, Link, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
-import type { Connection, Connector, Template } from '@microsoft/logic-apps-shared';
-import { getObjectPropertyValue } from '@microsoft/logic-apps-shared';
-import type { RootState } from '../../../core/state/templates/store';
+import type { Connection, Template } from '@microsoft/logic-apps-shared';
+import { ConnectionService, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getConnectorResources, normalizeConnectorId } from '../../../core/templates/utils/helper';
 import { type IntlShape, useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ConnectorIconWithName } from './connector';
-import { useState } from 'react';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import { CreateConnectionInTemplate } from '../../panel/templatePanel/createConnection';
+import { useEffect, useState } from 'react';
+import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
+import { getConnector } from '../../../core/queries/operation';
+import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 
+const createPlaceholderKey = '##create##';
 const connectionStatus: Record<string, any> = {
   true: {
     iconName: 'SkypeCircleCheck',
@@ -23,30 +27,45 @@ const connectionStatus: Record<string, any> = {
     color: '#e00b1ccf',
   },
 };
+
+interface ConnectionItem {
+  key: string;
+  connectorId: string;
+  connectorDisplayName?: string;
+  connection?: {
+    id: string;
+    displayName?: string;
+  };
+  hasConnection?: boolean;
+  allConnections?: Connection[];
+}
+
 export interface DisplayConnectionsProps {
   connections: Record<string, Template.Connection>;
 }
 
 export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => {
   const intl = useIntl();
-  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    subscriptionId,
+    location,
+    connections: { references, mapping },
+  } = useSelector((state: RootState) => state.workflow);
   const columnsNames = {
     name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
     status: intl.formatMessage({ defaultMessage: 'Status', id: 't7ytOJ', description: 'Column name for connection status' }),
     connection: intl.formatMessage({ defaultMessage: 'Connection', id: 'hlrKDC', description: 'Column name for connection display name' }),
   };
-
-  const [connectionsList, setConnectionsList] = useFunctionalState(
+  const [isConnectionInCreate, setConnectionInCreate] = useState(false);
+  const [connectionsList, setConnectionsList] = useFunctionalState<ConnectionItem[]>(
     Object.keys(connections).map((key) => ({
       key,
       connectorId: normalizeConnectorId(connections[key].connectorId, subscriptionId, location),
+      hasConnection: mapping[key] !== undefined ? true : undefined,
+      connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
     }))
   );
-
-  const updateItemInConnectionsList = (key: string, item: ConnectionItem) => {
-    const newList = connectionsList().map((connection: ConnectionItem) => (connection.key === key ? item : connection));
-    setConnectionsList(newList);
-  };
 
   const _onColumnClick = (_event: React.MouseEvent<HTMLElement>, column: IColumn): void => {
     let isSortedDescending = column.isSortedDescending;
@@ -99,17 +118,106 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     {
       ariaLabel: columnsNames.connection,
       fieldName: '$connection',
-      flexGrow: 1,
+      flexGrow: 3,
       key: '$connection',
-      isMultiline: true,
       isResizable: true,
-      minWidth: 0,
+      minWidth: 200,
       name: columnsNames.connection,
       showSortIconWhenUnsorted: true,
       targetWidthProportion: 6,
       onColumnClick: _onColumnClick,
     },
   ]);
+
+  const onConnectionsLoaded = async (connections: Connection[], item: ConnectionItem): Promise<void> => {
+    const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
+    const connectionToUse = itemHasConnection ? connections.find((connection) => connection.id === item.connection?.id) : connections[0];
+    const hasConnection = connections.length > 0;
+    updateItemInConnectionsList(item.key, {
+      ...item,
+      allConnections: connections,
+      hasConnection,
+      connection: connectionToUse
+        ? { id: connectionToUse.id, displayName: connectionToUse.properties.displayName ?? connectionToUse.id.split('/').slice(-1)[0] }
+        : undefined,
+    });
+
+    if (!itemHasConnection && connectionToUse) {
+      await ConnectionService().setupConnectionIfNeeded(connectionToUse);
+      const connector = await getConnector(item.connectorId);
+      dispatch(updateTemplateConnection({ connector, connection: connectionToUse, nodeId: item.key }));
+    }
+  };
+
+  const completeConnectionCreate = (): void => {
+    setConnectionInCreate(false);
+    setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: true, onColumnClick: _onColumnClick })));
+  };
+
+  const updateItemInConnectionsList = (key: string, item: ConnectionItem) => {
+    const newList = connectionsList().map((connection: ConnectionItem) => (connection.key === key ? item : connection));
+    setConnectionsList(newList);
+  };
+
+  const handleConnectionCancelled = (key: string): void => {
+    setConnectionsList(connectionsList().filter((current: ConnectionItem) => current.key !== key));
+    completeConnectionCreate();
+  };
+
+  const handleConnectionCreate = (item: ConnectionItem, connection: Connection) => {
+    const actualItemKey = item.key.replace(createPlaceholderKey, '');
+    const newListItems = connectionsList()
+      .filter((current: ConnectionItem) => current.key !== item.key)
+      .map((current) =>
+        current.key === actualItemKey
+          ? {
+              ...current,
+              allConnections: [...(current.allConnections ?? []), connection],
+              connection: { id: connection.id, displayName: connection.properties.displayName },
+              hasConnection: true,
+            }
+          : current
+      );
+    setConnectionsList(newListItems);
+    completeConnectionCreate();
+  };
+
+  const handleConnectionCreateClick = (item: ConnectionItem) => {
+    const newListItems = connectionsList().reduce((result: ConnectionItem[], current: ConnectionItem) => {
+      result.push(current);
+      if (current.key === item.key) {
+        result.push({ ...current, key: `${createPlaceholderKey}${current.key}` });
+      }
+
+      return result;
+    }, []);
+
+    setConnectionsList(newListItems);
+    setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
+    setConnectionInCreate(true);
+  };
+
+  const onRenderRow = (props: IDetailsRowProps | undefined) => {
+    if (props) {
+      const {
+        item,
+        item: { key, connectorId },
+      } = props;
+      if (key.startsWith(createPlaceholderKey)) {
+        return (
+          <CreateConnectionInTemplate
+            connectorId={connectorId}
+            connectionKey={key.replace(createPlaceholderKey, '')}
+            onConnectionCreated={(connection) => handleConnectionCreate(item, connection)}
+            onConnectionCancelled={() => handleConnectionCancelled(key)}
+          />
+        );
+      }
+
+      return <DetailsRow {...props} />;
+    }
+    return null;
+  };
 
   const onRenderItemColumn = (item: ConnectionItem, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
@@ -126,44 +234,23 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
             onConnectorLoaded={
               item.connectorDisplayName
                 ? undefined
-                : (connector: Connector) =>
-                    updateItemInConnectionsList(item.key, { ...item, connectorDisplayName: connector.properties.displayName })
+                : (connector: ConnectorInfo) =>
+                    updateItemInConnectionsList(item.key, { ...item, connectorDisplayName: connector.displayName })
             }
           />
         );
 
-      case '$status': {
-        return item.allConnections === undefined ? (
+      case '$status':
+        return (
           <ConnectionStatusWithProgress
             item={item}
             intl={intl}
-            onConnectionLoaded={(connections) => {
-              const hasConnection = connections.length > 0;
-              updateItemInConnectionsList(item.key, {
-                ...item,
-                allConnections: connections,
-                hasConnection,
-                connection: hasConnection ? getConnectionDetails(connections[0]) : undefined,
-              });
-            }}
+            onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
           />
-        ) : (
-          <ConnectionStatus hasConnection={!!item.hasConnection} intl={intl} />
         );
-      }
 
       case '$connection':
-        return (
-          <ConnectionName
-            item={item}
-            onConnectionCreated={(connection) => {
-              updateItemInConnectionsList(item.key, {
-                ...item,
-                connection: { id: connection.id, displayName: connection.properties.displayName },
-              });
-            }}
-          />
-        );
+        return <ConnectionName item={item} intl={intl} disabled={isConnectionInCreate} onCreate={handleConnectionCreateClick} />;
 
       default:
         return null;
@@ -172,19 +259,12 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
 
   return (
     <div className="msla-template-create-tabs">
-      <Text className="msla-template-create-tabs-description">
-        {intl.formatMessage({
-          defaultMessage:
-            'Configure connections to authenticate the following services and link your workflows with various services and applications, enabling seamless data integration and automation. Connections are required.',
-          id: 'Xld9qI',
-          description: 'Message to describe the connections tab',
-        })}
-      </Text>
       <DetailsList
         setKey="key"
         items={connectionsList()}
         columns={columns()}
         compact={true}
+        onRenderRow={onRenderRow}
         onRenderItemColumn={onRenderItemColumn}
         selectionMode={SelectionMode.none}
       />
@@ -196,15 +276,17 @@ const ConnectionStatusWithProgress = ({
   item,
   intl,
   onConnectionLoaded,
-}: { item: ConnectionItem; intl: IntlShape; onConnectionLoaded?: (connections: Connection[]) => void }): JSX.Element => {
+}: { item: ConnectionItem; intl: IntlShape; onConnectionLoaded: (connections: Connection[]) => void }): JSX.Element => {
   const { data } = useConnectionsForConnector(item.connectorId, /* shouldNotRefetch */ true);
 
-  if (data && onConnectionLoaded) {
-    onConnectionLoaded(data);
-  }
+  useEffect(() => {
+    if (data && item.allConnections === undefined) {
+      onConnectionLoaded(data);
+    }
+  }, [data, item.allConnections, onConnectionLoaded]);
 
-  return data ? (
-    <ConnectionStatus hasConnection={data.length > 0} intl={intl} />
+  return item.hasConnection !== undefined ? (
+    <ConnectionStatus hasConnection={item.hasConnection} intl={intl} />
   ) : (
     <Shimmer
       className="msla-template-connection-status"
@@ -233,51 +315,24 @@ const ConnectionStatus = ({ hasConnection, intl }: { hasConnection: boolean; int
 
 const ConnectionName = ({
   item,
-  onConnectionCreated,
-}: { item: ConnectionItem; onConnectionCreated: (connection: Connection) => void }): JSX.Element => {
-  const { connectorId, key, connection } = item;
-  const [showCreate, setShowCreate] = useState(false);
-  //const { data, isLoading } = useConnectionsForConnector(connectorId);
+  intl,
+  disabled,
+  onCreate,
+}: { item: ConnectionItem; intl: IntlShape; disabled: boolean; onCreate: (item: ConnectionItem) => void }): JSX.Element => {
+  const { connection } = item;
   if (connection?.id) {
     return <Text className="msla-template-connection-text">{connection.displayName}</Text>;
   }
 
-  const handleConnectionCreate = (connection: Connection) => {
-    onConnectionCreated(connection);
-    setShowCreate(false);
-  };
-
   const onCreateConnection = () => {
-    setShowCreate(true);
+    onCreate(item);
   };
-  return showCreate ? (
-    <CreateConnectionInTemplate connectorId={connectorId} connectionKey={key} onConnectionCreated={handleConnectionCreate} />
-  ) : (
-    <Link className="msla-template-connection-text" onClick={onCreateConnection}>
-      Connect
+  return (
+    <Link className="msla-template-connection-text" disabled={disabled} onClick={onCreateConnection}>
+      {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })}
     </Link>
   );
 };
-
-interface ConnectionItem {
-  key: string;
-  connectorId: string;
-  connectorDisplayName?: string;
-  connection?: {
-    id: string;
-    displayName: string;
-  };
-  hasConnection?: boolean;
-  allConnections?: Connection[];
-}
-
-// TODO: Update the connection in store or the reference.
-function getConnectionDetails(connection: Connection): { id: string; referenceKey?: string; displayName: string } {
-  return {
-    id: connection.id,
-    displayName: connection.properties.displayName ?? connection.name,
-  };
-}
 
 function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] {
   const keyPath =

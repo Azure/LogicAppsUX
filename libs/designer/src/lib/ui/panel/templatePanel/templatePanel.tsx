@@ -1,6 +1,6 @@
 import { Panel, PanelType } from '@fluentui/react';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
@@ -10,6 +10,7 @@ import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
+import { useExistingWorkflowNames } from '../../../core/queries/template';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,8 +23,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     dispatch(closePanel());
     dispatch(clearTemplateDetails());
   }, [dispatch]);
-  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs(onCreateClick);
-
+  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({ onCreateClick });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : getQuickViewTabs(intl, dispatch)),
     [currentPanelView, createWorkflowPanelTabs, intl, dispatch]
@@ -59,9 +59,15 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     [currentPanelView, templateTitle, templateDescription, manifest?.details, intlText.CREATE_WORKFLOW, intlText.BY_MICROSOFT]
   );
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} onClose={dismissPanel} /> : null),
-    [selectedTabProps, dismissPanel]
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
+    [selectedTabProps]
   );
+  const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
+  useEffect(() => {
+    if (isOpen && currentPanelView === 'createWorkflow') {
+      refetchWorkflowNames();
+    }
+  }, [isOpen, currentPanelView, refetchWorkflowNames]);
 
   return (
     <Panel

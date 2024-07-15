@@ -20,7 +20,13 @@ import {
   flattenSchemaNodeMap,
   isSchemaNodeExtended,
 } from '../../utils/Schema.Utils';
-import type { FunctionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type {
+  FunctionMetadata,
+  MapMetadataV2,
+  SchemaExtended,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -53,7 +59,7 @@ export interface DataMapOperationState {
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
-  loadedMapMetadata?: MapMetadata;
+  loadedMapMetadata?: MapMetadataV2;
   nodes: Node[];
   edges: Edge[];
 }
@@ -91,7 +97,7 @@ export interface InitialDataMapAction {
   sourceSchema: SchemaExtended;
   targetSchema: SchemaExtended;
   dataMapConnections: ConnectionDictionary;
-  metadata: MapMetadata | undefined;
+  metadata: MapMetadataV2 | undefined;
 }
 
 export interface ReactFlowNodeAction {
@@ -210,6 +216,17 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
     },
 
+    setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      applyConnectionValue(newState.dataMapConnections, action.payload);
+
+      doDataMapOperation(state, newState, 'Set connection input value');
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -291,7 +308,7 @@ export const dataMapSlice = createSlice({
       state.isDirty = false;
     },
 
-    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: XYPosition }>) => {
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
       const newOp = { ...state.curDataMapOperation };
       const node = newOp.functionNodes[action.payload.id];
       if (!node) {
@@ -329,6 +346,30 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = newState;
     },
+
+    deleteFunction: (state, action: PayloadAction<string>) => {
+      const reactFlowKey = action.payload;
+      const currentDataMap = state.curDataMapOperation;
+      const functionNode = currentDataMap.functionNodes[reactFlowKey];
+      const newFunctionsState = { ...currentDataMap.functionNodes };
+      if (functionNode) {
+        delete newFunctionsState[reactFlowKey];
+
+        const newConnections = deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
+
+        doDataMapOperation(
+          state,
+          {
+            ...currentDataMap,
+            functionNodes: newFunctionsState,
+            dataMapConnections: newConnections,
+          },
+          'Delete function by key'
+        );
+        return;
+      }
+    },
+
     updateReactFlowEdges: (state, action: PayloadAction<Edge[]>) => {
       const currentState = state.curDataMapOperation;
       const newState = {
@@ -376,8 +417,12 @@ export const {
   updateReactFlowEdges,
   updateReactFlowNodes,
   makeConnection,
+  updateDataMapLML,
   saveDataMap,
+  setConnectionInput,
   addFunctionNode,
+  deleteFunction,
+  updateFunctionPosition,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

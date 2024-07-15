@@ -3,7 +3,7 @@ import { AzureStandardLogicAppSelector } from '../app/AzureLogicAppsDesigner/Log
 import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/LogicAppSelector';
 import ContextSettings from '../app/SettingsSections/contextSettings';
 import SourceSettings from '../app/SettingsSections/sourceSettings';
-import { useIsConsumption, useIsDarkMode, useIsLocal } from '../state/workflowLoadingSelectors';
+import { useHostingPlan, useIsDarkMode, useIsLocal } from '../state/workflowLoadingSelectors';
 import { LocalizationSettings } from './LocalizationSettings';
 import styles from './settings_box.module.less';
 import { darkTheme } from './themes';
@@ -15,7 +15,7 @@ export const SettingsBox = () => {
   const [active, toggleActive] = useBoolean(true);
   const isDark = useIsDarkMode();
   const isLocal = useIsLocal();
-  const isConsumption = useIsConsumption();
+  const isConsumption = useHostingPlan() === 'consumption';
   const cs = css(styles.toybox, active && styles.active, isDark && styles.dark);
 
   const SettingsSection = (props: any) => {

@@ -108,6 +108,8 @@ export interface CreatedConnectionPayload {
 }
 
 export const CreateConnectionInternal = (props: {
+  classes?: Record<string, string>;
+  connectionName?: string;
   connectorId: string;
   operationType: string;
   existingReferences: string[];
@@ -115,12 +117,17 @@ export const CreateConnectionInternal = (props: {
   showActionBar: boolean;
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
+  onConnectionCancelled?: () => void;
+  description?: string;
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
   connectionMetadata?: ConnectionMetadata;
 }) => {
   const {
+    classes,
+    connectionName,
     connectorId,
+    description,
     operationType,
     assistedConnectionProps,
     existingReferences,
@@ -130,6 +137,7 @@ export const CreateConnectionInternal = (props: {
     showActionBar,
     updateConnectionInState,
     onConnectionCreated,
+    onConnectionCancelled,
   } = props;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -271,7 +279,7 @@ export const CreateConnectionInternal = (props: {
         let connection: Connection | undefined;
         let err: string | undefined;
 
-        const newName = await getUniqueConnectionName(connector.id, existingReferences);
+        const newName = connectionName ? connectionName : await getUniqueConnectionName(connector.id, existingReferences);
         if (isOAuthConnection) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
@@ -309,6 +317,7 @@ export const CreateConnectionInternal = (props: {
       applyNewConnection,
       assistedConnectionProps,
       connectionMetadata,
+      connectionName,
       connector,
       existingReferences,
       selectedSubResource,
@@ -318,7 +327,10 @@ export const CreateConnectionInternal = (props: {
 
   const cancelCallback = useCallback(() => {
     dispatch(setIsCreatingConnection(false));
-  }, [dispatch]);
+    if (onConnectionCancelled) {
+      onConnectionCancelled();
+    }
+  }, [dispatch, onConnectionCancelled]);
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
@@ -339,12 +351,14 @@ export const CreateConnectionInternal = (props: {
       nodeIds={nodeIds}
       iconUri={iconUri}
       showActionBar={showActionBar}
+      classes={classes}
       connector={connector}
       connectionParameterSets={getSupportedParameterSets(
         connector.properties.connectionParameterSets,
         operationType,
         connector.properties.capabilities
       )}
+      description={description}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
       isLoading={isCreating}

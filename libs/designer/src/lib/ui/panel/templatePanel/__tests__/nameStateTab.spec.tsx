@@ -6,6 +6,10 @@ import { screen } from '@testing-library/react';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
 import { NameStatePanel } from '../createWorkflowPanel/tabs/nameStateTab';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { getReactQueryClient } from '../../../../core';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
   let store: AppStore;
@@ -17,12 +21,15 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
       templateName: 'title',
       manifest: undefined,
       workflowDefinition: undefined,
-      parameters: {
-        definitions: {},
-        validationErrors: {},
-      },
+      parameterDefinitions: {},
       connections: {},
       servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: undefined,
+      },
     };
     const minimalStoreData = {
       template: templateSliceData,
@@ -36,7 +43,15 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
   });
 
   beforeEach(() => {
-    renderWithProviders(<NameStatePanel />, { store });
+    const queryClient = getReactQueryClient();
+
+    renderWithProviders(
+      <QueryClientProvider client={queryClient}>
+        <NameStatePanel />
+      </QueryClientProvider>,
+
+      { store }
+    );
   });
 
   it('Shows Name and State Tab values displayed', async () => {
@@ -44,9 +59,11 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
     expect(screen.getAllByText('Workflow Name')).toBeDefined();
     expect(screen.getAllByDisplayValue(store.getState().template.workflowName ?? 'n/a')).toBeDefined;
     expect(screen.getAllByText('State Type')).toBeDefined();
-    expect(screen.getAllByText('Stateful: Optimized for high reliability, ideal for process business transitional data.')).toBeDefined();
-    expect(
-      screen.getAllByText('Stateless: Optimized for low latency, ideal for request-response and processing IoT events.')
-    ).toBeDefined();
+    expect(screen.getAllByText('Stateful')).toBeDefined();
+    expect(screen.getAllByText('Optimized for high reliability')).toBeDefined();
+    expect(screen.getAllByText('Ideal for process business transitional data')).toBeDefined();
+    expect(screen.getAllByText('Stateless')).toBeDefined();
+    expect(screen.getAllByText('Optimized for low latency')).toBeDefined();
+    expect(screen.getAllByText('Ideal for request-response and processing IoT events')).toBeDefined();
   });
 });

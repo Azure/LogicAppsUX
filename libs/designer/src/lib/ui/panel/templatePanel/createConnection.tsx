@@ -8,13 +8,16 @@ import { useConnectorOnly } from '../../../core/state/connection/connectionSelec
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
+import { useIntl } from 'react-intl';
 
 export const CreateConnectionInTemplate = (props: {
   connectorId: string;
   connectionKey: string;
   onConnectionCreated: (connection: Connection) => void;
+  onConnectionCancelled: () => void;
 }) => {
-  const { connectorId, connectionKey, onConnectionCreated } = props;
+  const intl = useIntl();
+  const { connectorId, connectionKey, onConnectionCreated, onConnectionCancelled } = props;
   const dispatch = useDispatch<AppDispatch>();
   const { data: connector } = useConnectorOnly(connectorId);
 
@@ -34,16 +37,28 @@ export const CreateConnectionInTemplate = (props: {
     [connectionKey, dispatch]
   );
 
+  const description = intl.formatMessage(
+    {
+      defaultMessage: 'Fill out the fields below to create a connection for {connectorName}',
+      id: 'N+qRUv',
+      description: 'Message to show in title for connection creation',
+    },
+    { connectorName: connector?.properties.displayName ?? '' }
+  );
   return (
     <CreateConnectionInternal
+      classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
+      connectionName={isInAppConnector ? connectionKey : undefined}
       connectorId={connectorId}
+      description={description}
       operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
       existingReferences={references}
       assistedConnectionProps={assistedConnectionProps}
       showActionBar={false}
-      hideCancelButton={true}
+      hideCancelButton={false}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={onConnectionCreated}
+      onConnectionCancelled={onConnectionCancelled}
     />
   );
 };
