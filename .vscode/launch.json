@@ -8,8 +8,7 @@
       "runtimeExecutable": "${execPath}",
 
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist",
-        "--inspect-brk=9230"
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"
       ],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
