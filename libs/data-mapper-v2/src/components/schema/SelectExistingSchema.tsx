@@ -38,7 +38,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
     [dispatch, props.schemaType]
   );
 
-  const fetchedTargetSchema = useQuery(
+  useQuery(
     [selectedSchemaItem],
     async () => {
       if (selectedSchemaItem) {
@@ -53,8 +53,6 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
       enabled: selectedSchemaItem !== undefined,
     }
   );
-
-  console.log(fetchedTargetSchema);
 
   return (
     <DropdownTree

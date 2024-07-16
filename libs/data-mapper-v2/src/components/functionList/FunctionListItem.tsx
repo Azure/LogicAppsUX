@@ -25,14 +25,8 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
     type: 'function',
     item: functionData.key,
     end: (item, monitor) => {
-      console.log('drop');
       const dropResult = monitor.getDropResult<DropResult>();
-      console.log('dropResult', dropResult);
-      console.log('item', item);
       if (item && dropResult) {
-        console.log('dropResult', dropResult);
-        console.log('item', item);
-        console.log('position', dropResult.position);
         functionData.position = dropResult.position;
         dispatch(addFunctionNode(functionData));
       }

@@ -49,11 +49,9 @@ export class DataMapperApiService {
   private getBaseUri = () => `${this.options.baseUrl}:${this.options.port}`;
 
   public getSchemaFileUri = (schemaFilename: string, schemaFilePath: string) => {
-    console.log(schemaFilename, schemaFilePath);
     const filename = schemaFilename.substring(0, schemaFilename.lastIndexOf('.'));
     const formattedFilePath = schemaFilePath.replace(schemaFilename, '');
     const queryParams = schemaFilePath === schemaFilename ? '' : `?relativePath=${formattedFilePath}`;
-    console.log(`${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${filename}/contents/schemaTree${queryParams}`);
     return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${filename}/contents/schemaTree${queryParams}`;
   };
   private getFunctionsManifestUri = () =>

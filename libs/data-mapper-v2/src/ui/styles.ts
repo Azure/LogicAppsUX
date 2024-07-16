@@ -17,7 +17,6 @@ export const useStyles = makeStyles({
     ...shorthands.flex(1, 1, '1px'),
   },
   reactFlow: {
-    height: '600px',
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.overflow('visible'),
   },

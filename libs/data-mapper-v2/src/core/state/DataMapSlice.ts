@@ -201,9 +201,6 @@ export const dataMapSlice = createSlice({
         loadedMapMetadata: metadata,
       };
 
-      console.log(newState);
-      console.log(JSON.stringify(newState));
-
       state.curDataMapOperation = newState;
       state.pristineDataMap = newState;
     },

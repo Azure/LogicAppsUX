@@ -5,6 +5,7 @@ import {
   DataMapDataProvider as DataMapDataProviderV2,
   DataMapperDesignerProvider as DataMapperDesignerProviderV2,
   type IDataMapperFileService,
+  type SchemaFile,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -17,7 +18,6 @@ import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import type { SchemaFile } from '@microsoft/logic-apps-data-mapper/src/lib/components/configPanel/AddOrUpdateSchemaView';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {

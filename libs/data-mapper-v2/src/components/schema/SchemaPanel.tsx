@@ -49,7 +49,6 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       : state.dataMap.present.curDataMapOperation.targetSchema;
   });
 
-  // danielle remove this logic and replace
   const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
 
   const fetchedSourceSchema = useQuery(
@@ -289,7 +288,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
           errorMessage={errorMessage}
           uploadType={uploadType}
           setUploadType={setUploadType}
-          showScehmaSelection={showScehmaSelection}
+          showSchemaSelection={showScehmaSelection}
         />
       }
     />

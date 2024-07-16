@@ -19,7 +19,7 @@ export interface SchemaPanelBodyProps {
   errorMessage: string;
   uploadType: UploadSchemaTypes;
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
-  showScehmaSelection?: boolean;
+  showSchemaSelection?: boolean;
 }
 
 export const SchemaPanelBody = ({
@@ -29,7 +29,7 @@ export const SchemaPanelBody = ({
   errorMessage,
   uploadType,
   setUploadType,
-  showScehmaSelection: showSchemaSelection,
+  showSchemaSelection,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
