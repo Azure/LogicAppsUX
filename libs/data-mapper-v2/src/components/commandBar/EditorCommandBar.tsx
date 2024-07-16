@@ -24,7 +24,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
 
   const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
-  const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
+  const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);

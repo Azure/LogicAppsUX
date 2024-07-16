@@ -1,15 +1,13 @@
-import { SelectExistingSchema } from './SelectExistingSchema';
-import { UploadNewSchema } from './UploadNewSchema';
-import { ChoiceGroup } from '@fluentui/react';
-import type { IChoiceGroupOption } from '@fluentui/react';
-import type { SchemaType } from '@microsoft/logic-apps-shared';
+import { equals, type ITreeFile, type IFileSysTreeItem, SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { SchemaItemView } from '../schemaView/schemaView';
-import { type SchemaFile, UploadSchemaTypes } from '../../models/Schema';
-
-const acceptedSchemaFileInputExtensions = '.xsd, .json';
+import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
+import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../core/state/Store';
+import { DataMapperFileService } from '../../core';
 
 export interface SchemaPanelBodyProps {
   schemaType: SchemaType;
@@ -17,22 +15,23 @@ export interface SchemaPanelBodyProps {
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
-  uploadType: UploadSchemaTypes;
-  setUploadType: (newUploadType: UploadSchemaTypes) => void;
-  showSchemaSelection?: boolean;
+  fileSelectorOptions: FileSelectorOption;
+  setFileSelectorOptions: (option: FileSelectorOption) => void;
+  showScehmaSelection?: boolean;
 }
 
 export const SchemaPanelBody = ({
   schemaType,
   selectedSchemaFile,
   setSelectedSchemaFile,
-  errorMessage,
-  uploadType,
-  setUploadType,
-  showSchemaSelection,
+  fileSelectorOptions,
+  setFileSelectorOptions,
+  showScehmaSelection,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+  const fileService = DataMapperFileService();
 
   const stringResources = useMemo(
     () => ({
@@ -61,59 +60,81 @@ export const SchemaPanelBody = ({
         id: 'BnkCwH',
         description: 'Seach source or target properties',
       }),
+      BROWSE: intl.formatMessage({
+        defaultMessage: 'Browse',
+        id: 'syiNc+',
+        description: 'Browse for file',
+      }),
+      BROWSE_MESSAGE: intl.formatMessage({
+        defaultMessage: 'Select a file to upload',
+        id: '2CXCOt',
+        description: 'Placeholder for input to load a schema file',
+      }),
     }),
     [intl]
   );
 
-  const onChangeUploadType = useCallback(
-    (option?: IChoiceGroupOption) => {
-      if (option) {
-        setUploadType(option.key as UploadSchemaTypes);
-      }
+  const onSelectExistingFile = useCallback(
+    (item: IFileSysTreeItem) => {
+      setSelectedSchemaFile({
+        name: item.name ?? '',
+        path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
+        type: schemaType ?? SchemaType.Source,
+      });
     },
-    [setUploadType]
+    [setSelectedSchemaFile, schemaType]
   );
 
-  const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
-    () => [
-      { key: UploadSchemaTypes.UploadNew, text: stringResources.ADD_NEW },
-      {
-        key: UploadSchemaTypes.SelectFrom,
-        text: stringResources.SELECT_EXISTING,
-      },
-    ],
-    [stringResources]
+  const onOpenClose = useCallback(() => {
+    return fileService.readCurrentSchemaOptions ? fileService.readCurrentSchemaOptions : undefined;
+  }, [fileService]);
+
+  const onUpload = useCallback(
+    (files?: FileList) => {
+      if (!files) {
+        console.error('Files array is empty');
+        return;
+      }
+
+      const schemaFile = files[0] as FileWithVsCodePath;
+      if (!schemaFile.path) {
+        console.log('Path property is missing from file (should only occur in browser/standalone)');
+      } else if (schemaFile && schemaType) {
+        setSelectedSchemaFile({
+          name: schemaFile.name,
+          path: schemaFile.path,
+          type: schemaType,
+        });
+      } else {
+        console.error('Missing schemaType');
+      }
+    },
+    [schemaType, setSelectedSchemaFile]
   );
 
   return (
     <div className={styles.bodyWrapper}>
-      {showSchemaSelection ? (
-        <div className={styles.selectSchemaWrapper}>
-          <ChoiceGroup
-            className="choice-group"
-            selectedKey={uploadType}
-            options={uploadSchemaOptions}
-            onChange={(_e, option) => onChangeUploadType(option)}
-            required={true}
-          />
-          {uploadType === UploadSchemaTypes.UploadNew && (
-            <UploadNewSchema
-              acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
-              selectedSchemaFile={selectedSchemaFile}
-              setSelectedSchemaFile={setSelectedSchemaFile}
-              schemaType={schemaType}
-            />
-          )}
-          {uploadType === UploadSchemaTypes.SelectFrom && (
-            <SelectExistingSchema
-              errorMessage={errorMessage}
-              schemaType={schemaType}
-              setSelectedSchema={(schema: SchemaFile) => {
-                setSelectedSchemaFile(schema);
-              }}
-            />
-          )}
-        </div>
+      {showScehmaSelection ? (
+        <FileSelector
+          selectedKey={fileSelectorOptions}
+          options={{
+            'upload-new': { text: stringResources.ADD_NEW },
+            'select-existing': { text: stringResources.SELECT_EXISTING },
+          }}
+          onOptionChange={setFileSelectorOptions}
+          upload={{
+            uploadButtonText: stringResources.BROWSE,
+            inputPlaceholder: stringResources.BROWSE_MESSAGE,
+            acceptedExtensions: '.xsd, .json',
+            fileName: selectedSchemaFile?.name,
+            onUpload: onUpload,
+          }}
+          existing={{
+            fileList: availableSchemaList,
+            onSelect: onSelectExistingFile,
+            onOpenClose: onOpenClose,
+          }}
+        />
       ) : (
         <SchemaItemView schemaType={schemaType} />
       )}

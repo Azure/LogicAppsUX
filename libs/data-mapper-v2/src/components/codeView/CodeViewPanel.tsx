@@ -16,7 +16,7 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
+  const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const dataMapDefinition = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
 
   const onCloseClick = useCallback(() => {
