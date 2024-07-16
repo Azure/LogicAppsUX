@@ -24,7 +24,7 @@ export const resolveConnectionsReferences = (
   try {
     return JSON.parse(result);
   } catch (error) {
-    throw new Error('Failure in resolving connection parameterisation');
+    throw new Error('Failure in resolving connection parameterization');
   }
 };
 
