@@ -82,9 +82,6 @@ jobs:
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
-      - name: 'Run Prebuild for Resolving Submodule Path'
-        run: pnpm run prebuild
-
       - name: 'Pack VSCode Designer Extension'
         run: pnpm run vscode:designer:pack
 
