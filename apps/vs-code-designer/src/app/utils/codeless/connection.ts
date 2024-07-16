@@ -25,7 +25,7 @@ import type {
   ConnectionAndAppSetting,
   Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
-import { JwtTokenHelper, JwtTokenConstants, WorkflowUtility } from '@microsoft/vscode-extension-logic-apps';
+import { JwtTokenHelper, JwtTokenConstants, resolveConnectionsReferences } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -222,13 +222,10 @@ export async function getConnectionsAndSettingsToUpdate(
       );
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
-      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 42)
+      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
     ) {
-      const resolvedConnectionReference = WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(reference),
-        undefined,
-        localSettings.Values
-      );
+      const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
+
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,

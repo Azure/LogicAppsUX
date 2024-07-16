@@ -36,6 +36,8 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
       await activateAzurite(context);
+    });
+    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
       await verifyLocalConnectionKeys(context);
     });
   });
