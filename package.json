@@ -93,7 +93,8 @@
     "test:e2e": "playwright test",
     "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
-    "vscode:designer:pack": "turbo run vscode:designer:pack"
+    "vscode:designer:pack": "turbo run vscode:designer:pack",
+    "templates": "ts-node --esm downloadTemplates.ts"
   },
   "type": "module",
   "dependencies": {
