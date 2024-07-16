@@ -8,33 +8,32 @@ import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
 import type { File } from '../../../utils/codeless/common';
 import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
-import { connectionsFileName, hostFileName, parametersFileName, Platform, workflowFileName } from '../../../../constants';
+import { connectionsFileName, hostFileName, localSettingsFileName, parametersFileName, Platform, workflowFileName } from '../../../../constants';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
-import { guid } from '@microsoft/logic-apps-shared';
 
-export const connectToSMB = async (context: IActionContext, node: SlotTreeItem) => {
+export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive:string) => {
   const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');
   ext.outputChannel.appendLog(message);
 
   try {
     const workspaceFolder = await getWorkspaceFolderPath(context);
     const { hostName, path: fileSharePath, userName, password } = node.fileShare || {};
-    await mountSMB(hostName, fileSharePath, userName, password);
+    await mountSMB(hostName, fileSharePath, userName, password, mountDrive);
     const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-    const smbFoldername = `${node.hybridSite.name}-${guid()}`;
-    await fse.mkdir(path.join(projectPath, smbFoldername));
-    await uploadRootFiles(projectPath, hostName, fileSharePath);
-    await uploadWorkflowsFiles(projectPath, hostName, fileSharePath);
-    await uploadArtifactsFiles(projectPath, hostName, fileSharePath);
+    const smbFolderPath = path.join(mountDrive,smbFolderName)
+    await fse.ensureDir(smbFolderPath);
+    await uploadRootFiles(projectPath, smbFolderPath);
+    await uploadWorkflowsFiles(projectPath, smbFolderPath);
+    await uploadArtifactsFiles(projectPath, smbFolderPath);
   } catch (error) {
     console.error(`Error deploying to file share: ${error.message}`);
   }
 };
 
-const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string) => {
+const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string, mountDrive:string) => {
   let mountCommand: string;
   if (process.platform === Platform.windows) {
-    mountCommand = `net use ${hostName}/${fileSharePath} ${password} /user:${userName}`;
+    mountCommand = `net use ${mountDrive} \\\\${hostName}\\${fileSharePath} ${password} /user:${userName}`;
   } else if (process.platform === Platform.mac) {
     mountCommand = `open smb://${userName}:${password}@${hostName}/${fileSharePath}`;
   } else {
@@ -43,43 +42,45 @@ const mountSMB = async (hostName: string, fileSharePath: string, userName: strin
   await executeCommand(undefined, undefined, mountCommand);
 };
 
-const uploadFiles = async (files: File[], hostName: string, fileSharePath: string) => {
+const uploadFiles = async (files: File[], smbFolderPath: string) => {
   for (const file of files) {
-    await fse.copy(file.path, `${hostName}/${fileSharePath}`, { overwrite: true });
+    await fse.copy(file.path, path.join(smbFolderPath, file.name), { overwrite: true });
   }
 };
 
-const uploadRootFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
+const uploadRootFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
   const hostJsonPath: string = path.join(projectPath, hostFileName);
   const parametersJsonPath: string = path.join(projectPath, parametersFileName);
   const connectionsJsonPath: string = path.join(projectPath, connectionsFileName);
+  const localSettinsJsonPath: string = path.join(projectPath, localSettingsFileName);
   const rootFiles = [
     { path: hostJsonPath, name: hostFileName },
     { path: parametersJsonPath, name: parametersFileName },
     { path: connectionsJsonPath, name: connectionsFileName },
+    { path: localSettinsJsonPath, name: localSettingsFileName },
   ];
   for (const rootFile of rootFiles) {
     if (await fse.pathExists(rootFile.path)) {
-      await uploadFiles([{ path: rootFile.path, name: rootFile.name }], hostName, fileSharePath);
+      await uploadFiles([{ path: rootFile.path, name: rootFile.name }], smbFolderPath);
     }
   }
 };
 
-const uploadWorkflowsFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
+const uploadWorkflowsFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
   const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
   for (const workflowFile of workflowFiles) {
-    await uploadFiles([{ ...workflowFile, name: workflowFileName }], hostName, fileSharePath);
+    await uploadFiles([{ ...workflowFile, name: workflowFileName }], smbFolderPath);
   }
 };
 
-const uploadArtifactsFiles = async (projectPath: string | undefined, hostName: string, fileSharePath: string) => {
+const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
   const artifactsFiles = await getArtifactsPathInLocalProject(projectPath);
 
   if (artifactsFiles.maps.length > 0) {
-    await uploadFiles(artifactsFiles.maps, hostName, fileSharePath);
+    await uploadFiles(artifactsFiles.maps, smbFolderPath);
   }
 
   if (artifactsFiles.schemas.length > 0) {
-    await uploadFiles(artifactsFiles.schemas, hostName, fileSharePath);
+    await uploadFiles(artifactsFiles.schemas, smbFolderPath);
   }
 };

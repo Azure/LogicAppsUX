@@ -4,6 +4,7 @@ import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
 import { cleanSMB, unMountSMB } from './cleanResources';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export const deployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem) => {
   try {
@@ -15,8 +16,10 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
       },
       async (progress) => {
         context.telemetry.properties.lastStep = 'connectToSMB';
+        const smbFolderName = `${node.hybridSite.name}-${guid()}`;
+        const mountDrive = 'X:';
         progress.report({ increment: 33, message: 'Connecting to SMB' });
-        await connectToSMB(context, node);
+        await connectToSMB(context, node, smbFolderName, mountDrive);
 
         progress.report({ increment: 33, message: 'Cleaning SMB' });
         await cleanSMB(context, node);

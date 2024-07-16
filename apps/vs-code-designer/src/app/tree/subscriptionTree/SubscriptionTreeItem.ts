@@ -224,6 +224,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       await ext.rgApi.appResourceTree.refresh(context);
     }
 
+
     const slotTreeItem = new SlotTreeItem(subscription, resolved, {
       isHybridLogiApp: wizardContext.useHybrid,
       hybridSite: wizardContext.hybridSite,
