@@ -14,9 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useStyles } from './styles';
 import { Panel } from '../../components/common/panel/Panel';
 import { SchemaPanelBody } from './SchemaPanelBody';
-import { type SchemaFile, UploadSchemaTypes } from '../../models/Schema';
-
+import type { SchemaFile } from '../../models/Schema';
 import { mergeClasses } from '@fluentui/react-components';
+import type { FileSelectorOptions } from '../common/selector/FileSelector';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -39,9 +39,9 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     return state.panel.currentPanelView;
   });
 
-  const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
+  const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOptions>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
-  const [selectedSchema, setSelectedSchema] = useState<DataMapSchema>();
+  const [selectedSchema, _setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
   const [selectSchemaVisible, setSelectSchemaVisible] = useState<boolean>(true);
 
@@ -145,7 +145,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
 
       LogService.log(LogCategory.AddOrUpdateSchemaView, 'addOrChangeSchema', {
         message: `${isAddSchema ? 'Added' : 'Changed'} ${schemaType} schema from ${
-          uploadType === UploadSchemaTypes.SelectFrom ? 'existing schema files' : 'new file upload'
+          fileSelectorOptions === 'select-existing' ? 'existing schema files' : 'new file upload'
         }`,
       });
 
@@ -167,9 +167,9 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         return;
       }
 
-      if (uploadType === UploadSchemaTypes.SelectFrom && selectedSchema) {
+      if (fileSelectorOptions === 'select-existing' && selectedSchema) {
         onSubmitSchema(selectedSchema);
-      } else if (uploadType === UploadSchemaTypes.UploadNew && selectedSchemaFile) {
+      } else if (fileSelectorOptions === 'upload-new' && selectedSchemaFile) {
         onSubmitSchemaFileSelection(selectedSchemaFile);
       }
 
@@ -186,7 +186,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       goBackToDefaultConfigPanelView,
       genericErrorMsg,
       selectedSchemaFile,
-      uploadType,
+      fileSelectorOptions,
       onSubmitSchemaFileSelection,
       fetchedSourceSchema,
       onSubmitSchema,
@@ -208,7 +208,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
 
     let isNoNewSchemaSelected = true;
 
-    if (uploadType === UploadSchemaTypes.SelectFrom) {
+    if (fileSelectorOptions === 'select-existing') {
       if (schemaType === SchemaType.Source) {
         isNoNewSchemaSelected = !selectedSchema || selectedSchema.name === curDataMapOperation.sourceSchema?.name;
       } else {
@@ -240,7 +240,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     cancelLoc,
     addOrUpdateSchema,
     selectedSchemaFile,
-    uploadType,
+    fileSelectorOptions,
     addLoc,
     selectedSchema,
   ]);
@@ -270,8 +270,8 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
           setSelectedSchemaFile={setSelectedSchemaFile}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
-          uploadType={uploadType}
-          setUploadType={setUploadType}
+          fileSelectorOptions={fileSelectorOptions}
+          setFileSelectorOptions={setFileSelectorOptions}
           setSelectSchemaVisible={setSelectSchemaVisible}
           showScehmaSelection={showScehmaSelection}
         />
