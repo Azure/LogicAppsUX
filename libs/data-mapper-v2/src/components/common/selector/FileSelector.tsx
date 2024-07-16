@@ -6,6 +6,10 @@ import { Button, Input } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { DropdownTree } from '../DropdownTree';
 
+type U = {
+  text: string;
+};
+
 export type FileSelectorOption = 'upload-new' | 'select-existing';
 
 export type FileSelectorProps<T> = {
@@ -26,7 +30,7 @@ export type FileSelectorProps<T> = {
   };
 };
 
-const FileSelector = <T,>(props: FileSelectorProps<T>) => {
+const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
   const {
     selectedKey,
     options = {},
@@ -51,8 +55,7 @@ const FileSelector = <T,>(props: FileSelectorProps<T>) => {
         selectedKey={selectedKey}
         options={Object.keys(options).map((key) => ({
           key,
-          text:
-            options[key] && typeof options[key] === 'object' && 'text' in options[key] ? (options[key].text as string) : (key as string),
+          text: options[key].text,
           data: options[key],
           className: styles.choiceGroupOptionRoot,
         }))}

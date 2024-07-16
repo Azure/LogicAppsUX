@@ -9,10 +9,6 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 
-type FileSelectorType = {
-  text: string;
-};
-
 export interface SchemaPanelBodyProps {
   schemaType?: SchemaType;
   selectedSchema?: string;
@@ -123,7 +119,7 @@ export const SchemaPanelBody = ({
   return (
     <div className={styles.bodyWrapper}>
       {showScehmaSelection ? (
-        <FileSelector<FileSelectorType>
+        <FileSelector
           selectedKey={fileSelectorOptions}
           options={{
             'upload-new': { text: stringResources.ADD_NEW },

@@ -8,9 +8,6 @@ import type { FileWithVsCodePath } from '../../models/Schema';
 import { toggleShowSelection, setTestFile } from '../../core/state/PanelSlice';
 import { equals, type ITreeFile, SchemaType, type IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 
-type FileSelectorType = {
-  text: string;
-};
 type TestPanelBodyProps = {};
 
 export const TestPanelBody = (_props: TestPanelBodyProps) => {
@@ -102,7 +99,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
   return (
     <div className={styles.bodyWrapper}>
       {showSelection ? (
-        <FileSelector<FileSelectorType>
+        <FileSelector
           selectedKey={fileSelectorOption}
           options={{
             'upload-new': { text: stringResources.ADD_NEW },
