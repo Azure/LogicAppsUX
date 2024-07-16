@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.40.0](https://github.com/Azure/LogicAppsUX/compare/v4.39.0...v4.40.0) (2024-07-15)
+
+
+### Bug Fixes
+
+* **designer:** Fixed function operation output body token issue ([#5125](https://github.com/Azure/LogicAppsUX/issues/5125)) ([e96bac4](https://github.com/Azure/LogicAppsUX/commit/e96bac47116aafb7f952d2804fb32923dc5d09be))
+
 ## [4.39.0](https://github.com/Azure/LogicAppsUX/compare/v4.38.1...v4.39.0) (2024-07-15)
 
 
