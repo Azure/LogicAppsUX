@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.31.6](https://github.com/Azure/LogicAppsUX/compare/v4.31.5...v4.31.6) (2024-07-16)
+
+
+### Bug Fixes
+
+* **vscode:** Update node version and add APP_KIND to default settings ([#5113](https://github.com/Azure/LogicAppsUX/issues/5113)) ([e5bd9b5](https://github.com/Azure/LogicAppsUX/commit/e5bd9b5036d5ef3bc6a17662e8b49332c0f60479))
+
 ### [4.31.5](https://github.com/Azure/LogicAppsUX/compare/v4.31.4...v4.31.5) (2024-07-05)
 
 
