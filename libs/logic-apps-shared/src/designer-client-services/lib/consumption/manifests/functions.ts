@@ -112,7 +112,6 @@ export const selectFunctionManifest = {
       type: 'object',
       properties: {
         body: {
-          type: 'any',
           title: 'Body',
         },
         headers: {
