@@ -13,8 +13,72 @@ import * as path from 'path';
 import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 import { activateAzurite } from '../../../utils/azurite/activateAzurite';
-import type { TestFile } from '../../../tree/unitTestTree/testFile';
+import { TestFile } from '../../../tree/unitTestTree/testFile';
 import type { UnitTestExecutionResult } from '@microsoft/vscode-extension-logic-apps';
+import { TestWorkflow } from '../../../tree/unitTestTree/testWorkflow';
+import { TestWorkspace } from '../../../tree/unitTestTree/testWorkspace';
+import { findInitialFiles, getWorkspaceTestPatterns } from '../../../tree/unitTestTree';
+
+/**
+ * Initializes the test blade with the initial test files.
+ * @param controller - The unit test controller.
+ */
+async function initTestBlade(controller: vscode.TestController): Promise<void> {
+  const workspaceFolders = await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
+  await Promise.all(
+    workspaceFolders.map(async (workspaceTestItems) => {
+      await Promise.all(
+        workspaceTestItems.map(async ({ data }) => {
+          await data.createChild(controller);
+        })
+      );
+    })
+  );
+}
+
+/**
+ * Creates a test file for a given URI associated with unit test controller.
+ * @param controller - The unit test controller.
+ * @param uri - The URI representing the test file.
+ */
+function createTestFile(controller: vscode.TestController, uri: vscode.Uri) {
+  const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
+  const workflowName = path.basename(path.dirname(uri.fsPath));
+
+  let existingWorkspaceTestItem = controller.items.get(workspaceName);
+  if (!existingWorkspaceTestItem) {
+    const workspaceUri = vscode.Uri.file(uri.fsPath.split(path.sep).slice(0, -4).join(path.sep));
+    const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
+    workspaceTestItem.canResolveChildren = true;
+    controller.items.add(workspaceTestItem);
+
+    const testWorkspace = new TestWorkspace(workspaceName, [uri], workspaceTestItem);
+    testWorkspace.createChild(controller);
+    ext.testData.set(workspaceTestItem, testWorkspace);
+    existingWorkspaceTestItem = workspaceTestItem;
+  }
+
+  let existingWorkflowTestItem = existingWorkspaceTestItem.children.get(`${workspaceName}/${workflowName}`);
+  if (!existingWorkflowTestItem) {
+    const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
+    workflowTestItem.canResolveChildren = true;
+    controller.items.add(workflowTestItem);
+
+    const testWorkflow = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
+    testWorkflow.createChild(controller);
+    ext.testData.set(workflowTestItem, testWorkflow);
+    existingWorkspaceTestItem.children.add(workflowTestItem);
+    existingWorkflowTestItem = workflowTestItem;
+  }
+
+  const testName = getUnitTestName(uri.fsPath);
+  const unitTestFileName = path.basename(uri.fsPath);
+  const fileTestItem = controller.createTestItem(`${workspaceName}/${workflowName}/${unitTestFileName}`, testName, uri);
+  controller.items.add(fileTestItem);
+  const data = new TestFile();
+  ext.testData.set(fileTestItem, data);
+  existingWorkflowTestItem.children.add(fileTestItem);
+}
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -37,30 +101,34 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri): Pr
   const workflowName = path.basename(path.dirname(unitTestPath));
   const unitTestFileName = path.basename(unitTestPath);
 
-  const workspaceItem = ext.unitTestController.items.get(workspaceName);
-  const workflowItem = workspaceItem?.children.get(`${workspaceName}/${workflowName}`);
-  const testItem = workflowItem?.children.get(`${workspaceName}/${workflowName}/${unitTestFileName}`);
-  const testFile = ext.testData.get(testItem) as TestFile;
+  let workspaceItem = ext.unitTestController.items.get(workspaceName);
+  let workflowItem = workspaceItem?.children.get(`${workspaceName}/${workflowName}`);
+  let testItem = workflowItem?.children.get(`${workspaceName}/${workflowName}/${unitTestFileName}`);
+  let testFile = ext.testData.get(testItem) as TestFile;
 
-  if (testFile) {
-    // test item exists in test blade, update test blade with result
-    const simRequest = new vscode.TestRunRequest([testItem]);
-    const run = ext.unitTestController.createTestRun(simRequest, localize('runLogicApps', 'Run logic apps standard'), true);
-
-    run.appendOutput(`Running ${testItem.label}\r\n`);
-    if (run.token.isCancellationRequested) {
-      run.skipped(testItem);
-    } else {
-      run.started(testItem);
-      await testFile.run(testItem, run, context);
-    }
-
-    run.appendOutput(`Completed ${testItem.label}\r\n`);
-    run.end();
-  } else {
-    // test item doesn't exist in test blade, run without updating test blade result
-    await runUnitTestFromPath(context, unitTestPath);
+  if (!testFile) {
+    // test file doesn't exist in test data, initialize test blade, create test file
+    await initTestBlade(ext.unitTestController);
+    createTestFile(ext.unitTestController, vscode.Uri.file(unitTestPath));
+    workspaceItem = ext.unitTestController.items.get(workspaceName);
+    workflowItem = workspaceItem?.children.get(`${workspaceName}/${workflowName}`);
+    testItem = workflowItem?.children.get(`${workspaceName}/${workflowName}/${unitTestFileName}`);
+    testFile = ext.testData.get(testItem) as TestFile;
   }
+
+  const testRunRequest = new vscode.TestRunRequest([testItem]);
+  const run = ext.unitTestController.createTestRun(testRunRequest, localize('runLogicApps', 'Run logic apps standard'), true);
+
+  run.appendOutput(`Running ${testItem.label}\r\n`);
+  if (run.token.isCancellationRequested) {
+    run.skipped(testItem);
+  } else {
+    run.started(testItem);
+    await testFile.run(testItem, run, context);
+  }
+
+  run.appendOutput(`Completed ${testItem.label}\r\n`);
+  run.end();
 }
 
 /**

@@ -128,6 +128,34 @@ export const unitTestResolveHandler = async (context: ExtensionContext, ctrl: Te
 };
 
 /**
+ * Finds initial files based on the provided pattern and creates a test file on each file.
+ * @param {TestController} controller The test controller.
+ * @param {GlobPattern} pattern The glob pattern used to find files.
+ */
+export const findInitialFiles = async (
+  controller: TestController,
+  pattern: RelativePattern
+): Promise<{ workspaceTestItem: TestItem; data: TestWorkspace }[]> => {
+  const unitTestFiles = await workspace.findFiles(pattern);
+
+  const workspacesTestFiles = unitTestFiles.reduce((acc, file: Uri) => {
+    const workspaceName = file.fsPath.split(path.sep).slice(-5)[0];
+
+    if (!acc[workspaceName]) {
+      acc[workspaceName] = [];
+    }
+    acc[workspaceName].push(file);
+    return acc;
+  }, {});
+
+  const workspaceTestItems = [];
+  for (const workspace of Object.keys(workspacesTestFiles)) {
+    workspaceTestItems.push(getOrCreateWorkspace(controller, workspace, workspacesTestFiles[workspace]));
+  }
+  return workspaceTestItems;
+};
+
+/**
  * Creates and returns an array of file system watchers for the specified test patterns in the workspace.
  * Whenever a file is created, changed, or deleted, the corresponding actions are performed and the fileChangedEmitter is fired.
  * @param {TestController} controller - The test controller to associate the file system watchers with.
@@ -139,7 +167,7 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
     const watcher = workspace.createFileSystemWatcher(pattern);
 
     watcher.onDidCreate((uri) => {
-      getOrCreateFile(controller, uri);
+      createTestFile(controller, uri);
       fileChangedEmitter.fire(uri);
     });
     watcher.onDidChange(async (uri) => {
@@ -157,39 +185,20 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
 };
 
 /**
- * Finds initial files based on the provided pattern and creates a test file on each file.
- * @param {TestController} controller The test controller.
- * @param {GlobPattern} pattern The glob pattern used to find files.
- */
-const findInitialFiles = async (controller: TestController, pattern: RelativePattern) => {
-  const unitTestFiles = await workspace.findFiles(pattern);
-
-  const workspacesTestFiles = unitTestFiles.reduce((acc, file: Uri) => {
-    const workspaceName = file.fsPath.split(path.sep).slice(-5)[0];
-
-    if (!acc[workspaceName]) {
-      acc[workspaceName] = [];
-    }
-    acc[workspaceName].push(file);
-    return acc;
-  }, {});
-
-  for (const workspace of Object.keys(workspacesTestFiles)) {
-    getOrCreateWorkspace(controller, workspace, workspacesTestFiles[workspace]);
-  }
-};
-
-/**
  * Gets or creates a workspace for unit testing.
  * @param {TestController} controller - The test controller.
  * @param {string} workspaceName - The name of the workspace.
  * @param {Uri[]} files - An array of URIs representing the files in the workspace.
  * @returns An object containing the workspace test item and its associated data.
  */
-const getOrCreateWorkspace = (controller: TestController, workspaceName: string, files: Uri[]) => {
+const getOrCreateWorkspace = (
+  controller: TestController,
+  workspaceName: string,
+  files: Uri[]
+): { workspaceTestItem: TestItem; data: TestWorkspace } => {
   const existing = controller.items.get(workspaceName);
   if (existing) {
-    return { file: existing, data: ext.testData.get(existing) as TestWorkspace };
+    return { workspaceTestItem: existing, data: ext.testData.get(existing) as TestWorkspace };
   }
   const filePath = files.length > 0 ? files[0].fsPath : '';
   const workspaceUri = isEmptyString(filePath) ? undefined : Uri.file(filePath.split(path.sep).slice(0, -4).join(path.sep));
@@ -204,12 +213,11 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
 };
 
 /**
- * Retrieves an existing file test or creates a new one based on the provided URI.
+ * Creates a new test file based on the provided URI.
  * @param {TestController} controller - The test controller.
  * @param {Uri} uri - The URI of the file.
- * @returns An object containing the file test and its associated data, if it exists.
  */
-const getOrCreateFile = async (controller: TestController, uri: Uri) => {
+const createTestFile = async (controller: TestController, uri: Uri) => {
   const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
   const workflowName = path.basename(path.dirname(uri.fsPath));
 
@@ -226,7 +234,7 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
       const data = new TestFile();
       ext.testData.set(fileTestItem, data);
       existingWorkflowTest.children.add(fileTestItem);
-      return {};
+      return;
     }
     const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
     workflowTestItem.canResolveChildren = true;
@@ -246,8 +254,6 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
     testWorkspace.createChild(controller);
     ext.testData.set(workspaceTestItem, testWorkspace);
   }
-
-  return {};
 };
 
 /**
