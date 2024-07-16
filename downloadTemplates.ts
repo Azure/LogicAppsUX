@@ -1,4 +1,4 @@
-const fs = require('fs/promises');
+import fs from 'fs-extra';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/master`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
