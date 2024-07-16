@@ -12,15 +12,14 @@ import { type SchemaFile, UploadSchemaTypes } from '../../models/Schema';
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
 export interface SchemaPanelBodyProps {
-  schemaType?: SchemaType;
+  schemaType: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
   uploadType: UploadSchemaTypes;
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
-  setSelectSchemaVisible: (visible: boolean) => void;
-  showScehmaSelection?: boolean;
+  showSchemaSelection?: boolean;
 }
 
 export const SchemaPanelBody = ({
@@ -30,8 +29,7 @@ export const SchemaPanelBody = ({
   errorMessage,
   uploadType,
   setUploadType,
-  setSelectSchemaVisible,
-  showScehmaSelection,
+  showSchemaSelection,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
@@ -89,7 +87,7 @@ export const SchemaPanelBody = ({
 
   return (
     <div className={styles.bodyWrapper}>
-      {showScehmaSelection ? (
+      {showSchemaSelection ? (
         <div className={styles.selectSchemaWrapper}>
           <ChoiceGroup
             className="choice-group"
@@ -111,7 +109,6 @@ export const SchemaPanelBody = ({
               errorMessage={errorMessage}
               schemaType={schemaType}
               setSelectedSchema={(schema: SchemaFile) => {
-                setSelectSchemaVisible(false);
                 setSelectedSchemaFile(schema);
               }}
             />

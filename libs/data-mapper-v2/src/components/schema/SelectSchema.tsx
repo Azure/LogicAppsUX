@@ -25,7 +25,7 @@ export interface SchemaFile {
 }
 
 export interface SelectSchemaProps {
-  schemaType?: SchemaType;
+  schemaType: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
@@ -98,6 +98,11 @@ export const SelectSchema = ({
     [stringResources]
   );
 
+  const onSchemaSelected = (schema: SchemaFile) => {
+    setSelectSchemaVisible(false);
+    setSelectedSchemaFile(schema);
+  };
+
   return (
     <div className={styles.selectSchemaWrapper}>
       <ChoiceGroup
@@ -111,7 +116,7 @@ export const SelectSchema = ({
         <UploadNewSchema
           acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
           selectedSchemaFile={selectedSchemaFile}
-          setSelectedSchemaFile={setSelectedSchemaFile}
+          setSelectedSchemaFile={onSchemaSelected}
           schemaType={schemaType}
         />
       )}
@@ -119,10 +124,7 @@ export const SelectSchema = ({
         <SelectExistingSchema
           errorMessage={errorMessage}
           schemaType={schemaType}
-          setSelectedSchema={(schema: SchemaFile) => {
-            setSelectSchemaVisible(false);
-            setSelectedSchemaFile(schema);
-          }}
+          setSelectedSchema={onSchemaSelected}
         />
       )}
     </div>
