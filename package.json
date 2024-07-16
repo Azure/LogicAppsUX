@@ -73,7 +73,7 @@
   },
   "private": true,
   "scripts": {
-    "prebuild": "git submodule init && git submodule update && rimraf ./libs/designer/src/lib/core/templates/templateFiles/validate_templates.ts",
+    "preinstall": "git submodule init && git submodule update && rimraf ./libs/designer/src/lib/core/templates/templateFiles/validate_templates.ts",
     "build": "turbo run build",
     "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
