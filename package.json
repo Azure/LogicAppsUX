@@ -89,7 +89,7 @@
     "start": "turbo run dev",
     "start:arm": "npm run generateArmToken && npm run start",
     "start:e2e": "turbo run e2e",
-    "test:lib": "turbo run test:lib",
+    "test:lib": "pnpm run prebuild && turbo run test:lib",
     "test:e2e": "playwright test",
     "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
