@@ -38,8 +38,7 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
 export const convertStringToSegments = (
   value: string,
   nodeMap: Map<string, ValueSegment>,
-  options?: SegmentParserOptions,
-  convertSpaceToNewline?: boolean
+  options?: SegmentParserOptions
 ): ValueSegment[] => {
   if (!value) {
     return [];
@@ -95,7 +94,7 @@ export const convertStringToSegments = (
 
       // removes formatting compatibility issues between nodemap and HTML text in the editor
       // when opening an action with an HTML editor
-      if (convertSpaceToNewline) {
+      if (options?.convertSpaceToNewline) {
         // modifiedSegmentSoFar -> in segmentSoFar, replace spaces with no space
         const modifiedSegmentSoFar = removeNewlinesAndSpaces(segmentSoFar);
         // for each key in nodeMap

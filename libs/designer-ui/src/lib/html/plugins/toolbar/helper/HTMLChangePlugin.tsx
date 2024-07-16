@@ -110,7 +110,10 @@ export const convertEditorState = (
       if (replacedSpan) {
         noTokenSpansString = decodedLexicalStringWithoutNewlines;
       }
-      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true }, true);
+      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, {
+        tokensEnabled: true,
+        convertSpaceToNewline: true,
+      });
       resolve(valueSegments);
     });
   });

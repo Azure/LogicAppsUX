@@ -38,6 +38,7 @@ export interface SegmentParserOptions {
   readonly?: boolean;
   tokensEnabled?: boolean;
   removeSingleTokenQuotesWrapping?: boolean;
+  convertSpaceToNewline?: boolean;
 }
 
 export const isEmptySegments = (segments: ValueSegment[]): boolean => {
@@ -143,7 +144,7 @@ const appendChildrenNode = (
     const childNodeFormat = childNode.getFormat();
 
     if (tokensEnabled && nodeMap) {
-      const contentAsParameter = convertStringToSegments(decodedTextContent, nodeMap, options, true);
+      const contentAsParameter = convertStringToSegments(decodedTextContent, nodeMap, options);
       contentAsParameter.forEach((segment) => {
         const tokenNode = createTokenNodeFromSegment(segment, options, nodeMap);
         if (tokenNode) {
