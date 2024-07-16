@@ -73,6 +73,7 @@
   },
   "private": true,
   "scripts": {
+    "prebuild": "git submodule init && git submodule update && rimraf ./libs/designer/src/lib/core/templates/templateFiles/validate_templates.ts",
     "build": "turbo run build",
     "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
@@ -83,7 +84,7 @@
     "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/Standalone/src/environments/jsonImport/armToken.json",
     "prepare": "husky || true",
-    "publish": "turbo run build:lib && pnpm publish -r",
+    "publish": "pnpm run prebuild && turbo run build:lib && pnpm publish -r",
     "scrub-secrets:e2e": "node ./scrub-e2e-trace.js",
     "start": "turbo run dev",
     "start:arm": "npm run generateArmToken && npm run start",
