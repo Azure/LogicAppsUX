@@ -1,9 +1,9 @@
-import { getStraightPath, BaseEdge, EdgeLabelRenderer, type ConnectionLineComponentProps } from 'reactflow';
+import { getStraightPath, type ConnectionLineComponentProps } from 'reactflow';
 
 const ConnectionLineComponent = (props: ConnectionLineComponentProps) => {
   const { fromX, fromY, toX, toY, fromNode } = props;
 
-  const [path, labelX, labelY] = getStraightPath({
+  const [path] = getStraightPath({
     sourceX: fromX,
     sourceY: fromY,
     targetX: toX,
@@ -11,25 +11,11 @@ const ConnectionLineComponent = (props: ConnectionLineComponentProps) => {
   });
 
   return (
-    <>
-      <BaseEdge id={`${fromNode?.id}_custom_connectionLine`} path={path} />
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: 'absolute',
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            background: '#ffcc00',
-            padding: 10,
-            borderRadius: 5,
-            fontSize: 12,
-            fontWeight: 700,
-          }}
-          className="nodrag nopan"
-        >
-          {'+'}
-        </div>
-      </EdgeLabelRenderer>
-    </>
+    <g id={`${fromNode?.id}_customConnectionLine`}>
+      <circle cx={fromX} cy={fromY} r={8} strokeWidth={2} stroke="#62AAD8" fill="transparent" />
+      <path fill="none" stroke="#62AAD8" strokeWidth={6} className="animated" d={path} />
+      <circle cx={toX} cy={toY} r={8} strokeWidth={2} stroke="#62AAD8" fill="transparent" />
+    </g>
   );
 };
 

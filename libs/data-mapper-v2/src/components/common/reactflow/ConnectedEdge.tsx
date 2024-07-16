@@ -1,9 +1,9 @@
-import { getStraightPath, BaseEdge, EdgeLabelRenderer, type EdgeProps } from 'reactflow';
+import { getStraightPath, type EdgeProps } from 'reactflow';
 
 const ConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY } = props;
 
-  const [path, labelX, labelY] = getStraightPath({
+  const [path] = getStraightPath({
     sourceX,
     sourceY,
     targetX,
@@ -11,25 +11,9 @@ const ConnectedEdge = (props: EdgeProps) => {
   });
 
   return (
-    <>
-      <BaseEdge id={`${id}_customEdge`} path={path} />
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: 'absolute',
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            background: '#ffcc00',
-            padding: 10,
-            borderRadius: 5,
-            fontSize: 12,
-            fontWeight: 700,
-          }}
-          className="nodrag nopan"
-        >
-          {'+'}
-        </div>
-      </EdgeLabelRenderer>
-    </>
+    <g id={`${id}_customEdge`}>
+      <path fill="none" stroke="#C6DEEE" strokeWidth={6} className="animated" d={path} />
+    </g>
   );
 };
 
