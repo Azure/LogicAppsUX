@@ -11,13 +11,19 @@ export const resolveConnectionsReferences = (
     for (const parameterName of Object.keys(parameters)) {
       const parameterValue = parameters[parameterName].value !== undefined ? parameters[parameterName].value : '';
       result = replaceAllOccurrences(result, `@parameters('${parameterName}')`, parameterValue);
+      result = replaceAllOccurrences(result, `@{parameters('${parameterName}')}`, parameterValue);
     }
   }
 
   if (appsettings) {
     for (const settingName of Object.keys(appsettings)) {
       const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
+      // Don't replace if the setting value is a KeyVault reference
+      if (settingValue.startsWith('@Microsoft.KeyVault(')) {
+        continue;
+      }
       result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
+      result = replaceAllOccurrences(result, `@{appsetting('${settingName}')}`, settingValue);
     }
   }
 
