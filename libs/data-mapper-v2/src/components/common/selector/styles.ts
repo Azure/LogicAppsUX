@@ -7,4 +7,20 @@ export const useStyles = makeStyles({
     flexDirection: 'column',
     backgroundColor: 'transparent',
   },
+  choiceGroupRoot: {
+    backgroundColor: 'transparent',
+  },
+  choiceGroupOptionRoot: {
+    backgroundColor: 'transparent',
+  },
+  uploadInputRoot: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'center',
+    marginTop: '20px',
+  },
+  selectorDropdownRoot: {
+    alignSelf: 'center',
+    marginTop: '20px',
+  },
 });

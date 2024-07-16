@@ -47,26 +47,27 @@ const FileSelector = <T,>(props: FileSelectorProps<T>) => {
   return (
     <div className={styles.root}>
       <ChoiceGroup
-        className="choice-group"
+        className={styles.choiceGroupRoot}
         selectedKey={selectedKey}
         options={Object.keys(options).map((key) => ({
           key,
           text:
             options[key] && typeof options[key] === 'object' && 'text' in options[key] ? (options[key].text as string) : (key as string),
           data: options[key],
+          className: styles.choiceGroupOptionRoot,
         }))}
         onChange={(_e, option) => onOptionChange(option?.key as FileSelectorOption)}
         required={true}
       />
       {selectedKey === 'upload-new' ? (
-        <div>
+        <div className={styles.uploadInputRoot}>
           <input type="file" ref={uploadFileRef} onInput={onInput} accept={acceptedExtensions} hidden />
           <StackShim horizontal>
             <Input size="small" value={fileName} placeholder={inputPlaceholder} readOnly />
             <Button
               size="small"
               shape="square"
-              appearance="secondary"
+              appearance="primary"
               onClick={() => uploadFileRef.current?.click()}
               style={{ marginLeft: 8 }}
             >
@@ -76,7 +77,7 @@ const FileSelector = <T,>(props: FileSelectorProps<T>) => {
         </div>
       ) : null}
       {selectedKey === 'select-existing' ? (
-        <DropdownTree items={fileList} onItemSelect={onSelect} onDropdownOpenClose={onOpenClose} />
+        <DropdownTree items={fileList} onItemSelect={onSelect} onDropdownOpenClose={onOpenClose} className={styles.selectorDropdownRoot} />
       ) : null}
     </div>
   );

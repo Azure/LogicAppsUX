@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from '@fluentui/react-components';
+import { Button, mergeClasses } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
 import { Dismiss20Regular } from '@fluentui/react-icons';
@@ -15,7 +15,8 @@ export const TestPanel = (_props: TestPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const isTestPanelOpen = useSelector((state: RootState) => state.panel.isTestPanelOpen);
+  const isTestPanelOpen = useSelector((state: RootState) => state.panel.testPanel.isOpen);
+  const showSelection = useSelector((state: RootState) => state.panel.testPanel.showSelection);
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -56,7 +57,7 @@ export const TestPanel = (_props: TestPanelProps) => {
       }}
       body={<TestPanelBody />}
       styles={{
-        root: styles.root,
+        root: mergeClasses(styles.root, showSelection ? styles.selection : ''),
       }}
     />
   );
