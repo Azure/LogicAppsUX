@@ -43,12 +43,14 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     }
 
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
+    //added new setting here to allow local start without SAS
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
         Values: {
           AzureWebJobsStorage: '',
           APP_KIND: logicAppKind,
+          'AzureFunctionsJobHost__extensions__workflow__Settings__Runtime.Triggers.AnonymousAuthEnabledForDevEnvironment': 'true',
           ProjectDirectoryPath: path.join(context.projectPath),
         },
       };

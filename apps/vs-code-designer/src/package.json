@@ -278,6 +278,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.generateStaticWebApp",
+        "title": "Generate Static Web App",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.viewCommitInGitHub",
         "title": "View Commit in GitHub",
         "category": "Azure Logic Apps"
@@ -676,6 +681,11 @@
         },
         {
           "command": "azureLogicAppsStandard.enableAzureConnectors",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateStaticWebApp",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@2"
         },

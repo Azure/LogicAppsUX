@@ -154,6 +154,7 @@ export const extensionCommand = {
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   vscodeOpenFolder: 'vscode.openFolder',
+  generateStaticWebApp: 'azureLogicAppsStandard.generateStaticWebApp',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 

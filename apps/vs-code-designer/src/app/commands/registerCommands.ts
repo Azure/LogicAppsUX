@@ -25,6 +25,7 @@ import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
+import { generateStaticWebApp } from './GenerateStaticWebApp/generateStaticWebApp';
 import { connectToGitHub } from './deployments/connectToGitHub';
 import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
@@ -128,6 +129,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disconnectRepo, disconnectRepo);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewCommitInGitHub, viewCommitInGitHub);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.enableAzureConnectors, enableAzureConnectors);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.generateStaticWebApp, generateStaticWebApp);
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
