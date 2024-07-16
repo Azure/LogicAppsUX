@@ -13,6 +13,7 @@ import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { MapDefinitionDeserializer } from '../mapHandling/MapDefinitionDeserializer';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -33,6 +34,7 @@ const DataProviderInner = ({
   xsltContent,
   sourceSchema,
   targetSchema,
+  mapDefinition,
   availableSchemas,
   fetchedFunctions,
   customXsltPaths,
@@ -54,17 +56,24 @@ const DataProviderInner = ({
   }, [dispatch, xsltFilename, xsltContent]);
 
   useEffect(() => {
-    if (extendedSourceSchema && extendedTargetSchema && fetchedFunctions) {
+    if (extendedSourceSchema && extendedTargetSchema && fetchedFunctions && mapDefinition) {
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        mapDefinition,
+        extendedSourceSchema,
+        extendedTargetSchema,
+        fetchedFunctions
+      );
+      const connections = mapDefinitionDeserializer.convertFromMapDefinition();
       dispatch(
         setInitialDataMap({
           sourceSchema: extendedSourceSchema,
           targetSchema: extendedTargetSchema,
-          dataMapConnections: {},
+          dataMapConnections: connections,
           metadata: undefined,
         })
       );
     }
-  }, [dispatch, extendedSourceSchema, extendedTargetSchema, fetchedFunctions]);
+  }, [dispatch, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, mapDefinition]);
 
   useEffect(() => {
     if (extendedSourceSchema) {

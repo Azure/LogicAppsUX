@@ -10,14 +10,13 @@ import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 
 export interface SchemaPanelBodyProps {
-  schemaType?: SchemaType;
+  schemaType: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
   fileSelectorOptions: FileSelectorOption;
   setFileSelectorOptions: (option: FileSelectorOption) => void;
-  setSelectSchemaVisible: (visible: boolean) => void;
   showScehmaSelection?: boolean;
 }
 
@@ -27,7 +26,6 @@ export const SchemaPanelBody = ({
   setSelectedSchemaFile,
   fileSelectorOptions,
   setFileSelectorOptions,
-  setSelectSchemaVisible,
   showScehmaSelection,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
@@ -78,14 +76,13 @@ export const SchemaPanelBody = ({
 
   const onSelectExistingFile = useCallback(
     (item: IFileSysTreeItem) => {
-      setSelectSchemaVisible(false);
       setSelectedSchemaFile({
         name: item.name ?? '',
         path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
         type: schemaType ?? SchemaType.Source,
       });
     },
-    [setSelectedSchemaFile, schemaType, setSelectSchemaVisible]
+    [setSelectedSchemaFile, schemaType]
   );
 
   const onOpenClose = useCallback(() => {
@@ -103,7 +100,6 @@ export const SchemaPanelBody = ({
       if (!schemaFile.path) {
         console.log('Path property is missing from file (should only occur in browser/standalone)');
       } else if (schemaFile && schemaType) {
-        setSelectSchemaVisible(false);
         setSelectedSchemaFile({
           name: schemaFile.name,
           path: schemaFile.path,
@@ -113,7 +109,7 @@ export const SchemaPanelBody = ({
         console.error('Missing schemaType');
       }
     },
-    [schemaType, setSelectedSchemaFile, setSelectSchemaVisible]
+    [schemaType, setSelectedSchemaFile]
   );
 
   return (
