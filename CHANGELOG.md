@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.31.7](https://github.com/Azure/LogicAppsUX/compare/v4.31.6...v4.31.7) (2024-07-16)
+
+
+### Bug Fixes
+
+* **vscode:** Cherry-picked two paramerters.json fixes ([#5131](https://github.com/Azure/LogicAppsUX/issues/5131)) ([2dace66](https://github.com/Azure/LogicAppsUX/commit/2dace6636207268270cf6854f3318ed4001d7ab0)), closes [#5110](https://github.com/Azure/LogicAppsUX/issues/5110) [#5116](https://github.com/Azure/LogicAppsUX/issues/5116)
+
 ### [4.31.6](https://github.com/Azure/LogicAppsUX/compare/v4.31.5...v4.31.6) (2024-07-16)
 
 
