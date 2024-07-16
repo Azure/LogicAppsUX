@@ -13,13 +13,10 @@ import type { SchemaFile } from '../models/Schema';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
-  saveXsltCall: (dataMapXslt: string) => void;
-  saveDraftStateCall?: (dataMapDefinition: string) => void;
-  readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
@@ -28,8 +25,11 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     InitDataMapperFileService(fileService);
   }
 
-  useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
-
+  useEffect(() => {
+    if (fileService) {
+      fileService.readCurrentCustomXsltPathOptions()
+    } }
+  , [fileService]);
   return (
     // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
