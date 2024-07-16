@@ -228,9 +228,13 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const slotTreeItem = new SlotTreeItem(subscription, resolved, {
       isHybridLogiApp: wizardContext.useHybrid,
       hybridSite: wizardContext.hybridSite,
-      customLocation: wizardContext.customLocation,
+      location: wizardContext.customLocation
+      ? wizardContext.customLocation.kubeEnvironment.location.replace(/[()]/g, '')
+      : wizardContext._location.name,
       fileShare: wizardContext.fileShare,
       connectedEnvironment: wizardContext.connectedEnvironment,
+      resourceGroupName: wizardContext.resourceGroup.name,
+      sqlConnectionString: wizardContext.sqlConnectionString
     });
     return slotTreeItem;
   }

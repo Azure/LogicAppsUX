@@ -3,8 +3,9 @@ import { ProgressLocation, window } from 'vscode';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
-import { cleanSMB, unMountSMB } from './cleanResources';
+import { cleanSMB, deleteSMBFolder, unMountSMB } from './cleanResources';
 import { guid } from '@microsoft/logic-apps-shared';
+import { createHybridAppSMB } from './createHybridSMB';
 
 export const deployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem) => {
   try {
@@ -18,14 +19,21 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
         context.telemetry.properties.lastStep = 'connectToSMB';
         const smbFolderName = `${node.hybridSite.name}-${guid()}`;
         const mountDrive = 'X:';
-        progress.report({ increment: 33, message: 'Connecting to SMB' });
+        progress.report({ increment: 20, message: 'Connecting to SMB' });
         await connectToSMB(context, node, smbFolderName, mountDrive);
 
-        progress.report({ increment: 33, message: 'Cleaning SMB' });
-        await cleanSMB(context, node);
+        progress.report({ increment: 20, message: 'Connecting to SMB' });
+        await createHybridAppSMB(context, node, smbFolderName, mountDrive);
+        
+        progress.report({ increment: 20, message: 'Unmounting SMB' });
+        await unMountSMB(mountDrive);
 
-        progress.report({ increment: 34, message: 'Unmounting SMB' });
-        await unMountSMB(node.fileShare.hostName);
+        progress.report({ increment: 20, message: 'Deleting SMB folder' });
+        await deleteSMBFolder(mountDrive, smbFolderName);
+
+        progress.report({ increment: 20, message: 'Cleaning SMB' });
+        await cleanSMB(node);
+
       }
     );
   } catch (error) {
