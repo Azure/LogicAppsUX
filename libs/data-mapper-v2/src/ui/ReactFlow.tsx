@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, Node, Edge, ConnectionLineComponent, NodeDragHandler } from 'reactflow';
+import type { Connection, Node, Edge, ConnectionLineComponent, NodeDragHandler, NodeProps } from 'reactflow';
 import ReactFlow, { addEdge, useReactFlow } from 'reactflow';
 import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
@@ -53,7 +53,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
-  const nodeTypes = useMemo(
+  const nodeTypes: Record<string, React.ComponentType<NodeProps>> = useMemo(
     () => ({
       schemaNode: SchemaNode,
       functionNode: FunctionNode,

@@ -2,7 +2,6 @@ import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../.
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
   applyConnectionValue,
-  bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
@@ -580,16 +579,10 @@ export const handleDirectAccessConnection = (
         //   newState.flattenedTargetSchema,
         //   newState.dataMapConnections
         // );
-
         // add back in once notifications are discussed
         // if (wasNewArrayConnectionAdded) {
         //   state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
         // }
-
-        // Bring in correct source nodes
-        // Loop through parent nodes connected to
-        const parentTargetNode = newState.currentTargetSchemaNode;
-        bringInParentSourceNodesForRepeating(parentTargetNode, newState);
       }
     });
   }
