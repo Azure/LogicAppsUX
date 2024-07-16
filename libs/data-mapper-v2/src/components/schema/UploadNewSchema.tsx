@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 
 export type UploadNewSchemaProps = {
   acceptedSchemaFileInputExtensions: string;
-  setSelectedSchemaFile: (item?: SchemaFile) => void;
+  setSelectedSchemaFile: (item: SchemaFile) => void;
   schemaType?: SchemaType;
   selectedSchemaFile?: SchemaFile;
 };

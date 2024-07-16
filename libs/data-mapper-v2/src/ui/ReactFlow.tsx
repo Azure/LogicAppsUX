@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, Node, Edge, ConnectionLineComponent, NodeDragHandler } from 'reactflow';
+import type { Connection, Node, Edge, ConnectionLineComponent, NodeDragHandler, NodeProps } from 'reactflow';
 import ReactFlow, { addEdge, useReactFlow } from 'reactflow';
 import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
@@ -25,6 +25,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [allNodes, setAllNodes] = useState<Node[]>([]);
+  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
@@ -39,8 +40,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     }
   }, [ref, updateCanvasBoundsParent, width, height]);
 
-  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-
   useEffect(() => {
     const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
       id: node[0],
@@ -54,7 +53,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
-  const nodeTypes = useMemo(
+  const nodeTypes: Record<string, React.ComponentType<NodeProps>> = useMemo(
     () => ({
       schemaNode: SchemaNode,
       functionNode: FunctionNode,
@@ -185,6 +184,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
       <ReactFlow
+        id="dm-react-flow"
         ref={drop}
         nodes={allNodes}
         edges={edges}

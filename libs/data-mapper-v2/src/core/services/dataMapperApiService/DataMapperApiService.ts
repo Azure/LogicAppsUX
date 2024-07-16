@@ -48,9 +48,11 @@ export class DataMapperApiService {
 
   private getBaseUri = () => `${this.options.baseUrl}:${this.options.port}`;
 
-  private getSchemaFileUri = (schemaFilename: string, schemaFilePath: string) => {
-    const queryParams = schemaFilePath.length === 0 ? '' : `?relativePath=${schemaFilePath}`;
-    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${schemaFilename}/contents/schemaTree${queryParams}`;
+  public getSchemaFileUri = (schemaFilename: string, schemaFilePath: string) => {
+    const filename = schemaFilename.substring(0, schemaFilename.lastIndexOf('.'));
+    const formattedFilePath = schemaFilePath.replace(schemaFilename, '');
+    const queryParams = schemaFilePath === schemaFilename ? '' : `?relativePath=${formattedFilePath}`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${filename}/contents/schemaTree${queryParams}`;
   };
   private getFunctionsManifestUri = () =>
     `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=${dataMapperApiVersions.Oct2019Edge}`;
@@ -81,7 +83,7 @@ export class DataMapperApiService {
   // NOTE: From BPM repo, looks like two schema files with the same name will prefer the JSON one
   async getSchemaFile(schemaFilename: string, schemaFilePath: string): Promise<DataMapSchema> {
     const headers = this.getHeaders();
-    const schemaFileUri = this.getSchemaFileUri(schemaFilename.substring(0, schemaFilename.lastIndexOf('.')), schemaFilePath);
+    const schemaFileUri = this.getSchemaFileUri(schemaFilename, schemaFilePath);
     console.log(schemaFileUri);
     const response = await fetch(schemaFileUri, { headers, method: 'GET' });
 

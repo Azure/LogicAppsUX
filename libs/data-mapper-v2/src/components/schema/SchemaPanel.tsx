@@ -43,24 +43,37 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [selectedSchema, setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
-  const [selectSchemaVisible, setSelectSchemaVisible] = useState<boolean>(true);
+  const schemaFromStore = useSelector((state: RootState) => {
+    return schemaType === SchemaType.Source
+      ? state.dataMap.present.curDataMapOperation.sourceSchema
+      : state.dataMap.present.curDataMapOperation.targetSchema;
+  });
 
-  const showScehmaSelection = useMemo(() => !selectedSchemaFile || selectSchemaVisible, [selectedSchemaFile, selectSchemaVisible]);
+  const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
 
   const fetchedSourceSchema = useQuery(
     [selectedSchemaFile],
     async () => {
       if (selectedSchema && selectedSchemaFile) {
         const [fileName, filePath] = getFileNameAndPath(selectedSchemaFile?.path);
-        return await getSelectedSchema(fileName ?? '', filePath);
+        const schema = await getSelectedSchema(fileName ?? '', filePath);
+        return schema;
       }
-      return await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      const schema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      return schema;
     },
     {
       ...schemaFileQuerySettings,
-      enabled: selectedSchema !== undefined,
+      enabled: selectedSchemaFile !== undefined,
     }
   );
+
+  useEffect(() => {
+    if (fetchedSourceSchema.isSuccess && fetchedSourceSchema.data && schemaType) {
+      const extendedSchema = convertSchemaToSchemaExtended(fetchedSourceSchema.data);
+      dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
+    }
+  }, [dispatch, schemaType, fetchedSourceSchema.data, fetchedSourceSchema.isSuccess]);
 
   const stringResources = useMemo(
     () => ({
@@ -137,6 +150,9 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     [dispatch, schemaType]
   );
 
+  const schema = fetchedSourceSchema.data;
+
+  // this is not being used yet
   const addOrUpdateSchema = useCallback(
     (isAddSchema?: boolean) => {
       if (schemaType === undefined) {
@@ -272,8 +288,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
           errorMessage={errorMessage}
           uploadType={uploadType}
           setUploadType={setUploadType}
-          setSelectSchemaVisible={setSelectSchemaVisible}
-          showScehmaSelection={showScehmaSelection}
+          showSchemaSelection={showScehmaSelection}
         />
       }
     />

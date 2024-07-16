@@ -49,7 +49,7 @@ export interface ITreeDirectory {
 export interface ITreeFile {
   name: string;
   type: 'file';
-  fullPath?: string;
+  fullPath: string;
 }
 export interface MapMetadataV1 {
   functionNodes: FunctionMetadataV1[];

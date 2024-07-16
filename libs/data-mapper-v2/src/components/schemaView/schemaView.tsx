@@ -20,10 +20,5 @@ export const SchemaItemView = (props: SchemaViewProps) => {
     }
     return undefined;
   });
-
-  return (
-    <div className={styles.treeWrapper}>
-      {schema === undefined ? <div>Schema not found</div> : <SchemaTree schemaType={props.schemaType} schema={schema} />}
-    </div>
-  );
+  return <div className={styles.treeWrapper}>{schema !== undefined && <SchemaTree schemaType={props.schemaType} schema={schema} />}</div>;
 };
