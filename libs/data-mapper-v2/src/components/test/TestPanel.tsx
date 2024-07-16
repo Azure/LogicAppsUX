@@ -7,6 +7,7 @@ import { Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
 import { toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
+import { TestPanelBody } from './TestPanelBody';
 
 type TestPanelProps = {};
 
@@ -53,16 +54,7 @@ export const TestPanel = (_props: TestPanelProps) => {
         ),
         size: 500,
       }}
-      body={
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            flex: '1 1 auto',
-          }}
-        />
-      }
+      body={<TestPanelBody />}
       styles={{
         root: styles.root,
       }}

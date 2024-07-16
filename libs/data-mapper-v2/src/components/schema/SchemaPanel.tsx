@@ -16,7 +16,7 @@ import { Panel } from '../../components/common/panel/Panel';
 import { SchemaPanelBody } from './SchemaPanelBody';
 import type { SchemaFile } from '../../models/Schema';
 import { mergeClasses } from '@fluentui/react-components';
-import type { FileSelectorOptions } from '../common/selector/FileSelector';
+import type { FileSelectorOption } from '../common/selector/FileSelector';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -39,7 +39,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     return state.panel.currentPanelView;
   });
 
-  const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOptions>('select-existing');
+  const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [selectedSchema, _setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');

@@ -8,4 +8,10 @@ export const useStyles = makeStyles({
     paddingBottom: '0px',
     paddingTop: '0px',
   },
+  bodyWrapper: {
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'column',
+    height: '100%',
+  },
 });

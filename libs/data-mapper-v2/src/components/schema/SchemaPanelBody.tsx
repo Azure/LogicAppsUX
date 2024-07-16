@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { SchemaItemView } from '../schemaView/schemaView';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
-import FileSelector, { type FileSelectorOptions } from '../common/selector/FileSelector';
+import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
@@ -15,8 +15,8 @@ export interface SchemaPanelBodyProps {
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
-  fileSelectorOptions: FileSelectorOptions;
-  setFileSelectorOptions: (option: FileSelectorOptions) => void;
+  fileSelectorOptions: FileSelectorOption;
+  setFileSelectorOptions: (option: FileSelectorOption) => void;
   setSelectSchemaVisible: (visible: boolean) => void;
   showScehmaSelection?: boolean;
 }

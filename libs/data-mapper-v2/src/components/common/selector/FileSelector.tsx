@@ -6,11 +6,11 @@ import { Button, Input } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { DropdownTree } from '../DropdownTree';
 
-export type FileSelectorOptions = 'upload-new' | 'select-existing';
+export type FileSelectorOption = 'upload-new' | 'select-existing';
 
 export type FileSelectorProps<T> = {
-  selectedKey: FileSelectorOptions;
-  onOptionChange: (selection: FileSelectorOptions) => void;
+  selectedKey: FileSelectorOption;
+  onOptionChange: (selection: FileSelectorOption) => void;
   options?: Record<string, T>;
   upload: {
     onUpload: (files?: FileList) => void;
@@ -55,7 +55,7 @@ const FileSelector = <T,>(props: FileSelectorProps<T>) => {
             options[key] && typeof options[key] === 'object' && 'text' in options[key] ? (options[key].text as string) : (key as string),
           data: options[key],
         }))}
-        onChange={(_e, option) => onOptionChange(option?.key as FileSelectorOptions)}
+        onChange={(_e, option) => onOptionChange(option?.key as FileSelectorOption)}
         required={true}
       />
       {selectedKey === 'upload-new' ? (
