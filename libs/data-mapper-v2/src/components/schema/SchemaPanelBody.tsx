@@ -12,7 +12,7 @@ import { type SchemaFile, UploadSchemaTypes } from '../../models/Schema';
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
 export interface SchemaPanelBodyProps {
-  schemaType?: SchemaType;
+  schemaType: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;

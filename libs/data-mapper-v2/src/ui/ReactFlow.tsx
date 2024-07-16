@@ -25,6 +25,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [allNodes, setAllNodes] = useState<Node[]>([]);
+  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
@@ -48,8 +49,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       updateCanvasBoundsParent(bounds);
     }
   }, [ref, updateCanvasBoundsParent, width, height]);
-
-  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   useEffect(() => {
     const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
