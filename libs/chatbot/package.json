@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-chatbot",
-  "version": "0.401.2",
+  "version": "0.401.17",
   "dependencies": {
     "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.42.0",
