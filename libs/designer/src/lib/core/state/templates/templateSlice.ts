@@ -275,30 +275,19 @@ export const {
 } = templateSlice.actions;
 export default templateSlice.reducer;
 
-const loadTemplateFromGithub = async (
-  templateName: string,
-  _manifest: Template.Manifest | undefined
-): Promise<TemplateData | undefined> => {
+const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {
   try {
     const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
       `./../../templates/templateFiles/${templateName}/workflow.json`
     );
 
-    // const templateManifest: Template.Manifest =
-    //   manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
-    const templateManifestDefault = (await import('../../templates/templateFiles/ConnectionOnlyTemplate/manifest.json')).default;
-
-    const templateManifest: Template.Manifest = {
-      ...templateManifestDefault,
-      skus: templateManifestDefault?.skus as Template.SkuType[],
-      kinds: templateManifestDefault?.kinds as Template.WorkflowKindType[],
-      connections: templateManifestDefault.connections as Record<string, Template.Connection>,
-    };
+    const templateManifest: Template.Manifest =
+      manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
 
     const images: Record<string, any> = {};
-    // for (const key of Object.keys(templateManifest.images)) {
-    //   images[key] = (await import(`./../../templates/templateFiles/${templateName}/${templateManifest.images[key]}.png`)).default;
-    // }
+    for (const key of Object.keys(templateManifest.images)) {
+      images[key] = (await import(`./../../templates/templateFiles/${templateName}/${templateManifest.images[key]}.png`)).default;
+    }
 
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
