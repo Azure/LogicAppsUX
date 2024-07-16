@@ -72,8 +72,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           draggable={draggable}
           style={colorVars}
           onContextMenu={contextMenu.handle}
-          onKeyDown={keyboardInteraction.keyDown}
-          onKeyUp={keyboardInteraction.keyUp}
         >
           {isMonitoringView ? (
             <StatusPill
@@ -86,7 +84,13 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           ) : null}
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
-            <button className="msla-scope-card-title-button" ref={focusRef as any} onClick={handleClick}>
+            <button
+              className="msla-scope-card-title-button"
+              ref={focusRef as any}
+              onClick={handleClick}
+              onKeyDown={keyboardInteraction.keyDown}
+              onKeyUp={keyboardInteraction.keyUp}
+            >
               <div className="msla-scope-card-title-box">
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
                 <div className="panel-card-content-icon-section">{cardIcon}</div>
