@@ -19,8 +19,8 @@
 // import { guid, SchemaType } from '@microsoft/logic-apps-shared';
 // import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 // import { useEffect, useState } from 'react';
-// import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
-// import { Position } from 'reactflow';
+// import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from '@xyflow/react';
+// import { Position } from '@xyflow/react';
 
 import { guid, type SchemaType } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
