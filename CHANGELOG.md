@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [0.401.18](https://github.com/Azure/LogicAppsUX/compare/v4.40.0...v0.401.18) (2024-07-17)
+
+
+### Features
+
+* **Data Mapper:** More functionality in VSCode ([#5130](https://github.com/Azure/LogicAppsUX/issues/5130)) ([db7f3b3](https://github.com/Azure/LogicAppsUX/commit/db7f3b31fd157224b3584771c4a4d216413fab8b))
+* **Data Mapper:** Update nodes and edges ([#5126](https://github.com/Azure/LogicAppsUX/issues/5126)) ([27bc868](https://github.com/Azure/LogicAppsUX/commit/27bc868d37b223df2a7649207a86a7b3c5159387))
+
+
+### Bug Fixes
+
+* **designer:** Fixed scope node collapse button keyboard interaction ([#5136](https://github.com/Azure/LogicAppsUX/issues/5136)) ([43adca5](https://github.com/Azure/LogicAppsUX/commit/43adca56f7e7e7f6d02cd1925635ba3fdd2b13fa))
+* **vscode:** Refactor Parameters.json into a separate artifact class when converting to NuGet project ([#5116](https://github.com/Azure/LogicAppsUX/issues/5116)) ([d04e8a9](https://github.com/Azure/LogicAppsUX/commit/d04e8a9c3ef6b6d331056458b2285864675f8843))
+
 ## [4.40.0](https://github.com/Azure/LogicAppsUX/compare/v4.39.0...v4.40.0) (2024-07-15)
 
 
