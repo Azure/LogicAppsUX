@@ -15,7 +15,7 @@ interface SubgraphCardProps {
   title: string;
   subgraphType: SubgraphType;
   collapsed?: boolean;
-  handleCollapse?: (event: { currentTarget: any }) => void;
+  handleCollapse?: () => void;
   selected?: boolean;
   readOnly?: boolean;
   onClick?(id?: string): void;
@@ -43,7 +43,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 }) => {
   const intl = useIntl();
 
-  const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
+  const mainKeyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
+  const collapseKeyboardInteraction = useCardKeyboardInteraction(handleCollapse);
   const contextMenu = useCardContextMenu();
 
   const addCaseLabel = intl.formatMessage({
@@ -130,8 +131,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           className="msla-subgraph-title"
           onClick={handleTitleClick}
           onContextMenu={contextMenu.handle}
-          onKeyDown={keyboardInteraction.keyUp}
-          onKeyUp={keyboardInteraction.keyDown}
+          onKeyDown={mainKeyboardInteraction.keyUp}
+          onKeyUp={mainKeyboardInteraction.keyDown}
         >
           <div className="msla-subgraph-title-text">{data.title}</div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
@@ -156,11 +157,9 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           tabIndex={0}
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
-          onClick={(e) => {
-            handleCollapse?.(e);
-          }}
-          onKeyDown={keyboardInteraction.keyUp}
-          onKeyUp={keyboardInteraction.keyDown}
+          onClick={handleCollapse}
+          onKeyDown={collapseKeyboardInteraction.keyUp}
+          onKeyUp={collapseKeyboardInteraction.keyDown}
         >
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>

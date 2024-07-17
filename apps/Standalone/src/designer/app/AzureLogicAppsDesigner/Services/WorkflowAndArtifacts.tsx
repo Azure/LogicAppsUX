@@ -195,7 +195,7 @@ export const useRunInstanceStandard = (
       }
       if (HybridAppUtility.isHybridLogicApp(appId)) {
         return HybridAppUtility.getProxy<LogicAppsV2.RunInstanceDefinition>(
-          `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+          `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`,
           null,
           {
             Authorization: `Bearer ${environment.armToken}`,
