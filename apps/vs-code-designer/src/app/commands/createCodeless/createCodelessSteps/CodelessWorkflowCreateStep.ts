@@ -49,7 +49,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     // Check if the user chose to initialize a static web app
     if (context.initializeStaticWebApp) {
       context.telemetry.properties.initializeStaticWebApp = 'true';
-      //call SWA extension
+      //call deploy command
 
       vscodeExtension.commands.executeCommand('azureLogicAppsStandard.deploy');
     } else {
