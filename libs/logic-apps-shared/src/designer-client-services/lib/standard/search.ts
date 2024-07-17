@@ -20,19 +20,23 @@ interface StandardSearchServiceOptions extends BaseSearchServiceOptions {
   apiVersion: string;
   baseUrl: string;
   showStatefulOperations?: boolean;
+  hybridLogicApp?: boolean;
 }
 
 export class StandardSearchService extends BaseSearchService {
   constructor(public override readonly options: StandardSearchServiceOptions) {
     super(options);
 
-    const { baseUrl, apiVersion } = options;
+    const { baseUrl, apiVersion, hybridLogicApp } = options;
 
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     }
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
+    }
+    if (hybridLogicApp) {
+      this._isHybridLogicApp = true;
     }
   }
 
@@ -79,7 +83,7 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
-    if (this._isDev) {
+    if (this._isDev || this._isHybridLogicApp) {
       return Promise.resolve([]);
     }
 
@@ -87,9 +91,6 @@ export class StandardSearchService extends BaseSearchService {
       const {
         apiHubServiceDetails: { apiVersion, subscriptionId, location },
       } = this.options;
-      if (this._isDev) {
-        return Promise.resolve([]);
-      }
 
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
@@ -113,7 +114,7 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<{ nextlink?: string; value: Connector[] }> {
-    if (this._isDev) {
+    if (this._isDev || this._isHybridLogicApp) {
       return Promise.resolve({ value: [] });
     }
 
