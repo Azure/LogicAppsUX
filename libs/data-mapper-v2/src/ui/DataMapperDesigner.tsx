@@ -27,9 +27,9 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
 
   useEffect(() => {
     if (fileService) {
-      fileService.readCurrentCustomXsltPathOptions()
-    } }
-  , [fileService]);
+      fileService.readCurrentCustomXsltPathOptions();
+    }
+  }, [fileService]);
   return (
     // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
