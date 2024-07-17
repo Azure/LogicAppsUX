@@ -204,7 +204,7 @@ async function deploy(
   });
 
   await node.loadAllChildren(context);
-  await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
+  await notifyDeployComplete(node, context.workspaceFolder, isHybridLogicApp, settingsToExclude);
 }
 
 /**
