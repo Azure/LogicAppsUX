@@ -318,7 +318,6 @@ export class MapDefinitionDeserializer {
     ) as FunctionData;
     const funcKey = createReactFlowFunctionKey(func);
     func.key = funcKey;
-
     this.handleSingleValueOrFunction('', functionMetadata.inputs[0], func, connections);
     this.getFunctionForKey(funcKey);
     this._conditional = funcKey;
@@ -380,7 +379,10 @@ export class MapDefinitionDeserializer {
     if (sourceLoopKey.type === 'SingleValueMetadata') {
       const loopSource = this.getLoopNode(sourceLoopKey.value);
       if (loopSource) {
-        const loopMetadata: LoopMetadata = { key: loopSource.key, needsConnection: true };
+        const loopMetadata: LoopMetadata = {
+          key: loopSource.key,
+          needsConnection: true,
+        };
         this._loop.push(loopMetadata);
         this.createIndexFunctionIfNeeded(forFunc, loopSource, connections, loopMetadata);
       }
