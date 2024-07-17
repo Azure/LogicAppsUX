@@ -111,7 +111,7 @@ describe('selectConnection helpers', () => {
         'jdoe@example.com',
       ],
       [
-        'authenticated user name if available',
+        'gateway name if available',
         { ...mockConnectionWithErrors.properties, parameterValues: { gateway: { id: 'jdoe', name: 'jdoe@example.com', type: 'gateway' } } },
         'jdoe@example.com',
       ],
