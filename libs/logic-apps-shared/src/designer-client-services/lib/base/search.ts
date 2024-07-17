@@ -36,6 +36,7 @@ const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
 export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
+  _isHybridLogicApp = false;
 
   constructor(public readonly options: BaseSearchServiceOptions) {
     const { apiHubServiceDetails, isDev } = options;
@@ -134,6 +135,9 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
+    if (this._isHybridLogicApp) {
+      return Promise.resolve([]);
+    }
     if (this._isDev) {
       if (page === 0) {
         return Promise.resolve(azureOperationsResponse);
@@ -171,6 +175,9 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
+    if (this._isHybridLogicApp) {
+      return Promise.resolve([]);
+    }
     if (this._isDev) {
       if (page === 0) {
         const connectors = AzureConnectorMock.value as Connector[];
