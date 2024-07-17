@@ -317,8 +317,9 @@ export class MapDefinitionDeserializer {
       this._createdNodes
     ) as FunctionData;
     const funcKey = createReactFlowFunctionKey(func);
+    const updatedFunc = { ...func, key: funcKey };
 
-    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], { ...func, key: funcKey }, connections);
+    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], updatedFunc, connections);
     this.getFunctionForKey(funcKey);
     this._conditional = funcKey;
   };
