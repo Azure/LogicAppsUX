@@ -20,7 +20,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { templatesPathFromState, type RootState } from './store';
+import type { RootState } from './store';
 import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import type { TemplateServiceOptions } from '../../../core/templates/TemplatesDesignerContext';
 import { validateConnectionsValue, validateParameterValue } from '../../../core/templates/utils/helper';
@@ -278,16 +278,11 @@ export default templateSlice.reducer;
 const loadTemplateFromGithub = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplateData | undefined> => {
   try {
     const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
-      `${templatesPathFromState}/${templateName}/workflow.json`
+      `./../../templates/templateFiles/${templateName}/workflow.json`
     );
 
     const templateManifest: Template.Manifest =
-      manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
-
-    const images: Record<string, any> = {};
-    for (const key of Object.keys(templateManifest.images)) {
-      images[key] = (await import(`${templatesPathFromState}/${templateName}/${templateManifest.images[key]}.png`)).default;
-    }
+      manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
 
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
@@ -304,7 +299,7 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
       parameterDefinitions: parametersDefinitions,
       connections: templateManifest.connections,
-      images,
+      images: templateManifest.images,
       errors: {
         workflow: undefined,
         kind: undefined,

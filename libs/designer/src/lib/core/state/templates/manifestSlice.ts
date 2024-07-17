@@ -1,7 +1,7 @@
 import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { templatesPathFromState, type RootState } from './store';
+import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
 export interface ManifestState {
@@ -125,8 +125,7 @@ export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
-    const manifestNames: ManifestName[] = await import(`${templatesPathFromState}/manifest.json`);
-    return (manifestNames as any)?.default ?? manifestNames;
+    return (await import('./../../templates/templateFiles/manifest.json'))?.default as ManifestName[];
   } catch (ex) {
     console.error(ex);
     return undefined;
@@ -134,6 +133,5 @@ const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined
 };
 
 const loadManifestsFromGithub = async (resourcePath: string): Promise<Template.Manifest> => {
-  const manifestDetail: ManifestName[] = await import(`${templatesPathFromState}/${resourcePath}/manifest.json`);
-  return (manifestDetail as any)?.default ?? manifestDetail;
+  return (await import(`./../../templates/templateFiles/${resourcePath}/manifest.json`))?.default as Template.Manifest;
 };
