@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import path from 'path';
 import { projectTemplateKeySetting } from '../../../constants';
 import { getProjFiles } from '../../utils/dotnet/dotnet';
 import { addLocalFuncTelemetry, checkSupportedFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
@@ -16,6 +16,7 @@ import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { WorkspaceFolder } from 'vscode';
+import * as fs from 'fs';
 
 export async function createCodeless(
   context: IActionContext,
@@ -37,10 +38,13 @@ export async function createCodeless(
     workspaceFolder = getContainingWorkspace(workspacePath);
   }
 
-  const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspacePath);
-  if (!projectPath) {
-    return;
-  }
+  // const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspacePath);
+  // if (!projectPath) {
+  //   return;
+  // }
+
+  //this is a temporary fix. issue is swa feature opens up one directory higher than expected to show swa folders too. TODO
+  const projectPath = path.join(searchDirectory(workspacePath, 'Stateful1'), '..');
 
   let workflowProjectType: WorkflowProjectType = WorkflowProjectType.Bundle;
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
@@ -69,4 +73,23 @@ export async function createCodeless(
 
   await wizard.prompt();
   await wizard.execute();
+}
+
+function searchDirectory(dir: string, targetDirName: string): string | null {
+  const files = fs.readdirSync(dir);
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    if (fs.lstatSync(fullPath).isDirectory()) {
+      if (file === targetDirName) {
+        return fullPath;
+      }
+      const result = searchDirectory(fullPath, targetDirName);
+      if (result) {
+        return result;
+      }
+    }
+  }
+
+  return null;
 }

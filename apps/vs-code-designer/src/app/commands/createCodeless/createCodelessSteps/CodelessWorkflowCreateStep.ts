@@ -92,7 +92,6 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
               kind: 'Http',
               inputs: {
                 method: 'GET',
-                relativePath: '/api/message',
               },
             },
           },
