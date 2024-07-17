@@ -28,8 +28,9 @@ const downloadTemplate = async (path: string) => {
   for (const artifact of templateManifest.artifacts) {
     await downloadArtifact(`${path}/${artifact.file}`);
   }
-  await downloadImage(`${path}/${templateManifest.images.light}`);
-  await downloadImage(`${path}/${templateManifest.images.dark}`);
+  await fs.writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2));
+  //   await downloadImage(`${path}/${templateManifest.images.light}`);
+  //   await downloadImage(`${path}/${templateManifest.images.dark}`);
 };
 
 const downloadArtifact = async (path: string) => {
@@ -39,20 +40,20 @@ const downloadArtifact = async (path: string) => {
   await fs.writeFile(`${templatesFolder}/${path}`, JSON.stringify(data, null, 2));
 };
 
-const downloadImage = async (_path: string) => {
-  // TODO
-  // const imageUrl = `${baseURL}/${path}`;
-  // console.log("---loading to : ", `${templatesFolder}/${path}.png`);
-  // const imageFileStream = fs.createWriteStream(`${templatesFolder}/${path}.png`);
-  // const imageRes = await nodeFetch(imageUrl);
-  // await new Promise((resolve, reject) => {
-  //     imageRes?.body?.pipe(imageFileStream);
-  //     imageRes?.body?.on("error", reject);
-  //     imageFileStream.on("finish", resolve);
-  //   });
-};
+// const downloadImage = async (_path: string) => {
+// TODO
+// const imageUrl = `${baseURL}/${path}`;
+// console.log("---loading to : ", `${templatesFolder}/${path}.png`);
+// const imageFileStream = fs.createWriteStream(`${templatesFolder}/${path}.png`);
+// const imageRes = await nodeFetch(imageUrl);
+// await new Promise((resolve, reject) => {
+//     imageRes?.body?.pipe(imageFileStream);
+//     imageRes?.body?.on("error", reject);
+//     imageFileStream.on("finish", resolve);
+//   });
+// };
 
-const run = async () => {
+export const run = async () => {
   removeTemplatesFolderIfPresent();
   await createTemplatesFolder('');
   const value = await downloadManifest();
