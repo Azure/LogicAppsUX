@@ -1,4 +1,53 @@
 # Logic Apps Designer
+## [4.40.0](https://github.com/Azure/LogicAppsUX/compare/v4.39.0...v4.40.0) (2024-07-15)
+
+
+### Bug Fixes
+
+* **designer:** Fixed function operation output body token issue ([#5125](https://github.com/Azure/LogicAppsUX/issues/5125)) ([e96bac4](https://github.com/Azure/LogicAppsUX/commit/e96bac47116aafb7f952d2804fb32923dc5d09be))
+
+## [4.39.0](https://github.com/Azure/LogicAppsUX/compare/v4.38.1...v4.39.0) (2024-07-15)
+
+
+### Features
+
+* **Data Mapper:** Create a Standard panel and move all panels to re-use this ([#5109](https://github.com/Azure/LogicAppsUX/issues/5109)) ([5761eb5](https://github.com/Azure/LogicAppsUX/commit/5761eb5e65fd2f523814862e7afb1ff2a00a5a26))
+
+
+### Bug Fixes
+
+* **vscode:** Add Parameters.json in .Net project conversion ([#5110](https://github.com/Azure/LogicAppsUX/issues/5110)) ([19de272](https://github.com/Azure/LogicAppsUX/commit/19de272c86a9378ae2ba1bdf9dc1c675eac802fa))
+
+### [4.38.1](https://github.com/Azure/LogicAppsUX/compare/v4.38.0...v4.38.1) (2024-07-12)
+
+
+### Features
+
+* **Data Mapper:** Able to update and save metadata ([#5105](https://github.com/Azure/LogicAppsUX/issues/5105)) ([0e15edb](https://github.com/Azure/LogicAppsUX/commit/0e15edb3feeecf1b7903530ab567354290fd921d))
+* **Templates:** Connector Filter Dropdown to Fetch Service & Make Searchable ([#5049](https://github.com/Azure/LogicAppsUX/issues/5049)) ([980b20a](https://github.com/Azure/LogicAppsUX/commit/980b20abbb657acd5ef20542c0c915a8eb400856))
+
+
+### Bug Fixes
+
+* **designer:** Fix min width on status & details connections table columns ([#5108](https://github.com/Azure/LogicAppsUX/issues/5108)) ([d679208](https://github.com/Azure/LogicAppsUX/commit/d679208c871d6dabcc39403e9ea7dd55ed456af5))
+* **templates:** Fixing dynamic imports of workflow images to always contain hard coded extension ([#5111](https://github.com/Azure/LogicAppsUX/issues/5111)) ([854e202](https://github.com/Azure/LogicAppsUX/commit/854e202ac63dc7399fb3014ef6111095a16d3414))
+
+## [4.38.0](https://github.com/Azure/LogicAppsUX/compare/v4.37.0...v4.38.0) (2024-07-11)
+
+
+### Features
+
+* **Data Mapper:** Drag functions and connect them ([#5094](https://github.com/Azure/LogicAppsUX/issues/5094)) ([add402f](https://github.com/Azure/LogicAppsUX/commit/add402f9d1e2883b2edbeaf5b5ba1ba8934ca9ea))
+* **Data Mapper:** Smooth out the node connections and handle states ([#5092](https://github.com/Azure/LogicAppsUX/issues/5092)) ([6abd885](https://github.com/Azure/LogicAppsUX/commit/6abd885b407ab2e977ff9f4b579609e352a3c7bd))
+* **designer:** Adding RunAfter button for right clicking on actions ([#5071](https://github.com/Azure/LogicAppsUX/issues/5071)) ([b47c782](https://github.com/Azure/LogicAppsUX/commit/b47c782ac4fc83394f38a3c8a21d7f9d6f21136a))
+* **Templates:** UI Sanitary Check, Ensuring Consistency ([#5070](https://github.com/Azure/LogicAppsUX/issues/5070)) ([3de7c6d](https://github.com/Azure/LogicAppsUX/commit/3de7c6d854525809d4909fc4ef916a8ae448af67))
+
+
+### Bug Fixes
+
+* **designer:** Flip the text on toggle for date time UTC or local ([#5102](https://github.com/Azure/LogicAppsUX/issues/5102)) ([cb80fac](https://github.com/Azure/LogicAppsUX/commit/cb80facbf06bef7380be0738d7b416a981d8ae3c))
+* **vscode:** Update node version and add APP_KIND to default settings ([#5095](https://github.com/Azure/LogicAppsUX/issues/5095)) ([f37afa8](https://github.com/Azure/LogicAppsUX/commit/f37afa8c481948c21ae1a52d4d75d05969c15db2))
+
 ## [4.37.0](https://github.com/Azure/LogicAppsUX/compare/v4.36.0...v4.37.0) (2024-07-04)
 
 

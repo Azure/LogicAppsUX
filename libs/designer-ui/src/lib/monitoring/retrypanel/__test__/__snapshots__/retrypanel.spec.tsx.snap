@@ -315,7 +315,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -458,7 +458,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -1115,7 +1115,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -1258,7 +1258,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2027,7 +2027,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2170,7 +2170,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2857,7 +2857,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -3000,7 +3000,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span

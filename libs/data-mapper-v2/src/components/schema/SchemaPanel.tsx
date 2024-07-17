@@ -5,16 +5,18 @@ import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../c
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
-import { AddOrUpdateSchemaView, UploadSchemaTypes, type SchemaFile } from './AddOrUpdateSchemaView';
 import { DefaultButton, PrimaryButton } from '@fluentui/react';
-import type { DataMapSchema } from '@microsoft/logic-apps-shared';
-import { SchemaType } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useState } from 'react';
+import { equals, SchemaType, type DataMapSchema } from '@microsoft/logic-apps-shared';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { InlineDrawer, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
+import { Panel } from '../../components/common/panel/Panel';
+import { SchemaPanelBody } from './SchemaPanelBody';
+import type { SchemaFile } from '../../models/Schema';
+import { mergeClasses } from '@fluentui/react-components';
+import type { FileSelectorOption } from '../common/selector/FileSelector';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -26,7 +28,7 @@ export interface ConfigPanelProps {
   schemaType: SchemaType;
 }
 
-export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: ConfigPanelProps) => {
+export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -37,24 +39,71 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
     return state.panel.currentPanelView;
   });
 
-  const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
+  const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
-  const [selectedSchema, setSelectedSchema] = useState<DataMapSchema>();
+  const [selectedSchema, _setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
+  const schemaFromStore = useSelector((state: RootState) => {
+    return schemaType === SchemaType.Source
+      ? state.dataMap.present.curDataMapOperation.sourceSchema
+      : state.dataMap.present.curDataMapOperation.targetSchema;
+  });
+
+  const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
 
   const fetchedSourceSchema = useQuery(
     [selectedSchemaFile],
     async () => {
       if (selectedSchema && selectedSchemaFile) {
         const [fileName, filePath] = getFileNameAndPath(selectedSchemaFile?.path);
-        return await getSelectedSchema(fileName ?? '', filePath);
+        const schema = await getSelectedSchema(fileName ?? '', filePath);
+        return schema;
       }
-      return await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      const schema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      return schema;
     },
     {
       ...schemaFileQuerySettings,
-      enabled: selectedSchema !== undefined,
+      enabled: selectedSchemaFile !== undefined,
     }
+  );
+
+  useEffect(() => {
+    if (fetchedSourceSchema.isSuccess && fetchedSourceSchema.data && schemaType) {
+      const extendedSchema = convertSchemaToSchemaExtended(fetchedSourceSchema.data);
+      dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
+    }
+  }, [dispatch, schemaType, fetchedSourceSchema.data, fetchedSourceSchema.isSuccess]);
+
+  const stringResources = useMemo(
+    () => ({
+      ADD_NEW: intl.formatMessage({
+        defaultMessage: 'Add new',
+        id: 'rv0Pn+',
+        description: 'Add new option',
+      }),
+      SELECT_EXISTING: intl.formatMessage({
+        defaultMessage: 'Select existing',
+        id: '2ZfzaY',
+        description: 'Select existing option',
+      }),
+      SOURCE: intl.formatMessage({
+        defaultMessage: 'Source',
+        id: 'nODesn',
+        description: 'Source',
+      }),
+      DESTINATION: intl.formatMessage({
+        defaultMessage: 'Destination',
+        id: 'EXEL2j',
+        description: 'Destination',
+      }),
+      SEARCH_PROPERTIES: intl.formatMessage({
+        defaultMessage: 'Search properties',
+        id: 'BnkCwH',
+        description: 'Seach source or target properties',
+      }),
+    }),
+    [intl]
   );
 
   const addLoc = intl.formatMessage({
@@ -73,18 +122,6 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
     defaultMessage: 'Cancel',
     id: '6PdOcy',
     description: 'Cancel',
-  });
-
-  const configureLoc = intl.formatMessage({
-    defaultMessage: 'Configure',
-    id: 'LR/3Lr',
-    description: 'Configure',
-  });
-
-  const closeLoc = intl.formatMessage({
-    defaultMessage: 'Close',
-    id: 'wzEneQ',
-    description: 'Close',
   });
 
   const genericErrorMsg = intl.formatMessage({
@@ -113,6 +150,9 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
     [dispatch, schemaType]
   );
 
+  const schema = fetchedSourceSchema.data;
+
+  // this is not being used yet
   const addOrUpdateSchema = useCallback(
     (isAddSchema?: boolean) => {
       if (schemaType === undefined) {
@@ -121,7 +161,7 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
 
       LogService.log(LogCategory.AddOrUpdateSchemaView, 'addOrChangeSchema', {
         message: `${isAddSchema ? 'Added' : 'Changed'} ${schemaType} schema from ${
-          uploadType === UploadSchemaTypes.SelectFrom ? 'existing schema files' : 'new file upload'
+          fileSelectorOptions === 'select-existing' ? 'existing schema files' : 'new file upload'
         }`,
       });
 
@@ -143,9 +183,9 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
         return;
       }
 
-      if (uploadType === UploadSchemaTypes.SelectFrom && selectedSchema) {
+      if (fileSelectorOptions === 'select-existing' && selectedSchema) {
         onSubmitSchema(selectedSchema);
-      } else if (uploadType === UploadSchemaTypes.UploadNew && selectedSchemaFile) {
+      } else if (fileSelectorOptions === 'upload-new' && selectedSchemaFile) {
         onSubmitSchemaFileSelection(selectedSchemaFile);
       }
 
@@ -162,7 +202,7 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
       goBackToDefaultConfigPanelView,
       genericErrorMsg,
       selectedSchemaFile,
-      uploadType,
+      fileSelectorOptions,
       onSubmitSchemaFileSelection,
       fetchedSourceSchema,
       onSubmitSchema,
@@ -184,7 +224,7 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
 
     let isNoNewSchemaSelected = true;
 
-    if (uploadType === UploadSchemaTypes.SelectFrom) {
+    if (fileSelectorOptions === 'select-existing') {
       if (schemaType === SchemaType.Source) {
         isNoNewSchemaSelected = !selectedSchema || selectedSchema.name === curDataMapOperation.sourceSchema?.name;
       } else {
@@ -216,24 +256,41 @@ export const AddSchemaDrawer = ({ onSubmitSchemaFileSelection, schemaType }: Con
     cancelLoc,
     addOrUpdateSchema,
     selectedSchemaFile,
-    uploadType,
+    fileSelectorOptions,
     addLoc,
     selectedSchema,
   ]);
 
   return (
-    <div className={styles.root}>
-      <InlineDrawer open={!!currentPanelView} size="small" className={mergeClasses(styles.drawerWrapper)}>
-        <AddOrUpdateSchemaView
+    <Panel
+      id={`panel_${schemaType}`}
+      isOpen={!!currentPanelView}
+      title={{
+        text: equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION,
+      }}
+      search={
+        showScehmaSelection
+          ? undefined
+          : {
+              placeholder: stringResources.SEARCH_PROPERTIES,
+              onChange: (_?: string) => {},
+            }
+      }
+      styles={{
+        root: mergeClasses(styles.root, showScehmaSelection ? styles.rootWithSchemaSelection : styles.rootWithSchemaTree),
+      }}
+      body={
+        <SchemaPanelBody
           schemaType={schemaType}
           selectedSchema={selectedSchema?.name}
           setSelectedSchemaFile={setSelectedSchemaFile}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
-          uploadType={uploadType}
-          setUploadType={setUploadType}
+          fileSelectorOptions={fileSelectorOptions}
+          setFileSelectorOptions={setFileSelectorOptions}
+          showScehmaSelection={showScehmaSelection}
         />
-      </InlineDrawer>
-    </div>
+      }
+    />
   );
 };

@@ -39,6 +39,25 @@ export const useConnectorOnly = (connectorId: string | undefined, enabled = true
   );
 };
 
+export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> => {
+  return useQuery(
+    ['connectors', connectorIds],
+    async () => {
+      if (!connectorIds) {
+        return null;
+      }
+      return await Promise.all(connectorIds.map(async (connectorId) => [connectorId, await ConnectionService().getConnector(connectorId)]));
+    },
+    {
+      enabled: !!connectorIds,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
+};
+
 export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
   const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
   return { data: data?.connector, ...rest };

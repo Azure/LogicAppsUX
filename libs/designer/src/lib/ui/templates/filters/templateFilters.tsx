@@ -4,6 +4,9 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
+import { useMemo } from 'react';
+import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
+import { useConnectors } from '../../../core/state/connection/connectionSelector';
 
 export interface TemplateFiltersProps {
   connectors?: FilterObject[];
@@ -16,10 +19,21 @@ export interface TemplateFiltersProps {
   >;
 }
 
-export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersProps) => {
+export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const sortKey = useSelector((state: RootState) => state?.manifest?.filters?.sortKey);
   const intl = useIntl();
+  const { availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
+    availableTemplates: state.manifest.availableTemplates ?? {},
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
+  }));
+  const allTemplatesUniqueConnectorIds = useMemo(() => {
+    const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
+    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
+    return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
+  }, [availableTemplates, location, subscriptionId]);
+  const { data: allUniqueConnectorsEntries } = useConnectors(allTemplatesUniqueConnectorIds);
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -70,13 +84,17 @@ export const TemplateFilters = ({ connectors, detailFilters }: TemplateFiltersPr
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {connectors && (
+        {allUniqueConnectorsEntries && allUniqueConnectorsEntries.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={connectors}
+            items={allUniqueConnectorsEntries?.map(([connectorId, connector]) => ({
+              value: connectorId,
+              displayName: connector.properties.displayName,
+            }))}
             onApplyButtonClick={(filterItems) => {
               dispatch(setConnectorsFilters(filterItems));
             }}
+            isSearchable
           />
         )}
         {Object.keys(detailFilters).map((filterName, index) => (

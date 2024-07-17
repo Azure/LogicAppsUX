@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   connectionsFileName,
+  parametersFileName,
   funcIgnoreFileName,
   funcVersionSetting,
   hostFileName,
@@ -194,6 +195,10 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, connectionFile);
   }
 
+  for (const parametersFile of projectArtifacts['parameters']) {
+    xmlBuildFile = addFileToBuildPath(xmlBuildFile, parametersFile);
+  }
+
   if (projectArtifacts['lib']) {
     xmlBuildFile = addLibToPublishPath(xmlBuildFile);
   }
@@ -244,6 +249,7 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
   const artifactDict: Record<string, string[]> = {
     workflows: [],
     connections: [],
+    parameters: [],
     artifacts: [],
     lib: [],
   };
@@ -252,6 +258,10 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
     if (file === connectionsFileName) {
       artifactDict['connections'].push(connectionsFileName);
       continue;
+    }
+
+    if (file === parametersFileName) {
+      artifactDict['parameters'].push(parametersFileName);
     }
 
     if (file === 'Artifacts') {

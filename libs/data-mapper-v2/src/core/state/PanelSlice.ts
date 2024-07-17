@@ -1,5 +1,7 @@
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
+import type { SchemaFile } from '../../models/Schema';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 export const ConfigPanelView = {
   DefaultConfig: 'defaultConfig',
@@ -8,15 +10,32 @@ export const ConfigPanelView = {
 } as const;
 export type ConfigPanelView = (typeof ConfigPanelView)[keyof typeof ConfigPanelView];
 
+export type TestPanelState = {
+  isOpen: boolean;
+  showSelection: boolean;
+  selectedFile?: SchemaFile;
+};
+
+export type CodeViewState = {
+  isOpen: boolean;
+};
+
 export interface PanelState {
   currentPanelView?: ConfigPanelView;
   schemaType?: SchemaType;
-  isCodeViewOpen: boolean;
+  testPanel: TestPanelState;
+  codeViewPanel: CodeViewState;
 }
 
 const initialState: PanelState = {
   currentPanelView: ConfigPanelView.AddSchema,
-  isCodeViewOpen: false,
+  codeViewPanel: {
+    isOpen: false,
+  },
+  testPanel: {
+    isOpen: false,
+    showSelection: true,
+  },
 };
 
 export const panelSlice = createSlice({
@@ -30,7 +49,23 @@ export const panelSlice = createSlice({
     },
 
     toggleCodeView: (state) => {
-      state.isCodeViewOpen = !state.isCodeViewOpen;
+      // Close test panel first if code view needs to open
+      if (!state.codeViewPanel.isOpen && state.testPanel.isOpen) {
+        state.testPanel.isOpen = false;
+      }
+      state.codeViewPanel.isOpen = !state.codeViewPanel.isOpen;
+    },
+
+    toggleTestPanel: (state) => {
+      // Close code view first if test panel needs to open
+      if (!state.testPanel.isOpen && state.codeViewPanel.isOpen) {
+        state.codeViewPanel.isOpen = false;
+      }
+      state.testPanel.isOpen = !state.testPanel.isOpen;
+    },
+
+    toggleShowSelection: (state) => {
+      state.testPanel.showSelection = !state.testPanel.showSelection;
     },
 
     openAddSourceSchemaPanelView: (state) => {
@@ -57,6 +92,10 @@ export const panelSlice = createSlice({
       state.schemaType = undefined;
       state.currentPanelView = undefined;
     },
+
+    setTestFile: (state, action: PayloadAction<SchemaFile>) => {
+      state.testPanel.selectedFile = action.payload;
+    },
   },
 });
 
@@ -68,6 +107,9 @@ export const {
   openUpdateTargetSchemaPanelView,
   closePanel,
   toggleCodeView,
+  toggleTestPanel,
+  toggleShowSelection,
+  setTestFile,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

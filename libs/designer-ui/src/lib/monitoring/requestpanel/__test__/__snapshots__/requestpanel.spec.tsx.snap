@@ -315,7 +315,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -458,7 +458,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -891,7 +891,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -1034,7 +1034,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -1888,7 +1888,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2031,7 +2031,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2885,7 +2885,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -3028,7 +3028,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -3492,7 +3492,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -3635,7 +3635,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
