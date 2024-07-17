@@ -114,7 +114,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         }),
       renderCell: (item) => {
         const label = item.displayName;
-        const subLabel = item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name;
+        const subLabel = item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name ?? item.accountName;
         return (
           <div className="msla-connection-row-display-name">
             <Text block={true} className="msla-connection-row-display-name-label" size={300}>
