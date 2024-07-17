@@ -19,7 +19,7 @@ export interface IDataMapperFileService {
    */
   saveMapDefinitionCall(dataMapDefinition: string, mapMetadata: string): void;
 
-    /**
+  /**
    * Saves the data map draft to the filesystem.
    * @arg {string} dataMapDefinition - The map definition as a string.
    * @return {null} we get the output from the store
@@ -49,7 +49,7 @@ export interface IDataMapperFileService {
   /**
    * Adds a schema from a file to the data mapper.
    */
-  addSchemaFromFile(selectedSchemaFile: SchemaFile): void
+  addSchemaFromFile(selectedSchemaFile: SchemaFile): void;
 }
 
 let service: IDataMapperFileService;
