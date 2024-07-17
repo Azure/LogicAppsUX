@@ -4,8 +4,13 @@ import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
 import { cleanSMB, deleteSMBFolder, unMountSMB } from './cleanResources';
-import { guid } from '@microsoft/logic-apps-shared';
-import { createHybridAppSMB } from './createHybridSMB';
+import { getRandomHexString } from '../../../utils/fs';
+import { createHybridApp } from '../../../utils/codeless/hybridLogicApp/hybridApp';
+import { updateSMBConnectedEnvironment } from '../../../utils/codeless/hybridLogicApp/connectedEnvironment';
+import path from 'path';
+import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
+import { getAccountCredentials } from '../../../utils/credentials';
 
 export const deployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem) => {
   try {
@@ -17,26 +22,44 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
       },
       async (progress) => {
         context.telemetry.properties.lastStep = 'connectToSMB';
-        const smbFolderName = `${node.hybridSite.name}-${guid()}`;
+        const smbFolderName = `${node.hybridSite.name}-${getRandomHexString(32 - node.hybridSite.name.length - 1)}`.toLowerCase();
         const mountDrive = 'X:';
-        progress.report({ increment: 20, message: 'Connecting to SMB' });
+
+        const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
+        const accessToken = await getAuthorizationToken(credentials);
+
+        progress.report({ increment: 16, message: 'Connecting to SMB' });
         await connectToSMB(context, node, smbFolderName, mountDrive);
 
-        progress.report({ increment: 20, message: 'Connecting to SMB' });
-        await createHybridAppSMB(context, node, smbFolderName, mountDrive);
-        
-        progress.report({ increment: 20, message: 'Unmounting SMB' });
-        await unMountSMB(mountDrive);
+        progress.report({ increment: 16, message: 'Update SMB connected environment' });
+        await updateSMBConnectedEnvironment(accessToken, node.subscription.subscriptionId, node.connectedEnvironment, smbFolderName, {
+          ...node.fileShare,
+          path: path.join(node.fileShare.path, smbFolderName),
+        });
 
-        progress.report({ increment: 20, message: 'Deleting SMB folder' });
+        progress.report({ increment: 16, message: 'Connecting to SMB' });
+        const hybridAppOptions = {
+          sqlConnectionString: node.sqlConnectionString,
+          location: node.location,
+          connectedEnvironment: node.connectedEnvironment,
+          storageName: smbFolderName,
+          subscriptionId: node.subscription.subscriptionId,
+          resourceGroup: node.resourceGroupName,
+          siteName: node.hybridSite.name,
+        };
+        await createHybridApp(context, accessToken, hybridAppOptions);
+
+        progress.report({ increment: 16, message: 'Deleting SMB folder' });
         await deleteSMBFolder(mountDrive, smbFolderName);
 
-        progress.report({ increment: 20, message: 'Cleaning SMB' });
-        await cleanSMB(node);
+        progress.report({ increment: 16, message: 'Unmounting SMB' });
+        await unMountSMB(mountDrive);
 
+        progress.report({ increment: 20, message: 'Cleaning SMB' });
+        await cleanSMB(node, accessToken);
       }
     );
   } catch (error) {
-    console.log('error', error);
+    throw new Error(`${localize('errorDeployingHybridLogicApp', 'Error deploying hybrid logic app')} - ${error.message}`);
   }
 };

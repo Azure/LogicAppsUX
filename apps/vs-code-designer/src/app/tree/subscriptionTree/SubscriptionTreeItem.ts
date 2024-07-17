@@ -224,17 +224,16 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       await ext.rgApi.appResourceTree.refresh(context);
     }
 
-
     const slotTreeItem = new SlotTreeItem(subscription, resolved, {
       isHybridLogiApp: wizardContext.useHybrid,
       hybridSite: wizardContext.hybridSite,
       location: wizardContext.customLocation
-      ? wizardContext.customLocation.kubeEnvironment.location.replace(/[()]/g, '')
-      : wizardContext._location.name,
+        ? wizardContext.customLocation.kubeEnvironment.location.replace(/[()]/g, '')
+        : wizardContext._location.name,
       fileShare: wizardContext.fileShare,
       connectedEnvironment: wizardContext.connectedEnvironment,
       resourceGroupName: wizardContext.resourceGroup.name,
-      sqlConnectionString: wizardContext.sqlConnectionString
+      sqlConnectionString: wizardContext.sqlConnectionString,
     });
     return slotTreeItem;
   }

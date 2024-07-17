@@ -7,17 +7,12 @@ import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import type { RemoteWorkflowTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import type {
-  AppSettingsTreeItem,
-  CustomLocation,
-  DeploymentsTreeItem,
-  IDeployContext,
-  ParsedSite,
-} from '@microsoft/vscode-azext-azureappservice';
+import type { AppSettingsTreeItem, DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ApplicationSettings,
+  FileShare,
   FuncHostRequest,
   FuncVersion,
   IParsedHostJson,
@@ -32,17 +27,11 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public readonly source: ProjectSource = ProjectSource.Remote;
   public site: ParsedSite;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
-  public location?: CustomLocation;
+  public location?: string;
   public isHybridLogicApp?: boolean;
   public connectedEnvironment?: ConnectedEnvironment;
   public hybridSite?: ContainerApp;
-  public fileShare?: {
-    hostName?: string;
-    path?: string;
-    localPath?: string;
-    userName?: string;
-    password?: string;
-  };
+  public fileShare?: FileShare;
   public resourceGroupName?: string;
   public sqlConnectionString?: string;
 
@@ -56,16 +45,15 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
     options?: {
       isHybridLogiApp?: boolean;
       hybridSite?: ContainerApp;
-      location?: CustomLocation;
-      fileShare?: { hostName?: string; path?: string; userName?: string; password?: string };
+      location?: string;
+      fileShare?: FileShare;
       connectedEnvironment?: ConnectedEnvironment;
       resourceGroupName?: string;
-      sqlConnectionString?:string;
+      sqlConnectionString?: string;
     }
   ) {
     super(parent);
     this.resourceTree = resourceTree;
-    // this is for the slotContextValue because it never gets resolved by the Resources extension
     if (options?.isHybridLogiApp) {
       this.isHybridLogicApp = options.isHybridLogiApp;
       this.location = options.location;
