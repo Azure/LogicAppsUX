@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@types/fs-extra':
-        specifier: ^11.0.4
-        version: 11.0.4
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
