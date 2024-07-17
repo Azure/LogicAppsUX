@@ -82,10 +82,8 @@ export const FunctionList = (props: FunctionListProps) => {
       }
 
       if (searchTerm) {
-        console.log('List: ', updateFunctionList);
         const fuse = new Fuse(updateFunctionList, fuseFunctionSearchOptions);
         updateFunctionList = fuse.search(searchTerm).map((result) => result.item);
-        console.log('List: ', updateFunctionList);
       }
 
       // Add functions to their respective categories
@@ -94,6 +92,11 @@ export const FunctionList = (props: FunctionListProps) => {
           ...functionData,
           children: [],
         });
+      }
+
+      // Incase of searching, expand all categories
+      if (searchTerm) {
+        setOpenItems(Object.values(FunctionCategory).filter((category) => updatedFunctionCategories[category].children.length > 0));
       }
 
       // Add function categories as children to the tree root, filtering out any that don't have any children
@@ -114,7 +117,7 @@ export const FunctionList = (props: FunctionListProps) => {
     }
 
     return [];
-  }, [functionList, getFunctionCategories, searchTerm, inlineFunctionInputOutputKeys]);
+  }, [functionList, getFunctionCategories, searchTerm, inlineFunctionInputOutputKeys, setOpenItems]);
 
   const treeItems = useMemo(
     () =>
@@ -137,7 +140,7 @@ export const FunctionList = (props: FunctionListProps) => {
       appearance="transparent"
       className={styles.functionTree}
       onOpenChange={handleOpenChange}
-      openItems={searchTerm ? Object.values(FunctionCategory) : openItems}
+      openItems={openItems}
       aria-label="function-tree"
     >
       {treeItems}
