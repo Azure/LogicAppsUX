@@ -21,9 +21,15 @@ import { window } from 'vscode';
 export async function notifyDeployComplete(
   node: SlotTreeItem,
   workspaceFolder: WorkspaceFolder,
+  isHybridLogiApp: boolean,
   settingsToExclude?: string[]
 ): Promise<void> {
   const deployComplete: string = localize('deployComplete', 'Deployment to "{0}" completed.', node.site.fullName);
+
+  if (isHybridLogiApp) {
+    window.showInformationMessage(deployComplete);
+  }
+
   const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
   const streamLogs: MessageItem = { title: localize('streamLogs', 'Stream logs') };
   const uploadSettings: MessageItem = { title: localize('uploadAppSettings', 'Upload settings') };

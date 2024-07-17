@@ -98,10 +98,11 @@ async function deploy(
     node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
   }
 
-  const nodeKind = node.site.kind && node.site.kind.toLowerCase();
+  const isHybridLogicApp = !!node.isHybridLogicApp;
+
+  const nodeKind = (isHybridLogicApp ? node.hybridSite.type : node.site.kind).toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
-  const isHybridLogicApp = !!node.isHybridLogicApp;
   const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
 
   context.telemetry.properties.projectLanguage = language;
@@ -137,33 +138,31 @@ async function deploy(
 
   identityWizardContext?.useAdvancedIdentity ? await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext) : undefined;
 
-  await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
+  let isZipDeploy = false;
 
-  const client = await node.site.createClient(actionContext);
-  const siteConfig: SiteConfigResource = await client.getSiteConfig();
-  const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
+  if (!isHybridLogicApp) {
+    await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
+    const client = await node.site.createClient(actionContext);
+    const siteConfig: SiteConfigResource = await client.getSiteConfig();
+    isZipDeploy = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (
-    getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) &&
-    !context.isNewApp &&
-    isZipDeploy &&
-    !isHybridLogicApp
-  ) {
-    const warning: string = localize(
-      'confirmDeploy',
-      'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
-      client.fullName
-    );
-    context.telemetry.properties.cancelStep = 'confirmDestructiveDeployment';
-    const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
-    await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
-    context.telemetry.properties.cancelStep = '';
-  }
+    if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
+      const warning: string = localize(
+        'confirmDeploy',
+        'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
+        client.fullName
+      );
+      context.telemetry.properties.cancelStep = 'confirmDestructiveDeployment';
+      const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
+      await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
+      context.telemetry.properties.cancelStep = '';
+    }
 
-  await runPreDeployTask(context, effectiveDeployFsPath, siteConfig.scmType);
+    await runPreDeployTask(context, effectiveDeployFsPath, siteConfig.scmType);
 
-  if (isZipDeploy) {
-    validateGlobSettings(context, effectiveDeployFsPath);
+    if (isZipDeploy) {
+      validateGlobSettings(context, effectiveDeployFsPath);
+    }
   }
 
   await node.runWithTemporaryDescription(context, localize('deploying', 'Deploying...'), async () => {
@@ -198,14 +197,14 @@ async function deploy(
         );
       }
     } finally {
-      if (deployProjectPathForWorkflowApp !== undefined) {
+      if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
       }
     }
   });
 
   await node.loadAllChildren(context);
-  await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
+  await notifyDeployComplete(node, context.workspaceFolder, isHybridLogicApp, settingsToExclude);
 }
 
 /**

@@ -2,22 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { ConnectedEnvironment } from '@azure/arm-appcontainers';
+import type { ConnectedEnvironment, ContainerApp } from '@azure/arm-appcontainers';
 import { getIconPath } from '../../utils/tree/assets';
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import type { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
 import type { RemoteWorkflowTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowTreeItem';
-import type {
-  AppSettingsTreeItem,
-  CustomLocation,
-  DeploymentsTreeItem,
-  IDeployContext,
-  ParsedSite,
-} from '@microsoft/vscode-azext-azureappservice';
+import type { AppSettingsTreeItem, DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   ApplicationSettings,
+  FileShare,
   FuncHostRequest,
   FuncVersion,
   IParsedHostJson,
@@ -32,30 +27,50 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   public readonly source: ProjectSource = ProjectSource.Remote;
   public site: ParsedSite;
   public readonly appSettingsTreeItem: AppSettingsTreeItem;
-  public customLocation?: CustomLocation;
+  public location?: string;
   public isHybridLogicApp?: boolean;
   public connectedEnvironment?: ConnectedEnvironment;
-  public fileShare?: {
-    hostName?: string;
-    path?: string;
-    userName?: string;
-    password?: string;
-  };
+  public hybridSite?: ContainerApp;
+  public fileShare?: FileShare;
+  public resourceGroupName?: string;
+  public sqlConnectionString?: string;
+
   public readonly contextValue: string;
 
   public resourceTree: LogicAppResourceTree;
 
-  public constructor(parent: AzExtParentTreeItem, resourceTree: LogicAppResourceTree) {
+  public constructor(
+    parent: AzExtParentTreeItem,
+    resourceTree: LogicAppResourceTree,
+    options?: {
+      isHybridLogiApp?: boolean;
+      hybridSite?: ContainerApp;
+      location?: string;
+      fileShare?: FileShare;
+      connectedEnvironment?: ConnectedEnvironment;
+      resourceGroupName?: string;
+      sqlConnectionString?: string;
+    }
+  ) {
     super(parent);
     this.resourceTree = resourceTree;
-    // this is for the slotContextValue because it never gets resolved by the Resources extension
-    const slotContextValue = this.resourceTree.site.isSlot
-      ? LogicAppResourceTree.slotContextValue
-      : LogicAppResourceTree.productionContextValue;
-    const contextValues = [slotContextValue, 'slot'];
-    this.contextValue = Array.from(new Set(contextValues)).sort().join(';');
-    this.site = this.resourceTree.site;
-    this.iconPath = getIconPath(slotContextValue);
+    if (options?.isHybridLogiApp) {
+      this.isHybridLogicApp = options.isHybridLogiApp;
+      this.location = options.location;
+      this.fileShare = options.fileShare;
+      this.connectedEnvironment = options.connectedEnvironment;
+      this.hybridSite = options.hybridSite;
+      this.resourceGroupName = options.resourceGroupName;
+      this.sqlConnectionString = options.sqlConnectionString;
+    } else {
+      const slotContextValue = this.resourceTree.site.isSlot
+        ? LogicAppResourceTree.slotContextValue
+        : LogicAppResourceTree.productionContextValue;
+      const contextValues = [slotContextValue, 'slot'];
+      this.contextValue = Array.from(new Set(contextValues)).sort().join(';');
+      this.site = this.resourceTree.site;
+      this.iconPath = getIconPath(slotContextValue);
+    }
   }
 
   public get id(): string {
