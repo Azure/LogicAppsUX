@@ -13,6 +13,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
+    "@xyflow/react": "^12.0.2",
     "elkjs": "0.8.2",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
@@ -27,7 +28,6 @@
     "react-intl": "6.3.0",
     "react-markdown": "8.0.5",
     "react-redux": "8.0.2",
-    "reactflow": "11.11.1",
     "redux-thunk": "2.4.2",
     "reselect": "4.1.8",
     "to-title-case": "1.0.0",
@@ -59,10 +59,10 @@
   "main": "src/index.ts",
   "module": "src/index.ts",
   "peerDependencies": {
-    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "@tanstack/react-query": "4.36.1",
-    "@tanstack/react-query-devtools": "4.36.1"
+    "@tanstack/react-query-devtools": "4.36.1",
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
   "publishConfig": {
     "main": "build/lib/index.cjs",
