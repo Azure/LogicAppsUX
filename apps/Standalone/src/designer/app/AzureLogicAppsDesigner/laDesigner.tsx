@@ -168,6 +168,7 @@ const DesignerEditor = () => {
       getDesignerServices(
         workflowId,
         equals(workflow?.kind, 'stateful'),
+        isHybridLogicApp,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
@@ -369,6 +370,7 @@ const DesignerEditor = () => {
 const getDesignerServices = (
   workflowId: string,
   isStateful: boolean,
+  isHybrid: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -618,6 +620,7 @@ const getDesignerServices = (
     },
     showStatefulOperations: isStateful,
     isDev: false,
+    hybridLogicApp: isHybrid,
     locale,
   });
 
