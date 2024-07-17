@@ -11,6 +11,8 @@ import path from 'path';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import { getAccountCredentials } from '../../../utils/credentials';
+import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
+import { driveLetterSMBSetting } from '../../../../constants';
 
 export const deployHybridLogicApp = async (context: IActionContext, node: SlotTreeItem) => {
   try {
@@ -23,7 +25,7 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
       async (progress) => {
         context.telemetry.properties.lastStep = 'connectToSMB';
         const smbFolderName = `${node.hybridSite.name}-${getRandomHexString(32 - node.hybridSite.name.length - 1)}`.toLowerCase();
-        const mountDrive = 'X:';
+        const mountDrive: string = getWorkspaceSetting<string>(driveLetterSMBSetting);
 
         const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
         const accessToken = await getAuthorizationToken(credentials);

@@ -2,6 +2,7 @@ import { type FileShare, isSuccessResponse } from '@microsoft/vscode-extension-l
 import axios from 'axios';
 import { localize } from '../../../../localize';
 import type { ConnectedEnvironment } from '@azure/arm-appcontainers';
+import { azurePublicBaseUrl } from '../../../../constants';
 
 export const updateSMBConnectedEnvironment = async (
   accessToken: string,
@@ -12,7 +13,7 @@ export const updateSMBConnectedEnvironment = async (
 ) => {
   const resourceGroup = connectedEnvironment.id.split('/')[4];
 
-  const url = `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${siteName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${siteName}?api-version=2024-02-02-preview`;
 
   try {
     const options = {

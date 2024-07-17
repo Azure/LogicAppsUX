@@ -951,7 +951,7 @@
             "default": null,
             "description": "Parameterize connections when your project loads."
           },
-          "azureLogicAppsStandard.DriveLetterSMB": {
+          "azureLogicAppsStandard.driveLetterSMB": {
             "type": "string",
             "description": "Default drive letter to mount the smb for hybrid logic apps",
             "default": "X"

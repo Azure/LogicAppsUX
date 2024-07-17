@@ -2,7 +2,7 @@ import axios from 'axios';
 import { localize } from '../../../../localize';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
-import { Platform } from '../../../../constants';
+import { azurePublicBaseUrl, Platform } from '../../../../constants';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
@@ -12,7 +12,7 @@ import { isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
  * @returns A Promise that resolves when the hybrid app is created.
  */
 export const cleanSMB = async (node: SlotTreeItem, accessToken: string): Promise<void> => {
-  const url = `https://management.azure.com/subscriptions/${node.subscription.subscriptionId}/resourceGroups/${node.resourceGroupName}/providers/Microsoft.App/connectedEnvironments/${node.connectedEnvironment.name}/storages/${node.hybridSite.name}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/subscriptions/${node.subscription.subscriptionId}/resourceGroups/${node.resourceGroupName}/providers/Microsoft.App/connectedEnvironments/${node.connectedEnvironment.name}/storages/${node.hybridSite.name}?api-version=2024-02-02-preview`;
   try {
     const response = await axios.delete(url, {
       headers: { authorization: accessToken },

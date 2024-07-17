@@ -202,6 +202,7 @@ export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
+export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
