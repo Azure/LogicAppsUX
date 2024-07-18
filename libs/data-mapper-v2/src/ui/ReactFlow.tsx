@@ -29,13 +29,71 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const { nodes, edges, functionNodes, flattenedSourceSchema, flattenedTargetSchema, dataMapConnections } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
+  const [didCreateMap, setDidCreateMap] = useState(false);
 
   const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
   });
 
-  const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
-  console.log(layout);
+  const dispatchEdgesAndNodes = useCallback(
+    (updatedEdges: Edge[], updatedNodes: Node[]) => {
+      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
+
+      const newNodes = [
+        ...updatedNodes.map((node) => ({
+          ...node,
+          data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
+        })),
+      ];
+
+      dispatch(updateReactFlowEdges(updatedEdges));
+
+      dispatch(updateReactFlowNodes(newNodes));
+    },
+    [dispatch]
+  );
+
+  const dispatchEdges = useCallback(
+    (updatedEdges: Edge[]) => {
+      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
+
+      const newNodes = [
+        ...nodes.map((node) => ({
+          ...node,
+          data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
+        })),
+      ];
+
+      dispatch(updateReactFlowEdges(updatedEdges));
+
+      dispatch(updateReactFlowNodes(newNodes));
+    },
+    [dispatch, nodes]
+  );
+
+  useEffect(() => {
+    // danielle move this to init action
+    if (!didCreateMap && edges.length === 0 && Object.entries(dataMapConnections).length > 0) {
+      const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
+      console.log(layout);
+      const newEdges = layout.edges.map((edge) => {
+        const newEdge: Edge = {
+          id: `${edge.sourceId}-${edge.targetId}`,
+          source: edge.sourceId,
+          target: edge.targetId,
+          type: 'connectedEdge',
+          reconnectable: 'target',
+          focusable: true,
+          deletable: true,
+        };
+        return newEdge;
+      });
+      if (newEdges && newEdges.length > 0) {
+        dispatchEdges(newEdges);
+      }
+      setDidCreateMap(true);
+    }
+  }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes, dispatchEdges, didCreateMap, edges]);
 
   useEffect(() => {
     if (ref?.current) {
@@ -73,24 +131,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       connectedEdge: ConnectedEdge,
     }),
     []
-  );
-
-  const dispatchEdgesAndNodes = useCallback(
-    (updatedEdges: Edge[], updatedNodes: Node[]) => {
-      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
-
-      const newNodes = [
-        ...updatedNodes.map((node) => ({
-          ...node,
-          data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
-        })),
-      ];
-
-      dispatch(updateReactFlowEdges(updatedEdges));
-
-      dispatch(updateReactFlowNodes(newNodes));
-    },
-    [dispatch]
   );
 
   const dispatchMakeConnection = useCallback(

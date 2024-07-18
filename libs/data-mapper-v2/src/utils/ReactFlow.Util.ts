@@ -36,7 +36,7 @@ export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
 
 const rootLayoutNodeId = 'root';
-const LayoutContainer = {
+export const LayoutContainer = {
   SourceSchema: 'sourceSchemaBlock',
   Functions: 'functionsBlock',
   TargetSchema: 'targetSchemaBlock',

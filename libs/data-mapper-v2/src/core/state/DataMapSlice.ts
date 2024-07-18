@@ -11,7 +11,7 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
+import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
   flattenSchemaIntoDictionary,
@@ -31,7 +31,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Edge, XYPosition } from '@xyflow/react';
-import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -184,8 +184,34 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
-      //let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
-      //functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+      assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
+
+      const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
+      const newEdges = layout.edges.map((edge) => {
+        const newEdge: Edge = {
+          id: `${edge.sourceId}-${edge.targetId}`,
+          source: edge.sourceId,
+          target: edge.targetId,
+          type: 'connectedEdge',
+          reconnectable: 'target',
+          focusable: true,
+          deletable: true,
+        };
+        return newEdge;
+      });
+
+      const addedNodes = Object.entries(functionNodes).map((funcTuple) => {
+        const func = funcTuple[1];
+        const id = funcTuple[0];
+        const node: Node = {
+          id: id,
+          type: 'function',
+          position: func.position || { x: 100, y: 100 }, // find layout if none found
+          data: { id, func },
+        };
+        return node;
+      });
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -194,10 +220,12 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes: {},
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
+        edges: newEdges,
+        nodes: { ...state.curDataMapOperation.nodes, ...addedNodes },
       };
 
       state.curDataMapOperation = newState;
