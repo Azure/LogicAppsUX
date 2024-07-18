@@ -1,4 +1,28 @@
 # Logic Apps Designer
+## [4.42.0](https://github.com/Azure/LogicAppsUX/compare/v4.41.0...v4.42.0) (2024-07-18)
+
+
+### Bug Fixes
+
+* **Templates:** Templates Not Loading on Portal ([#5134](https://github.com/Azure/LogicAppsUX/issues/5134)) ([1fcad28](https://github.com/Azure/LogicAppsUX/commit/1fcad28d041e0819f422b952fbba95c667b97e53))
+
+## [4.41.0](https://github.com/Azure/LogicAppsUX/compare/v4.40.0...v4.41.0) (2024-07-17)
+
+
+### Features
+
+* **Data Mapper:** Generalize selector and add it to Test Panel ([#5127](https://github.com/Azure/LogicAppsUX/issues/5127)) ([08cac71](https://github.com/Azure/LogicAppsUX/commit/08cac71943c1625eccd0e5b838a7336a6388acb1))
+* **Data Mapper:** More functionality in VSCode ([#5130](https://github.com/Azure/LogicAppsUX/issues/5130)) ([db7f3b3](https://github.com/Azure/LogicAppsUX/commit/db7f3b31fd157224b3584771c4a4d216413fab8b))
+* **Data Mapper:** Update nodes and edges ([#5126](https://github.com/Azure/LogicAppsUX/issues/5126)) ([27bc868](https://github.com/Azure/LogicAppsUX/commit/27bc868d37b223df2a7649207a86a7b3c5159387))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Function search updates ([#5138](https://github.com/Azure/LogicAppsUX/issues/5138)) ([44e9cf4](https://github.com/Azure/LogicAppsUX/commit/44e9cf4d65fdcaa42054590b7d8dd3d0c4646086))
+* **designer:** Fix Hybrid apis for standalone designer ([#5140](https://github.com/Azure/LogicAppsUX/issues/5140)) ([96af9c5](https://github.com/Azure/LogicAppsUX/commit/96af9c5514a641ac53073df8c1333db0f36b6cac))
+* **designer:** Fixed scope node collapse button keyboard interaction ([#5136](https://github.com/Azure/LogicAppsUX/issues/5136)) ([43adca5](https://github.com/Azure/LogicAppsUX/commit/43adca56f7e7e7f6d02cd1925635ba3fdd2b13fa))
+* **vscode:** Refactor Parameters.json into a separate artifact class when converting to NuGet project ([#5116](https://github.com/Azure/LogicAppsUX/issues/5116)) ([d04e8a9](https://github.com/Azure/LogicAppsUX/commit/d04e8a9c3ef6b6d331056458b2285864675f8843))
+
 ## [4.40.0](https://github.com/Azure/LogicAppsUX/compare/v4.39.0...v4.40.0) (2024-07-15)
 
 

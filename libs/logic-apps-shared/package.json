@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-shared",
-  "version": "4.40.0",
+  "version": "4.42.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@formatjs/intl": "^2.10.1",
