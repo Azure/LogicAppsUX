@@ -12,6 +12,7 @@ import { makeConnection, updateFunctionPosition, updateReactFlowEdges, updateRea
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
+import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -25,11 +26,16 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const [allNodes, setAllNodes] = useState<Node[]>([]);
-  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { nodes, edges, functionNodes, flattenedSourceSchema, flattenedTargetSchema, dataMapConnections } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
 
   const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
   });
+
+  const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
+  console.log(layout);
 
   useEffect(() => {
     if (ref?.current) {

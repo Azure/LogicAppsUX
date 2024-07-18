@@ -165,25 +165,28 @@ export class MapDefinitionDeserializer {
       func.key = funcKey;
 
       // function to target
-      applyConnectionValue(connections, {
-        targetNode: targetNode,
-        targetNodeReactFlowKey: this.getTargetKey(targetNode),
-        findInputSlot: true,
-        input: {
-          reactFlowKey: funcKey,
-          node: func,
-        },
-      });
+      if (targetNode !== undefined) {
+        applyConnectionValue(connections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: this.getTargetKey(targetNode),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: funcKey,
+            node: func,
+          },
+        });
 
-      // connect inputs
-      functionMetadata.inputs.forEach((input) => {
-        const srcStr = input.type !== 'Function' ? input.value : input.name;
-        this.handleSingleValueOrFunction(srcStr, input, func, connections);
-      });
+        // connect inputs
+        functionMetadata.inputs.forEach((input) => {
+          const srcStr = input.type !== 'Function' ? input.value : input.name;
+          this.handleSingleValueOrFunction(srcStr, input, func, connections);
+        });
+      }
     } else if (!sourceSchemaNode && functionMetadata.type !== 'Function') {
       // custom value or index
       this.handleSingleValue(key, targetNode, connections);
-    } else {
+    } else if (targetNode) {
+      //danielle temporary to unblock
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
@@ -317,7 +320,8 @@ export class MapDefinitionDeserializer {
       this._createdNodes
     ) as FunctionData;
     const funcKey = createReactFlowFunctionKey(func);
-    func.key = funcKey;
+    //func.key = funcKey;
+
     this.handleSingleValueOrFunction('', functionMetadata.inputs[0], func, connections);
     this.getFunctionForKey(funcKey);
     this._conditional = funcKey;
@@ -464,7 +468,8 @@ export class MapDefinitionDeserializer {
       const idk = createSchemaNodeOrFunction(directAccessSeparated);
 
       this.handleSingleValueOrFunction('', idk.term, targetNode, connections);
-    } else {
+    } else if (targetNode) {
+      //danielle temporary to unblock
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
