@@ -174,9 +174,13 @@ export async function getConnectionsAndSettingsToUpdate(
   connectionReferences: any,
   azureTenantId: string,
   workflowBaseManagementUri: string,
-  parametersFromDefinition: any
+  parametersFromDefinition: any,
+  skipProjectPath = false // Added new parameter with default value
 ): Promise<ConnectionAndSettings> {
-  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+  let projectPath = workflowFilePath;
+  if (!skipProjectPath) {
+    projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+  }
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
 
@@ -187,7 +191,7 @@ export async function getConnectionsAndSettingsToUpdate(
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
 
-    if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
+    if (isApiHubConnectionId(reference.connection.id) && referencesToAdd[referenceKey]) {
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -211,9 +215,13 @@ export async function getConnectionsAndSettingsToUpdate(
 export async function saveConnectionReferences(
   context: IActionContext,
   workflowFilePath: string,
-  connectionAndSettingsToUpdate: ConnectionAndSettings
+  connectionAndSettingsToUpdate: ConnectionAndSettings,
+  skipProjectPath = false
 ): Promise<void> {
-  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+  let projectPath = workflowFilePath;
+  if (!skipProjectPath) {
+    projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+  }
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);

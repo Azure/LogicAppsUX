@@ -1,7 +1,6 @@
 // Used createNewCodeProject.ts as a template to create this file
 // This file is used to take a zipped Logic App from the desktop and unzip to the local workspace
 // Reorganized file with constants at the top, grouped functions, and a main cloudToLocalInternal to call everything
-
 import {
   extensionCommand,
   funcVersionSetting,
@@ -24,11 +23,16 @@ import { deepMerge } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { extractConnectionDetails, changeAuthTypeToRaw } from './cloudToLocalHelper';
+import { getParametersJson } from '../../utils/codeless/parameter';
+import { writeFormattedJson } from '../../utils/fs';
+import { saveConnectionReferences, getConnectionsJson, getConnectionsAndSettingsToUpdate } from '../../utils/codeless/connection';
+import { parameterizeConnection } from '../../utils/codeless/parameterizer';
 import type {
-  ConnectionReferenceModel,
   ICreateFunctionOptions,
   IFunctionWizardContext,
   ProjectLanguage,
+  ConnectionsData,
 } from '@microsoft/vscode-extension-logic-apps';
 import { window } from 'vscode';
 import * as path from 'path';
@@ -37,10 +41,6 @@ import * as fs from 'fs';
 
 // Constants
 const openFolder = true;
-const DELIMITER = '/';
-const SUBSCRIPTION_INDEX = 2;
-const MANAGED_API_LOCATION_INDEX = 6;
-const MANAGED_CONNECTION_RESOURCE_GROUP_INDEX = 4;
 
 // Function to create an AdmZip instance
 function createAdmZipInstance(zipFilePath: string) {
@@ -53,53 +53,72 @@ function getZipEntries(zipFilePath: string) {
   return zip.getEntries();
 }
 
-// Function to extract connection details
-function extractConnectionDetails(connection: ConnectionReferenceModel): any {
-  const details = [];
-  if (connection) {
-    const managedApiConnections = connection['managedApiConnections'];
-    for (const connKey in managedApiConnections) {
-      if (Object.prototype.hasOwnProperty.call(managedApiConnections, connKey)) {
-        const idPath = managedApiConnections[connKey]['api']['id'];
-        const connectionidPath = managedApiConnections[connKey]['connection']['id'];
-        const apiIdParts = idPath.split(DELIMITER);
-        const connectionidParts = connectionidPath.split(DELIMITER);
-        if (apiIdParts) {
-          const detail = {
-            WORKFLOWS_SUBSCRIPTION_ID: apiIdParts[SUBSCRIPTION_INDEX],
-            WORKFLOWS_LOCATION_NAME: apiIdParts[MANAGED_API_LOCATION_INDEX],
-            WORKFLOWS_RESOURCE_GROUP_NAME: connectionidParts[MANAGED_CONNECTION_RESOURCE_GROUP_INDEX],
-          };
-          details.push(detail);
-        }
-      }
+async function getSettings(context: IActionContext, connections: any, workspacePath: any) {
+  const tenantId = '';
+  const parametersFileName = 'parameters.json';
+  const workflowManagementBaseUrl = 'https://management.azure.com/';
+  const settingsRecord: Record<string, string> = {};
+
+  console.log('getSettings: Start');
+  const connectionReferences = connections.managedApiConnections || {};
+  console.log('getSettings: Connection references obtained', connectionReferences);
+  const parameters = await getParametersJson(workspacePath);
+  const connectionsJson = await getConnectionsJson(workspacePath);
+
+  const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+  Object.keys(connectionsData).forEach(async (connectionType) => {
+    if (connectionType !== 'serviceProviderConnections') {
+      const connectionTypeJson = connectionsData[connectionType];
+      Object.keys(connectionTypeJson).forEach((connectionKey) => {
+        connectionTypeJson[connectionKey] = parameterizeConnection(
+          connectionTypeJson[connectionKey],
+          connectionKey,
+          parameters,
+          settingsRecord
+        );
+      });
+      await writeFormattedJson(path.join(workspacePath, parametersFileName), parameters);
     }
-  }
-  return details;
+  });
+  console.log('getSettings: Parameters', parameters);
+  const skipProjectPath = true;
+  console.log('getSettings: Before getConnectionsAndSettingsToUpdate');
+  const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
+    context,
+    workspacePath,
+    connectionReferences,
+    tenantId,
+    workflowManagementBaseUrl,
+    parameters,
+    skipProjectPath
+  );
+  return connectionsAndSettingsToUpdate;
 }
 
-// Function to change authentication type to Raw
-function changeAuthTypeToRaw(connections: ConnectionReferenceModel, connectionspath: string): void {
-  if (connections) {
-    const managedApiConnections = connections['managedApiConnections'];
-    for (const connKey in managedApiConnections) {
-      if (Object.prototype.hasOwnProperty.call(managedApiConnections, connKey)) {
-        const authType = managedApiConnections[connKey]['authentication']['type'];
-        if (authType === 'ManagedServiceIdentity') {
-          console.log(`Changing type for ${connKey} from ${authType} to Raw`);
-          managedApiConnections[connKey]['authentication']['type'] = 'Raw';
-          managedApiConnections[connKey]['authentication']['scheme'] = 'Key';
-          managedApiConnections[connKey]['authentication']['parameter'] = `@appsetting('${connKey}-connectionKey')`;
-        }
+function cleanLocalSettings(localSettingsPath: string) {
+  const localSettingsContent = fs.readFileSync(localSettingsPath, 'utf8');
+  const localSettings = JSON.parse(localSettingsContent);
+
+  if (localSettings.Values) {
+    Object.keys(localSettings.Values).forEach((key) => {
+      if (
+        key === 'WEBSITE_SITE_NAME' ||
+        key === 'WEBSITE_AUTH_ENABLED' ||
+        key === 'WEBSITE_SLOT_NAME' ||
+        key === 'ScmType' ||
+        key === 'FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'
+      ) {
+        console.log(`Deleting: ${key} = ${localSettings.Values[key]}`);
+        delete localSettings.Values[key];
+      } else if (key === 'AzureWebJobsStorage') {
+        localSettings.Values[key] = 'UseDevelopmentStorage=true';
       }
-    }
-    const data = JSON.stringify(connections, null, 2);
-    try {
-      fs.writeFileSync(connectionspath, data, 'utf8');
-      console.log('Connections updated and saved to file.');
-    } catch (error) {
-      console.error('Failed to write connections to file:', error);
-    }
+    });
+
+    fs.writeFileSync(localSettingsPath, JSON.stringify(localSettings, null, 2));
+    console.log('Local settings cleaned.');
+  } else {
+    console.log('No Values found in local settings.');
   }
 }
 
@@ -189,8 +208,8 @@ export async function cloudToLocalInternal(
       const connectionsValues = await fetchConnections();
       const connectionDetail = connectionsValues[0];
       const newValues = {
-        ...localSettings.Values,
         ...connectionDetail,
+        ...localSettings.Values,
       };
       const finalObject = {
         ...localSettings,
@@ -202,12 +221,19 @@ export async function cloudToLocalInternal(
       console.error('Error writing file:', error);
     }
   }
+  const skipProjectPath = true;
 
   deepMerge(localSettings, zipSettings);
   await mergeAndWriteConnections();
   const instance = new ZipFileStep();
   const connection = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
-  changeAuthTypeToRaw(connection, connectionspath);
+  fs.writeFileSync(connectionspath, changeAuthTypeToRaw(connection), 'utf-8');
+  cleanLocalSettings(localSettingsPath);
+  const connectionsAndSettingsUpdated = await getSettings(context, connection, wizardContext.workspacePath);
+
+  console.debug('Before saveConnectionReferences call');
+  await saveConnectionReferences(context, wizardContext.workspacePath, connectionsAndSettingsUpdated, skipProjectPath);
+  console.debug('After saveConnectionReferences call');
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
