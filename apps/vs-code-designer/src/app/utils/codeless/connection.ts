@@ -9,7 +9,6 @@ import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
-import * as parameterizer from './parameterizer';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -30,6 +29,7 @@ import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { parameterizeConnection } from './parameterizer';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -115,7 +115,7 @@ async function addConnectionDataInJson(
     return;
   }
 
-  parameterizer.parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+  parameterizeConnection(connectionData, connectionKey, parametersData, settings);
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
@@ -180,7 +180,7 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      parameterizer.parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
+      parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
 
       return connectionReference;
     })
