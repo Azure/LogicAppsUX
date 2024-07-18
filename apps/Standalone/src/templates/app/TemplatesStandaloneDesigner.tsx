@@ -80,7 +80,7 @@ export const TemplatesStandaloneDesigner = () => {
           const sanitizedParameterName = replaceWithWorkflowName(parameter.name, workflowName);
           sanitizedParameterData[sanitizedParameterName] = {
             type: parameter.type,
-            // description: parameter?.description,
+            description: parameter?.description,
             value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
           };
           sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
