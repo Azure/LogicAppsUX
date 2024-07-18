@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { useTheme, Image } from '@fluentui/react';
+import { useTheme } from '@fluentui/react';
 import { useMemo } from 'react';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
@@ -15,7 +15,7 @@ export const WorkflowPanel: React.FC = () => {
 
   return imageName ? (
     <div className="msla-template-workflow-preview">
-      <Image src={imageName} alt={manifest?.title} />
+      <img className="msla-template-workflow-preview-image" src={imageName} alt={manifest?.title} />
     </div>
   ) : null;
 };

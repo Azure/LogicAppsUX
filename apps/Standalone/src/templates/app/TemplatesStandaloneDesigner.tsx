@@ -36,6 +36,7 @@ import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
 import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
+import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 
 const workflowIdentifier = '#workflowname#';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
@@ -80,7 +81,7 @@ export const TemplatesStandaloneDesigner = () => {
           sanitizedParameterData[sanitizedParameterName] = {
             type: parameter.type,
             description: parameter?.description,
-            value: parameter?.value ?? parameter?.default,
+            value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
           };
           sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
             `@parameters('${parameter.name}')`,
@@ -198,42 +199,28 @@ export const TemplatesStandaloneDesigner = () => {
             >
               <TemplateFilters
                 detailFilters={{
-                  By: {
-                    displayName: 'By',
+                  Categories: {
+                    displayName: 'Category',
                     items: [
                       {
-                        value: 'Microsoft',
-                        displayName: 'Microsoft',
+                        value: 'Design Patterns',
+                        displayName: 'Design Patterns',
                       },
                       {
-                        value: 'Other',
-                        displayName: 'Other',
-                      },
-                    ],
-                  },
-                  Type: {
-                    displayName: 'Type',
-                    items: [
-                      {
-                        value: 'Workflow',
-                        displayName: 'Workflow',
+                        value: 'Generative AI',
+                        displayName: 'Generative AI',
                       },
                       {
-                        value: 'Other',
-                        displayName: 'Other',
-                      },
-                    ],
-                  },
-                  Industry: {
-                    displayName: 'Categories',
-                    items: [
-                      {
-                        value: 'Analytics',
-                        displayName: 'Analytics',
+                        value: 'B2B',
+                        displayName: 'B2B',
                       },
                       {
-                        value: 'IT',
-                        displayName: 'IT',
+                        value: 'EDI',
+                        displayName: 'EDI',
+                      },
+                      {
+                        value: 'Approval',
+                        displayName: 'Approval',
                       },
                     ],
                   },
