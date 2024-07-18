@@ -2,8 +2,8 @@ import { useShowMinimap } from '../core/state/designerView/designerViewSelectors
 import { useTheme } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useMemo, useCallback } from 'react';
-import type { XYPosition } from 'reactflow';
-import { MiniMap, useReactFlow } from 'reactflow';
+import type { XYPosition } from '@xyflow/react';
+import { MiniMap, useReactFlow } from '@xyflow/react';
 
 const nodeColorsLight: Record<WorkflowNodeType, any> = {
   OPERATION_NODE: { fill: '#ECECEC', stroke: '#A19F9D' },
