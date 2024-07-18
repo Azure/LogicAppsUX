@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.42.0](https://github.com/Azure/LogicAppsUX/compare/v4.41.0...v4.42.0) (2024-07-18)
+
+
+### Bug Fixes
+
+* **Templates:** Templates Not Loading on Portal ([#5134](https://github.com/Azure/LogicAppsUX/issues/5134)) ([1fcad28](https://github.com/Azure/LogicAppsUX/commit/1fcad28d041e0819f422b952fbba95c667b97e53))
+
 ## [4.41.0](https://github.com/Azure/LogicAppsUX/compare/v4.40.0...v4.41.0) (2024-07-17)
 
 
