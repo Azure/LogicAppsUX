@@ -1,4 +1,4 @@
-import { getStraightPath, type EdgeProps } from 'reactflow';
+import { getStraightPath, type EdgeProps } from '@xyflow/react';
 
 const ConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY } = props;
