@@ -243,6 +243,20 @@ const getWorkflowParameters = (
   }, {});
 };
 
+export const parseWorkflowParameterValue = (parameterType: any, parameterValue: any) => {
+  const isStringParameter =
+    equals(parameterType, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
+    equals(parameterType, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
+
+  return isStringParameter
+    ? parameterValue
+    : parameterValue === ''
+      ? undefined
+      : typeof parameterValue !== 'string'
+        ? parameterValue
+        : JSON.parse(parameterValue);
+};
+
 export const serializeOperation = async (
   rootState: RootState,
   operationId: string,

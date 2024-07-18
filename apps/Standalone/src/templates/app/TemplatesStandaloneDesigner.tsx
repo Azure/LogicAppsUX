@@ -36,6 +36,7 @@ import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
 import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
+import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 
 const workflowIdentifier = '#workflowname#';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
@@ -79,8 +80,8 @@ export const TemplatesStandaloneDesigner = () => {
           const sanitizedParameterName = replaceWithWorkflowName(parameter.name, workflowName);
           sanitizedParameterData[sanitizedParameterName] = {
             type: parameter.type,
-            description: parameter?.description,
-            value: parameter?.value ?? parameter?.default,
+            // description: parameter?.description,
+            value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
           };
           sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
             `@parameters('${parameter.name}')`,
