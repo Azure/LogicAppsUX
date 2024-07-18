@@ -128,11 +128,12 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       <div className={css('msla-subgraph-card', data.size)} style={colorVars} tabIndex={-1}>
         <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
         <button
+          id={`msla-node-${id}`}
           className="msla-subgraph-title"
           onClick={handleTitleClick}
           onContextMenu={contextMenu.handle}
-          onKeyDown={mainKeyboardInteraction.keyUp}
-          onKeyUp={mainKeyboardInteraction.keyDown}
+          onKeyDown={mainKeyboardInteraction.keyDown}
+          onKeyUp={mainKeyboardInteraction.keyUp}
         >
           <div className="msla-subgraph-title-text">{data.title}</div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}

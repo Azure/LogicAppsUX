@@ -16,6 +16,7 @@ export interface ScopeCardProps extends CardProps {
 }
 
 export const ScopeCard: React.FC<ScopeCardProps> = ({
+  id,
   active = true,
   brandColor,
   collapsed,
@@ -85,6 +86,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
             <button
+              id={`msla-node-${id}`}
               className="msla-scope-card-title-button"
               ref={focusRef as any}
               onClick={handleClick}

@@ -165,6 +165,8 @@ export const PanelContainer = ({
     description: 'label for panel error',
   });
 
+  const selectedElement = nodeId ? document.getElementById(`msla-node-${nodeId}`) ?? undefined : undefined;
+
   return (
     <Panel
       aria-label={panelLabel}
@@ -173,7 +175,12 @@ export const PanelContainer = ({
       headerText={title || panelLabel}
       isOpen
       onRenderHeader={renderHeader ?? defaultRenderHeader}
-      focusTrapZoneProps={{ disabled: isCollapsed }}
+      focusTrapZoneProps={{
+        disabled: isCollapsed,
+        firstFocusableTarget: '#msla-panel-header-collapse-nav',
+        forceFocusInsideTrap: !isCollapsed,
+      }}
+      elementToFocusOnDismiss={selectedElement}
       isBlocking={false}
       hasCloseButton={false}
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}

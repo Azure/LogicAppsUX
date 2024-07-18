@@ -720,10 +720,9 @@
 
   &:focus {
     outline: none;
-    // TODO: This overlaps the selection blue, looks strange
-    // .msla-selection-box {
-    //   border: 2px solid #605e5c;
-    // }
+    .msla-selection-box {
+      border: 2px solid #000000;
+    }
   }
 
   &:focus,
@@ -1101,6 +1100,12 @@
         color: @ms-color-black;
       }
     }
+
+		&:focus {
+			.msla-selection-box {
+				border: 2px solid #ffffff;
+			}
+		}
   }
 
   .msla-panel-card-container--no-action {

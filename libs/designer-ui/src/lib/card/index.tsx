@@ -62,6 +62,7 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
 };
 
 export const Card: React.FC<CardProps> = ({
+  id,
   active = true,
   brandColor,
   cloned,
@@ -171,6 +172,7 @@ export const Card: React.FC<CardProps> = ({
           drag(node);
         }}
         aria-describedby={describedBy}
+        id={`msla-node-${id}`}
         className={css(
           'msla-panel-card-container',
           selected && 'msla-panel-card-container-selected',

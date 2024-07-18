@@ -14,7 +14,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       panelScope: PanelScope.CardLevel,
       panelHeaderMenu: [],
       showCommentBox: true,
-      tabs: {},
+      tabs: [],
       title: 'test title',
       width: '630px',
       onCommentChange: vi.fn(),
