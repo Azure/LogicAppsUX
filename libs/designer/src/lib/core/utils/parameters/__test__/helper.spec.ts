@@ -2511,7 +2511,7 @@ describe('core/utils/parameters/helper', () => {
 
       // For values using `body/*` syntax, use OUTPUTS.
       ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
-    ])('correctly gets the token expression for %p', (key, actionName, expected) => {
+    ])('correctly gets the token expression for "%s"', (key, actionName, expected) => {
       expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
     });
   });
