@@ -133,6 +133,8 @@ export const PanelHeader = ({
     return (
       <Tooltip relationship="label" positioning={'before'} content={buttonText}>
         <Button
+          autoFocus={!isCollapsed}
+          id="msla-panel-header-collapse-nav"
           appearance="subtle"
           icon={<DismissIcon />}
           className={className}
