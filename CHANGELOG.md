@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.43.0](https://github.com/Azure/LogicAppsUX/compare/v4.42.0...v4.43.0) (2024-07-18)
+
+
+### Features
+
+* **designer:** Migrated reactflow to @xyflow/react version 12 ([#5139](https://github.com/Azure/LogicAppsUX/issues/5139)) ([0f871dd](https://github.com/Azure/LogicAppsUX/commit/0f871dd83ed83c37fa104abb5d83d95a68419963))
+* **Templates:** Parameters Type Validate + Minor UI Sanitary Check ([#5145](https://github.com/Azure/LogicAppsUX/issues/5145)) ([248a3c7](https://github.com/Azure/LogicAppsUX/commit/248a3c7a4dc1d99ac4318ed1c12fc1f4977f60b8))
+
+
+### Bug Fixes
+
+* **Designer:** Focus moves in/out of node details panel as it is opened/closed ([#5148](https://github.com/Azure/LogicAppsUX/issues/5148)) ([45bc6e1](https://github.com/Azure/LogicAppsUX/commit/45bc6e12952dda8a2161b1f2981ed8ab2efbe778))
+
 ## [4.42.0](https://github.com/Azure/LogicAppsUX/compare/v4.41.0...v4.42.0) (2024-07-18)
 
 
