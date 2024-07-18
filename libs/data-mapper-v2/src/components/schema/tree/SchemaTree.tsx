@@ -5,7 +5,7 @@ import { useState, useMemo, useLayoutEffect, useRef, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { flattenSchemaNodeMap } from '../../../utils';
-import { type Node, applyNodeChanges, type NodeChange } from 'reactflow';
+import { type Node, applyNodeChanges, type NodeChange } from '@xyflow/react';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateReactFlowNodes } from '../../../core/state/DataMapSlice';

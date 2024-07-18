@@ -1,4 +1,4 @@
-import type { XYPosition } from 'reactflow';
+import type { XYPosition } from '@xyflow/react';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/logic-apps-shared';
 

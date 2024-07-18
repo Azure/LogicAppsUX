@@ -2,7 +2,7 @@ import type { MenuOpenChangeData } from '@fluentui/react-components';
 import { Menu, MenuPopover, MenuList } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useOnViewportChange } from 'reactflow';
+import { useOnViewportChange } from '@xyflow/react';
 
 export interface CardContextMenuProps {
   contextMenuLocation?: { x: number; y: number };

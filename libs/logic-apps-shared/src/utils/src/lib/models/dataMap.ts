@@ -1,4 +1,4 @@
-import type { Dimensions, XYPosition } from 'reactflow';
+import type { Dimensions, XYPosition } from '@xyflow/react';
 
 export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[] };
 

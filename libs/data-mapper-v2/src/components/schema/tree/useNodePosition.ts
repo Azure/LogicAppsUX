@@ -1,5 +1,5 @@
 import { useState, useLayoutEffect, useContext } from 'react';
-import type { XYPosition } from 'reactflow';
+import type { XYPosition } from '@xyflow/react';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { DataMapperWrappedContext } from '../../../core';
 

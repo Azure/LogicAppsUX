@@ -12,6 +12,7 @@ export * from './subscription';
 export * from './theme';
 export * from './dataMap';
 export * from './dataMapSchema';
+export * from './helpers';
 
 import * as LogicApps from './logicApps';
 import * as LogicAppsV2 from './logicAppsV2';

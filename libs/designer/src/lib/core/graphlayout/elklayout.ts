@@ -14,7 +14,7 @@ import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import type { Edge, Node } from 'reactflow';
+import type { Edge, Node } from '@xyflow/react';
 
 export const layerSpacing = {
   default: '64',
@@ -90,9 +90,10 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
           id: n.id,
           position: { x: n.x ?? 0, y: n.y ?? 0 },
           data: { label: n.id },
-          parentNode: node.id !== 'root' ? node.id : undefined,
+          parentId: node.id !== 'root' ? node.id : undefined,
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
-          style: n?.children && n?.height ? { height: n?.height, width: n?.width } : undefined,
+          width: n?.children ? n?.width : undefined,
+          height: n?.children ? n?.height : undefined,
         });
 
         const farWidth = (n?.x ?? 0) + (n?.width ?? 0);

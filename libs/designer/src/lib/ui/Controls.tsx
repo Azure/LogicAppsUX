@@ -5,7 +5,7 @@ import { Icon, useTheme } from '@fluentui/react';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { ControlButton, Controls } from 'reactflow';
+import { ControlButton, Controls } from '@xyflow/react';
 
 const CustomControls = () => {
   const intl = useIntl();

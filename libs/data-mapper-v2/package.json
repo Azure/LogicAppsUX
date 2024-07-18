@@ -16,6 +16,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
+    "@xyflow/react": "^12.0.2",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
     "js-yaml": "4.1.0",
@@ -25,7 +26,6 @@
     "react-icons": "4.8.0",
     "react-intl": "6.3.0",
     "react-redux": "8.0.2",
-    "reactflow": "11.11.1",
     "redux-thunk": "2.4.2",
     "redux-undo": "1.1.0",
     "use-resize-observer": "^9.1.0"

@@ -12,8 +12,8 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: '~reactflow',
-        replacement: 'reactflow',
+        find: '~@xyflow/react',
+        replacement: '@xyflow/react',
       },
     ],
   },

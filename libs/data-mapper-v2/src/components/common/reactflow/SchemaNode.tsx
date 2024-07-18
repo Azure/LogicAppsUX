@@ -1,10 +1,11 @@
-import { Handle, Position, useEdges, useUpdateNodeInternals, type NodeProps } from 'reactflow';
+import { Handle, Position, useEdges, useUpdateNodeInternals, type NodeProps, type Node } from '@xyflow/react';
 import type { SchemaNodeReactFlowDataProps } from '../../../models/ReactFlow';
 import { mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useRef, useEffect, useMemo } from 'react';
+import type { StringIndexed } from '@microsoft/logic-apps-shared';
 
-const SchemaNode = (props: NodeProps<SchemaNodeReactFlowDataProps>) => {
+const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataProps>, 'schema'>>) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   const { data, id } = props;
   const { isLeftDirection } = data;

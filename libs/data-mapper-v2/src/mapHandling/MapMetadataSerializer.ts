@@ -1,4 +1,4 @@
-import type { Dimensions } from 'reactflow';
+import type { Dimensions } from '@xyflow/react';
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { ConnectionAndOrder, FunctionMetadata, MapMetadataV2 } from '@microsoft/logic-apps-shared';
