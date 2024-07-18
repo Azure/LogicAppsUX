@@ -199,42 +199,28 @@ export const TemplatesStandaloneDesigner = () => {
             >
               <TemplateFilters
                 detailFilters={{
-                  By: {
-                    displayName: 'By',
+                  Categories: {
+                    displayName: 'Category',
                     items: [
                       {
-                        value: 'Microsoft',
-                        displayName: 'Microsoft',
+                        value: 'Design Patterns',
+                        displayName: 'Design Patterns',
                       },
                       {
-                        value: 'Other',
-                        displayName: 'Other',
-                      },
-                    ],
-                  },
-                  Type: {
-                    displayName: 'Type',
-                    items: [
-                      {
-                        value: 'Workflow',
-                        displayName: 'Workflow',
+                        value: 'Generative AI',
+                        displayName: 'Generative AI',
                       },
                       {
-                        value: 'Other',
-                        displayName: 'Other',
-                      },
-                    ],
-                  },
-                  Industry: {
-                    displayName: 'Categories',
-                    items: [
-                      {
-                        value: 'Analytics',
-                        displayName: 'Analytics',
+                        value: 'B2B',
+                        displayName: 'B2B',
                       },
                       {
-                        value: 'IT',
-                        displayName: 'IT',
+                        value: 'EDI',
+                        displayName: 'EDI',
+                      },
+                      {
+                        value: 'Approval',
+                        displayName: 'Approval',
                       },
                     ],
                   },
