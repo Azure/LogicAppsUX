@@ -90,7 +90,7 @@ describe('Parameter Key Utility Tests', () => {
       ['body.foo', 'body~1foo'],
       ['body/foo', 'body.body/foo'],
       ['body/foo/Bar', 'body.body/foo.body/foo/Bar'],
-    ])('%p evaluates to %p', (input, expected) => {
+    ])('"%s" evaluates to "%s"', (input, expected) => {
       expect(ParameterKeyUtility.expandAndEncodePropertySegment(input)).toBe(expected);
     });
   });

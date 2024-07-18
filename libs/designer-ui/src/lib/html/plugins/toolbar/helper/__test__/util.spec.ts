@@ -25,7 +25,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['<span id="@{variables(\'abc\')}">text</span>', '<span id="@{variables(\'abc\')}">text</span>'],
       ['<span id="@{concat(\'&lt;\')}">text</span>', '<span id="@{concat(\'&lt;\')}">text</span>'],
       ['<span id="@{concat(\'%26lt;\')}">text</span>', '<span id="@{concat(\'%26lt;\')}">text</span>'],
-    ])('should properly convert HTML: %p', (input, expected) => {
+    ])('should properly convert HTML: "%s"', (input, expected) => {
       expect(cleanHtmlString(input)).toBe(expected);
     });
   });
@@ -36,7 +36,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['white-space: pre-wrap;', undefined],
       ['color: red; white-space: pre-wrap;', 'color: red;'],
       ['white-space: pre-wrap; color: red;', 'color: red;'],
-    ])('should return style=%p as %p', (input, expected) => {
+    ])('should return style="%s" as "%s"', (input, expected) => {
       expect(cleanStyleAttribute(input)).toBe(expected);
     });
   });
@@ -50,7 +50,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["$[concat(...),concat('%3C()%3E'),#AD008C]$", "$[concat(...),concat('<()>'),#AD008C]$"],
       ["@{concat('abc')}", "@{concat('abc')}"],
       ["@{concat('%3C()%3E')}", "@{concat('<()>')}"],
-    ])('should properly decode segments in: %p', (input, expected) => {
+    ])('should properly decode segments in: "%s"', (input, expected) => {
       expect(decodeSegmentValueInDomContext(input)).toBe(expected);
     });
   });
@@ -64,7 +64,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["$[concat(...),concat('<()>'),#AD008C]$", "$[concat(...),concat('%3C()%3E'),#AD008C]$"],
       ["@{concat('abc')}", "@{concat('abc')}"],
       ["@{concat('<()>')}", "@{concat('%3C()%3E')}"],
-    ])('should properly encode segments in: %p', (input, expected) => {
+    ])('should properly encode segments in: "%s"', (input, expected) => {
       expect(encodeSegmentValueInDomContext(input)).toBe(expected);
     });
   });
@@ -83,7 +83,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["@{concat('abc')}", "@{concat('abc')}"],
       ["@{concat('%26lt;')}", "@{concat('&lt;')}"],
       ["@{concat('%26amp;lt;')}", "@{concat('&amp;lt;')}"],
-    ])('should properly decode segments in: %p', (input, expected) => {
+    ])('should properly decode segments in: "%s"', (input, expected) => {
       expect(decodeSegmentValueInLexicalContext(input)).toBe(expected);
     });
   });
@@ -102,7 +102,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ["@{concat('abc')}", "@{concat('abc')}"],
       ["@{concat('&lt;')}", "@{concat('%26lt;')}"],
       ["@{concat('&amp;lt;')}", "@{concat('%26amp;lt;')}"],
-    ])('should properly encode segments in: %p', (input, expected) => {
+    ])('should properly encode segments in: "%s"', (input, expected) => {
       expect(encodeSegmentValueInLexicalContext(input)).toBe(expected);
     });
   });
@@ -132,7 +132,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['img', 'src', true],
       ['table', 'class', true],
       ['table', 'cellpadding', true],
-    ])('should return <%s %s="..." /> as supported=%p', (inputTag, inputAttr, expected) => {
+    ])('should return <%s %s="..." /> as supported="%s"', (inputTag, inputAttr, expected) => {
       expect(isAttributeSupportedByHtmlEditor(inputTag, inputAttr)).toBe(expected);
     });
   });
@@ -148,7 +148,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['small string using <h1>', true, case2],
       ['large string using <a>, <u>, <h3>, <span>', true, case3],
       ['small string using <section>', false, case4],
-    ])('should return %p as supported=%p', (_caseName, expected, inputString) => {
+    ])('should return "%s" as supported="%s"', (_caseName, expected, inputString) => {
       const nodeMap = new Map<string, ValueSegment>();
       expect(isHtmlStringValueSafeForLexical(inputString, nodeMap)).toBe(expected);
     });
@@ -183,7 +183,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['strong', true],
       ['u', true],
       ['ul', true],
-    ])('should return <%s /> as supported=%p', (inputTag, expected) => {
+    ])('should return <%s /> as supported="%s"', (inputTag, expected) => {
       expect(isTagNameSupportedByLexical(inputTag)).toBe(expected);
     });
   });

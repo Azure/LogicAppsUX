@@ -156,7 +156,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
           { type: ValueSegmentType.LITERAL, value: ' t3' },
         ],
       ],
-    ])('parses segments out of %p with appropriate node map', (input, expectedTokens) => {
+    ])('parses segments out of "%s" with appropriate node map', (input, expectedTokens) => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
       nodeMap.set(`@{variables('@{')}`, { id: '', ...getInitializeVariableOpenBraceToken() });
@@ -185,7 +185,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         `Text before @{body('Create_new_folder')?['{Link}']} text after`,
         [{ type: ValueSegmentType.LITERAL, value: `Text before @{body('Create_new_folder')?['{Link}']} text after` }],
       ],
-    ])('parses segments out of %p with an empty node map', (input, expectedTokens) => {
+    ])('parses segments out of "%s" with an empty node map', (input, expectedTokens) => {
       const nodeMap = new Map<string, ValueSegment>();
 
       const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true });

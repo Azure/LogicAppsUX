@@ -73,7 +73,7 @@ describe('lib/helpers/functions', () => {
       ['foo', 'FOO', true],
       ['ßß', 'SSSS', true],
       ['ς', 'Σ', true],
-    ])('returns the correct result for %p=%p, case-insensitive true/default', (a, b, expected) => {
+    ])('returns the correct result for "%s"="%s", case-insensitive true/default', (a, b, expected) => {
       expect(equals(a, b)).toBe(expected);
       expect(equals(a, b, true)).toBe(expected);
     });
@@ -86,7 +86,7 @@ describe('lib/helpers/functions', () => {
       ['foo', 'FOO', false],
       ['ßß', 'SSSS', false],
       ['ς', 'Σ', false],
-    ])('returns the correct result for %p=%p, case-insensitive false', (a, b, expected) => {
+    ])('returns the correct result for "%s"="%s", case-insensitive false', (a, b, expected) => {
       expect(equals(a, b, false)).toBe(expected);
     });
   });
