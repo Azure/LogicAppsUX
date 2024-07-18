@@ -19,7 +19,7 @@ import { ZipFileStep } from '../createNewProject/createProjectSteps/ZipFileStep'
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
-import { deepMerge } from '@microsoft/logic-apps-shared';
+import { extend } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
@@ -223,7 +223,7 @@ export async function cloudToLocalInternal(
   }
   const skipProjectPath = true;
 
-  deepMerge(localSettings, zipSettings);
+  extend(localSettings, zipSettings);
   await mergeAndWriteConnections();
   const instance = new ZipFileStep();
   const connection = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
