@@ -2,7 +2,7 @@ import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface ITemplateService {
   getExistingWorkflowNames: () => Promise<string[]>;
-  openBladeAfterCreate: () => void;
+  openBladeAfterCreate: (workflowName: string) => void;
 }
 
 let service: ITemplateService;

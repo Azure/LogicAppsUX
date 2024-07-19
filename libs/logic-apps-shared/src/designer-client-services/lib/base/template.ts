@@ -8,5 +8,5 @@ export interface TemplateServiceOptions {
     subscription: string;
     gateway: string;
   };
-  openBladeAfterCreate: () => void;
+  openBladeAfterCreate: (workflowName: string) => void;
 }
