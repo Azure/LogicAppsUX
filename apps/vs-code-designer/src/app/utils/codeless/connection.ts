@@ -127,7 +127,7 @@ async function addConnectionDataInJson(
 
 export function isKeyExpired(jwtTokenHelper: JwtTokenHelper, date: number, connectionKey: string, bufferInHours: number): boolean {
   const payload: Record<string, any> = jwtTokenHelper.extractJwtTokenPayload(connectionKey);
-  const secondsSinceEpoch = Math.round(date / 1000);
+  const secondsSinceEpoch = date / 1000;
   const buffer = bufferInHours * 3600; // convert to seconds
   const expiry = payload[JwtTokenConstants.expiry];
 
