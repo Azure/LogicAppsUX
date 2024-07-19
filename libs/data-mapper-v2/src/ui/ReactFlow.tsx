@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback, useState } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { Connection, Node, Edge, ConnectionLineComponent, NodeDragHandler, NodeProps } from 'reactflow';
 import ReactFlow, { addEdge, useReactFlow } from 'reactflow';
@@ -12,10 +12,11 @@ import { makeConnection, updateFunctionPosition, updateReactFlowEdges, updateRea
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
+import type { Bounds } from '../core';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
-  updateCanvasBoundsParent: (bounds: DOMRect | undefined) => void;
+  updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
 }
 
 export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DMReactFlowProps) => {
@@ -27,16 +28,19 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const [allNodes, setAllNodes] = useState<Node[]>([]);
   const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
-  const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
+  const { width = undefined, height = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (ref?.current) {
-      const bounds = ref.current.getBoundingClientRect();
-      bounds.width = width;
-      bounds.height = height;
-      updateCanvasBoundsParent(bounds);
+      const rect = ref.current.getBoundingClientRect();
+      updateCanvasBoundsParent({
+        x: rect.x,
+        y: rect.y,
+        height: height,
+        width: width,
+      });
     }
   }, [ref, updateCanvasBoundsParent, width, height]);
 

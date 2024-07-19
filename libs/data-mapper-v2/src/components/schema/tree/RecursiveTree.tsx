@@ -1,10 +1,11 @@
 import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClasses } from '@fluentui/react-components';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useStyles } from './styles';
-import type { Node } from 'reactflow';
+import type { Node, XYPosition } from 'reactflow';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
+import useOnScreen from './useOnScreen';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -13,23 +14,28 @@ type RecursiveTreeProps = {
   setOpenKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   flattenedScehmaMap: Record<string, SchemaNodeExtended>;
   setUpdatedNode: (node: Node) => void;
+  treePosition?: XYPosition;
 };
 
 const RecursiveTree = (props: RecursiveTreeProps) => {
-  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNode } = props;
+  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNode, treePosition } = props;
   const { key } = root;
+  const nodeVisble = useMemo(() => !!flattenedScehmaMap[key], [flattenedScehmaMap, key]);
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
+  const onScreen = useOnScreen(nodeRef);
+  const [nodePosition, setNodePosition] = useState<XYPosition>();
 
   const {
     position: { x, y } = { x: undefined, y: undefined },
   } = useNodePosition({
     key: key,
     openKeys: openKeys,
+    onScreen: onScreen,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
-    nodeX: nodeRef.current?.getBoundingClientRect().x,
-    nodeY: nodeRef.current?.getBoundingClientRect().y,
+    nodePosition: nodePosition,
+    treePosition,
   });
 
   const onOpenChange = useCallback(
@@ -48,6 +54,25 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [setOpenKeys]
   );
 
+  const handleScroll = useCallback(() => {
+    if (nodeRef?.current) {
+      setNodePosition({
+        x: nodeRef.current.getBoundingClientRect().x,
+        y: nodeRef.current.getBoundingClientRect().y,
+      });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodeRef, nodeRef?.current, setNodePosition]);
+
+  useLayoutEffect(() => {
+    if (nodeRef?.current) {
+      nodeRef.current.addEventListener('scroll', handleScroll);
+      handleScroll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodeRef, nodeRef?.current, setNodePosition]);
+
   useLayoutEffect(() => {
     const nodeId = getReactFlowNodeId(root.key, isLeftDirection);
     if (x !== undefined && y !== undefined) {
@@ -63,6 +88,10 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       });
     }
   }, [isLeftDirection, x, y, root, setUpdatedNode]);
+
+  if (!nodeVisble) {
+    return null;
+  }
 
   if (root.children.length === 0) {
     return (
@@ -87,6 +116,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
               setOpenKeys={setOpenKeys}
               flattenedScehmaMap={flattenedScehmaMap}
               setUpdatedNode={setUpdatedNode}
+              treePosition={treePosition}
             />
           </span>
         ))}
