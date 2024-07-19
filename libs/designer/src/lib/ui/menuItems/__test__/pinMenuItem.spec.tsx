@@ -5,7 +5,7 @@ import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, exp
 
 import * as PanelSelectors from '../../../core/state/panelV2/panelSelectors';
 
-describe('lib/card', () => {
+describe('lib/ui/menuItems/pinMenuItem', () => {
   it.each([true, false])('should render for actions if pinned=%s', (isPinned) => {
     vi.spyOn(PanelSelectors, 'useIsNodePinned').mockReturnValue(isPinned);
     const tree = renderer.create(<PinMenuItem nodeId="List_folder" onClick={vi.fn()} />).toJSON();
