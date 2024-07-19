@@ -122,10 +122,12 @@ export const reviewCreateTab = (
   dispatch: AppDispatch,
   onCreateClick: () => Promise<void>,
   {
+    workflowName,
     isLoadingCreate,
     isCreated,
     isPrimaryButtonDisabled,
   }: {
+    workflowName: string;
     isLoadingCreate: boolean;
     isCreated: boolean;
     isPrimaryButtonDisabled: boolean;
@@ -172,7 +174,11 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate() : isLoadingCreate ? () => {} : onCreateClick,
+    primaryButtonOnClick: isCreated
+      ? () => TemplateService()?.openBladeAfterCreate(workflowName)
+      : isLoadingCreate
+        ? () => {}
+        : onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
     secondaryButtonText: isCreated
       ? intl.formatMessage({
