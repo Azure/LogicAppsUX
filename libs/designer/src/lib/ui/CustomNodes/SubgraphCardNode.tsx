@@ -39,7 +39,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
 
-  const pinned = useIsNodePinned(subgraphId);
+  const isPinned = useIsNodePinned(subgraphId);
   const selected = useIsNodeSelected(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
@@ -135,7 +135,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
                 title={label}
-                selectionMode={selected ? 'selected' : pinned ? 'pinned' : false}
+                selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}
                 collapsed={graphCollapsed}

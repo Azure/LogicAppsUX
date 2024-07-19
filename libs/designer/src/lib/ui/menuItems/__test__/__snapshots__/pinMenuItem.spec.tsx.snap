@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/card > should render for actions if pinned=false 1`] = `
+exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=false 1`] = `
 <div
   className="fui-MenuItem rszfvis"
   data-automation-id="msla-pin-menu-option"
@@ -51,7 +51,7 @@ exports[`lib/card > should render for actions if pinned=false 1`] = `
 </div>
 `;
 
-exports[`lib/card > should render for actions if pinned=true 1`] = `
+exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=true 1`] = `
 <div
   className="fui-MenuItem rszfvis"
   data-automation-id="msla-pin-menu-option"

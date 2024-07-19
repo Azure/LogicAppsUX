@@ -156,7 +156,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [readOnly, metadata]
   );
 
-  const pinned = useIsNodePinned(scopeId);
+  const isPinned = useIsNodePinned(scopeId);
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -347,7 +347,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             readOnly={readOnly}
             onClick={nodeClick}
             onDeleteClick={deleteClick}
-            selectionMode={selected ? 'selected' : pinned ? 'pinned' : false}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
