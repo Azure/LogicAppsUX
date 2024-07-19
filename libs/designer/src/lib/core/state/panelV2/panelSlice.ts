@@ -242,6 +242,8 @@ export const panelSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
 
+    // The below matchers are used to ensure that dispatches made to v1 panel are consumed by v2 panel as well.
+    // Once v1 panel is deprecated & deleted, these can be safely removed.
     builder.addMatcher(isAnyOf(panelV1ExpandPanel), (state) => panelSlice.caseReducers.expandPanel(state));
     builder.addMatcher(isAnyOf(panelV1CollapsePanel), (state) => panelSlice.caseReducers.collapsePanel(state));
     builder.addMatcher(isAnyOf(panelV1ClearPanel), (state) => panelSlice.caseReducers.clearPanel(state));
@@ -249,14 +251,23 @@ export const panelSlice = createSlice({
     builder.addMatcher(isAnyOf(panelV1SetSelectedNodeId), (state, action) => panelSlice.caseReducers.setSelectedNodeId(state, action));
     builder.addMatcher(isAnyOf(panelV1SetSelectedNodeIds), (state, action) => panelSlice.caseReducers.setSelectedNodeIds(state, action));
     builder.addMatcher(isAnyOf(panelV1ChangePanelNode), (state, action) => panelSlice.caseReducers.changePanelNode(state, action));
-    builder.addMatcher(isAnyOf(panelV1ExpandDiscoveryPanel), (state, action) => panelSlice.caseReducers.expandDiscoveryPanel(state, action));
-    builder.addMatcher(isAnyOf(panelV1SelectOperationGroupId), (state, action) => panelSlice.caseReducers.selectOperationGroupId(state, action));
+    builder.addMatcher(isAnyOf(panelV1ExpandDiscoveryPanel), (state, action) =>
+      panelSlice.caseReducers.expandDiscoveryPanel(state, action)
+    );
+    builder.addMatcher(isAnyOf(panelV1SelectOperationGroupId), (state, action) =>
+      panelSlice.caseReducers.selectOperationGroupId(state, action)
+    );
     builder.addMatcher(isAnyOf(panelV1SelectOperationId), (state, action) => panelSlice.caseReducers.selectOperationId(state, action));
     builder.addMatcher(isAnyOf(panelV1OpenPanel), (state, action) => panelSlice.caseReducers.openPanel(state, action));
     builder.addMatcher(isAnyOf(panelV1SelectPanelTab), (state, action) => panelSlice.caseReducers.selectPanelTab(state, action));
     builder.addMatcher(isAnyOf(panelV1SetIsPanelLoading), (state, action) => panelSlice.caseReducers.setIsPanelLoading(state, action));
-    builder.addMatcher(isAnyOf(panelV1SetIsCreatingConnection), (state, action) => panelSlice.caseReducers.setIsCreatingConnection(state, action));
-    builder.addMatcher(isAnyOf(panelV1SelectErrorsPanelTab), (state, action) => panelSlice.caseReducers.selectErrorsPanelTab(state, action));
+    builder.addMatcher(isAnyOf(panelV1SetIsCreatingConnection), (state, action) =>
+      panelSlice.caseReducers.setIsCreatingConnection(state, action)
+    );
+    builder.addMatcher(isAnyOf(panelV1SelectErrorsPanelTab), (state, action) =>
+      panelSlice.caseReducers.selectErrorsPanelTab(state, action)
+    );
+    // End v1 panel matchers.
   },
 });
 
