@@ -1,5 +1,4 @@
 import type { PanelLocation } from '@microsoft/designer-ui';
-import type { RelationshipIds } from './panelInterfaces';
 
 export interface PanelState {
   connectionContent: ConnectionPanelContentState;
@@ -14,6 +13,12 @@ export interface PanelState {
   operationContent: OperationPanelContentState;
   previousPanelMode: PanelMode | undefined;
   workflowParametersContent: WorkflowParametersPanelContentState;
+}
+
+export interface RelationshipIds {
+  graphId: string;
+  parentId?: string;
+  childId?: string;
 }
 
 export interface ConnectionPanelContentState {
