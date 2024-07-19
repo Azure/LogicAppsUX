@@ -1,7 +1,7 @@
-import { azurePublicBaseUrl, connectionsFileName } from '../../../constants';
+import { azurePublicBaseUrl, connectionsFileName, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
-import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
+import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
@@ -9,13 +9,13 @@ import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
-import * as parameterizer from './parameterizer';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
+  ILocalSettingsJson,
   ServiceProviderConnectionModel,
   ConnectionAndSettings,
   ConnectionReferenceModel,
@@ -24,10 +24,12 @@ import type {
   ConnectionAndAppSetting,
   Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
+import { JwtTokenHelper, JwtTokenConstants, resolveConnectionsReferences } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { parameterizeConnection } from './parameterizer';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -113,7 +115,7 @@ async function addConnectionDataInJson(
     return;
   }
 
-  parameterizer.parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+  parameterizeConnection(connectionData, connectionKey, parametersData, settings);
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
@@ -121,6 +123,25 @@ async function addConnectionDataInJson(
   if (!connectionsFileExists && (await isCSharpProject(context, functionAppPath))) {
     await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
   }
+}
+
+export function isKeyExpired(jwtTokenHelper: JwtTokenHelper, date: number, connectionKey: string, bufferInHours: number): boolean {
+  const payload: Record<string, any> = jwtTokenHelper.extractJwtTokenPayload(connectionKey);
+  const secondsSinceEpoch = date / 1000;
+  const buffer = bufferInHours * 3600; // convert to seconds
+  const expiry = payload[JwtTokenConstants.expiry];
+
+  return expiry - buffer <= secondsSinceEpoch;
+}
+
+function formatSetting(setting: string): string {
+  if (setting.endsWith('/')) {
+    setting = setting.substring(0, setting.length - 1);
+  }
+  if (setting.startsWith('/')) {
+    setting = setting.substring(1);
+  }
+  return setting;
 }
 
 async function getConnectionReference(
@@ -139,7 +160,7 @@ async function getConnectionReference(
 
   return axios
     .post(
-      `${workflowBaseManagementUri}/${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+      `${formatSetting(workflowBaseManagementUri)}/${formatSetting(connectionId)}/listConnectionKeys?api-version=2018-07-01-preview`,
       { validityTimeSpan: '7' },
       { headers: { authorization: accessToken } }
     )
@@ -159,7 +180,7 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      parameterizer.parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
+      parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
 
       return connectionReference;
     })
@@ -170,18 +191,20 @@ async function getConnectionReference(
 
 export async function getConnectionsAndSettingsToUpdate(
   context: IActionContext,
-  workflowFilePath: string,
+  projectPath: string,
   connectionReferences: any,
   azureTenantId: string,
   workflowBaseManagementUri: string,
   parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
-  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
+  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
+  const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
   let accessToken: string | undefined;
 
   for (const referenceKey of Object.keys(connectionReferences)) {
@@ -192,6 +215,21 @@ export async function getConnectionsAndSettingsToUpdate(
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
         reference,
+        accessToken,
+        workflowBaseManagementUri,
+        settingsToAdd,
+        parametersFromDefinition
+      );
+    } else if (
+      localSettings.Values[`${referenceKey}-connectionKey`] &&
+      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
+    ) {
+      const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
+
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
+      referencesToAdd[referenceKey] = await getConnectionReference(
+        referenceKey,
+        resolvedConnectionReference,
         accessToken,
         workflowBaseManagementUri,
         settingsToAdd,
@@ -210,10 +248,9 @@ export async function getConnectionsAndSettingsToUpdate(
 
 export async function saveConnectionReferences(
   context: IActionContext,
-  workflowFilePath: string,
+  projectPath: string,
   connectionAndSettingsToUpdate: ConnectionAndSettings
 ): Promise<void> {
-  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);

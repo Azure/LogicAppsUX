@@ -15,6 +15,7 @@ import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
+import { verifyLocalConnectionKeys } from './app/utils/appSettings/connectionKeys';
 import {
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
@@ -46,7 +47,6 @@ export async function activate(context: vscode.ExtensionContext) {
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
-
   registerUIExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
 
@@ -58,6 +58,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     await downloadExtensionBundle(activateContext);
     promptParameterizeConnections(activateContext);
+    verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();

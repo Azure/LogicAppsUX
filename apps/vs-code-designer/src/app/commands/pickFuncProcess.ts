@@ -2,10 +2,18 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform, autoStartAzuriteSetting, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
+import {
+  Platform,
+  autoStartAzuriteSetting,
+  verifyConnectionKeysSetting,
+  defaultFuncPort,
+  hostStartTaskName,
+  pickProcessTimeoutSetting,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
+import { verifyLocalConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
@@ -37,6 +45,11 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
       await activateAzurite(context);
     });
   });
+  await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
+      await verifyLocalConnectionKeys(context);
+    });
+  });
 
   const result: IPreDebugValidateResult = await preDebugValidate(context, debugConfig);
 
@@ -45,7 +58,6 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   }
 
   await waitForPrevFuncTaskToStop(result.workspace);
-
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, result.workspace.uri.fsPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
