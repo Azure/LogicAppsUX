@@ -21,6 +21,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
+  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const {
     errors: { workflow: workflowError, kind: kindError, parameters: parameterErrors, connections: connectionsError },
     kind,
@@ -50,11 +51,13 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
       if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
-        dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+        if (!existingWorkflowName) {
+          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+        }
         dispatch(validateKind());
       }
     }
-  }, [dispatch, mapping, existingWorkflowNames, parametersExist, selectedTabId, kind]);
+  }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
