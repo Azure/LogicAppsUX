@@ -3,6 +3,22 @@ import packageJson from './package.json';
 import path from 'path';
 
 export default defineProject({
+  resolve: {
+    alias: [
+      {
+        find: 'vscode',
+        replacement: `${__dirname}/node_modules/@types/vscode/index.d`,
+      },
+      {
+        find: '@microsoft/vscode-azext-utils',
+        replacement: `${__dirname}/node_modules/@types/vscode/index.d`,
+      },
+      {
+        find: 'child_process',
+        replacement: `${__dirname}/node_modules/.pnpm/@types+node@20.12.7/node_modules/@types/node/child_process.d`,
+      },
+    ],
+  },
   plugins: [],
   resolve: {
     alias: {
