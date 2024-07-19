@@ -24,6 +24,7 @@ export interface OutputInfo {
   title: string;
   value?: string;
   alias?: string;
+  children?: OutputInfo[]; // Added children property
 }
 
 export interface IWorkflowService {
