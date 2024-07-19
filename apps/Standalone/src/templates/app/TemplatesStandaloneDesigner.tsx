@@ -309,8 +309,8 @@ const getServices = (
           subscription: apiVersion,
           gateway: '2018-11-01',
         },
-        openBladeAfterCreate: () => {
-          console.log('Open blade after create');
+        openBladeAfterCreate: (workflowName: string) => {
+          console.log('Open blade after create, workflowName is: ', workflowName);
         },
       });
 
