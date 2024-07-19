@@ -1,9 +1,9 @@
 import { resetWorkflowState } from '../global';
-import type { PanelMode, PanelState, RelationshipIds } from './panelInterfaces';
+import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
+import { LogEntryLevel, LoggerService, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { PanelLocation } from '@microsoft/designer-ui';
-import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: PanelState = {
   collapsed: true,
