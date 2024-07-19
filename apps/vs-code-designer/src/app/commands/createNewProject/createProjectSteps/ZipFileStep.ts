@@ -6,7 +6,8 @@ import * as fs from 'fs';
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionReferenceModel, IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
+
 import * as rimraf from 'rimraf';
 
 export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
@@ -23,9 +24,6 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
     const fileUris = await vscode.window.showOpenDialog({
       canSelectMany: false,
       defaultUri: vscode.Uri.file(path.join(os.homedir(), 'Downloads')),
-      // filters: {
-      //     'Zip files': ['zip']
-      // },
       openLabel: localize('selectZipFile', 'Select a zip file'),
     });
 
@@ -44,7 +42,12 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
     return this.zipContent === undefined;
   }
 
-  private async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
+
+  public async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
+    if (!this.wizardContext) {
+      console.error('wizardContext is not set in getzipfILes.');
+      return []; // Return early if wizardContext is not set
+    }
     try {
       if (ZipFileStep.zipFilePath) {
         this.zipContent = fs.readFileSync(ZipFileStep.zipFilePath);
@@ -62,5 +65,27 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
       console.error('Failed to unzip the Logic App artifacts', error);
     }
     return Promise.resolve([]);
+  }
+
+  public async getConnectionsJsonContent(context: IFunctionWizardContext): Promise<any> {
+    this.wizardContext = context;
+    try {
+      if (!this.wizardContext) {
+        console.error('wizardContext is not set in getconncetions.');
+        return null; // Early return if wizardContext is not set
+      }
+      this.targetDirectory = this.wizardContext.workspacePath;
+      const connectionsJsonPath = path.join(this.targetDirectory, 'connections.json');
+
+      if (fs.existsSync(connectionsJsonPath)) {
+        const connectionsJsonContent = fs.readFileSync(connectionsJsonPath, 'utf8');
+        const connection: ConnectionReferenceModel = JSON.parse(connectionsJsonContent);
+
+        return connection; // Return the parsed connections object
+      }
+    } catch (error) {
+      console.error('Failed to process connections.json', error);
+    }
+    return null; // Return null or appropriate error handling
   }
 }
