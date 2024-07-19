@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.44.0](https://github.com/Azure/LogicAppsUX/compare/v4.43.0...v4.44.0) (2024-07-19)
+
+
+### Features
+
+* **Templates:** Change TemplateService with Additional Params ([#5154](https://github.com/Azure/LogicAppsUX/issues/5154)) ([3c299ab](https://github.com/Azure/LogicAppsUX/commit/3c299ab08f4c5a0731c0ec3e4ba856f8016f05fc))
+
+
+### Bug Fixes
+
+* **build:** Remove Submodule Folder ([#5150](https://github.com/Azure/LogicAppsUX/issues/5150)) ([dd38c09](https://github.com/Azure/LogicAppsUX/commit/dd38c09e1c670095e3f1581c384038a43b9eecf9))
+* **designer:** Fix copyPaste to include dynamic content ([#5153](https://github.com/Azure/LogicAppsUX/issues/5153)) ([6ab8992](https://github.com/Azure/LogicAppsUX/commit/6ab89920e86836ee7c5b8b3e7d81ad4916ebd904))
+
 ## [4.43.0](https://github.com/Azure/LogicAppsUX/compare/v4.42.0...v4.43.0) (2024-07-18)
 
 
