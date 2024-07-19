@@ -42,7 +42,7 @@ export class JwtTokenHelper {
   private base64DecodeStringUrlSafe(base64String: string): string {
     let tempString = base64String;
     // html5 should support atob function for decoding
-    if (window.atob) {
+    if (typeof window !== 'undefined' && window && window.atob) {
       // window.atob function decodes base64 string
       // decodeURIComponent + escape function decodes UTF-8 string
       // escape function is being deprecated but is still supported by all browsers
@@ -65,6 +65,7 @@ export class JwtTokenHelper {
       return decodeURIComponent(window['escape'](window.atob(tempString)));
     }
 
-    throw new Error('atob not supported');
+    const data = Buffer.from(base64String, 'base64').toString('binary');
+    return decodeURIComponent(data);
   }
 }
