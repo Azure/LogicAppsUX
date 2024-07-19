@@ -34,7 +34,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   onClick,
   onDeleteClick,
   handleCollapse,
-  selected,
+  selectionMode,
   contextMenuItems = [],
   runData,
   setFocus,
@@ -84,7 +84,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             />
           ) : null}
           <div className="msla-scope-card-content">
-            <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
+            <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
               id={`msla-node-${id}`}
               className="msla-scope-card-title-button"
