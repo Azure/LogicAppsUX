@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { beforeEach } from 'vitest';
 
 vi.mock('fs');
-describe('Your Test Suite', () => {
+describe('extractConnectionDetails and ChangAuthToRaw are being tested for cloudToLocal.', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -37,7 +37,6 @@ describe('Your Test Suite', () => {
           WORKFLOWS_LOCATION_NAME: 'eastus2',
           WORKFLOWS_RESOURCE_GROUP_NAME: 'vs-code-debug',
           WORKFLOWS_SUBSCRIPTION_ID: '346751b2-0de1-405c-ad29-acb7ba73797f',
-          WORKFLOWS_TENANT_ID: '72f988bf-86f1-41af-91ab-2d7cd011db47',
         },
       ];
 

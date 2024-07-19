@@ -7,6 +7,7 @@ import {
   projectLanguageSetting,
   projectOpenBehaviorSetting,
   projectTemplateKeySetting,
+  parametersFileName,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -55,18 +56,15 @@ function getZipEntries(zipFilePath: string) {
 
 async function getSettings(context: IActionContext, connections: any, workspacePath: any) {
   const tenantId = '';
-  const parametersFileName = 'parameters.json';
   const workflowManagementBaseUrl = 'https://management.azure.com/';
   const settingsRecord: Record<string, string> = {};
 
-  console.log('getSettings: Start');
   const connectionReferences = connections.managedApiConnections || {};
-  console.log('getSettings: Connection references obtained', connectionReferences);
   const parameters = await getParametersJson(workspacePath);
   const connectionsJson = await getConnectionsJson(workspacePath);
+  const connectionsData: ConnectionsData = connectionsJson ? JSON.parse(connectionsJson) : {};
 
-  const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
-  Object.keys(connectionsData).forEach(async (connectionType) => {
+  for (const connectionType of Object.keys(connectionsData)) {
     if (connectionType !== 'serviceProviderConnections') {
       const connectionTypeJson = connectionsData[connectionType];
       Object.keys(connectionTypeJson).forEach((connectionKey) => {
@@ -79,10 +77,8 @@ async function getSettings(context: IActionContext, connections: any, workspaceP
       });
       await writeFormattedJson(path.join(workspacePath, parametersFileName), parameters);
     }
-  });
-  console.log('getSettings: Parameters', parameters);
+  }
   const skipProjectPath = true;
-  console.log('getSettings: Before getConnectionsAndSettingsToUpdate');
   const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
     context,
     workspacePath,
@@ -108,7 +104,6 @@ function cleanLocalSettings(localSettingsPath: string) {
         key === 'ScmType' ||
         key === 'FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'
       ) {
-        console.log(`Deleting: ${key} = ${localSettings.Values[key]}`);
         delete localSettings.Values[key];
       } else if (key === 'AzureWebJobsStorage') {
         localSettings.Values[key] = 'UseDevelopmentStorage=true';
@@ -116,9 +111,6 @@ function cleanLocalSettings(localSettingsPath: string) {
     });
 
     fs.writeFileSync(localSettingsPath, JSON.stringify(localSettings, null, 2));
-    console.log('Local settings cleaned.');
-  } else {
-    console.log('No Values found in local settings.');
   }
 }
 
@@ -216,7 +208,6 @@ export async function cloudToLocalInternal(
         Values: newValues,
       };
       fs.writeFileSync(localSettingsPath, JSON.stringify(finalObject, null, 2));
-      console.log(`Successfully wrote to ${localSettingsPath}`);
     } catch (error) {
       console.error('Error writing file:', error);
     }
@@ -231,9 +222,7 @@ export async function cloudToLocalInternal(
   cleanLocalSettings(localSettingsPath);
   const connectionsAndSettingsUpdated = await getSettings(context, connection, wizardContext.workspacePath);
 
-  console.debug('Before saveConnectionReferences call');
   await saveConnectionReferences(context, wizardContext.workspacePath, connectionsAndSettingsUpdated, skipProjectPath);
-  console.debug('After saveConnectionReferences call');
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
