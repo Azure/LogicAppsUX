@@ -12,7 +12,7 @@ type NodePositionProps = {
   nodeY?: number;
 };
 
-function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKeys: Set<string>, key?: string) {
+function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKeys: Set<string>, key?: string): boolean {
   if (!key) {
     return false;
   }

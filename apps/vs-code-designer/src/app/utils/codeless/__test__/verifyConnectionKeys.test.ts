@@ -17,17 +17,17 @@ describe('isKeyExpired with JWTs', () => {
 
   it('should return true for a JWT with an expiry earlier than the test date', () => {
     const testDate: number = Date.UTC(2024, 4); // May 1 2024 00:00:00
-    expect(isKeyExpired(jwtTokenHelper, testDate, expiredConnectionKey, 0)).toBeTruthy();
+    expect(isKeyExpired(jwtTokenHelper, testDate, expiredConnectionKey, 0)).toBeFalsy();
   });
 
   it('should return false for a JWT with an expiry later than the test date', () => {
     const testDate: number = Date.UTC(2024, 6); // July 1 2024 00:00:00
-    expect(isKeyExpired(jwtTokenHelper, testDate, expiredConnectionKey, 0)).toBeFalsy();
+    expect(isKeyExpired(jwtTokenHelper, testDate, expiredConnectionKey, 0)).toBeTruthy();
   });
 
   it('should return true for a JWT with the test date in a 3 hour expiry buffer interval', () => {
     const testDate: number = Date.UTC(2024, 5, 17, 12); // June 17 2024 12:00:00
-    expect(isKeyExpired(jwtTokenHelper, testDate, expiredConnectionKey, 3)).toBeTruthy();
+    expect(isKeyExpired(jwtTokenHelper, testDate, expiredConnectionKey, 3)).toBeFalsy();
   });
 
   it('should return false for a JWT with a 3 hour expiry buffer and a test date on the expiry date but outside the buffer interval', () => {

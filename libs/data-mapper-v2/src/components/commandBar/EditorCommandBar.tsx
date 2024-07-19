@@ -6,7 +6,7 @@ import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService, DataMapperWrappedContext } from '../../core';
+import { DataMapperFileService, DataMapperWrappedContext, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
@@ -24,7 +24,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
 
   const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
-  const isCodeViewOpen = useSelector((state: RootState) => state.panel.isCodeViewOpen);
+  const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
@@ -92,6 +92,22 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         targetSchemaExtended: targetSchema,
       })
     );
+
+    generateDataMapXslt(dataMapDefinition)
+      .then((xsltStr) => {
+        DataMapperFileService().saveXsltCall(xsltStr);
+
+        LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          message: 'Successfully generated xslt',
+        });
+      })
+      .catch((error: Error) => {
+        LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          message: error.message,
+        });
+
+        // show notification here
+      });
   }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasBounds]);
 
   const triggerDiscardWarningModal = useCallback(() => {
