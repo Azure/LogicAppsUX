@@ -1,5 +1,3 @@
-import { useTheme } from '@fluentui/react';
-import { mergeClasses, ToolbarButton } from '@fluentui/react-components';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import type { LexicalEditor } from 'lexical';
 import { useCallback } from 'react';
@@ -7,6 +5,7 @@ import { useIntl } from 'react-intl';
 import linkDark from '../../icons/dark/link.svg';
 import linkLight from '../../icons/light/link.svg';
 import { sanitizeUrl } from '../helper/functions';
+import { FormatButton } from './FormatButton';
 
 interface FormatLinkButtonProps {
   activeEditor: LexicalEditor;
@@ -17,7 +16,6 @@ interface FormatLinkButtonProps {
 export const FormatLinkButton: React.FC<FormatLinkButtonProps> = (props) => {
   const { activeEditor, isToggledOn, readonly } = props;
 
-  const { isInverted } = useTheme();
   const intl = useIntl();
 
   const insertLink = useCallback(() => {
@@ -35,14 +33,18 @@ export const FormatLinkButton: React.FC<FormatLinkButtonProps> = (props) => {
   });
 
   return (
-    <ToolbarButton
-      onMouseDown={(e) => e.preventDefault()}
-      disabled={readonly}
+    <FormatButton
+      icons={{
+        dark: linkDark,
+        label: 'link',
+        light: linkLight,
+      }}
+      isToggledOn={isToggledOn}
       onClick={insertLink}
-      className={mergeClasses('toolbar-item', 'spaced', isToggledOn && 'active')}
-      aria-label={insertLinkLabel}
-      title={insertLinkLabel}
-      icon={<img className={'format'} src={isInverted ? linkDark : linkLight} alt={'link icon'} />}
+      readonly={readonly}
+      strings={{
+        title: insertLinkLabel,
+      }}
     />
   );
 };
