@@ -4,9 +4,9 @@ import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import type { LexicalEditor } from 'lexical';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import linkDark from '../../icons/dark/link.svg';
+import linkLight from '../../icons/light/link.svg';
 import { sanitizeUrl } from '../helper/functions';
-import linkDark from '../icons/dark/link.svg';
-import linkLight from '../icons/light/link.svg';
 
 interface FormatLinkButtonProps {
   activeEditor: LexicalEditor;

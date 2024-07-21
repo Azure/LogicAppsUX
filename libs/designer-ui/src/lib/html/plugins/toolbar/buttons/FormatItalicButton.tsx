@@ -1,7 +1,7 @@
 import { FORMAT_TEXT_COMMAND, type LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
-import italicDark from '../icons/dark/type-italic.svg';
-import italicLight from '../icons/light/type-italic.svg';
+import italicDark from '../../icons/dark/type-italic.svg';
+import italicLight from '../../icons/light/type-italic.svg';
 import { FormatButton } from './FormatButton';
 
 interface FormatItalicButtonProps {

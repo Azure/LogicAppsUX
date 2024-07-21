@@ -1,7 +1,7 @@
 import { FORMAT_TEXT_COMMAND, type LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
-import boldDark from '../icons/dark/type-bold.svg';
-import boldLight from '../icons/light/type-bold.svg';
+import boldDark from '../../icons/dark/type-bold.svg';
+import boldLight from '../../icons/light/type-bold.svg';
 import { FormatButton } from './FormatButton';
 
 interface FormatBoldButtonProps {

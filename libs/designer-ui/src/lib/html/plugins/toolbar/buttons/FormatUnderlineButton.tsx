@@ -1,7 +1,7 @@
 import { FORMAT_TEXT_COMMAND, type LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
-import underlineDark from '../icons/dark/type-underline.svg';
-import underlineLight from '../icons/light/type-underline.svg';
+import underlineDark from '../../icons/dark/type-underline.svg';
+import underlineLight from '../../icons/light/type-underline.svg';
 import { FormatButton } from './FormatButton';
 
 interface FormatUnderlineButtonProps {
