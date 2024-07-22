@@ -11,10 +11,9 @@ import {
   MoreVertical24Regular,
   PinOffRegular,
 } from '@fluentui/react-icons';
-import type { IButton } from '@fluentui/react/lib/Button';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -84,7 +83,7 @@ export const PanelHeader = ({
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
-  const menuButtonRef = React.createRef<IButton>();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
@@ -99,9 +98,12 @@ export const PanelHeader = ({
   });
 
   useEffect(() => {
+    if (isCollapsed || !isOutermostPanel || !nodeId) {
+      return;
+    }
+
     menuButtonRef.current?.focus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCollapsed]);
+  }, [isCollapsed, isOutermostPanel, nodeId]);
 
   const isRight = headerLocation === PanelLocation.Right;
 
@@ -145,7 +147,6 @@ export const PanelHeader = ({
     return (
       <Tooltip relationship="label" positioning={'before'} content={buttonText}>
         <Button
-          // autoFocus={!isCollapsed} // TODO: Causes "Cannot call an event handler while rendering" error.
           id="msla-panel-header-collapse-nav"
           appearance="subtle"
           icon={<DismissIcon />}
@@ -153,6 +154,7 @@ export const PanelHeader = ({
           aria-label={buttonText}
           onClick={toggleCollapse}
           data-automation-id="msla-panel-header-collapse-nav"
+          ref={menuButtonRef}
         />
       </Tooltip>
     );

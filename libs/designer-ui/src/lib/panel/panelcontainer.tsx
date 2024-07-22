@@ -3,7 +3,7 @@ import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Button, Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -79,10 +79,25 @@ export const PanelContainer = ({
 }: PanelContainerProps) => {
   const intl = useIntl();
 
+  const selectedElementRef = useRef<HTMLElement | null>(null);
+
   const canResize = !!(isResizeable && setOverrideWidth && !pinnedNode);
-  const pinnedNodeIfDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
-  const pinnedNodeId = pinnedNode?.nodeId;
   const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
+  const isRight = panelLocation === PanelLocation.Right;
+  const pinnedNodeId = pinnedNode?.nodeId;
+  const pinnedNodeIfDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
+
+  const drawerWidth = isCollapsed
+    ? PanelSize.Auto
+    : (canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium);
+
+  useEffect(() => {
+    selectedElementRef.current = node?.nodeId ? document.getElementById(`msla-node-${node.nodeId}`) : null;
+  }, [node?.nodeId]);
+
+  useEffect(() => {
+    selectedElementRef.current?.focus();
+  }, [isCollapsed]);
 
   const renderHeader = useCallback(
     (headerNode: PanelContainerNodeData): JSX.Element => {
@@ -175,11 +190,6 @@ export const PanelContainer = ({
     },
     [renderHeader, panelErrorMessage, trackEvent]
   );
-
-  const isRight = panelLocation === PanelLocation.Right;
-  const drawerWidth = isCollapsed
-    ? PanelSize.Auto
-    : (canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium);
 
   return (
     <OverlayDrawer
