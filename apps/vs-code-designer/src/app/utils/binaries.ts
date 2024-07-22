@@ -71,7 +71,8 @@ export async function downloadAndExtractDependency(
     // Download the compressed dependency
     await new Promise<void>((resolve, reject) => {
       executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-      const downloadStream = request(downloadUrl).pipe(fs.createWriteStream(dependencyFilePath));
+      // TODO: @mireed: remove the timeout completely and download async instead.
+      const downloadStream = request({ url: downloadUrl, timeout: 600000 }).pipe(fs.createWriteStream(dependencyFilePath));
       downloadStream.on('finish', async () => {
         await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
 
