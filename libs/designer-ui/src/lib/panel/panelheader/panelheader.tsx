@@ -143,7 +143,7 @@ export const PanelHeader = ({
     return (
       <Tooltip relationship="label" positioning={'before'} content={buttonText}>
         <Button
-          autoFocus={!isCollapsed}
+          // autoFocus={!isCollapsed} // TODO: Causes "Cannot call an event handler while rendering" error.
           id="msla-panel-header-collapse-nav"
           appearance="subtle"
           icon={<DismissIcon />}
@@ -202,7 +202,7 @@ export const PanelHeader = ({
             </div>
             {onUnpinAction ? (
               <Tooltip content={unpinButtonText} relationship="label">
-                <Button appearance="subtle" icon={<PinOffRegular />} onClick={() => onUnpinAction()} />
+                <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
               </Tooltip>
             ) : null}
             <OverflowButton />
