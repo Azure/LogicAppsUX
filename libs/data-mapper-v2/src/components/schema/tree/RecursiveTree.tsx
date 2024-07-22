@@ -2,7 +2,7 @@ import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClass
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useLayoutEffect, useRef } from 'react';
 import { useStyles } from './styles';
-import type { Node } from 'reactflow';
+import type { Node } from '@xyflow/react';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
 

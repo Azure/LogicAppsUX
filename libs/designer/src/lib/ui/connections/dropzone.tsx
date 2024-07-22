@@ -37,7 +37,7 @@ import { useDrop } from 'react-dnd';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { useOnViewportChange } from 'reactflow';
+import { useOnViewportChange } from '@xyflow/react';
 
 export interface DropZoneProps {
   graphId: string;
@@ -139,6 +139,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             relationshipIds,
             nodeId: copiedNode.nodeId,
             nodeData: copiedNode.nodeData,
+            nodeTokenData: copiedNode.nodeTokenData,
             operationInfo: copiedNode.nodeOperationInfo,
             connectionData: copiedNode.nodeConnectionData,
           })

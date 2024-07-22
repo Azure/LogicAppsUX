@@ -8,6 +8,8 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
   focusTrapZoneProps={
     {
       "disabled": false,
+      "firstFocusableTarget": "#msla-panel-header-collapse-nav",
+      "forceFocusInsideTrap": true,
     }
   }
   hasCloseButton={false}
@@ -37,7 +39,7 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
 >
   <React.Fragment>
     <PanelContent
-      tabs={{}}
+      tabs={[]}
       trackEvent={[MockFunction spy]}
     />
   </React.Fragment>

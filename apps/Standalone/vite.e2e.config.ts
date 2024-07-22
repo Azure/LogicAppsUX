@@ -7,10 +7,12 @@ import { nodePolyfills as np } from 'vite-plugin-node-polyfills';
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [{
-      find: '~reactflow',
-      replacement: 'reactflow',
-    }],
+    alias: [
+      {
+        find: '~@xyflow/react',
+        replacement: '@xyflow/react',
+      },
+    ],
   },
   plugins: [
     react(),
@@ -18,10 +20,10 @@ export default defineConfig({
       // process: true,
       buffer: true,
     }),
-    np()
+    np(),
   ],
   server: {
-    port: 4200
+    port: 4200,
   },
   define: {
     global: 'globalThis',

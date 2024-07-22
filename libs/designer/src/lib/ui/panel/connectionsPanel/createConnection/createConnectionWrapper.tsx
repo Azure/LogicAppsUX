@@ -26,7 +26,7 @@ import {
   getSupportedParameterSets,
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
-import { Spinner } from '@fluentui/react-components';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import {
   ConnectionService,
   LogEntryLevel,
@@ -341,7 +341,7 @@ export const CreateConnectionInternal = (props: {
   if (connector?.properties === undefined) {
     return (
       <div className="msla-loading-container">
-        <Spinner size={'large'} label={loadingText} />
+        <Spinner size={SpinnerSize.small} label={loadingText} />
       </div>
     );
   }

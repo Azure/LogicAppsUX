@@ -34,8 +34,8 @@ import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
-import type { BackgroundProps, NodeChange } from 'reactflow';
+import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from '@xyflow/react';
+import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 
 export interface DesignerProps {
@@ -64,7 +64,7 @@ const edgeTypes = {
   HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
   ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
-};
+} as EdgeTypes;
 export interface CanvasFinderProps {
   panelLocation?: PanelLocation;
 }
@@ -96,8 +96,8 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
       return;
     }
 
-    let xRawPos = nodeData?.positionAbsolute?.x ?? 0;
-    const yRawPos = nodeData?.positionAbsolute?.y ?? 0;
+    let xRawPos = nodeData?.position?.x ?? 0;
+    const yRawPos = nodeData?.position?.y ?? 0;
 
     // If the panel is open, reduce X space
     if (!isPanelCollapsed) {
@@ -154,7 +154,7 @@ export const Designer = (props: DesignerProps) => {
       id: 'newWorkflowTrigger',
       position: { x: 0, y: 0 },
       data: { label: 'newWorkflowTrigger' },
-      parentNode: undefined,
+      parentId: undefined,
       type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
       style: DEFAULT_NODE_SIZE,
     },
