@@ -41,7 +41,7 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
         onClick={handleCollapse}
         onKeyDown={keyboardInteraction.keyDown}
         onKeyUp={keyboardInteraction.keyUp}
-        tabIndex={tabIndex}
+        tabIndex={disabled ? -1 : tabIndex}
       >
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
       </button>
