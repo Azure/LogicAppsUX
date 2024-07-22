@@ -38,10 +38,13 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const parameterValidationErrors = useParameterValidationErrors(nodeId);
   const settingValidationErrors = useSettingValidationErrors(nodeId);
 
-  const tabProps: PanelTabProps = useMemo(() => ({
-    isPanelPinned: isPinnedNode,
-    nodeId,
-  }), [isPinnedNode, nodeId]);
+  const tabProps: PanelTabProps = useMemo(
+    () => ({
+      isPanelPinned: isPinnedNode,
+      nodeId,
+    }),
+    [isPinnedNode, nodeId]
+  );
 
   const monitoringTabItem = useMemo(
     () => ({

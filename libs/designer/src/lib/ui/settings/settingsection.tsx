@@ -216,7 +216,12 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   );
 };
 
-const Setting = ({ id, nodeId, settings, isReadOnly }: { id?: string; nodeId: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
+const Setting = ({
+  id,
+  nodeId,
+  settings,
+  isReadOnly,
+}: { id?: string; nodeId: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const readOnly = useReadOnly();

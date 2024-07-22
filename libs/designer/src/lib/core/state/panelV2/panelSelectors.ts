@@ -8,6 +8,8 @@ export const usePinnedNodeId = () => useSelector(createSelector(getPanelState, (
 
 export const useIsNodePinned = (nodeId: string) => usePinnedNodeId() === nodeId;
 
-export const useSelectedNodeActiveTabId = () => useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));
+export const useSelectedNodeActiveTabId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));
 
-export const usePinnedNodeActiveTabId = () => useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeActiveTabId));
+export const usePinnedNodeActiveTabId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeActiveTabId));
