@@ -14,6 +14,10 @@ export const parseErrorMessage = (error: any, defaultErrorMessage?: string): str
       return message;
     }
 
+    if(error?.data?.error?.message) {
+      return error?.data?.error?.message;
+    }
+
     // Response text needs to be parsed to get internal error message
     if (error?.responseText) {
       message = parseErrorMessage(JSON.parse(error.responseText), defaultErrorMessage);
