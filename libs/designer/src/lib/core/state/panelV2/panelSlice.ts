@@ -213,9 +213,8 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
     },
-    selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
-      state.errorContent.selectedTabId = action.payload;
-      state.operationContent.selectedNodeActiveTabId = action.payload;
+    setPinnedPanelActiveTab: (state, action: PayloadAction<string | undefined>) => {
+      state.operationContent.pinnedNodeActiveTabId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -224,8 +223,9 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
-    selectPinnedPanelTab: (state, action: PayloadAction<string | undefined>) => {
-      state.operationContent.pinnedNodeActiveTabId = action.payload;
+    setSelectedPanelActiveTab: (state, action: PayloadAction<string | undefined>) => {
+      state.errorContent.selectedTabId = action.payload;
+      state.operationContent.selectedNodeActiveTabId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -271,7 +271,7 @@ export const panelSlice = createSlice({
     );
     builder.addMatcher(isAnyOf(panelV1SelectOperationId), (state, action) => panelSlice.caseReducers.selectOperationId(state, action));
     builder.addMatcher(isAnyOf(panelV1OpenPanel), (state, action) => panelSlice.caseReducers.openPanel(state, action));
-    builder.addMatcher(isAnyOf(panelV1SelectPanelTab), (state, action) => panelSlice.caseReducers.selectPanelTab(state, action));
+    builder.addMatcher(isAnyOf(panelV1SelectPanelTab), (state, action) => panelSlice.caseReducers.setSelectedPanelActiveTab(state, action));
     builder.addMatcher(isAnyOf(panelV1SetIsPanelLoading), (state, action) => panelSlice.caseReducers.setIsPanelLoading(state, action));
     builder.addMatcher(isAnyOf(panelV1SetIsCreatingConnection), (state, action) =>
       panelSlice.caseReducers.setIsCreatingConnection(state, action)
@@ -293,8 +293,8 @@ export const {
   selectErrorsPanelTab,
   selectOperationGroupId,
   selectOperationId,
-  selectPanelTab,
-  selectPinnedPanelTab,
+  setPinnedPanelActiveTab,
+  setSelectedPanelActiveTab,
   setIsCreatingConnection,
   setIsPanelLoading,
   setPinnedNodeId,
