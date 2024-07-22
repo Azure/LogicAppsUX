@@ -17,7 +17,12 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
 import type { ConnectionWithFlattenedProperties } from './selectConnection.helpers';
-import { compareFlattenedConnections, flattenConnection } from './selectConnection.helpers';
+import {
+  compareFlattenedConnections,
+  flattenConnection,
+  getLabelForConnection,
+  getSubLabelForConnection,
+} from './selectConnection.helpers';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -113,8 +118,8 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
           description: 'Column header for connection display name',
         }),
       renderCell: (item) => {
-        const label = item.displayName;
-        const subLabel = item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name;
+        const label = getLabelForConnection(item);
+        const subLabel = getSubLabelForConnection(item);
         return (
           <div className="msla-connection-row-display-name">
             <Text block={true} className="msla-connection-row-display-name-label" size={300}>

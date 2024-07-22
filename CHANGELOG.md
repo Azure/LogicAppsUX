@@ -1,4 +1,31 @@
 # Logic Apps Designer
+## [4.45.0](https://github.com/Azure/LogicAppsUX/compare/v4.44.0...v4.45.0) (2024-07-19)
+
+
+### Features
+
+* **designer:** Add new state object for v2 panel ([#5152](https://github.com/Azure/LogicAppsUX/issues/5152)) ([e087cb5](https://github.com/Azure/LogicAppsUX/commit/e087cb5bf772289e20a1da62b5fb60da29b2130d))
+* **vscode:** Auto regenerate managed api connection keys  ([#4982](https://github.com/Azure/LogicAppsUX/issues/4982)) ([c31d440](https://github.com/Azure/LogicAppsUX/commit/c31d440b054eb2b7a35ac154c653c57d7c770531)), closes [#5147](https://github.com/Azure/LogicAppsUX/issues/5147)
+
+
+### Bug Fixes
+
+* **designer-ui:** Extract toolbar components into their own files ([#5158](https://github.com/Azure/LogicAppsUX/issues/5158)) ([206761f](https://github.com/Azure/LogicAppsUX/commit/206761f27d1019d00ff3764d4f825c4dcdfd409e))
+* **designer:** Add support for `accountName` field ([#5143](https://github.com/Azure/LogicAppsUX/issues/5143)) ([6b28577](https://github.com/Azure/LogicAppsUX/commit/6b285773fc4ccade0528a623af3edd92cd2d430b))
+
+## [4.44.0](https://github.com/Azure/LogicAppsUX/compare/v4.43.0...v4.44.0) (2024-07-19)
+
+
+### Features
+
+* **Templates:** Change TemplateService with Additional Params ([#5154](https://github.com/Azure/LogicAppsUX/issues/5154)) ([3c299ab](https://github.com/Azure/LogicAppsUX/commit/3c299ab08f4c5a0731c0ec3e4ba856f8016f05fc))
+
+
+### Bug Fixes
+
+* **build:** Remove Submodule Folder ([#5150](https://github.com/Azure/LogicAppsUX/issues/5150)) ([dd38c09](https://github.com/Azure/LogicAppsUX/commit/dd38c09e1c670095e3f1581c384038a43b9eecf9))
+* **designer:** Fix copyPaste to include dynamic content ([#5153](https://github.com/Azure/LogicAppsUX/issues/5153)) ([6ab8992](https://github.com/Azure/LogicAppsUX/commit/6ab89920e86836ee7c5b8b3e7d81ad4916ebd904))
+
 ## [4.43.0](https://github.com/Azure/LogicAppsUX/compare/v4.42.0...v4.43.0) (2024-07-18)
 
 
