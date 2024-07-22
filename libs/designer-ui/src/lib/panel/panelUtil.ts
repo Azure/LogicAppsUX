@@ -46,7 +46,7 @@ export interface PanelTab {
 export interface CommonPanelProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
-  width: string;
+  overrideWidth?: string;
   layerProps?: any;
   panelLocation: PanelLocation;
   isResizeable?: boolean;

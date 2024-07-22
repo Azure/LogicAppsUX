@@ -4,22 +4,22 @@ import { PanelContainer } from '../panelcontainer';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: PanelContainerProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {
     minimal = {
+      node: undefined,
+      pinnedNode: undefined,
       isCollapsed: false,
       panelLocation: PanelLocation.Right,
       noNodeSelected: false,
       panelScope: PanelScope.CardLevel,
-      panelHeaderMenu: [],
+      headerMenuItems: [],
       showCommentBox: true,
-      tabs: [],
-      title: 'test title',
-      width: '630px',
+      overrideWidth: '630px',
       onCommentChange: vi.fn(),
       trackEvent: vi.fn(),
-      setSelectedTab: vi.fn(),
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
     };
@@ -41,7 +41,6 @@ describe('ui/workflowparameters/workflowparameter', () => {
 
     expect(panel.props.className).toBe('msla-panel-container');
     expect(panel.props.headerClassName).toBe('msla-panel-header');
-    expect(panel.props.headerText).toBe(minimal.title);
-    expect(panel.props.customWidth).toBe(minimal.width);
+    expect(panel.props.customWidth).toBe(minimal.overrideWidth);
   });
 });

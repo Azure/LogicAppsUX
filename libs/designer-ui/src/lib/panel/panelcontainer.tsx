@@ -42,6 +42,7 @@ export type PanelContainerProps = {
   pinnedNode: PanelContainerNodeData | undefined;
   layerProps?: ILayerProps;
   canResubmit?: boolean;
+  overrideWidth?: string;
   resubmitOperation?: () => void;
   onUnpinAction?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
@@ -49,7 +50,7 @@ export type PanelContainerProps = {
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
-  setCurrWidth: (width: string) => void;
+  setOverrideWidth?: (width: string | undefined) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -72,12 +73,13 @@ export const PanelContainer = ({
   onCommentChange,
   onTitleChange,
   onTitleBlur,
-  setCurrWidth,
+  setOverrideWidth,
+  overrideWidth,
   isResizeable,
 }: PanelContainerProps) => {
   const intl = useIntl();
 
-  const canResize = isResizeable && !pinnedNode;
+  const canResize = !!(isResizeable && setOverrideWidth && !pinnedNode);
   const pinnedNodeIfDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
   const pinnedNodeId = pinnedNode?.nodeId;
   const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
@@ -175,7 +177,9 @@ export const PanelContainer = ({
   );
 
   const isRight = panelLocation === PanelLocation.Right;
-  const drawerWidth = isCollapsed ? PanelSize.Auto : pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium;
+  const drawerWidth = isCollapsed
+    ? PanelSize.Auto
+    : (canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium);
 
   return (
     <OverlayDrawer
@@ -219,7 +223,7 @@ export const PanelContainer = ({
               </>
             )}
           </div>
-          {canResize ? <PanelResizer updatePanelWidth={setCurrWidth} /> : null}
+          {canResize ? <PanelResizer updatePanelWidth={setOverrideWidth} /> : null}
         </>
       )}
     </OverlayDrawer>

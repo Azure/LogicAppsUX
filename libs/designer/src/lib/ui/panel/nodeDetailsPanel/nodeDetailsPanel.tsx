@@ -20,7 +20,7 @@ import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { isCustomCode, PanelContainer, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
   isNullOrUndefined,
   replaceWhiteSpaceWithUnderscore,
@@ -51,7 +51,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     idReplacements: state.workflow.idReplacements,
   }));
 
-  const [width, setWidth] = useState<string>(PanelSize.Auto);
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
@@ -169,7 +169,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const commonPanelProps: CommonPanelProps = {
     isCollapsed: collapsed,
     toggleCollapse: dismissPanel,
-    width,
+    overrideWidth,
     layerProps,
     panelLocation,
     isResizeable: props.isResizeable,
@@ -212,7 +212,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}
       onTitleBlur={onTitleBlur}
-      setCurrWidth={setWidth}
+      overrideWidth={overrideWidth}
+      setOverrideWidth={setOverrideWidth}
     />
   );
 };
