@@ -7,6 +7,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
 describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
@@ -77,6 +78,7 @@ describe('lib/panel/panelHeader/main', () => {
       title: 'sample title',
       isLoading: false,
       cardIcon: 'sample icon url',
+      isOutermostPanel: true,
     };
     shallow.render(<PanelHeader {...props} />);
     const panelHeader = shallow.getRenderOutput();

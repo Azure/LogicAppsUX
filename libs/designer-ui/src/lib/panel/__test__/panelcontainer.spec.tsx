@@ -1,5 +1,5 @@
 import { PanelLocation, PanelScope } from '../panelUtil';
-import type { PanelContainerProps } from '../panelcontainer';
+import type { PanelContainerNodeData, PanelContainerProps } from '../panelcontainer';
 import { PanelContainer } from '../panelcontainer';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
@@ -20,6 +20,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       overrideWidth: '630px',
       onCommentChange: vi.fn(),
       trackEvent: vi.fn(),
+      setOverrideWidth: vi.fn(),
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
     };
@@ -30,17 +31,16 @@ describe('ui/workflowparameters/workflowparameter', () => {
     renderer.unmount();
   });
 
-  it('should construct.', () => {
+  it('should construct', () => {
     const panel = renderer.render(<PanelContainer {...minimal} />);
     expect(panel).toMatchSnapshot();
   });
 
-  it('should render.', () => {
+  it('should render', () => {
     renderer.render(<PanelContainer {...minimal} />);
     const panel = renderer.getRenderOutput();
 
     expect(panel.props.className).toBe('msla-panel-container');
-    expect(panel.props.headerClassName).toBe('msla-panel-header');
-    expect(panel.props.customWidth).toBe(minimal.overrideWidth);
+    expect(panel.props.style).toEqual({ width: minimal.overrideWidth });
   });
 });

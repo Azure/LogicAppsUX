@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
+exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
 <OverlayDrawer
   aria-label="panel"
   className="msla-panel-container"
