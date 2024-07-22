@@ -39,7 +39,7 @@ export const AboutTab: React.FC<PanelTabProps> = (props) => {
   );
 };
 
-export const aboutTab: PanelTabFn = (intl, nodeId) => ({
+export const aboutTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.ABOUT,
   title: intl.formatMessage({
     defaultMessage: 'About',
@@ -52,7 +52,7 @@ export const aboutTab: PanelTabFn = (intl, nodeId) => ({
     description: 'An accessability label that describes the about tab',
   }),
   visible: true,
-  content: <AboutTab nodeId={nodeId} />,
+  content: <AboutTab {...props} />,
   order: 10,
   icon: 'Info',
 });

@@ -61,8 +61,9 @@ const getInitialNodeSearchContentState = (): NodeSearchPanelContentState => ({
 const getInitialOperationContentState = (): OperationPanelContentState => ({
   panelMode: 'Operation',
   pinnedNodeId: undefined,
+  pinnedNodeActiveTabId: undefined,
   selectedNodeId: undefined,
-  selectedTabId: undefined,
+  selectedNodeActiveTabId: undefined,
 });
 
 const getInitialWorkflowParametersContentState = (): WorkflowParametersPanelContentState => ({
@@ -115,6 +116,7 @@ export const panelSlice = createSlice({
     },
     setPinnedNodeId: (state, action: PayloadAction<string>) => {
       state.operationContent.pinnedNodeId = action.payload;
+      state.operationContent.pinnedNodeActiveTabId = undefined;
     },
     setSelectedNodeId: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
@@ -139,7 +141,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = 'Operation';
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
-      state.operationContent.selectedTabId = undefined;
+      state.operationContent.selectedNodeActiveTabId = undefined;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -213,7 +215,17 @@ export const panelSlice = createSlice({
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.errorContent.selectedTabId = action.payload;
-      state.operationContent.selectedTabId = action.payload;
+      state.operationContent.selectedNodeActiveTabId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area,
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    selectPinnedPanelTab: (state, action: PayloadAction<string | undefined>) => {
+      state.operationContent.pinnedNodeActiveTabId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -282,6 +294,7 @@ export const {
   selectOperationGroupId,
   selectOperationId,
   selectPanelTab,
+  selectPinnedPanelTab,
   setIsCreatingConnection,
   setIsPanelLoading,
   setPinnedNodeId,

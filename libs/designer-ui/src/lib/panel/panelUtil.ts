@@ -25,9 +25,10 @@ export const PanelSize = {
 } as const;
 export type PanelSize = (typeof PanelSize)[keyof typeof PanelSize];
 
-export type PanelTabFn = (intl: IntlShape, nodeId: string) => PanelTab;
+export type PanelTabFn = (intl: IntlShape, props: PanelTabProps) => PanelTab;
 
 export interface PanelTabProps {
+  isPanelPinned: boolean;
   nodeId: string;
 }
 

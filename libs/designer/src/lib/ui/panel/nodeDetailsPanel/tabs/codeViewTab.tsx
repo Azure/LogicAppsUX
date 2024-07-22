@@ -27,7 +27,7 @@ export const CodeViewTab: React.FC<PanelTabProps> = (props) => {
   return <Peek input={content} />;
 };
 
-export const codeViewTab: PanelTabFn = (intl, nodeId) => ({
+export const codeViewTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.CODE_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Code View',
@@ -40,7 +40,7 @@ export const codeViewTab: PanelTabFn = (intl, nodeId) => ({
     description: 'An accessability label that describes the code view tab',
   }),
   visible: true,
-  content: <CodeViewTab nodeId={nodeId} />,
+  content: <CodeViewTab {...props} />,
   order: 3,
   icon: 'Info',
 });

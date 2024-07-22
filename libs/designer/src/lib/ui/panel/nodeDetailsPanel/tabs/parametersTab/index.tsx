@@ -474,6 +474,7 @@ const ParameterSection = ({
   return (
     <SettingsSection
       id={group.id}
+      nodeId={nodeId}
       sectionName={group.description}
       title={group.description}
       settings={settings}
@@ -527,7 +528,7 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
-export const parametersTab: PanelTabFn = (intl, nodeId) => ({
+export const parametersTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -540,7 +541,7 @@ export const parametersTab: PanelTabFn = (intl, nodeId) => ({
     description: 'Parameters tab description',
   }),
   visible: true,
-  content: <ParametersTab nodeId={nodeId} />,
+  content: <ParametersTab {...props} />,
   order: 0,
   icon: 'Info',
 });

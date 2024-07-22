@@ -9,7 +9,7 @@ export const RetryPanelTab: React.FC<PanelTabProps> = (props) => {
   return histories ? <RetryPanel retryHistories={histories} /> : null;
 };
 
-export const monitorRetryTab: PanelTabFn = (intl, nodeId) => ({
+export const monitorRetryTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
   title: intl.formatMessage({
     defaultMessage: 'Retry History',
@@ -22,7 +22,7 @@ export const monitorRetryTab: PanelTabFn = (intl, nodeId) => ({
     description: 'An accessability label that describes the retry history tab',
   }),
   visible: true,
-  content: <RetryPanelTab nodeId={nodeId} />,
+  content: <RetryPanelTab {...props} />,
   order: 1,
   icon: 'Rerun',
 });

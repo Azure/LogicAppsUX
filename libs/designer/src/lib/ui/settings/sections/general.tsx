@@ -2,7 +2,6 @@ import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandle
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useOutputParameters } from '../../../core/state/selectors/actionMetadataSelector';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
@@ -26,6 +25,7 @@ export interface GeneralSectionProps extends SectionProps {
 }
 
 export const General = ({
+  nodeId,
   readOnly,
   expanded,
   splitOn,
@@ -48,7 +48,6 @@ export const General = ({
   validationErrors,
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
-  const nodeId = useSelectedNodeId();
   const nodesMetadata = useNodeMetadata(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const nodeOutputs = useOutputParameters(nodeId);
@@ -172,6 +171,7 @@ export const General = ({
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
+    nodeId,
     title: generalTitle,
     sectionName: SettingSectionName.GENERAL,
     isReadOnly: readOnly,

@@ -61,7 +61,7 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   );
 };
 
-export const monitoringTab: PanelTabFn = (intl, nodeId) => ({
+export const monitoringTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.MONITORING,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -74,7 +74,7 @@ export const monitoringTab: PanelTabFn = (intl, nodeId) => ({
     description: 'An accessability label that describes the monitoring tab',
   }),
   visible: true,
-  content: <MonitoringPanel nodeId={nodeId} />,
+  content: <MonitoringPanel {...props} />,
   order: 0,
   icon: 'Info',
 });

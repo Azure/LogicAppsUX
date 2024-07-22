@@ -4,6 +4,7 @@ import { StaticResultOption } from '../../../../../core/actions/bjsworkflow/stat
 import { updateStaticResults } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useParameterStaticResult } from '../../../../../core/state/operation/operationSelector';
 import { selectPanelTab } from '../../../../../core/state/panel/panelSlice';
+import { setPinnedPanelActiveTab } from '../../../../../core/state/panelV2/panelSlice';
 import { useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../../core/state/staticresultschema/staitcresultsSelector';
 import { updateStaticResultProperties } from '../../../../../core/state/staticresultschema/staticresultsSlice';
@@ -15,7 +16,7 @@ import { useDispatch } from 'react-redux';
 
 export const TestingPanel: React.FC<PanelTabProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { nodeId: selectedNode } = props;
+  const { isPanelPinned, nodeId: selectedNode } = props;
   const operationInfo = useOperationInfo(selectedNode);
   const { connectorId, operationId } = operationInfo;
   const staticResultSchema = useStaticResultSchema(connectorId, operationId);
@@ -24,18 +25,20 @@ export const TestingPanel: React.FC<PanelTabProps> = (props) => {
   const staticResultOptions = parameterStaticResult?.staticResultOptions;
   const properties = useStaticResultProperties(name);
 
+  const selectPanelTabFn = isPanelPinned ? setPinnedPanelActiveTab : selectPanelTab;
+
   const savePropertiesCallback = useCallback(
     (properties: OpenAPIV2.SchemaObject, updatedStaticResultOptions: StaticResultOption) => {
       dispatch(updateStaticResults({ id: selectedNode, staticResults: { name, staticResultOptions: updatedStaticResultOptions } }));
       dispatch(updateStaticResultProperties({ name, properties }));
-      dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
+      dispatch(selectPanelTabFn(constants.PANEL_TAB_NAMES.PARAMETERS));
     },
-    [dispatch, name, selectedNode]
+    [dispatch, name, selectPanelTabFn, selectedNode]
   );
 
   const cancelPropertiesCallback = useCallback(() => {
-    dispatch(selectPanelTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-  }, [dispatch]);
+    dispatch(selectPanelTabFn(constants.PANEL_TAB_NAMES.PARAMETERS));
+  }, [dispatch, selectPanelTabFn]);
 
   return staticResultSchema ? (
     <StaticResultContainer
@@ -49,7 +52,7 @@ export const TestingPanel: React.FC<PanelTabProps> = (props) => {
   ) : null;
 };
 
-export const testingTab: PanelTabFn = (intl, nodeId) => ({
+export const testingTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.TESTING,
   title: intl.formatMessage({
     defaultMessage: 'Testing',
@@ -62,7 +65,7 @@ export const testingTab: PanelTabFn = (intl, nodeId) => ({
     description: 'An accessability label that describes the testing tab',
   }),
   visible: true,
-  content: <TestingPanel nodeId={nodeId} />,
+  content: <TestingPanel {...props} />,
   order: 5,
   icon: 'Info',
 });

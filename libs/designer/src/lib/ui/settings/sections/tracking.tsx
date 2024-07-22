@@ -14,6 +14,7 @@ export interface TrackingSectionProps extends SectionProps {
 }
 
 export const Tracking = ({
+  nodeId,
   readOnly,
   expanded,
   correlation,
@@ -65,6 +66,7 @@ export const Tracking = ({
 
   const trackingSectionProps: SettingsSectionProps = {
     id: 'tracking',
+    nodeId,
     title: trackingTitle,
     sectionName: SettingSectionName.TRACKING,
     expanded,
