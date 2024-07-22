@@ -21,10 +21,16 @@ export const PanelSize = {
   Auto: 'auto',
   Small: '300px',
   Medium: '630px',
+  DualView: `${340 * 2}px`,
 } as const;
 export type PanelSize = (typeof PanelSize)[keyof typeof PanelSize];
 
-export type PanelTabFn = (intl: IntlShape) => PanelTab;
+export type PanelTabFn = (intl: IntlShape, nodeId: string) => PanelTab;
+
+export interface PanelTabProps {
+  nodeId: string;
+}
+
 export interface PanelTab {
   id: string;
   title: string;

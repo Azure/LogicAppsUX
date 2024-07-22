@@ -1,19 +1,18 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
 import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
 import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-export const MonitoringPanel: React.FC = () => {
-  const selectedNodeId = useSelectedNodeId();
+export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
+  const { nodeId: selectedNodeId } = props;
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = useRunData(selectedNodeId);
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
@@ -62,7 +61,7 @@ export const MonitoringPanel: React.FC = () => {
   );
 };
 
-export const monitoringTab: PanelTabFn = (intl) => ({
+export const monitoringTab: PanelTabFn = (intl, nodeId) => ({
   id: constants.PANEL_TAB_NAMES.MONITORING,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -75,7 +74,7 @@ export const monitoringTab: PanelTabFn = (intl) => ({
     description: 'An accessability label that describes the monitoring tab',
   }),
   visible: true,
-  content: <MonitoringPanel />,
+  content: <MonitoringPanel nodeId={nodeId} />,
   order: 0,
   icon: 'Info',
 });

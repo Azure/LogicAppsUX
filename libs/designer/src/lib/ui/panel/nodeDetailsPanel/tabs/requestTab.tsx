@@ -1,8 +1,8 @@
 import constants from '../../../../common/constants';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { RequestPanel } from '@microsoft/designer-ui';
 
-export const RequestPanelTab = () => {
+export const RequestPanelTab: React.FC<PanelTabProps> = () => {
   // TODO: Retrieve logic from a redux store?
   const requestHistory = [
     {
@@ -235,7 +235,7 @@ export const RequestPanelTab = () => {
   return <RequestPanel requestHistory={requestHistory} />;
 };
 
-export const monitorRequestTab: PanelTabFn = (intl) => ({
+export const monitorRequestTab: PanelTabFn = (intl, nodeId) => ({
   title: intl.formatMessage({
     defaultMessage: 'Request History',
     id: 'WaTsxR',
@@ -248,7 +248,7 @@ export const monitorRequestTab: PanelTabFn = (intl) => ({
     description: 'The tab description for the request history tab on the operation panel',
   }),
   visible: true,
-  content: <RequestPanelTab />,
+  content: <RequestPanelTab nodeId={nodeId} />,
   order: 0,
   icon: 'Rerun',
 });

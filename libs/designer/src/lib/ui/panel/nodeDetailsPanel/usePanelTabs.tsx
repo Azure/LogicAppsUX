@@ -3,7 +3,6 @@ import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
 import { useHasSchema } from '../../../core/state/staticresultschema/staitcresultsSelector';
 import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors';
@@ -21,65 +20,64 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-export const usePanelTabs = () => {
+export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
   const panelTabHideKeys = usePanelTabHideKeys();
 
-  const selectedNode = useSelectedNodeId();
-  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
-  const operationInfo = useOperationInfo(selectedNode);
-  const nodeMetaData = useNodeMetadata(selectedNode);
+  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const operationInfo = useOperationInfo(nodeId);
+  const nodeMetaData = useNodeMetadata(nodeId);
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
-  const runHistory = useRetryHistory(selectedNode);
+  const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
-  const parameterValidationErrors = useParameterValidationErrors(selectedNode);
-  const settingValidationErrors = useSettingValidationErrors(selectedNode);
+  const parameterValidationErrors = useParameterValidationErrors(nodeId);
+  const settingValidationErrors = useSettingValidationErrors(nodeId);
 
   const monitoringTabItem = useMemo(
     () => ({
-      ...monitoringTab(intl),
+      ...monitoringTab(intl, nodeId),
       visible: !isScopeNode && isMonitoringView,
     }),
-    [intl, isMonitoringView, isScopeNode]
+    [intl, isMonitoringView, isScopeNode, nodeId]
   );
 
   const parametersTabItem = useMemo(
     () => ({
-      ...parametersTab(intl),
+      ...parametersTab(intl, nodeId),
       visible: !isMonitoringView,
       hasErrors: parameterValidationErrors.length > 0,
     }),
-    [intl, isMonitoringView, parameterValidationErrors]
+    [intl, isMonitoringView, nodeId, parameterValidationErrors]
   );
 
   const settingsTabItem = useMemo(
     () => ({
-      ...settingsTab(intl),
+      ...settingsTab(intl, nodeId),
       hasErrors: settingValidationErrors.length > 0,
     }),
-    [intl, settingValidationErrors]
+    [intl, nodeId, settingValidationErrors]
   );
 
-  const codeViewTabItem = useMemo(() => codeViewTab(intl), [intl]);
+  const codeViewTabItem = useMemo(() => codeViewTab(intl, nodeId), [intl, nodeId]);
 
   const testingTabItem = useMemo(
     () => ({
-      ...testingTab(intl),
+      ...testingTab(intl, nodeId),
       visible: !isTriggerNode && hasSchema && !isMonitoringView,
     }),
-    [intl, isTriggerNode, hasSchema, isMonitoringView]
+    [intl, isTriggerNode, hasSchema, isMonitoringView, nodeId]
   );
 
-  const aboutTabItem = useMemo(() => aboutTab(intl), [intl]);
+  const aboutTabItem = useMemo(() => aboutTab(intl, nodeId), [intl, nodeId]);
 
   const monitorRetryTabItem = useMemo(
     () => ({
-      ...monitorRetryTab(intl),
+      ...monitorRetryTab(intl, nodeId),
       visible: isMonitoringView && !!runHistory,
     }),
-    [intl, isMonitoringView, runHistory]
+    [intl, isMonitoringView, nodeId, runHistory]
   );
 
   const scratchTabItem = useMemo(

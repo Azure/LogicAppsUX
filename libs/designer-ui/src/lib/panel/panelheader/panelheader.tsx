@@ -9,6 +9,7 @@ import {
   ChevronRight24Regular,
   MoreVertical24Filled,
   MoreVertical24Regular,
+  PinOffRegular,
 } from '@fluentui/react-icons';
 import type { IButton } from '@fluentui/react/lib/Button';
 import { Icon } from '@fluentui/react/lib/Icon';
@@ -41,6 +42,7 @@ export interface PanelHeaderProps {
   horizontalPadding: string;
   canResubmit?: boolean;
   resubmitOperation?: () => void;
+  onUnpinAction?: () => void;
   commentChange(panelCommentChangeEvent?: string): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
@@ -71,6 +73,7 @@ export const PanelHeader = ({
   horizontalPadding,
   canResubmit,
   resubmitOperation,
+  onUnpinAction,
   commentChange,
   onRenderWarningMessage,
   toggleCollapse,
@@ -86,6 +89,13 @@ export const PanelHeader = ({
     id: 'I+85NV',
     description: 'Button label for submitting a workflow to rerun from this action',
   });
+
+  const unpinButtonText = intl.formatMessage({
+    defaultMessage: 'Unpin Action',
+    id: 'UFMpGk',
+    description: 'Text indicating a menu button to unpin a pinned action from the side panel',
+  });
+
   useEffect(() => {
     menuButtonRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,6 +200,11 @@ export const PanelHeader = ({
                 onBlur={onTitleBlur}
               />
             </div>
+            {onUnpinAction ? (
+              <Tooltip content={unpinButtonText} relationship="label">
+                <Button appearance="subtle" icon={<PinOffRegular />} onClick={() => onUnpinAction()} />
+              </Tooltip>
+            ) : null}
             <OverflowButton />
           </div>
           {onRenderWarningMessage ? onRenderWarningMessage() : null}

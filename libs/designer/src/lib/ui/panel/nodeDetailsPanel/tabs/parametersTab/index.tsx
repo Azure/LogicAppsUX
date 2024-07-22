@@ -5,7 +5,7 @@ import { useHostOptions, useReadOnly } from '../../../../../core/state/designerO
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
-import { usePanelLocation, useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
+import { usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -46,7 +46,15 @@ import {
   isCustomCode,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
-import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
+import type {
+  ChangeState,
+  ParameterInfo,
+  ValueSegment,
+  OutputToken,
+  TokenPickerMode,
+  PanelTabFn,
+  PanelTabProps,
+} from '@microsoft/designer-ui';
 import {
   EditorService,
   equals,
@@ -56,12 +64,13 @@ import {
   replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const ParametersTab = () => {
-  const selectedNodeId = useSelectedNodeId();
+export const ParametersTab: React.FC<PanelTabProps> = (props) => {
+  const { nodeId: selectedNodeId } = props;
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
@@ -515,7 +524,7 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
   return Object.keys(parameterGroups).some((key) => parameterGroups[key].parameters.filter((p) => !p.hideInUI).length > 0);
 };
 
-export const parametersTab: PanelTabFn = (intl) => ({
+export const parametersTab: PanelTabFn = (intl, nodeId) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -528,7 +537,7 @@ export const parametersTab: PanelTabFn = (intl) => ({
     description: 'Parameters tab description',
   }),
   visible: true,
-  content: <ParametersTab />,
+  content: <ParametersTab nodeId={nodeId} />,
   order: 0,
   icon: 'Info',
 });

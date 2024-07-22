@@ -1,97 +1,74 @@
+import type { ILayerProps } from '@fluentui/react';
+import { MessageBar, MessageBarType } from '@fluentui/react';
+import { Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { useCallback } from 'react';
+import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
-import { PanelResizer } from './panelResizer';
-import type { CommonPanelProps, PanelTab } from './panelUtil';
-import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
-import type { ILayerProps } from '@fluentui/react';
-import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
-import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
-import { Panel, PanelType } from '@fluentui/react/lib/Panel';
-import { useCallback } from 'react';
-import { useIntl } from 'react-intl';
+import { PanelResizer } from './panelResizer';
+import type { CommonPanelProps, PanelTab } from './panelUtil';
+import { PanelLocation, PanelScope, PanelSize } from './panelUtil';
 
 const horizontalPadding = '2rem';
 
-const panelStyles: Partial<IPanelStyles> = {
-  content: {
-    padding: '1rem 2rem 0rem',
-    overflow: 'hidden',
-    height: '100%',
-  },
-  main: { overflow: 'hidden' },
-  scrollableContent: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-};
-
-const panelStylesCollapsed: Partial<IPanelStyles> = {
-  content: { padding: 0 },
-  main: { overflow: 'hidden' },
-  scrollableContent: { height: '100%' },
-};
+export interface PanelContainerNodeData {
+  comment: string | undefined;
+  displayName: string;
+  errorMessage: string | undefined;
+  iconUri: string;
+  isError: boolean;
+  isLoading: boolean;
+  nodeId: string;
+  onSelectTab: (tabId: string) => void;
+  runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
+  selectedTab?: string;
+  tabs: PanelTab[];
+}
 
 export type PanelContainerProps = {
-  cardIcon?: string;
-  comment?: string;
   noNodeSelected: boolean;
-  isError?: boolean;
-  errorMessage?: string;
-  isLoading?: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
   headerMenuItems: JSX.Element[];
-  selectedTab?: string;
-  selectTab: (tabId: string) => void;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
-  tabs: PanelTab[];
-  nodeId: string;
-  title?: string;
+  node: PanelContainerNodeData | undefined;
+  pinnedNode: PanelContainerNodeData | undefined;
   layerProps?: ILayerProps;
   canResubmit?: boolean;
   resubmitOperation?: () => void;
+  onUnpinAction?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
-  renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
   setCurrWidth: (width: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
-  cardIcon,
-  comment,
   isCollapsed,
   panelLocation,
   noNodeSelected,
-  isError,
-  errorMessage,
-  isLoading,
   panelScope,
   suppressDefaultNodeSelectFunctionality,
   headerMenuItems,
-  selectedTab,
-  selectTab,
   canResubmit,
   resubmitOperation,
+  onUnpinAction,
   showCommentBox,
   readOnlyMode,
-  tabs,
-  nodeId,
-  title,
+  node,
+  pinnedNode,
   width,
-  layerProps,
+  // TODO layerProps,
   toggleCollapse,
   trackEvent,
-  renderHeader,
   onCommentChange,
   onTitleChange,
   onTitleBlur,
@@ -100,12 +77,20 @@ export const PanelContainer = ({
 }: PanelContainerProps) => {
   const intl = useIntl();
 
-  const defaultRenderHeader = useCallback(
-    (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
+  const canResize = isResizeable && !pinnedNode;
+  const pinnedNodeIfDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
+  const pinnedNodeId = pinnedNode?.nodeId;
+  const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
+
+  const renderHeader = useCallback(
+    (headerNode: PanelContainerNodeData): JSX.Element => {
+      const { comment, displayName, iconUri, isError, isLoading, nodeId } = headerNode;
+      const canUnpin = !!onUnpinAction && pinnedNodeId === nodeId;
+
       return (
         <PanelHeader
           nodeId={nodeId}
-          cardIcon={cardIcon}
+          cardIcon={iconUri}
           isCollapsed={isCollapsed}
           headerLocation={panelLocation}
           showCommentBox={showCommentBox}
@@ -114,12 +99,13 @@ export const PanelContainer = ({
           suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
           headerMenuItems={headerMenuItems}
           readOnlyMode={readOnlyMode}
-          titleId={headerTextId}
-          title={title}
+          // TODO titleId={headerTextId}
+          title={displayName}
           isError={isError}
           isLoading={isLoading}
           comment={comment}
           canResubmit={canResubmit}
+          onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={resubmitOperation}
           horizontalPadding={horizontalPadding}
           commentChange={onCommentChange}
@@ -130,8 +116,6 @@ export const PanelContainer = ({
       );
     },
     [
-      nodeId,
-      cardIcon,
       isCollapsed,
       panelLocation,
       showCommentBox,
@@ -140,12 +124,10 @@ export const PanelContainer = ({
       suppressDefaultNodeSelectFunctionality,
       headerMenuItems,
       readOnlyMode,
-      title,
-      isError,
-      isLoading,
-      comment,
       canResubmit,
+      pinnedNodeId,
       resubmitOperation,
+      onUnpinAction,
       onCommentChange,
       toggleCollapse,
       onTitleChange,
@@ -165,45 +147,66 @@ export const PanelContainer = ({
     description: 'label for panel error',
   });
 
-  const selectedElement = nodeId ? document.getElementById(`msla-node-${nodeId}`) ?? undefined : undefined;
+  const renderPanelContents = useCallback(
+    (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected'): JSX.Element => {
+      const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
+      return (
+        <div className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
+          {renderHeader(contentsNode)}
+          <div className="msla-panel-contents">
+            {isLoading ? (
+              <div className="msla-loading-container">
+                <Spinner size={'large'} />
+              </div>
+            ) : isError ? (
+              <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
+            ) : (
+              <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
+            )}
+          </div>
+        </div>
+      );
+    },
+    [renderHeader, panelErrorMessage, trackEvent]
+  );
 
   return (
-    <Panel
+    <OverlayDrawer
       aria-label={panelLabel}
       className="msla-panel-container"
-      headerClassName="msla-panel-header"
-      headerText={title || panelLabel}
-      isOpen
-      onRenderHeader={renderHeader ?? defaultRenderHeader}
-      focusTrapZoneProps={{
-        disabled: isCollapsed,
-        firstFocusableTarget: '#msla-panel-header-collapse-nav',
-        forceFocusInsideTrap: !isCollapsed,
+      modalType="non-modal"
+      mountNode={{
+        className: 'msla-panel-host-container',
       }}
-      elementToFocusOnDismiss={selectedElement}
-      isBlocking={false}
-      hasCloseButton={false}
-      type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
-      customWidth={width}
-      styles={isCollapsed ? panelStylesCollapsed : panelStyles}
-      layerProps={layerProps}
+      open={true}
+      position={panelLocation === PanelLocation.Right ? 'end' : 'start'}
+      style={{ width: pinnedNodeIfDifferent ? PanelSize.DualView : width }}
     >
       {!isCollapsed && (
         <>
-          {noNodeSelected && panelScope === PanelScope.CardLevel ? (
-            <EmptyContent />
-          ) : isLoading ? (
-            <div className="msla-loading-container">
-              <Spinner size={'large'} />
-            </div>
-          ) : isError ? (
-            <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
-          ) : (
-            <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={selectTab} />
-          )}
-          {isResizeable ? <PanelResizer updatePanelWidth={setCurrWidth} /> : null}
+          <div
+            className={mergeClasses(
+              'msla-panel-container-nested',
+              !isEmptyPane && pinnedNodeIfDifferent && 'msla-panel-container-nested-dual'
+            )}
+          >
+            {isEmptyPane ? (
+              <EmptyContent />
+            ) : (
+              <>
+                {node ? renderPanelContents(node, 'selected') : null}
+                {pinnedNodeIfDifferent ? (
+                  <>
+                    <Divider vertical={true} />
+                    {renderPanelContents(pinnedNodeIfDifferent, 'pinned')}
+                  </>
+                ) : null}
+              </>
+            )}
+          </div>
+          {canResize ? <PanelResizer updatePanelWidth={setCurrWidth} /> : null}
         </>
       )}
-    </Panel>
+    </OverlayDrawer>
   );
 };
