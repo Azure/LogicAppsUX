@@ -24,6 +24,7 @@ interface SubgraphCardProps {
   contextMenuItems?: JSX.Element[];
   errorLevel?: MessageBarType;
   errorMessage?: string;
+  nodeIndex?: number;
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
@@ -40,6 +41,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   contextMenuItems = [],
   errorLevel,
   errorMessage,
+  nodeIndex,
 }) => {
   const intl = useIntl();
 
@@ -59,7 +61,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     }
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} />
+        <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} tabIndex={nodeIndex} />
       </div>
     );
   }
@@ -134,11 +136,12 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onContextMenu={contextMenu.handle}
           onKeyDown={mainKeyboardInteraction.keyDown}
           onKeyUp={mainKeyboardInteraction.keyUp}
+          tabIndex={nodeIndex}
         >
           <div className="msla-subgraph-title-text">{data.title}</div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
-        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
         {contextMenuItems?.length > 0 ? (
           <CardContextMenu
             contextMenuLocation={contextMenu.location}
@@ -155,7 +158,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <div
-          tabIndex={0}
+          tabIndex={nodeIndex}
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
           onClick={handleCollapse}

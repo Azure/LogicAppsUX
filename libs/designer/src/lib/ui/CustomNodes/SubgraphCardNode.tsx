@@ -23,7 +23,7 @@ import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -121,6 +121,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     return { errorMessage: undefined, errorLevel: undefined };
   }, [parameterValidationErrors?.length, parameterValidationErrorText]);
 
+  const nodeIndex = useNodeIndex(subgraphId);
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -141,6 +143,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 contextMenuItems={contextMenuItems}
                 errorLevel={errorLevel}
                 errorMessage={errorMessage}
+                nodeIndex={nodeIndex}
               />
               {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
                 <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
@@ -156,7 +159,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
           <p className="no-actions-text">No Actions</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} />
+            <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
           </div>
         )
       ) : null}

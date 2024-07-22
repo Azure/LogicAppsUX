@@ -4,7 +4,7 @@ import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
+import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import type React from 'react';
 import { memo, useMemo } from 'react';
@@ -17,6 +17,7 @@ interface EdgeContentProps {
   parentId?: string;
   childId?: string;
   isLeaf?: boolean;
+  tabIndex?: number;
 }
 
 const EdgeContent = (props: EdgeContentProps) => (
@@ -29,7 +30,7 @@ const EdgeContent = (props: EdgeContentProps) => (
     requiredExtensions="http://www.w3.org/1999/xhtml"
   >
     <div style={{ padding: '4px' }}>
-      <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} isLeaf={props.isLeaf} />
+      <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} isLeaf={props.isLeaf} tabIndex={props.tabIndex} />
     </div>
   </foreignObject>
 );
@@ -127,6 +128,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     });
   }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
+  const tabIndex = useEdgeIndex(id);
+
   return (
     <>
       <defs>
@@ -155,6 +158,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               graphId={graphId}
               parentId={source}
               childId={multipleTargets ? undefined : target}
+              tabIndex={tabIndex}
             />
           )}
 
@@ -166,6 +170,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               graphId={graphId}
               parentId={source}
               childId={target}
+              tabIndex={tabIndex}
             />
           )}
 
@@ -178,6 +183,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               parentId={multipleSources ? undefined : source}
               childId={target}
               isLeaf={isLeaf}
+              tabIndex={tabIndex}
             />
           )}
         </>
