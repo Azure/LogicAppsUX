@@ -6,6 +6,7 @@ import type { ParameterGroup } from '../../../../../core/state/operation/operati
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
+import { usePinnedNodeId } from '../../../../../core/state/panelV2/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -89,6 +90,8 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
+  const isPaneInPinnedViewMode = !!usePinnedNodeId();
+
   const intl = useIntl();
   const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
@@ -163,7 +166,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
             connectionName={connectionName.result}
             nodeId={selectedNodeId}
             isLoading={connectionName.isLoading}
-            readOnly={!!readOnly}
+            readOnly={!!readOnly || isPaneInPinnedViewMode}
             hasError={errorInfo?.level === ErrorLevel.Connection}
           />
         </>
