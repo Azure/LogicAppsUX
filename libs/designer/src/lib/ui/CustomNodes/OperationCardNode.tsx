@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch, RootState } from '../../core';
@@ -21,8 +20,9 @@ import {
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panelV2/panelSlice';
+import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinned, usePinnedNodeId } from '../../core/state/panelV2/panelSelectors';
+import { setPinnedNodeId } from '../../core/state/panelV2/panelSlice';
 import {
   useAllOperations,
   useConnectorName,
@@ -66,6 +66,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
+import { PinMenuItem } from '../menuItems/pinMenuItem';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -74,6 +75,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const dispatch = useDispatch<AppDispatch>();
   const rootState = useSelector((state: RootState) => state);
+  const pinnedNodeId = usePinnedNodeId();
   const operationsInfo = useAllOperations();
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
@@ -172,8 +174,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [readOnly, metadata, dependencies]
   );
 
+  const pinned = useIsNodePinned(id);
   const selected = useIsNodeSelected(id);
-  const isPinned = useIsNodePinned(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
@@ -232,6 +234,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     dispatch(setShowDeleteModal(true));
   }, [dispatch, id]);
 
+  const pinClick = useCallback(() => {
+    dispatch(setPinnedNodeId(id === pinnedNodeId ? '' : id));
+  }, [dispatch, id, pinnedNodeId]);
+
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyOperation({ nodeId: id }));
@@ -252,10 +258,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
       <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
+      <PinMenuItem key={'pin'} nodeId={id} onClick={pinClick} />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
       ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
     ],
-    [copyClick, deleteClick, isTrigger, resubmitClick, runData?.canResubmit, runAfterClick, runAfter]
+    [copyClick, deleteClick, id, isTrigger, pinClick, resubmitClick, runData?.canResubmit, runAfterClick, runAfter]
   );
 
   const opQuery = useOperationQuery(id);
@@ -365,7 +372,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             onDeleteClick={deleteClick}
             onCopyClick={copyClick}
             operationName={operationSummary?.result}
-            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
+            selectionMode={selected ? 'selected' : pinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             setFocus={shouldFocus}
             staticResultsEnabled={!!staticResults}
