@@ -2284,7 +2284,7 @@ export async function loadDynamicValuesForParameter(
     propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
-    const errorData = error?.response?.data ? error?.response?.data : error?.data;
+    const errorData = error?.response ? error?.response?.data : error?.data;
     const message = errorData?.error?.message ?? rootMessage;
 
     propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
@@ -2336,7 +2336,9 @@ export async function fetchDynamicValuesForParameter(
     propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
-    const message = error?.response?.data?.error?.message ?? rootMessage;
+    const errorData = error?.response ? error?.response?.data : error?.data;
+    const message = errorData?.error?.message ?? rootMessage;
+
     propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
   }
 
