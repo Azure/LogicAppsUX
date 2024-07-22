@@ -87,7 +87,7 @@ const initialState: PanelState = {
 const area = 'Designer:PanelV2 Slice';
 
 export const panelSlice = createSlice({
-  name: 'panel',
+  name: 'panelV2',
   initialState,
   reducers: {
     expandPanel: (state) => {
@@ -98,25 +98,53 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedOperationGroupId = '';
       state.discoveryContent.isAddingTrigger = false;
     },
-    clearPanel: (state) => {
+    clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean }>) => {
+      const { clearPinnedState } = action.payload;
+
       state.connectionContent = getInitialConnectionContentState();
       state.currentPanelMode = 'Operation';
       state.discoveryContent = getInitialDiscoveryContentState();
       state.errorContent = getInitialErrorContentState();
-      state.isCollapsed = true;
       state.nodeSearchContent = getInitialNodeSearchContentState();
-      state.operationContent = getInitialOperationContentState();
       state.previousPanelMode = undefined;
       state.workflowParametersContent = getInitialWorkflowParametersContentState();
+
+      if (clearPinnedState) {
+        state.operationContent = getInitialOperationContentState();
+      } else {
+        state.operationContent = {
+          ...getInitialOperationContentState(),
+          pinnedNodeId: state.operationContent.pinnedNodeId,
+          pinnedNodeActiveTabId: state.operationContent.pinnedNodeActiveTabId,
+        };
+      }
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.location) {
         state.location = action.payload;
       }
     },
-    setPinnedNodeId: (state, action: PayloadAction<string>) => {
-      state.operationContent.pinnedNodeId = action.payload;
+    setPinnedNode: (state, action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean }>) => {
+      const { nodeId, updatePanelOpenState } = action.payload;
+      const hasSelectedNode = !!state.operationContent.selectedNodeId;
+
+      if (nodeId && !hasSelectedNode) {
+        state.connectionContent.selectedNodeIds = [nodeId];
+        state.discoveryContent.selectedNodeIds = [nodeId];
+        state.operationContent.selectedNodeId = nodeId;
+      }
+
+      state.operationContent.pinnedNodeId = nodeId;
       state.operationContent.pinnedNodeActiveTabId = undefined;
+
+      if (updatePanelOpenState) {
+        if (nodeId) {
+          state.isCollapsed = false;
+          state.currentPanelMode = 'Operation';
+        } else {
+          state.isCollapsed = !hasSelectedNode;
+        }
+      }
     },
     setSelectedNodeId: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
@@ -135,7 +163,7 @@ export const panelSlice = createSlice({
     changePanelNode: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
 
-      clearPanel();
+      clearPanel({});
 
       state.isCollapsed = false;
       state.currentPanelMode = 'Operation';
@@ -203,7 +231,7 @@ export const panelSlice = createSlice({
       const { focusReturnElementId, nodeId, nodeIds, panelMode, referencePanelMode } = action.payload;
       const selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
 
-      clearPanel();
+      clearPanel({});
 
       state.currentPanelMode = panelMode;
       state.isCollapsed = false;
@@ -258,7 +286,9 @@ export const panelSlice = createSlice({
     // Once v1 panel is deprecated & deleted, these can be safely removed.
     builder.addMatcher(isAnyOf(panelV1ExpandPanel), (state) => panelSlice.caseReducers.expandPanel(state));
     builder.addMatcher(isAnyOf(panelV1CollapsePanel), (state) => panelSlice.caseReducers.collapsePanel(state));
-    builder.addMatcher(isAnyOf(panelV1ClearPanel), (state) => panelSlice.caseReducers.clearPanel(state));
+    builder.addMatcher(isAnyOf(panelV1ClearPanel), (state, action) =>
+      panelSlice.caseReducers.clearPanel(state, { ...action, payload: { clearPinnedState: true } })
+    );
     builder.addMatcher(isAnyOf(panelV1UpdatePanelLocation), (state, action) => panelSlice.caseReducers.updatePanelLocation(state, action));
     builder.addMatcher(isAnyOf(panelV1SetSelectedNodeId), (state, action) => panelSlice.caseReducers.setSelectedNodeId(state, action));
     builder.addMatcher(isAnyOf(panelV1SetSelectedNodeIds), (state, action) => panelSlice.caseReducers.setSelectedNodeIds(state, action));
@@ -297,7 +327,7 @@ export const {
   setSelectedPanelActiveTab,
   setIsCreatingConnection,
   setIsPanelLoading,
-  setPinnedNodeId,
+  setPinnedNode,
   setSelectedNodeId,
   setSelectedNodeIds,
   updatePanelLocation,

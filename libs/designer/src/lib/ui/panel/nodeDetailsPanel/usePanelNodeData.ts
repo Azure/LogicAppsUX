@@ -3,7 +3,11 @@ import { useNodeDisplayName, useNodeMetadata } from '../../../core';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { selectPanelTab } from '../../../core/state/panel/panelSlice';
-import { useIsNodePinned, usePinnedNodeActiveTabId, useSelectedNodeActiveTabId } from '../../..//core/state/panelV2/panelSelectors';
+import {
+  useIsNodePinnedToOperationPanel,
+  usePinnedNodeActiveTabId,
+  useSelectedNodeActiveTabId,
+} from '../../..//core/state/panelV2/panelSelectors';
 import { setPinnedPanelActiveTab } from '../../../core/state/panelV2/panelSlice';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
@@ -16,7 +20,7 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelContainerNode
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const isPinnedNode = useIsNodePinned(nonNullNodeId);
+  const isPinnedNode = useIsNodePinnedToOperationPanel(nonNullNodeId);
   const comment = useNodeDescription(nonNullNodeId);
   const displayName = useNodeDisplayName(nonNullNodeId);
   const errorInfo = useOperationErrorInfo(nonNullNodeId);

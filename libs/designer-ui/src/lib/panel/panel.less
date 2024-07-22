@@ -5,11 +5,11 @@
   justify-content: space-between;
 
   .msla-panel-select-card-container-empty {
-    padding-top: 25vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
 
     .msla-panel-empty-text {
       font-size: 14px;
@@ -97,23 +97,6 @@
       height: 32px;
       width: 32px;
     }
-
-    .collapse-toggle {
-      &.left {
-        float: right;
-        transform: rotate(180deg);
-        &.collapsed {
-          transform: rotate(0deg);
-        }
-      }
-      &.right {
-        float: left;
-        transform: rotate(0deg);
-        &.collapsed {
-          transform: rotate(180deg);
-        }
-      }
-    }
   }
 
   .msla-panel-trace-container {
@@ -162,6 +145,7 @@
 
       &.msla-panel-layout-pinned .msla-panel-header {
         border-top-color: @pinned-item-color;
+        padding-left: 16px;
       }
 
       > div {
@@ -264,6 +248,27 @@
         color: @ms-color-neutralSecondary;
         font-size: 14px;
         margin-top: 24px;
+      }
+    }
+  }
+
+  > .collapse-toggle {
+    margin: 4px;
+  }
+
+  .collapse-toggle {
+    &.left {
+      float: right;
+      transform: rotate(180deg);
+      &.collapsed {
+        transform: rotate(0deg);
+      }
+    }
+    &.right {
+      float: left;
+      transform: rotate(0deg);
+      &.collapsed {
+        transform: rotate(180deg);
       }
     }
   }

@@ -5,8 +5,8 @@ import { PanelHeaderTitle } from './panelheadertitle';
 import { Button, Menu, MenuList, MenuPopover, MenuTrigger, Spinner, Tooltip } from '@fluentui/react-components';
 import {
   bundleIcon,
-  ChevronRight24Filled,
-  ChevronRight24Regular,
+  ChevronDoubleRightFilled,
+  ChevronDoubleRightRegular,
   MoreVertical24Filled,
   MoreVertical24Regular,
   PinOffRegular,
@@ -24,6 +24,7 @@ export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTM
 };
 export interface PanelHeaderProps {
   isCollapsed: boolean;
+  isOutermostPanel?: boolean;
   headerLocation: PanelLocation;
   cardIcon?: string;
   comment?: string;
@@ -50,11 +51,12 @@ export interface PanelHeaderProps {
   onTitleBlur?: (prevtitle: string) => void;
 }
 
-const DismissIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
+const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 
 export const PanelHeader = ({
   isCollapsed,
+  isOutermostPanel,
   headerLocation,
   cardIcon,
   comment,
@@ -104,7 +106,7 @@ export const PanelHeader = ({
   const isRight = headerLocation === PanelLocation.Right;
 
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
-  const shouldHideCollapseButton = isCollapsed && suppressDefaultNodeSelectFunctionality;
+  const shouldHideCollapseButton = !isOutermostPanel || (isCollapsed && suppressDefaultNodeSelectFunctionality);
 
   // collapsed -> loading -> connector icon -> error -> backup loading
   const iconComponent = useMemo(

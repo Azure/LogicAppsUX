@@ -21,8 +21,8 @@ import {
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
-import { useIsNodePinned, usePinnedNodeId } from '../../core/state/panelV2/panelSelectors';
-import { setPinnedNodeId } from '../../core/state/panelV2/panelSlice';
+import { useIsNodePinnedToOperationPanel, useOperationPanelPinnedNodeId } from '../../core/state/panelV2/panelSelectors';
+import { setPinnedNode } from '../../core/state/panelV2/panelSlice';
 import {
   useAllOperations,
   useConnectorName,
@@ -75,7 +75,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const dispatch = useDispatch<AppDispatch>();
   const rootState = useSelector((state: RootState) => state);
-  const pinnedNodeId = usePinnedNodeId();
+  const pinnedNodeId = useOperationPanelPinnedNodeId();
   const operationsInfo = useAllOperations();
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
@@ -174,7 +174,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [readOnly, metadata, dependencies]
   );
 
-  const pinned = useIsNodePinned(id);
+  const pinned = useIsNodePinnedToOperationPanel(id);
   const selected = useIsNodeSelected(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
@@ -235,7 +235,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   }, [dispatch, id]);
 
   const pinClick = useCallback(() => {
-    dispatch(setPinnedNodeId(id === pinnedNodeId ? '' : id));
+    dispatch(
+      setPinnedNode({
+        nodeId: id === pinnedNodeId ? '' : id,
+        updatePanelOpenState: true,
+      })
+    );
   }, [dispatch, id, pinnedNodeId]);
 
   const copyClick = useCallback(() => {

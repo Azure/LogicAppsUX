@@ -4,9 +4,15 @@ import { useSelector } from 'react-redux';
 
 const getPanelState = (state: RootState) => state.panelV2;
 
-export const usePinnedNodeId = () => useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeId ?? ''));
+export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.isCollapsed));
 
-export const useIsNodePinned = (nodeId: string) => usePinnedNodeId() === nodeId;
+export const useIsNodePinnedToOperationPanel = (nodeId: string) => useOperationPanelPinnedNodeId() === nodeId;
+
+export const useOperationPanelPinnedNodeId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeId ?? ''));
+
+export const useOperationPanelSelectedNodeId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeId ?? ''));
 
 export const useSelectedNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));

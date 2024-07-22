@@ -1,6 +1,7 @@
 import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
+import { Button, Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
+import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -65,7 +66,6 @@ export const PanelContainer = ({
   readOnlyMode,
   node,
   pinnedNode,
-  width,
   // TODO layerProps,
   toggleCollapse,
   trackEvent,
@@ -85,13 +85,16 @@ export const PanelContainer = ({
   const renderHeader = useCallback(
     (headerNode: PanelContainerNodeData): JSX.Element => {
       const { comment, displayName, iconUri, isError, isLoading, nodeId } = headerNode;
-      const canUnpin = !!onUnpinAction && pinnedNodeId === nodeId;
+      const panelHasPinnedNode = !!pinnedNodeIfDifferent;
+      const isPinnedNode = pinnedNodeId === nodeId;
+      const canUnpin = !!onUnpinAction && isPinnedNode;
 
       return (
         <PanelHeader
           nodeId={nodeId}
           cardIcon={iconUri}
           isCollapsed={isCollapsed}
+          isOutermostPanel={!panelHasPinnedNode || !isPinnedNode}
           headerLocation={panelLocation}
           showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
@@ -126,6 +129,7 @@ export const PanelContainer = ({
       readOnlyMode,
       canResubmit,
       pinnedNodeId,
+      pinnedNodeIfDifferent,
       resubmitOperation,
       onUnpinAction,
       onCommentChange,
@@ -170,6 +174,9 @@ export const PanelContainer = ({
     [renderHeader, panelErrorMessage, trackEvent]
   );
 
+  const isRight = panelLocation === PanelLocation.Right;
+  const drawerWidth = isCollapsed ? PanelSize.Auto : pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium;
+
   return (
     <OverlayDrawer
       aria-label={panelLabel}
@@ -179,10 +186,18 @@ export const PanelContainer = ({
         className: 'msla-panel-host-container',
       }}
       open={true}
-      position={panelLocation === PanelLocation.Right ? 'end' : 'start'}
-      style={{ width: pinnedNodeIfDifferent ? PanelSize.DualView : width }}
+      position={isRight ? 'end' : 'start'}
+      style={{ width: drawerWidth }}
     >
-      {!isCollapsed && (
+      {isEmptyPane || isCollapsed ? (
+        <Button
+          appearance="subtle"
+          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed')}
+          icon={<ChevronDoubleRightFilled />}
+          onClick={toggleCollapse}
+        />
+      ) : null}
+      {isCollapsed ? null : (
         <>
           <div
             className={mergeClasses(

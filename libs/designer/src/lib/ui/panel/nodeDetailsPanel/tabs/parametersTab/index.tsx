@@ -6,7 +6,7 @@ import type { ParameterGroup } from '../../../../../core/state/operation/operati
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
-import { usePinnedNodeId } from '../../../../../core/state/panelV2/panelSelectors';
+import { useOperationPanelPinnedNodeId } from '../../../../../core/state/panelV2/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -90,7 +90,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
-  const isPaneInPinnedViewMode = !!usePinnedNodeId();
+  const isPaneInPinnedViewMode = !!useOperationPanelPinnedNodeId();
 
   const intl = useIntl();
   const emptyParametersMessage = intl.formatMessage({

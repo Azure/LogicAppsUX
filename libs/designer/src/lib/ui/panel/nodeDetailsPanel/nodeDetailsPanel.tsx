@@ -1,14 +1,17 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import { clearPanel, collapsePanel, updateParameterValidation, useNodeMetadata, useSelectedNodeId, validateParameter } from '../../../core';
+import { clearPanel, collapsePanel, updateParameterValidation, useNodeMetadata, validateParameter } from '../../../core';
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
-import { useIsPanelCollapsed } from '../../../core/state/panel/panelSelectors';
 import { expandPanel, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
-import { usePinnedNodeId } from '../../../core/state/panelV2/panelSelectors';
-import { setPinnedNodeId } from '../../../core/state/panelV2/panelSlice';
+import {
+  useIsPanelCollapsed,
+  useOperationPanelPinnedNodeId,
+  useOperationPanelSelectedNodeId,
+} from '../../../core/state/panelV2/panelSelectors';
+import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
@@ -38,8 +41,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const readOnly = useReadOnly();
   const collapsed = useIsPanelCollapsed();
 
-  const pinnedNode = usePinnedNodeId();
-  const selectedNode = useSelectedNodeId();
+  const pinnedNode = useOperationPanelPinnedNodeId();
+  const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
   const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
@@ -59,10 +62,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNodeData = usePanelNodeData(selectedNode);
 
   const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
-
-  useEffect(() => {
-    collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
-  }, [collapsed]);
 
   useEffect(() => {
     dispatch(updatePanelLocation(panelLocation));
@@ -150,7 +149,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
-  const unpinAction = () => dispatch(setPinnedNodeId(''));
+  const unpinAction = () => dispatch(setPinnedNode({ nodeId: '' }));
 
   const runInstance = useRunInstance();
 
