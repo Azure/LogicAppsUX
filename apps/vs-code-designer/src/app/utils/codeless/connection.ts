@@ -69,9 +69,11 @@ export async function addConnectionData(
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  //when creating logic app workspace with static web app. there is an issue with the workspace, the workflow is always in the same spot so temporary fix TODO
+  //need to add flag for how workspace found depending on if SWA initialized TODO
+
   //const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   //const workspacePath: string = workspaceFolder.uri.fsPath;
+
   const workspacePath: string = path.join(workflowFilePath, '../..');
 
   const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);

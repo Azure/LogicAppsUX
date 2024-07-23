@@ -38,12 +38,13 @@ export async function createCodeless(
     workspaceFolder = getContainingWorkspace(workspacePath);
   }
 
+  //project path changed to account for SWA. need to add flag depending on if SWA initialized TODO
+
   // const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspacePath);
   // if (!projectPath) {
   //   return;
   // }
 
-  //this is a temporary fix. issue is swa feature opens up one directory higher than expected to show swa folders too. TODO
   const projectPath = path.join(searchDirectory(workspacePath, 'Stateful1'), '..');
 
   let workflowProjectType: WorkflowProjectType = WorkflowProjectType.Bundle;

@@ -78,7 +78,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
     //creating all .vscode files in the root of the workspace
-    //TODO add flag here for initial creation
+    //TODO add flag here for initial creation depending on if SWA initialized
     context.workspacePath = path.join(context.workspacePath, '../..');
     const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
@@ -163,55 +163,6 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   ]
 }`;
     await fse.writeFile(tasksJsonPath, tasksJsonContent);
-    /*
-  const newTasks: TaskDefinition[] = this.getTasks();
-
-  for (const task of newTasks) {
-    let cwd: string = (task.options && task.options.cwd) || '.';
-    cwd = this.addSubDir(context, cwd);
-    if (!isPathEqual(cwd, '.')) {
-      task.options = task.options || {};
-      // always use posix for debug config
-      task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
-    }
-  }
-
-  const versionMismatchError: Error = new Error(
-    localize('versionMismatchError', 'The version in your {0} must be "{1}" to work with Azure Functions.', tasksFileName, tasksVersion)
-  );
-
-  // Use VS Code api to update config if folder is open and it's not a multi-root workspace (https://github.com/Microsoft/vscode-azurefunctions/issues/1235)
-  // The VS Code api is better for several reasons, including:
-  // 1. It handles comments in json files
-  // 2. It sends the 'onDidChangeConfiguration' event
-  if (context.workspaceFolder && !isMultiRootWorkspace()) {
-    const currentVersion: string | undefined = getTasksVersion(context.workspaceFolder);
-    if (!currentVersion) {
-      updateTasksVersion(context.workspaceFolder, tasksVersion);
-    } else if (currentVersion !== tasksVersion) {
-      throw versionMismatchError;
-    }
-    updateTasks(context.workspaceFolder, this.insertNewTasks(getTasks(context.workspaceFolder), newTasks));
-    if (this.getTaskInputs) {
-      updateInputs(context.workspaceFolder, this.insertNewTaskInputs(context, getInputs(context.workspaceFolder), this.getTaskInputs()));
-    }
-  } else {
-    // otherwise manually edit json
-    const tasksJsonPath: string = path.join(vscodePath, tasksFileName);
-    await confirmEditJsonFile(context, tasksJsonPath, (data: ITasksJson): ITasksJson => {
-      if (!data.version) {
-        data.version = tasksVersion;
-      } else if (data.version !== tasksVersion) {
-        throw versionMismatchError;
-      }
-      data.tasks = this.insertNewTasks(data.tasks, newTasks);
-      if (this.getTaskInputs) {
-        data.inputs = this.insertNewTaskInputs(context, data.inputs, this.getTaskInputs());
-      }
-      return data;
-    });
-  }
-    */
   }
 
   private insertNewTasks(existingTasks: ITask[] | undefined, newTasks: ITask[]): ITask[] {

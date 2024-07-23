@@ -191,7 +191,7 @@ async function deploy(
   });
   await node.loadAllChildren(context);
 
-  //need to add flag for this call and remove region hardcode TODO
+  //need to add flag for this call depending on if SWA initialized and remove region hardcode TODO
   const suffix = '/config/web';
   const logicAppBackendResourceId = siteConfig.id.substring(0, siteConfig.id.length - suffix.length);
   vscodeExtension.commands.executeCommand('staticWebApps.createStaticWebApp', undefined, undefined, {

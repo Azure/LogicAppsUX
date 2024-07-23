@@ -34,7 +34,6 @@ export async function createNewProjectFromCommand(
   functionName?: string,
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
-  console.log('CREATE NEW PROJECT LOG');
   await createNewProjectInternal(context, {
     folderPath: isString(folderPath) ? folderPath : undefined,
     templateId,
