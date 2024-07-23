@@ -23,7 +23,6 @@ exports[`lib/card > should render 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -104,7 +103,6 @@ exports[`lib/card > should render as cloned 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -185,7 +183,6 @@ exports[`lib/card > should render as draggable 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -279,7 +276,6 @@ exports[`lib/card > should render as inactive 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -360,7 +356,6 @@ exports[`lib/card > should render as pinned 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box pinned"
@@ -441,7 +436,6 @@ exports[`lib/card > should render as selected 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box selected"
@@ -522,7 +516,6 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -596,7 +589,6 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -670,7 +662,6 @@ exports[`lib/card > should render with an icon and an operation name and connect
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box"

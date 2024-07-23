@@ -8,10 +8,11 @@ interface NodeCollapseToggleProps {
   collapsed?: boolean;
   onSmallCard?: boolean;
   handleCollapse?: () => void;
+  tabIndex?: number;
 }
 
 const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
-  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse } = props;
+  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse, tabIndex } = props;
 
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
@@ -40,6 +41,7 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
         onClick={handleCollapse}
         onKeyDown={keyboardInteraction.keyDown}
         onKeyUp={keyboardInteraction.keyUp}
+        tabIndex={disabled ? -1 : tabIndex}
       >
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
       </button>

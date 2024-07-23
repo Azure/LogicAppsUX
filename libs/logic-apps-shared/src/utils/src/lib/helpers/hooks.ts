@@ -1,5 +1,7 @@
+import { useNodesData } from '@xyflow/react';
 import type { MutableRefObject } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEdgesData } from './useEdgesData';
 
 export const useThrottledEffect = (effect: () => void, deps: any[], delay: number) => {
   const timestamp = useRef(Date.now());
@@ -63,3 +65,15 @@ export const useOutsideClick = (refs: MutableRefObject<any>[], callback: () => v
 
 export const useConsoleLog = (value: any) =>
   useEffect(() => console.log('%c UseConsole>', 'color: #3386FF; font-weight: bold;', value), [value]);
+
+export const useNodeIndex = (nodeId?: string) => {
+  return (useNodesData(nodeId ?? '')?.data?.['nodeIndex'] as number) ?? 0;
+};
+
+export const useEdgeIndex = (edgeId?: string) => {
+  return (useEdgesData(edgeId ?? '')?.data?.['edgeIndex'] as number) ?? 0;
+};
+
+export const useNodeLeafIndex = (nodeId?: string) => {
+  return (useNodesData(nodeId ?? '')?.data?.['nodeLeafIndex'] as number) ?? 0;
+};
