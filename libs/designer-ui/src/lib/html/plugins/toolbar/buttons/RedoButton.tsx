@@ -1,12 +1,12 @@
-import { ToolbarButton } from "@fluentui/react-components";
+import { useTheme } from '@fluentui/react';
+import { ToolbarButton } from '@fluentui/react-components';
 import { isApple } from '@microsoft/logic-apps-shared';
-import type { LexicalEditor} from "lexical";
-import { REDO_COMMAND } from "lexical";
+import type { LexicalEditor } from 'lexical';
+import { REDO_COMMAND } from 'lexical';
+import { useIntl } from 'react-intl';
 import clockWiseArrowDark from '../../icons/dark/arrow-clockwise.svg';
 import clockWiseArrowLight from '../../icons/light/arrow-clockwise.svg';
 import { CLOSE_DROPDOWN_COMMAND } from '../helper/Dropdown';
-import { useTheme } from "@fluentui/react";
-import { useIntl } from "react-intl";
 
 interface RedoButtonProps {
   activeEditor: LexicalEditor;

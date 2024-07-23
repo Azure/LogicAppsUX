@@ -1,9 +1,9 @@
-import { useTheme } from "@fluentui/react";
-import { ToolbarButton } from "@fluentui/react-components";
+import { useTheme } from '@fluentui/react';
+import { ToolbarButton } from '@fluentui/react-components';
 import { isApple } from '@microsoft/logic-apps-shared';
-import type { LexicalEditor } from "lexical";
-import { UNDO_COMMAND } from "lexical";
-import { useIntl } from "react-intl";
+import type { LexicalEditor } from 'lexical';
+import { UNDO_COMMAND } from 'lexical';
+import { useIntl } from 'react-intl';
 import counterClockWiseArrowDark from '../../icons/dark/arrow-counterclockwise.svg';
 import counterClockWiseArrowLight from '../../icons/light/arrow-counterclockwise.svg';
 import { CLOSE_DROPDOWN_COMMAND } from '../helper/Dropdown';

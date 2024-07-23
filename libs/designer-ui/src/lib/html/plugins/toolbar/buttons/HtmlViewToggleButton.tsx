@@ -1,6 +1,6 @@
-import { useTheme } from "@fluentui/react";
-import { mergeClasses, ToolbarButton } from "@fluentui/react-components";
-import { useIntl } from "react-intl";
+import { useTheme } from '@fluentui/react';
+import { mergeClasses, ToolbarButton } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
 import codeToggleDark from '../../icons/dark/code-toggle.svg';
 import codeToggleLight from '../../icons/light/code-toggle.svg';
 
