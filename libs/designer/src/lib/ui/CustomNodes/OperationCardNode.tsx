@@ -53,7 +53,7 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -337,6 +337,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  const nodeIndex = useNodeIndex(id);
+
   return (
     <>
       <div className="nopan" ref={ref as any}>
@@ -370,6 +372,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             setFocus={shouldFocus}
             staticResultsEnabled={!!staticResults}
             isSecureInputsOutputs={isSecureInputsOutputs}
+            nodeIndex={nodeIndex}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
@@ -383,7 +386,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
+          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
         </div>
       ) : null}
     </>

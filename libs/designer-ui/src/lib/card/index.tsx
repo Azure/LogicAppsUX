@@ -35,6 +35,7 @@ export interface CardProps {
   isDragging?: boolean;
   isMonitoringView?: boolean;
   isLoading?: boolean;
+  nodeIndex?: number;
   operationName?: string;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
@@ -62,7 +63,6 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
 };
 
 export const Card: React.FC<CardProps> = ({
-  id,
   active = true,
   brandColor,
   cloned,
@@ -78,16 +78,18 @@ export const Card: React.FC<CardProps> = ({
   errorLevel,
   errorMessage,
   icon,
+  id,
   isDragging,
   isMonitoringView,
   isLoading,
+  nodeIndex,
+  onClick,
+  onDeleteClick,
+  onCopyClick,
   operationName,
   selectionMode,
   staticResultsEnabled,
   title,
-  onClick,
-  onDeleteClick,
-  onCopyClick,
   runData,
   setFocus,
   isSecureInputsOutputs,
@@ -186,7 +188,7 @@ export const Card: React.FC<CardProps> = ({
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={2}
+        tabIndex={nodeIndex}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
@@ -217,6 +219,7 @@ export const Card: React.FC<CardProps> = ({
             connectionRequired={connectionRequired}
             staticResultsEnabled={staticResultsEnabled}
             isSecureInputsOutputs={isSecureInputsOutputs}
+            nodeIndex={nodeIndex}
           />
         </div>
       </div>

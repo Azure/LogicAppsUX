@@ -198,7 +198,7 @@ describe('elklayout', () => {
         [210, 50],
       ];
       const output = convertElkGraphToReactFlow(input);
-      expect(output).toEqual(expectedOutput);
+      expect(cleanOutput(output)).toEqual(cleanOutput(expectedOutput));
     });
 
     it('should convert elk graph into a react flow compatible object with scoped nodes', () => {
@@ -382,7 +382,7 @@ describe('elklayout', () => {
       ];
 
       const output = convertElkGraphToReactFlow(input);
-      expect(output).toEqual(expectedOutput);
+      expect(cleanOutput(output)).toEqual(cleanOutput(expectedOutput));
     });
   });
 
@@ -430,3 +430,17 @@ describe('elklayout', () => {
     });
   });
 });
+
+const cleanOutput = (output: [Node[], Edge[], number[]]) => {
+  const [nodes, edges, dimensions] = output;
+  // Remove index data
+  edges.forEach((edge) => {
+    if (edge.data?.edgeIndex) delete edge.data.edgeIndex;
+  });
+  nodes.forEach((node) => {
+    if (node.data?.nodeIndex) delete node.data.nodeIndex;
+    if (node.data?.nodeLeafIndex) delete node.data.nodeLeafIndex;
+  });
+
+  return [nodes.sort((a, b) => a.id.localeCompare(b.id)), edges.sort((a, b) => a.id.localeCompare(b.id)), dimensions];
+};
