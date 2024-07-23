@@ -35,7 +35,7 @@ import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService, getRecordEntry, removeIdTag } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -300,6 +300,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const nodeIndex = useNodeIndex(id);
+
   if (!node) {
     return null;
   }
@@ -365,6 +367,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             runData={runData}
             commentBox={comment}
             setFocus={shouldFocus}
+            nodeIndex={nodeIndex}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
@@ -385,7 +388,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           <p className="no-actions-text">No Actions</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
+            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
           </div>
         )
       ) : null}
