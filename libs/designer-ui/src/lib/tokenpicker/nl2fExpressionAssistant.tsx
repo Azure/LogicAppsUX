@@ -12,7 +12,7 @@ import {
   ChevronRight16Regular,
   bundleIcon,
 } from '@fluentui/react-icons';
-import type { ExpressionEditorEvent } from 'lib/expressioneditor';
+import type { ExpressionEditorEvent } from '../../lib/expressioneditor';
 import { TokenPickerMode } from '.';
 import useIntl from 'react-intl/src/components/useIntl';
 import type { Nl2fSuggestedExpression } from '@microsoft/logic-apps-shared';
