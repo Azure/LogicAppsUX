@@ -11,7 +11,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 
 export interface TokenPickerBaseProps {
-  selectedKey: TokenPickerMode;
+  selectedMode: TokenPickerMode;
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
@@ -28,7 +28,7 @@ interface TokenPickerSectionProps extends TokenPickerBaseProps {
 }
 
 export const TokenPickerSection = ({
-  selectedKey,
+  selectedMode,
   tokenGroup,
   expressionGroup,
   searchQuery,
@@ -42,12 +42,12 @@ export const TokenPickerSection = ({
   const [noItems, setNoItems] = useState(false);
 
   useEffect(() => {
-    if (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN) {
+    if (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN) {
       setNoItems(dynamicTokenLength.reduce((sum, a) => sum + a, 0) === 0);
     } else {
       setNoItems(expressionTokenLength.reduce((sum, a) => sum + a, 0) === 0);
     }
-  }, [dynamicTokenLength, expressionTokenLength, searchQuery, selectedKey]);
+  }, [dynamicTokenLength, expressionTokenLength, searchQuery, selectedMode]);
 
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
@@ -70,10 +70,10 @@ export const TokenPickerSection = ({
       }}
     >
       {searchQuery && noItems ? <TokenPickerNoMatches /> : null}
-      {noDynamicContent && (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN) ? (
+      {noDynamicContent && (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN) ? (
         <TokenPickerNoDynamicContent />
       ) : (
-        (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map(
+        (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map(
           (section, i) => {
             if (section.tokens.length > 0) {
               return (
@@ -81,8 +81,8 @@ export const TokenPickerSection = ({
                   <TokenPickerOptions
                     section={section}
                     index={i}
-                    setTokenLength={selectedKey === TokenPickerMode.EXPRESSION ? setExpressionTokenLength : setDynamicTokenLength}
-                    selectedKey={selectedKey}
+                    setTokenLength={selectedMode === TokenPickerMode.EXPRESSION ? setExpressionTokenLength : setDynamicTokenLength}
+                    selectedMode={selectedMode}
                     searchQuery={searchQuery}
                     {...tokenPickerBaseProps}
                   />
