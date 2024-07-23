@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [4.46.0](https://github.com/Azure/LogicAppsUX/compare/v4.45.0...v4.46.0) (2024-07-23)
+
+
+### Features
+
+* Adding UI for NL2F Expression Assistant and Copilot Service Interface ([#5107](https://github.com/Azure/LogicAppsUX/issues/5107)) ([6cef0e1](https://github.com/Azure/LogicAppsUX/commit/6cef0e16021f44c1851f0e1e6a3d961d4b108b2b))
+* **designer-ui:** Add `PinMenuItem` component & styles ([#5159](https://github.com/Azure/LogicAppsUX/issues/5159)) ([4136033](https://github.com/Azure/LogicAppsUX/commit/413603319a5867290359e77dd69ed2e4e900ebd3))
+* **designer:** Add unit testing for parseErrorMessage function ([#5177](https://github.com/Azure/LogicAppsUX/issues/5177)) ([fe186de](https://github.com/Azure/LogicAppsUX/commit/fe186dee95fcc0380cf5e095792b7d398caab6f4))
+
+
+### Bug Fixes
+
+* **designer-ui:** Extract toolbar format buttons into component files ([#5162](https://github.com/Azure/LogicAppsUX/issues/5162)) ([d51c797](https://github.com/Azure/LogicAppsUX/commit/d51c797cd1bb4b2178730be72af18d0b11cf71a4))
+* **designer-ui:** Fix wrapping of connection display when panel is narrow ([#5160](https://github.com/Azure/LogicAppsUX/issues/5160)) ([50ba269](https://github.com/Azure/LogicAppsUX/commit/50ba269219a4ce246c08e7b2011d0f5e71f701ff))
+* **designer:** Added accessible names to search filter dropdowns ([#5178](https://github.com/Azure/LogicAppsUX/issues/5178)) ([09ba8b9](https://github.com/Azure/LogicAppsUX/commit/09ba8b95b2be2fd0769fd1e7ef34ebb4e0f1817a))
+* **Designer:** Fixed foreach dynamic item() / items() token issue ([#5149](https://github.com/Azure/LogicAppsUX/issues/5149)) ([17b9cad](https://github.com/Azure/LogicAppsUX/commit/17b9cadf31530b570ff93502e282f66d41c7d56d))
+* **designer:** Workflow canvas proper tab ordering ([#5169](https://github.com/Azure/LogicAppsUX/issues/5169)) ([0c9aec7](https://github.com/Azure/LogicAppsUX/commit/0c9aec70549215306870fbfe3d90840b5afe3cbf))
+* **shared:** Add `objectId` and `tenantId` to `authenticatedUser` ([#5180](https://github.com/Azure/LogicAppsUX/issues/5180)) ([8c2733a](https://github.com/Azure/LogicAppsUX/commit/8c2733a4b89ef22c9809a4799b508665097b1a74))
+* **vscode:** Add validation for error response structure ([#5170](https://github.com/Azure/LogicAppsUX/issues/5170)) ([064b65d](https://github.com/Azure/LogicAppsUX/commit/064b65de92b09e4a1c7579df8f5b9db884e0ab07))
+
 ## [4.45.0](https://github.com/Azure/LogicAppsUX/compare/v4.44.0...v4.45.0) (2024-07-19)
 
 
