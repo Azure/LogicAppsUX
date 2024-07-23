@@ -104,6 +104,18 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     }
   };
 
+  const runtimeText = intl.formatMessage({
+    defaultMessage: 'Runtime',
+    id: 'g5A6Bn',
+    description: 'Filter by label',
+  });
+
+  const actionTypeText = intl.formatMessage({
+    defaultMessage: 'Action Type',
+    id: 'TRpSCQ',
+    description: 'Filter by label',
+  });
+
   return (
     <div className="msla-sub-heading-container">
       <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
@@ -111,8 +123,9 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
           {displayRuntimeInfo && runtimeFilters.length > 0 ? (
             <div style={{ display: 'inherit' }}>
-              <Label>{intl.formatMessage({ defaultMessage: 'Runtime', id: 'g5A6Bn', description: 'Filter by label' })}</Label>
+              <Label htmlFor={'runtimeDropdown'}>{runtimeText}</Label>
               <Dropdown
+                id={'runtimeDropdown'}
                 placeholder={
                   filters?.['runtime']
                     ? runtimeFilters?.find((data) => data.value === filters['runtime'])?.text
@@ -136,8 +149,9 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
           ) : null}
           {displayActionType ? (
             <div style={{ display: 'inherit' }}>
-              <Label>{intl.formatMessage({ defaultMessage: 'Action Type', id: 'TRpSCQ', description: 'Filter by label' })}</Label>
+              <Label htmlFor={'actionTypeDropdown'}>{actionTypeText}</Label>
               <Dropdown
+                id={'actionTypeDropdown'}
                 placeholder={
                   filters?.['actionType']
                     ? actionTypeFilters?.find((data) => data.value === filters['actionType'])?.text

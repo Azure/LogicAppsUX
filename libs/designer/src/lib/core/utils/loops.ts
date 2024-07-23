@@ -277,7 +277,7 @@ const getArrayDetailsForNestedForeach = (
   repetitionContext: RepetitionContext,
   state: RootState
 ): ImplicitForeachDetails => {
-  let shouldAddAnyForeach = false;
+  let shouldAdd = false;
   const arrayDetails: ImplicitForeachArrayDetails[] = [];
   const actionName = token.outputInfo.actionName;
   let parentArrayKey = getParentArrayKey(token.key);
@@ -309,12 +309,9 @@ const getArrayDetailsForNestedForeach = (
       return checkArrayInRepetition(actionName, repetitionValue, parentArrayKey, data?.expression, data?.output, areOutputsManifestBased);
     });
 
-    const shouldAdd = !isSplitOn && !alreadyInLoop;
-    if (!shouldAddAnyForeach && shouldAdd) {
-      shouldAddAnyForeach = shouldAdd;
-    }
+    shouldAdd = !isSplitOn && !alreadyInLoop;
 
-    if (shouldAdd && data?.expression) {
+    if (data?.expression) {
       arrayDetails.push({ parentArrayKey, parentArrayValue: data.expression });
     }
 
@@ -322,7 +319,7 @@ const getArrayDetailsForNestedForeach = (
     parentArray = data?.token.arrayDetails?.parentArrayName;
   }
 
-  return { shouldAdd: shouldAddAnyForeach, arrayDetails };
+  return { shouldAdd, arrayDetails };
 };
 
 const getParentArrayExpression = (
