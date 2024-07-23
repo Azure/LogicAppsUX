@@ -337,6 +337,87 @@ exports[`lib/card > should render as inactive 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render as pinned 1`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={2}
+  >
+    <div
+      className="msla-selection-box pinned"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        aria-label=" operation"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as selected 1`] = `
 <div
   style={
