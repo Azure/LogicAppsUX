@@ -1,4 +1,6 @@
+import { environment } from '../../../../environments/environment';
 import type { ArtifactProperties } from '../Models/Workflow';
+import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
 import type { DynamicCallServiceOptions } from './ChildWorkflow';
 import type { ListDynamicValue } from '@microsoft/logic-apps-shared';
 
@@ -187,9 +189,20 @@ export class ArtifactService {
 
   private async _getArtifactFiles(filePath: string, _errorMessage: string): Promise<FileDetails[]> {
     const { apiVersion, baseUrl, siteResourceId, httpClient } = this.options;
-    const response = await httpClient.get<ArtifactProperties[]>({
-      uri: `${baseUrl}${siteResourceId}/hostruntime/admin/vfs/${filePath}/?api-version=${apiVersion}&relativepath=1`,
-    });
+    let response: ArtifactProperties[];
+    if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+      response = await HybridAppUtility.getProxy<ArtifactProperties[]>(
+        `${baseUrl}${siteResourceId}/hostruntime/admin/vfs/${filePath}/?relativepath=1`,
+        null,
+        {
+          Authorization: `Bearer ${environment.armToken}`,
+        }
+      );
+    } else {
+      response = await httpClient.get<ArtifactProperties[]>({
+        uri: `${baseUrl}${siteResourceId}/hostruntime/admin/vfs/${filePath}/?api-version=${apiVersion}&relativepath=1`,
+      });
+    }
 
     return response.map((file: any) => {
       const fileName = file.name;

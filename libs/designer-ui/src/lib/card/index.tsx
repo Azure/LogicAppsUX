@@ -38,7 +38,7 @@ export interface CardProps {
   operationName?: string;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
-  selected?: boolean;
+  selectionMode?: 'selected' | 'pinned' | false;
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
@@ -62,6 +62,7 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
 };
 
 export const Card: React.FC<CardProps> = ({
+  id,
   active = true,
   brandColor,
   cloned,
@@ -81,7 +82,7 @@ export const Card: React.FC<CardProps> = ({
   isMonitoringView,
   isLoading,
   operationName,
-  selected,
+  selectionMode,
   staticResultsEnabled,
   title,
   onClick,
@@ -171,9 +172,10 @@ export const Card: React.FC<CardProps> = ({
           drag(node);
         }}
         aria-describedby={describedBy}
+        id={`msla-node-${id}`}
         className={css(
           'msla-panel-card-container',
-          selected && 'msla-panel-card-container-selected',
+          selectionMode === 'selected' && 'msla-panel-card-container-selected',
           !active && 'inactive',
           cloned && 'msla-card-ghost-image',
           isDragging && 'dragging'
@@ -197,7 +199,7 @@ export const Card: React.FC<CardProps> = ({
             resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
           />
         ) : null}
-        <div className={css('msla-selection-box', selected && 'selected')} />
+        <div className={css('msla-selection-box', selectionMode)} />
         <div className="panel-card-main">
           <div aria-label={cardAltText} className="panel-card-header" role="button">
             <div className="panel-card-content-container">

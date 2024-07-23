@@ -1,4 +1,4 @@
-import type { Connection } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionProperties } from '@microsoft/logic-apps-shared';
 import { getConnectionErrors } from '@microsoft/logic-apps-shared';
 
 export type ConnectionWithFlattenedProperties = Omit<Connection, 'properties'> & Connection['properties'] & { invalid: boolean };
@@ -21,4 +21,12 @@ export const compareFlattenedConnections = (a: ConnectionWithFlattenedProperties
     return -1;
   }
   return a.displayName.localeCompare(b.displayName);
+};
+
+export const getLabelForConnection = (item: ConnectionProperties): string => {
+  return item.displayName;
+};
+
+export const getSubLabelForConnection = (item: ConnectionProperties): string | undefined => {
+  return item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name ?? item.accountName;
 };

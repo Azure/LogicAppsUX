@@ -8,7 +8,7 @@ import { AddRegular } from '@fluentui/react-icons';
 import { useDrag } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { addFunctionNode } from '../../core/state/DataMapSlice';
-import type { XYPosition } from 'reactflow';
+import type { XYPosition } from '@xyflow/react';
 
 interface FunctionListItemProps {
   functionData: FunctionData;

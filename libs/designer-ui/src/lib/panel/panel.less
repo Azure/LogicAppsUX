@@ -143,16 +143,16 @@
 
   .msla-panel-content-container {
     margin: 0px -2rem;
-		padding: 1rem 2rem;
-		overflow-y: auto;
-		height: inherit;
+    padding: 1rem 2rem;
+    overflow-y: auto;
+    height: inherit;
   }
 
-	.msla-node-details-panel {
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-	}
+  .msla-node-details-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 
   .msla-tab-component-container {
     .msla-panel-about-container {
@@ -233,16 +233,32 @@
 }
 
 .connection-display {
-  display: flex;
-  margin: 8px 0px;
-  gap: 8px;
-  justify-content: space-between;
-
   .connection-info {
+    align-items: flex-start;
     display: flex;
-    column-gap: 8px;
+    flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
+    justify-content: flex-start;
+
+    .connection-info-labels {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      max-width: 100%;
+
+      > svg {
+        flex: 0 0 16px;
+      }
+
+      .label {
+        white-space: nowrap;
+      }
+    }
+
+    .change-connection-button {
+      margin-left: 15px;
+    }
   }
 
   .connection-info-error {

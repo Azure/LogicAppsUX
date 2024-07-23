@@ -219,28 +219,30 @@ const getWorkflowParameters = (
     delete parameterDefinition['name'];
     delete parameterDefinition['isEditable'];
 
-    const isStringParameter =
-      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
-      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
-
-    parameterDefinition.value = isStringParameter
-      ? value
-      : value === ''
-        ? undefined
-        : typeof value !== 'string'
-          ? value
-          : JSON.parse(value);
-
-    parameterDefinition.defaultValue = isStringParameter
-      ? defaultValue
-      : defaultValue === ''
-        ? undefined
-        : typeof defaultValue !== 'string'
-          ? defaultValue
-          : JSON.parse(defaultValue);
+    parameterDefinition.value = parseWorkflowParameterValue(parameterDefinition.type, value);
+    parameterDefinition.defaultValue = parseWorkflowParameterValue(parameterDefinition.type, defaultValue);
     result[parameter?.name ?? parameterId] = parameterDefinition;
     return result;
   }, {});
+};
+
+export const parseWorkflowParameterValue = (parameterType: any, parameterValue: any) => {
+  try {
+    const isStringParameter =
+      equals(parameterType, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
+      equals(parameterType, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
+
+    return isStringParameter
+      ? parameterValue
+      : parameterValue === ''
+        ? undefined
+        : typeof parameterValue !== 'string'
+          ? parameterValue
+          : JSON.parse(parameterValue);
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 };
 
 export const serializeOperation = async (

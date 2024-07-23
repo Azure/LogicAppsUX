@@ -4,7 +4,7 @@ import { exportForTesting } from '../elklayout';
 import type { WorkflowEdgeType } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkNode } from 'elkjs/lib/elk-api';
-import type { Edge, Node } from 'reactflow';
+import type { Edge, Node } from '@xyflow/react';
 
 const createSharedEdge = (source: string, target: string, type?: WorkflowEdgeType) => ({
   ...createWorkflowEdge(source, target, type),
@@ -23,7 +23,8 @@ const elkSubgraphLayoutOptions = {
   nodeType: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
 };
 
-const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('elklayout', () => {
   describe('convertWorkflowGraphToElkGraph', () => {
     it('should properly convert a valid WorkflowGraph to an ElkNode', () => {
@@ -161,7 +162,7 @@ describe('elklayout', () => {
           {
             id: 'node1',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
-            parentNode: undefined,
+            parentId: undefined,
             position: {
               x: 10,
               y: 10,
@@ -173,7 +174,7 @@ describe('elklayout', () => {
           {
             id: 'node2',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
-            parentNode: undefined,
+            parentId: undefined,
             position: {
               x: 10,
               y: 10,
@@ -294,56 +295,56 @@ describe('elklayout', () => {
             type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf-#scope' },
-            parentNode: 'ActionIf',
+            parentId: 'ActionIf',
           },
           {
             id: 'ActionIf-actions',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-actions' },
-            parentNode: 'ActionIf',
+            parentId: 'ActionIf',
           },
           {
             id: 'ActionIf-actions-#subgraph',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
             position: { x: 50, y: 100 },
             data: { label: 'ActionIf-actions-#subgraph' },
-            parentNode: 'ActionIf-actions',
+            parentId: 'ActionIf-actions',
           },
           {
             id: 'Increment_variable2',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 150, y: 200 },
             data: { label: 'Increment_variable2' },
-            parentNode: 'ActionIf-actions',
+            parentId: 'ActionIf-actions',
           },
           {
             id: 'Increment_variable4',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 300, y: 301 },
             data: { label: 'Increment_variable4' },
-            parentNode: 'ActionIf-actions',
+            parentId: 'ActionIf-actions',
           },
           {
             id: 'ActionIf-elseActions',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions' },
-            parentNode: 'ActionIf',
+            parentId: 'ActionIf',
           },
           {
             id: 'ActionIf-elseActions-#subgraph',
             type: WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions-#subgraph' },
-            parentNode: 'ActionIf-elseActions',
+            parentId: 'ActionIf-elseActions',
           },
           {
             id: 'Increment_variable3',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 302, y: 303 },
             data: { label: 'Increment_variable3' },
-            parentNode: 'ActionIf-elseActions',
+            parentId: 'ActionIf-elseActions',
           },
           {
             id: 'EmptyScope',
@@ -356,7 +357,7 @@ describe('elklayout', () => {
             type: WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE,
             position: { x: 0, y: 0 },
             data: { label: 'EmptyScope-#scope' },
-            parentNode: 'EmptyScope',
+            parentId: 'EmptyScope',
           },
           {
             id: 'Response',

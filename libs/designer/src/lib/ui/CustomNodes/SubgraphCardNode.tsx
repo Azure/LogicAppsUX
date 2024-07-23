@@ -7,6 +7,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
@@ -27,8 +28,7 @@ import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -39,6 +39,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
 
+  const isPinned = useIsNodePinned(subgraphId);
   const selected = useIsNodeSelected(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
@@ -134,7 +135,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
                 title={label}
-                selected={selected}
+                selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}
                 collapsed={graphCollapsed}

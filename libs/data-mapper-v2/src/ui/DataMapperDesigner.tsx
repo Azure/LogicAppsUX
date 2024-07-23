@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react';
-import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
-import { SchemaType } from '@microsoft/logic-apps-shared';
+import { SchemaPanel } from '../components/schema/SchemaPanel';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
-import { Panel as FunctionPanel } from '../components/functionsPanel/Panel';
+import { FunctionPanel } from '../components/functionsPanel/FunctionPanel';
 import type { IDataMapperFileService } from '../core';
 import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
-import { CodeView } from '../components/codeView/CodeView';
+import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { DMReactFlow } from './ReactFlow';
+import { TestPanel } from '../components/test/TestPanel';
+import { SchemaType } from '@microsoft/logic-apps-shared';
+import type { SchemaFile } from '../models/Schema';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
-  saveXsltCall: (dataMapXslt: string) => void;
-  saveDraftStateCall?: (dataMapDefinition: string) => void;
-  readCurrentCustomXsltPathOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
@@ -26,20 +25,31 @@ export const DataMapperDesigner = ({ fileService, readCurrentCustomXsltPathOptio
     InitDataMapperFileService(fileService);
   }
 
-  useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
-
+  useEffect(() => {
+    if (fileService) {
+      fileService.readCurrentCustomXsltPathOptions();
+    }
+  }, [fileService]);
   return (
     // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
-      value={{ canvasBounds: { x: canvasBounds?.x, y: canvasBounds?.y, height: canvasBounds?.height, width: canvasBounds?.width } }}
+      value={{
+        canvasBounds: {
+          x: canvasBounds?.x,
+          y: canvasBounds?.y,
+          height: canvasBounds?.height,
+          width: canvasBounds?.width,
+        },
+      }}
     >
-      <EditorCommandBar onUndoClick={() => {}} onTestClick={() => {}} />
+      <EditorCommandBar onUndoClick={() => {}} />
       <div className={styles.dataMapperShell}>
         <FunctionPanel />
-        <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Source} />
+        <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Source} />
         <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
-        <AddSchemaDrawer onSubmitSchemaFileSelection={(schema) => console.log(schema)} schemaType={SchemaType.Target} />
-        <CodeView />
+        <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Target} />
+        <CodeViewPanel />
+        <TestPanel />
       </div>
     </DataMapperWrappedContext.Provider>
   );

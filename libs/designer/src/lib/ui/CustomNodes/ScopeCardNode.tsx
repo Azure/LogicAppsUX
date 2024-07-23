@@ -43,12 +43,12 @@ import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Handle, Position, useOnViewportChange } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, useOnViewportChange, type NodeProps } from '@xyflow/react';
 import { CopyMenuItem } from '../menuItems';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
@@ -156,6 +156,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [readOnly, metadata]
   );
 
+  const isPinned = useIsNodePinned(scopeId);
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -346,7 +347,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             readOnly={readOnly}
             onClick={nodeClick}
             onDeleteClick={deleteClick}
-            selected={selected}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
