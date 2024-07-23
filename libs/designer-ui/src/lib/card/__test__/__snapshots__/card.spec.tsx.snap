@@ -356,7 +356,6 @@ exports[`lib/card > should render as pinned 1`] = `
         "borderRadius": "2px",
       }
     }
-    tabIndex={2}
   >
     <div
       className="msla-selection-box pinned"
