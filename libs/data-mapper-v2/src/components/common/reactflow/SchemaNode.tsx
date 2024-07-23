@@ -12,6 +12,10 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const updateNodeInternals = useUpdateNodeInternals();
   const edges = useEdges();
   const styles = useStyles();
+  const handleStyle = mergeClasses(
+    styles.handleWrapper,
+    isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper
+  );
   // danielle update this to move away from edges
   const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
 
@@ -22,8 +26,8 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     <div className={mergeClasses('nodrag', styles.nodeWrapper)} ref={divRef}>
       <Handle
         type={isLeftDirection ? 'source' : 'target'}
-        position={Position.Left}
-        className={mergeClasses(styles.handleWrapper, isConnected ? styles.handleConnected : '')}
+        position={isLeftDirection ? Position.Left : Position.Right}
+        className={mergeClasses(handleStyle, isConnected ? styles.handleConnected : '')}
         isConnectable={true}
       />
     </div>
