@@ -38,7 +38,7 @@ import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange, NodeDimensionChange } from 'reactflow';
+import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;

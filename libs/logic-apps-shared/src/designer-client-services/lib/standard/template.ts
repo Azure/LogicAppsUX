@@ -37,5 +37,5 @@ export class StandardTemplateService implements ITemplateService {
     }
   }
 
-  public openBladeAfterCreate = (): void => this.options.openBladeAfterCreate();
+  public openBladeAfterCreate = (workflowName: string): void => this.options.openBladeAfterCreate(workflowName);
 }

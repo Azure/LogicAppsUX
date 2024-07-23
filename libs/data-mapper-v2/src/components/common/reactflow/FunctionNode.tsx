@@ -4,12 +4,13 @@ import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { Button, Caption1, tokens, Popover, PopoverTrigger, mergeClasses } from '@fluentui/react-components';
 import { useCardContextMenu } from '@microsoft/designer-ui';
 
-import { Handle, Position, type NodeProps } from 'reactflow';
+import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useStyles } from './styles';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/functionConfigurationPopover';
 import type { RootState } from '../../../core/state/Store';
 import { useSelector } from 'react-redux';
+import type { StringIndexed } from '@microsoft/logic-apps-shared';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -23,7 +24,7 @@ export interface CardProps {
   id: string;
 }
 
-export const FunctionNode = (props: NodeProps<FunctionCardProps>) => {
+export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardProps>, 'function'>>) => {
   const { functionData, disabled, dataTestId } = props.data;
   const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
 

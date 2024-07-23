@@ -8,8 +8,7 @@ import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@mi
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import type React from 'react';
 import { memo, useMemo } from 'react';
-import { getSmoothStepPath, useReactFlow } from 'reactflow';
-import type { EdgeProps } from 'reactflow';
+import { getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 
 interface EdgeContentProps {
   x: number;
@@ -37,9 +36,10 @@ const EdgeContent = (props: EdgeContentProps) => (
 
 export interface LogicAppsEdgeProps {
   id: string;
-  parent: string;
-  child: string;
+  source: string;
+  target: string;
   elkEdge?: ElkExtendedEdge;
+  style?: React.CSSProperties;
 }
 
 const foreignObjectHeight = 32;

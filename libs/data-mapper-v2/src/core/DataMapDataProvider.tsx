@@ -1,17 +1,26 @@
-import { ReactFlowProvider } from 'reactflow';
-import type { FunctionData } from '../models/Function';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
-import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { changeTheme } from './state/AppSlice';
-import { setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
-import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
-import { setAvailableSchemas } from './state/SchemaSlice';
-import type { AppDispatch } from './state/Store';
-import type { MapMetadata, MapDefinitionEntry, DataMapSchema, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
-import type React from 'react';
-import { useContext, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { ReactFlowProvider } from "reactflow";
+import type { FunctionData } from "../models/Function";
+import { convertSchemaToSchemaExtended } from "../utils/Schema.Utils";
+import { DataMapperWrappedContext } from "./DataMapperDesignerContext";
+import { changeTheme } from "./state/AppSlice";
+import {
+  setInitialSchema,
+  setXsltContent,
+  setXsltFilename,
+} from "./state/DataMapSlice";
+import { loadCustomXsltFilePaths, loadFunctions } from "./state/FunctionSlice";
+import { setAvailableSchemas } from "./state/SchemaSlice";
+import type { AppDispatch } from "./state/Store";
+import type {
+  MapMetadata,
+  MapDefinitionEntry,
+  DataMapSchema,
+  IFileSysTreeItem,
+} from "@microsoft/logic-apps-shared";
+import { Theme as ThemeType, SchemaType } from "@microsoft/logic-apps-shared";
+import type React from "react";
+import { useContext, useEffect, useMemo } from "react";
+import { useDispatch } from "react-redux";
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -40,16 +49,22 @@ const DataProviderInner = ({
 }: DataMapDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
-  const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
+  const extendedSourceSchema = useMemo(
+    () => sourceSchema && convertSchemaToSchemaExtended(sourceSchema),
+    [sourceSchema]
+  );
+  const extendedTargetSchema = useMemo(
+    () => targetSchema && convertSchemaToSchemaExtended(targetSchema),
+    [targetSchema]
+  );
 
   useEffect(() => {
     dispatch(changeTheme(theme));
   }, [dispatch, theme]);
 
   useEffect(() => {
-    dispatch(setXsltFilename(xsltFilename ?? ''));
-    dispatch(setXsltContent(xsltContent ?? ''));
+    dispatch(setXsltFilename(xsltFilename ?? ""));
+    dispatch(setXsltContent(xsltContent ?? ""));
   }, [dispatch, xsltFilename, xsltContent]);
 
   useEffect(() => {
@@ -98,7 +113,9 @@ const DataProviderInner = ({
 export const DataMapDataProvider = (props: DataMapDataProviderProps) => {
   const wrapped = useContext(DataMapperWrappedContext);
   if (!wrapped) {
-    throw new Error('DataMapDataProvider must be used inside of a DataMapperWrappedContext');
+    throw new Error(
+      "DataMapDataProvider must be used inside of a DataMapperWrappedContext"
+    );
   }
 
   return (
