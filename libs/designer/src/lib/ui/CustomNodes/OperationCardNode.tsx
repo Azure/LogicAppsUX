@@ -176,6 +176,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const pinned = useIsNodePinnedToOperationPanel(id);
   const selected = useIsNodeSelected(id);
+  const isPinned = useIsNodePinned(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
@@ -377,7 +378,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             onDeleteClick={deleteClick}
             onCopyClick={copyClick}
             operationName={operationSummary?.result}
-            selectionMode={selected ? 'selected' : pinned ? 'pinned' : false}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             setFocus={shouldFocus}
             staticResultsEnabled={!!staticResults}
