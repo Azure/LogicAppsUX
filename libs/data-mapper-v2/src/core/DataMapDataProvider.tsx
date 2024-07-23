@@ -1,4 +1,4 @@
-import { ReactFlowProvider } from 'reactflow';
+import { ReactFlowProvider } from '@xyflow/react';
 import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
@@ -39,7 +39,6 @@ const DataProviderInner = ({
   children,
 }: DataMapDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
 

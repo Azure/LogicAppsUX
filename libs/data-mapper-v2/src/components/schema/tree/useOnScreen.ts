@@ -11,7 +11,9 @@ const useOnScreen = (ref: RefObject<HTMLElement>) => {
     }
 
     return () => observer.disconnect();
-  }, [ref, observer]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, observer, ref.current]);
 
   return isIntersecting;
 };
