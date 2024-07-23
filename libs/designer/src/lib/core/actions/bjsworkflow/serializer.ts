@@ -1129,7 +1129,17 @@ const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string
   const outputValues: Record<string, any> = {};
   for (const [key, value] of Object.entries(outputs)) {
     if (value && value.length > 0) {
-      outputValues[key] = value[0].value;
+      // Parse the value if it's a string that looks like JSON
+      if (typeof value[0].value === 'string' && (value[0].value.startsWith('[') || value[0].value.startsWith('{'))) {
+        try {
+          outputValues[key] = JSON.parse(value[0].value);
+        } catch {
+          // If parsing fails, use the original value
+          outputValues[key] = value[0].value;
+        }
+      } else {
+        outputValues[key] = value[0].value;
+      }
     }
   }
   return unifyOutputs(outputValues);
@@ -1152,7 +1162,7 @@ const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
         currentLevel[part] = outputs[key];
       } else {
         if (!currentLevel[part]) {
-          currentLevel[part] = {};
+          currentLevel[part] = Array.isArray(outputs[key]) ? [] : {};
         }
         currentLevel = currentLevel[part];
       }

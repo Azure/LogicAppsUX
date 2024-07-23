@@ -43,7 +43,39 @@ const MockResultsTab = () => {
   const mocks = useMocksByOperation(nodeName);
   const mocksValidationErrors = useMocksValidationErrors();
 
+  // Modified to include nested properties in children array
+  const buildOutputsFields = (outputs: OutputInfo[]): OutputsField[] => {
+    return outputs.map((output: OutputInfo) => {
+      const { key: id, title: label, type, children } = output;
+      const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
+      const value = mocks?.output[id] ?? [];
+      const valueViewModel = { ...editorViewModel, uncastedValue: value };
+      const validationErrors = mocksValidationErrors[`${nodeName}-${id}`] ?? {};
+
+      return {
+        id,
+        label,
+        required: false,
+        readOnly: false,
+        value: value,
+        editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,
+        editorOptions,
+        schema,
+        tokenEditor: false,
+        isLoading: false,
+        editorViewModel: valueViewModel,
+        showTokens: false,
+        tokenMapping: {},
+        validationErrors,
+        suppressCastingForSerialize: false,
+        onValueChange: (newState: ChangeState) => onMockUpdate(id, newState, type),
+        children: children ? buildOutputsFields(children) : undefined, // Recursively build nested outputs
+      };
+    });
+  };
+
   const filteredOutputs: OutputInfo[] = getFilteredOutputs(rawOutputs.outputs, nodeType);
+  const outputs: OutputsField[] = buildOutputsFields(filteredOutputs);
 
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState, type: string) => {
@@ -104,33 +136,6 @@ const MockResultsTab = () => {
     },
     [nodeName, dispatch, mocks?.errorMessage, mocks?.errorCode]
   );
-
-  const outputs: OutputsField[] = filteredOutputs.map((output: OutputInfo) => {
-    const { key: id, title: label, type } = output;
-    const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
-    const value = mocks?.output[id] ?? [];
-    const valueViewModel = { ...editorViewModel, uncastedValue: value };
-    const validationErrors = mocksValidationErrors[`${nodeName}-${id}`] ?? {};
-
-    return {
-      id,
-      label,
-      required: false,
-      readOnly: false,
-      value: value,
-      editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,
-      editorOptions,
-      schema,
-      tokenEditor: false,
-      isLoading: false,
-      editorViewModel: valueViewModel,
-      showTokens: false,
-      tokenMapping: {},
-      validationErrors,
-      suppressCastingForSerialize: false,
-      onValueChange: (newState: ChangeState) => onMockUpdate(id, newState, type),
-    };
-  });
 
   return (
     <OutputMocks

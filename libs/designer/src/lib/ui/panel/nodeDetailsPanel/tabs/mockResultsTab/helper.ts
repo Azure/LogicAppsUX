@@ -1,31 +1,51 @@
 import { ConnectionType, type OutputInfo } from '@microsoft/logic-apps-shared';
 
-/**
- * Retrieves the filtered outputs based on the provided type.
- * @param {Record<string, OutputInfo>} outputs - The outputs object containing key-value pairs of output information.
- * @param {string} type - The type of connection.
- * @returns An array of filtered output information.
- */
-export const getFilteredOutputs = (outputs: Record<string, OutputInfo>, type: string): OutputInfo[] => {
+interface HierarchicalOutputInfo extends OutputInfo {
+  children?: HierarchicalOutputInfo[];
+}
+
+export const getFilteredOutputs = (outputs: Record<string, OutputInfo>, type: string): HierarchicalOutputInfo[] => {
   const supported = type === 'http' || type === ConnectionType.ServiceProvider || type === ConnectionType.ApiConnection;
   const addPrefix = type === ConnectionType.ApiConnection;
 
-  let filteredOutputs = Object.values(outputs)
-    .filter((output: OutputInfo) => !output.isInsideArray)
-    .filter((output: OutputInfo, _index: number, outputArray: OutputInfo[]) => {
-      const hasChildren = outputArray.some((o: OutputInfo) => o.key !== output.key && o.key.includes(output.key));
-      return !hasChildren;
-    });
+  const processNestedOutputs = (output: OutputInfo, parentKey = ''): HierarchicalOutputInfo => {
+    const currentKey = parentKey ? `${parentKey}.${output.key}` : output.key;
+    const prefixedKey = addPrefix ? `outputs.$.${currentKey}` : currentKey;
 
-  if (addPrefix) {
-    filteredOutputs = filteredOutputs.map((output: OutputInfo) => {
-      return { ...output, key: `outputs.$.${output.key.replace('.$', '')}` };
-    });
-  }
+    const result: HierarchicalOutputInfo = {
+      ...output,
+      key: prefixedKey,
+      name: currentKey,
+      title: output.title || output.key,
+      source: 'outputs',
+      required: false,
+    };
+
+    if (output.type === 'object' && output.schema && output.schema.properties) {
+      result.children = Object.entries(output.schema.properties).map(([key, prop]: [string, any]) =>
+        processNestedOutputs(
+          {
+            key,
+            type: prop.type,
+            title: prop.title || key,
+            schema: prop,
+            isAdvanced: false,
+            name: '',
+          },
+          currentKey
+        )
+      );
+    }
+
+    return result;
+  };
+
+  const filteredOutputs = Object.values(outputs)
+    .filter((output: OutputInfo) => !output.isInsideArray)
+    .map((output: OutputInfo) => processNestedOutputs(output));
 
   const outputsHasStatusCode = filteredOutputs.some((item) => item.key.includes('statusCode'));
-
-  const initialOutputs =
+  const initialOutputs: HierarchicalOutputInfo[] =
     supported && !outputsHasStatusCode
       ? [
           {
