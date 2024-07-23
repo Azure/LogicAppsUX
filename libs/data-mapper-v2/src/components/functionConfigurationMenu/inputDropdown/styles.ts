@@ -1,0 +1,19 @@
+import { makeStyles } from '@fluentui/react';
+import { tokens, typographyStyles } from '@fluentui/react-components';
+
+export const useStyles = makeStyles({
+  pathText: {
+    paddingLeft: '5px',
+    fontSize: '8px',
+  },
+  optionText: {
+    fontSize: '12px',
+  },
+  inputStyles: {
+    width: '100%',
+  },
+  inputLabel: {
+    ...typographyStyles.body1,
+    color: tokens.colorNeutralForeground1,
+  },
+});

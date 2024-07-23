@@ -12,7 +12,6 @@ import {
   TableCell,
   TableCellLayout,
   Caption1,
-  Dropdown,
   Caption2,
 } from '@fluentui/react-components';
 import { useStyles } from './styles';
@@ -26,6 +25,7 @@ import type { InputConnection } from '../../models/Connection';
 import { deleteFunction, setConnectionInput } from '../../core/state/DataMapSlice';
 import { isSchemaNodeExtended } from '../../utils';
 import { useIntl } from 'react-intl';
+import { InputDropdown } from './inputDropdown/InputDropdown';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -169,12 +169,11 @@ const InputTabContents = (props: {
         <TableHeader>
           <TableRow>
             <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
-              {props.func.inputs[0].name}
+              <Caption1>{props.func.inputs[0].name}</Caption1>
             </TableHeaderCell>
-            <TableHeaderCell
-              className={styles.unlimitedInputHeaderCell}
-              key="input-name"
-            >{`Accepted types: ${props.func.inputs[0].allowedTypes}`}</TableHeaderCell>
+            <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
+              <Caption2>{`Accepted types: ${props.func.inputs[0].allowedTypes}`}</Caption2>
+            </TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -182,7 +181,7 @@ const InputTabContents = (props: {
             <TableRow key={input.name + index}>
               <TableCell>
                 <TableCellLayout>
-                  <Dropdown>{}</Dropdown>
+                  <InputDropdown currentNode={props.func} inputName={undefined} inputValue={undefined} inputIndex={0} />
                 </TableCellLayout>
               </TableCell>
               <TableCell>
