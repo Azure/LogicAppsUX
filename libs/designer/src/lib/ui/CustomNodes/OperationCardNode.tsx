@@ -174,9 +174,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [readOnly, metadata, dependencies]
   );
 
-  const pinned = useIsNodePinnedToOperationPanel(id);
   const selected = useIsNodeSelected(id);
-  const isPinned = useIsNodePinned(id);
+  const isPinned = useIsNodePinnedToOperationPanel(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
