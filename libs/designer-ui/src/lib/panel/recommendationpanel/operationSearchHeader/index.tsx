@@ -126,7 +126,6 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
               <Label htmlFor={'runtimeDropdown'}>{runtimeText}</Label>
               <Dropdown
                 id={'runtimeDropdown'}
-                // name={runtimeText}
                 placeholder={
                   filters?.['runtime']
                     ? runtimeFilters?.find((data) => data.value === filters['runtime'])?.text
@@ -153,7 +152,6 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
               <Label htmlFor={'actionTypeDropdown'}>{actionTypeText}</Label>
               <Dropdown
                 id={'actionTypeDropdown'}
-                // name={actionTypeText}
                 placeholder={
                   filters?.['actionType']
                     ? actionTypeFilters?.find((data) => data.value === filters['actionType'])?.text
