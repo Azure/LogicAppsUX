@@ -1,6 +1,11 @@
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-import { compareFlattenedConnections, flattenConnection } from '../selectConnection.helpers';
-import { Connection } from '@microsoft/logic-apps-shared';
+import {
+  compareFlattenedConnections,
+  flattenConnection,
+  getLabelForConnection,
+  getSubLabelForConnection,
+} from '../selectConnection.helpers';
+import { Connection, ConnectionProperties } from '@microsoft/logic-apps-shared';
 
 const mockApi: Connection['properties']['api'] = {
   brandColor: '#008372',
@@ -87,6 +92,31 @@ describe('selectConnection helpers', () => {
         statuses: [{ status: 'Error' }],
         type: 'type',
       });
+    });
+  });
+
+  describe('getLabelForConnection', () => {
+    it('should get the display name', () => {
+      expect(getLabelForConnection(mockConnectionWithErrors.properties)).toBe('displayName');
+    });
+  });
+
+  describe('getSubLabelForConnection', () => {
+    it.each<[string, ConnectionProperties, string | undefined]>([
+      ['undefined if no valid sub label', mockConnectionWithErrors.properties, undefined],
+      ['account name if available', { ...mockConnectionWithErrors.properties, accountName: 'jdoe@example.com' }, 'jdoe@example.com'],
+      [
+        'authenticated user name if available',
+        { ...mockConnectionWithErrors.properties, authenticatedUser: { name: 'jdoe@example.com' } },
+        'jdoe@example.com',
+      ],
+      [
+        'gateway name if available',
+        { ...mockConnectionWithErrors.properties, parameterValues: { gateway: { id: 'jdoe', name: 'jdoe@example.com', type: 'gateway' } } },
+        'jdoe@example.com',
+      ],
+    ])('should handle "%s" case', (_caseName, properties, expected) => {
+      expect(getSubLabelForConnection(properties)).toBe(expected);
     });
   });
 });

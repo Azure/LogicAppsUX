@@ -17,7 +17,12 @@ import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
 import type { ConnectionWithFlattenedProperties } from './selectConnection.helpers';
-import { compareFlattenedConnections, flattenConnection } from './selectConnection.helpers';
+import {
+  compareFlattenedConnections,
+  flattenConnection,
+  getLabelForConnection,
+  getSubLabelForConnection,
+} from './selectConnection.helpers';
 
 export interface ConnectionTableProps {
   connections: Connection[];
@@ -73,9 +78,16 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
   );
 
+  const statusColumnWidth = 36;
+  const statusColumnName = 'status';
+  const displayNameColumnWidth = 420;
+  const displayNameColumnName = 'displayName';
+  const detailsColumnWidth = 48;
+  const detailsColumnName = 'details';
+
   const columns: TableColumnDefinition<ConnectionWithFlattenedProperties>[] = [
     createTableColumn({
-      columnId: 'status',
+      columnId: statusColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Status',
@@ -98,7 +110,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'displayName',
+      columnId: displayNameColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Display Name',
@@ -106,8 +118,8 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
           description: 'Column header for connection display name',
         }),
       renderCell: (item) => {
-        const label = item.displayName;
-        const subLabel = item.parameterValues?.gateway?.name ?? item.authenticatedUser?.name;
+        const label = getLabelForConnection(item);
+        const subLabel = getSubLabelForConnection(item);
         return (
           <div className="msla-connection-row-display-name">
             <Text block={true} className="msla-connection-row-display-name-label" size={300}>
@@ -123,7 +135,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       },
     }),
     createTableColumn({
-      columnId: 'details',
+      columnId: detailsColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Details',
@@ -135,17 +147,19 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   ];
 
   const columnSizingOptions: TableColumnSizingOptions = {
-    status: {
-      defaultWidth: 36,
-      idealWidth: 36,
+    [statusColumnName]: {
+      defaultWidth: statusColumnWidth,
+      idealWidth: statusColumnWidth,
+      minWidth: statusColumnWidth,
     },
-    displayName: {
-      defaultWidth: 420,
-      idealWidth: 420,
+    [displayNameColumnName]: {
+      defaultWidth: displayNameColumnWidth,
+      idealWidth: displayNameColumnWidth,
     },
-    details: {
-      defaultWidth: 48,
-      idealWidth: 48,
+    [detailsColumnName]: {
+      defaultWidth: detailsColumnWidth,
+      idealWidth: detailsColumnWidth,
+      minWidth: detailsColumnWidth,
     },
   };
 

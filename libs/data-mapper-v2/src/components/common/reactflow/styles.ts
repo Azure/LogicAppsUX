@@ -24,9 +24,10 @@ export const useStyles = makeStyles({
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
   },
   handleWrapper: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     width: '14px',
     height: '14px',
+    left: '-7px',
     ...shorthands.border('1px', 'solid', '#ddd'),
   },
   handleConnected: {
@@ -34,8 +35,8 @@ export const useStyles = makeStyles({
     ...shorthands.border('1px', 'solid', '#C6DEEE'),
   },
   nodeWrapper: {
-    width: '10px',
-    height: '10px',
+    width: '14px',
+    height: '14px',
     backgroundColor: 'transparent',
   },
   functionButton: {
@@ -44,11 +45,11 @@ export const useStyles = makeStyles({
     minWidth: '80px',
     display: 'inline-flex',
     justifyContent: 'left',
-    paddingRight: '20px'
+    paddingRight: '20px',
   },
   functionName: {
     textWrap: 'nowrap',
-    display: 'inline-table'
+    display: 'inline-table',
   },
   iconContainer: {
     display: 'inline-flex',
@@ -59,6 +60,6 @@ export const useStyles = makeStyles({
     color: tokens.colorNeutralBackground1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: '3px'
+    marginRight: '3px',
   },
 });

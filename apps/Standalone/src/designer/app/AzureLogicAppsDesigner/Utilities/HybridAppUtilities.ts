@@ -15,7 +15,7 @@ export class HybridAppUtility {
 
     return (
       await axios.post<T>(
-        `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+        `${uri.split('hostruntime')[0]}providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
         data,
         {
           headers: {

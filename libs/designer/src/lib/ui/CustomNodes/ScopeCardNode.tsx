@@ -35,7 +35,7 @@ import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService, getRecordEntry, removeIdTag } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -43,12 +43,12 @@ import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Handle, Position, useOnViewportChange } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, useOnViewportChange, type NodeProps } from '@xyflow/react';
 import { CopyMenuItem } from '../menuItems';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
@@ -156,6 +156,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [readOnly, metadata]
   );
 
+  const isPinned = useIsNodePinned(scopeId);
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -286,6 +287,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const nodeIndex = useNodeIndex(id);
+
   if (!node) {
     return null;
   }
@@ -346,11 +349,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             readOnly={readOnly}
             onClick={nodeClick}
             onDeleteClick={deleteClick}
-            selected={selected}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
             setFocus={shouldFocus}
+            nodeIndex={nodeIndex}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
@@ -371,7 +375,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           <p className="no-actions-text">No Actions</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
+            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
           </div>
         )
       ) : null}

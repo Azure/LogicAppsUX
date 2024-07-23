@@ -26,15 +26,7 @@ export const useCardContextMenu = () => {
 };
 
 export const useCardKeyboardInteraction = (onPrimaryClick?: () => void, onDeleteClick?: () => void, onCopyClick?: () => void) => {
-  // Prevent Enter and space bar keypresses from scrolling the page down when used to select a card.
   const handleKeyDown: React.KeyboardEventHandler<HTMLElement> = (e) => {
-    if (isEnterKey(e) || isSpaceKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
-
-  const handleKeyUp: React.KeyboardEventHandler<HTMLElement> = (e) => {
     if (isEnterKey(e) || isSpaceKey(e)) {
       e.preventDefault();
       e.stopPropagation();
@@ -48,6 +40,10 @@ export const useCardKeyboardInteraction = (onPrimaryClick?: () => void, onDelete
       e.stopPropagation();
       onCopyClick?.();
     }
+  };
+
+  const handleKeyUp: React.KeyboardEventHandler<HTMLElement> = (_e) => {
+    // Nothing for now, may need to add key events in the future.
   };
 
   return {

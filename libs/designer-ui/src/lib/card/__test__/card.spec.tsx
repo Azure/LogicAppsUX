@@ -1,7 +1,9 @@
 import type { CardProps } from '../index';
 import { Card } from '../index';
+import React from 'react';
 import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
 describe('lib/card', () => {
   let minimal: CardProps;
 
@@ -39,7 +41,12 @@ describe('lib/card', () => {
   });
 
   it('should render as selected', () => {
-    const tree = renderer.create(<Card {...minimal} selected={true} />).toJSON();
+    const tree = renderer.create(<Card {...minimal} selectionMode="selected" />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render as pinned', () => {
+    const tree = renderer.create(<Card {...minimal} selectionMode="pinned" />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 

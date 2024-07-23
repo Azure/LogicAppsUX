@@ -21,7 +21,8 @@ import {
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
+import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panelV2/panelSlice';
 import {
   useAllOperations,
   useConnectorName,
@@ -52,7 +53,7 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -60,8 +61,7 @@ import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Handle, Position, useOnViewportChange } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, useOnViewportChange, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
@@ -173,6 +173,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
 
   const selected = useIsNodeSelected(id);
+  const isPinned = useIsNodePinned(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
@@ -336,6 +337,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  const nodeIndex = useNodeIndex(id);
+
   return (
     <>
       <div className="nopan" ref={ref as any}>
@@ -364,11 +367,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             onDeleteClick={deleteClick}
             onCopyClick={copyClick}
             operationName={operationSummary?.result}
-            selected={selected}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             setFocus={shouldFocus}
             staticResultsEnabled={!!staticResults}
             isSecureInputsOutputs={isSecureInputsOutputs}
+            nodeIndex={nodeIndex}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
@@ -382,7 +386,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
+          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
         </div>
       ) : null}
     </>

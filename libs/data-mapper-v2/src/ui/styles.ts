@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 export const useStyles = makeStyles({
   dataMapperShell: {
     backgroundColor: tokens.colorNeutralBackground1,
+    height: '100vh',
     minHeight: 'calc(100vh - 50px)',
     maxHeight: 'calc(100vh - 40px)',
     display: 'flex',
@@ -12,12 +13,11 @@ export const useStyles = makeStyles({
   canvasWrapper: {
     height: '100%',
     display: 'flex',
-    backgroundColor: tokens.colorNeutralBackground4,
+    backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.flex(1, 1, '1px'),
   },
   reactFlow: {
-    height: '100%',
-    backgroundColor: tokens.colorNeutralBackground4,
+    backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.overflow('visible'),
   },
   dataMapperFunctionPanel: {
@@ -30,7 +30,7 @@ export const useStyles = makeStyles({
 
 export const reactFlowStyle: CSSProperties = {
   height: '100%',
-  backgroundColor: tokens.colorNeutralBackground4,
+  backgroundColor: tokens.colorNeutralBackground1,
 };
 
 export const useStaticStyles = makeStaticStyles({

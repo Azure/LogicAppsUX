@@ -1,7 +1,4 @@
-import { SearchBox } from '@fluentui/react-search';
-import { SchemaTree } from '../addSchema/tree/SchemaTree';
-import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import { SchemaTree } from '../schema/tree/SchemaTree';
 import { useStyles } from './styles';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
@@ -12,7 +9,6 @@ interface SchemaViewProps {
 }
 
 export const SchemaItemView = (props: SchemaViewProps) => {
-  const intl = useIntl();
   const styles = useStyles();
 
   const schema = useSelector((state: RootState) => {
@@ -24,21 +20,5 @@ export const SchemaItemView = (props: SchemaViewProps) => {
     }
     return undefined;
   });
-
-  const stringResources = useMemo(
-    () => ({
-      SEARCH_PROPERTIES: intl.formatMessage({
-        defaultMessage: 'Search properties',
-        id: 'BnkCwH',
-        description: 'Seach source or target properties',
-      }),
-    }),
-    [intl]
-  );
-  return (
-    <div className={styles.treeWrapper}>
-      <SearchBox placeholder={stringResources.SEARCH_PROPERTIES} className={styles.searchBox} />
-      {schema === undefined ? <div>Schema not found</div> : <SchemaTree schemaType={props.schemaType} schema={schema} />}
-    </div>
-  );
+  return <div className={styles.treeWrapper}>{schema !== undefined && <SchemaTree schemaType={props.schemaType} schema={schema} />}</div>;
 };

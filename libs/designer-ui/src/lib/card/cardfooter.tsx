@@ -7,12 +7,13 @@ import { useIntl } from 'react-intl';
 
 export type CardFooterProps = Pick<
   CardProps,
-  'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled' | 'isSecureInputsOutputs'
+  'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled' | 'isSecureInputsOutputs' | 'nodeIndex'
 >;
 
 interface CardBadgeBarProps {
   badges: CardBadgeProps[];
   brandColor?: string;
+  tabIndex?: number;
 }
 
 interface CardBadgeProps {
@@ -21,6 +22,7 @@ interface CardBadgeProps {
   darkBackground?: boolean;
   iconProps: IIconProps;
   title: string;
+  tabIndex?: number;
 }
 
 const commentIconProps: IIconProps = {
@@ -45,6 +47,7 @@ export const CardFooter: React.FC<CardFooterProps> = ({
   connectionRequired,
   staticResultsEnabled,
   isSecureInputsOutputs,
+  nodeIndex,
 }) => {
   const intl = useIntl();
 
@@ -122,22 +125,30 @@ export const CardFooter: React.FC<CardFooterProps> = ({
 
   return (
     <div className="msla-card-v2-footer">
-      <CardBadgeBar badges={badges} />
+      <CardBadgeBar badges={badges} tabIndex={nodeIndex} />
     </div>
   );
 };
 
-const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor }) => {
+const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex }) => {
   return (
     <div className="msla-badges" style={getHeaderStyle(brandColor)}>
       {badges.map(({ active, content, darkBackground, iconProps, title }) => (
-        <CardBadge key={title} title={title} content={content} darkBackground={darkBackground} iconProps={iconProps} active={active} />
+        <CardBadge
+          key={title}
+          title={title}
+          content={content}
+          darkBackground={darkBackground}
+          iconProps={iconProps}
+          active={active}
+          tabIndex={tabIndex}
+        />
       ))}
     </div>
   );
 };
 
-const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground = false, iconProps, title }) => {
+const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground = false, iconProps, title, tabIndex }) => {
   if (!content) {
     return null;
   }
@@ -149,7 +160,7 @@ const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground =
             className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
             {...iconProps}
             ariaLabel={`${title}: ${content}`}
-            tabIndex={0}
+            tabIndex={tabIndex}
           />
         </div>
       </Tooltip>

@@ -1,4 +1,5 @@
-import type { IDataMapperFileService } from '@microsoft/logic-apps-data-mapper-v2';
+import type { IDataMapperFileService, SchemaFile } from '@microsoft/logic-apps-data-mapper-v2';
+import type { SchemaType } from '@microsoft/logic-apps-shared';
 import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 
@@ -20,9 +21,36 @@ export class DataMapperFileService implements IDataMapperFileService {
     });
   };
 
+  public saveDraftStateCall(dataMapDefinition: string): void {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.saveDraftDataMapDefinition,
+      data: dataMapDefinition,
+    });
+  }
+
   public readCurrentSchemaOptions = () => {
     this.sendMsgToVsix({
       command: ExtensionCommand.readLocalSchemaFileOptions,
+    });
+  };
+
+  public saveXsltCall = (xslt: string) => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.saveDataMapXslt,
+      data: xslt,
+    });
+  };
+
+  public readCurrentCustomXsltPathOptions = () => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.readLocalCustomXsltFileOptions,
+    });
+  };
+
+  public addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.addSchemaFromFile,
+      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
     });
   };
 }

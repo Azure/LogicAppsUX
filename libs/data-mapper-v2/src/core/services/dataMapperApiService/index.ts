@@ -16,6 +16,7 @@ export interface IDataMapperApiService {
   getSchemaFile(schemaName: string, schemaFilePath: string): Promise<any>;
   generateDataMapXslt(dataMapDefinition: string): Promise<string>;
   testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<TestMapResponse>;
+  getSchemaFileUri(schemaFilename: string, schemaFilePath: string): string;
 }
 
 export const InitDataMapperApiService = (options: DataMapperApiServiceOptions) => {

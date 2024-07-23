@@ -37,20 +37,21 @@ import { useDrop } from 'react-dnd';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { useOnViewportChange } from 'reactflow';
+import { useOnViewportChange } from '@xyflow/react';
 
 export interface DropZoneProps {
   graphId: string;
   parentId?: string;
   childId?: string;
   isLeaf?: boolean;
+  tabIndex?: number;
 }
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
 const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
 
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false }) => {
+export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const [showCallout, setShowCallout] = useState(false);
@@ -139,6 +140,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             relationshipIds,
             nodeId: copiedNode.nodeId,
             nodeData: copiedNode.nodeData,
+            nodeTokenData: copiedNode.nodeTokenData,
             operationInfo: copiedNode.nodeOperationInfo,
             connectionData: copiedNode.nodeConnectionData,
           })
@@ -231,7 +233,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies]
   );
 
-  const parentName = useNodeDisplayName(parentId);
+  const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
   const childName = useNodeDisplayName(childId);
   const parentSubgraphName = useNodeDisplayName(parentId && containsIdTag(parentId) ? removeIdTag(parentId) : '');
 
@@ -324,8 +326,10 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             >
               <PopoverTrigger disableButtonEnhancement>
                 <div tabIndex={-1}>
+                  {' '}
+                  {/* Do not remove, this keeps tooltip position working */}
                   <ActionButtonV2
-                    tabIndex={1}
+                    tabIndex={tabIndex}
                     id={buttonId}
                     title={tooltipText}
                     dataAutomationId={automationId('plus')}
