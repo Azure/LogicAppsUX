@@ -48,8 +48,14 @@ export interface ValueObject {
   value: any;
 }
 
+export interface ConnectionAuthenticatedUser {
+  name?: string;
+  objectId?: string;
+  tenantId?: string;
+}
+
 export interface ConnectionProperties {
-  authenticatedUser?: { name?: string };
+  authenticatedUser?: ConnectionAuthenticatedUser;
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParametersSet?: ConnectionParameterSet;
   createdBy?: Principal;
