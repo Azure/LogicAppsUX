@@ -57,6 +57,7 @@ export const Nl2fInputBox: FC<INl2fInputBoxProps> = ({
     <div>
       <div className={rootClassName}>
         <TextField
+          data-testId={'expression-assistant-input-box-text'}
           value={query}
           componentRef={textFieldRef}
           placeholder={placeholder}
@@ -81,6 +82,7 @@ export const Nl2fInputBox: FC<INl2fInputBoxProps> = ({
       </div>
       <div className="msla-token-picker-nl2fex-submit-button-container">
         <Button
+          data-testId={'expression-assistant-input-box-submit'}
           className="msla-token-picker-nl2fex-submit-button"
           size="medium"
           onClick={() => onSubmitInputQuery(query)}

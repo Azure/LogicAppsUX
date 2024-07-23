@@ -113,6 +113,7 @@ export function TokenPickerHeader({
       <div className="msla-token-picker-nl2f-header-title-container">
         <Tooltip relationship="label" positioning={'before'} content={intlText.returnToExpressionEditor}>
           <Button
+            data-testId={'expression-assistant-panel-header-back-button'}
             appearance="subtle"
             icon={<DismissIcon />}
             className={'msla-token-picker-nl2f-header-back'}
@@ -123,11 +124,14 @@ export function TokenPickerHeader({
           />
         </Tooltip>
         <img src={copilotLogo} alt="Copilot" />
-        <div className={'msla-token-picker-nl2f-title'}>{intlText.createWithNl2fButtonText}</div>
+        <div className={'msla-token-picker-nl2f-title'} data-testId={'expression-assistant-panel-header-title'}>
+          {intlText.createWithNl2fButtonText}
+        </div>
         <div className={'msla-token-picker-nl2f-header-preview-tag'}>{intlText.previewTag}</div>
       </div>
       <div className={'msla-token-picker-nl2f-header-close-icon-container'}>
         <IconButton
+          data-testId={'expression-assistant-panel-header-close-button'}
           className="msla-token-picker-nl2f-header-close-icon"
           iconProps={{ iconName: 'Cancel' }}
           title={intlText.closeMessage}

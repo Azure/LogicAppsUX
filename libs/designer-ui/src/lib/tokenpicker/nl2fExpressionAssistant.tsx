@@ -308,6 +308,7 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
       {isGeneratingAnswer && (
         <div className="msla-token-picker-nl2fex-result-section">
           <ProgressCardWithStopButton
+            data-testId={'expression-assistant-progress-card'}
             onStopButtonClick={() => abortFetching()}
             progressState={intlText.progressBarText}
             stopButtonLabel={intlText.progressCardStopButtonLabel}
@@ -315,17 +316,22 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         </div>
       )}
       {!isGeneratingAnswer && (!!nl2fOutput || errorMessage) && (
-        <div className="msla-token-picker-nl2fex-result-section">
+        <div className="msla-token-picker-nl2fex-result-section" data-testId={'expression-assistant-result-section'}>
           <div className="msla-token-picker-nl2f-results-title-container">
-            <span className="msla-token-picker-nl2f-title">
+            <span className="msla-token-picker-nl2f-title" data-testId={'expression-assistant-output-box-title'}>
               {!!nl2fOutput && !lastSubmittedQuery ? intlText.originalExpressionTitle : intlText.suggestedExpressionTitle}
             </span>
           </div>
-          <div className="msla-token-picker-nl2fex-result-output">
+          <div className="msla-token-picker-nl2fex-result-output" data-testId={'expression-assistant-output-box'}>
             <span>{errorMessage ? errorMessage : nl2fOutput}</span>
           </div>
-          <div className="msla-token-picker-nl2fex-result-feedback-container">
+          <div
+            className="msla-token-picker-nl2fex-result-footer"
+            data-testId={'expression-assistant-result-footer'}
+            style={{ visibility: !!nl2fOutput && !lastSubmittedQuery ? 'hidden' : 'visible' }}
+          >
             <div
+              data-testId={'expression-assistant-result-carousel'}
               className="msla-token-picker-nl2fex-result-carousel"
               style={{ visibility: suggestedExpressions && suggestedExpressions.length > 1 ? 'visible' : 'hidden' }}
             >
@@ -356,7 +362,10 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
             <div className="msla-token-picker-nl2fex-result-disclaimer-tag">
               <span className="msla-token-picker-nl2fex-result-disclaimer-text">{intlText.aIGeneratedDisclaimer}</span>
             </div>
-            <div className="msla-token-picker-nl2fex-result-feedback-buttons-container">
+            <div
+              className="msla-token-picker-nl2fex-result-feedback-buttons-container"
+              data-testId={'expression-assistant-result-feedback'}
+            >
               <ThumbsReactionButton
                 onClick={() => onMessageReactionClicked(ChatEntryReaction.thumbsUp)}
                 isVoted={reaction === ChatEntryReaction.thumbsUp}
@@ -371,6 +380,7 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
           </div>
           <div className="msla-token-picker-nl2fex-result-footer">
             <Button
+              data-testId={'expression-assistant-ok-button'}
               className="msla-token-picker-nl2fex-result-footer-ok-button"
               disabled={!!errorMessage}
               aria-label={intlText.OK}
