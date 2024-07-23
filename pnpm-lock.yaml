@@ -731,9 +731,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@use-it/event-listener':
-        specifier: 0.1.7
-        version: 0.1.7(react@18.2.0)
       '@xyflow/react':
         specifier: ^12.0.2
         version: 12.0.2(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)

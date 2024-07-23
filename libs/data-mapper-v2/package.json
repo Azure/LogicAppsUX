@@ -16,7 +16,6 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
-    "@use-it/event-listener": "0.1.7",
     "@xyflow/react": "^12.0.2",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
