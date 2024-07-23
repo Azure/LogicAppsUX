@@ -1,23 +1,24 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import { clearPanel, collapsePanel, updateParameterValidation, useNodeMetadata, validateParameter } from '../../../core';
+import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
-import { expandPanel, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { expandPanel, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import {
   useIsPanelCollapsed,
   useOperationPanelPinnedNodeId,
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panelV2/panelSelectors';
 import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
-import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
 import { getCustomCodeFileName, getParameterFromName, ParameterGroupKeys } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
+import { PinMenuItem } from '../../menuItems/pinMenuItem';
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
@@ -28,8 +29,6 @@ import {
   SUBGRAPH_TYPES,
   WorkflowService,
 } from '@microsoft/logic-apps-shared';
-import type React from 'react';
-import type { ReactElement } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -54,9 +53,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
-  const comment = useNodeDescription(selectedNode);
-  const nodeMetaData = useNodeMetadata(selectedNode);
-  let showCommentBox = !isNullOrUndefined(comment);
 
   const pinnedNodeData = usePanelNodeData(pinnedNode);
   const selectedNodeData = usePanelNodeData(selectedNode);
@@ -75,28 +71,54 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(expandPanel());
   }, [dispatch]);
 
-  const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(selectedNode));
-    dispatch(setShowDeleteModal(true));
-  }, [dispatch, selectedNode]);
+  const handleDeleteClick = useCallback(
+    (nodeId: string) => {
+      dispatch(setShowDeleteModalNodeId(nodeId));
+    },
+    [dispatch]
+  );
 
-  const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
-    showCommentBox = !showCommentBox;
-    dispatch(
-      setNodeDescription({
-        nodeId: selectedNode,
-        ...(showCommentBox && { description: '' }),
-      })
-    );
-  };
+  const handlePinClick = useCallback(
+    (nodeId: string) => {
+      dispatch(setPinnedNode({ nodeId }));
+    },
+    [dispatch]
+  );
 
-  // Removing the 'add a note' button for subgraph nodes
-  const isSubgraphContainer = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
-  const headerMenuItems: ReactElement[] = [];
-  if (!isSubgraphContainer) {
-    headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />);
-  }
-  headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={deleteClick} />);
+  const handleCommentMenuClick = useCallback(
+    (nodeId: string): void => {
+      const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
+      const comment = nodeData?.comment;
+      const showCommentBox = !isNullOrUndefined(comment);
+      dispatch(
+        setNodeDescription({
+          nodeId,
+          ...(showCommentBox && { description: '' }),
+        })
+      );
+    },
+    [dispatch, pinnedNode, pinnedNodeData, selectedNodeData]
+  );
+
+  const getHeaderMenuItems = useCallback(
+    (nodeId: string): JSX.Element[] => {
+      const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
+      const comment = nodeData?.comment;
+
+      // Removing the 'add a note' button for subgraph nodes
+      const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'];
+      const headerMenuItems: JSX.Element[] = [];
+      if (!isSubgraphContainer) {
+        headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!!comment} />);
+      }
+      if (nodeId !== pinnedNode) {
+        headerMenuItems.push(<PinMenuItem key={'pin'} nodeId={selectedNode} onClick={() => handlePinClick(nodeId)} />);
+      }
+      headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={() => handleDeleteClick(nodeId)} />);
+      return headerMenuItems;
+    },
+    [handleCommentMenuClick, handleDeleteClick, handlePinClick, pinnedNode, pinnedNodeData, selectedNode, selectedNodeData]
+  );
 
   const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
     const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
@@ -181,10 +203,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       noNodeSelected={!selectedNode}
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
-      headerMenuItems={headerMenuItems}
-      showCommentBox={showCommentBox}
       node={selectedNodeData}
+      nodeHeaderItems={getHeaderMenuItems(selectedNode)}
       pinnedNode={pinnedNodeData}
+      pinnedNodeHeaderItems={getHeaderMenuItems(pinnedNode)}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}
       resubmitOperation={resubmitClick}

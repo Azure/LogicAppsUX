@@ -4,17 +4,18 @@ import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
+export interface NodeMetadata {
+  graphId: string;
+  parentNodeId?: string;
+  subgraphType?: SubgraphType;
+  actionCount?: number;
+  isRoot?: boolean;
+  runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
+  actionMetadata?: Record<string, any>;
+  runIndex?: number;
+}
 export interface NodesMetadata {
-  [nodeId: string]: {
-    graphId: string;
-    parentNodeId?: string;
-    subgraphType?: SubgraphType;
-    actionCount?: number;
-    isRoot?: boolean;
-    runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
-    actionMetadata?: Record<string, any>;
-    runIndex?: number;
-  };
+  [nodeId: string]: NodeMetadata;
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 

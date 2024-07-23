@@ -2,7 +2,6 @@ import type { ILayerProps } from '@fluentui/react';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Button, Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
@@ -11,35 +10,22 @@ import { PanelContent } from './panelcontent';
 import { PanelHeader } from './panelheader/panelheader';
 import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import { PanelResizer } from './panelResizer';
-import type { CommonPanelProps, PanelTab } from './panelUtil';
+import type { CommonPanelProps } from './panelUtil';
 import { PanelLocation, PanelScope, PanelSize } from './panelUtil';
+import type { PanelNodeData } from './types';
 
 const horizontalPadding = '2rem';
-
-export interface PanelContainerNodeData {
-  comment: string | undefined;
-  displayName: string;
-  errorMessage: string | undefined;
-  iconUri: string;
-  isError: boolean;
-  isLoading: boolean;
-  nodeId: string;
-  onSelectTab: (tabId: string) => void;
-  runData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined;
-  selectedTab?: string;
-  tabs: PanelTab[];
-}
 
 export type PanelContainerProps = {
   noNodeSelected: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
-  headerMenuItems: JSX.Element[];
-  showCommentBox: boolean;
   readOnlyMode?: boolean;
-  node: PanelContainerNodeData | undefined;
-  pinnedNode: PanelContainerNodeData | undefined;
+  node: PanelNodeData | undefined;
+  nodeHeaderItems: JSX.Element[];
+  pinnedNode: PanelNodeData | undefined;
+  pinnedNodeHeaderItems: JSX.Element[];
   layerProps?: ILayerProps;
   canResubmit?: boolean;
   overrideWidth?: string;
@@ -59,15 +45,14 @@ export const PanelContainer = ({
   noNodeSelected,
   panelScope,
   suppressDefaultNodeSelectFunctionality,
-  headerMenuItems,
   canResubmit,
   resubmitOperation,
   onUnpinAction,
-  showCommentBox,
   readOnlyMode,
   node,
+  nodeHeaderItems,
   pinnedNode,
-  // TODO layerProps,
+  pinnedNodeHeaderItems,
   toggleCollapse,
   trackEvent,
   onCommentChange,
@@ -100,30 +85,23 @@ export const PanelContainer = ({
   }, [isCollapsed]);
 
   const renderHeader = useCallback(
-    (headerNode: PanelContainerNodeData): JSX.Element => {
-      const { comment, displayName, iconUri, isError, isLoading, nodeId } = headerNode;
+    (headerNode: PanelNodeData): JSX.Element => {
+      const { nodeId } = headerNode;
       const panelHasPinnedNode = !!pinnedNodeIfDifferent;
       const isPinnedNode = pinnedNodeId === nodeId;
       const canUnpin = !!onUnpinAction && isPinnedNode;
 
       return (
         <PanelHeader
-          nodeId={nodeId}
-          cardIcon={iconUri}
+          nodeData={headerNode}
           isCollapsed={isCollapsed}
           isOutermostPanel={!panelHasPinnedNode || !isPinnedNode}
+          headerItems={isPinnedNode ? pinnedNodeHeaderItems : nodeHeaderItems}
           headerLocation={panelLocation}
-          showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
           panelScope={panelScope}
           suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
-          headerMenuItems={headerMenuItems}
           readOnlyMode={readOnlyMode}
-          // TODO titleId={headerTextId}
-          title={displayName}
-          isError={isError}
-          isLoading={isLoading}
-          comment={comment}
           canResubmit={canResubmit}
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={resubmitOperation}
@@ -138,13 +116,13 @@ export const PanelContainer = ({
     [
       isCollapsed,
       panelLocation,
-      showCommentBox,
       noNodeSelected,
       panelScope,
       suppressDefaultNodeSelectFunctionality,
-      headerMenuItems,
       readOnlyMode,
       canResubmit,
+      nodeHeaderItems,
+      pinnedNodeHeaderItems,
       pinnedNodeId,
       pinnedNodeIfDifferent,
       resubmitOperation,

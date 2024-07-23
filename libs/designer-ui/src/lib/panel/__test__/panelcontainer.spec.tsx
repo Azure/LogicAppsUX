@@ -1,5 +1,5 @@
 import { PanelLocation, PanelScope } from '../panelUtil';
-import type { PanelContainerNodeData, PanelContainerProps } from '../panelcontainer';
+import type { PanelContainerProps } from '../panelcontainer';
 import { PanelContainer } from '../panelcontainer';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
@@ -10,13 +10,13 @@ describe('ui/workflowparameters/workflowparameter', () => {
   beforeEach(() => {
     minimal = {
       node: undefined,
+      nodeHeaderItems: [],
       pinnedNode: undefined,
+      pinnedNodeHeaderItems: [],
       isCollapsed: false,
       panelLocation: PanelLocation.Right,
       noNodeSelected: false,
       panelScope: PanelScope.CardLevel,
-      headerMenuItems: [],
-      showCommentBox: true,
       overrideWidth: '630px',
       onCommentChange: vi.fn(),
       trackEvent: vi.fn(),

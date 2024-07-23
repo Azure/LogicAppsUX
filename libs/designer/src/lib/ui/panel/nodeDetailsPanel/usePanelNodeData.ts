@@ -12,10 +12,10 @@ import { setPinnedPanelActiveTab } from '../../../core/state/panelV2/panelSlice'
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from './usePanelTabs';
-import type { PanelContainerNodeData } from '@microsoft/designer-ui';
+import type { PanelNodeData } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
 
-export const usePanelNodeData = (nodeId: string | undefined): PanelContainerNodeData | undefined => {
+export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | undefined => {
   const nonNullNodeId = nodeId ?? '';
 
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +25,7 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelContainerNode
   const displayName = useNodeDisplayName(nonNullNodeId);
   const errorInfo = useOperationErrorInfo(nonNullNodeId);
   const iconUri = useIconUri(nonNullNodeId);
-  const nodeMetaData = useNodeMetadata(nonNullNodeId);
+  const nodeMetadata = useNodeMetadata(nonNullNodeId);
   const runData = useRunData(nonNullNodeId);
   const tabs = usePanelTabs({ nodeId: nonNullNodeId });
 
@@ -40,6 +40,7 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelContainerNode
 
   const selectedTab = isPinnedNode ? pinnedNodeActiveTab : selectedNodeActiveTab;
   const selectTab = isPinnedNode ? setPinnedPanelActiveTab : selectPanelTab;
+  const subgraphType = nodeMetadata?.subgraphType;
 
   return {
     comment,
@@ -47,13 +48,14 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelContainerNode
     errorMessage: errorInfo?.message,
     iconUri,
     isError: errorInfo?.level === ErrorLevel.Critical || opQuery?.isError,
-    isLoading: nodeMetaData?.subgraphType ? false : opQuery.isLoading,
+    isLoading: subgraphType ? false : opQuery.isLoading,
     nodeId,
     onSelectTab: (tabId) => {
       dispatch(selectTab(tabId));
     },
     runData,
     selectedTab,
+    subgraphType,
     tabs,
   };
 };

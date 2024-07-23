@@ -9,7 +9,7 @@ import {
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -230,8 +230,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
   const pinClick = useCallback(() => {

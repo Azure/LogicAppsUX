@@ -1,4 +1,5 @@
 import { PanelLocation, PanelScope } from '../panelUtil';
+import type { PanelNodeData } from '../types';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
@@ -21,24 +22,18 @@ export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTM
     e.preventDefault();
   }
 };
+
 export interface PanelHeaderProps {
+  nodeData: PanelNodeData;
   isCollapsed: boolean;
   isOutermostPanel?: boolean;
+  headerItems: JSX.Element[];
   headerLocation: PanelLocation;
-  cardIcon?: string;
-  comment?: string;
-  titleId?: string;
-  isError?: boolean;
-  isLoading?: boolean;
-  headerMenuItems: JSX.Element[];
   noNodeSelected?: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
-  showCommentBox?: boolean;
-  title?: string;
-  nodeId: string;
   horizontalPadding: string;
   canResubmit?: boolean;
   resubmitOperation?: () => void;
@@ -47,30 +42,23 @@ export interface PanelHeaderProps {
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: (prevtitle: string) => void;
+  onTitleBlur?: (prevTitle: string) => void;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 
 export const PanelHeader = ({
+  nodeData,
   isCollapsed,
   isOutermostPanel,
+  headerItems,
   headerLocation,
-  cardIcon,
-  comment,
   noNodeSelected,
-  isError,
-  isLoading,
   panelScope,
   suppressDefaultNodeSelectFunctionality,
-  titleId,
-  headerMenuItems,
   readOnlyMode,
   renameTitleDisabled,
-  showCommentBox,
-  title,
-  nodeId,
   horizontalPadding,
   canResubmit,
   resubmitOperation,
@@ -81,6 +69,8 @@ export const PanelHeader = ({
   onTitleChange,
   onTitleBlur,
 }: PanelHeaderProps): JSX.Element => {
+  const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
+
   const intl = useIntl();
 
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -106,9 +96,9 @@ export const PanelHeader = ({
   }, [isCollapsed, isOutermostPanel, nodeId]);
 
   const isRight = headerLocation === PanelLocation.Right;
-
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const shouldHideCollapseButton = !isOutermostPanel || (isCollapsed && suppressDefaultNodeSelectFunctionality);
+  const titleId = `${nodeId}-title`;
 
   // collapsed -> loading -> connector icon -> error -> backup loading
   const iconComponent = useMemo(
@@ -180,7 +170,7 @@ export const PanelHeader = ({
           </Tooltip>
         </MenuTrigger>
         <MenuPopover>
-          <MenuList>{headerMenuItems}</MenuList>
+          <MenuList>{headerItems}</MenuList>
         </MenuPopover>
       </Menu>
     );
@@ -212,7 +202,7 @@ export const PanelHeader = ({
             <OverflowButton />
           </div>
           {onRenderWarningMessage ? onRenderWarningMessage() : null}
-          {showCommentBox ? (
+          {comment ? (
             <PanelHeaderComment
               comment={comment}
               isCollapsed={isCollapsed}
