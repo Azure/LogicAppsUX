@@ -181,7 +181,13 @@ const InputTabContents = (props: {
             <TableRow key={input.name + index}>
               <TableCell>
                 <TableCellLayout>
-                  <InputDropdown currentNode={props.func} inputName={undefined} inputValue={undefined} inputIndex={0} />
+                  <InputDropdown
+                    functionId={props.functionKey}
+                    currentNode={props.func}
+                    inputName={undefined}
+                    inputValue={undefined}
+                    inputIndex={0}
+                  />
                 </TableCellLayout>
               </TableCell>
               <TableCell>

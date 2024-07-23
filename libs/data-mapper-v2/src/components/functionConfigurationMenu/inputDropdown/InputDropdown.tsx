@@ -4,15 +4,14 @@ import { FunctionCategory } from '../../../models';
 import type { ConnectionUnit, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { isValidConnectionByType, isValidCustomValueByType, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
-import { functionDropDownItemText, isFunctionData } from '../../../utils/Function.Utils';
+import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
-import { LogCategory, LogService } from '../../../utils/Logging.Utils';
 import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, Option, Text, tokens } from '@fluentui/react-components';
-import { type SchemaNodeExtended, isNullOrEmpty, type NormalizedDataType } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, type NormalizedDataType } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,11 +28,11 @@ interface InputOptionProps {
 }
 
 export interface InputDropdownProps {
-  currentNode: SchemaNodeExtended | FunctionData; // danielle this is only function now
+  currentNode: FunctionData;
   inputName: string | undefined;
   inputValue: string | undefined; // undefined, Node ID, or custom value (string)
   inputIndex: number;
-  id?: string;
+  functionId: string;
   labelId?: string;
   placeholder?: string;
   inputAllowsCustomValues?: boolean;
@@ -47,7 +46,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     inputValue,
     inputIndex,
     labelId,
-    id,
+    functionId,
     placeholder,
     inputAllowsCustomValues = true,
     isUnboundedInput,
@@ -59,7 +58,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
   const functions = useSelector((state: RootState) => state.function.availableFunctions);
 
   const [matchingOptions, setMatchingOptions] = useState<InputOptionProps[]>([]);
@@ -116,12 +114,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
         const selectedInputKey = option.value;
         const isSelectedInputFunction = option.isFunction;
 
-        // If Function node, ensure that new connection won't create loop/circular logic
-        if (
-          isFunctionData(currentNode) &&
-          selectedItemKey &&
-          newConnectionWillHaveCircularLogic(selectedItemKey, selectedInputKey, connectionDictionary)
-        ) {
+        // ensure that new connection won't create loop/circular logic
+        if (newConnectionWillHaveCircularLogic(currentNode.key, selectedInputKey, connectionDictionary)) {
           //dispatch(showNotification({ type: NotificationTypes.CircularLogicError, autoHideDurationMs: errorNotificationAutoHideDuration }));
           return;
         }
@@ -144,15 +138,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   };
 
   const updateInput = (newValue: InputConnection) => {
-    if (!selectedItemKey) {
-      LogService.error(LogCategory.InputDropDown, 'updateInput', {
-        message: 'Attempted to update input with nothing selected on canvas',
-      });
-
-      return;
-    }
-
-    const targetNodeReactFlowKey = selectedItemKey;
+    const targetNodeReactFlowKey = functionId;
     dispatch(
       setConnectionInput({
         targetNode: currentNode,
@@ -180,7 +166,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     // Add function nodes currently on the canvas
     Object.entries(functionNodeDictionary).forEach(([key, node]) => {
       // Don't list currentNode as an option
-      if (key === selectedItemKey) {
+      if (key === props.functionId) {
         return;
       }
 
@@ -198,7 +184,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return options;
-  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, selectedItemKey]);
+  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, props.functionId]);
 
   useEffect(() => {
     setMatchingOptions(originalOptions);
@@ -345,7 +331,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   return (
     <Stack horizontal={false}>
       <Combobox
-        id={id}
+        id={`combobox-${functionId}`}
         size="small"
         aria-labelledby={labelId}
         freeform={inputAllowsCustomValues}
