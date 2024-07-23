@@ -10,7 +10,7 @@ import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
-import { Combobox, Option, Text, tokens } from '@fluentui/react-components';
+import { Combobox, Option, Text } from '@fluentui/react-components';
 import { isNullOrEmpty, type NormalizedDataType } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -53,7 +53,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const style = useStyles();
+  const styles = useStyles();
 
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -200,23 +200,23 @@ export const InputDropdown = (props: InputDropdownProps) => {
           <Option key={option.key} text={option.text} value={option.value}>
             <Stack horizontal verticalAlign="center">
               <TypeIcon />
-              <div className={style.optionText} style={{ marginLeft: 4 }}>
+              <div className={styles.optionText} style={{ marginLeft: 4 }}>
                 {option.text}
               </div>
-              <div className={style.pathText}>{option.path}</div>
+              <div className={styles.pathText}>{option.path}</div>
             </Stack>
           </Option>
         );
       }
       return (
-        <Option className={style.optionText} key={option.key} text={option.text} value={option.key}>
+        <Option className={styles.optionText} key={option.key} text={option.text} value={option.key}>
           {option.text}
         </Option>
       );
     });
 
     return options;
-  }, [matchingOptions, sourceSchemaDictionary, style]);
+  }, [matchingOptions, sourceSchemaDictionary, styles]);
 
   const onChange: ComboboxProps['onChange'] = (event) => {
     const value = event.target.value;
@@ -336,13 +336,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
         aria-labelledby={labelId}
         freeform={inputAllowsCustomValues}
         placeholder={placeholder}
-        className={style.inputStyles}
+        className={styles.inputStyles}
         data-testid={`inputDropdown-dropdown-${inputIndex}`}
         onChange={onChange}
         onOptionSelect={onOptionSelect}
         value={customValue === undefined ? value : customValue}
         selectedOptions={selectedOptions}
-        style={{ width: '250px' }}
+        style={{ width: '200px' }}
       >
         {filteredOptions.length > 0 ? filteredOptions : undefined}
         {customValue && (
@@ -351,7 +351,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           </Option>
         )}
       </Combobox>
-      {typeValidationMessage && <Text style={{ color: tokens.colorPaletteYellowForeground2 }}>{typeValidationMessage}</Text>}
+      {typeValidationMessage && <Text className={styles.validationText}>{typeValidationMessage}</Text>}
     </Stack>
   );
 };

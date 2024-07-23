@@ -16,4 +16,8 @@ export const useStyles = makeStyles({
     ...typographyStyles.body1,
     color: tokens.colorNeutralForeground1,
   },
+  validationText: {
+    fontSize: '10px',
+    color: tokens.colorPaletteYellowForeground2,
+  },
 });

@@ -26,6 +26,7 @@ import { deleteFunction, setConnectionInput } from '../../core/state/DataMapSlic
 import { isSchemaNodeExtended } from '../../utils';
 import { useIntl } from 'react-intl';
 import { InputDropdown } from './inputDropdown/InputDropdown';
+import { getInputName, getInputValue } from '../../utils/Function.Utils';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -115,7 +116,7 @@ const InputTabContents = (props: {
   functionKey: string;
 }) => {
   const styles = useStyles();
-  const inputs = props.func.inputs;
+  const inputsFromManifest = props.func.inputs;
   const dispatch = useDispatch();
 
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
@@ -133,9 +134,9 @@ const InputTabContents = (props: {
   };
 
   let table: JSX.Element;
+  const functionConnection = connections[props.functionKey];
 
   if (props.func.maxNumberOfInputs !== UnboundedInput) {
-    const functionConnection = connections[props.functionKey];
     const tableContents = props.func.inputs.map((input, index) => {
       const inputConnection = functionConnection
         ? Object.values(functionConnection.inputs).length > 1
@@ -169,34 +170,39 @@ const InputTabContents = (props: {
         <TableHeader>
           <TableRow>
             <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
-              <Caption1>{props.func.inputs[0].name}</Caption1>
+              <Caption1>{inputsFromManifest[0].name}</Caption1>
             </TableHeaderCell>
-            <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
-              <Caption2>{`Accepted types: ${props.func.inputs[0].allowedTypes}`}</Caption2>
+            <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-types">
+              <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
             </TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {inputs.map((input, index) => (
-            <TableRow key={input.name + index}>
-              <TableCell>
-                <TableCellLayout>
-                  <InputDropdown
-                    functionId={props.functionKey}
-                    currentNode={props.func}
-                    inputName={undefined}
-                    inputValue={undefined}
-                    inputIndex={0}
-                  />
-                </TableCellLayout>
-              </TableCell>
-              <TableCell>
-                <TableCellLayout>
-                  <Button appearance="transparent" icon={<ReOrderRegular />} />
-                </TableCellLayout>
-              </TableCell>
-            </TableRow>
-          ))}
+          {}
+          {Object.entries(functionConnection.inputs[0]).map((input, index) => {
+            return (
+              <TableRow key={input[0] + index}>
+                <TableCell>
+                  <TableCellLayout>
+                    <InputDropdown
+                      functionId={props.functionKey}
+                      currentNode={props.func}
+                      inputName={getInputName(input[1], connections)}
+                      inputValue={getInputValue(input[1])}
+                      inputIndex={index}
+                      isUnboundedInput={true}
+                      placeholder={inputsFromManifest[0].placeHolder}
+                    />
+                  </TableCellLayout>
+                </TableCell>
+                <TableCell>
+                  <TableCellLayout>
+                    <Button appearance="transparent" icon={<ReOrderRegular />} />
+                  </TableCellLayout>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     );
