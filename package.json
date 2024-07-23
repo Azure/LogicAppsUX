@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "4.45.0",
+  "version": "4.46.0",
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "@eslint/eslintrc": "^3.0.2",
