@@ -5,7 +5,6 @@ import { DataMapperWrappedContext } from '../../../core';
 
 type NodePositionProps = {
   key: string;
-  openKeys: Set<string>;
   schemaMap: Record<string, SchemaNodeExtended>;
   isLeftDirection: boolean;
   nodePositionX?: number;
@@ -16,7 +15,7 @@ type NodePositionProps = {
 };
 
 const useNodePosition = (props: NodePositionProps) => {
-  const { schemaMap, openKeys, key, isLeftDirection, onScreen, treePositionY, nodePositionY } = props;
+  const { schemaMap, key, isLeftDirection, onScreen, treePositionY, nodePositionY } = props;
   const [position, setPosition] = useState<XYPosition>();
 
   const {
@@ -27,50 +26,21 @@ const useNodePosition = (props: NodePositionProps) => {
   } = useContext(DataMapperWrappedContext);
 
   useLayoutEffect(() => {
-    const isNodeCollapsed = (parentKey?: string) => {
-      if (!parentKey) {
-        return false;
-      }
-
-      if (!openKeys.has(parentKey)) {
-        return true;
-      }
-
-      return isNodeCollapsed(schemaMap[parentKey]?.parentKey);
-    };
-
-    if (isLeftDirection) {
-      console.log(
-        'Key :: ',
-        key,
-        ' ;TreeY :: ',
-        treePositionY,
-        ' ;NodeY :: ',
-        nodePositionY,
-        ' ;OnScreen :: ',
-        onScreen,
-        ' ;CanvasY :: ',
-        canvasY,
-        ' ;CanvasWidth :: ',
-        canvasWidth
-      );
-    }
     // Don't look for the node position if tree, node or canvas isn't on the screen yet
     if (
       treePositionY === undefined ||
       nodePositionY === undefined ||
-      onScreen === undefined ||
       canvasY === undefined ||
-      canvasWidth === undefined
+      canvasWidth === undefined ||
+      onScreen === undefined
     ) {
       return;
     }
 
-    const collapsed = isNodeCollapsed(schemaMap[key]?.parentKey);
     let x: number | undefined = undefined;
     let y: number | undefined = undefined;
 
-    if (!onScreen || !schemaMap[key] || collapsed || nodePositionY < treePositionY) {
+    if (!schemaMap[key] || nodePositionY < treePositionY) {
       x = -1;
       y = -1;
     } else if (nodePositionY >= 0 && canvasY >= 0 && canvasWidth >= 0) {
@@ -83,7 +53,7 @@ const useNodePosition = (props: NodePositionProps) => {
     } else {
       setPosition(undefined);
     }
-  }, [onScreen, schemaMap, openKeys, setPosition, canvasY, canvasWidth, nodePositionY, isLeftDirection, key, treePositionY]);
+  }, [onScreen, schemaMap, setPosition, canvasY, canvasWidth, nodePositionY, isLeftDirection, key, treePositionY]);
 
   return { position };
 };

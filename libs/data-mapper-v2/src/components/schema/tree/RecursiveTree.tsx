@@ -5,7 +5,7 @@ import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
 import useOnScreen from './useOnScreen';
-import { useNodes, applyNodeChanges, type NodeChange } from '@xyflow/react';
+import { applyNodeChanges, useNodes, type NodeChange } from '@xyflow/react';
 import { updateReactFlowNodes } from '../../../core/state/DataMapSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../core/state/Store';
@@ -25,16 +25,15 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const { key } = root;
   const nodeVisble = useMemo(() => !!flattenedScehmaMap[key], [flattenedScehmaMap, key]);
   const nodeRef = useRef<HTMLDivElement | null>(null);
-  const nodes = useNodes();
   const styles = useStyles();
   const onScreen = useOnScreen(nodeRef);
   const dispatch = useDispatch<AppDispatch>();
+  const nodes = useNodes();
 
   const {
     position: { x, y } = { x: undefined, y: undefined },
   } = useNodePosition({
     key: key,
-    openKeys: openKeys,
     onScreen: onScreen,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
@@ -43,6 +42,37 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     treePositionX,
     treePositionY,
   });
+
+  const removeChildNodes = useCallback(
+    (key: string) => {
+      const getAllChildNodes = (key: string, allChildren: string[]) => {
+        const node = flattenedScehmaMap[key];
+
+        if (node?.children && node.children.length > 0) {
+          const allChildrenKeys = node.children.map((child) => child.key);
+
+          allChildren.push(...allChildrenKeys);
+
+          for (const childKey of allChildrenKeys) {
+            getAllChildNodes(childKey, allChildren);
+          }
+        }
+
+        return allChildren;
+      };
+
+      const allChildrenKeys = getAllChildNodes(key, []);
+      const nodeChanges: NodeChange[] = allChildrenKeys
+        .filter((key) => nodes.find((node) => node.id === key))
+        .map((childKey) => ({
+          id: getReactFlowNodeId(childKey, isLeftDirection),
+          type: 'remove',
+        }));
+
+      dispatch(updateReactFlowNodes(applyNodeChanges(nodeChanges, nodes)));
+    },
+    [flattenedScehmaMap, nodes, dispatch, isLeftDirection]
+  );
 
   const onOpenChange = useCallback(
     (_e: any, data: TreeItemOpenChangeData) => {
@@ -56,24 +86,14 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
         }
         return newOpenKeys;
       });
+
+      // If node is collapsed, remove all the child nodes as well
+      if (!data.open) {
+        removeChildNodes(data.value as string);
+      }
     },
-    [setOpenKeys]
+    [setOpenKeys, removeChildNodes]
   );
-
-  const handleScroll = useCallback(() => {
-    if (nodeRef?.current) {
-      /* empty */
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodeRef, nodeRef?.current]);
-
-  useLayoutEffect(() => {
-    if (nodeRef?.current) {
-      nodeRef.current.addEventListener('scroll', handleScroll);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodeRef, nodeRef?.current]);
 
   useLayoutEffect(() => {
     const id = getReactFlowNodeId(root.key, isLeftDirection);

@@ -177,14 +177,19 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     [reactFlowInstance]
   );
 
-  const onFunctionNodeDrag: OnNodeDrag = (_event, node, _nodes) => {
-    const unaffectedNodes = allNodes.filter((nodeFromState) => nodeFromState.id !== node.id);
-    setAllNodes([...unaffectedNodes, node]);
-  };
+  const onFunctionNodeDrag: OnNodeDrag = useCallback(
+    (_event, node, _nodes) => {
+      setAllNodes((allNodes) => [...allNodes.filter((nodeFromState) => nodeFromState.id !== node.id), node]);
+    },
+    [setAllNodes]
+  );
 
-  const onFunctionNodeDragStop: OnNodeDrag = (event, node, _nodes) => {
-    dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
-  };
+  const onFunctionNodeDragStop: OnNodeDrag = useCallback(
+    (_event, node, _nodes) => {
+      dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
+    },
+    [dispatch]
+  );
 
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
