@@ -14,7 +14,7 @@ export const parseErrorMessage = (error: any, defaultErrorMessage?: string): str
       return message;
     }
 
-    message = error?.data?.error?.message;
+    message = error?.data?.error?.message ?? undefined;
     if (message) {
       return message;
     }
