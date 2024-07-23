@@ -91,10 +91,13 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   return (
     <div className="connection-display">
       <div className="connection-info">
-        <LinkMultiple16Regular />
-        <Label className="label" text={connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName} />
+        <div className="connection-info-labels">
+          <LinkMultiple16Regular />
+          <Label className="label" text={connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName} />
+        </div>
         {readOnly ? null : (
           <Button
+            className="change-connection-button"
             id="change-connection-button"
             size="small"
             appearance="subtle"
