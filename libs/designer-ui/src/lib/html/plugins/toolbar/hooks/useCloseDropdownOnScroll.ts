@@ -1,6 +1,6 @@
-import type { LexicalEditor } from "lexical";
-import { useEffect } from "react";
-import { CLOSE_DROPDOWN_COMMAND } from "../helper/Dropdown";
+import type { LexicalEditor } from 'lexical';
+import { useEffect } from 'react';
+import { CLOSE_DROPDOWN_COMMAND } from '../helper/Dropdown';
 
 export const useCloseDropdownOnScroll = (activeEditor: LexicalEditor) => {
   useEffect(() => {
