@@ -71,8 +71,11 @@ export async function downloadAndExtractDependency(
     // Download the compressed dependency
     await new Promise<void>((resolve, reject) => {
       executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-      // TODO: @mireed: remove the timeout completely and download async instead.
-      const downloadStream = request({ url: downloadUrl, timeout: 600000 }).pipe(fs.createWriteStream(dependencyFilePath));
+      // TODO: @mireed: change the download to be async and not block.
+      // TODO: @mireed: the NPM Request library is deprecated, change to use a different library.
+      // Get the Dependency Timout setting value, which is in seconds and convert to msec for the request library.
+      const dependencyTimeoutMsec = getDependencyTimeout() * 1000;
+      const downloadStream = request({ url: downloadUrl, timeout: dependencyTimeoutMsec }).pipe(fs.createWriteStream(dependencyFilePath));
       downloadStream.on('finish', async () => {
         await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
 
