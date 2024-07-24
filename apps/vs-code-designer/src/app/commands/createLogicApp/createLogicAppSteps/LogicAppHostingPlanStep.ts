@@ -5,10 +5,13 @@
 import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../../localize';
 import { setSiteOS } from '../../../tree/subscriptionTree/SubscriptionTreeItem';
-import { AppServicePlanListStep } from '@microsoft/vscode-azext-azureappservice';
+import { AppServicePlanListStep, CustomLocationListStep } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizardPromptStep, type IAzureQuickPickItem, type IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { ConnectedEnvironmentStep } from './HybridLogicAppsSteps/ConnectedEnvironmentStep';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
+import { sendAzureRequest } from '../../../utils/requestUtils';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { workflowAppApiVersion } from '../../../../constants';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
@@ -35,10 +38,26 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
     const { suppressCreate, useHybrid } = wizardContext;
+    const promptSteps = [];
+    CustomLocationListStep.addStep(wizardContext as any, promptSteps);
     if (useHybrid) {
-      wizardContext.newSiteName = wizardContext.newSiteName.toLowerCase();
-      return { promptSteps: [new ResourceGroupListStep(), new ConnectedEnvironmentStep()] };
+      this.setHybridPlanProperties(wizardContext);
+      promptSteps.push(new ResourceGroupListStep(), new ConnectedEnvironmentStep());
+    } else {
+      promptSteps.push(new AppServicePlanListStep(suppressCreate), new ResourceGroupListStep());
     }
-    return { promptSteps: [new AppServicePlanListStep(suppressCreate), new ResourceGroupListStep()] };
+    return { promptSteps: promptSteps };
+  }
+
+  private setHybridPlanProperties(wizardContext: ILogicAppWizardContext) {
+    wizardContext.newSiteName = wizardContext.newSiteName.toLowerCase();
+    CustomLocationListStep.setLocationSubset(wizardContext, this.getAllLocations(wizardContext), 'Microsoft.Resources');
+  }
+
+  private async getAllLocations(wizardContext: ILogicAppWizardContext): Promise<string[]> {
+    const url = `/subscriptions/${wizardContext.subscriptionId}/providers/Microsoft.Web/georegions?api-version=${workflowAppApiVersion}`;
+    const locationsResponse = await sendAzureRequest(url, wizardContext, HTTP_METHODS.GET, wizardContext);
+    const locations = (locationsResponse.parsedBody as { value }).value.map((loc) => loc.name) as string[];
+    return locations;
   }
 }

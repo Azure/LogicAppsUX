@@ -28,7 +28,7 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
   }
 
   public shouldPrompt(wizardContext: ILogicAppWizardContext): boolean {
-    return wizardContext.customLocation && wizardContext.storageType === undefined;
+    return wizardContext.useHybrid && wizardContext.storageType === undefined;
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
