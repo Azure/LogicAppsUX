@@ -10,7 +10,7 @@ import {
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -21,7 +21,8 @@ import {
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
+import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panelV2/panelSlice';
 import {
   useAllOperations,
   useConnectorName,
@@ -52,7 +53,7 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -172,6 +173,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
 
   const selected = useIsNodeSelected(id);
+  const isPinned = useIsNodePinned(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
@@ -226,8 +228,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
   const copyClick = useCallback(() => {
@@ -335,6 +336,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  const nodeIndex = useNodeIndex(id);
+
   return (
     <>
       <div className="nopan" ref={ref as any}>
@@ -363,11 +366,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             onDeleteClick={deleteClick}
             onCopyClick={copyClick}
             operationName={operationSummary?.result}
-            selected={selected}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             setFocus={shouldFocus}
             staticResultsEnabled={!!staticResults}
             isSecureInputsOutputs={isSecureInputsOutputs}
+            nodeIndex={nodeIndex}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
@@ -381,7 +385,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
+          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
         </div>
       ) : null}
     </>

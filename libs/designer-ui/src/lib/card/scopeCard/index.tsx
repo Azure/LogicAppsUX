@@ -34,10 +34,11 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   onClick,
   onDeleteClick,
   handleCollapse,
-  selected,
+  selectionMode,
   contextMenuItems = [],
   runData,
   setFocus,
+  nodeIndex,
 }) => {
   const contextMenu = useCardContextMenu();
   const focusRef = useRef<HTMLDivElement | null>(null);
@@ -84,7 +85,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             />
           ) : null}
           <div className="msla-scope-card-content">
-            <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
+            <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
               id={`msla-node-${id}`}
               className="msla-scope-card-title-button"
@@ -92,6 +93,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               onClick={handleClick}
               onKeyDown={keyboardInteraction.keyDown}
               onKeyUp={keyboardInteraction.keyUp}
+              tabIndex={nodeIndex}
             >
               <div className="msla-scope-card-title-box">
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
@@ -100,7 +102,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               </div>
               {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
             </button>
-            <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+            <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
           </div>
           <div className="msla-card-v2-footer" onClick={handleClick}>
             <div className="msla-badges">
@@ -111,7 +113,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
                       className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
                       {...iconProps}
                       aria-label={`${title}: ${content}`}
-                      tabIndex={0}
+                      tabIndex={nodeIndex}
                     />
                   </div>
                 </Tooltip>

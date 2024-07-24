@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import {
   useBrandColor,
   useIconUri,
@@ -10,7 +10,7 @@ import {
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { changePanelNode, selectPanelTab } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -35,7 +35,7 @@ import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService, getRecordEntry, removeIdTag } from '@microsoft/logic-apps-shared';
+import { RunService, WorkflowService, getRecordEntry, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -48,6 +48,7 @@ import { CopyMenuItem } from '../menuItems';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
@@ -155,6 +156,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [readOnly, metadata]
   );
 
+  const isPinned = useIsNodePinned(scopeId);
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -181,8 +183,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(scopeId));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(scopeId));
   }, [dispatch, scopeId]);
 
   const copyClick = useCallback(() => {
@@ -285,6 +286,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const nodeIndex = useNodeIndex(id);
+
   if (!node) {
     return null;
   }
@@ -345,11 +348,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             readOnly={readOnly}
             onClick={nodeClick}
             onDeleteClick={deleteClick}
-            selected={selected}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
             setFocus={shouldFocus}
+            nodeIndex={nodeIndex}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
@@ -370,7 +374,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           <p className="no-actions-text">No Actions</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
+            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
           </div>
         )
       ) : null}

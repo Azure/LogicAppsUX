@@ -35,10 +35,11 @@ export interface CardProps {
   isDragging?: boolean;
   isMonitoringView?: boolean;
   isLoading?: boolean;
+  nodeIndex?: number;
   operationName?: string;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
-  selected?: boolean;
+  selectionMode?: 'selected' | 'pinned' | false;
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
@@ -62,7 +63,6 @@ export const CARD_LOADING_SPINNER_STYLE: ISpinnerStyles = {
 };
 
 export const Card: React.FC<CardProps> = ({
-  id,
   active = true,
   brandColor,
   cloned,
@@ -78,16 +78,18 @@ export const Card: React.FC<CardProps> = ({
   errorLevel,
   errorMessage,
   icon,
+  id,
   isDragging,
   isMonitoringView,
   isLoading,
-  operationName,
-  selected,
-  staticResultsEnabled,
-  title,
+  nodeIndex,
   onClick,
   onDeleteClick,
   onCopyClick,
+  operationName,
+  selectionMode,
+  staticResultsEnabled,
+  title,
   runData,
   setFocus,
   isSecureInputsOutputs,
@@ -175,7 +177,7 @@ export const Card: React.FC<CardProps> = ({
         id={`msla-node-${id}`}
         className={css(
           'msla-panel-card-container',
-          selected && 'msla-panel-card-container-selected',
+          selectionMode === 'selected' && 'msla-panel-card-container-selected',
           !active && 'inactive',
           cloned && 'msla-card-ghost-image',
           isDragging && 'dragging'
@@ -186,7 +188,7 @@ export const Card: React.FC<CardProps> = ({
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={2}
+        tabIndex={nodeIndex}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
@@ -199,7 +201,7 @@ export const Card: React.FC<CardProps> = ({
             resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
           />
         ) : null}
-        <div className={css('msla-selection-box', selected && 'selected')} />
+        <div className={css('msla-selection-box', selectionMode)} />
         <div className="panel-card-main">
           <div aria-label={cardAltText} className="panel-card-header" role="button">
             <div className="panel-card-content-container">
@@ -217,6 +219,7 @@ export const Card: React.FC<CardProps> = ({
             connectionRequired={connectionRequired}
             staticResultsEnabled={staticResultsEnabled}
             isSecureInputsOutputs={isSecureInputsOutputs}
+            nodeIndex={nodeIndex}
           />
         </div>
       </div>
