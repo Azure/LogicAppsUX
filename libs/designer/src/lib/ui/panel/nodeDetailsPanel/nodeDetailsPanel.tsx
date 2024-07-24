@@ -44,12 +44,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
 
   const readOnly = useReadOnly();
-
-  const panelTabs = usePanelTabs();
-  const selectedTab = useSelectedPanelTabId();
-
-  const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const selectedTab = useSelectedPanelTabId();
+  const collapsed = useIsPanelCollapsed();
+
+  const panelTabs = usePanelTabs({ nodeId: selectedNode });
+
   const runData = useRunData(selectedNode);
   const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),

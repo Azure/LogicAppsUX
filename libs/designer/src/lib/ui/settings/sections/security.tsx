@@ -67,6 +67,7 @@ export const Security = ({
 
   const securitySectionProps: SettingsSectionProps = {
     id: 'security',
+    nodeId,
     title: securityTitle,
     sectionName: SettingSectionName.SECURITY,
     isReadOnly: readOnly,
