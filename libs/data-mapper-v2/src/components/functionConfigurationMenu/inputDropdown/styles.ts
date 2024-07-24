@@ -11,6 +11,7 @@ export const useStyles = makeStyles({
   },
   inputStyles: {
     width: '100%',
+    minWidth: '200px',
   },
   inputLabel: {
     ...typographyStyles.body1,

@@ -342,7 +342,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
         onOptionSelect={onOptionSelect}
         value={customValue === undefined ? value : customValue}
         selectedOptions={selectedOptions}
-        style={{ width: '200px' }}
       >
         {filteredOptions.length > 0 ? filteredOptions : undefined}
         {customValue && (

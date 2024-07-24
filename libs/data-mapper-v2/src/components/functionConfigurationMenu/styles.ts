@@ -19,7 +19,7 @@ export const useStyles = makeStyles({
     marginLeft: 'auto',
   },
   unlimitedInputHeaderCell: {
-    width: '150px',
+    width: '210px',
   },
   headerRow: {
     display: 'flex',

@@ -15,7 +15,7 @@ import {
   Caption2,
 } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { AddRegular, DeleteRegular, ReOrderRegular } from '@fluentui/react-icons';
+import { AddRegular, DeleteRegular, LinkDismissRegular, ReOrderRegular } from '@fluentui/react-icons';
 import { useMemo, useState } from 'react';
 import type { RootState } from '../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -95,11 +95,11 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
           />
         </div>
         <TabList onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
+          <Tab value="input">{stringResources.INPUT}</Tab>
+          <Tab value="output">{stringResources.OUTPUT}</Tab>
           <Tab className={styles.detailsButton} value="details">
             {stringResources.DETAILS}
           </Tab>
-          <Tab value="input">{stringResources.INPUT}</Tab>
-          <Tab value="output">{stringResources.OUTPUT}</Tab>
         </TabList>
         {tab(selectedTab)}
       </PopoverSurface>
@@ -150,23 +150,24 @@ const InputTabContents = (props: {
               <Caption1 className={styles.inputName}>{input.name}</Caption1>
               <Caption2>{input.placeHolder}</Caption2>
             </div>
-            <Caption1>{input.allowedTypes}</Caption1>
+            <Caption2>Allowed types: {input.allowedTypes}</Caption2>
           </div>
-          {inputConnection !== undefined && typeof inputConnection !== 'string' && (
-            <div>
-              <Caption1>
-                {isSchemaNodeExtended(inputConnection.node) ? inputConnection.node.name : inputConnection.node.displayName}
-              </Caption1>
-              <Caption1>Type</Caption1>
-            </div>
-          )}
+          <InputDropdown
+            functionId={props.functionKey}
+            currentNode={props.func}
+            inputName={getInputName(inputConnection, connections)}
+            inputValue={getInputValue(inputConnection)}
+            inputIndex={index}
+            isUnboundedInput={true}
+            placeholder={inputsFromManifest[0].placeHolder}
+          />
         </div>
       );
     });
     table = <div>{tableContents}</div>;
   } else {
     table = (
-      <Table size="medium">
+      <Table size="medium" noNativeElements>
         <TableHeader>
           <TableRow>
             <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
@@ -178,12 +179,11 @@ const InputTabContents = (props: {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {}
           {Object.entries(functionConnection.inputs[0]).map((input, index) => {
             return (
               <TableRow key={input[0] + index}>
-                <TableCell>
-                  <TableCellLayout>
+                <TableCell style={{ width: '210px' }}>
+                  <TableCellLayout style={{ width: '210px' }}>
                     <InputDropdown
                       functionId={props.functionKey}
                       currentNode={props.func}
@@ -193,6 +193,11 @@ const InputTabContents = (props: {
                       isUnboundedInput={true}
                       placeholder={inputsFromManifest[0].placeHolder}
                     />
+                  </TableCellLayout>
+                </TableCell>
+                <TableCell>
+                  <TableCellLayout>
+                    <Button appearance="transparent" icon={<LinkDismissRegular />} />
                   </TableCellLayout>
                 </TableCell>
                 <TableCell>
