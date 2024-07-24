@@ -11,11 +11,11 @@ import {
 } from '../../../core';
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { expandPanel, selectPanelTab, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
@@ -86,8 +86,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   }, [dispatch]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(selectedNode));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(selectedNode));
   }, [dispatch, selectedNode]);
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
