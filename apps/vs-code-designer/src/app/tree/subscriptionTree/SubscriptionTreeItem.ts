@@ -28,7 +28,6 @@ import {
   AppInsightsCreateStep,
   AppInsightsListStep,
   AppKind,
-  CustomLocationListStep,
   ParsedSite,
   SiteNameStep,
   WebsiteOS,
@@ -123,7 +122,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const executeSteps: AzureWizardExecuteStep<IAppServiceWizardContext>[] = [];
 
     promptSteps.push(new SiteNameStep());
-    CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new CustomLocationStorageAccountStep());
 
