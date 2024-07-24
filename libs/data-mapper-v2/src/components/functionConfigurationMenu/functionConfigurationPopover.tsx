@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import type { InputConnection } from '../../models/Connection';
-import { deleteFunction, setConnectionInput } from '../../core/state/DataMapSlice';
+import { createInputSlotForUnboundedInput, deleteFunction, setConnectionInput } from '../../core/state/DataMapSlice';
 import { isSchemaNodeExtended } from '../../utils';
 import { useIntl } from 'react-intl';
 import { InputDropdown } from './inputDropdown/InputDropdown';
@@ -101,7 +101,7 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
             {stringResources.DETAILS}
           </Tab>
         </TabList>
-        {tab(selectedTab)}
+        <div className={styles.tabWrapper}>{tab(selectedTab)}</div>
       </PopoverSurface>
     )
   );
@@ -119,6 +119,10 @@ const InputTabContents = (props: {
   const inputsFromManifest = props.func.inputs;
   const dispatch = useDispatch();
 
+  const addUnboundedInputSlot = () => {
+    dispatch(createInputSlotForUnboundedInput(props.functionKey));
+  };
+
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
@@ -133,6 +137,10 @@ const InputTabContents = (props: {
     );
   };
 
+  const removeUnboundedInput = (index: number) => {
+    updateInput(index, null);
+  };
+
   let table: JSX.Element;
   const functionConnection = connections[props.functionKey];
 
@@ -144,13 +152,13 @@ const InputTabContents = (props: {
           : functionConnection.inputs[0][index]
         : undefined;
       return (
-        <div key={index}>
+        <div className={styles.boundedInputRow} key={index}>
           <div className={styles.boundedInputTopRow}>
             <div className={styles.inputNameDiv}>
               <Caption1 className={styles.inputName}>{input.name}</Caption1>
               <Caption2>{input.placeHolder}</Caption2>
             </div>
-            <Caption2>Allowed types: {input.allowedTypes}</Caption2>
+            <Caption2 className={styles.allowedTypes}>Allowed types: {input.allowedTypes}</Caption2>
           </div>
           <InputDropdown
             functionId={props.functionKey}
@@ -159,7 +167,6 @@ const InputTabContents = (props: {
             inputValue={getInputValue(inputConnection)}
             inputIndex={index}
             isUnboundedInput={true}
-            placeholder={inputsFromManifest[0].placeHolder}
           />
         </div>
       );
@@ -197,7 +204,7 @@ const InputTabContents = (props: {
                 </TableCell>
                 <TableCell>
                   <TableCellLayout>
-                    <Button appearance="transparent" icon={<LinkDismissRegular />} />
+                    <Button appearance="transparent" icon={<LinkDismissRegular />} onClick={() => removeUnboundedInput(index)} />
                   </TableCellLayout>
                 </TableCell>
                 <TableCell>
@@ -215,7 +222,7 @@ const InputTabContents = (props: {
   const addInput = (
     <Button
       icon={<AddRegular className={styles.addIcon} />}
-      onClick={() => updateInput(0, undefined)}
+      onClick={() => addUnboundedInputSlot()}
       className={styles.addButton}
       appearance="transparent"
     >

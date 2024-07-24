@@ -4,7 +4,7 @@ export const useStyles = makeStyles({
   surface: {
     display: 'flex',
     width: '360px',
-    height: '410px',
+    minHeight: '410px',
     flexDirection: 'column',
     paddingLeft: '24px',
     paddingRight: '24px',
@@ -41,5 +41,15 @@ export const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     height: '40px',
+  },
+  boundedInputRow: {
+    paddingBottom: '25px',
+  },
+  allowedTypes: {
+    width: '190px',
+    textAlign: 'end',
+  },
+  tabWrapper: {
+    paddingTop: '8px',
   },
 });

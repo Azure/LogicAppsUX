@@ -205,6 +205,17 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
     },
 
+    createInputSlotForUnboundedInput: (state, action: PayloadAction<string>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      newState.dataMapConnections[action.payload].inputs[0].push(undefined);
+
+      doDataMapOperation(state, newState, 'Set connection input value');
+    },
+
     setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -411,6 +422,7 @@ export const {
   makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
+  createInputSlotForUnboundedInput,
   setConnectionInput,
   addFunctionNode,
   deleteFunction,
