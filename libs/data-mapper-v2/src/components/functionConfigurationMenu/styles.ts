@@ -19,7 +19,13 @@ export const useStyles = makeStyles({
     marginLeft: 'auto',
   },
   unlimitedInputHeaderCell: {
-    width: '210px',
+    width: '170px',
+    display: 'inline-block',
+    paddingRight: '5px',
+  },
+  listButton: {
+    width: '40px',
+    maxWidth: '40px',
   },
   headerRow: {
     display: 'flex',
@@ -46,7 +52,7 @@ export const useStyles = makeStyles({
     paddingBottom: '25px',
   },
   allowedTypes: {
-    width: '190px',
+    width: '170px',
     textAlign: 'end',
   },
   tabWrapper: {

@@ -27,6 +27,8 @@ import { isSchemaNodeExtended } from '../../utils';
 import { useIntl } from 'react-intl';
 import { InputDropdown } from './inputDropdown/InputDropdown';
 import { getInputName, getInputValue } from '../../utils/Function.Utils';
+import { mergeStyles } from '@fluentui/react';
+import { List, ListItem } from '@fluentui/react-list-preview';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -174,23 +176,21 @@ const InputTabContents = (props: {
     table = <div>{tableContents}</div>;
   } else {
     table = (
-      <Table size="medium" noNativeElements>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-name">
-              <Caption1>{inputsFromManifest[0].name}</Caption1>
-            </TableHeaderCell>
-            <TableHeaderCell className={styles.unlimitedInputHeaderCell} key="input-types">
-              <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
-            </TableHeaderCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+      <div>
+        <div>
+          <span className={styles.unlimitedInputHeaderCell} key="input-name">
+            <Caption1>{inputsFromManifest[0].name}</Caption1>
+          </span>
+          <span className={mergeStyles(styles.unlimitedInputHeaderCell, styles.allowedTypes)} key="input-types">
+            <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
+          </span>
+        </div>
+        <List>
           {Object.entries(functionConnection.inputs[0]).map((input, index) => {
             return (
-              <TableRow key={input[0] + index}>
-                <TableCell style={{ width: '210px' }}>
-                  <TableCellLayout style={{ width: '210px' }}>
+              <ListItem key={input[0] + index}>
+                <div style={{ display: 'inline-block', width: '100%' }}>
+                  <span style={{ width: '250px', display: 'inline-block' }}>
                     <InputDropdown
                       functionId={props.functionKey}
                       currentNode={props.func}
@@ -200,23 +200,22 @@ const InputTabContents = (props: {
                       isUnboundedInput={true}
                       placeholder={inputsFromManifest[0].placeHolder}
                     />
-                  </TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <TableCellLayout>
-                    <Button appearance="transparent" icon={<LinkDismissRegular />} onClick={() => removeUnboundedInput(index)} />
-                  </TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <TableCellLayout>
-                    <Button appearance="transparent" icon={<ReOrderRegular />} />
-                  </TableCellLayout>
-                </TableCell>
-              </TableRow>
+                  </span>
+                  <span style={{ paddingLeft: '8px' }}>
+                    <Button
+                      className={styles.listButton}
+                      appearance="transparent"
+                      icon={<LinkDismissRegular />}
+                      onClick={() => removeUnboundedInput(index)}
+                    />
+                    <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} />
+                  </span>
+                </div>
+              </ListItem>
             );
           })}
-        </TableBody>
-      </Table>
+        </List>
+      </div>
     );
   }
   const addInput = (
