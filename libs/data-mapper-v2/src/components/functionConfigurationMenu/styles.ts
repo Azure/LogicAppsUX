@@ -3,7 +3,7 @@ import { makeStyles, tokens } from '@fluentui/react-components';
 export const useStyles = makeStyles({
   surface: {
     display: 'flex',
-    width: '360px',
+    width: '390px',
     minHeight: '410px',
     flexDirection: 'column',
     paddingLeft: '24px',
@@ -57,5 +57,9 @@ export const useStyles = makeStyles({
   },
   tabWrapper: {
     paddingTop: '8px',
+  },
+  badgeWrapper: {
+    width: '70px',
+    display: 'inline-block',
   },
 });

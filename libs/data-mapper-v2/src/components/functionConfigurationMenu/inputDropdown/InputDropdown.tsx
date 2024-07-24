@@ -198,11 +198,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
         const TypeIcon = iconForNormalizedDataType(srcSchemaNode.type, 16, false, srcSchemaNode.nodeProperties);
         return (
           <Option key={option.key} text={option.text} value={option.value}>
-            <Stack horizontal verticalAlign="center">
-              <TypeIcon />
-              <div className={styles.optionText} style={{ marginLeft: 4 }}>
-                {option.text}
-              </div>
+            <Stack className={styles.optionStack} horizontal verticalAlign="center">
+              <TypeIcon className={styles.icon} />
+              <div className={styles.optionText}>{option.text}</div>
               <div className={styles.pathText}>{option.path}</div>
             </Stack>
           </Option>

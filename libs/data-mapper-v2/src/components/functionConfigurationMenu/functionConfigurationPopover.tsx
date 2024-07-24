@@ -12,23 +12,18 @@ import {
   TableCell,
   TableCellLayout,
   Caption1,
-  Caption2,
 } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { AddRegular, DeleteRegular, LinkDismissRegular, ReOrderRegular } from '@fluentui/react-icons';
+import { AddRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useMemo, useState } from 'react';
 import type { RootState } from '../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
 import { UnboundedInput } from '../../constants/FunctionConstants';
-import type { InputConnection } from '../../models/Connection';
-import { createInputSlotForUnboundedInput, deleteFunction, setConnectionInput } from '../../core/state/DataMapSlice';
+import { deleteFunction } from '../../core/state/DataMapSlice';
 import { isSchemaNodeExtended } from '../../utils';
 import { useIntl } from 'react-intl';
-import { InputDropdown } from './inputDropdown/InputDropdown';
-import { getInputName, getInputValue } from '../../utils/Function.Utils';
-import { mergeStyles } from '@fluentui/react';
-import { List, ListItem } from '@fluentui/react-list-preview';
+import { InputTabContents } from './inputTab/inputTab';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -111,128 +106,6 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
 
 const DetailsTabContents = (props: { func: FunctionData }) => {
   return <div>{props.func.description}</div>;
-};
-
-const InputTabContents = (props: {
-  func: FunctionData;
-  functionKey: string;
-}) => {
-  const styles = useStyles();
-  const inputsFromManifest = props.func.inputs;
-  const dispatch = useDispatch();
-
-  const addUnboundedInputSlot = () => {
-    dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  };
-
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-
-  const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
-    const targetNodeReactFlowKey = props.functionKey;
-    dispatch(
-      setConnectionInput({
-        targetNode: props.func,
-        targetNodeReactFlowKey,
-        inputIndex,
-        input: newValue,
-      })
-    );
-  };
-
-  const removeUnboundedInput = (index: number) => {
-    updateInput(index, null);
-  };
-
-  let table: JSX.Element;
-  const functionConnection = connections[props.functionKey];
-
-  if (props.func.maxNumberOfInputs !== UnboundedInput) {
-    const tableContents = props.func.inputs.map((input, index) => {
-      const inputConnection = functionConnection
-        ? Object.values(functionConnection.inputs).length > 1
-          ? functionConnection.inputs[index][0]
-          : functionConnection.inputs[0][index]
-        : undefined;
-      return (
-        <div className={styles.boundedInputRow} key={index}>
-          <div className={styles.boundedInputTopRow}>
-            <div className={styles.inputNameDiv}>
-              <Caption1 className={styles.inputName}>{input.name}</Caption1>
-              <Caption2>{input.placeHolder}</Caption2>
-            </div>
-            <Caption2 className={styles.allowedTypes}>Allowed types: {input.allowedTypes}</Caption2>
-          </div>
-          <InputDropdown
-            functionId={props.functionKey}
-            currentNode={props.func}
-            inputName={getInputName(inputConnection, connections)}
-            inputValue={getInputValue(inputConnection)}
-            inputIndex={index}
-            isUnboundedInput={true}
-          />
-        </div>
-      );
-    });
-    table = <div>{tableContents}</div>;
-  } else {
-    table = (
-      <div>
-        <div>
-          <span className={styles.unlimitedInputHeaderCell} key="input-name">
-            <Caption1>{inputsFromManifest[0].name}</Caption1>
-          </span>
-          <span className={mergeStyles(styles.unlimitedInputHeaderCell, styles.allowedTypes)} key="input-types">
-            <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
-          </span>
-        </div>
-        <List>
-          {Object.entries(functionConnection.inputs[0]).map((input, index) => {
-            return (
-              <ListItem key={input[0] + index}>
-                <div style={{ display: 'inline-block', width: '100%' }}>
-                  <span style={{ width: '250px', display: 'inline-block' }}>
-                    <InputDropdown
-                      functionId={props.functionKey}
-                      currentNode={props.func}
-                      inputName={getInputName(input[1], connections)}
-                      inputValue={getInputValue(input[1])}
-                      inputIndex={index}
-                      isUnboundedInput={true}
-                      placeholder={inputsFromManifest[0].placeHolder}
-                    />
-                  </span>
-                  <span style={{ paddingLeft: '8px' }}>
-                    <Button
-                      className={styles.listButton}
-                      appearance="transparent"
-                      icon={<LinkDismissRegular />}
-                      onClick={() => removeUnboundedInput(index)}
-                    />
-                    <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} />
-                  </span>
-                </div>
-              </ListItem>
-            );
-          })}
-        </List>
-      </div>
-    );
-  }
-  const addInput = (
-    <Button
-      icon={<AddRegular className={styles.addIcon} />}
-      onClick={() => addUnboundedInputSlot()}
-      className={styles.addButton}
-      appearance="transparent"
-    >
-      <Caption1>Add Input</Caption1>
-    </Button>
-  );
-  return (
-    <div>
-      <div>{table}</div> {props.func.maxNumberOfInputs === UnboundedInput && addInput}
-    </div>
-  );
 };
 
 const OutputTabContents = (props: {
