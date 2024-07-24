@@ -32,6 +32,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Edge, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { UnboundedInput } from '../../constants/FunctionConstants';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -204,6 +205,17 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
     },
 
+    createInputSlotForUnboundedInput: (state, action: PayloadAction<string>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      newState.dataMapConnections[action.payload].inputs[0].push(undefined);
+
+      doDataMapOperation(state, newState, 'Set connection input value');
+    },
+
     setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -215,7 +227,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
-    makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
+    makeConnectionFromMap: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
@@ -234,7 +246,10 @@ export const dataMapSlice = createSlice({
       if (action.payload.reactFlowDestination.startsWith(SchemaType.Target)) {
         destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination];
       } else {
-        destinationNode = newState.functionNodes[action.payload.reactFlowSource];
+        destinationNode = newState.functionNodes[action.payload.reactFlowDestination];
+        if (destinationNode.maxNumberOfInputs === UnboundedInput) {
+          action.payload.specificInput = 0;
+        }
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
@@ -404,9 +419,10 @@ export const {
   updateReactFlowNode,
   updateReactFlowEdges,
   updateReactFlowNodes,
-  makeConnection,
+  makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
+  createInputSlotForUnboundedInput,
   setConnectionInput,
   addFunctionNode,
   deleteFunction,
