@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import {
   useBrandColor,
   useIconUri,
@@ -10,7 +10,7 @@ import {
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { changePanelNode, selectPanelTab } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -183,8 +183,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(scopeId));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(scopeId));
   }, [dispatch, scopeId]);
 
   const copyClick = useCallback(() => {

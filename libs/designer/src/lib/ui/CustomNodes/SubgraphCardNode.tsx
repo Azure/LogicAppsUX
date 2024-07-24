@@ -4,11 +4,11 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -96,8 +96,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   );
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
   const contextMenuItems: JSX.Element[] = useMemo(
