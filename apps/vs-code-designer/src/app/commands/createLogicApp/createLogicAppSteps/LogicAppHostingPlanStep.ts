@@ -11,6 +11,7 @@ import { ConnectedEnvironmentStep } from './HybridLogicAppsSteps/ConnectedEnviro
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { workflowAppApiVersion } from '../../../../constants';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
@@ -54,7 +55,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
   }
 
   private async getAllLocations(wizardContext: ILogicAppWizardContext): Promise<string[]> {
-    const url = `https://management.azure.com/subscriptions/${wizardContext.subscriptionId}/providers/Microsoft.Web/georegions?api-version=2018-11-01`;
+    const url = `/subscriptions/${wizardContext.subscriptionId}/providers/Microsoft.Web/georegions?api-version=${workflowAppApiVersion}`;
     const locationsResponse = await sendAzureRequest(url, wizardContext, HTTP_METHODS.GET, wizardContext);
     const locations = (locationsResponse.parsedBody as { value }).value.map((loc) => loc.name) as string[];
     return locations;
