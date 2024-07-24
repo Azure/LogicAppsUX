@@ -10,7 +10,7 @@ import type { FunctionData } from '../../../models';
 import type { ConnectionDictionary, InputConnection } from '../../../models/Connection';
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
-import { useStyles } from '../styles';
+import { useStyles } from './styles';
 import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
 
@@ -32,6 +32,9 @@ export const InputTabContents = (props: {
           ? functionConnection.inputs[index][0]
           : functionConnection.inputs[0][index]
         : undefined;
+
+      const inputType = getInputTypeFromNode(inputConnection);
+
       return (
         <div className={styles.boundedInputRow} key={index}>
           <div className={styles.boundedInputTopRow}>
@@ -41,14 +44,25 @@ export const InputTabContents = (props: {
             </div>
             <Caption2 className={styles.allowedTypes}>Allowed types: {input.allowedTypes}</Caption2>
           </div>
-          <InputDropdown
-            functionId={props.functionKey}
-            currentNode={props.func}
-            inputName={getInputName(inputConnection, connections)}
-            inputValue={getInputValue(inputConnection)}
-            inputIndex={index}
-            isUnboundedInput={true}
-          />
+          <div>
+            <span className={styles.inputDropdownWrapper}>
+              <InputDropdown
+                functionId={props.functionKey}
+                currentNode={props.func}
+                inputName={getInputName(inputConnection, connections)}
+                inputValue={getInputValue(inputConnection)}
+                inputIndex={index}
+                isUnboundedInput={true}
+              />
+            </span>
+            <span className={styles.badgeWrapper}>
+              {inputType && (
+                <Badge appearance="filled" color="informative">
+                  {inputType}
+                </Badge>
+              )}
+            </span>
+          </div>
         </div>
       );
     });
@@ -140,18 +154,23 @@ interface UnboundedInputEntryProps {
   removeUnboundedInput: (index: number) => void;
 }
 
+const getInputTypeFromNode = (input: InputConnection | undefined) => {
+  let inputType = '';
+  if (typeof input !== 'string' && input !== undefined) {
+    if (isSchemaNodeExtended(input.node)) {
+      inputType = input?.node.type;
+    } else {
+      inputType = input?.node.outputValueType;
+    }
+  }
+  return inputType;
+};
+
 const UnboundedInputEntry = (props: UnboundedInputEntryProps) => {
   const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
 
-  let inputType = '';
-  if (typeof props.input[1] !== 'string' && props.input[1] !== undefined) {
-    if (isSchemaNodeExtended(props.input[1].node)) {
-      inputType = props.input[1]?.node.type;
-    } else {
-      inputType = props.input[1]?.node.outputValueType;
-    }
-  }
+  const inputType = getInputTypeFromNode(props.input[1]);
 
   const [, drag] = useDrag(() => ({
     type: 'functionInput',
@@ -159,8 +178,8 @@ const UnboundedInputEntry = (props: UnboundedInputEntryProps) => {
   }));
   return (
     <ListItem key={props.input[0] + props.index}>
-      <div ref={drag} style={{ display: 'inline-block', width: '100%' }}>
-        <span style={{ width: '220px', display: 'inline-block' }}>
+      <div ref={drag} className={styles.draggableListItem}>
+        <span className={styles.inputDropdown}>
           <InputDropdown
             functionId={props.functionKey}
             currentNode={props.func}
@@ -171,7 +190,7 @@ const UnboundedInputEntry = (props: UnboundedInputEntryProps) => {
             placeholder={inputsFromManifest[0].placeHolder}
           />
         </span>
-        <span style={{ paddingLeft: '8px' }}>
+        <span className={styles.listButtons}>
           <span className={styles.badgeWrapper}>
             {inputType && (
               <Badge appearance="filled" color="informative">

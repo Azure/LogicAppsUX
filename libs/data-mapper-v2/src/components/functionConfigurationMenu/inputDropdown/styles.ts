@@ -29,6 +29,8 @@ export const useStyles = makeStyles({
   inputStyles: {
     width: '100%',
     minWidth: '200px !important',
+    maxWidth: '300px',
+    display: 'inline-block',
   },
   inputLabel: {
     ...typographyStyles.body1,

@@ -349,11 +349,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         )}
       </Combobox>
       {/* hiding until we fix styling */}
-      {typeValidationMessage && (
-        <Text style={{ visibility: 'hidden', height: '0px' }} className={styles.validationText}>
-          {typeValidationMessage}
-        </Text>
-      )}
+      {typeValidationMessage && <Text className={styles.validationText}>{typeValidationMessage}</Text>}
     </Stack>
   );
 };
