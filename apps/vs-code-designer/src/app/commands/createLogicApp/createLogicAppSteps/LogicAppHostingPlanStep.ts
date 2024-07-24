@@ -43,9 +43,9 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
     if (useHybrid) {
       this.setHybridPlanProperties(wizardContext);
       promptSteps.push(new ResourceGroupListStep(), new ConnectedEnvironmentStep());
-      return { promptSteps: promptSteps };
+    } else {
+      promptSteps.push(new AppServicePlanListStep(suppressCreate), new ResourceGroupListStep());
     }
-    promptSteps.push(new AppServicePlanListStep(suppressCreate), new ResourceGroupListStep());
     return { promptSteps: promptSteps };
   }
 
