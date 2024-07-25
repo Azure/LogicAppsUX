@@ -93,10 +93,17 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
   const intl = useIntl();
+
   const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
     id: 'BtL7UI',
     description: 'Message to show when there are no parameters to author in operation.',
+  });
+  const cannotUpdateConnectionIfPinnedMessage = intl.formatMessage({
+    defaultMessage: 'Connections cannot be edited in pinned view. Release the pinned action to make connection changes.',
+    id: 'rl9UOO',
+    description:
+      'Descriptive message to show if the connection for an action cannot be changed or edited due to being shown in dual-pane (pinned action) view.',
   });
 
   const isLoading = useMemo(() => {
@@ -167,6 +174,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
             nodeId={selectedNodeId}
             isLoading={connectionName.isLoading}
             readOnly={!!readOnly || isPaneInPinnedViewMode}
+            readOnlyReason={isPaneInPinnedViewMode ? cannotUpdateConnectionIfPinnedMessage : undefined}
             hasError={errorInfo?.level === ErrorLevel.Connection}
           />
         </>

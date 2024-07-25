@@ -284,7 +284,7 @@
 
 .connection-display {
   .connection-info {
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -305,21 +305,15 @@
         white-space: nowrap;
       }
     }
-
-    .change-connection-button {
-      margin-left: 15px;
-    }
   }
 
-  .connection-info-error {
+  .connection-info-badge {
     display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #a80000;
+  }
 
-    .connection-info-error-text {
-      text-wrap: nowrap;
-    }
+  .change-connection-button,
+  .connection-info-badge {
+    margin-left: 15px;
   }
 }
 
