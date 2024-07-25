@@ -95,6 +95,19 @@ export const PseudoCommandBar = () => {
       )}
       <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
       <ActionButton
+        iconProps={{ iconName: 'Download' }}
+        text="Document"
+        onClick={async () => {
+          // console.log(state);
+          // const sampleRequestBody = getSampleRequestBody(
+          //   await serializeWorkflow(state),
+          //   state.operations.operationInfo,
+          //   state.tokens.outputTokens
+          // );
+          // await getBackendResponse(sampleRequestBody);
+        }}
+      />
+      <ActionButton
         iconProps={{
           iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
           style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,

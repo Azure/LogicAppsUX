@@ -204,6 +204,23 @@ export const DesignerCommandBar = ({
         },
       },
       {
+        key: 'document',
+        text: 'Document',
+        iconProps: { iconName: 'Download' },
+        onClick: async () => {
+          console.log('download document!');
+          // const designerState = DesignerStore.getState();
+          // console.log(designerState);
+          // const sampleRequestBody = getSampleRequestBody(
+          //   await serializeWorkflow(designerState),
+          //   designerState.operations.operationInfo,
+          //   designerState.tokens.outputTokens,
+          //   designerState?.workflow?.workflowKind
+          // );
+          // await getBackendResponse(sampleRequestBody);
+        },
+      },
+      {
         key: 'fileABug',
         text: 'File a bug',
         iconProps: { iconName: 'Bug' },
