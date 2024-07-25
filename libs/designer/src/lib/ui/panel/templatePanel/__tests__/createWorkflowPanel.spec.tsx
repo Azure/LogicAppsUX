@@ -30,8 +30,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         subscription: '2018-07-01-preview',
         gateway: '2018-11-01',
       },
-      openBladeAfterCreate: () => {
-        console.log('Open blade after create');
+      openBladeAfterCreate: (workflowName: string) => {
+        console.log('Open blade after create', workflowName);
       },
     })
   );

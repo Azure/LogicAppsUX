@@ -27,7 +27,7 @@ interface TokenPickerOptionsProps extends TokenPickerBaseProps {
 const maxTokensPerSection = 6;
 
 export const TokenPickerOptions = ({
-  selectedKey,
+  selectedMode,
   section,
   searchQuery,
   index,
@@ -85,11 +85,11 @@ export const TokenPickerOptions = ({
   };
 
   const handleTokenClicked = (token: OutputToken) => {
-    if (selectedKey === TokenPickerMode.TOKEN) {
+    if (selectedMode === TokenPickerMode.TOKEN) {
       handleCreateToken(token);
-    } else if (selectedKey === TokenPickerMode.EXPRESSION) {
+    } else if (selectedMode === TokenPickerMode.EXPRESSION) {
       handleExpressionClicked(token);
-    } else if (selectedKey === TokenPickerMode.TOKEN_EXPRESSION) {
+    } else if (selectedMode === TokenPickerMode.TOKEN_EXPRESSION) {
       handleTokenExpressionClicked(token);
     }
   };
@@ -172,7 +172,7 @@ export const TokenPickerOptions = ({
   const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
   const sectionHeaderColorCssDark = `rgb(${sectionHeaderColorRgbDark.red}, ${sectionHeaderColorRgbDark.green}, ${sectionHeaderColorRgbDark.blue})`;
 
-  const maxRowsShown = selectedKey === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
+  const maxRowsShown = selectedMode === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
   const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
 
   return (
