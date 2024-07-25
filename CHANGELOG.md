@@ -1,4 +1,31 @@
 # Logic Apps Designer
+### [4.47.1](https://github.com/Azure/LogicAppsUX/compare/v4.47.0...v4.47.1) (2024-07-25)
+
+
+### Features
+
+* **designer:** Decouple panel tabs from `useSelectedNodeId()` ([#5183](https://github.com/Azure/LogicAppsUX/issues/5183)) ([4113a4f](https://github.com/Azure/LogicAppsUX/commit/4113a4fa618457b63e0487f8a33dae09384f0a65))
+
+
+### Bug Fixes
+
+* **designer:** Fixed small portal css issue with upgrading reactflow ([#5196](https://github.com/Azure/LogicAppsUX/issues/5196)) ([45199cb](https://github.com/Azure/LogicAppsUX/commit/45199cb3cce3d16cb9ce5ec2b99ed13564160fb2))
+
+## [4.47.0](https://github.com/Azure/LogicAppsUX/compare/v4.46.0...v4.47.0) (2024-07-25)
+
+
+### Features
+
+* **Data Mapper:** Able to select function inputs from the popover ([#5187](https://github.com/Azure/LogicAppsUX/issues/5187)) ([f511ebd](https://github.com/Azure/LogicAppsUX/commit/f511ebd6813c13dc5a549d3c01f7d58dd09c0d4a))
+* **designer:** Allow deleting a node without affecting selected node ID in state ([#5182](https://github.com/Azure/LogicAppsUX/issues/5182)) ([da1473d](https://github.com/Azure/LogicAppsUX/commit/da1473d74c511239e29a19227ab4650e29f95f04))
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixed missing handle bug, improved schema handle styling ([#5181](https://github.com/Azure/LogicAppsUX/issues/5181)) ([d9af6f9](https://github.com/Azure/LogicAppsUX/commit/d9af6f9391a55dc7cc28ed7baef52849bbf81f50))
+* **Designer:** Updated HTML Editor to support newline and carriage return characters (for dynamic content)  ([#5117](https://github.com/Azure/LogicAppsUX/issues/5117)) ([ef36f8a](https://github.com/Azure/LogicAppsUX/commit/ef36f8a65d165d273d413eb035f8232b3dc4733c))
+* **vscode:** DependenciesDownloadRefactoring: Part1: Increase Dependencies Download Timeout to 5 Minutes ([#5171](https://github.com/Azure/LogicAppsUX/issues/5171)) ([20e2f1e](https://github.com/Azure/LogicAppsUX/commit/20e2f1e193ad98b4ddd332be094df69459228b1a))
+
 ## [4.46.0](https://github.com/Azure/LogicAppsUX/compare/v4.45.0...v4.46.0) (2024-07-23)
 
 
