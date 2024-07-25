@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.2](https://github.com/Azure/LogicAppsUX/compare/v4.44.1...v4.44.2) (2024-07-25)
+
+
+### Bug Fixes
+
+* **designer:** Fixed fluent autoload property causing console error issue ([#5199](https://github.com/Azure/LogicAppsUX/issues/5199)) ([ef427cd](https://github.com/Azure/LogicAppsUX/commit/ef427cd91008f8eca875de271c87334841ec6b70))
+
 ### [4.44.1](https://github.com/Azure/LogicAppsUX/compare/v4.44.0...v4.44.1) (2024-07-25)
 
 
