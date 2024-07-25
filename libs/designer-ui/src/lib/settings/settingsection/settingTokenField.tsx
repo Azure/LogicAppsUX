@@ -30,6 +30,7 @@ import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { MixedInputEditor } from '../../mixedinputeditor';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -375,6 +376,18 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
         />
       );
+
+    case constants.PARAMETER.EDITOR.MIXEDINPUTEDITOR: {
+      return (
+        <MixedInputEditor
+          supportedTypes={editorOptions?.supportedTypes}
+          useStaticInputs={editorOptions?.useStaticInputs}
+          initialValue={value}
+          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
+          onChange={onValueChange || (() => {})}
+        />
+      );
+    }
 
     default:
       return (
