@@ -128,6 +128,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
 
   const runAfterSectionProps: SettingsSectionProps = {
     id: 'runAfter',
+    nodeId,
     title: runAfterTitle,
     sectionName: SettingSectionName.RUNAFTER,
     expanded,

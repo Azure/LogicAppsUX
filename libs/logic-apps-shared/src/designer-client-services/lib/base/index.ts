@@ -36,6 +36,9 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// Copilot
+export { BaseCopilotService } from './copilot';
+export type { CopilotServiceOptions } from './copilot';
 // Template
 export type { TemplateServiceOptions } from './template';
 // Tenant

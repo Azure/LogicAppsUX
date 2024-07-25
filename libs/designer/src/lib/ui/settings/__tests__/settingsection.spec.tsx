@@ -1,7 +1,10 @@
 import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps } from '../settingsection';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, beforeEach, afterEach, it, expect } from 'vitest';
+import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
+
+import * as PanelSelectors from '../../../core/state/panel/panelSelectors';
+
 describe('ui/settings/settingsection', () => {
   let minimal: SettingsSectionProps;
   let renderer: ReactShallowRenderer.ShallowRenderer;
@@ -92,7 +95,7 @@ describe('ui/settings/settingsection', () => {
         },
       ],
       onHeaderClick: () => {
-        jest.fn();
+        vi.fn();
       },
     };
     renderer = ReactShallowRenderer.createRenderer();
@@ -100,14 +103,19 @@ describe('ui/settings/settingsection', () => {
 
   afterEach(() => {
     renderer.unmount();
+    vi.resetAllMocks();
   });
 
   it('should construct', () => {
+    vi.spyOn(PanelSelectors, 'useSelectedNodeId').mockReturnValue('');
+
     const settingSection = renderer.render(<SettingsSection {...minimal} />);
     expect(settingSection).toMatchSnapshot();
   });
 
   it('should have child section when expanded', () => {
+    vi.spyOn(PanelSelectors, 'useSelectedNodeId').mockReturnValue('');
+
     const props: SettingsSectionProps = { ...minimal, expanded: true };
     renderer.render(<SettingsSection {...props} />);
 

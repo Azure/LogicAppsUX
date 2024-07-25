@@ -19,11 +19,16 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { Button } from '@fluentui/react-components';
+import copilotLogo from './images/copilotLogo.svg';
+import { Nl2fExpressionAssistant } from './nl2fExpressionAssistant';
+import { isCopilotServiceEnabled } from '@microsoft/logic-apps-shared';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
   TOKEN_EXPRESSION: 'tokenExpression',
   EXPRESSION: 'expression',
+  NL2F_EXPRESSION: 'nl2fExpression',
 } as const;
 export type TokenPickerMode = (typeof TokenPickerMode)[keyof typeof TokenPickerMode];
 
@@ -32,6 +37,27 @@ export type { Token as OutputToken } from './models/token';
 const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
+
+let calloutStyles: Partial<ICalloutContentStyles> = {
+  calloutMain: {
+    overflow: 'visible',
+  },
+};
+
+calloutStyles = isCopilotServiceEnabled()
+  ? {
+      ...calloutStyles,
+      calloutMain: {
+        borderRadius: '8px',
+      },
+      beakCurtain: {
+        borderRadius: '8px',
+      },
+      root: {
+        borderRadius: '8px',
+      },
+    }
+  : calloutStyles;
 
 export type SearchTextChangedEventHandler = (e: string) => void;
 
@@ -62,7 +88,7 @@ export function TokenPicker({
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
+  const [selectedMode, setSelectedMode] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
   const [expressionToBeUpdated, setExpressionToBeUpdated] = useState<NodeKey | null>(null);
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
   const [fullScreen, setFullScreen] = useState(false);
@@ -73,7 +99,8 @@ export function TokenPicker({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<ISearchBox | null>(null);
-  const isExpression = initialMode === TokenPickerMode.EXPRESSION;
+  const isExpression = selectedMode === TokenPickerMode.EXPRESSION;
+  const isNl2fExpression = selectedMode === TokenPickerMode.NL2F_EXPRESSION;
 
   useEffect(() => {
     function handleResize() {
@@ -85,7 +112,7 @@ export function TokenPicker({
   }, []);
 
   useEffect(() => {
-    if (isExpression) {
+    if (isExpression || isNl2fExpression) {
       setTimeout(() => {
         expressionEditorRef.current?.focus();
       }, 300);
@@ -94,11 +121,11 @@ export function TokenPicker({
         searchBoxRef.current?.focus();
       }, 0);
     }
-  }, [isExpression]);
+  }, [isExpression, isNl2fExpression]);
 
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
-    setSelectedKey(TokenPickerMode.EXPRESSION);
+    setSelectedMode(TokenPickerMode.EXPRESSION);
     setExpressionToBeUpdated(n);
 
     setTimeout(() => {
@@ -114,7 +141,7 @@ export function TokenPicker({
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
-      setSelectedKey(item.props.itemKey as TokenPickerMode);
+      setSelectedMode(item.props.itemKey as TokenPickerMode);
     }
   };
 
@@ -148,17 +175,78 @@ export function TokenPicker({
     description: 'Placeholder text to search token picker',
   });
 
-  const calloutStyles: Partial<ICalloutContentStyles> = {
-    calloutMain: {
-      overflow: 'visible',
-    },
-  };
+  const createWithNl2fButtonText = intl.formatMessage({
+    defaultMessage: 'Create an expression with Copilot',
+    id: '+Agiub',
+    description: 'Button text for the create expression with copilot feature',
+  });
 
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
   } catch {
     editor = null;
+  }
+
+  const nl2fExpressionPane = (
+    <Callout
+      role="dialog"
+      ariaLabelledBy={labelId}
+      gapSpace={gapSpace}
+      target={`#${editorId}`}
+      beakWidth={beakWidth}
+      directionalHint={directionalHint}
+      onMouseMove={handleExpressionEditorMoveDistance}
+      onMouseUp={() => {
+        if (isDraggingExpressionEditor) {
+          setIsDraggingExpressionEditor(false);
+        }
+      }}
+      onDismiss={(e) => {
+        if (e?.type === 'keydown' && (e as React.KeyboardEvent<HTMLElement>).key === 'Escape') {
+          editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
+        } else {
+          editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: false });
+        }
+      }}
+      onRestoreFocus={() => {
+        return;
+      }}
+      styles={calloutStyles}
+      layerProps={{
+        hostId: 'msla-layer-host',
+      }}
+    >
+      <div
+        className="msla-token-picker-container-v3"
+        style={
+          fullScreen
+            ? {
+                height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
+                width: Math.max(
+                  windowDimensions.width - (Number.parseInt(PanelSize.Medium, 10) + 40),
+                  Math.min(windowDimensions.width - 16, 400)
+                ),
+              }
+            : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
+        }
+        ref={containerRef}
+      >
+        <Nl2fExpressionAssistant
+          isFullScreen={fullScreen}
+          expression={expression}
+          isFixErrorRequest={expressionEditorError !== ''}
+          setFullScreen={setFullScreen}
+          setSelectedMode={setSelectedMode}
+          setExpression={setExpression}
+          setExpressionEditorError={setExpressionEditorError}
+        />
+      </div>
+    </Callout>
+  );
+
+  if (isNl2fExpression) {
+    return nl2fExpressionPane;
   }
 
   return (
@@ -211,8 +299,10 @@ export function TokenPicker({
               <TokenPickerHeader
                 fullScreen={fullScreen}
                 isExpression={isExpression}
+                isNl2fExpression={false}
                 setFullScreen={setFullScreen}
                 pasteLastUsedExpression={pasteLastUsedExpression}
+                setSelectedMode={setSelectedMode}
               />
             ) : null}
 
@@ -231,7 +321,23 @@ export function TokenPicker({
                   hideUTFExpressions={hideUTFExpressions}
                 />
                 <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
-                <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
+                {isCopilotServiceEnabled() ? (
+                  <div className="msla_token_picker_nl2fex_button_container">
+                    <Button
+                      className="msla-token-picker-nl2fex-use-button"
+                      size="medium"
+                      onClick={() => {
+                        setSelectedMode(TokenPickerMode.NL2F_EXPRESSION);
+                      }}
+                      title={createWithNl2fButtonText}
+                      aria-label={createWithNl2fButtonText}
+                    >
+                      <img className="msla_token_picker_nl2fex_button_icon" src={copilotLogo} alt="Copilot" />
+                      <span>{createWithNl2fButtonText}</span>
+                    </Button>
+                  </div>
+                ) : null}
+                <TokenPickerPivot selectedKey={selectedMode} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
               </div>
             ) : null}
             <div className="msla-token-picker-search-container">
@@ -248,10 +354,10 @@ export function TokenPicker({
               />
             </div>
             <TokenPickerSection
-              tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
+              tokenGroup={(selectedMode === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
               expressionGroup={expressionGroup ?? []}
               expressionEditorRef={expressionEditorRef}
-              selectedKey={selectedKey}
+              selectedMode={selectedMode}
               searchQuery={searchQuery}
               fullScreen={fullScreen}
               expression={expression}
