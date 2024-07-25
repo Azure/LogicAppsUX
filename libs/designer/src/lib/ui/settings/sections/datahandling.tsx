@@ -10,6 +10,7 @@ export interface DataHandlingSectionProps extends SectionProps {
 }
 
 export const DataHandling = ({
+  nodeId,
   readOnly,
   expanded,
   requestSchemaValidation,
@@ -48,6 +49,7 @@ export const DataHandling = ({
 
   const dataHandlingSectionProps: SettingsSectionProps = {
     id: 'dataHandling',
+    nodeId,
     title: dataHandlingTitle,
     expanded,
     isReadOnly: readOnly,

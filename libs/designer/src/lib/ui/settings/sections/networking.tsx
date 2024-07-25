@@ -30,6 +30,7 @@ export interface NetworkingSectionProps extends SectionProps {
 }
 
 export const Networking = ({
+  nodeId,
   readOnly,
   expanded,
   validationErrors,
@@ -558,6 +559,7 @@ export const Networking = ({
 
   const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
+    nodeId,
     title: networking,
     sectionName: SettingSectionName.NETWORKING,
     expanded,

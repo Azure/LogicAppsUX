@@ -1,3 +1,4 @@
+import type { PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../common/constants';
 import { useOperationInfo } from '../../core';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
@@ -5,7 +6,6 @@ import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import { useHostOptions, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useRawInputParameters } from '../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useOperationDownloadChunkMetadata, useOperationUploadChunkMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
@@ -75,9 +75,9 @@ export interface MaximumWaitingRunsMetadata {
 
 export type HeaderClickHandler = (sectionName: SettingSectionName) => void;
 
-export const SettingsPanel = (): JSX.Element => {
+export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
   const dispatch = useDispatch();
-  const selectedNode = useSelectedNodeId();
+  const { nodeId: selectedNode } = props;
   const readOnly = useReadOnly();
   const expandedSections = useExpandedSections();
   const operationInfo = useOperationInfo(selectedNode);
