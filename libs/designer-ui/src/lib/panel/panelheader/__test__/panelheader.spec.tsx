@@ -15,10 +15,23 @@ describe('lib/panel/panelHeader/main', () => {
 
   beforeEach(() => {
     minimal = {
-      nodeId: '',
+      nodeData: {
+        comment: undefined,
+        displayName: 'Node Title',
+        errorMessage: undefined,
+        iconUri: '',
+        isError: false,
+        isLoading: false,
+        nodeId: 'nodeId',
+        onSelectTab: vi.fn(),
+        runData: undefined,
+        selectedTab: undefined,
+        subgraphType: undefined,
+        tabs: [],
+      },
       horizontalPadding: '',
       isCollapsed: false,
-      headerMenuItems: [],
+      headerItems: [],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
       toggleCollapse: vi.fn(),
@@ -26,12 +39,8 @@ describe('lib/panel/panelHeader/main', () => {
       commentChange: vi.fn(),
     };
     minimalWithHeader = {
-      nodeId: '',
-      horizontalPadding: '',
-      isCollapsed: false,
-      onTitleChange: vi.fn(),
-      commentChange: vi.fn(),
-      headerMenuItems: [
+      ...minimal,
+      headerItems: [
         <MenuItem key={'Comment'} disabled={false} icon={'Comment'} onClick={vi.fn()}>
           Add a comment
         </MenuItem>,
@@ -39,9 +48,6 @@ describe('lib/panel/panelHeader/main', () => {
           Delete
         </MenuItem>,
       ],
-      headerLocation: PanelLocation.Right,
-      panelScope: PanelScope.CardLevel,
-      toggleCollapse: vi.fn(),
     };
     shallow = ReactShallowRenderer.createRenderer();
     initializeIcons();
@@ -66,18 +72,17 @@ describe('lib/panel/panelHeader/main', () => {
   });
 
   it('should have display header content with Menu', () => {
-    const props = {
+    const props: PanelHeaderProps = {
       ...minimalWithHeader,
-      isRight: false,
-      comment: 'sample comment',
-      titleId: 'title id',
+      nodeData: {
+        ...minimalWithHeader.nodeData,
+        comment: 'sample comment',
+        displayName: 'sample title',
+        iconUri: 'sample icon url',
+      },
       noNodeSelected: false,
       readOnlyMode: false,
       renameTitleDisabled: false,
-      showCommentBox: true,
-      title: 'sample title',
-      isLoading: false,
-      cardIcon: 'sample icon url',
       isOutermostPanel: true,
     };
     shallow.render(<PanelHeader {...props} />);
@@ -94,12 +99,12 @@ describe('lib/panel/panelHeader/main', () => {
     expect(titleContainer.props.className).toBe('msla-panel-card-title-container');
 
     const title = titleContainer.props.children;
-    expect(title.props.titleId).toBe(props.titleId);
+    expect(title.props.titleId).toBe('nodeId-title');
     expect(title.props.readOnlyMode).toBe(props.readOnlyMode);
     expect(title.props.renameTitleDisabled).toBe(props.renameTitleDisabled);
-    expect(title.props.titleValue).toBe(props.title);
+    expect(title.props.titleValue).toBe(props.nodeData.displayName);
 
-    expect(comment.props.comment).toBe(props.comment);
+    expect(comment.props.comment).toBe(props.nodeData.comment);
     expect(comment.props.isCollapsed).toBe(props.isCollapsed);
     expect(comment.props.noNodeSelected).toBe(props.noNodeSelected);
     expect(comment.props.readOnlyMode).toBe(props.readOnlyMode);

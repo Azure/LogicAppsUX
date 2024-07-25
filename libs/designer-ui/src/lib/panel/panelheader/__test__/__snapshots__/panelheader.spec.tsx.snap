@@ -3,6 +3,7 @@
 exports[`lib/panel/panelHeader/main > should render 1`] = `
 <div
   className="msla-panel-header"
+  id="Node Title"
 >
   <div
     className="msla-panel-card-header"
@@ -36,6 +37,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
               aria-invalid={false}
               aria-label="Card Title"
               className="ms-TextField-field field-112"
+              id="nodeId-title"
               maxLength={80}
               onBlur={[Function]}
               onChange={[Function]}
@@ -43,7 +45,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
               onInput={[Function]}
               onKeyDown={[Function]}
               type="text"
-              value=""
+              value="Node Title"
             />
           </div>
         </div>
@@ -111,6 +113,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
 exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] = `
 <div
   className="msla-panel-header"
+  id="Node Title"
 >
   <div
     className="msla-panel-card-header"
@@ -144,6 +147,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
               aria-invalid={false}
               aria-label="Card Title"
               className="ms-TextField-field field-112"
+              id="nodeId-title"
               maxLength={80}
               onBlur={[Function]}
               onChange={[Function]}
@@ -151,7 +155,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
               onInput={[Function]}
               onKeyDown={[Function]}
               type="text"
-              value=""
+              value="Node Title"
             />
           </div>
         </div>
