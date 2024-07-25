@@ -2,8 +2,10 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Toggle } from '@fluentui/react/lib/Toggle';
 import type { ChangeHandler, ValueSegment } from '@microsoft/logic-apps-shared';
-import { SchemaEditor } from './schemaeditor';
-import { FloatingActionMenuInputs } from './floatingactionmenu/floatingactionmenuinputs';
+import { addUseSchemaEditor, checkIsSchemaEditor } from './mixedinputeditorhelper';
+import { FloatingActionMenuInputs } from '../floatingactionmenu/floatingactionmenuinputs';
+import { SchemaEditor } from '../schemaeditor';
+import { useIntl } from 'react-intl';
 
 interface MixedInputEditorProps {
   initialValue: ValueSegment[];
@@ -15,41 +17,6 @@ interface MixedInputEditorProps {
   useStaticInputs: boolean;
 }
 
-// Function to check if `initialValue` contains "useSchemaEditor": true
-const checkIsSchemaEditor = (initialValue: ValueSegment[]): boolean => {
-  return initialValue.some((segment) => {
-    try {
-      const parsedValue = JSON.parse(segment.value);
-      return parsedValue?.useSchemaEditor === true;
-    } catch (error) {
-      console.error('Error parsing value segment:', error);
-      return false;
-    }
-  });
-};
-
-// Function to add "useSchemaEditor": true if it's missing
-const addUseSchemaEditor = (value: ValueSegment[]): ValueSegment[] => {
-  const updatedValue = value.map((segment) => {
-    try {
-      const parsedValue = JSON.parse(segment.value);
-      if (parsedValue && !Object.prototype.hasOwnProperty.call(parsedValue, 'useSchemaEditor')) {
-        parsedValue.useSchemaEditor = true;
-        return {
-          ...segment,
-          value: JSON.stringify(parsedValue),
-        };
-      }
-      return segment;
-    } catch (error) {
-      console.error('Error parsing or updating value segment:', error);
-      return segment;
-    }
-  });
-
-  return updatedValue;
-};
-
 export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
   initialValue,
   onChange,
@@ -59,8 +26,15 @@ export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
   readonly,
   useStaticInputs,
 }) => {
+  const intl = useIntl();
+  // ...
+  const toggleLabel = intl.formatMessage({
+    defaultMessage: 'Use Schema Editor',
+    id: 'lkmLHk',
+    description: 'Toggle to use schema editor',
+  });
   const [isSchemaEditor, setIsSchemaEditor] = useState<boolean>(() => {
-    const storedToggleValue = localStorage.getItem('toggle');
+    const storedToggleValue = localStorage.getItem('mixedInputEditor_toggle');
     const hasSchemaEditor = checkIsSchemaEditor(initialValue);
 
     if (storedToggleValue === null) {
@@ -71,19 +45,16 @@ export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
   });
 
   useEffect(() => {
-    // Check if we need to update the state or localStorage
     if (isSchemaEditor) {
       const updatedValue = addUseSchemaEditor(initialValue);
-      // Only call onChange if there's a real update
       if (JSON.stringify(updatedValue) !== JSON.stringify(initialValue)) {
-        onChange({ value: updatedValue });
+        onChange?.({ value: updatedValue });
       }
-      // Update localStorage only if not already set
-      if (localStorage.getItem('toggle') !== 'true') {
-        localStorage.setItem('toggle', 'true');
+      if (localStorage.getItem('mixedInputEditor_toggle') !== 'true') {
+        localStorage.setItem('mixedInputEditor_toggle', 'true');
       }
-    } else if (localStorage.getItem('toggle') === 'true') {
-      localStorage.setItem('toggle', 'false');
+    } else if (localStorage.getItem('mixedInputEditor_toggle') === 'true') {
+      localStorage.setItem('mixedInputEditor_toggle', 'false');
     }
   }, [isSchemaEditor, initialValue, onChange]);
 
@@ -93,7 +64,7 @@ export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
 
   return (
     <div>
-      <Toggle label="Use Schema Editor" checked={isSchemaEditor} onChange={handleToggleChange} disabled={readonly} />
+      <Toggle label={toggleLabel} checked={isSchemaEditor} onChange={handleToggleChange} disabled={readonly} />
       {isSchemaEditor ? (
         <SchemaEditor initialValue={initialValue} onChange={onChange} readonly={readonly} label={label} />
       ) : (
