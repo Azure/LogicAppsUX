@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { PanelLocation, PanelScope } from '../panelUtil';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
@@ -13,7 +14,7 @@ import {
 import type { IButton } from '@fluentui/react/lib/Button';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -130,11 +131,19 @@ export const PanelHeader = ({
 
     const className: string = css('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed');
 
+    const ref = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+      if (!isCollapsed) {
+        ref.current?.focus();
+      }
+    }, [isCollapsed]);
+
     return (
       <Tooltip relationship="label" positioning={'before'} content={buttonText}>
         <Button
-          autoFocus={!isCollapsed}
           id="msla-panel-header-collapse-nav"
+          ref={ref}
           appearance="subtle"
           icon={<DismissIcon />}
           className={className}
