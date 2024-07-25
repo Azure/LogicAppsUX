@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [4.47.1](https://github.com/Azure/LogicAppsUX/compare/v4.47.0...v4.47.1) (2024-07-25)
+
+
+### Features
+
+* **designer:** Decouple panel tabs from `useSelectedNodeId()` ([#5183](https://github.com/Azure/LogicAppsUX/issues/5183)) ([4113a4f](https://github.com/Azure/LogicAppsUX/commit/4113a4fa618457b63e0487f8a33dae09384f0a65))
+
+
+### Bug Fixes
+
+* **designer:** Fixed small portal css issue with upgrading reactflow ([#5196](https://github.com/Azure/LogicAppsUX/issues/5196)) ([45199cb](https://github.com/Azure/LogicAppsUX/commit/45199cb3cce3d16cb9ce5ec2b99ed13564160fb2))
+
 ## [4.47.0](https://github.com/Azure/LogicAppsUX/compare/v4.46.0...v4.47.0) (2024-07-25)
 
 
