@@ -1,18 +1,4 @@
-import {
-  Button,
-  Tab,
-  TabList,
-  PopoverSurface,
-  Subtitle2,
-  Table,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-  TableBody,
-  TableCell,
-  TableCellLayout,
-  Caption1,
-} from '@fluentui/react-components';
+import { Button, Tab, TabList, PopoverSurface, Subtitle2, Caption1 } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { AddRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useMemo, useState } from 'react';
@@ -21,9 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { deleteFunction } from '../../core/state/DataMapSlice';
-import { isSchemaNodeExtended } from '../../utils';
 import { useIntl } from 'react-intl';
-import { InputTabContents } from './inputTab/inputTab';
+import { InputTabContents, UnboundedDropdownListItem } from './inputTab/inputTab';
+import { List } from '@fluentui/react';
+import type { InputOptionProps } from './inputDropdown/InputDropdown';
+import type { ConnectionUnit } from '../../models/Connection';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -105,57 +93,47 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
 };
 
 const DetailsTabContents = (props: { func: FunctionData }) => {
-  return <div>{props.func.description}</div>;
+  const styles = useStyles();
+  return <Caption1 className={styles.detailsText}>{props.func.description}</Caption1>;
 };
 
 const OutputTabContents = (props: {
   func: FunctionData;
   functionId: string;
 }) => {
-  const columns = [
-    { columnKey: 'destination', label: 'Destination' },
-    { columnKey: 'type', label: 'Output Type' },
-  ];
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const styles = useStyles();
-  const outputs = connections[props.functionId]?.outputs;
+  const outputs: (ConnectionUnit | undefined)[] = [...connections[props.functionId].outputs];
+  const createConnection = (_optionValue: string | undefined, _option: InputOptionProps | undefined) => {
+    return;
+  };
+
+  if (outputs.length === 0) {
+    outputs[0] = undefined;
+  }
 
   const table = (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {columns.map((column) => (
-            <TableHeaderCell key={column.columnKey}>{column.label}</TableHeaderCell>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {outputs.map((output) => {
-          if (isSchemaNodeExtended(output.node)) {
-            return (
-              <TableRow key={output.reactFlowKey}>
-                <TableCell>
-                  <TableCellLayout>{output.node.name}</TableCellLayout>
-                </TableCell>
-                <TableCell>
-                  <TableCellLayout>{output.node.type}</TableCellLayout>
-                </TableCell>
-              </TableRow>
-            );
-          }
+    <div>
+      <List>
+        {outputs.map((output, index) => {
           return (
-            <TableRow key={output.reactFlowKey}>
-              <TableCell>
-                <TableCellLayout>{`${output.node.displayName}`}</TableCellLayout>
-              </TableCell>
-              <TableCell>
-                <TableCellLayout>placeholder</TableCellLayout>
-              </TableCell>
-            </TableRow>
+            <UnboundedDropdownListItem
+              key={`output-list-item-${index}`}
+              inputName={undefined}
+              inputValue={undefined}
+              inputType={undefined}
+              validateAndCreateConnection={createConnection}
+              functionKey={props.functionId}
+              func={props.func}
+              draggable={false}
+              removeItem={() => {
+                return;
+              }}
+            />
           );
         })}
-      </TableBody>
-    </Table>
+      </List>
+    </div>
   );
   const addOutput = (
     <Button icon={<AddRegular className={styles.addIcon} />} className={styles.addButton} appearance="transparent">

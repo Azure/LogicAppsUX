@@ -216,6 +216,8 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
+    //setEmptyOutput
+
     setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
