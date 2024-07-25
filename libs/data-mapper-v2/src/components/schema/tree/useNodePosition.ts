@@ -1,5 +1,5 @@
 import { useState, useLayoutEffect, useContext } from 'react';
-import type { XYPosition } from 'reactflow';
+import type { XYPosition } from '@xyflow/react';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { DataMapperWrappedContext } from '../../../core';
 
@@ -12,7 +12,7 @@ type NodePositionProps = {
   nodeY?: number;
 };
 
-function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKeys: Set<string>, key?: string) {
+function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKeys: Set<string>, key?: string): boolean {
   if (!key) {
     return false;
   }

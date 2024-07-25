@@ -1,18 +1,14 @@
 import { getChildrenNodes } from '../../../editor/base/utils/helper';
 import { parseHtmlSegments, parseSegments } from '../../../editor/base/utils/parsesegments';
-import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
-import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
-import codeToggleDark from '../icons/dark/code-toggle.svg';
-import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
-import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
-import codeToggleLight from '../icons/light/code-toggle.svg';
+import { HtmlViewToggleButton } from './buttons/HtmlViewToggleButton';
+import { RedoButton } from './buttons/RedoButton';
+import { UndoButton } from './buttons/UndoButton';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
-import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
 import { convertEditorState } from './helper/HTMLChangePlugin';
-import { css, useTheme } from '@fluentui/react';
-import { Toolbar, ToolbarButton, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
+import { useCloseDropdownOnScroll } from './hooks/useCloseDropdownOnScroll';
+import { Toolbar, ToolbarDivider, ToolbarGroup } from '@fluentui/react-components';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -22,7 +18,6 @@ import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { $findMatchingParent, $getNearestNodeOfType, mergeRegister } from '@lexical/utils';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
-import { isApple } from '@microsoft/logic-apps-shared';
 import {
   $getRoot,
   $getSelection,
@@ -32,12 +27,9 @@ import {
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_NORMAL,
-  REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 export const blockTypeToBlockName = {
   bullet: 'Bullet List',
@@ -55,6 +47,13 @@ export const blockTypeToBlockName = {
 } as const;
 export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof blockTypeToBlockName];
 
+const groupNames = {
+  undoRedo: 'undoRedo',
+  fontAppearance: 'fontAppearance',
+  textStyle: 'textStyle',
+  toggleView: 'toggleView',
+};
+
 interface ToolbarProps {
   isRawText?: boolean;
   isSwitchFromPlaintextBlocked?: boolean;
@@ -62,17 +61,21 @@ interface ToolbarProps {
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const RichTextToolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
+const RichTextToolbarDivider: React.FC<{ groupId: keyof typeof groupNames }> = (props) => (
+  <ToolbarDivider data-group={props.groupId} className="msla-toolbar-divider" />
+);
+
+export const RichTextToolbar: React.FC<ToolbarProps> = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = false, setIsRawText }) => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
-  const { isInverted } = useTheme();
-  const intl = useIntl();
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [fontSize, setFontSize] = useState<string>('15px');
   const [fontFamily, setFontFamily] = useState<string>('Arial');
   const [blockType, setBlockType] = useState<keyof typeof blockTypeToBlockName>('paragraph');
+
+  useCloseDropdownOnScroll(activeEditor);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -157,64 +160,14 @@ export const RichTextToolbar = ({ isRawText, isSwitchFromPlaintextBlocked, reado
     );
   }, [editor, activeEditor, updateToolbar]);
 
-  // close dropdowns when panel is scrolled
-  useEffect(() => {
-    function handleScroll() {
-      activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
-    }
-
-    const scrollableContent = document.querySelector('.ms-Panel-scrollableContent');
-    if (scrollableContent) {
-      scrollableContent.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      if (scrollableContent) {
-        scrollableContent.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [activeEditor]);
-
-  const toggleCodeViewMessage = intl.formatMessage({
-    defaultMessage: 'Toggle code view',
-    id: 'gA1dde',
-    description: 'Label used for the toolbar button which switches between raw HTML (code) view and WYSIWIG (rich text) view',
-  });
-
   const formattingButtonsDisabled = readonly || !!isRawText;
 
   return (
     <Toolbar className="msla-html-editor-toolbar">
       <ToolbarGroup className="msla-html-editor-toolbar-group" role="presentation">
-        <ToolbarButton
-          disabled={!canUndo || readonly}
-          onClick={() => {
-            activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
-            activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
-          }}
-          title={isApple() ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
-          className="toolbar-item"
-          aria-label="Undo"
-          icon={
-            <img
-              className={'format'}
-              src={isInverted ? counterClockWiseArrowDark : counterClockWiseArrowLight}
-              alt={'counter clockwise arrow'}
-            />
-          }
-        />
-        <ToolbarButton
-          disabled={!canRedo || readonly}
-          onClick={() => {
-            activeEditor.dispatchCommand(CLOSE_DROPDOWN_COMMAND, undefined);
-            activeEditor.dispatchCommand(REDO_COMMAND, undefined);
-          }}
-          title={isApple() ? 'Redo (⌘Y)' : 'Redo (Ctrl+Y)'}
-          className="toolbar-item"
-          aria-label="Redo"
-          icon={<img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />}
-        />
-        <ToolbarDivider className="msla-toolbar-divider" />
+        <UndoButton activeEditor={activeEditor} disabled={!canUndo || readonly} />
+        <RedoButton activeEditor={activeEditor} disabled={!canRedo || readonly} />
+        <RichTextToolbarDivider groupId={'undoRedo'} />
         <BlockFormatDropDown disabled={formattingButtonsDisabled} blockType={blockType} editor={editor} />
         <FontDropDown
           fontDropdownType={FontDropDownType.FONTFAMILY}
@@ -223,17 +176,15 @@ export const RichTextToolbar = ({ isRawText, isSwitchFromPlaintextBlocked, reado
           disabled={formattingButtonsDisabled}
         />
         <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={formattingButtonsDisabled} />
-        <ToolbarDivider className="msla-toolbar-divider" />
+        <RichTextToolbarDivider groupId={'fontAppearance'} />
         <Format activeEditor={activeEditor} readonly={formattingButtonsDisabled} />
       </ToolbarGroup>
       {setIsRawText ? (
         <ToolbarGroup className="msla-html-editor-toolbar-group" role="presentation">
-          <ToolbarButton
-            aria-label="Raw code toggle"
-            className={css('toolbar-item', isRawText && 'active')}
-            disabled={readonly || (isRawText && isSwitchFromPlaintextBlocked)}
-            icon={<img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />}
-            onClick={() => {
+          <HtmlViewToggleButton
+            disabled={(readonly || (isRawText && isSwitchFromPlaintextBlocked)) ?? false}
+            isPressed={!!isRawText}
+            onToggle={() => {
               const nodeMap = new Map<string, ValueSegment>();
               activeEditor.getEditorState().read(() => {
                 getChildrenNodes($getRoot(), nodeMap);
@@ -251,7 +202,6 @@ export const RichTextToolbar = ({ isRawText, isSwitchFromPlaintextBlocked, reado
                 });
               });
             }}
-            title={toggleCodeViewMessage}
           />
         </ToolbarGroup>
       ) : null}

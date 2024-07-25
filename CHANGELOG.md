@@ -1,4 +1,88 @@
 # Logic Apps Designer
+## [4.46.0](https://github.com/Azure/LogicAppsUX/compare/v4.45.0...v4.46.0) (2024-07-23)
+
+
+### Features
+
+* Adding UI for NL2F Expression Assistant and Copilot Service Interface ([#5107](https://github.com/Azure/LogicAppsUX/issues/5107)) ([6cef0e1](https://github.com/Azure/LogicAppsUX/commit/6cef0e16021f44c1851f0e1e6a3d961d4b108b2b))
+* **designer-ui:** Add `PinMenuItem` component & styles ([#5159](https://github.com/Azure/LogicAppsUX/issues/5159)) ([4136033](https://github.com/Azure/LogicAppsUX/commit/413603319a5867290359e77dd69ed2e4e900ebd3))
+* **designer:** Add unit testing for parseErrorMessage function ([#5177](https://github.com/Azure/LogicAppsUX/issues/5177)) ([fe186de](https://github.com/Azure/LogicAppsUX/commit/fe186dee95fcc0380cf5e095792b7d398caab6f4))
+
+
+### Bug Fixes
+
+* **designer-ui:** Extract toolbar format buttons into component files ([#5162](https://github.com/Azure/LogicAppsUX/issues/5162)) ([d51c797](https://github.com/Azure/LogicAppsUX/commit/d51c797cd1bb4b2178730be72af18d0b11cf71a4))
+* **designer-ui:** Fix wrapping of connection display when panel is narrow ([#5160](https://github.com/Azure/LogicAppsUX/issues/5160)) ([50ba269](https://github.com/Azure/LogicAppsUX/commit/50ba269219a4ce246c08e7b2011d0f5e71f701ff))
+* **designer:** Added accessible names to search filter dropdowns ([#5178](https://github.com/Azure/LogicAppsUX/issues/5178)) ([09ba8b9](https://github.com/Azure/LogicAppsUX/commit/09ba8b95b2be2fd0769fd1e7ef34ebb4e0f1817a))
+* **Designer:** Fixed foreach dynamic item() / items() token issue ([#5149](https://github.com/Azure/LogicAppsUX/issues/5149)) ([17b9cad](https://github.com/Azure/LogicAppsUX/commit/17b9cadf31530b570ff93502e282f66d41c7d56d))
+* **designer:** Workflow canvas proper tab ordering ([#5169](https://github.com/Azure/LogicAppsUX/issues/5169)) ([0c9aec7](https://github.com/Azure/LogicAppsUX/commit/0c9aec70549215306870fbfe3d90840b5afe3cbf))
+* **shared:** Add `objectId` and `tenantId` to `authenticatedUser` ([#5180](https://github.com/Azure/LogicAppsUX/issues/5180)) ([8c2733a](https://github.com/Azure/LogicAppsUX/commit/8c2733a4b89ef22c9809a4799b508665097b1a74))
+* **vscode:** Add validation for error response structure ([#5170](https://github.com/Azure/LogicAppsUX/issues/5170)) ([064b65d](https://github.com/Azure/LogicAppsUX/commit/064b65de92b09e4a1c7579df8f5b9db884e0ab07))
+
+## [4.45.0](https://github.com/Azure/LogicAppsUX/compare/v4.44.0...v4.45.0) (2024-07-19)
+
+
+### Features
+
+* **designer:** Add new state object for v2 panel ([#5152](https://github.com/Azure/LogicAppsUX/issues/5152)) ([e087cb5](https://github.com/Azure/LogicAppsUX/commit/e087cb5bf772289e20a1da62b5fb60da29b2130d))
+* **vscode:** Auto regenerate managed api connection keys  ([#4982](https://github.com/Azure/LogicAppsUX/issues/4982)) ([c31d440](https://github.com/Azure/LogicAppsUX/commit/c31d440b054eb2b7a35ac154c653c57d7c770531)), closes [#5147](https://github.com/Azure/LogicAppsUX/issues/5147)
+
+
+### Bug Fixes
+
+* **designer-ui:** Extract toolbar components into their own files ([#5158](https://github.com/Azure/LogicAppsUX/issues/5158)) ([206761f](https://github.com/Azure/LogicAppsUX/commit/206761f27d1019d00ff3764d4f825c4dcdfd409e))
+* **designer:** Add support for `accountName` field ([#5143](https://github.com/Azure/LogicAppsUX/issues/5143)) ([6b28577](https://github.com/Azure/LogicAppsUX/commit/6b285773fc4ccade0528a623af3edd92cd2d430b))
+
+## [4.44.0](https://github.com/Azure/LogicAppsUX/compare/v4.43.0...v4.44.0) (2024-07-19)
+
+
+### Features
+
+* **Templates:** Change TemplateService with Additional Params ([#5154](https://github.com/Azure/LogicAppsUX/issues/5154)) ([3c299ab](https://github.com/Azure/LogicAppsUX/commit/3c299ab08f4c5a0731c0ec3e4ba856f8016f05fc))
+
+
+### Bug Fixes
+
+* **build:** Remove Submodule Folder ([#5150](https://github.com/Azure/LogicAppsUX/issues/5150)) ([dd38c09](https://github.com/Azure/LogicAppsUX/commit/dd38c09e1c670095e3f1581c384038a43b9eecf9))
+* **designer:** Fix copyPaste to include dynamic content ([#5153](https://github.com/Azure/LogicAppsUX/issues/5153)) ([6ab8992](https://github.com/Azure/LogicAppsUX/commit/6ab89920e86836ee7c5b8b3e7d81ad4916ebd904))
+
+## [4.43.0](https://github.com/Azure/LogicAppsUX/compare/v4.42.0...v4.43.0) (2024-07-18)
+
+
+### Features
+
+* **designer:** Migrated reactflow to @xyflow/react version 12 ([#5139](https://github.com/Azure/LogicAppsUX/issues/5139)) ([0f871dd](https://github.com/Azure/LogicAppsUX/commit/0f871dd83ed83c37fa104abb5d83d95a68419963))
+* **Templates:** Parameters Type Validate + Minor UI Sanitary Check ([#5145](https://github.com/Azure/LogicAppsUX/issues/5145)) ([248a3c7](https://github.com/Azure/LogicAppsUX/commit/248a3c7a4dc1d99ac4318ed1c12fc1f4977f60b8))
+
+
+### Bug Fixes
+
+* **Designer:** Focus moves in/out of node details panel as it is opened/closed ([#5148](https://github.com/Azure/LogicAppsUX/issues/5148)) ([45bc6e1](https://github.com/Azure/LogicAppsUX/commit/45bc6e12952dda8a2161b1f2981ed8ab2efbe778))
+
+## [4.42.0](https://github.com/Azure/LogicAppsUX/compare/v4.41.0...v4.42.0) (2024-07-18)
+
+
+### Bug Fixes
+
+* **Templates:** Templates Not Loading on Portal ([#5134](https://github.com/Azure/LogicAppsUX/issues/5134)) ([1fcad28](https://github.com/Azure/LogicAppsUX/commit/1fcad28d041e0819f422b952fbba95c667b97e53))
+
+## [4.41.0](https://github.com/Azure/LogicAppsUX/compare/v4.40.0...v4.41.0) (2024-07-17)
+
+
+### Features
+
+* **Data Mapper:** Generalize selector and add it to Test Panel ([#5127](https://github.com/Azure/LogicAppsUX/issues/5127)) ([08cac71](https://github.com/Azure/LogicAppsUX/commit/08cac71943c1625eccd0e5b838a7336a6388acb1))
+* **Data Mapper:** More functionality in VSCode ([#5130](https://github.com/Azure/LogicAppsUX/issues/5130)) ([db7f3b3](https://github.com/Azure/LogicAppsUX/commit/db7f3b31fd157224b3584771c4a4d216413fab8b))
+* **Data Mapper:** Update nodes and edges ([#5126](https://github.com/Azure/LogicAppsUX/issues/5126)) ([27bc868](https://github.com/Azure/LogicAppsUX/commit/27bc868d37b223df2a7649207a86a7b3c5159387))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Function search updates ([#5138](https://github.com/Azure/LogicAppsUX/issues/5138)) ([44e9cf4](https://github.com/Azure/LogicAppsUX/commit/44e9cf4d65fdcaa42054590b7d8dd3d0c4646086))
+* **designer:** Fix Hybrid apis for standalone designer ([#5140](https://github.com/Azure/LogicAppsUX/issues/5140)) ([96af9c5](https://github.com/Azure/LogicAppsUX/commit/96af9c5514a641ac53073df8c1333db0f36b6cac))
+* **designer:** Fixed scope node collapse button keyboard interaction ([#5136](https://github.com/Azure/LogicAppsUX/issues/5136)) ([43adca5](https://github.com/Azure/LogicAppsUX/commit/43adca56f7e7e7f6d02cd1925635ba3fdd2b13fa))
+* **vscode:** Refactor Parameters.json into a separate artifact class when converting to NuGet project ([#5116](https://github.com/Azure/LogicAppsUX/issues/5116)) ([d04e8a9](https://github.com/Azure/LogicAppsUX/commit/d04e8a9c3ef6b6d331056458b2285864675f8843))
+
 ## [4.40.0](https://github.com/Azure/LogicAppsUX/compare/v4.39.0...v4.40.0) (2024-07-15)
 
 

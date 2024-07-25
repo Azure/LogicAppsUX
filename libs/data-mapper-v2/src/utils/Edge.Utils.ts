@@ -1,7 +1,7 @@
 import { LogCategory, LogService } from './Logging.Utils';
 import * as PF from 'pathfinding';
-import type { Node as ReactFlowNode, XYPosition } from 'reactflow';
-import { Position } from 'reactflow';
+import type { Node as ReactFlowNode, XYPosition } from '@xyflow/react';
+import { Position } from '@xyflow/react';
 
 interface BoundingBox {
   width: number;
@@ -98,8 +98,8 @@ const generateBoundingBoxes = (nodes: ReactFlowNode[], nodePadding = 2, roundTo 
     const height = Math.max(node.height || 0, 1);
 
     const position: XYPosition = {
-      x: node.positionAbsolute?.x || 0,
-      y: node.positionAbsolute?.y || 0,
+      x: node.position?.x || 0,
+      y: node.position?.y || 0,
     };
 
     const topLeft: XYPosition = {

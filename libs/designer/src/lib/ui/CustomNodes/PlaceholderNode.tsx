@@ -7,8 +7,7 @@ import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/designer-
 import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Handle, Position } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 
 const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();

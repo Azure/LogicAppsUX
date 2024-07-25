@@ -27,8 +27,13 @@ export const useStyles = makeStyles({
     backgroundColor: '#fff',
     width: '14px',
     height: '14px',
-    left: '-7px',
     ...shorthands.border('1px', 'solid', '#ddd'),
+  },
+  sourceSchemaHandleWrapper: {
+    left: '-8px',
+  },
+  targetSchemaHandleWrapper: {
+    left: '-7px',
   },
   handleConnected: {
     backgroundColor: '#C6DEEE',

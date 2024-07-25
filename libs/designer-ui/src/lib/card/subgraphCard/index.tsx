@@ -3,6 +3,7 @@ import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { CardContextMenu } from '../cardcontextmenu';
 import { ErrorBanner } from '../errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
+import type { CardProps } from '..';
 import type { MessageBarType } from '@fluentui/react';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft/logic-apps-shared';
@@ -15,8 +16,8 @@ interface SubgraphCardProps {
   title: string;
   subgraphType: SubgraphType;
   collapsed?: boolean;
-  handleCollapse?: (event: { currentTarget: any }) => void;
-  selected?: boolean;
+  handleCollapse?: () => void;
+  selectionMode?: CardProps['selectionMode'];
   readOnly?: boolean;
   onClick?(id?: string): void;
   onDeleteClick?(): void;
@@ -24,6 +25,7 @@ interface SubgraphCardProps {
   contextMenuItems?: JSX.Element[];
   errorLevel?: MessageBarType;
   errorMessage?: string;
+  nodeIndex?: number;
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
@@ -33,17 +35,19 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   subgraphType,
   collapsed,
   handleCollapse,
-  selected = false,
+  selectionMode = false,
   readOnly = false,
   onClick,
   onDeleteClick,
   contextMenuItems = [],
   errorLevel,
   errorMessage,
+  nodeIndex,
 }) => {
   const intl = useIntl();
 
-  const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
+  const mainKeyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
+  const collapseKeyboardInteraction = useCardKeyboardInteraction(handleCollapse);
   const contextMenu = useCardContextMenu();
 
   const addCaseLabel = intl.formatMessage({
@@ -58,7 +62,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     }
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} />
+        <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} tabIndex={nodeIndex} />
       </div>
     );
   }
@@ -125,18 +129,20 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   if (data.size === 'large') {
     return (
       <div className={css('msla-subgraph-card', data.size)} style={colorVars} tabIndex={-1}>
-        <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
+        <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
         <button
+          id={`msla-node-${id}`}
           className="msla-subgraph-title"
           onClick={handleTitleClick}
           onContextMenu={contextMenu.handle}
-          onKeyDown={keyboardInteraction.keyUp}
-          onKeyUp={keyboardInteraction.keyDown}
+          onKeyDown={mainKeyboardInteraction.keyDown}
+          onKeyUp={mainKeyboardInteraction.keyUp}
+          tabIndex={nodeIndex}
         >
           <div className="msla-subgraph-title-text">{data.title}</div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
-        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
         {contextMenuItems?.length > 0 ? (
           <CardContextMenu
             contextMenuLocation={contextMenu.location}
@@ -153,16 +159,14 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <div
-          tabIndex={0}
+          tabIndex={nodeIndex}
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
-          onClick={(e) => {
-            handleCollapse?.(e);
-          }}
-          onKeyDown={keyboardInteraction.keyUp}
-          onKeyUp={keyboardInteraction.keyDown}
+          onClick={handleCollapse}
+          onKeyDown={collapseKeyboardInteraction.keyUp}
+          onKeyUp={collapseKeyboardInteraction.keyDown}
         >
-          <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
+          <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
           <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
           <NodeCollapseToggle disabled collapsed={collapsed} onSmallCard />
         </div>

@@ -90,13 +90,12 @@ dist-ssr
 *.sln
 *.sw?
 
-
-
 # Dependencies
 /node_modules
 
 # Production
 /build
+/libs/designer/src/lib/core/templates/templateFiles
 
 # Generated files
 .docusaurus

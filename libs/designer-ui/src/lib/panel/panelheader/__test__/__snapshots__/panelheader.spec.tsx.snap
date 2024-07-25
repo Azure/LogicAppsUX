@@ -6,8 +6,10 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
 >
   <button
     aria-label="Collapse"
+    autoFocus={true}
     className="fui-Button r1alrhcs collapse-toggle right ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
     data-automation-id="msla-panel-header-collapse-nav"
+    id="msla-panel-header-collapse-nav"
     onBlur={[Function]}
     onClick={[Function]}
     onFocus={[Function]}
@@ -158,8 +160,10 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
 >
   <button
     aria-label="Collapse"
+    autoFocus={true}
     className="fui-Button r1alrhcs collapse-toggle right ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
     data-automation-id="msla-panel-header-collapse-nav"
+    id="msla-panel-header-collapse-nav"
     onBlur={[Function]}
     onClick={[Function]}
     onFocus={[Function]}
