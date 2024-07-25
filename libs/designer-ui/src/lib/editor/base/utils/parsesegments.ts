@@ -38,6 +38,7 @@ export interface SegmentParserOptions {
   readonly?: boolean;
   tokensEnabled?: boolean;
   removeSingleTokenQuotesWrapping?: boolean;
+  convertSpaceToNewline?: boolean;
 }
 
 export const isEmptySegments = (segments: ValueSegment[]): boolean => {
