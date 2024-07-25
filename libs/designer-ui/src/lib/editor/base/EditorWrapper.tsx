@@ -18,6 +18,7 @@ export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
         const options: SegmentParserOptions = {
           readonly,
           tokensEnabled: tokens,
+          convertSpaceToNewline: true,
         };
         htmlEditor === 'rich-html' ? parseHtmlSegments(initialValue, options) : parseSegments(initialValue, options);
       }),
