@@ -190,7 +190,7 @@ export const PanelHeader = ({
                 readOnlyMode={readOnlyMode}
                 renameTitleDisabled={renameTitleDisabled}
                 titleValue={title}
-                onChange={onTitleChange}
+                onChange={(newId) => onTitleChange(nodeId, newId)}
                 onBlur={onTitleBlur}
               />
             </div>

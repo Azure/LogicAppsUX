@@ -29,11 +29,11 @@ export type PanelContainerProps = {
   layerProps?: ILayerProps;
   canResubmit?: boolean;
   overrideWidth?: string;
-  resubmitOperation?: () => void;
+  resubmitOperation?: (nodeId: string) => void;
   onUnpinAction?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
   toggleCollapse: () => void;
-  onCommentChange: (panelCommentChangeEvent?: string) => void;
+  onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
@@ -104,9 +104,9 @@ export const PanelContainer = ({
           readOnlyMode={readOnlyMode}
           canResubmit={canResubmit}
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
-          resubmitOperation={resubmitOperation}
+          resubmitOperation={() => resubmitOperation?.(nodeId)}
           horizontalPadding={horizontalPadding}
-          commentChange={onCommentChange}
+          commentChange={() => onCommentChange(nodeId)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           onTitleBlur={onTitleBlur}

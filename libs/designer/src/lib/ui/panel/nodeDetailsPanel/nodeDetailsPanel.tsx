@@ -120,11 +120,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     [handleCommentMenuClick, handleDeleteClick, handlePinClick, pinnedNode, pinnedNodeData, selectedNode, selectedNodeData]
   );
 
-  const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
-    const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
-    dispatch(replaceId({ originalId: selectedNode, newId }));
+  const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
+    const isValid = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements);
+    dispatch(replaceId({ originalId, newId }));
 
-    return { valid: isValid, oldValue: isValid ? newId : selectedNode };
+    return { valid: isValid, oldValue: isValid ? newId : originalId };
   };
 
   // if is customcode file, on blur title,
@@ -164,8 +164,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     }
   };
 
-  const onCommentChange = (newDescription?: string) => {
-    dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
+  const onCommentChange = (nodeId: string, newDescription?: string) => {
+    dispatch(setNodeDescription({ nodeId, description: newDescription }));
   };
 
   const togglePanel = (): void => (collapsed ? expand() : collapse());
@@ -175,13 +175,16 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const runInstance = useRunInstance();
 
-  const resubmitClick = useCallback(() => {
-    if (!runInstance) {
-      return;
-    }
-    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [selectedNode]);
-    dispatch(clearPanel());
-  }, [dispatch, runInstance, selectedNode]);
+  const resubmitClick = useCallback(
+    (nodeId: string) => {
+      if (!runInstance) {
+        return;
+      }
+      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [nodeId]);
+      dispatch(clearPanel());
+    },
+    [dispatch, runInstance]
+  );
 
   const layerProps = {
     hostId: 'msla-layer-host',
