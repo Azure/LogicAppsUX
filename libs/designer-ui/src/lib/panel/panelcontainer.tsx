@@ -66,7 +66,7 @@ export const PanelContainer = ({
 
   const selectedElementRef = useRef<HTMLElement | null>(null);
 
-  const canResize = !!(isResizeable && setOverrideWidth && !pinnedNode);
+  const canResize = !!(isResizeable && setOverrideWidth);
   const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
   const pinnedNodeId = pinnedNode?.nodeId;
@@ -169,6 +169,8 @@ export const PanelContainer = ({
     [renderHeader, panelErrorMessage, trackEvent]
   );
 
+  const minWidth = pinnedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
+
   return (
     <OverlayDrawer
       aria-label={panelLabel}
@@ -211,7 +213,7 @@ export const PanelContainer = ({
               </>
             )}
           </div>
-          {canResize ? <PanelResizer updatePanelWidth={setOverrideWidth} /> : null}
+          {canResize ? <PanelResizer minWidth={minWidth} updatePanelWidth={setOverrideWidth} /> : null}
         </>
       )}
     </OverlayDrawer>

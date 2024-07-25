@@ -33,7 +33,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
-  const { panelLocation } = props;
+  const { isResizeable, panelLocation } = props;
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -194,7 +194,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     overrideWidth,
     layerProps,
     panelLocation,
-    isResizeable: props.isResizeable,
+    isResizeable,
   };
 
   return (
@@ -234,7 +234,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}
       onTitleBlur={onTitleBlur}
-      overrideWidth={overrideWidth}
       setOverrideWidth={setOverrideWidth}
     />
   );
