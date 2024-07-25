@@ -88,9 +88,11 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
       <div style={{ padding: 20 }}>
         <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
       </div>
-      {searchNodeNames.map((node) => (
-        <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
-      ))}
+      <div aria-description={'List of operation results'}>
+        {searchNodeNames.map((node) => (
+          <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
+        ))}
+      </div>
     </FocusTrapZone>
   );
 };

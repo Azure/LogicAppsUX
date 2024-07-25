@@ -258,6 +258,7 @@ export abstract class BaseSearchService implements ISearchService {
       ...($filter ? { $filter } : {}),
     };
     const response = await this.getAzureResourceRecursive(uri, queryParameters);
+    console.log('### Response:', response);
     return response.filter((workflow: any) => workflow.location === location);
   }
 
