@@ -2,23 +2,24 @@ import { openPanel } from '../../../../../core';
 import { useIsOperationMissingConnection } from '../../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { Badge, Button, Spinner } from '@fluentui/react-components';
-import { LinkMultiple16Regular, ErrorCircle16Filled } from '@fluentui/react-icons';
+import { Badge, Button, InfoLabel, Spinner } from '@fluentui/react-components';
+import { ErrorCircle16Filled, LinkMultiple16Regular } from '@fluentui/react-icons';
+import { Label } from '@microsoft/designer-ui';
 import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Label } from '@microsoft/designer-ui';
 
 interface ConnectionDisplayProps {
   connectionName: string | undefined;
   nodeId: string;
   readOnly: boolean;
+  readOnlyReason?: string;
   isLoading?: boolean;
   hasError: boolean;
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
-  const { connectionName, nodeId, isLoading = false, readOnly } = props;
+  const { connectionName, nodeId, hasError, isLoading = false, readOnly, readOnlyReason } = props;
 
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -88,12 +89,20 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     description: 'Text to show when there is an error with the connection',
   });
 
+  const labelText = connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName;
+
   return (
     <div className="connection-display">
       <div className="connection-info">
         <div className="connection-info-labels">
           <LinkMultiple16Regular />
-          <Label className="label" text={connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName} />
+          {readOnly && readOnlyReason ? (
+            <InfoLabel className="label" info={readOnlyReason} size="small">
+              {labelText}
+            </InfoLabel>
+          ) : (
+            <Label className="label" text={labelText} />
+          )}
         </div>
         {readOnly ? null : (
           <Button
@@ -107,14 +116,15 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
             {openChangeConnectionText}
           </Button>
         )}
+        <div style={{ flex: 1 }} />
+        {hasError ? (
+          <div className="connection-info-badge">
+            <Badge appearance="ghost" color="danger" icon={<ErrorCircle16Filled />}>
+              {connectionErrorText}
+            </Badge>
+          </div>
+        ) : null}
       </div>
-      {props.hasError ? (
-        <div className="connection-info-error">
-          <Badge appearance="ghost" color="danger" icon={<ErrorCircle16Filled />}>
-            {connectionErrorText}
-          </Badge>
-        </div>
-      ) : null}
     </div>
   );
 };
