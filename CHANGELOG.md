@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.1](https://github.com/Azure/LogicAppsUX/compare/v4.44.0...v4.44.1) (2024-07-25)
+
+
+### Bug Fixes
+
+* **designer:** Fixed small portal css issue with upgrading reactflow ([#5197](https://github.com/Azure/LogicAppsUX/issues/5197)) ([24c8365](https://github.com/Azure/LogicAppsUX/commit/24c83653ea25b03fad39f978d1a804698f467211))
+
 ## [4.44.0](https://github.com/Azure/LogicAppsUX/compare/v4.43.0...v4.44.0) (2024-07-19)
 
 
