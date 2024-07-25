@@ -25,11 +25,19 @@ export class BaseChatbotService implements IChatbotService {
   }
 
   async getCopilotResponse(query: string, workflow: any, signal: AbortSignal, armToken: string): Promise<AxiosResponse<any>> {
+    const queryData = {
+      prompt: query,
+      workflow,
+    };
+    return this.getCopilotResponseV2('chatbot', queryData, signal, armToken);
+  }
+
+  async getCopilotResponseV2(queryType: string, query: any, signal: AbortSignal, armToken: string): Promise<AxiosResponse<any>> {
     const { baseUrl, subscriptionId, apiVersion, location } = this.options;
     const requestData = {
       properties: {
+        queryType,
         query,
-        workflow,
       },
     };
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Logic/locations/${location}/generateCopilotResponse`;
