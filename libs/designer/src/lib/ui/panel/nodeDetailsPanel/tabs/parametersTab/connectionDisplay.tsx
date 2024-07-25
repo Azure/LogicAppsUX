@@ -96,7 +96,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
       <div className="connection-info">
         <div className="connection-info-labels">
           <LinkMultiple16Regular />
-          {readOnlyReason ? (
+          {readOnly && readOnlyReason ? (
             <InfoLabel className="label" info={readOnlyReason} size="small">
               {labelText}
             </InfoLabel>
