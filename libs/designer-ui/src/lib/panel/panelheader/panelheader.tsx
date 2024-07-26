@@ -155,8 +155,8 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
   });
 
   const unpinButtonText = intl.formatMessage({
-    defaultMessage: 'Unpin Action',
-    id: 'UFMpGk',
+    defaultMessage: 'Unpin action',
+    id: 'iTz1lp',
     description: 'Text indicating a menu button to unpin a pinned action from the side panel',
   });
 
