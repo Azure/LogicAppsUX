@@ -1933,9 +1933,9 @@ export async function updateDynamicDataInNode(
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
       workflowParameters.definitions
-    )
+    );
 
-    if(!isNullOrUndefined(parameter)){
+    if (!isNullOrUndefined(parameter)) {
       parameterDynamicValues.push(parameter);
     }
   }
