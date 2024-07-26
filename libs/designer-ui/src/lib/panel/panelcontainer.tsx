@@ -146,6 +146,12 @@ export const PanelContainer = ({
     description: 'label for panel error',
   });
 
+  const panelCollapseTitle = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    id: 'lX30/R',
+    description: 'Text of Tooltip to collapse',
+  });
+
   const renderPanelContents = useCallback(
     (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected'): JSX.Element => {
       const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
@@ -186,7 +192,7 @@ export const PanelContainer = ({
       {isEmptyPane || isCollapsed ? (
         <Button
           appearance="subtle"
-          aria-label="Collapse"
+          aria-label={panelCollapseTitle}
           className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed')}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
