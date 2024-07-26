@@ -1,209 +1,242 @@
-import { type StandardApp, ProjectType } from '@microsoft/vscode-extension-logic-apps';
-import { describe, it, expect, beforeEach } from 'vitest';
-import { addNugetPackagesToBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion } from '../updateBuildFile';
+import { describe, it, expect } from 'vitest';
+import {
+  addFileToBuildPath,
+  addFolderToBuildPath,
+  addLibToPublishPath,
+  addNugetPackagesToBuildFile,
+  allowLocalSettingsToPublishDirectory,
+  suppressJavaScriptBuildWarnings,
+  updateFunctionsSDKVersion,
+} from '../updateBuildFile';
 import { DotnetVersion } from '../../../../constants';
-
-let defaultBuildFile: Record<string, any> = {};
-
-beforeEach(() => {
-  defaultBuildFile = {
-    Project: {
-      $: {
-        Sdk: 'Microsoft.NET.Sdk',
-      },
-      PropertyGroup: {
-        TargetFramework: 'net6.0',
-        AzureFunctionsVersion: 'v4',
-        RootNamespace: 'LogicAppProject',
-      },
-      ItemGroup: [
-        {
-          PackageReference: {
-            $: {
-              Include: 'Microsoft.NET.Sdk.Functions',
-              Version: '4.4.0',
-            },
-          },
-        },
-        {
-          None: [
-            {
-              $: {
-                Update: 'host.json',
-              },
-              CopyToOutputDirectory: 'PreserveNewest',
-            },
-            {
-              $: {
-                Update: 'local.settings.json',
-              },
-              CopyToOutputDirectory: 'PreserveNewest',
-              CopyToPublishDirectory: 'Never',
-            },
-          ],
-        },
-      ],
-    },
-  };
-});
+import path from 'path';
 
 describe('utils/codeless/updateBuildFile', () => {
   describe('addNugetPackagesToBuildFile', () => {
-    const packageReference = {
-      Include: 'Microsoft.Azure.Workflows.WebJobs.Extension',
-      Version: '1.2.*',
-    };
+    it('Should add a new package reference to the XML build file', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'SomePackage',
+                  Version: '1.0.0',
+                },
+              },
+            },
+          ],
+        },
+      };
 
-    it('Should return a stateful workflow definition with the custom code template', () => {
-      const xmlBuildFile = addNugetPackagesToBuildFile(defaultBuildFile);
-      expect(xmlBuildFile.Project.ItemGroup.length).toEqual(3);
-      expect(xmlBuildFile.Project.ItemGroup[2].PackageReference.$).toMatchObject(packageReference);
+      const updatedXmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup.length).toEqual(2);
+      expect(updatedXmlBuildFile.Project.ItemGroup[1].PackageReference.$).toMatchObject({
+        Include: 'Microsoft.Azure.Workflows.WebJobs.Extension',
+        Version: '1.2.*',
+      });
     });
 
-    it('Should return a stateful workflow definition with the custom code template', () => {
-      defaultBuildFile.Project.ItemGroup.push({
-        PackageReference: {
-          $: packageReference,
+    it('Should not add a new package reference if it already exists in the XML build file', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Microsoft.Azure.Workflows.WebJobs.Extension',
+                  Version: '1.2.*',
+                },
+              },
+            },
+          ],
         },
-      });
-      const xmlBuildFile = addNugetPackagesToBuildFile(defaultBuildFile);
-      expect(xmlBuildFile.Project.ItemGroup.length).toEqual(3);
+      };
+
+      const updatedXmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup.length).toEqual(1);
     });
   });
 
   describe('suppressJavaScriptBuildWarnings', () => {
     it('Should return a stateless workflow definition with the custom code template', () => {
-      const xmlBuildFile = suppressJavaScriptBuildWarnings(defaultBuildFile);
-      expect(xmlBuildFile.Project.PropertyGroup).toHaveProperty('MSBuildWarningsAsMessages');
-      expect(xmlBuildFile.Project.PropertyGroup.MSBuildWarningsAsMessages).toStrictEqual('MSB3246;$(MSBuildWarningsAsMessages)');
+      const xmlBuildFile = {
+        Project: {
+          PropertyGroup: {},
+        },
+      };
+      const updatedXmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
+      expect(updatedXmlBuildFile.Project.PropertyGroup).toHaveProperty('MSBuildWarningsAsMessages');
+      expect(updatedXmlBuildFile.Project.PropertyGroup.MSBuildWarningsAsMessages).toStrictEqual('MSB3246;$(MSBuildWarningsAsMessages)');
     });
   });
 
   describe('updateFunctionsSDKVersion', () => {
-    it('Should return a stateless workflow definition with the rules template', () => {
-      const xmlBuildFile = updateFunctionsSDKVersion(defaultBuildFile, DotnetVersion.net6);
+    it('Should update the package version to 4.1.3 for .NET 6', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Microsoft.NET.Sdk.Functions',
+                  Version: '3.0.13',
+                },
+              },
+            },
+          ],
+        },
+      };
 
-      expect(xmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
+      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net6);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
         Include: 'Microsoft.NET.Sdk.Functions',
         Version: '4.1.3',
       });
     });
-    it('Should return a stateless workflow definition with the rules template', () => {
-      const xmlBuildFile = updateFunctionsSDKVersion(defaultBuildFile, DotnetVersion.net3);
 
-      expect(xmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
+    it('Should update the package version to 3.0.13 for .NET 3', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [
+            {
+              PackageReference: {
+                $: {
+                  Include: 'Microsoft.NET.Sdk.Functions',
+                  Version: '4.1.3',
+                },
+              },
+            },
+          ],
+        },
+      };
+
+      const updatedXmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, DotnetVersion.net3);
+
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].PackageReference.$).toMatchObject({
         Include: 'Microsoft.NET.Sdk.Functions',
         Version: '3.0.13',
       });
     });
   });
 
-  // describe('allowLocalSettingsToPublishDirectory', () => {
-  //     it('Should return a stateful workflow definition with the rules template', () => {
-  //         const workflowDefinition: StandardApp = allowLocalSettingsToPublishDirectory(methodName, true, ProjectType.rulesEngine);
-  //         const test = {
-  //           $: {
-  //             Sdk: "Microsoft.NET.Sdk",
-  //           },
-  //           PropertyGroup: {
-  //             TargetFramework: "net6.0",
-  //             AzureFunctionsVersion: "v4",
-  //             RootNamespace: "TestCarlosCastro2_copy_10",
-  //             MSBuildWarningsAsMessages: "MSB3246;$(MSBuildWarningsAsMessages)",
-  //           },
-  //           ItemGroup: [
-  //             {
-  //               PackageReference: {
-  //                 $: {
-  //                   Include: "Microsoft.NET.Sdk.Functions",
-  //                   Version: "4.4.0",
-  //                 },
-  //               },
-  //             },
-  //             {
-  //               None: [
-  //                 {
-  //                   $: {
-  //                     Update: "host.json",
-  //                   },
-  //                   CopyToOutputDirectory: "PreserveNewest",
-  //                 },
-  //                 {
-  //                   $: {
-  //                     Update: "local.settings.json",
-  //                   },
-  //                   CopyToOutputDirectory: "PreserveNewest",
-  //                 },
-  //               ],
-  //             },
-  //             {
-  //               PackageReference: {
-  //                 $: {
-  //                   Include: "Microsoft.Azure.Workflows.WebJobs.Extension",
-  //                   Version: "1.2.*",
-  //                 },
-  //               },
-  //             },
-  //           ],
-  //         }
+  describe('addFolderToBuildPath', () => {
+    it('Should add folder to build path', () => {
+      const folderName = 'Stateful1';
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [],
+        },
+      };
+      const updatedXmlBuildFile = addFolderToBuildPath(xmlBuildFile, folderName);
+      expect(updatedXmlBuildFile.Project.ItemGroup.length).toEqual(1);
+      expect(updatedXmlBuildFile.Project.ItemGroup[0]).toEqual({
+        None: {
+          $: {
+            Update: `${folderName}${path.sep}**${path.sep}*.*`,
+          },
+          CopyToOutputDirectory: 'PreserveNewest',
+        },
+      });
+    });
+  });
 
-  //       });
-  // });
+  describe('addLibToPublishPath', () => {
+    it('Should add lib directory to publish path', () => {
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [],
+        },
+      };
+      const updatedXmlBuildFile = addLibToPublishPath(xmlBuildFile);
+      expect(updatedXmlBuildFile.Project).toHaveProperty('Target');
+      expect(updatedXmlBuildFile.Project.Target).toHaveProperty('$');
+      expect(updatedXmlBuildFile.Project.Target.$).toHaveProperty('Name', 'CopyDynamicLibraries');
+      expect(updatedXmlBuildFile.Project.Target.$).toHaveProperty('AfterTargets', '_GenerateFunctionsExtensionsMetadataPostPublish');
+      expect(updatedXmlBuildFile.Project.Target).toHaveProperty('Copy');
+      expect(updatedXmlBuildFile.Project.Target.Copy).toHaveProperty('$');
+      expect(updatedXmlBuildFile.Project.Target.Copy.$).toHaveProperty('SourceFiles', '@(LibDirectory)');
+      expect(updatedXmlBuildFile.Project.Target.Copy.$).toHaveProperty(
+        'DestinationFiles',
+        `@(LibDirectory->'$(MSBuildProjectDirectory)${path.sep}$(PublishUrl)${path.sep}lib${path.sep}%(RecursiveDir)%(Filename)%(Extension)')`
+      );
+      expect(updatedXmlBuildFile.Project).toHaveProperty('ItemGroup');
+      expect(updatedXmlBuildFile.Project.ItemGroup.length).toEqual(1);
+      expect(updatedXmlBuildFile.Project.ItemGroup[0]).toHaveProperty('LibDirectory');
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].LibDirectory).toHaveProperty('$');
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].LibDirectory.$).toHaveProperty(
+        'Include',
+        `$(MSBuildProjectDirectory)${path.sep}lib${path.sep}**${path.sep}*`
+      );
+    });
+  });
 
-  //   it('Should return an empty stateful workflow definition', () => {
-  //     const workflowDefinition: StandardApp = addFolderToBuildPath(true);
-  //     const test = {
-  //       $: {
-  //         Sdk: "Microsoft.NET.Sdk",
-  //       },
-  //       PropertyGroup: {
-  //         TargetFramework: "net6.0",
-  //         AzureFunctionsVersion: "v4",
-  //         RootNamespace: "TestCarlosCastro2_copy_10",
-  //         MSBuildWarningsAsMessages: "MSB3246;$(MSBuildWarningsAsMessages)",
-  //       },
-  //       ItemGroup: [
-  //         {
-  //           PackageReference: {
-  //             $: {
-  //               Include: "Microsoft.NET.Sdk.Functions",
-  //               Version: "4.1.3",
-  //             },
-  //           },
-  //         },
-  //         {
-  //           None: [
-  //             {
-  //               $: {
-  //                 Update: "host.json",
-  //               },
-  //               CopyToOutputDirectory: "PreserveNewest",
-  //             },
-  //             {
-  //               $: {
-  //                 Update: "local.settings.json",
-  //               },
-  //               CopyToOutputDirectory: "PreserveNewest",
-  //             },
-  //           ],
-  //         },
-  //         {
-  //           PackageReference: {
-  //             $: {
-  //               Include: "Microsoft.Azure.Workflows.WebJobs.Extension",
-  //               Version: "1.2.*",
-  //             },
-  //           },
-  //         },
-  //         {
-  //           None: {
-  //             $: {
-  //               Update: "Stateful1/**/*.*",
-  //             },
-  //             CopyToOutputDirectory: "PreserveNewest",
-  //           },
-  //         },
-  //       ],
-  //     }
-  //   });
+  describe('addFileToBuildPath', () => {
+    it('Should add file to build path', () => {
+      const fileName = 'file.txt';
+      const xmlBuildFile = {
+        Project: {
+          ItemGroup: [],
+        },
+      };
+      const updatedXmlBuildFile = addFileToBuildPath(xmlBuildFile, fileName);
+      expect(updatedXmlBuildFile.Project.ItemGroup.length).toEqual(1);
+      expect(updatedXmlBuildFile.Project.ItemGroup[0]).toEqual({
+        None: {
+          $: {
+            Update: fileName,
+          },
+          CopyToOutputDirectory: 'PreserveNewest',
+        },
+      });
+    });
+  });
+
+  describe('allowLocalSettingsToPublishDirectory', () => {
+    const context: any = {
+      telemetry: {
+        properties: {},
+      },
+    };
+
+    const xmlBuildFile = {
+      Project: {
+        ItemGroup: [
+          {
+            None: [
+              {
+                $: {
+                  Update: 'local.settings.json',
+                },
+                CopyToOutputDirectory: 'PreserveNewest',
+                CopyToPublishDirectory: 'PreserveNewest',
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    it('Should remove CopyToPublishDirectory property for local settings file', () => {
+      const updatedXmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
+      expect(updatedXmlBuildFile.Project.ItemGroup[0].None[0]).not.toHaveProperty('CopyToPublishDirectory');
+    });
+
+    it('Should set telemetry property allowSettingsToPublish to true', () => {
+      allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
+      expect(context.telemetry.properties.allowSettingsToPublish).toBe('true');
+    });
+
+    it('Should set telemetry property allowSettingsToPublish to false if an error occurs', () => {
+      const xmlBuildFile = {
+        Project: {},
+      };
+
+      allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
+      expect(context.telemetry.properties.allowSettingsToPublish).toBe('false');
+    });
+  });
 });
