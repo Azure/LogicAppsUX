@@ -5,30 +5,39 @@ import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
 import useOnScreen from './useOnScreen';
-import { applyNodeChanges, useNodes, type NodeChange } from '@xyflow/react';
-import { updateReactFlowNodes } from '../../../core/state/DataMapSlice';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../core/state/Store';
+import type { Node } from '@xyflow/react';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
   isLeftDirection: boolean;
   openKeys: Set<string>;
+  visibleKeys: Set<string>;
   setOpenKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
+  setVisibleKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   flattenedScehmaMap: Record<string, SchemaNodeExtended>;
+  setUpdatedNode: (node: Node) => void;
   treePositionX?: number;
   treePositionY?: number;
 };
 
 const RecursiveTree = (props: RecursiveTreeProps) => {
-  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, treePositionX, treePositionY } = props;
+  const {
+    root,
+    isLeftDirection,
+    openKeys,
+    setOpenKeys,
+    flattenedScehmaMap,
+    treePositionX,
+    treePositionY,
+    setUpdatedNode,
+    visibleKeys,
+    setVisibleKeys,
+  } = props;
   const { key } = root;
   const nodeVisble = useMemo(() => !!flattenedScehmaMap[key], [flattenedScehmaMap, key]);
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
   const onScreen = useOnScreen(nodeRef);
-  const dispatch = useDispatch<AppDispatch>();
-  const nodes = useNodes();
 
   const {
     position: { x, y } = { x: undefined, y: undefined },
@@ -37,102 +46,97 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     onScreen: onScreen,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
+    openKeys: openKeys,
     nodePositionX: nodeRef?.current?.getBoundingClientRect().x,
     nodePositionY: nodeRef?.current?.getBoundingClientRect().y,
     treePositionX,
     treePositionY,
   });
 
-  const removeChildNodes = useCallback(
-    (key: string) => {
-      const getAllChildNodes = (key: string, allChildren: string[]) => {
-        const node = flattenedScehmaMap[key];
+  const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
 
-        if (node?.children && node.children.length > 0) {
-          const allChildrenKeys = node.children.map((child) => child.key);
-
-          allChildren.push(...allChildrenKeys);
-
-          for (const childKey of allChildrenKeys) {
-            getAllChildNodes(childKey, allChildren);
-          }
+  const getAllVisibleOrHiddenNodes = useCallback(
+    (key: string, openKeys: Set<string>, findVisibleNodes = true) => {
+      const node = flattenedScehmaMap[key];
+      const allNodes: string[] = [key];
+      // findVisibleNodes denotes whether the root node (current Component) is expaned or collapsed
+      // Node children are only traversed if the current key is expanded or,
+      // we are trying to find the hidden nodes to delete them
+      if ((findVisibleNodes && openKeys.has(key)) || !findVisibleNodes) {
+        for (const child of node?.children ?? []) {
+          allNodes.push(...getAllVisibleOrHiddenNodes(child.key, openKeys, findVisibleNodes));
         }
-
-        return allChildren;
-      };
-
-      const allChildrenKeys = getAllChildNodes(key, []);
-      const nodeChanges: NodeChange[] = allChildrenKeys
-        .filter((key) => nodes.find((node) => node.id === key))
-        .map((childKey) => ({
-          id: getReactFlowNodeId(childKey, isLeftDirection),
-          type: 'remove',
-        }));
-
-      dispatch(updateReactFlowNodes(applyNodeChanges(nodeChanges, nodes)));
+      }
+      return allNodes;
     },
-    [flattenedScehmaMap, nodes, dispatch, isLeftDirection]
+    [flattenedScehmaMap]
   );
 
   const onOpenChange = useCallback(
     (_e: any, data: TreeItemOpenChangeData) => {
-      setOpenKeys((prev) => {
-        const newOpenKeys = new Set(prev);
-        const value = data.value as string;
-        if (newOpenKeys.has(value)) {
-          newOpenKeys.delete(value);
-        } else {
-          newOpenKeys.add(value);
-        }
-        return newOpenKeys;
-      });
+      const key = data.value as string;
+      const updatedOpenKeys = new Set(openKeys);
+      const updatedVisibleKeys = new Set(visibleKeys);
+      const visible = data.open;
 
-      // If node is collapsed, remove all the child nodes as well
-      if (!data.open) {
-        removeChildNodes(data.value as string);
+      if (visible) {
+        updatedOpenKeys.add(key);
+      } else {
+        updatedOpenKeys.delete(key);
       }
+      setOpenKeys(updatedOpenKeys);
+
+      const updatedVisibleNodesWithCollapseExpandToggle = getAllVisibleOrHiddenNodes(key, updatedOpenKeys, visible);
+      for (const node of updatedVisibleNodesWithCollapseExpandToggle) {
+        if (visible) {
+          updatedVisibleKeys.add(node);
+        } else if (node !== key) {
+          // In case of collapse, the current node should not be removed since that will still be visible
+          updatedVisibleKeys.delete(node);
+        }
+      }
+      setVisibleKeys(updatedVisibleKeys);
+
+      // if (allChildren.length > 0 && !data.open) {
+      //   allChildren.push(data.value as string);
+      //   applyNodeChanges(
+      //     allChildren.map((child) => ({
+      //       type: "remove",
+      //       id: getReactFlowNodeId(child, isLeftDirection),
+      //     })),
+      //     nodes
+      //   );
+
+      //   const newNodes = isLeftDirection
+      //     ? { ...sourceNodesMap }
+      //     : { ...targetNodesMap };
+
+      //   for (const child of allChildren) {
+      //     delete newNodes[getReactFlowNodeId(child, isLeftDirection)];
+      //   }
+
+      //   dispatch(
+      //     updateReactFlowNodes({ nodes: newNodes, isSource: isLeftDirection })
+      //   );
+      // }
     },
-    [setOpenKeys, removeChildNodes]
+    [setOpenKeys, setVisibleKeys, getAllVisibleOrHiddenNodes, openKeys, visibleKeys]
   );
 
   useLayoutEffect(() => {
-    const id = getReactFlowNodeId(root.key, isLeftDirection);
-    if (x !== undefined && y !== undefined) {
-      const currentNode = nodes.find((node) => node.id === id);
-      const nodeChanges: NodeChange[] = [];
-
-      const updatedNode = currentNode
-        ? { ...currentNode, position: { x, y } }
-        : {
-            id: id,
-            selectable: true,
-            data: {
-              ...root,
-              isLeftDirection: isLeftDirection,
-            },
-            type: 'schemaNode',
-            position: { x, y },
-          };
-
-      if (currentNode) {
-        if (x < 0 || y < 0) {
-          nodeChanges.push({ id: id, type: 'remove' });
-        } else if (currentNode.position.x !== x || currentNode.position.y !== y) {
-          nodeChanges.push({
-            id: id,
-            type: 'position',
-            position: { x, y },
-          });
-        }
-      } else if (x >= 0 && y >= 0) {
-        nodeChanges.push({ type: 'add', item: updatedNode });
-      }
-
-      if (nodeChanges.length > 0) {
-        dispatch(updateReactFlowNodes(applyNodeChanges(nodeChanges, nodes)));
-      }
+    if (x !== undefined && y !== undefined && visibleKeys.has(root.key)) {
+      setUpdatedNode({
+        id: nodeId,
+        selectable: true,
+        data: {
+          ...root,
+          isLeftDirection: isLeftDirection,
+        },
+        type: 'schemaNode',
+        position: { x, y },
+      });
     }
-  }, [isLeftDirection, x, y, root, nodes, dispatch]);
+  }, [isLeftDirection, x, y, root, setUpdatedNode, nodeId, visibleKeys]);
 
   if (!nodeVisble) {
     return null;
@@ -162,6 +166,9 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
               flattenedScehmaMap={flattenedScehmaMap}
               treePositionX={treePositionX}
               treePositionY={treePositionY}
+              setUpdatedNode={setUpdatedNode}
+              visibleKeys={visibleKeys}
+              setVisibleKeys={setVisibleKeys}
             />
           </span>
         ))}

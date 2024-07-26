@@ -7,6 +7,7 @@ type NodePositionProps = {
   key: string;
   schemaMap: Record<string, SchemaNodeExtended>;
   isLeftDirection: boolean;
+  openKeys: Set<string>;
   nodePositionX?: number;
   nodePositionY?: number;
   treePositionX?: number;
@@ -26,6 +27,9 @@ const useNodePosition = (props: NodePositionProps) => {
   } = useContext(DataMapperWrappedContext);
 
   useLayoutEffect(() => {
+    // if(isLeftDirection) {
+    //   console.log('Key: ', key, ' ;treeY: ', treePositionY, ' ;nodeY: ', nodePositionY, ' ;canvasY: ', canvasY, ' ;canvas: ', canvasWidth, ' ;Visible: ', onScreen, '; Map: ', schemaMap[key]);
+    // }
     // Don't look for the node position if tree, node or canvas isn't on the screen yet
     if (
       treePositionY === undefined ||

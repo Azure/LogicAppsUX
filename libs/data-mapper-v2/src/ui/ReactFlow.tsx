@@ -8,7 +8,7 @@ import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { makeConnection, updateFunctionPosition, updateReactFlowEdges, updateReactFlowNodes } from '../core/state/DataMapSlice';
+import { makeConnection, updateFunctionPosition, updateReactFlowEdges } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
@@ -25,8 +25,10 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const reactFlowInstance = useReactFlow();
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const [allNodes, setAllNodes] = useState<Node[]>([]);
-  const { nodes, edges, functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceNodesMap, targetNodesMap, edges, functionNodes } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
+  const [functionNodesForDragDrop, setFunctionNodesForDragDrop] = useState<Node[]>([]);
 
   const { width = undefined, height = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
@@ -45,15 +47,16 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   }, [ref, updateCanvasBoundsParent, width, height]);
 
   useEffect(() => {
-    const newNodes: Node[] = Object.entries(functionNodes).map((node) => ({
-      id: node[0],
-      type: 'functionNode',
-      data: { functionData: node[1] },
-      position: node[1].position || { x: 10, y: 200 },
-      draggable: true,
-    }));
-    setAllNodes(nodes.concat(newNodes));
-  }, [nodes, functionNodes]);
+    setFunctionNodesForDragDrop(
+      Object.entries(functionNodes).map((node) => ({
+        id: node[0],
+        type: 'functionNode',
+        data: { functionData: node[1] },
+        position: node[1].position || { x: 10, y: 200 },
+        draggable: true,
+      }))
+    );
+  }, [functionNodes]);
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
@@ -73,23 +76,23 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     []
   );
 
-  const dispatchEdgesAndNodes = useCallback(
-    (updatedEdges: Edge[], updatedNodes: Node[]) => {
-      const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
+  // const dispatchEdgesAndNodes = useCallback(
+  //   (updatedEdges: Edge[], updatedNodes: Node[]) => {
+  //     const allNodeIds = [...updatedEdges.map((edge) => edge.source), ...updatedEdges.map((edge) => edge.target)];
 
-      const newNodes = [
-        ...updatedNodes.map((node) => ({
-          ...node,
-          data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
-        })),
-      ];
+  //     const newNodes = [
+  //       ...updatedNodes.map((node) => ({
+  //         ...node,
+  //         data: { ...node.data, isConnected: allNodeIds.indexOf(node.id) > -1 },
+  //       })),
+  //     ];
 
-      dispatch(updateReactFlowEdges(updatedEdges));
+  //     dispatch(updateReactFlowEdges(updatedEdges));
 
-      dispatch(updateReactFlowNodes(newNodes));
-    },
-    [dispatch]
-  );
+  //     dispatch(updateReactFlowNodes(newNodes));
+  //   },
+  //   [dispatch]
+  // );
 
   const dispatchMakeConnection = useCallback(
     (connection: Connection) => {
@@ -116,9 +119,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       );
 
       dispatchMakeConnection(connection);
-      dispatchEdgesAndNodes(newEdges, nodes);
+      dispatch(updateReactFlowEdges(newEdges));
     },
-    [edges, nodes, dispatchEdgesAndNodes, dispatchMakeConnection]
+    [edges, dispatchMakeConnection, dispatch]
   );
 
   const onReconnect = useCallback(
@@ -134,9 +137,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edges.filter((edge) => edge.id !== oldEdge.id)
       );
 
-      dispatchEdgesAndNodes(newEdges, nodes);
+      dispatch(updateReactFlowEdges(newEdges));
     },
-    [edges, nodes, dispatchEdgesAndNodes]
+    [edges, dispatch]
   );
 
   const isValidConnection: IsValidConnection = useCallback(
@@ -179,9 +182,12 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
 
   const onFunctionNodeDrag: OnNodeDrag = useCallback(
     (_event, node, _nodes) => {
-      setAllNodes((allNodes) => [...allNodes.filter((nodeFromState) => nodeFromState.id !== node.id), node]);
+      setFunctionNodesForDragDrop((functionNodesForDragDrop) => [
+        ...functionNodesForDragDrop.filter((nodeFromState) => nodeFromState.id !== node.id),
+        node,
+      ]);
     },
-    [setAllNodes]
+    [setFunctionNodesForDragDrop]
   );
 
   const onFunctionNodeDragStop: OnNodeDrag = useCallback(
@@ -196,7 +202,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       <ReactFlow
         id="dm-react-flow"
         ref={drop}
-        nodes={allNodes}
+        nodes={[...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop]}
         edges={edges}
         selectNodesOnDrag={false}
         onlyRenderVisibleElements={false}

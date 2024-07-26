@@ -59,6 +59,8 @@ export interface DataMapOperationState {
   loadedMapMetadata?: MapMetadataV2;
   nodes: Node[];
   edges: Edge[];
+  sourceNodesMap: Record<string, Node>;
+  targetNodesMap: Record<string, Node>;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -74,6 +76,8 @@ const emptyPristineState: DataMapOperationState = {
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
+  sourceNodesMap: {},
+  targetNodesMap: {},
   nodes: [],
   edges: [],
 };
@@ -120,6 +124,11 @@ export interface DeleteConnectionAction {
   inputKey: string;
 }
 
+type ReactFlowNodesUpdateProps = {
+  isSource: boolean;
+  nodes: Record<string, Node>;
+};
+
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
@@ -152,6 +161,7 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
+        currentState.sourceNodesMap = {};
         currentState.nodes = currentState.nodes.filter((node) => !sourceCurrentFlattenedSchemaMap[node.data.id as string]);
       } else {
         const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
@@ -167,6 +177,7 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
+        currentState.targetNodesMap = {};
         currentState.nodes = currentState.nodes.filter((node) => !targetCurrentFlattenedSchemaMap[node.data.id as string]);
       }
 
@@ -308,33 +319,6 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation = newOp;
     },
 
-    updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
-      const currentState = state.curDataMapOperation;
-      const { nodes } = currentState;
-      const newNode = action.payload.node;
-      const oldNode = nodes.find((node) => node.id === newNode.id);
-      let updatedNodes = [];
-      if (action.payload.removeNode) {
-        updatedNodes = oldNode ? nodes.filter((node) => node.id !== newNode.id) : nodes;
-      } else if (oldNode) {
-        updatedNodes = nodes.map((node) => {
-          if (node.id === newNode.id) {
-            return newNode;
-          }
-          return node;
-        });
-      } else {
-        updatedNodes = [...nodes, newNode];
-      }
-
-      const newState = {
-        ...currentState,
-        nodes: updatedNodes,
-      };
-
-      state.curDataMapOperation = newState;
-    },
-
     deleteFunction: (state, action: PayloadAction<string>) => {
       const reactFlowKey = action.payload;
       const currentDataMap = state.curDataMapOperation;
@@ -367,12 +351,17 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = newState;
     },
-    updateReactFlowNodes: (state, action: PayloadAction<Node[]>) => {
+    updateReactFlowNodes: (state, action: PayloadAction<ReactFlowNodesUpdateProps>) => {
       const currentState = state.curDataMapOperation;
       const newState = {
         ...currentState,
-        nodes: action.payload,
       };
+
+      if (action.payload.isSource) {
+        newState.sourceNodesMap = action.payload.nodes;
+      } else {
+        newState.targetNodesMap = action.payload.nodes;
+      }
 
       state.curDataMapOperation = newState;
     },
@@ -401,7 +390,6 @@ export const {
   setInitialDataMap,
   changeSourceSchema,
   changeTargetSchema,
-  updateReactFlowNode,
   updateReactFlowEdges,
   updateReactFlowNodes,
   makeConnection,
