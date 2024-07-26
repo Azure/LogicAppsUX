@@ -44,6 +44,9 @@ export const useStyles = makeStyles({
     height: '14px',
     backgroundColor: 'transparent',
   },
+  functionNode: {
+    zIndex: 700,
+  },
   functionButton: {
     ...shorthands.borderRadius('16px'),
     height: '26px',

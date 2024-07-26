@@ -153,8 +153,11 @@ export const createFunctionDictionary = (
   const functionNodes: FunctionDictionary = {};
   for (const connectionKey in dataMapConnections) {
     const func = dataMapConnections[connectionKey].self.node as FunctionData;
-    if (func.functionName !== undefined) {
-      functionNodes[connectionKey] = func;
+    if (func !== undefined) {
+      // danielle to remove when deserialization is fixed
+      if (func.functionName !== undefined) {
+        functionNodes[connectionKey] = func;
+      }
     }
   }
   return functionNodes;

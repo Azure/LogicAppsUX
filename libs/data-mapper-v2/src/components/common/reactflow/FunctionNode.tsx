@@ -43,7 +43,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const funcitonHasInputs = functionData.maxNumberOfInputs !== 0;
 
   return (
-    <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
+    <div className={styles.functionNode} onContextMenu={contextMenu.handle} data-testid={dataTestId}>
       {funcitonHasInputs && (
         <Handle
           type={'target'}

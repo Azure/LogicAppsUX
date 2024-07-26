@@ -13,12 +13,7 @@ import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
-import {
-  flattenSchemaIntoDictionary,
-  flattenSchemaIntoSortArray,
-  flattenSchemaNodeMap,
-  isSchemaNodeExtended,
-} from '../../utils/Schema.Utils';
+import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
   MapMetadataV2,
@@ -140,9 +135,6 @@ export const dataMapSlice = createSlice({
 
       if (action.payload.schemaType === SchemaType.Source) {
         const sourceSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const sourceCurrentFlattenedSchemaMap = currentState.sourceSchema
-          ? flattenSchemaNodeMap(currentState.sourceSchema.schemaTreeRoot)
-          : {};
 
         currentState.sourceSchema = action.payload.schema;
         currentState.flattenedSourceSchema = flattenedSchema;
@@ -150,24 +142,14 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
         state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
-
-        // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.nodes = currentState.nodes.filter((node) => !sourceCurrentFlattenedSchemaMap[node.data.id as string]);
       } else {
         const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const targetCurrentFlattenedSchemaMap = currentState.targetSchema
-          ? flattenSchemaNodeMap(currentState.targetSchema.schemaTreeRoot)
-          : {};
-
         currentState.targetSchema = action.payload.schema;
         currentState.flattenedTargetSchema = flattenedSchema;
         currentState.targetSchemaOrdering = targetSchemaSortArray;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
-
-        // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.nodes = currentState.nodes.filter((node) => !targetCurrentFlattenedSchemaMap[node.data.id as string]);
       }
 
       // NOTE: Reset ReactFlow edges
@@ -225,7 +207,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
         edges: newEdges,
-        nodes: { ...state.curDataMapOperation.nodes, ...addedNodes },
+        nodes: [...state.curDataMapOperation.nodes, ...addedNodes],
       };
 
       state.curDataMapOperation = newState;
