@@ -5,11 +5,11 @@
   justify-content: space-between;
 
   .msla-panel-select-card-container-empty {
-    padding-top: 25vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
 
     .msla-panel-empty-text {
       font-size: 14px;
@@ -18,8 +18,9 @@
   }
 
   .msla-panel-header {
-    margin-top: 12px;
-    margin-bottom: 12px;
+    border-top: 3px solid transparent;
+    padding-top: 12px;
+    padding-bottom: 12px;
 
     .msla-panel-card-header {
       flex-grow: 1;
@@ -96,23 +97,6 @@
       height: 32px;
       width: 32px;
     }
-
-    .collapse-toggle {
-      &.left {
-        float: right;
-        transform: rotate(180deg);
-        &.collapsed {
-          transform: rotate(0deg);
-        }
-      }
-      &.right {
-        float: left;
-        transform: rotate(0deg);
-        &.collapsed {
-          transform: rotate(180deg);
-        }
-      }
-    }
   }
 
   .msla-panel-trace-container {
@@ -141,17 +125,62 @@
     }
   }
 
-  .msla-panel-content-container {
-    margin: 0px -2rem;
-    padding: 1rem 2rem;
-    overflow-y: auto;
-    height: inherit;
-  }
-
-  .msla-node-details-panel {
-    height: 100%;
+  .msla-panel-container-nested {
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column;
+    flex: 1;
+    flex-direction: row;
+    max-height: 100%;
+    width: 100%;
+
+    &.msla-panel-container-nested-dual .msla-panel-layout {
+      flex: 0 0 50%;
+      min-width: 0;
+    }
+
+    .msla-panel-layout {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      width: 100%;
+
+      &.msla-panel-layout-pinned .msla-panel-header {
+        border-top-color: @pinned-item-color;
+        padding-left: 16px;
+      }
+
+      > div {
+        flex: 0;
+
+        &.msla-panel-contents {
+          border-top: 3px solid transparent;
+          display: flex;
+          flex: 1 0 50%;
+          flex-direction: column;
+          max-width: 100%;
+          overflow-y: auto;
+          padding: 0 16px 16px;
+
+          > div {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+          }
+
+          .msla-panel-content-container {
+            flex: 1;
+            margin: 0;
+            padding: 1px;
+            overflow-y: auto;
+          }
+        }
+      }
+    }
+
+    &.msla-panel-container-nested-dual > .msla-panel-contents {
+      flex: 0.5 0 0;
+      min-width: 0;
+    }
   }
 
   .msla-tab-component-container {
@@ -223,6 +252,27 @@
       }
     }
   }
+
+  > .collapse-toggle {
+    margin: 4px;
+  }
+
+  .collapse-toggle {
+    &.left {
+      float: right;
+      transform: rotate(180deg);
+      &.collapsed {
+        transform: rotate(0deg);
+      }
+    }
+    &.right {
+      float: left;
+      transform: rotate(0deg);
+      &.collapsed {
+        transform: rotate(180deg);
+      }
+    }
+  }
 }
 
 .identity-selector {
@@ -280,4 +330,8 @@
       background: @ms-color-primaryBackground;
     }
   }
+}
+
+div.msla-panel-host-container {
+  z-index: auto;
 }
