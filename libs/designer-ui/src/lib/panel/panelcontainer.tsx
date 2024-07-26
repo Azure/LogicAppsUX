@@ -190,7 +190,7 @@ export const PanelContainer = ({
         <Button
           appearance="subtle"
           aria-label={panelCollapseTitle}
-          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed')}
+          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
         />

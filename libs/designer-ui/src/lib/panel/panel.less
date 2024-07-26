@@ -21,6 +21,7 @@
 
   .msla-panel-header {
     border-top: 3px solid transparent;
+    display: flex;
     padding-top: 12px;
     padding-bottom: 12px;
 
@@ -138,6 +139,10 @@
 
     &.msla-panel-container-nested-left {
       flex-direction: row-reverse;
+
+      .msla-panel-header {
+        flex-direction: row-reverse;
+      }
 
       .msla-panel-card-header {
         margin-left: @panel-padding;
@@ -277,14 +282,15 @@
 
   .collapse-toggle {
     &.left {
-      float: right;
       transform: rotate(180deg);
       &.collapsed {
         transform: rotate(0deg);
       }
+      &.empty {
+        align-self: flex-end;
+      }
     }
     &.right {
-      float: left;
       transform: rotate(0deg);
       &.collapsed {
         transform: rotate(180deg);
