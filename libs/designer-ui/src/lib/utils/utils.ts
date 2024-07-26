@@ -341,8 +341,8 @@ export function getStatusString(status: string, hasRetries: boolean): string {
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
-        defaultMessage: 'Timedout',
-        id: 'apEg6g',
+        defaultMessage: 'Timed out',
+        id: 'BRMOfD',
         description: 'The status message to show in monitoring view.',
       });
 
