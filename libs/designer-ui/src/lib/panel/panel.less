@@ -1,6 +1,8 @@
 @import (reference) '../variables.less';
 
 .msla-panel-container {
+  @panel-padding: 16px;
+
   display: flex;
   justify-content: space-between;
 
@@ -126,6 +128,7 @@
   }
 
   .msla-panel-container-nested {
+
     box-sizing: border-box;
     display: flex;
     flex: 1;
@@ -133,9 +136,30 @@
     max-height: 100%;
     width: 100%;
 
-    &.msla-panel-container-nested-dual .msla-panel-layout {
-      flex: 0 0 50%;
-      min-width: 0;
+    &.msla-panel-container-nested-left {
+      flex-direction: row-reverse;
+
+      .msla-panel-card-header {
+        margin-left: @panel-padding;
+      }
+    }
+
+    &.msla-panel-container-nested-right {
+      .msla-panel-layout-pinned .msla-panel-card-header {
+        margin-left: @panel-padding;
+      }
+    }
+
+    &.msla-panel-container-nested-dual {
+      .msla-panel-layout {
+        flex: 0 0 50%;
+        min-width: 0;
+      }
+
+      > .msla-panel-contents {
+        flex: 0.5 0 0;
+        min-width: 0;
+      }
     }
 
     .msla-panel-layout {
@@ -146,7 +170,6 @@
 
       &.msla-panel-layout-pinned .msla-panel-header {
         border-top-color: @pinned-item-color;
-        padding-left: 16px;
       }
 
       > div {
@@ -159,7 +182,7 @@
           flex-direction: column;
           max-width: 100%;
           overflow-y: auto;
-          padding: 0 16px 16px;
+          padding: 0 @panel-padding @panel-padding;
 
           > div {
             display: flex;
@@ -175,11 +198,6 @@
           }
         }
       }
-    }
-
-    &.msla-panel-container-nested-dual > .msla-panel-contents {
-      flex: 0.5 0 0;
-      min-width: 0;
     }
   }
 
