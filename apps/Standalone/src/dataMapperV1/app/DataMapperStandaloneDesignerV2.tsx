@@ -17,7 +17,7 @@ import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFuncti
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
+import type { IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
@@ -150,7 +150,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
             xsltFilename={xsltFilename}
             xsltContent={xsltContent}
             mapDefinition={mapDefinition}
-            dataMapMetadata={mapMetadata}
+            dataMapMetadata={mapMetadata as MapMetadataV2}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
             availableSchemas={mockFileItems}
