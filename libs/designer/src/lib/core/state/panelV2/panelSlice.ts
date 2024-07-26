@@ -98,8 +98,8 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedOperationGroupId = '';
       state.discoveryContent.isAddingTrigger = false;
     },
-    clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean }>) => {
-      const { clearPinnedState } = action.payload;
+    clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean } | undefined>) => {
+      const { clearPinnedState } = action.payload ?? {};
 
       state.connectionContent = getInitialConnectionContentState();
       state.currentPanelMode = 'Operation';
@@ -163,7 +163,7 @@ export const panelSlice = createSlice({
     changePanelNode: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
 
-      clearPanel({});
+      clearPanel();
 
       state.isCollapsed = false;
       state.currentPanelMode = 'Operation';
@@ -231,7 +231,7 @@ export const panelSlice = createSlice({
       const { focusReturnElementId, nodeId, nodeIds, panelMode, referencePanelMode } = action.payload;
       const selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
 
-      clearPanel({});
+      clearPanel();
 
       state.currentPanelMode = panelMode;
       state.isCollapsed = false;
