@@ -48,10 +48,12 @@ import { CopyMenuItem } from '../menuItems';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
+import { useIsNodePinnedToOperationPanel, useOperationPanelPinnedNodeId } from '../../core/state/panelV2/panelSelectors';
+import { setPinnedNode } from '../../core/state/panelV2/panelSlice';
 import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
+import { PinMenuItem } from '../menuItems/pinMenuItem';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -67,6 +69,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isMonitoringView = useMonitoringView();
 
   const rootState = useSelector((state: RootState) => state);
+  const pinnedNodeId = useOperationPanelPinnedNodeId();
   const metadata = useNodeMetadata(scopeId);
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
@@ -156,7 +159,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [readOnly, metadata]
   );
 
-  const isPinned = useIsNodePinned(scopeId);
+  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
@@ -194,6 +197,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     }, 3000);
   }, [dispatch, id]);
 
+  const pinClick = useCallback(() => {
+    dispatch(
+      setPinnedNode({
+        nodeId: scopeId === pinnedNodeId ? '' : scopeId,
+        updatePanelOpenState: true,
+      })
+    );
+  }, [dispatch, pinnedNodeId, scopeId]);
+
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
@@ -211,10 +223,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
       <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
+      <PinMenuItem key={'pin'} nodeId={scopeId} onClick={pinClick} />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
       ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
     ],
-    [deleteClick, copyClick, runData?.canResubmit, resubmitClick, runAfterClick, runAfter]
+    [deleteClick, copyClick, pinClick, runData?.canResubmit, resubmitClick, runAfterClick, runAfter, scopeId]
   );
 
   const opQuery = useOperationQuery(scopeId);
