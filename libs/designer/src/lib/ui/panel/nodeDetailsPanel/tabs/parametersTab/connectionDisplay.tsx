@@ -4,7 +4,7 @@ import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/desig
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { Badge, Button, Spinner } from '@fluentui/react-components';
 import { LinkMultiple16Regular, ErrorCircle16Filled } from '@fluentui/react-icons';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Label } from '@microsoft/designer-ui';
@@ -74,6 +74,17 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     description: 'Text to show when the connection is loading',
   });
 
+  const connectionErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid connection',
+    id: 'l/3yJr',
+    description: 'Text to show when there is an error with the connection',
+  });
+
+  const connectionLabel = useMemo(
+    () => (connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName),
+    [connectionName, connectionDisplayTextWithName, connectionDisplayTextWithoutName]
+  );
+
   if (isLoading) {
     return (
       <div className="connection-display">
@@ -82,18 +93,12 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     );
   }
 
-  const connectionErrorText = intl.formatMessage({
-    defaultMessage: 'Invalid connection',
-    id: 'l/3yJr',
-    description: 'Text to show when there is an error with the connection',
-  });
-
   return (
     <div className="connection-display">
       <div className="connection-info">
         <div className="connection-info-labels">
           <LinkMultiple16Regular />
-          <Label className="label" text={connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName} />
+          <Label className="label" text={connectionLabel} />
         </div>
         {readOnly ? null : (
           <Button
@@ -103,6 +108,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
             appearance="subtle"
             onClick={openChangeConnectionCallback}
             style={{ color: 'var(--colorBrandForeground1)' }}
+            aria-label={`${connectionLabel}, ${openChangeConnectionText}`}
           >
             {openChangeConnectionText}
           </Button>

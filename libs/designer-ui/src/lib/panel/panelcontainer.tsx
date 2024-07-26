@@ -154,9 +154,9 @@ export const PanelContainer = ({
   );
 
   const panelLabel = intl.formatMessage({
-    defaultMessage: 'panel',
-    id: 'c6XbVI',
-    description: 'label for panel component',
+    defaultMessage: 'Operation details panel',
+    id: 'nV2Spt',
+    description: 'label for operation details panel component',
   });
 
   const panelErrorMessage = intl.formatMessage({
@@ -169,10 +169,8 @@ export const PanelContainer = ({
 
   return (
     <Panel
-      aria-label={panelLabel}
       className="msla-panel-container"
       headerClassName="msla-panel-header"
-      headerText={title || panelLabel}
       isOpen
       onRenderHeader={renderHeader ?? defaultRenderHeader}
       focusTrapZoneProps={{
@@ -187,6 +185,7 @@ export const PanelContainer = ({
       customWidth={width}
       styles={isCollapsed ? panelStylesCollapsed : panelStyles}
       layerProps={layerProps}
+      popupProps={{ ariaLabel: panelLabel }}
     >
       {!isCollapsed && (
         <>

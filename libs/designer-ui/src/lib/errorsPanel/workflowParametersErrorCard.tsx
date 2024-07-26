@@ -3,6 +3,7 @@ import { Icon } from '@fluentui/react';
 import { MediumText } from '../text';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { Text } from '@fluentui/react-components';
 
 export interface WorkflowParametersErrorCardProps {
   errors?: Record<string, Record<string, string | undefined>>;
@@ -55,21 +56,21 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   );
 
   return (
-    <div key="workflowParametersErrorCard" className="msla-error-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
+    <div key="workflowParametersErrorCard" className="msla-error-card" onClick={handleClick} tabIndex={0} role="list">
       <div className="msla-error-card-header">
         <div className="msla-error-card-icon">
           <Icon iconName="Parameter" />
         </div>
-        <span className="msla-error-card-title">{title}</span>
-        <span className="msla-error-card-button-hint">
+        <Text className="msla-error-card-title">{title}</Text>
+        <Text className="msla-error-card-button-hint" onKeyDown={handleKeyDown} tabIndex={0} role="button">
           {wfpButtonHint}
           <Icon iconName="ChevronRight" style={{ marginLeft: '8px' }} />
-        </span>
+        </Text>
       </div>
       <div className="msla-error-card-body">
         {Object.entries(errors ?? {}).map(([parameterId, errorValues]) => (
           <div key={parameterId} className="msla-error-card-subsection">
-            <span className="msla-error-card-subtitle">{getParameterName(parameterId)}</span>
+            <Text className="msla-error-card-subtitle">{getParameterName(parameterId)}</Text>
             {Object.values(errorValues)
               .filter((e) => !!e)
               .map((e) => (

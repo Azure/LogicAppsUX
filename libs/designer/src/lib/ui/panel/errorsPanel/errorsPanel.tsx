@@ -53,6 +53,12 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
     count: totalNumWarnings,
   };
 
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    id: 'ho2D6F',
+    description: 'Close panel',
+  });
+
   const visibleTabs = [errorsTab, warningsTab].filter((tab) => tab.visible);
   const defaultTabId = visibleTabs.find((tab) => tab.count > 0)?.id || visibleTabs[0]?.id;
   const selectedTabId = useSelectedErrorsPanelTabId() || defaultTabId;
@@ -67,7 +73,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
     <FocusTrapZone>
       <div className="msla-app-action-header">
         <XLargeText text={errorsPanelHeader} />
-        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
         {visibleTabs.map(({ id, count, title }) => (

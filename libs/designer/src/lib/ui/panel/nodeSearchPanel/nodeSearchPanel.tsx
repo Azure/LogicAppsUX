@@ -77,13 +77,19 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     description: 'Placeholder for search box that searches operations',
   });
 
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    id: 'sfTqHY',
+    description: 'Aria label for the close button in the node search panel',
+  });
+
   const originalFocusElement = props.focusReturnElementId ? document.getElementById(props.focusReturnElementId) : undefined;
 
   return (
     <FocusTrapZone elementToFocusOnDismiss={originalFocusElement ? originalFocusElement : undefined}>
       <div className="msla-app-action-header">
         <XLargeText text={goToOperationHeader} />
-        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div style={{ padding: 20 }}>
         <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />

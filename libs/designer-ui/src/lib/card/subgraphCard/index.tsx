@@ -58,8 +58,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   });
 
   const conditionalTypeText = intl.formatMessage({
-    defaultMessage: 'condition',
-    id: 'FnMYZ/',
+    defaultMessage: 'condition, collapse',
+    id: 'YWD/RY',
     description: 'condition',
   });
 
