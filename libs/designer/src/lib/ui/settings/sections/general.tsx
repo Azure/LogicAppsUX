@@ -58,13 +58,13 @@ export const General = ({
     description: 'title for general setting section',
   });
   const degreeOfParallelism = intl.formatMessage({
-    defaultMessage: 'Degree of Parallelism',
-    id: 'sW47JR',
+    defaultMessage: 'Degree of parallelism',
+    id: 'eOAJQk',
     description: 'label for slider indicating the degree of parallelism',
   });
   const splitOnTitle = intl.formatMessage({
-    defaultMessage: 'Split On',
-    id: 'FUhNu4',
+    defaultMessage: 'Split on',
+    id: 'f7cxXb',
     description: 'title for split on setting',
   });
   const splitOnTooltipText = intl.formatMessage({
@@ -74,8 +74,8 @@ export const General = ({
     description: 'description of the split on setting',
   });
   const actionTimeoutTitle = intl.formatMessage({
-    defaultMessage: 'Action Timeout',
-    id: 'XKDZXi',
+    defaultMessage: 'Action timeout',
+    id: 'M/m3nG',
     description: 'title for action timeout setting',
   });
   const actionTimeoutTooltipText = intl.formatMessage({
@@ -90,8 +90,8 @@ export const General = ({
     description: 'description of action timeout format description',
   });
   const concurrencyTitle = intl.formatMessage({
-    defaultMessage: 'Concurrency Control',
-    id: 'ZM1mRy',
+    defaultMessage: 'Concurrency control',
+    id: 'Sy4cFC',
     description: 'title for concurrency setting',
   });
   const concurrencyTooltipText = intl.formatMessage({
@@ -110,8 +110,8 @@ export const General = ({
     description: 'sublabel for concurrency limit toggle button',
   });
   const maxWaitingRunsTitle = intl.formatMessage({
-    defaultMessage: 'Maximum Waiting Runs',
-    id: 'ei1KmG',
+    defaultMessage: 'Maximum waiting runs',
+    id: 'FEYdkx',
     description: 'Label for maximum waiting runs',
   });
   const maximumWaitingRunsTooltipText = intl.formatMessage({
@@ -123,8 +123,8 @@ export const General = ({
   const maximumWaitingDescription = intl.formatMessage(
     {
       defaultMessage: 'Enter a positive integer between {min} and {max}',
-      id: 'MtWzvX',
-      description: 'descriptio of maximum waiting runs setting',
+      id: '+l5XmZ',
+      description: 'description of maximum waiting runs setting',
     },
     { max: maximumWaitingRunsMetadata.max, min: maximumWaitingRunsMetadata.min }
   );
@@ -139,13 +139,13 @@ export const General = ({
     description: 'The description for the trigger condition expression setting.',
   });
   const splitOnTrackingId = intl.formatMessage({
-    defaultMessage: 'Split-On Tracking Id',
-    id: 'Pl/fcn',
+    defaultMessage: 'Split-on tracking ID',
+    id: '0BO/tO',
     description: 'Title for split on client tracking id setting',
   });
   const splitOnTrackingIdTooltipText = intl.formatMessage({
-    defaultMessage: 'Distinct Tracking id for each split-on instance',
-    id: 'ahFd/S',
+    defaultMessage: 'Distinct tracking ID for each split-on instance',
+    id: 'N8LgJq',
     description: 'Description of tracking id input field of split on setting',
   });
   const arrayDropdownTitle = intl.formatMessage({

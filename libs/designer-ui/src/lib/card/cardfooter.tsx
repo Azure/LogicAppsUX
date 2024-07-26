@@ -67,8 +67,8 @@ export const CardFooter: React.FC<CardFooterProps> = ({
     description: 'Title for a tab panel',
   });
   const MENU_STATIC_RESULT_ICON_TOOLTIP = intl.formatMessage({
-    defaultMessage: 'This Action has testing configured.',
-    id: 'iRjBf4',
+    defaultMessage: 'This action has testing configured.',
+    id: 'WxcmZr',
     description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
   });
   const COMMENT = intl.formatMessage({

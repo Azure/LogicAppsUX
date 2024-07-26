@@ -58,9 +58,9 @@ export const testingTab: PanelTabFn = (intl) => ({
     description: 'The tab label for the testing tab on the operation panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Testing Tab',
-    id: 'sEqLTV',
-    description: 'An accessability label that describes the testing tab',
+    defaultMessage: 'Testing tab',
+    id: 'BXb3CB',
+    description: 'An accessibility label that describes the testing tab',
   }),
   visible: true,
   content: <TestingPanel />,

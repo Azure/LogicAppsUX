@@ -21,8 +21,8 @@ export const PinMenuItem: React.FC<PinMenuItemProps> = (props) => {
   const intl = useIntl();
 
   const pinAction = intl.formatMessage({
-    defaultMessage: 'Pin Action',
-    id: 'yy7jg4',
+    defaultMessage: 'Pin action',
+    id: 'b2aL+f',
     description: 'Text indicating a menu button to pin an action to the side panel',
   });
 
