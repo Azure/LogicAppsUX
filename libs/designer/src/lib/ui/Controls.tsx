@@ -33,14 +33,14 @@ const CustomControls = () => {
   };
 
   const minimapAria = intl.formatMessage({
-    defaultMessage: 'Toggle Minimap',
-    id: '4j2MEv',
+    defaultMessage: 'Toggle minimap',
+    id: 'yOyeBT',
     description: 'Turn the minimap on or off',
   });
 
   const searchAria = intl.formatMessage({
-    defaultMessage: 'Search Workflow Actions',
-    id: 'TNH/nK',
+    defaultMessage: 'Search workflow actions',
+    id: 'yqF/Ew',
     description: 'Aria label for a button that opens a search panel to search the actions in the users workflow',
   });
 

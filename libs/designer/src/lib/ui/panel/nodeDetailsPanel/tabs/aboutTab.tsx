@@ -1,6 +1,5 @@
 import constants from '../../../../common/constants';
 import { useHostOptions } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import {
   useConnectorEnvironmentBadge,
   useConnectorName,
@@ -9,11 +8,11 @@ import {
   useOperationDocumentation,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { About, getConnectorCategoryString } from '@microsoft/designer-ui';
 
-export const AboutTab = () => {
-  const nodeId = useSelectedNodeId();
+export const AboutTab: React.FC<PanelTabProps> = (props) => {
+  const { nodeId } = props;
   const operationInfo = useOperationInfo(nodeId);
   const { displayRuntimeInfo } = useHostOptions();
   const displayNameResult = useConnectorName(operationInfo);
@@ -40,7 +39,7 @@ export const AboutTab = () => {
   );
 };
 
-export const aboutTab: PanelTabFn = (intl) => ({
+export const aboutTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.ABOUT,
   title: intl.formatMessage({
     defaultMessage: 'About',
@@ -48,12 +47,12 @@ export const aboutTab: PanelTabFn = (intl) => ({
     description: 'The tab label for the about tab on the operation panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'About Tab',
-    id: 'iB8YKD',
-    description: 'An accessability label that describes the about tab',
+    defaultMessage: 'About tab',
+    id: 'Kb5u9F',
+    description: 'An accessibility label that describes the about tab',
   }),
   visible: true,
-  content: <AboutTab />,
+  content: <AboutTab {...props} />,
   order: 10,
   icon: 'Info',
 });

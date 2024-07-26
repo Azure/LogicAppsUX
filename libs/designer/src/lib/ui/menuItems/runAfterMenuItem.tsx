@@ -19,8 +19,8 @@ export const RunAfterMenuItem = (props: RunAfterMenuItemProps) => {
   const intl = useIntl();
 
   const runAfterMessage = intl.formatMessage({
-    defaultMessage: 'Run After',
-    id: 'lXIgtx',
+    defaultMessage: 'Run after',
+    id: '8p0yK8',
     description: 'Button label for checking the action that this operation runs after',
   });
 

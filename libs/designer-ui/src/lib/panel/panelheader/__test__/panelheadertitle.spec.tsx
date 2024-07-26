@@ -7,7 +7,7 @@ describe('ui/panel/panelheadertitle', () => {
   let minimal: PanelHeaderTitleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    minimal = {};
+    minimal = { onChange: vi.fn() };
     renderer = ReactShallowRenderer.createRenderer();
   });
 
@@ -28,7 +28,7 @@ describe('ui/panel/panelheadertitle', () => {
     expect(title.props.className).toBe('msla-card-title');
     expect(title.props.id).toBe(props.titleId);
     expect(title.props.readOnly).toBe(props.readOnlyMode);
-    expect(title.props.ariaLabel).toBe('Card Title');
+    expect(title.props.ariaLabel).toBe('Card title');
     expect(title.props.value).toBe(props.titleValue);
   });
 });

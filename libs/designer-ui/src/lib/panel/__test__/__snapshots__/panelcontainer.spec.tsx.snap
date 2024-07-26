@@ -1,47 +1,29 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
-<StyledPanelBase
+exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
+<OverlayDrawer
   aria-label="panel"
   className="msla-panel-container"
-  customWidth="630px"
-  focusTrapZoneProps={
+  modalType="non-modal"
+  mountNode={
     {
-      "disabled": false,
-      "firstFocusableTarget": "#msla-panel-header-collapse-nav",
-      "forceFocusInsideTrap": true,
+      "className": "msla-panel-host-container",
     }
   }
-  hasCloseButton={false}
-  headerClassName="msla-panel-header"
-  headerText="test title"
-  isBlocking={false}
-  isOpen={true}
-  onRenderHeader={[Function]}
-  styles={
+  open={true}
+  position="end"
+  style={
     {
-      "content": {
-        "height": "100%",
-        "overflow": "hidden",
-        "padding": "1rem 2rem 0rem",
-      },
-      "main": {
-        "overflow": "hidden",
-      },
-      "scrollableContent": {
-        "display": "flex",
-        "flexDirection": "column",
-        "height": "100%",
-      },
+      "width": "630px",
     }
   }
-  type={7}
 >
   <React.Fragment>
-    <PanelContent
-      tabs={[]}
-      trackEvent={[MockFunction spy]}
-    />
+    <div
+      className="msla-panel-container-nested"
+    >
+      <React.Fragment />
+    </div>
   </React.Fragment>
-</StyledPanelBase>
+</OverlayDrawer>
 `;

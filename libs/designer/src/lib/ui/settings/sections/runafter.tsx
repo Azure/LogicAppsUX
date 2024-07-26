@@ -24,8 +24,8 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
   const intl = useIntl();
 
   const runAfterTitle = intl.formatMessage({
-    defaultMessage: 'Run After',
-    id: 'DyYcJZ',
+    defaultMessage: 'Run after',
+    id: 'mQJXU4',
     description: 'title for run after setting section',
   });
   const lastActionErrorMessage = intl.formatMessage({
@@ -128,6 +128,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
 
   const runAfterSectionProps: SettingsSectionProps = {
     id: 'runAfter',
+    nodeId,
     title: runAfterTitle,
     sectionName: SettingSectionName.RUNAFTER,
     expanded,

@@ -35,8 +35,8 @@ export const Security = ({
     description: 'label when setting is off',
   });
   const secureInputsTitle = intl.formatMessage({
-    defaultMessage: 'Secure Inputs',
-    id: '1ejxkP',
+    defaultMessage: 'Secure inputs',
+    id: 'Y9VFj8',
     description: 'title for the secure inputs setting',
   });
   const secureInputsDescription = intl.formatMessage({
@@ -50,8 +50,8 @@ export const Security = ({
     description: 'description of the secure inputs setting',
   });
   const secureOutputsTitle = intl.formatMessage({
-    defaultMessage: 'Secure Outputs',
-    id: 'FDWfqM',
+    defaultMessage: 'Secure outputs',
+    id: 'EX0g1d',
     description: 'title for secure outputs setting',
   });
   const secureOutputsTooltipText = intl.formatMessage({
@@ -67,6 +67,7 @@ export const Security = ({
 
   const securitySectionProps: SettingsSectionProps = {
     id: 'security',
+    nodeId,
     title: securityTitle,
     sectionName: SettingSectionName.SECURITY,
     isReadOnly: readOnly,

@@ -20,20 +20,20 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   const intl = useIntl();
 
   const operationNodeTitle = intl.formatMessage({
-    defaultMessage: 'Delete Workflow Action',
-    id: 'UEryJE',
+    defaultMessage: 'Delete workflow action',
+    id: '/ye9Df',
     description: 'Title for operation node',
   });
 
   const graphNodeTitle = intl.formatMessage({
-    defaultMessage: 'Delete Workflow Graph',
-    id: 'LBbhCu',
+    defaultMessage: 'Delete workflow graph',
+    id: '6rJ+Fj',
     description: 'Title for graph node',
   });
 
   const switchCaseTitle = intl.formatMessage({
-    defaultMessage: 'Delete Switch Case',
-    id: 'V7k/GN',
+    defaultMessage: 'Delete switch case',
+    id: 'oPKLDZ',
     description: 'Title for switch case',
   });
 

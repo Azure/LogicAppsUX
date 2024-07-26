@@ -1,6 +1,6 @@
 import Constants from '../../constants';
-import { getDurationString, getDurationStringPanelMode, getStatusString } from '../index';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { getDurationString, getDurationStringPanelMode, getStatusString, removeAllNewlines, removeAllSpaces } from '../index';
+import { describe, it, expect } from 'vitest';
 describe('ui/utils/utils', () => {
   describe('getDurationString', () => {
     it(`returns -- if you try to get a duration for NaN milliseconds`, () => {
@@ -97,7 +97,7 @@ describe('ui/utils/utils', () => {
     { expectedValue: 'Skipped', hasRetries: false, status: Constants.STATUS.SKIPPED },
     { expectedValue: 'Succeeded', hasRetries: false, status: Constants.STATUS.SUCCEEDED },
     { expectedValue: 'Succeeded with retries', hasRetries: true, status: Constants.STATUS.SUCCEEDED },
-    { expectedValue: 'Timed Out', hasRetries: false, status: Constants.STATUS.TIMEDOUT },
+    { expectedValue: 'Timed out', hasRetries: false, status: Constants.STATUS.TIMEDOUT },
     { expectedValue: 'Waiting', hasRetries: false, status: Constants.STATUS.WAITING },
     { expectedValue: 'Not specified', hasRetries: false, status: Constants.STATUS.NOT_SPECIFIED },
   ]) {
@@ -105,4 +105,22 @@ describe('ui/utils/utils', () => {
       expect(getStatusString(status, hasRetries)).toBe(expectedValue);
     });
   }
+
+  it(`should remove newlines`, () => {
+    let inputStr = '\n\nThis\nstringhas\n\nnewlines\n';
+    let inputStrWithoutNewlines = 'Thisstringhasnewlines';
+    expect(removeAllNewlines(inputStr)).toEqual(inputStrWithoutNewlines);
+  });
+
+  it(`should remove carriage return characters - newline equivalents`, () => {
+    let inputStr = '\rThis\r\rstringhas\rcarriagereturns\r';
+    let inputStrWithoutCarriageReturns = 'Thisstringhascarriagereturns';
+    expect(removeAllNewlines(inputStr)).toEqual(inputStrWithoutCarriageReturns);
+  });
+
+  it(`should remove spaces`, () => {
+    let inputStr = ' This string has  spaces ';
+    let inputStrWithoutSpaces = 'Thisstringhasspaces';
+    expect(removeAllSpaces(inputStr)).toEqual(inputStrWithoutSpaces);
+  });
 });

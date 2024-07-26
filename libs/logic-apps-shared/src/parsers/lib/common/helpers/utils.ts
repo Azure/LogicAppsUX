@@ -283,8 +283,8 @@ export function getKnownTitles(name: string, description?: string): string {
       });
     case OutputKeys.StatusCode:
       return intl.formatMessage({
-        defaultMessage: 'Status Code',
-        id: 'x10E1p',
+        defaultMessage: 'Status code',
+        id: 'eUxnDx',
         description: 'Display name for status code in outputs',
       });
     case OutputKeys.Item:
@@ -295,8 +295,8 @@ export function getKnownTitles(name: string, description?: string): string {
       });
     case OutputKeys.PathParameters:
       return intl.formatMessage({
-        defaultMessage: 'Path Parameters',
-        id: 'BJNUxN',
+        defaultMessage: 'Path parameters',
+        id: 'IHzSSN',
         description: 'Display name for relative path parameters in trigger outputs',
       });
     default: {
