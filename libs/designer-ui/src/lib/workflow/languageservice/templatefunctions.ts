@@ -736,8 +736,8 @@ const Resources = {
     description: 'Required string parameter to be sized using utf16Length function',
   }),
   TOKEN_FUNCTION_CONVERSION_ENCODEURICOMPONENT: intl.formatMessage({
-    defaultMessage: 'Url encodes the input string',
-    id: 'mPakaD',
+    defaultMessage: 'URL encodes the input string',
+    id: 'b6G9bq',
     description: 'Label for description of custom encodeUriComponent Function',
   }),
   TOKEN_PARAMETER_ENCODEURICOMPONENT_VALUE: intl.formatMessage({
@@ -746,8 +746,8 @@ const Resources = {
     description: 'Required string parameter to be encoded using encodeUriComponent function',
   }),
   TOKEN_FUNCTION_CONVERSION_DECODEURICOMPONENT: intl.formatMessage({
-    defaultMessage: 'Url decodes the input string',
-    id: '0GqNGo',
+    defaultMessage: 'URL decodes the input string',
+    id: 'osln7P',
     description: 'Label for description of custom decodeUriComponent Function',
   }),
   TOKEN_PARAMETER_DECODEURICOMPONENT_VALUE: intl.formatMessage({

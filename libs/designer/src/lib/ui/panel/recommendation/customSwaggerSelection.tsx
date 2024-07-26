@@ -43,8 +43,8 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
   }, [dispatch, isParallelBranch, isTrigger, operation, relationshipIds, swaggerUrl]);
 
   const inputLabel = intl.formatMessage({
-    defaultMessage: 'Swagger Endpoint',
-    id: 'qUMXpq',
+    defaultMessage: 'Swagger endpoint',
+    id: '3Xf/4S',
     description: 'Swagger endpoint input label',
   });
 
@@ -109,7 +109,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
         }}
         appearance="primary"
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add action', id: '0/VGiF', description: 'Add action button text' })}
       </Button>
     </div>
   );

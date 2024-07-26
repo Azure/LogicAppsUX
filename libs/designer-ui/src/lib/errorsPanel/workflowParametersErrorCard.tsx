@@ -26,8 +26,8 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   };
 
   const title = intl.formatMessage({
-    defaultMessage: 'Workflow Parameters',
-    id: 'QdhS3y',
+    defaultMessage: 'Workflow parameters',
+    id: 'y+eYFf',
     description: 'Title for the workflow parameters error card',
   });
 

@@ -547,8 +547,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMessage = intl.formatMessage(
       {
-        defaultMessage: 'Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}',
-        id: 'NnD8gF',
+        defaultMessage: 'Invalid operation path input value. Path value - {pathValue}, Path template - {pathTemplate}',
+        id: 'apZgmJ',
         description: 'Error message while parsing ',
       },
       { pathValue, pathTemplate }

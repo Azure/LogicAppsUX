@@ -10,9 +10,9 @@ export const settingsTab: PanelTabFn = (intl, props) => ({
     description: 'The tab label for the settings tab on the operation panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Request Settings',
-    id: 'vdKLiR',
-    description: 'An accessability label that describes the settings tab',
+    defaultMessage: 'Request settings',
+    id: '3BXdMk',
+    description: 'An accessibility label that describes the settings tab',
   }),
   visible: true,
   content: <SettingsPanel {...props} />,
