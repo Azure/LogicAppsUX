@@ -124,6 +124,12 @@ export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dot
   return xmlBuildFile;
 }
 
+/**
+ * Allows local settings to be published to the directory by modifying the XML build file.
+ * @param context - The action context.
+ * @param xmlBuildFile - The XML build file to update.
+ * @returns The updated XML build file.
+ */
 export function allowLocalSettingsToPublishDirectory(context: IActionContext, xmlBuildFile: Record<string, any>): Record<string, any> {
   try {
     for (const itemGroup of xmlBuildFile['Project']['ItemGroup']) {
