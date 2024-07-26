@@ -48,32 +48,105 @@ export interface PanelHeaderProps {
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
 const OverflowIcon = bundleIcon(MoreVertical24Filled, MoreVertical24Regular);
 
-export const PanelHeader = ({
-  nodeData,
-  isCollapsed,
-  isOutermostPanel,
-  headerItems,
-  headerLocation,
-  noNodeSelected,
-  panelScope,
-  suppressDefaultNodeSelectFunctionality,
-  readOnlyMode,
-  renameTitleDisabled,
-  horizontalPadding,
-  canResubmit,
-  resubmitOperation,
-  onUnpinAction,
-  commentChange,
-  onRenderWarningMessage,
-  toggleCollapse,
-  onTitleChange,
-  onTitleBlur,
-}: PanelHeaderProps): JSX.Element => {
-  const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
+const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: string }): JSX.Element => {
+  const { isCollapsed, isOutermostPanel, isRight, nodeId, toggleCollapse } = props;
 
   const intl = useIntl();
 
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  const panelCollapseTitle = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    id: 'lX30/R',
+    description: 'Text of Tooltip to collapse',
+  });
+  const panelExpandTitle = intl.formatMessage({
+    defaultMessage: 'Expand',
+    id: 'oZMhX/',
+    description: 'Text of Tooltip to expand',
+  });
+  const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
+
+  const className: string = css('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed');
+
+  useEffect(() => {
+    if (isCollapsed || !isOutermostPanel || !nodeId) {
+      return;
+    }
+
+    menuButtonRef.current?.focus();
+  }, [isCollapsed, isOutermostPanel, nodeId]);
+
+  return (
+    <Tooltip relationship="label" positioning={'before'} content={buttonText}>
+      <Button
+        id="msla-panel-header-collapse-nav"
+        ref={menuButtonRef}
+        appearance="subtle"
+        icon={<DismissIcon />}
+        className={className}
+        aria-label={buttonText}
+        onClick={toggleCollapse}
+        data-automation-id="msla-panel-header-collapse-nav"
+      />
+    </Tooltip>
+  );
+};
+
+const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
+  const { headerItems } = props;
+
+  const intl = useIntl();
+
+  const panelHeaderMenuCommands = intl.formatMessage({
+    defaultMessage: 'More commands',
+    id: '0y5eia',
+    description: 'Label for commands in panel header',
+  });
+
+  return (
+    <Menu>
+      <MenuTrigger>
+        <Tooltip relationship={'label'} positioning={'before'} content={panelHeaderMenuCommands}>
+          <Button
+            appearance="subtle"
+            icon={<OverflowIcon />}
+            aria-label={panelHeaderMenuCommands}
+            data-automation-id="msla-panel-header-more-options"
+          />
+        </Tooltip>
+      </MenuTrigger>
+      <MenuPopover>
+        <MenuList>{headerItems}</MenuList>
+      </MenuPopover>
+    </Menu>
+  );
+};
+
+export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
+  const {
+    nodeData,
+    isCollapsed,
+    isOutermostPanel,
+    headerLocation,
+    noNodeSelected,
+    panelScope,
+    suppressDefaultNodeSelectFunctionality,
+    readOnlyMode,
+    renameTitleDisabled,
+    horizontalPadding,
+    canResubmit,
+    resubmitOperation,
+    onUnpinAction,
+    commentChange,
+    onRenderWarningMessage,
+    onTitleChange,
+    onTitleBlur,
+  } = props;
+
+  const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
+
+  const intl = useIntl();
 
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
@@ -86,14 +159,6 @@ export const PanelHeader = ({
     id: 'UFMpGk',
     description: 'Text indicating a menu button to unpin a pinned action from the side panel',
   });
-
-  useEffect(() => {
-    if (isCollapsed || !isOutermostPanel || !nodeId) {
-      return;
-    }
-
-    menuButtonRef.current?.focus();
-  }, [isCollapsed, isOutermostPanel, nodeId]);
 
   const isRight = headerLocation === PanelLocation.Right;
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
@@ -119,66 +184,9 @@ export const PanelHeader = ({
     [isLoading, cardIcon, isCollapsed, isError]
   );
 
-  const CollapseButton = (): JSX.Element => {
-    const panelCollapseTitle = intl.formatMessage({
-      defaultMessage: 'Collapse',
-      id: 'lX30/R',
-      description: 'Text of Tooltip to collapse',
-    });
-    const panelExpandTitle = intl.formatMessage({
-      defaultMessage: 'Expand',
-      id: 'oZMhX/',
-      description: 'Text of Tooltip to expand',
-    });
-    const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
-
-    const className: string = css('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed');
-
-    return (
-      <Tooltip relationship="label" positioning={'before'} content={buttonText}>
-        <Button
-          id="msla-panel-header-collapse-nav"
-          appearance="subtle"
-          icon={<DismissIcon />}
-          className={className}
-          aria-label={buttonText}
-          onClick={toggleCollapse}
-          data-automation-id="msla-panel-header-collapse-nav"
-          ref={menuButtonRef}
-        />
-      </Tooltip>
-    );
-  };
-
-  const OverflowButton = (): JSX.Element => {
-    const PanelHeaderMenuCommands = intl.formatMessage({
-      defaultMessage: 'More commands',
-      id: '0y5eia',
-      description: 'Label for commands in panel header',
-    });
-
-    return (
-      <Menu>
-        <MenuTrigger>
-          <Tooltip relationship={'label'} positioning={'before'} content={PanelHeaderMenuCommands}>
-            <Button
-              appearance="subtle"
-              icon={<OverflowIcon />}
-              aria-label={PanelHeaderMenuCommands}
-              data-automation-id="msla-panel-header-more-options"
-            />
-          </Tooltip>
-        </MenuTrigger>
-        <MenuPopover>
-          <MenuList>{headerItems}</MenuList>
-        </MenuPopover>
-      </Menu>
-    );
-  };
-
   return (
     <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
-      {shouldHideCollapseButton ? undefined : <CollapseButton />}
+      {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} />}
       {!noNodeOnCardLevel && !isCollapsed ? (
         <>
           <div className={'msla-panel-card-header'} style={isRight ? {} : { paddingLeft: horizontalPadding }}>
@@ -199,7 +207,7 @@ export const PanelHeader = ({
                 <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
               </Tooltip>
             ) : null}
-            <OverflowButton />
+            <OverflowButton {...props} />
           </div>
           {onRenderWarningMessage ? onRenderWarningMessage() : null}
           {comment ? (
