@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [4.48.0](https://github.com/Azure/LogicAppsUX/compare/v4.47.1...v4.48.0) (2024-07-26)
+
+
+### Features
+
+* **designer-ui:** Add badge for read-only connection to show reason ([#5200](https://github.com/Azure/LogicAppsUX/issues/5200)) ([54d2463](https://github.com/Azure/LogicAppsUX/commit/54d2463372c90f3d171c00c8619d91b1e1bbeebc))
+* **designer:** Allow pinning a node to panel to view side-by-side with selected node ([#5202](https://github.com/Azure/LogicAppsUX/issues/5202)) ([be1a455](https://github.com/Azure/LogicAppsUX/commit/be1a455267e108ed865683cb4fe9cceec35f1504)), closes [#5148](https://github.com/Azure/LogicAppsUX/issues/5148)
+
+
+### Bug Fixes
+
+* **all:** Convert all label strings to `Standard case` except when referring to proper nouns ([#5209](https://github.com/Azure/LogicAppsUX/issues/5209)) ([dc3acfc](https://github.com/Azure/LogicAppsUX/commit/dc3acfcedc90087a9d6630f5e338a459948cbcd1))
+* **designer:** Add validation for parameters with dynamic values ([#5207](https://github.com/Azure/LogicAppsUX/issues/5207)) ([cd36666](https://github.com/Azure/LogicAppsUX/commit/cd366662b50f19855b444d70154d687e6d36b772))
+* **designer:** Fixed fluent `autoload` property causing console error issue ([#5198](https://github.com/Azure/LogicAppsUX/issues/5198)) ([f704d77](https://github.com/Azure/LogicAppsUX/commit/f704d7748c5193145ee0a22c39eb2b5f13aaffd2))
+
 ### [4.47.1](https://github.com/Azure/LogicAppsUX/compare/v4.47.0...v4.47.1) (2024-07-25)
 
 
