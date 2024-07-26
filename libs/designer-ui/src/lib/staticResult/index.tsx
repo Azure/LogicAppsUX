@@ -77,16 +77,16 @@ export const StaticResultContainer = ({
     } else if (serializedValue['status'] === constants.STATUS.FAILED && !(serializedValue['error'] && serializedValue['error']['code'])) {
       setErrorMessage(
         intl.formatMessage({
-          defaultMessage: 'The Error and its code is required when status is "Failed"',
-          id: 'HGA9iU',
+          defaultMessage: 'The error and its code are required when status is "Failed"',
+          id: 'l8lP1X',
           description: 'Error message for when status is failed and error and error code are not provided',
         })
       );
     } else if (serializedValue['status'] === constants.STATUS.FAILED && serializedValue['outputs']) {
       setErrorMessage(
         intl.formatMessage({
-          defaultMessage: 'Ouputs should not be provided when status is "Failed"',
-          id: 'LPdGu/',
+          defaultMessage: 'Outputs should not be provided when status is "Failed"',
+          id: 'SbCUKw',
           description: 'Error message for when status is failed and outputs are provided',
         })
       );
@@ -96,14 +96,14 @@ export const StaticResultContainer = ({
   }, [intl, properties, propertyValues, staticResultSchema]);
 
   const toggleLabelOn = intl.formatMessage({
-    defaultMessage: 'Disable Static Result',
-    id: 'Yw7Nfl',
+    defaultMessage: 'Disable static result',
+    id: '7fZkLA',
     description: 'Label for toggle to disable static result',
   });
 
   const toggleLabelOff = intl.formatMessage({
-    defaultMessage: 'Enable Static Result',
-    id: 'OdoUEu',
+    defaultMessage: 'Enable static result',
+    id: 'chEskq',
     description: 'Label for toggle to enable static result',
   });
 

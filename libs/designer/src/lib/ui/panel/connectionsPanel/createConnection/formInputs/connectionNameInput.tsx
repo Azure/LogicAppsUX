@@ -11,8 +11,8 @@ export interface ConnectionNameInputProps {
 const ConnectionNameInput = ({ isLoading, value, onChange }: ConnectionNameInputProps) => {
   const intl = useIntl();
   const inputConnectionDisplayNameLabel = intl.formatMessage({
-    defaultMessage: 'Connection Name',
-    id: 'OKszbi',
+    defaultMessage: 'Connection name',
+    id: 'uSr3WX',
     description: 'Connection Name',
   });
   const inputConnectionDisplayNamePlaceholder = intl.formatMessage({

@@ -13,8 +13,8 @@ const STATIC_RESULT_OPERATION_OUTPUT_TITLE = intl.formatMessage({
   description: 'The title of the output field in the static result query action',
 });
 const STATIC_RESULT_OPERATION_BODY_ITEM = intl.formatMessage({
-  defaultMessage: 'Body Item',
-  id: 'YABOLz',
+  defaultMessage: 'Body item',
+  id: '6epkWC',
   description: 'The title of the child item field in the static result query action',
 });
 

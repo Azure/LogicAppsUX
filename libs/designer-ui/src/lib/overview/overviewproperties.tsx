@@ -50,8 +50,8 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
       description: 'Label text for workflow operation options',
     }),
     WORKFLOW_PROPERTIES: intl.formatMessage({
-      defaultMessage: 'Workflow Properties',
-      id: 'vz2gZC',
+      defaultMessage: 'Workflow properties',
+      id: 'OMuMCI',
       description: 'Header text for workflow properties',
     }),
   };

@@ -134,13 +134,13 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   );
 
   const backgroundColorTitle = intl.formatMessage({
-    defaultMessage: 'Background Color',
-    id: 'r7ZizR',
+    defaultMessage: 'Background color',
+    id: '4E69aV',
     description: 'label to set background color',
   });
   const textColorTitle = intl.formatMessage({
-    defaultMessage: 'Text Color',
-    id: 'ZVB4NL',
+    defaultMessage: 'Text color',
+    id: 'j4OKkU',
     description: 'label to set text color',
   });
 

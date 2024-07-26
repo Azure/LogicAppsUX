@@ -51,8 +51,8 @@ export function getDefaultTitleForDynamicallyAddedParameterType(type: Dynamicall
       });
     case DynamicallyAddedParameterType.File:
       return intl.formatMessage({
-        defaultMessage: 'File Content',
-        id: 'Gziyq8',
+        defaultMessage: 'File content',
+        id: 'hHDJhD',
         description: 'Placeholder title for a newly inserted File parameter',
       });
     case DynamicallyAddedParameterType.Email:

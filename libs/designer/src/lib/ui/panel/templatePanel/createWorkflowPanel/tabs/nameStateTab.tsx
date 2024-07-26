@@ -36,8 +36,8 @@ export const NameStatePanel = () => {
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
-        defaultMessage: 'State Type',
-        id: 'X2xiq1',
+        defaultMessage: 'State type',
+        id: 'W1rlxU',
         description: 'Label for choosing State type',
       }),
       STATE_TYPE_DESCRIPTION: intl.formatMessage({
@@ -46,8 +46,8 @@ export const NameStatePanel = () => {
         description: 'Description for state type choice group.',
       }),
       LEARN_MORE: intl.formatMessage({
-        defaultMessage: 'Learn More',
-        id: 'Kxq/yR',
+        defaultMessage: 'Learn more',
+        id: 'Xg1UDw',
         description: 'Link to learn more about state type',
       }),
       STATEFUL: intl.formatMessage({
@@ -81,8 +81,8 @@ export const NameStatePanel = () => {
         description: 'Second bullet point of stateless type',
       }),
       WORKFLOW_NAME: intl.formatMessage({
-        defaultMessage: 'Workflow Name',
-        id: '8WZwsC',
+        defaultMessage: 'Workflow name',
+        id: 'ekM77J',
         description: 'Label for workflow Name',
       }),
     }),
@@ -188,14 +188,14 @@ export const nameStateTab = (
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
-    defaultMessage: 'Name and State',
-    id: '+sz9Ur',
+    defaultMessage: 'Name and state',
+    id: 'zmsJrW',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Provide a unique, descriptive name and review the state type to ensure your workflow is properly configured.',
-    id: 'ZXyMDQ',
-    description: 'An accessability label that describes the objective of name and state tab',
+    id: 'jgy58N',
+    description: 'An accessibility label that describes the objective of name and state tab',
   }),
   hasError: hasError,
   order: 2,

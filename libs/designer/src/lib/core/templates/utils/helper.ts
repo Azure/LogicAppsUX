@@ -164,8 +164,8 @@ export const getConnectorResources = (intl: IntlShape) => {
       description: 'Connected text',
     }),
     notConnected: intl.formatMessage({
-      defaultMessage: 'Not Connected',
-      id: '3HrFPS',
+      defaultMessage: 'Not connected',
+      id: 'WxJJcQ',
       description: 'Not Connected text',
     }),
   };

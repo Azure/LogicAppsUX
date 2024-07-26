@@ -50,8 +50,8 @@ function DeleteButton({ onClick }: ButtonProps): JSX.Element {
   const intl = useIntl();
 
   const deleteTitle = intl.formatMessage({
-    defaultMessage: 'Delete Parameter',
-    id: '5rkegy',
+    defaultMessage: 'Delete parameter',
+    id: 'qsL/fE',
     description: 'Delete Button Tooltip Text',
   });
 

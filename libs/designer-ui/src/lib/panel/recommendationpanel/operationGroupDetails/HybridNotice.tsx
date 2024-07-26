@@ -5,8 +5,8 @@ const HybridNotice = () => {
   const intl = useIntl();
 
   const hybridTitle = intl.formatMessage({
-    defaultMessage: 'Hybrid Connector',
-    id: '6+RwRp',
+    defaultMessage: 'Hybrid connector',
+    id: 'Alq4/3',
     description: 'Resource group title',
   });
 

@@ -99,8 +99,8 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
     h1Text: intl.formatMessage({ defaultMessage: 'Heading 1', id: 'Ttc0SM', description: 'Heading 1 text' }),
     h2Text: intl.formatMessage({ defaultMessage: 'Heading 2', id: 'SGnTpt', description: 'Heading 2 text' }),
     h3Text: intl.formatMessage({ defaultMessage: 'Heading 3', id: 'P+7G62', description: 'Heading 3 text' }),
-    bulletListText: intl.formatMessage({ defaultMessage: 'Bullet List', id: 'Lm9bnN', description: 'Bullet List text' }),
-    numberListText: intl.formatMessage({ defaultMessage: 'Numbered List', id: 'YWOKlU', description: 'Numbered List text' }),
+    bulletListText: intl.formatMessage({ defaultMessage: 'Bullet list', id: 'wG8fwz', description: 'Bullet List text' }),
+    numberListText: intl.formatMessage({ defaultMessage: 'Numbered list', id: 'bg00eY', description: 'Numbered List text' }),
   };
 
   const altTextForChevronDown = intl.formatMessage({

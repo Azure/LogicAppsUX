@@ -63,8 +63,8 @@ export function TokenPickerHeader({
         description: 'Info about token picker',
       }),
       fullScreenMessage: intl.formatMessage({
-        defaultMessage: 'Full Screen',
-        id: 'ae7W0a',
+        defaultMessage: 'Full screen',
+        id: 'QNfUf/',
         description: 'Full Screen token picker',
       }),
       fullScreenExitMessage: intl.formatMessage({

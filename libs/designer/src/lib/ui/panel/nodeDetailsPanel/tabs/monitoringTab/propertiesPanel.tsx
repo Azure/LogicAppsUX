@@ -40,13 +40,13 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ properties, br
       description: 'Status text',
     }),
     clienTrackingId: intl.formatMessage({
-      defaultMessage: 'Client Tracking ID',
-      id: 'wkiETV',
+      defaultMessage: 'Client tracking ID',
+      id: '5we9SR',
       description: 'Client Tracking ID text',
     }),
     actionTrackingId: intl.formatMessage({
-      defaultMessage: 'Action Tracking ID',
-      id: 'eFet4K',
+      defaultMessage: 'Action tracking ID',
+      id: 'lSUNx5',
       description: 'Action Tracking ID text',
     }),
   };

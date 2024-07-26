@@ -568,8 +568,8 @@ const STATIC_RESULT_ERROR_OBJECT_CODE_TITLE = intl.formatMessage({
 });
 
 const STATIC_RESULT_ERROR_OBJECT_MESSAGE_TITLE = intl.formatMessage({
-  defaultMessage: 'Error Message',
-  id: 'ca/QIc',
+  defaultMessage: 'Error message',
+  id: 'ZXha+w',
   description: 'The title of the error message property within Error in the static result schema',
 });
 

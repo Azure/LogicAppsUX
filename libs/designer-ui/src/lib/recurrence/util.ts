@@ -34,7 +34,7 @@ export const resources = {
     description: intl.formatMessage({ defaultMessage: 'Specify the interval.', id: '83G5rr', description: 'Placeholder for Interval' }),
   },
   startTime: {
-    label: intl.formatMessage({ defaultMessage: 'Start Time', id: '2kWLLc', description: 'Label for Start time' }),
+    label: intl.formatMessage({ defaultMessage: 'Start time', id: '6nWQm7', description: 'Label for Start time' }),
     description: intl.formatMessage({
       defaultMessage: 'Example: 2017-03-24T15:00:00Z',
       id: 'tUYXRA',

@@ -22,7 +22,7 @@ const getDefaultRuntimeCategories = (intl: IntlShape): OperationRuntimeCategory[
   return [
     {
       key: 'inapp',
-      text: intl.formatMessage({ defaultMessage: 'In-App', id: 'p1Qtm5', description: 'Filter by In App category of connectors' }),
+      text: intl.formatMessage({ defaultMessage: 'In-app', id: 'Wc77aJ', description: 'Filter by In App category of connectors' }),
     },
     {
       key: 'shared',
@@ -111,8 +111,8 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   });
 
   const actionTypeText = intl.formatMessage({
-    defaultMessage: 'Action Type',
-    id: 'TRpSCQ',
+    defaultMessage: 'Action type',
+    id: 'jvVVTG',
     description: 'Filter by label',
   });
 

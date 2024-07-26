@@ -237,8 +237,8 @@ export const RequestPanelTab: React.FC<PanelTabProps> = () => {
 
 export const monitorRequestTab: PanelTabFn = (intl, props) => ({
   title: intl.formatMessage({
-    defaultMessage: 'Request History',
-    id: 'WaTsxR',
+    defaultMessage: 'Request history',
+    id: 'MWG2k9',
     description: 'The tab label for the request history tab on the operation panel',
   }),
   id: constants.PANEL_TAB_NAMES.REQUEST_HISTORY,

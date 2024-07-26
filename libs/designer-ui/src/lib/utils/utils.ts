@@ -341,8 +341,8 @@ export function getStatusString(status: string, hasRetries: boolean): string {
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
-        defaultMessage: 'Timed Out',
-        id: 'MsCHhQ',
+        defaultMessage: 'Timed out',
+        id: 'BRMOfD',
         description: 'The status message to show in monitoring view.',
       });
 
@@ -391,9 +391,9 @@ export const getConnectorCategoryString = (connector: Connector | OperationApi |
 export const getConnectorAllCategories = (): Record<string, string> => {
   const intl = getIntl();
   const builtInText = intl.formatMessage({
-    defaultMessage: 'In App',
-    id: 'VA7M1u',
-    description: '"In App" category name',
+    defaultMessage: 'In-app',
+    id: 'RatwOB',
+    description: 'In-app category name text',
   });
   const azureText = intl.formatMessage({
     defaultMessage: 'Shared',

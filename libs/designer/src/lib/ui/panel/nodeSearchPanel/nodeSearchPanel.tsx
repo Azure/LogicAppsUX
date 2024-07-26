@@ -68,8 +68,8 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
 
   const goToOperationHeader = intl.formatMessage({
     description: 'Header for a search panel that searches for and allows direct navigation to a specific node',
-    defaultMessage: 'Go To Operation',
-    id: 'FBNevf',
+    defaultMessage: 'Go to operation',
+    id: 'Fx/6sv',
   });
   const searchOperation = intl.formatMessage({
     defaultMessage: 'Search for operation',

@@ -30,14 +30,14 @@ export const CodeViewTab: React.FC<PanelTabProps> = (props) => {
 export const codeViewTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.CODE_VIEW,
   title: intl.formatMessage({
-    defaultMessage: 'Code View',
-    id: 'IPbMdl',
+    defaultMessage: 'Code view',
+    id: 't0tN4J',
     description: 'The tab label for the code view tab on the operation panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Code View Tab',
-    id: 'ifnOUI',
-    description: 'An accessability label that describes the code view tab',
+    defaultMessage: 'Code view tab',
+    id: '2On4Xu',
+    description: 'An accessibility label that describes the code view tab',
   }),
   visible: true,
   content: <CodeViewTab {...props} />,

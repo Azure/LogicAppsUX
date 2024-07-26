@@ -16,14 +16,14 @@ interface AddSectionProps {
 export const AddSection = ({ readonly, handleUpdateParent, index, addEmptyRow }: AddSectionProps) => {
   const intl = useIntl();
   const addRowText = intl.formatMessage({
-    defaultMessage: 'Add Row',
-    id: 'xLF2Zr',
+    defaultMessage: 'Add row',
+    id: 'PpupBE',
     description: 'Button to add row',
   });
 
   const addGroupText = intl.formatMessage({
-    defaultMessage: 'Add Group',
-    id: 'lZT0JI',
+    defaultMessage: 'Add group',
+    id: 'ZXc10N',
     description: 'Button to add group',
   });
 

@@ -55,8 +55,8 @@ export const CollapsedAuthentication = ({
           } else {
             setErrorMessage(
               intl.formatMessage({
-                defaultMessage: 'Invalid Authentication Value',
-                id: 'OBO/HE',
+                defaultMessage: 'Invalid authentication value',
+                id: '7+ZxCU',
                 description: 'Error message for invalid Auth in authentication editor',
               })
             );

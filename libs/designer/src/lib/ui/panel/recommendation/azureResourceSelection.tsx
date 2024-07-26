@@ -296,7 +296,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add action', id: '0/VGiF', description: 'Add action button text' })}
       </Button>
     </div>
   );

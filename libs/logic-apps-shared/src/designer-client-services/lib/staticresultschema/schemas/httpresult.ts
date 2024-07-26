@@ -5,8 +5,8 @@ import { StaticResultRootSchema } from './baseactionresult';
 const intl = getIntl();
 
 const STATIC_RESULT_HTTP_STATUS_CODE_TITLE = intl.formatMessage({
-  defaultMessage: 'Status Code',
-  id: 'uDI1Um',
+  defaultMessage: 'Status code',
+  id: 'Gk79Ma',
   description: 'The title of the status code field in the static result http action',
 });
 const STATIC_RESULT_HTTP_BODY_TITLE = intl.formatMessage({

@@ -203,8 +203,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
 
   const closeButtonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Close Add Action Panel',
-    id: 'Yg/vvm',
+    defaultMessage: 'Close "add an action" panel',
+    id: 'wTDgoX',
     description: 'Aria label for the close button in the Add Action Panel',
   });
   return (

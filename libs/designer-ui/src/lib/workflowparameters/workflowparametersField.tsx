@@ -157,16 +157,16 @@ export const WorkflowparameterField = ({
           {
             key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
             text: intl.formatMessage({
-              defaultMessage: 'Secure String',
-              id: 'ZKnJnh',
+              defaultMessage: 'Secure string',
+              id: 'lK+Vzo',
               description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
             }),
           },
           {
             key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
             text: intl.formatMessage({
-              defaultMessage: 'Secure Object',
-              id: 'TUdPdI',
+              defaultMessage: 'Secure object',
+              id: 'udnt8c',
               description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
             }),
           },
@@ -204,13 +204,13 @@ export const WorkflowparameterField = ({
     description: 'Parameter Field Value Placeholder Text',
   });
   const actualValueTitle = intl.formatMessage({
-    defaultMessage: 'Actual Value',
-    id: 'lztiwS',
+    defaultMessage: 'Actual value',
+    id: 'mb1XDD',
     description: 'Parameter Field Actual Value Title',
   });
   const defaultValueTitle = intl.formatMessage({
-    defaultMessage: 'Default Value',
-    id: 'ut5Med',
+    defaultMessage: 'Default value',
+    id: 'dVFyPb',
     description: 'Parameter Field Default Value Title',
   });
   const defaultValueDescription = intl.formatMessage({

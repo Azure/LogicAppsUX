@@ -97,7 +97,7 @@ describe('ui/utils/utils', () => {
     { expectedValue: 'Skipped', hasRetries: false, status: Constants.STATUS.SKIPPED },
     { expectedValue: 'Succeeded', hasRetries: false, status: Constants.STATUS.SUCCEEDED },
     { expectedValue: 'Succeeded with retries', hasRetries: true, status: Constants.STATUS.SUCCEEDED },
-    { expectedValue: 'Timed Out', hasRetries: false, status: Constants.STATUS.TIMEDOUT },
+    { expectedValue: 'Timed out', hasRetries: false, status: Constants.STATUS.TIMEDOUT },
     { expectedValue: 'Waiting', hasRetries: false, status: Constants.STATUS.WAITING },
     { expectedValue: 'Not specified', hasRetries: false, status: Constants.STATUS.NOT_SPECIFIED },
   ]) {

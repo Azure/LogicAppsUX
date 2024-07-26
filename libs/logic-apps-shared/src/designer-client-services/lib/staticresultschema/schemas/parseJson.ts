@@ -41,8 +41,8 @@ function getAllValidationErrorType(): string[] {
 }
 
 const STATIC_RESULT_VALIDATION_ERROR_TITLE = intl.formatMessage({
-  defaultMessage: 'Validation Error',
-  id: 'U7yRwM',
+  defaultMessage: 'Validation error',
+  id: '7ZF1Hr',
   description: 'The title of the validation error field in the static result parseJson action',
 });
 
@@ -57,8 +57,8 @@ const STATIC_RESULT_ERROR_LINE_NUMBER = intl.formatMessage({
   description: 'The title of the line number field in the static result parseJson action',
 });
 const STATIC_RESULT_ERROR_LINE_POSITION = intl.formatMessage({
-  defaultMessage: 'Line Position',
-  id: '93Gj/n',
+  defaultMessage: 'Line position',
+  id: 'ROC+1+',
   description: 'The title of the line position field in the static result parseJson action',
 });
 const STATIC_RESULT_VALIDATION_ERROR_PATH = intl.formatMessage({
@@ -72,18 +72,18 @@ const STATIC_RESULT_VALIDATION_ERROR_VALUE = intl.formatMessage({
   description: 'The title of the value field in the static result parseJson action',
 });
 const STATIC_RESULT_VALIDATION_ERROR_ERROR_TYPE = intl.formatMessage({
-  defaultMessage: 'Error Type',
-  id: 'Vfce7b',
+  defaultMessage: 'Error type',
+  id: '3JEC7U',
   description: 'The title of the error type field in the static result parseJson action',
 });
 const STATIC_RESULT_VALIDATION_ERROR_SCHEMA_ID = intl.formatMessage({
-  defaultMessage: 'Schema Id',
-  id: 'o8ohVV',
+  defaultMessage: 'Schema ID',
+  id: 'K9ORYo',
   description: 'The title of the schema id field in the static result parseJson action',
 });
 const STATIC_RESULT_VALIDATION_ERROR_SCHEMA_BASE_URI = intl.formatMessage({
-  defaultMessage: 'Schema Uri',
-  id: 'PZgHf/',
+  defaultMessage: 'Schema URI',
+  id: 'cw9FiJ',
   description: 'The title of the schema base uri field in the static result parseJson action',
 });
 const STATIC_RESULT_VALIDATION_ERROR_SCHEMA = intl.formatMessage({
@@ -92,8 +92,8 @@ const STATIC_RESULT_VALIDATION_ERROR_SCHEMA = intl.formatMessage({
   description: 'The title of the schema field in the static result parseJson action',
 });
 const STATIC_RESULT_PARSE_JSON_CHILD_ERRORS = intl.formatMessage({
-  defaultMessage: 'Internal Errors',
-  id: 'nCa0KG',
+  defaultMessage: 'Internal errors',
+  id: 'E70Rdt',
   description: 'The title of the internal errors field in the static result parseJson action',
 });
 const STATIC_RESULT_HTTP_BODY_TITLE = intl.formatMessage({

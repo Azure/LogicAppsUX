@@ -65,8 +65,8 @@ export const ExpressionsEditor = ({
     description: 'label to add a condition',
   });
   const expressionEditorLabel = intl.formatMessage({
-    defaultMessage: 'Expression Editor',
-    id: 'zEv8dd',
+    defaultMessage: 'Expression editor',
+    id: '8zcsPi',
     description: 'label for expression editor',
   });
 

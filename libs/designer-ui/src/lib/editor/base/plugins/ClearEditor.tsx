@@ -16,8 +16,8 @@ export default function ClearEditor({ showButton }: ClearEditorProps): JSX.Eleme
   });
 
   const buttonLabel = intl.formatMessage({
-    defaultMessage: 'Clear Editor',
-    id: 'YEHutH',
+    defaultMessage: 'Clear editor',
+    id: 'aGxYMY',
     description: 'Label to clear editor',
   });
 

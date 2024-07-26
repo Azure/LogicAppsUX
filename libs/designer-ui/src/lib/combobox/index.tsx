@@ -334,8 +334,8 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   });
 
   const noOptionsExists = intl.formatMessage({
-    defaultMessage: 'No Items',
-    id: 'AiceEQ',
+    defaultMessage: 'No items',
+    id: 'tbl/ar',
     description: 'Label for when no items exist for combobox options',
   });
 

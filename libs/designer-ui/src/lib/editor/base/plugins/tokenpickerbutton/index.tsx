@@ -119,8 +119,8 @@ export const TokenPickerButton = ({
   });
 
   const expressionButtonText = intl.formatMessage({
-    defaultMessage: 'Insert Expression (You can also add by typing / in the editor)',
-    id: 'loxzZD',
+    defaultMessage: `Insert expression (you can also add by typing '/' in the editor)`,
+    id: '9V2Uwf',
     description: 'Label for button to open expression token picker',
   });
 

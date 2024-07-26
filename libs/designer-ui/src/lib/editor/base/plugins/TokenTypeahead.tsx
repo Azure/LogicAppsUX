@@ -102,13 +102,13 @@ export const TokenTypeAheadPlugin = ({ isEditorFocused, hideTokenPickerOptions, 
 
   const intl = useIntl();
   const expressionButtonText = intl.formatMessage({
-    defaultMessage: 'Insert Expression',
-    id: 'Hbqlzk',
+    defaultMessage: 'Insert expression',
+    id: 'F2wR+r',
     description: 'Label for button to open expression token picker',
   });
   const dynamicDataButtonText = intl.formatMessage({
-    defaultMessage: 'Insert Dynamic Content',
-    id: 'pMms92',
+    defaultMessage: 'Insert dynamic content',
+    id: 'hz9HJ2',
     description: 'Label for button to open dynamic content picker',
   });
   const options: TokenOption[] = [];

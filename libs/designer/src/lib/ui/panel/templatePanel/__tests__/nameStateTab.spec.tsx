@@ -56,9 +56,9 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
 
   it('Shows Name and State Tab values displayed', async () => {
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
-    expect(screen.getAllByText('Workflow Name')).toBeDefined();
+    expect(screen.getAllByText('Workflow name')).toBeDefined();
     expect(screen.getAllByDisplayValue(store.getState().template.workflowName ?? 'n/a')).toBeDefined;
-    expect(screen.getAllByText('State Type')).toBeDefined();
+    expect(screen.getAllByText('State type')).toBeDefined();
     expect(screen.getAllByText('Stateful')).toBeDefined();
     expect(screen.getAllByText('Optimized for high reliability')).toBeDefined();
     expect(screen.getAllByText('Ideal for process business transitional data')).toBeDefined();

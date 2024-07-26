@@ -76,8 +76,8 @@ export const PanelHeaderTitle = ({
 
   const readOnly = readOnlyMode || renameTitleDisabled;
   const panelHeaderCardTitle = intl.formatMessage({
-    defaultMessage: 'Card Title',
-    id: 'rCl53e',
+    defaultMessage: 'Card title',
+    id: 's5AOpV',
     description: 'Label for the title for panel header card',
   });
 

@@ -391,8 +391,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   });
 
   const createButtonText = intl.formatMessage({
-    defaultMessage: 'Create New',
-    id: 'jMLmag',
+    defaultMessage: 'Create new',
+    id: 'JKfEGS',
     description: 'Button to add a new connection',
   });
 
@@ -465,8 +465,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   });
 
   const legacyManagedIdentityLabelText = intl.formatMessage({
-    defaultMessage: 'Managed Identity',
-    id: 'l72gf4',
+    defaultMessage: 'Managed identity',
+    id: 'uIgGKj',
     description: 'Dropdown text for legacy managed identity connection',
   });
 

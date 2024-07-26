@@ -27,8 +27,8 @@ export const connectionsTab = (
   description: intl.formatMessage({
     defaultMessage:
       'Configure connections to authenticate the following services and link your workflows with various services and applications, enabling seamless data integration and automation. Connections are required.',
-    id: '2zqm3d',
-    description: 'An accessability label that describes the objective of connections tab',
+    id: 'eHYwI0',
+    description: 'An accessibility label that describes the objective of connections tab',
   }),
   hasError: hasError,
   order: 0,

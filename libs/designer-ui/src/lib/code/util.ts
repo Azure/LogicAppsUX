@@ -26,8 +26,8 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
     throw new UnsupportedException(
       intl.formatMessage(
         {
-          defaultMessage: 'Unsupported Token Type: {var}',
-          id: 'XLUs2P',
+          defaultMessage: 'Unsupported token type: {var}',
+          id: 'wKJdDk',
           description: 'Exception for unsupported token types',
         },
         { var: 'Variables' }
@@ -39,8 +39,8 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
     throw new UnsupportedException(
       intl.formatMessage(
         {
-          defaultMessage: 'Unsupported Token Type: {controls}',
-          id: 'b9P8SA',
+          defaultMessage: 'Unsupported token type: {controls}',
+          id: 'RxbkcI',
           description: 'Exception for unsupported token types',
         },
         { controls: 'Controls' }
@@ -52,8 +52,8 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
     throw new UnsupportedException(
       intl.formatMessage(
         {
-          defaultMessage: 'Unsupported Token Type: {expressions}',
-          id: '8baaNC',
+          defaultMessage: 'Unsupported token type: {expressions}',
+          id: 'wYzIf2',
           description: 'Exception for unsupported token types',
         },
         { expressions: 'Expressions' }

@@ -80,7 +80,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
           >
             <input
               aria-invalid={false}
-              aria-label="Card Title"
+              aria-label="Card title"
               className="ms-TextField-field field-112"
               id="nodeId-title"
               maxLength={80}
@@ -235,7 +235,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
           >
             <input
               aria-invalid={false}
-              aria-label="Card Title"
+              aria-label="Card title"
               className="ms-TextField-field field-112"
               id="nodeId-title"
               maxLength={80}
