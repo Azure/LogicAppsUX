@@ -18,13 +18,13 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
-export type TitleChangeHandler = (newValue: string) => { valid: boolean; oldValue?: string };
+export type TitleChangeHandler = (originalValue: string, newValue: string) => { valid: boolean; oldValue?: string };
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   titleValue?: string;
   titleId?: string;
-  onChange: TitleChangeHandler;
+  onChange: (newId: string) => ReturnType<TitleChangeHandler>;
   onBlur?: (prevTitle: string) => void;
 }
 
