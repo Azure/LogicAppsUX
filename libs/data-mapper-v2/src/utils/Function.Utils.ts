@@ -9,15 +9,21 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
+import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../mapHandling/MapMetadataSerializer';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
-import type { FunctionData } from '../models/Function';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { isConnectionUnit, isCustomValue } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
-//import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import {
+  isAGuid,
+  InputFormat,
+  type SchemaNodeDictionary,
+  type SchemaNodeExtended,
+  type FunctionMetadata,
+} from '@microsoft/logic-apps-shared';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
@@ -140,32 +146,39 @@ export const isIfAndGuid = (key: string) => {
 //     Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
 //   );
 
-// export const getFunctionLocationsForAllFunctions = (
-//   dataMapConnections: ConnectionDictionary,
-//   _flattenedTargetSchema: SchemaNodeDictionary
-// ): FunctionDictionary => {
-//   const functionNodes: FunctionDictionary = {};
-//   for (const connectionKey in dataMapConnections) {
-//     const func = dataMapConnections[connectionKey].self.node as FunctionData;
-//     if (func.functionName !== undefined) {
-//       const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+export const createFunctionDictionary = (
+  dataMapConnections: ConnectionDictionary,
+  _flattenedTargetSchema: SchemaNodeDictionary
+): FunctionDictionary => {
+  const functionNodes: FunctionDictionary = {};
+  for (const connectionKey in dataMapConnections) {
+    const func = dataMapConnections[connectionKey].self.node as FunctionData;
+    if (func !== undefined) {
+      // danielle to remove when deserialization is fixed
+      if (func.functionName !== undefined) {
+        functionNodes[connectionKey] = func;
+      }
+    }
+  }
+  return functionNodes;
+};
 
-//       const parentNodes: SchemaNodeExtended[] = [];
-//       targetNodesConnectedToFunction.forEach((childNode) => {
-//         if (childNode.parentKey) {
-//           //parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
-//         }
-//       });
+export const assignFunctionNodePositionsFromMetadata = (
+  connections: ConnectionDictionary,
+  metadata: FunctionMetadata[],
+  functions: FunctionDictionary
+) => {
+  Object.keys(functions).forEach((key) => {
+    // find matching metadata
+    const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
+    const id = convertConnectionShorthandToId(generatedMetadata);
+    const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
 
-//       const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
-//       functionNodes[connectionKey] = {
-//         functionData: func,
-//         functionLocations: combinedTargetNodes,
-//       };
-//     }
-//   }
-//   return functionNodes;
-// };
+    // assign position data to function in store
+    functions[key] = { ...functions[key], position: matchingMetadata?.position };
+  });
+  return functions;
+};
 
 export const getConnectedSourceSchema = (
   dataMapConnections: ConnectionDictionary,
