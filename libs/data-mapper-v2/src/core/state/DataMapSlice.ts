@@ -11,14 +11,9 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
+import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
-import {
-  flattenSchemaIntoDictionary,
-  flattenSchemaIntoSortArray,
-  flattenSchemaNodeMap,
-  isSchemaNodeExtended,
-} from '../../utils/Schema.Utils';
+import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
   MapMetadataV2,
@@ -33,7 +28,6 @@ import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } fr
 import type { Node, Edge, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
-
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
@@ -59,7 +53,6 @@ export interface DataMapOperationState {
   lastAction: string;
   loadedMapMetadata?: MapMetadataV2;
   nodes: Node[];
-  edges: Edge[];
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -76,7 +69,6 @@ const emptyPristineState: DataMapOperationState = {
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
   nodes: [],
-  edges: [],
 };
 
 const initialState: DataMapState = {
@@ -141,9 +133,6 @@ export const dataMapSlice = createSlice({
 
       if (action.payload.schemaType === SchemaType.Source) {
         const sourceSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const sourceCurrentFlattenedSchemaMap = currentState.sourceSchema
-          ? flattenSchemaNodeMap(currentState.sourceSchema.schemaTreeRoot)
-          : {};
 
         currentState.sourceSchema = action.payload.schema;
         currentState.flattenedSourceSchema = flattenedSchema;
@@ -151,28 +140,15 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
         state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
-
-        // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.nodes = currentState.nodes.filter((node) => !sourceCurrentFlattenedSchemaMap[node.data.id as string]);
       } else {
         const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const targetCurrentFlattenedSchemaMap = currentState.targetSchema
-          ? flattenSchemaNodeMap(currentState.targetSchema.schemaTreeRoot)
-          : {};
-
         currentState.targetSchema = action.payload.schema;
         currentState.flattenedTargetSchema = flattenedSchema;
         currentState.targetSchemaOrdering = targetSchemaSortArray;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
-
-        // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.nodes = currentState.nodes.filter((node) => !targetCurrentFlattenedSchemaMap[node.data.id as string]);
       }
-
-      // NOTE: Reset ReactFlow edges
-      currentState.edges = [];
 
       state.curDataMapOperation = { ...currentState };
     },
@@ -185,8 +161,20 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
-      //let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
-      //functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+      assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
+
+      const addedNodes = Object.entries(functionNodes).map((funcTuple) => {
+        const func = funcTuple[1];
+        const id = funcTuple[0];
+        const node: Node = {
+          id: id,
+          type: 'function',
+          position: func.position || { x: 100, y: 100 }, // find layout if none found
+          data: { id, func },
+        };
+        return node;
+      });
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -195,10 +183,11 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes: {},
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
+        nodes: [...state.curDataMapOperation.nodes, ...addedNodes],
       };
 
       state.curDataMapOperation = newState;
