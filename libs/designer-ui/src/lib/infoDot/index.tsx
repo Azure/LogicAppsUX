@@ -14,7 +14,7 @@ export const InfoDot = (props: any) => {
 
   return (
     <Tooltip relationship="description" content={tooltipContent}>
-      <img className="msla-info-dot" alt={description} src={InformationImage} style={style} tabIndex={0} />
+      <img className="msla-info-dot" alt={`${title} ${description}`} src={InformationImage} style={style} tabIndex={0} />
     </Tooltip>
   );
 };

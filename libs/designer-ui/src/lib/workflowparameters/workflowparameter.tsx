@@ -75,6 +75,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
             className="msla-workflow-parameter-heading-button"
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+            aria-expanded={expanded}
           >
             {name ? name : headingTitle}
           </Button>

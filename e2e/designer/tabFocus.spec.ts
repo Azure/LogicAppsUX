@@ -11,7 +11,6 @@ test.describe(
       const tab = async () => page.locator('*:focus').press('Tab');
 
       await page.goto('/');
-      await page.getByText('Local', { exact: true }).click();
       await GoToMockWorkflow(page, 'All Scope Nodes');
 
       // Find element with text 'Recurrence'

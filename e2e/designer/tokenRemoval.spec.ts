@@ -32,7 +32,7 @@ test.describe(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
       expect(serializedOld.definition.actions.HTTP.inputs.body).toEqual("@variables('ArrayVariable')");
-      await page.getByLabel('Initialize variable operation').click({
+      await page.getByLabel('Initialize ArrayVariable operation').click({
         button: 'right',
       });
       await page.getByText('Delete', { exact: true }).click();
@@ -112,7 +112,7 @@ test.describe(
         .filter({ hasText: /^Parameters$/ })
         .getByRole('button')
         .click();
-      await page.getByLabel('Initialize variable operation').click({
+      await page.getByLabel('Initialize ArrayVariable operation').click({
         button: 'right',
       });
       await page.getByText('Delete', { exact: true }).click();

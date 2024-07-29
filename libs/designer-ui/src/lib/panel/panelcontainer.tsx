@@ -132,9 +132,9 @@ export const PanelContainer = ({
   );
 
   const panelLabel = intl.formatMessage({
-    defaultMessage: 'panel',
-    id: 'c6XbVI',
-    description: 'label for panel component',
+    defaultMessage: 'Operation details panel',
+    id: 'nV2Spt',
+    description: 'label for operation details panel component',
   });
 
   const panelErrorMessage = intl.formatMessage({

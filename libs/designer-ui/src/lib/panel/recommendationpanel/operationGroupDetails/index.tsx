@@ -47,7 +47,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         docsUrl={externalDocs?.url}
       />
       {isHybrid ? <HybridNotice /> : null}
-      <ul className="msla-op-group-item-container">
+      <ul className="msla-op-group-item-container" aria-description={`Operation list for ${displayName} Connector`}>
         {!isLoading && operationActionsData.length === 0 ? (
           <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>
         ) : null}

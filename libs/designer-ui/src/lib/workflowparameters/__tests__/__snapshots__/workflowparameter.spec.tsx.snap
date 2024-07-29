@@ -8,6 +8,7 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
     <div>
       <Button
         appearance="subtle"
+        aria-expanded={false}
         className="msla-workflow-parameter-heading-button"
         data-testid="-parameter-heading-button"
         icon={<CompoundIcon />}

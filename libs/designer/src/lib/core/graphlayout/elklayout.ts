@@ -76,7 +76,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
     if (node.edges) {
       // Put edge objects into a record by sourceId
       for (const edge of node.edges as ElkExtendedEdge[]) {
-        const tempEdge = {
+        const tempEdge: Edge = {
           id: edge.id,
           target: edge.targets[0],
           source: edge.sources[0],

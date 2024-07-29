@@ -46,13 +46,16 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
     onClick(operationActionData.id, apiId);
   };
 
+  const buttonId = `msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`;
+
   return (
     <button
+      id={buttonId}
       className="msla-op-search-card-container"
       onClick={() => onCardClick()}
       style={style}
       data-automation-id={`msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`}
-      aria-label={`${title} ${description}`}
+      aria-label={title}
     >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
@@ -81,7 +84,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
         </>
       )}
 
-      <InfoDot description={description} innerAriaHidden="true" />
+      <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" />
     </button>
   );
 };

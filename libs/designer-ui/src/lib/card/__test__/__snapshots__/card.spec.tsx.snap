@@ -80,6 +80,87 @@ exports[`lib/card > should render 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as cloned 1`] = `
 <div
   style={
@@ -112,6 +193,87 @@ exports[`lib/card > should render as cloned 1`] = `
     >
       <div
         aria-label=" operation"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render as cloned 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container msla-card-ghost-image"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
         className="panel-card-header"
         role="button"
       >
@@ -253,6 +415,100 @@ exports[`lib/card > should render as draggable 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render as draggable 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section draggable"
+          >
+            <svg
+              fill="none"
+              height="12"
+              viewBox="0 0 2 10"
+              width="4"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0 2V0H2V2H0ZM0 6V4H2V6H0ZM0 10V8H2V10H0Z"
+                fill="#605E5C"
+              />
+            </svg>
+          </div>
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as inactive 1`] = `
 <div
   style={
@@ -285,6 +541,87 @@ exports[`lib/card > should render as inactive 1`] = `
     >
       <div
         aria-label=" operation"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render as inactive 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container inactive"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
         className="panel-card-header"
         role="button"
       >
@@ -413,6 +750,87 @@ exports[`lib/card > should render as pinned 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render as pinned 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box pinned"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render as selected 1`] = `
 <div
   style={
@@ -445,6 +863,87 @@ exports[`lib/card > should render as selected 1`] = `
     >
       <div
         aria-label=" operation"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <div
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
+            >
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
+            </div>
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render as selected 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container msla-panel-card-container-selected"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box selected"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
         className="panel-card-header"
         role="button"
       >
@@ -566,6 +1065,80 @@ exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render with an icon and a connector name (0) 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation, SharePoint connector"
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 <div
   style={
@@ -639,6 +1212,80 @@ exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
 </div>
 `;
 
+exports[`lib/card > should render with an icon and an operation name (1) 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation"
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`lib/card > should render with an icon and an operation name and connector name (2) 1`] = `
 <div
   style={
@@ -671,6 +1318,80 @@ exports[`lib/card > should render with an icon and an operation name and connect
     >
       <div
         aria-label="Get an item operation, SharePoint connector"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render with an icon and an operation name and connector name (2) 2`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    aria-label="title operation, SharePoint connector"
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    id="msla-node-id"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    role="button"
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
         className="panel-card-header"
         role="button"
       >

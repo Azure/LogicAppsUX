@@ -137,11 +137,17 @@ export function WorkflowParameters({
   });
   const onClose = () => onDismiss?.();
 
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    id: 'O8Qy7k',
+    description: 'Aria label for the close button on the workflow parameters panel',
+  });
+
   return (
     <div className="msla-workflow-parameters">
       <div className="msla-workflow-parameters-heading">
         <XLargeText text={titleText} />
-        <Button appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
 
       {useLegacy ? null : <InfoBar />}

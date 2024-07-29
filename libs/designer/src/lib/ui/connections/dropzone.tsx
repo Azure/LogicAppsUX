@@ -323,9 +323,10 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
               withArrow
               mouseLeaveDelay={500}
               onOpenChange={(e, { open }) => setShowCallout(open)}
+              aria-describedby={buttonId}
             >
-              <PopoverTrigger disableButtonEnhancement>
-                <div tabIndex={-1}>
+              <PopoverTrigger aria-describedby={buttonId}>
+                <div tabIndex={-1} role={undefined}>
                   {' '}
                   {/* Do not remove, this keeps tooltip position working */}
                   <ActionButtonV2
