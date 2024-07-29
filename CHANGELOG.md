@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.4](https://github.com/Azure/LogicAppsUX/compare/v4.44.3...v4.44.4) (2024-07-29)
+
+
+### Features
+
+* **hotfix:** hotfix a commit into v4.44 ([#5222](https://github.com/Azure/LogicAppsUX/issues/5222)) ([ba87d8a](https://github.com/Azure/LogicAppsUX/commit/ba87d8aa373165b3da268310e3cb772f0826ee38)), closes [#5207](https://github.com/Azure/LogicAppsUX/issues/5207)
+
 ### [4.44.3](https://github.com/Azure/LogicAppsUX/compare/v4.44.2...v4.44.3) (2024-07-29)
 
 
