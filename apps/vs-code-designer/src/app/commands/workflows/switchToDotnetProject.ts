@@ -24,6 +24,7 @@ import {
   writeBuildFileToDisk,
   addFileToBuildPath,
   addLibToPublishPath,
+  allowLocalSettingsToPublishDirectory,
 } from '../../utils/codeless/updateBuildFile';
 import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
@@ -181,6 +182,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
+  xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
   xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);
 
   for (const workflowName of projectArtifacts['workflows']) {

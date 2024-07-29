@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion } from '../../../constants';
+import { DotnetVersion, localSettingsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles } from '../dotnet/dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -119,6 +119,32 @@ export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dot
       item['PackageReference']['$']['Version'] = packageVersion;
       break;
     }
+  }
+
+  return xmlBuildFile;
+}
+
+/**
+ * Allows local settings to be published to the directory by modifying the XML build file.
+ * @param context - The action context.
+ * @param xmlBuildFile - The XML build file to update.
+ * @returns The updated XML build file.
+ */
+export function allowLocalSettingsToPublishDirectory(context: IActionContext, xmlBuildFile: Record<string, any>): Record<string, any> {
+  try {
+    for (const itemGroup of xmlBuildFile['Project']['ItemGroup']) {
+      if ('None' in itemGroup) {
+        for (const item of itemGroup['None']) {
+          if (item?.['$']?.['Update'] === localSettingsFileName) {
+            delete item.CopyToPublishDirectory;
+          }
+        }
+      }
+    }
+    context.telemetry.properties.allowSettingsToPublish = 'true';
+  } catch (error) {
+    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.allowSettingsToPublish = 'false';
   }
 
   return xmlBuildFile;
