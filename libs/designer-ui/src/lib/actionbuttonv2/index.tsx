@@ -5,7 +5,6 @@ import { Tooltip } from '@fluentui/react-components';
 export interface ActionButtonV2Props {
   id?: string;
   dataAutomationId?: string;
-  buttonRef?: React.RefObject<HTMLButtonElement>;
   className?: string;
   disabled?: boolean;
   title: string;
@@ -17,21 +16,19 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
   tabIndex,
   id,
   dataAutomationId,
-  buttonRef,
   className,
   disabled = false,
   title,
   onClick,
 }) => {
   return (
-    <Tooltip withArrow positioning={'before'} content={title} relationship="label">
+    <Tooltip withArrow positioning={'before'} content={title} relationship="label" aria-expanded={undefined}>
       <button
         id={id}
         data-automation-id={dataAutomationId}
         aria-label={title}
         className={css('msla-action-button-v2', className)}
         disabled={disabled}
-        ref={buttonRef}
         onClick={onClick}
         onContextMenu={onClick}
         tabIndex={tabIndex ?? 0}

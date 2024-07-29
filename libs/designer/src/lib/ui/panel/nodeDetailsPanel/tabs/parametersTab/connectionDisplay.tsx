@@ -5,7 +5,7 @@ import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/s
 import { Badge, Button, InfoLabel, Spinner } from '@fluentui/react-components';
 import { ErrorCircle16Filled, LinkMultiple16Regular } from '@fluentui/react-icons';
 import { Label } from '@microsoft/designer-ui';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -75,6 +75,17 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     description: 'Text to show when the connection is loading',
   });
 
+  const connectionErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid connection',
+    id: 'l/3yJr',
+    description: 'Text to show when there is an error with the connection',
+  });
+
+  const connectionLabel = useMemo(
+    () => (connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName),
+    [connectionName, connectionDisplayTextWithName, connectionDisplayTextWithoutName]
+  );
+
   if (isLoading) {
     return (
       <div className="connection-display">
@@ -82,12 +93,6 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
       </div>
     );
   }
-
-  const connectionErrorText = intl.formatMessage({
-    defaultMessage: 'Invalid connection',
-    id: 'l/3yJr',
-    description: 'Text to show when there is an error with the connection',
-  });
 
   const labelText = connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName;
 
@@ -112,6 +117,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
             appearance="subtle"
             onClick={openChangeConnectionCallback}
             style={{ color: 'var(--colorBrandForeground1)' }}
+            aria-label={`${connectionLabel}, ${openChangeConnectionText}`}
           >
             {openChangeConnectionText}
           </Button>

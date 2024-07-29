@@ -30,7 +30,6 @@ import {
   useNodeConnectionName,
   useOperationInfo,
   useOperationQuery,
-  useOperationSummary,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -81,7 +80,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const connectorName = useConnectorName(operationInfo);
-  const operationSummary = useOperationSummary(operationInfo);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
@@ -377,7 +375,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             onClick={nodeClick}
             onDeleteClick={deleteClick}
             onCopyClick={copyClick}
-            operationName={operationSummary?.result}
             selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
             contextMenuItems={contextMenuItems}
             setFocus={shouldFocus}
