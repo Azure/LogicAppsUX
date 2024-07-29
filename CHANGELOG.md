@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [4.49.0](https://github.com/Azure/LogicAppsUX/compare/v4.48.0...v4.49.0) (2024-07-29)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix UI issues with pinned node when using left-side panel ([#5213](https://github.com/Azure/LogicAppsUX/issues/5213)) ([90f0538](https://github.com/Azure/LogicAppsUX/commit/90f05386e4f6460abe3d3f3b2b0ede5af0c42e0f))
+* **designer:** Add mixed input editor ([#5190](https://github.com/Azure/LogicAppsUX/issues/5190)) ([3a1ab79](https://github.com/Azure/LogicAppsUX/commit/3a1ab794548f0f4fd2600f0881b3f375e06aa581))
+* **vscode:** Remove never from copy settings from publish directory in dotnet projects ([#5212](https://github.com/Azure/LogicAppsUX/issues/5212)) ([fac4c6b](https://github.com/Azure/LogicAppsUX/commit/fac4c6b5caedc097bacb2bf42ef0428246f1c72b))
+
 ## [4.48.0](https://github.com/Azure/LogicAppsUX/compare/v4.47.1...v4.48.0) (2024-07-26)
 
 
