@@ -135,7 +135,7 @@ export function allowLocalSettingsToPublishDirectory(context: IActionContext, xm
     for (const itemGroup of xmlBuildFile['Project']['ItemGroup']) {
       if ('None' in itemGroup) {
         for (const item of itemGroup['None']) {
-          if (item['$']['Update'] === localSettingsFileName) {
+          if (item?.['$']?.['Update'] === localSettingsFileName) {
             delete item.CopyToPublishDirectory;
           }
         }
