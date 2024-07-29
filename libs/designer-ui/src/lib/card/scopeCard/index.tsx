@@ -101,6 +101,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
               id={`msla-node-${id}`}
+              name={title}
               className="msla-scope-card-title-button"
               ref={focusRef as any}
               onClick={handleClick}
