@@ -164,13 +164,13 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     description: 'A label to represent setting section being collapsed',
   });
   const expandAriaLabel = intl.formatMessage({
-    defaultMessage: 'Click to Collapse',
-    id: 'hJbr09',
+    defaultMessage: 'Click to collapse',
+    id: 'elWEjT',
     description: 'An accessible label for button to collapse setting section',
   });
   const collapseAriaLabel = intl.formatMessage({
-    defaultMessage: 'Click to Expand',
-    id: 'qdUeUk',
+    defaultMessage: 'Click to expand',
+    id: 'G+6Juu',
     description: 'An accessible label for button to expand setting section',
   });
   const internalSettings = (

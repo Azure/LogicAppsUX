@@ -66,7 +66,7 @@ const edgeTypes = {
   HIDDEN_EDGE: HiddenEdge,
 } as EdgeTypes;
 export interface CanvasFinderProps {
-  panelLocation?: PanelLocation;
+  panelLocation: PanelLocation;
 }
 export const CanvasFinder = (props: CanvasFinderProps) => {
   const { panelLocation } = props;
@@ -102,7 +102,7 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
     // If the panel is open, reduce X space
     if (!isPanelCollapsed) {
       // Move center to the right if Panel is located to the left; otherwise move center to the left.
-      const directionMultiplier = panelLocation && panelLocation === PanelLocation.Left ? -1 : 1;
+      const directionMultiplier = panelLocation === PanelLocation.Left ? -1 : 1;
       xRawPos += (directionMultiplier * 630) / 2;
     }
 
@@ -136,7 +136,7 @@ export const SearchPreloader = () => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps, panelLocation, customPanelLocations } = props;
+  const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();

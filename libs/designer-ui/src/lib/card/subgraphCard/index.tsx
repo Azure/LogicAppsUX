@@ -52,8 +52,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   const contextMenu = useCardContextMenu();
 
   const addCaseLabel = intl.formatMessage({
-    defaultMessage: 'Add Case',
-    id: 'sQ2vRs',
+    defaultMessage: 'Add case',
+    id: 'TcU2Gf',
     description: 'add a case to switch statement',
   });
 

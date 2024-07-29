@@ -14,8 +14,6 @@ import type { CommonPanelProps } from './panelUtil';
 import { PanelLocation, PanelScope, PanelSize } from './panelUtil';
 import type { PanelNodeData } from './types';
 
-const horizontalPadding = '2rem';
-
 export type PanelContainerProps = {
   noNodeSelected: boolean;
   panelScope: PanelScope;
@@ -105,7 +103,6 @@ export const PanelContainer = ({
           canResubmit={canResubmit}
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
-          horizontalPadding={horizontalPadding}
           commentChange={() => onCommentChange(nodeId)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
@@ -193,7 +190,7 @@ export const PanelContainer = ({
         <Button
           appearance="subtle"
           aria-label={panelCollapseTitle}
-          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed')}
+          className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
         />
@@ -203,6 +200,7 @@ export const PanelContainer = ({
           <div
             className={mergeClasses(
               'msla-panel-container-nested',
+              `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
               !isEmptyPane && pinnedNodeIfDifferent && 'msla-panel-container-nested-dual'
             )}
           >

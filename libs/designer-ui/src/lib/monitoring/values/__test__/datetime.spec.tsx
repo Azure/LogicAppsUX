@@ -37,7 +37,7 @@ describe('ui/monitoring/values/datetime', () => {
     expect(value.props.displayName).toBe(props.displayName);
 
     const intl = getTestIntl();
-    const expected = intl.formatDate(props.value, options) + ' (Local Time)';
+    const expected = intl.formatDate(props.value, options) + ' (Local time)';
     expect(value.props.value).toBe(expected);
   });
 });

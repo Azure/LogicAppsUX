@@ -9,8 +9,8 @@ export const TokenPickerNoMatches = (): JSX.Element => {
     description: 'Text for when no tokens match search query',
   });
   const searchTipsHeader = intl.formatMessage({
-    defaultMessage: 'Search Tips',
-    id: 'YfwZJO',
+    defaultMessage: 'Search tips',
+    id: '9OzDnJ',
     description: 'Search tip header label',
   });
   const searchTip1 = intl.formatMessage({
