@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.3](https://github.com/Azure/LogicAppsUX/compare/v4.44.2...v4.44.3) (2024-07-29)
+
+
+### Bug Fixes
+
+* **vscode:** Remove never from copy settings from publish directory in dotnet projects  ([#5216](https://github.com/Azure/LogicAppsUX/issues/5216)) ([49a361d](https://github.com/Azure/LogicAppsUX/commit/49a361deeebcc222d2c654a70991cd9c91f67dd7)), closes [#5212](https://github.com/Azure/LogicAppsUX/issues/5212)
+
 ### [4.44.2](https://github.com/Azure/LogicAppsUX/compare/v4.44.1...v4.44.2) (2024-07-25)
 
 
