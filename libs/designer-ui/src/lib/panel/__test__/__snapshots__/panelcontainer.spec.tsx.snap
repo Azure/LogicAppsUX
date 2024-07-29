@@ -28,6 +28,34 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
 </OverlayDrawer>
 `;
 
+exports[`ui/workflowparameters/workflowparameter > should construct 2`] = `
+<OverlayDrawer
+  aria-label="Operation details panel"
+  className="msla-panel-container"
+  modalType="non-modal"
+  mountNode={
+    {
+      "className": "msla-panel-host-container",
+    }
+  }
+  open={true}
+  position="end"
+  style={
+    {
+      "width": "630px",
+    }
+  }
+>
+  <React.Fragment>
+    <div
+      className="msla-panel-container-nested msla-panel-container-nested-right"
+    >
+      <React.Fragment />
+    </div>
+  </React.Fragment>
+</OverlayDrawer>
+`;
+
 exports[`ui/workflowparameters/workflowparameter > should construct. 2`] = `
 <StyledPanelBase
   className="msla-panel-container"
