@@ -11,6 +11,7 @@ export interface OverviewPropertiesProps {
   operationOptions?: string;
   statelessRunMode?: string;
   stateType: string;
+  triggerName?: string;
 }
 
 export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
