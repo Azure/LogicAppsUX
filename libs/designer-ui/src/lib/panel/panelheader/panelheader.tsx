@@ -34,7 +34,6 @@ export interface PanelHeaderProps {
   suppressDefaultNodeSelectFunctionality?: boolean;
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
-  horizontalPadding: string;
   canResubmit?: boolean;
   resubmitOperation?: () => void;
   onUnpinAction?: () => void;
@@ -134,7 +133,6 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     suppressDefaultNodeSelectFunctionality,
     readOnlyMode,
     renameTitleDisabled,
-    horizontalPadding,
     canResubmit,
     resubmitOperation,
     onUnpinAction,
@@ -189,7 +187,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
       {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} />}
       {!noNodeOnCardLevel && !isCollapsed ? (
         <>
-          <div className={'msla-panel-card-header'} style={isRight ? {} : { paddingLeft: horizontalPadding }}>
+          <div className={'msla-panel-card-header'}>
             {iconComponent}
             <div className={'msla-panel-card-title-container'}>
               <PanelHeaderTitle

@@ -20,7 +20,7 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
 >
   <React.Fragment>
     <div
-      className="msla-panel-container-nested"
+      className="msla-panel-container-nested msla-panel-container-nested-right"
     >
       <React.Fragment />
     </div>
