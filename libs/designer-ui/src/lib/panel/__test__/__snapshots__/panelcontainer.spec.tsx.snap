@@ -1,8 +1,63 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
-<StyledPanelBase
+exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
+<OverlayDrawer
   aria-label="panel"
+  className="msla-panel-container"
+  modalType="non-modal"
+  mountNode={
+    {
+      "className": "msla-panel-host-container",
+    }
+  }
+  open={true}
+  position="end"
+  style={
+    {
+      "width": "630px",
+    }
+  }
+>
+  <React.Fragment>
+    <div
+      className="msla-panel-container-nested msla-panel-container-nested-right"
+    >
+      <React.Fragment />
+    </div>
+  </React.Fragment>
+</OverlayDrawer>
+`;
+
+exports[`ui/workflowparameters/workflowparameter > should construct 2`] = `
+<OverlayDrawer
+  aria-label="Operation details panel"
+  className="msla-panel-container"
+  modalType="non-modal"
+  mountNode={
+    {
+      "className": "msla-panel-host-container",
+    }
+  }
+  open={true}
+  position="end"
+  style={
+    {
+      "width": "630px",
+    }
+  }
+>
+  <React.Fragment>
+    <div
+      className="msla-panel-container-nested msla-panel-container-nested-right"
+    >
+      <React.Fragment />
+    </div>
+  </React.Fragment>
+</OverlayDrawer>
+`;
+
+exports[`ui/workflowparameters/workflowparameter > should construct. 2`] = `
+<StyledPanelBase
   className="msla-panel-container"
   customWidth="630px"
   focusTrapZoneProps={
@@ -14,10 +69,14 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
   }
   hasCloseButton={false}
   headerClassName="msla-panel-header"
-  headerText="test title"
   isBlocking={false}
   isOpen={true}
   onRenderHeader={[Function]}
+  popupProps={
+    {
+      "ariaLabel": "Operation details panel",
+    }
+  }
   styles={
     {
       "content": {

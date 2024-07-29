@@ -24,7 +24,6 @@ export interface CardProps {
   connectionRequired?: boolean;
   connectorName?: string;
   contextMenuItems?: JSX.Element[];
-  describedBy?: string;
   drag: ConnectDragSource;
   draggable: boolean;
   dragPreview: ConnectDragPreview;
@@ -36,7 +35,6 @@ export interface CardProps {
   isMonitoringView?: boolean;
   isLoading?: boolean;
   nodeIndex?: number;
-  operationName?: string;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   selectionMode?: 'selected' | 'pinned' | false;
@@ -71,7 +69,6 @@ export const Card: React.FC<CardProps> = ({
   connectionRequired,
   connectorName,
   contextMenuItems = [],
-  describedBy,
   drag,
   draggable,
   dragPreview,
@@ -86,7 +83,6 @@ export const Card: React.FC<CardProps> = ({
   onClick,
   onDeleteClick,
   onCopyClick,
-  operationName,
   selectionMode,
   staticResultsEnabled,
   title,
@@ -113,7 +109,7 @@ export const Card: React.FC<CardProps> = ({
   const cardAltTexts = useMemo(() => {
     const cardAltTextArgs = {
       connectorName,
-      operationName,
+      operationName: title,
     };
 
     return {
@@ -142,10 +138,10 @@ export const Card: React.FC<CardProps> = ({
         cardAltTextArgs
       ),
     };
-  }, [connectorName, intl, operationName]);
+  }, [connectorName, intl, title]);
 
   const cardAltText = connectorName
-    ? operationName
+    ? title
       ? cardAltTexts.withConnectorAndOperation
       : cardAltTexts.withConnectorOnly
     : cardAltTexts.withOperationOnly;
@@ -173,8 +169,9 @@ export const Card: React.FC<CardProps> = ({
           focusRef.current = node;
           drag(node);
         }}
-        aria-describedby={describedBy}
+        role={'button'}
         id={`msla-node-${id}`}
+        aria-label={cardAltText}
         className={css(
           'msla-panel-card-container',
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
@@ -203,7 +200,7 @@ export const Card: React.FC<CardProps> = ({
         ) : null}
         <div className={css('msla-selection-box', selectionMode)} />
         <div className="panel-card-main">
-          <div aria-label={cardAltText} className="panel-card-header" role="button">
+          <div className="panel-card-header" role="button">
             <div className="panel-card-content-container">
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               <div className="panel-card-content-icon-section">{cardIcon}</div>

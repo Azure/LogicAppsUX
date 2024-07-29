@@ -296,8 +296,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
       this.deleteConnection(connectionId);
       const error = new Error(
         intl.formatMessage({
-          defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
-          id: 'fDisLL',
+          defaultMessage: 'ACL creation failed for connection. Deleting the connection.',
+          id: 'm4qt/b',
           description: 'Error while creating acl',
         })
       );

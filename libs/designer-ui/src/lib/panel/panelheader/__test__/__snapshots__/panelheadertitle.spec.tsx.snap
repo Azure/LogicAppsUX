@@ -2,7 +2,7 @@
 
 exports[`ui/panel/panelheadertitle > should construct. 1`] = `
 <StyledTextFieldBase
-  ariaLabel="Card Title"
+  ariaLabel="Card title"
   borderless={true}
   className="msla-card-title"
   componentRef={

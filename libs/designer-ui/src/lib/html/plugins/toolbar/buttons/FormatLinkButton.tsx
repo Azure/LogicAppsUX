@@ -27,8 +27,8 @@ export const FormatLinkButton: React.FC<FormatLinkButtonProps> = (props) => {
   }, [activeEditor, isToggledOn]);
 
   const insertLinkLabel = intl.formatMessage({
-    defaultMessage: 'Insert Link',
-    id: 'tUCptx',
+    defaultMessage: 'Insert link',
+    id: 'qp3gCy',
     description: 'label to insert link',
   });
 

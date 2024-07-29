@@ -44,8 +44,8 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
   );
 
   const viewDocsText = intl.formatMessage({
-    defaultMessage: 'View Documentation',
-    id: 'cK2A/V',
+    defaultMessage: 'View documentation',
+    id: 'UWF/WI',
     description: 'Text for view docs button',
   });
 

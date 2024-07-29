@@ -6,6 +6,7 @@ import type { SegmentParserOptions } from './parsesegments';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
+import { removeAllNewlines, removeAllSpaces } from '../../../utils';
 
 export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
   const segments: ValueSegment[] = [];
@@ -89,7 +90,27 @@ export const convertStringToSegments = (
     segmentSoFar += currChar;
 
     if (!isInQuotedString && currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
-      const token = nodeMap.get(segmentSoFar);
+      let token: ValueSegment | undefined = undefined;
+
+      // removes formatting compatibility issues between nodemap and HTML text in the editor
+      // when opening an action with an HTML editor
+      if (options?.convertSpaceToNewline) {
+        // modifiedSegmentSoFar -> in segmentSoFar, replace spaces with no space
+        const modifiedSegmentSoFar = removeNewlinesAndSpaces(segmentSoFar);
+        // for each key in nodeMap
+        for (const key of nodeMap.keys()) {
+          // keyNoNewline = key, but replace all newlines with no space
+          const keyNoNewline = removeNewlinesAndSpaces(key);
+          // if the nodemap key and modified HTML segment match,
+          // take the corresponding HTML node in the nodemap
+          if (keyNoNewline === modifiedSegmentSoFar) {
+            token = nodeMap.get(key);
+            break;
+          }
+        }
+      } else {
+        token = nodeMap.get(segmentSoFar);
+      }
       if (token) {
         // If remove quotes param is set, remove the quotes from previous and next segments if it's a single token
         if (options?.removeSingleTokenQuotesWrapping && doubleQuotesStarted && returnSegments.length > 0) {
@@ -141,4 +162,11 @@ const collapseLiteralSegments = (segments: ValueSegment[]): void => {
 
     index++;
   }
+};
+
+const removeNewlinesAndSpaces = (inputStr: string): string => {
+  const noSpaces = removeAllSpaces(inputStr);
+  const noNewlinesAndNoSpaces = removeAllNewlines(noSpaces);
+
+  return noNewlinesAndNoSpaces;
 };

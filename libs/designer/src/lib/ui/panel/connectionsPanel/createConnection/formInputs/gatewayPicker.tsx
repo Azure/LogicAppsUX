@@ -25,8 +25,8 @@ const GatewayPicker = (props: any) => {
       key: newGatewayUrl,
       text: intl.formatMessage(
         {
-          defaultMessage: '{addIcon} Install Gateway',
-          id: 'HsO1Rd',
+          defaultMessage: '{addIcon} Install gateway',
+          id: 'h+ZYip',
           description: 'Option to install a new gateway, links to new page',
         },
         { addIcon: '+ ' }

@@ -60,8 +60,8 @@ export const Overview: React.FC<OverviewProps> = ({
       description: 'Button text for loading more runs',
     }),
     RUN_HISTORY: intl.formatMessage({
-      defaultMessage: 'Run History',
-      id: 'Vaacox',
+      defaultMessage: 'Run history',
+      id: 'JUZ7g5',
       description: 'Pivot item header text for run history',
     }),
     SUMMARY: intl.formatMessage({
