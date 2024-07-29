@@ -29,7 +29,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const { nodes, functionNodes, flattenedSourceSchema, flattenedTargetSchema, dataMapConnections } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
-  const [edgesD, setEdgesD] = useState<Edge[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const { width = -1, height = -1 } = useResizeObserver<HTMLDivElement>({
     ref,
@@ -87,10 +87,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         };
         return newEdge;
       });
-      setEdgesD(newEdges);
-      if (newEdges && newEdges.length > 0) {
-        //dispatchEdges(newEdges);
-      }
+      setEdges(newEdges);
     }
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes, dispatchEdges]);
 
@@ -108,7 +105,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       id: node[0],
       type: 'functionNode',
       data: { functionData: node[1] },
-      position: node[1].position || { x: Math.random() * 600, y: Math.random() * 600 },
+      position: node[1].position || { x: 10, y: 200 },
       draggable: true,
     }));
     setAllNodes(nodes.concat(newNodes));
@@ -153,13 +150,13 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           focusable: true,
           deletable: true,
         },
-        edgesD
+        edges
       );
 
       dispatchMakeConnection(connection);
       dispatchEdgesAndNodes(newEdges, nodes);
     },
-    [edgesD, nodes, dispatchEdgesAndNodes, dispatchMakeConnection]
+    [edges, nodes, dispatchEdgesAndNodes, dispatchMakeConnection]
   );
 
   const onReconnect = useCallback(
@@ -172,19 +169,19 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           focusable: true,
           deletable: true,
         },
-        edgesD.filter((edge) => edge.id !== oldEdge.id)
+        edges.filter((edge) => edge.id !== oldEdge.id)
       );
 
       dispatchEdgesAndNodes(newEdges, nodes);
     },
-    [edgesD, nodes, dispatchEdgesAndNodes]
+    [edges, nodes, dispatchEdgesAndNodes]
   );
 
   const isValidConnection: IsValidConnection = useCallback(
     (connection) => {
-      return !edgesD.find((edge) => edge.source === connection.source && edge.target === connection.target);
+      return !edges.find((edge) => edge.source === connection.source && edge.target === connection.target);
     },
-    [edgesD]
+    [edges]
   );
 
   // NOTE: Putting this useEffect here for vis next to onSave
@@ -233,7 +230,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         id="dm-react-flow"
         ref={drop}
         nodes={allNodes}
-        edges={edgesD}
+        edges={edges}
         selectNodesOnDrag={false}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}

@@ -11,7 +11,7 @@ const ConnectedEdge = (props: EdgeProps) => {
   });
 
   return (
-    <g style={{ zIndex: '-1 !important' }} id={`${id}_customEdge`}>
+    <g id={`${id}_customEdge`}>
       <path fill="none" stroke="#C6DEEE" strokeWidth={6} className="animated" d={path} />
     </g>
   );
