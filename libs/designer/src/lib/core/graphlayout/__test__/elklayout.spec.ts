@@ -170,8 +170,6 @@ describe('elklayout', () => {
             data: {
               label: 'node1',
             },
-            height: 40,
-            width: 200,
           },
           {
             id: 'node2',
@@ -184,8 +182,6 @@ describe('elklayout', () => {
             data: {
               label: 'node2',
             },
-            height: 40,
-            width: 200,
           },
         ],
         [
@@ -275,32 +271,24 @@ describe('elklayout', () => {
             position: { x: 50, y: 100 },
             data: { label: 'manual' },
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
-            width: 200,
-            height: 40,
           },
           {
             id: 'Increment_variable',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 60, y: 80 },
             data: { label: 'Increment_variable' },
-            parentId: undefined,
-            width: 200,
-            height: 40,
           },
           {
             id: 'Initialize_variable',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 70, y: 90 },
             data: { label: 'Initialize_variable' },
-            width: 200,
-            height: 40,
           },
           {
             id: 'ActionIf',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf' },
-            parentId: undefined,
           },
           {
             id: 'ActionIf-#scope',
@@ -308,8 +296,6 @@ describe('elklayout', () => {
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf-#scope' },
             parentId: 'ActionIf',
-            width: 200,
-            height: 40,
           },
           {
             id: 'ActionIf-actions',
@@ -324,8 +310,6 @@ describe('elklayout', () => {
             position: { x: 50, y: 100 },
             data: { label: 'ActionIf-actions-#subgraph' },
             parentId: 'ActionIf-actions',
-            width: 200,
-            height: 40,
           },
           {
             id: 'Increment_variable2',
@@ -333,8 +317,6 @@ describe('elklayout', () => {
             position: { x: 150, y: 200 },
             data: { label: 'Increment_variable2' },
             parentId: 'ActionIf-actions',
-            width: 200,
-            height: 40,
           },
           {
             id: 'Increment_variable4',
@@ -342,8 +324,6 @@ describe('elklayout', () => {
             position: { x: 300, y: 301 },
             data: { label: 'Increment_variable4' },
             parentId: 'ActionIf-actions',
-            width: 200,
-            height: 40,
           },
           {
             id: 'ActionIf-elseActions',
@@ -358,8 +338,6 @@ describe('elklayout', () => {
             position: { x: 0, y: 0 },
             data: { label: 'ActionIf-elseActions-#subgraph' },
             parentId: 'ActionIf-elseActions',
-            width: 200,
-            height: 40,
           },
           {
             id: 'Increment_variable3',
@@ -367,15 +345,12 @@ describe('elklayout', () => {
             position: { x: 302, y: 303 },
             data: { label: 'Increment_variable3' },
             parentId: 'ActionIf-elseActions',
-            width: 200,
-            height: 40,
           },
           {
             id: 'EmptyScope',
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'EmptyScope' },
-            parentId: undefined,
           },
           {
             id: 'EmptyScope-#scope',
@@ -383,16 +358,12 @@ describe('elklayout', () => {
             position: { x: 0, y: 0 },
             data: { label: 'EmptyScope-#scope' },
             parentId: 'EmptyScope',
-            width: 200,
-            height: 40,
           },
           {
             id: 'Response',
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 304, y: 305 },
             data: { label: 'Response' },
-            width: 200,
-            height: 40,
           },
         ],
         [
