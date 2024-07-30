@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.45.2](https://github.com/Azure/LogicAppsUX/compare/v4.45.1...v4.45.2) (2024-07-30)
+
+
+### Bug Fixes
+
+* **Hotfix:** Fixed Build Fail Due to Templates with Non-Json Artifacts ([#5233](https://github.com/Azure/LogicAppsUX/issues/5233)) ([53f0251](https://github.com/Azure/LogicAppsUX/commit/53f0251c2d700be8914595bd22fd559b0cd1755d))
+
 ### [4.45.1](https://github.com/Azure/LogicAppsUX/compare/v4.45.0...v4.45.1) (2024-07-25)
 
 
