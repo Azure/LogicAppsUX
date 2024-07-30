@@ -1,10 +1,9 @@
-//import { MapDefinitionDeserializer } from '../mapDefinitions';
 import { ReactFlowProvider } from '@xyflow/react';
 import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
-import { setInitialSchema, setXsltContent, setXsltFilename, setInitialDataMap } from './state/DataMapSlice';
+import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
@@ -34,16 +33,15 @@ const DataProviderInner = ({
   xsltContent,
   sourceSchema,
   targetSchema,
-  mapDefinition,
   availableSchemas,
   fetchedFunctions,
   customXsltPaths,
+  mapDefinition,
   dataMapMetadata,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
 
