@@ -54,6 +54,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         data: { functionData: node[1] },
         position: node[1].position || { x: 10, y: 200 },
         draggable: true,
+        selectable: false,
       }))
     );
   }, [functionNodes]);
@@ -204,7 +205,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         ref={drop}
         nodes={[...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop]}
         edges={edges}
-        selectNodesOnDrag={false}
+        nodeDragThreshold={0}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}
         zoomOnPinch={false}

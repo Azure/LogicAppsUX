@@ -7,7 +7,6 @@ type NodePositionProps = {
   key: string;
   schemaMap: Record<string, SchemaNodeExtended>;
   isLeftDirection: boolean;
-  openKeys: Set<string>;
   nodePositionX?: number;
   nodePositionY?: number;
   treePositionX?: number;
