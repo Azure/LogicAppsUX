@@ -63,11 +63,10 @@ calloutStyles = isCopilotServiceEnabled()
   : calloutStyles;
 
 const calloutStylesWithTopMargin: Partial<ICalloutContentStyles> = {
+  ...calloutStyles,
   root: {
+    ...(calloutStyles.root as object),
     marginTop: '80px',
-  },
-  calloutMain: {
-    overflow: 'visible',
   },
 };
 
