@@ -16,7 +16,6 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     styles.handleWrapper,
     isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper
   );
-  // danielle update this to move away from edges
   const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
 
   useEffect(() => {

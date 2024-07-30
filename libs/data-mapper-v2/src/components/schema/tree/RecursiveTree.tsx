@@ -1,4 +1,5 @@
 import {
+  Caption2,
   Tree,
   TreeItem,
   TreeItemLayout,
@@ -7,7 +8,7 @@ import {
   mergeClasses,
 } from '@fluentui/react-components';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
@@ -16,6 +17,7 @@ import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { toogleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
+import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -35,6 +37,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const nodes = useNodes();
   const dispatch = useDispatch<AppDispatch>();
   const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const [isHover, setIsHover] = useState<boolean>(false);
 
   const {
     position: { x, y } = { x: undefined, y: undefined },
@@ -130,10 +133,19 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     return null;
   }
 
+  const aside = isHover ? <TypeAnnotation schemaNode={root} /> : undefined;
+
   if (root.children.length === 0) {
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
-        <TreeItemLayout className={isLeftDirection ? '' : styles.rightTreeItemLayout}>{root.name}</TreeItemLayout>
+        <TreeItemLayout
+          onMouseOver={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+          className={mergeClasses(styles.leafNode, props.isLeftDirection ? '' : styles.rightTreeItemLayout)}
+          aside={aside}
+        >
+          {root.name}
+        </TreeItemLayout>
       </TreeItem>
     );
   }
@@ -147,7 +159,12 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       open={isLeftDirection ? sourceOpenKeys[key] : targetOpenKeys[key]}
       onOpenChange={onOpenChange}
     >
-      <TreeItemLayout className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}>
+      <TreeItemLayout
+        onMouseOver={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        aside={aside}
+        className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}
+      >
         {root.name}
       </TreeItemLayout>
       <Tree aria-label="sub-tree">
@@ -167,3 +184,15 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   );
 };
 export default RecursiveTree;
+
+const TypeAnnotation = (props: { schemaNode: SchemaNodeExtended }) => {
+  const styles = useStyles();
+  const TypeIcon = iconForNormalizedDataType(props.schemaNode.type, 16, true, props.schemaNode.nodeProperties);
+
+  return (
+    <div className={styles.typeAnnotation}>
+      <TypeIcon filled={true} style={{ paddingRight: '3px' }} />
+      <Caption2>{props.schemaNode.type}</Caption2>
+    </div>
+  );
+};

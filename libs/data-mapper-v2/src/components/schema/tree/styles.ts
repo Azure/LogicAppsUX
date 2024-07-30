@@ -15,6 +15,9 @@ export const useStyles = makeStyles({
   },
   rootNode: {
     fontWeight: '600',
+    ':hover': {
+      backgroundColor: '#D5E4FF',
+    },
   },
   circleNonHoveredAndNonConnected: {
     color: '#fff',
@@ -22,5 +25,15 @@ export const useStyles = makeStyles({
   },
   rightTreeItemLayout: {
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
+  },
+  leafNode: {
+    display: 'inline-flex',
+    ':hover': {
+      backgroundColor: '#D5E4FF',
+    },
+  },
+  typeAnnotation: {
+    display: 'inline-flex',
+    marginLeft: 'auto',
   },
 });
