@@ -31,4 +31,7 @@ export const useStyles = makeStyles({
   tabWrapper: {
     paddingTop: '8px',
   },
+  detailsText: {
+    color: '#605E5C',
+  },
 });
