@@ -1,7 +1,7 @@
 import { PanelLocation } from '@microsoft/designer-ui';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNodes, useReactFlow } from '@xyflow/react';
+import { useInternalNode, useNodes, useReactFlow } from '@xyflow/react';
 
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
@@ -24,8 +24,8 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
   const [firstLoad, setFirstLoad] = useState(true);
 
   const nodes = useNodes();
-  const focusNode = useMemo(() => nodes.find((node) => node.id === focusNodeId), [focusNodeId, nodes]);
   const firstNode = useMemo(() => nodes[0], [nodes]);
+  const focusNode = useInternalNode(focusNodeId ?? '');
 
   // Center the canvas on the first node when the workflow is first loaded
   useEffect(() => {
@@ -51,12 +51,12 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
 
   // Center the canvas on the focused node when set
   const setCanvasCenterToFocus = useCallback(() => {
-    if ((!focusNode?.position?.x && !focusNode?.position?.y) || !focusNode?.width || !focusNode?.height) {
+    if (!focusNode) {
       return;
     }
 
-    let xRawPos = focusNode?.position?.x ?? 0;
-    const yRawPos = focusNode?.position?.y ?? 0;
+    let xRawPos = focusNode?.internals.positionAbsolute?.x ?? 0;
+    const yRawPos = focusNode?.internals.positionAbsolute?.y ?? 0;
 
     // If the panel is open, reduce X space
     if (!isPanelCollapsed) {
@@ -65,8 +65,8 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
       xRawPos += (directionMultiplier * 630) / 2 / getZoom();
     }
 
-    const xTarget = xRawPos + (focusNode?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
-    const yTarget = yRawPos + (focusNode?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
+    const xTarget = xRawPos + (focusNode?.measured?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
+    const yTarget = yRawPos + (focusNode?.measured?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
 
     setCenter(xTarget, yTarget, {
       zoom: getZoom(),
@@ -74,7 +74,7 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
     });
 
     dispatch(clearFocusNode());
-  }, [isPanelCollapsed, dispatch, focusNode, panelLocation, setCenter, getZoom]);
+  }, [focusNode, isPanelCollapsed, setCenter, getZoom, dispatch, panelLocation]);
 
   useEffect(() => {
     setCanvasCenterToFocus();

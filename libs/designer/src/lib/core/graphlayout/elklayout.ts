@@ -108,10 +108,8 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
         };
 
-        if (n.width) {
+        if (n.children) {
           nodeObject.width = n.width;
-        }
-        if (n.height) {
           nodeObject.height = n.height;
         }
 
