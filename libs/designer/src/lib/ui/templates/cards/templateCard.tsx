@@ -81,7 +81,10 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
           {title}
         </Text>
         <div className="msla-template-card-tags">
-          {Object.keys(details).map((key: string) => {
+          {['By', 'Type', 'Trigger'].map((key: string) => {
+            if (!details[key]) {
+              return null;
+            }
             return (
               <Text key={key} size={300} className="msla-template-card-tag">
                 {key}: {details[key]}
