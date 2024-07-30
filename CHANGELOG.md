@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.51.0](https://github.com/Azure/LogicAppsUX/compare/v4.50.0...v4.51.0) (2024-07-30)
+
+
+### Bug Fixes
+
+* **Templates:** Creation Successful Only Upon on Successful Creation & Remove Template Card Unwanted Info ([#5230](https://github.com/Azure/LogicAppsUX/issues/5230)) ([a872051](https://github.com/Azure/LogicAppsUX/commit/a872051032ece2275143279b5b3e5a7d71b25632))
+* **Templates:** Fixed Build Fail Due to Templates with Non-Json Artifacts ([#5232](https://github.com/Azure/LogicAppsUX/issues/5232)) ([f40180b](https://github.com/Azure/LogicAppsUX/commit/f40180bed83ccb7d125cb77c620cc22d6eda0f83))
+
 ## [4.50.0](https://github.com/Azure/LogicAppsUX/compare/v4.49.0...v4.50.0) (2024-07-30)
 
 
