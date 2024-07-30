@@ -12,7 +12,7 @@ import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 
-export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
+export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulCreation: () => void) => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
@@ -23,7 +23,9 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     dispatch(closePanel());
     dispatch(clearTemplateDetails());
   }, [dispatch]);
-  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({ onCreateClick });
+  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({
+    onCreateClick: (onSuccessfulCreation: () => void) => onCreateClick(onSuccessfulCreation),
+  });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : getQuickViewTabs(intl, dispatch)),
     [currentPanelView, createWorkflowPanelTabs, intl, dispatch]
