@@ -2,6 +2,8 @@ import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../.
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
   applyConnectionValue,
+  collectSourceNodesForConnectionChain,
+  collectTargetNodesForConnectionChain,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
@@ -32,7 +34,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, XYPosition } from '@xyflow/react';
-import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { createReactFlowFunctionKey, getSplitIdsFromReactFlowConnectionId } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -479,6 +481,33 @@ export const dataMapSlice = createSlice({
         state.isDirty = true;
       }
     },
+
+    setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
+      const connections = state.curDataMapOperation.dataMapConnections;
+      const selectedItemKey = action.payload;
+
+      state.curDataMapOperation.selectedItemKey = action.payload;
+
+      if (selectedItemKey) {
+        const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
+        // state.curDataMapOperation.selectedItemKeyParts = selectedItemKeyParts;
+
+        const selectedItemConnectedNodes = [];
+        if (connections[selectedItemKeyParts.sourceId]) {
+          selectedItemConnectedNodes.push(...collectSourceNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+          selectedItemConnectedNodes.push(...collectTargetNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+        }
+
+        const uniqueSelectedItemConnectedNodes = selectedItemConnectedNodes.filter((node, index, self) => {
+          return self.findIndex((subNode) => subNode.reactFlowKey === node.reactFlowKey) === index;
+        });
+
+        state.curDataMapOperation.selectedItemConnectedNodes = uniqueSelectedItemConnectedNodes;
+      } else {
+        //state.curDataMapOperation.selectedItemKeyParts = undefined;
+        state.curDataMapOperation.selectedItemConnectedNodes = [];
+      }
+    },
     toogleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
       const { keys, isExpanded } = action.payload;
@@ -595,6 +624,7 @@ export const {
   setXsltContent,
   setInitialSchema,
   setInitialDataMap,
+  setSelectedItem,
   changeSourceSchema,
   changeTargetSchema,
   updateReactFlowNodes,

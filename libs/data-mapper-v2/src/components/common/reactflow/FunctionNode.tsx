@@ -9,8 +9,9 @@ import { useStyles } from './styles';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/functionConfigurationPopover';
 import type { RootState } from '../../../core/state/Store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
+import { setSelectedItem } from '../../../core/state/DataMapSlice';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -25,6 +26,7 @@ export interface CardProps {
 }
 
 export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardProps>, 'function'>>) => {
+  const dispatch = useDispatch();
   const { functionData, disabled, dataTestId } = props.data;
   const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
 
@@ -42,6 +44,10 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
 
   const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
 
+  const onClick = () => {
+    dispatch(setSelectedItem(props.id));
+  };
+
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
       {funcitonHasInputs && (
@@ -54,7 +60,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
       )}
       <Popover>
         <PopoverTrigger>
-          <Button disabled={!!disabled} className={styles.functionButton}>
+          <Button onClick={() => onClick()} disabled={!!disabled} className={styles.functionButton}>
             <div
               className={styles.iconContainer}
               style={{

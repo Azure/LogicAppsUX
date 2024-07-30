@@ -16,7 +16,7 @@ import useOnScreen from './useOnScreen';
 import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { toogleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
+import { setSelectedItem, toogleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 
 type RecursiveTreeProps = {
@@ -135,10 +135,15 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
 
   const aside = isHover ? <TypeAnnotation schemaNode={root} /> : undefined;
 
+  const onClick = () => {
+    dispatch(setSelectedItem(key));
+  };
+
   if (root.children.length === 0) {
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
         <TreeItemLayout
+          onClick={onClick}
           onMouseOver={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}
           className={mergeClasses(styles.leafNode, props.isLeftDirection ? '' : styles.rightTreeItemLayout)}
@@ -160,6 +165,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       onOpenChange={onOpenChange}
     >
       <TreeItemLayout
+        onClick={onClick}
         onMouseOver={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
         aside={aside}

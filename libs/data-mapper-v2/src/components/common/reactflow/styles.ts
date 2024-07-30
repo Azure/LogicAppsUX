@@ -51,6 +51,7 @@ export const useStyles = makeStyles({
     display: 'inline-flex',
     justifyContent: 'left',
     paddingRight: '20px',
+    ...shorthands.border('3px', 'solid', '#62AAD8'),
   },
   functionName: {
     textWrap: 'nowrap',
