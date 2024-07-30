@@ -500,8 +500,8 @@ const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
     brandColor: httpWebhookBrandColor,
     key: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY,
     title: intl.formatMessage({
-      defaultMessage: 'Callback url',
-      id: 'bSZ0lL',
+      defaultMessage: 'Callback URL',
+      id: 'hMpLz3',
       description: 'Callback url token title',
     }),
     type: Constants.SWAGGER.TYPE.STRING,

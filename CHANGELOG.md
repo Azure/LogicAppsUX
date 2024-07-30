@@ -1,4 +1,55 @@
 # Logic Apps Designer
+## [4.49.0](https://github.com/Azure/LogicAppsUX/compare/v4.48.0...v4.49.0) (2024-07-29)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix UI issues with pinned node when using left-side panel ([#5213](https://github.com/Azure/LogicAppsUX/issues/5213)) ([90f0538](https://github.com/Azure/LogicAppsUX/commit/90f05386e4f6460abe3d3f3b2b0ede5af0c42e0f))
+* **designer:** Add mixed input editor ([#5190](https://github.com/Azure/LogicAppsUX/issues/5190)) ([3a1ab79](https://github.com/Azure/LogicAppsUX/commit/3a1ab794548f0f4fd2600f0881b3f375e06aa581))
+* **vscode:** Remove never from copy settings from publish directory in dotnet projects ([#5212](https://github.com/Azure/LogicAppsUX/issues/5212)) ([fac4c6b](https://github.com/Azure/LogicAppsUX/commit/fac4c6b5caedc097bacb2bf42ef0428246f1c72b))
+
+## [4.48.0](https://github.com/Azure/LogicAppsUX/compare/v4.47.1...v4.48.0) (2024-07-26)
+
+
+### Features
+
+* **designer-ui:** Add badge for read-only connection to show reason ([#5200](https://github.com/Azure/LogicAppsUX/issues/5200)) ([54d2463](https://github.com/Azure/LogicAppsUX/commit/54d2463372c90f3d171c00c8619d91b1e1bbeebc))
+* **designer:** Allow pinning a node to panel to view side-by-side with selected node ([#5202](https://github.com/Azure/LogicAppsUX/issues/5202)) ([be1a455](https://github.com/Azure/LogicAppsUX/commit/be1a455267e108ed865683cb4fe9cceec35f1504)), closes [#5148](https://github.com/Azure/LogicAppsUX/issues/5148)
+
+
+### Bug Fixes
+
+* **all:** Convert all label strings to `Standard case` except when referring to proper nouns ([#5209](https://github.com/Azure/LogicAppsUX/issues/5209)) ([dc3acfc](https://github.com/Azure/LogicAppsUX/commit/dc3acfcedc90087a9d6630f5e338a459948cbcd1))
+* **designer:** Add validation for parameters with dynamic values ([#5207](https://github.com/Azure/LogicAppsUX/issues/5207)) ([cd36666](https://github.com/Azure/LogicAppsUX/commit/cd366662b50f19855b444d70154d687e6d36b772))
+* **designer:** Fixed fluent `autoload` property causing console error issue ([#5198](https://github.com/Azure/LogicAppsUX/issues/5198)) ([f704d77](https://github.com/Azure/LogicAppsUX/commit/f704d7748c5193145ee0a22c39eb2b5f13aaffd2))
+
+### [4.47.1](https://github.com/Azure/LogicAppsUX/compare/v4.47.0...v4.47.1) (2024-07-25)
+
+
+### Features
+
+* **designer:** Decouple panel tabs from `useSelectedNodeId()` ([#5183](https://github.com/Azure/LogicAppsUX/issues/5183)) ([4113a4f](https://github.com/Azure/LogicAppsUX/commit/4113a4fa618457b63e0487f8a33dae09384f0a65))
+
+
+### Bug Fixes
+
+* **designer:** Fixed small portal css issue with upgrading reactflow ([#5196](https://github.com/Azure/LogicAppsUX/issues/5196)) ([45199cb](https://github.com/Azure/LogicAppsUX/commit/45199cb3cce3d16cb9ce5ec2b99ed13564160fb2))
+
+## [4.47.0](https://github.com/Azure/LogicAppsUX/compare/v4.46.0...v4.47.0) (2024-07-25)
+
+
+### Features
+
+* **Data Mapper:** Able to select function inputs from the popover ([#5187](https://github.com/Azure/LogicAppsUX/issues/5187)) ([f511ebd](https://github.com/Azure/LogicAppsUX/commit/f511ebd6813c13dc5a549d3c01f7d58dd09c0d4a))
+* **designer:** Allow deleting a node without affecting selected node ID in state ([#5182](https://github.com/Azure/LogicAppsUX/issues/5182)) ([da1473d](https://github.com/Azure/LogicAppsUX/commit/da1473d74c511239e29a19227ab4650e29f95f04))
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixed missing handle bug, improved schema handle styling ([#5181](https://github.com/Azure/LogicAppsUX/issues/5181)) ([d9af6f9](https://github.com/Azure/LogicAppsUX/commit/d9af6f9391a55dc7cc28ed7baef52849bbf81f50))
+* **Designer:** Updated HTML Editor to support newline and carriage return characters (for dynamic content)  ([#5117](https://github.com/Azure/LogicAppsUX/issues/5117)) ([ef36f8a](https://github.com/Azure/LogicAppsUX/commit/ef36f8a65d165d273d413eb035f8232b3dc4733c))
+* **vscode:** DependenciesDownloadRefactoring: Part1: Increase Dependencies Download Timeout to 5 Minutes ([#5171](https://github.com/Azure/LogicAppsUX/issues/5171)) ([20e2f1e](https://github.com/Azure/LogicAppsUX/commit/20e2f1e193ad98b4ddd332be094df69459228b1a))
+
 ## [4.46.0](https://github.com/Azure/LogicAppsUX/compare/v4.45.0...v4.46.0) (2024-07-23)
 
 

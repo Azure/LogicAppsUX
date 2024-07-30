@@ -3,21 +3,22 @@ import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
-import { setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
+import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import type { MapMetadata, MapDefinitionEntry, DataMapSchema, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, DataMapSchema, IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { MapDefinitionDeserializer } from '../mapHandling/MapDefinitionDeserializer';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
   xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
-  dataMapMetadata?: MapMetadata;
+  dataMapMetadata?: MapMetadataV2;
   sourceSchema?: DataMapSchema;
   targetSchema?: DataMapSchema;
   availableSchemas?: IFileSysTreeItem[];
@@ -35,6 +36,8 @@ const DataProviderInner = ({
   availableSchemas,
   fetchedFunctions,
   customXsltPaths,
+  mapDefinition,
+  dataMapMetadata,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
@@ -50,6 +53,26 @@ const DataProviderInner = ({
     dispatch(setXsltFilename(xsltFilename ?? ''));
     dispatch(setXsltContent(xsltContent ?? ''));
   }, [dispatch, xsltFilename, xsltContent]);
+
+  useEffect(() => {
+    if (extendedSourceSchema && extendedTargetSchema && fetchedFunctions && mapDefinition) {
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        mapDefinition,
+        extendedSourceSchema,
+        extendedTargetSchema,
+        fetchedFunctions
+      );
+      const connections = mapDefinitionDeserializer.convertFromMapDefinition();
+      dispatch(
+        setInitialDataMap({
+          sourceSchema: extendedSourceSchema,
+          targetSchema: extendedTargetSchema,
+          dataMapConnections: connections,
+          metadata: dataMapMetadata,
+        })
+      );
+    }
+  }, [dispatch, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, mapDefinition, dataMapMetadata]);
 
   useEffect(() => {
     if (extendedSourceSchema) {

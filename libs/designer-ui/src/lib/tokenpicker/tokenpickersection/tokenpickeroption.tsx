@@ -67,16 +67,16 @@ export const TokenPickerOptions = ({
 
   const buttonTextMore = intl.formatMessage(
     {
-      defaultMessage: 'See More ({count})',
-      id: 'uTnqzQ',
+      defaultMessage: 'See more ({count})',
+      id: '6SQuYg',
       description: 'Click to view more token options. {count} indicates the number of total tokens.',
     },
     { count: section.tokens.length }
   );
 
   const buttonTextLess = intl.formatMessage({
-    defaultMessage: 'See Less',
-    id: 'oWGaw9',
+    defaultMessage: 'See less',
+    id: 'WGq3Fo',
     description: 'Click to view less token options.',
   });
 

@@ -104,8 +104,8 @@ export const Row = ({
   // });
 
   const makeGroupButton = intl.formatMessage({
-    defaultMessage: 'Make Group',
-    id: 'ERVorY',
+    defaultMessage: 'Make group',
+    id: 'J7PN35',
     description: 'Make group button',
   });
 

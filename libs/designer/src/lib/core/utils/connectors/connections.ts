@@ -91,15 +91,15 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   const intl = getIntl();
   const headers = [
     intl.formatMessage({ defaultMessage: 'Name', id: 'AGCm1p', description: 'Header for resource name' }),
-    intl.formatMessage({ defaultMessage: 'Resource Group', id: '/yYyOq', description: 'Header for resource group name' }),
+    intl.formatMessage({ defaultMessage: 'Resource group', id: 'ao6BlS', description: 'Header for resource group name' }),
     intl.formatMessage({ defaultMessage: 'Location', id: 'aSnCCB', description: 'Header for resource lcoation' }),
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
     const fetchSubResourcesCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
-      defaultMessage: 'Loading Function Apps...',
-      id: 'LCXZLM',
+      defaultMessage: 'Loading function apps...',
+      id: 'YZl7FU',
       description: 'Text for loading function apps',
     });
 
@@ -129,8 +129,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
     const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
-      defaultMessage: 'Loading Api Management service instances...',
-      id: 'LV/BTE',
+      defaultMessage: 'Loading API Management service instances...',
+      id: 'UNXQDI',
       description: 'Text for loading apim service instances',
     });
 

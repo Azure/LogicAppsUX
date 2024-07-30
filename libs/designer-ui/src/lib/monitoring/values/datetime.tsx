@@ -19,8 +19,8 @@ export const DateTimeValue: React.FC<ValueProps> = (props) => {
   const [showUTC, toggleUTC] = useState(false);
   const intl = useIntl();
   const localTimeLabel = intl.formatMessage({
-    defaultMessage: 'Local Time',
-    id: 'ca7S+o',
+    defaultMessage: 'Local time',
+    id: 'i/R+Q7',
     description: 'Text for local time',
   });
   const valueAsString = `${intl.formatDate(value, options)} (${localTimeLabel})`;

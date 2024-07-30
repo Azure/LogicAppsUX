@@ -25,11 +25,12 @@ const useStyles = makeStyles({
 });
 
 interface PanelResizerProps {
+  minWidth?: number;
   updatePanelWidth: (width: string) => void;
 }
 
 export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
-  const { updatePanelWidth } = props;
+  const { minWidth = 400, updatePanelWidth } = props;
   const styles = useStyles();
   const [isResizing, setIsResizing] = useState(false);
   const startResizing = useCallback(() => setIsResizing(true), []);
@@ -44,11 +45,11 @@ export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
       e.preventDefault();
       const { clientX } = e;
       animationFrame.current = requestAnimationFrame(() => {
-        const newWidth = Math.max(window.innerWidth - clientX, 400);
+        const newWidth = Math.max(window.innerWidth - clientX, minWidth);
         updatePanelWidth(`${newWidth.toString()}px`);
       });
     },
-    [isResizing, updatePanelWidth]
+    [isResizing, minWidth, updatePanelWidth]
   );
 
   useEffect(() => {

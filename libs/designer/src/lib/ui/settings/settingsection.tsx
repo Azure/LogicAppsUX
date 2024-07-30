@@ -121,6 +121,7 @@ export type Settings = SettingBase &
 
 type WarningDismissHandler = (key?: string, message?: string) => void;
 export interface SettingsSectionProps {
+  nodeId?: string;
   id?: string;
   title?: string;
   sectionName?: string;
@@ -136,6 +137,7 @@ export interface SettingsSectionProps {
 
 export const SettingsSection: FC<SettingsSectionProps> = ({
   id,
+  nodeId,
   title = 'Settings',
   sectionName,
   showHeading = true,
@@ -147,6 +149,9 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
+  const selectedNodeId = useSelectedNodeId();
+  const settingNodeId = nodeId ?? selectedNodeId;
+
   const intl = useIntl();
   const expandedLabel = intl.formatMessage({
     defaultMessage: 'Expanded',
@@ -159,13 +164,13 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     description: 'A label to represent setting section being collapsed',
   });
   const expandAriaLabel = intl.formatMessage({
-    defaultMessage: 'Click to Collapse',
-    id: 'hJbr09',
+    defaultMessage: 'Click to collapse',
+    id: 'elWEjT',
     description: 'An accessible label for button to collapse setting section',
   });
   const collapseAriaLabel = intl.formatMessage({
-    defaultMessage: 'Click to Expand',
-    id: 'qdUeUk',
+    defaultMessage: 'Click to expand',
+    id: 'G+6Juu',
     description: 'An accessible label for button to expand setting section',
   });
   const internalSettings = (
@@ -180,7 +185,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
             />
           ))
         : null}
-      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
+      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} nodeId={settingNodeId} settings={settings} /> : null}
       {expanded && showSeparator ? <Divider className="msla-setting-section-divider" /> : null}
     </>
   );
@@ -211,10 +216,14 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   );
 };
 
-const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
+const Setting = ({
+  id,
+  nodeId,
+  settings,
+  isReadOnly,
+}: { id?: string; nodeId: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const nodeId = useSelectedNodeId();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
 

@@ -113,8 +113,8 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       columnId: displayNameColumnName,
       renderHeaderCell: () =>
         intl.formatMessage({
-          defaultMessage: 'Display Name',
-          id: 'tsmuoF',
+          defaultMessage: 'Display name',
+          id: 'z5H3GF',
           description: 'Column header for connection display name',
         }),
       renderCell: (item) => {

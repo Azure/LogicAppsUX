@@ -11,13 +11,14 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
+import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
   flattenSchemaIntoDictionary,
   flattenSchemaNode,
   getChildParentSchemaMapping,
   isSchemaNodeExtended,
+  flattenSchemaIntoSortArray,
 } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -30,9 +31,9 @@ import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, Edge, XYPosition } from '@xyflow/react';
+import type { Node, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
-
+import { UnboundedInput } from '../../constants/FunctionConstants';
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
@@ -45,10 +46,10 @@ export interface DataMapOperationState {
   dataMapLML: string;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
-  sourceSchemaOrdering: SchemaNodeExtended[];
+  sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
-  targetSchemaOrdering: SchemaNodeExtended[];
+  targetSchemaOrdering: string[];
   functionNodes: FunctionDictionary;
   selectedItemKey?: string;
   selectedItemConnectedNodes: ConnectionUnit[];
@@ -57,7 +58,6 @@ export interface DataMapOperationState {
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
   loadedMapMetadata?: MapMetadataV2;
-  edges: Edge[];
   // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
   // This info is not saved in LML which is why it is stored separately in the store
   sourceTemporaryStateConnections: Record<string, Record<string, boolean>>;
@@ -99,7 +99,6 @@ const emptyPristineState: DataMapOperationState = {
   targetOpenKeys: {},
   sourceTemporaryStateConnections: {},
   targetTemporaryStateConnections: {},
-  edges: [],
 };
 
 const initialState: DataMapState = {
@@ -177,6 +176,7 @@ export const dataMapSlice = createSlice({
 
       if (action.payload.schemaType === SchemaType.Source) {
         const flattenedSourceSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
+        const sourceSchemaSortArray = flattenedSourceSchema.map((node) => node.key);
 
         currentState.sourceSchema = action.payload.schema;
         currentState.sourceChildParentMapping = getChildParentSchemaMapping(action.payload.schema);
@@ -187,16 +187,16 @@ export const dataMapSlice = createSlice({
             return acc;
           }, {});
         currentState.flattenedSourceSchema = flattenedSchema;
-        currentState.sourceSchemaOrdering = flattenedSourceSchema;
+        currentState.sourceSchemaOrdering = sourceSchemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
-        state.pristineDataMap.sourceSchemaOrdering = flattenedSourceSchema;
+        state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
         currentState.sourceNodesMap = {};
       } else {
         const flattenedTargetSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
-
+        const targetSchemaSortArray = flattenedTargetSchema.map((node) => node.key);
         currentState.targetSchema = action.payload.schema;
         currentState.targetChildParentMapping = getChildParentSchemaMapping(action.payload.schema);
         currentState.targetOpenKeys = flattenedTargetSchema
@@ -206,17 +206,14 @@ export const dataMapSlice = createSlice({
             return acc;
           }, {});
         currentState.flattenedTargetSchema = flattenedSchema;
-        currentState.targetSchemaOrdering = flattenedTargetSchema;
+        currentState.targetSchemaOrdering = targetSchemaSortArray;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
-        state.pristineDataMap.targetSchemaOrdering = flattenedTargetSchema;
+        state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
         currentState.targetNodesMap = {};
       }
-
-      // NOTE: Reset ReactFlow edges
-      currentState.edges = [];
 
       state.curDataMapOperation = { ...currentState };
     },
@@ -225,9 +222,24 @@ export const dataMapSlice = createSlice({
       const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
       const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
-      const sourceSchemaSortArray = flattenSchemaNode(sourceSchema.schemaTreeRoot);
+      const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
-      const targetSchemaSortArray = flattenSchemaNode(targetSchema.schemaTreeRoot);
+      const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
+
+      const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+      assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
+
+      // const addedNodes = Object.entries(functionNodes).map((funcTuple) => {
+      //   const func = funcTuple[1];
+      //   const id = funcTuple[0];
+      //   const node: Node = {
+      //     id: id,
+      //     type: 'function',
+      //     position: func.position || { x: 100, y: 100 }, // find layout if none found
+      //     data: { id, func },
+      //   };
+      //   return node;
+      // });
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -236,7 +248,7 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes: {},
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
@@ -244,6 +256,17 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = newState;
       state.pristineDataMap = newState;
+    },
+
+    createInputSlotForUnboundedInput: (state, action: PayloadAction<string>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      newState.dataMapConnections[action.payload].inputs[0].push(undefined);
+
+      doDataMapOperation(state, newState, 'Set connection input value');
     },
 
     setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
@@ -257,7 +280,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
-    makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
+    makeConnectionFromMap: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
@@ -306,7 +329,10 @@ export const dataMapSlice = createSlice({
 
         state.curDataMapOperation.targetParentChildEdgeMapping = newState.targetParentChildEdgeMapping;
       } else {
-        destinationNode = newState.functionNodes[reactFlowDestination];
+        destinationNode = newState.functionNodes[action.payload.reactFlowDestination];
+        if (destinationNode.maxNumberOfInputs === UnboundedInput) {
+          action.payload.specificInput = 0;
+        }
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
@@ -401,16 +427,6 @@ export const dataMapSlice = createSlice({
         );
         return;
       }
-    },
-
-    updateReactFlowEdges: (state, action: PayloadAction<Edge[]>) => {
-      const currentState = state.curDataMapOperation;
-      const newState = {
-        ...currentState,
-        edges: action.payload,
-      };
-
-      state.curDataMapOperation = newState;
     },
     updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
       const newState = { ...state.curDataMapOperation };
@@ -561,12 +577,12 @@ export const {
   setInitialDataMap,
   changeSourceSchema,
   changeTargetSchema,
-  updateReactFlowEdges,
   updateReactFlowNodes,
   updateReactFlowNode,
-  makeConnection,
+  makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
+  createInputSlotForUnboundedInput,
   setConnectionInput,
   addFunctionNode,
   deleteFunction,

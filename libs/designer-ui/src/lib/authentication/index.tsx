@@ -191,8 +191,8 @@ export const AuthenticationEditor = ({
   };
 
   const authenticationTypeLabel = intl.formatMessage({
-    defaultMessage: 'Authentication Type',
-    id: 'ADM1Z8',
+    defaultMessage: 'Authentication type',
+    id: 'CeF40t',
     description: 'Label for Authentication Type dropdown',
   });
 
@@ -261,7 +261,7 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
       case AuthenticationType.CERTIFICATE:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Client Certificate', id: 'sys5gu', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Client certificate', id: 'eLthgv', description: 'Authentication type' }),
         };
 
       case AuthenticationType.OAUTH:
@@ -279,7 +279,7 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
       case AuthenticationType.MSI:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Managed Identity', id: 'iSb/hp', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Managed identity', id: 'aurgrg', description: 'Authentication type' }),
         };
 
       default:

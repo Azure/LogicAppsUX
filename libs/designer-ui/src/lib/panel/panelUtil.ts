@@ -21,10 +21,17 @@ export const PanelSize = {
   Auto: 'auto',
   Small: '300px',
   Medium: '630px',
+  DualView: `${340 * 2}px`,
 } as const;
 export type PanelSize = (typeof PanelSize)[keyof typeof PanelSize];
 
-export type PanelTabFn = (intl: IntlShape) => PanelTab;
+export type PanelTabFn = (intl: IntlShape, props: PanelTabProps) => PanelTab;
+
+export interface PanelTabProps {
+  isPanelPinned: boolean;
+  nodeId: string;
+}
+
 export interface PanelTab {
   id: string;
   title: string;
@@ -39,7 +46,7 @@ export interface PanelTab {
 export interface CommonPanelProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
-  width: string;
+  overrideWidth?: string;
   layerProps?: any;
   panelLocation: PanelLocation;
   isResizeable?: boolean;

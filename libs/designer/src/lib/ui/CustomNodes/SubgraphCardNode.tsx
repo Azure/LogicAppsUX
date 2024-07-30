@@ -4,11 +4,11 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -39,7 +39,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isPinned = useIsNodePinned(subgraphId);
+  const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
   const selected = useIsNodeSelected(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
@@ -49,7 +49,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
 
-  const label = useNodeDisplayName(subgraphId);
+  const title = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -96,8 +96,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   );
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
   const contextMenuItems: JSX.Element[] = useMemo(
@@ -136,7 +135,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 id={subgraphId}
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
-                title={label}
+                title={title}
                 selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}

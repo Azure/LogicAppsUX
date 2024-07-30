@@ -68,13 +68,19 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
 
   const goToOperationHeader = intl.formatMessage({
     description: 'Header for a search panel that searches for and allows direct navigation to a specific node',
-    defaultMessage: 'Go To Operation',
-    id: 'FBNevf',
+    defaultMessage: 'Go to operation',
+    id: 'Fx/6sv',
   });
   const searchOperation = intl.formatMessage({
     defaultMessage: 'Search for operation',
     id: 'i0XjL5',
     description: 'Placeholder for search box that searches operations',
+  });
+
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    id: 'sfTqHY',
+    description: 'Aria label for the close button in the node search panel',
   });
 
   const originalFocusElement = props.focusReturnElementId ? document.getElementById(props.focusReturnElementId) : undefined;
@@ -83,14 +89,16 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     <FocusTrapZone elementToFocusOnDismiss={originalFocusElement ? originalFocusElement : undefined}>
       <div className="msla-app-action-header">
         <XLargeText text={goToOperationHeader} />
-        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div style={{ padding: 20 }}>
         <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
       </div>
-      {searchNodeNames.map((node) => (
-        <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
-      ))}
+      <div aria-description={'List of operation results'}>
+        {searchNodeNames.map((node) => (
+          <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
+        ))}
+      </div>
     </FocusTrapZone>
   );
 };

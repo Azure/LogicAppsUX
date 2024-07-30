@@ -1923,19 +1923,21 @@ export async function updateDynamicDataInNode(
     if (!details) {
       continue;
     }
-    parameterDynamicValues.push(
-      await fetchDynamicValuesForParameter(
-        details.groupId,
-        details.parameter.id,
-        operationInfo,
-        connectionReference,
-        nodeInputParameters,
-        nodeDependencies,
-        false /* showErrorWhenNotReady */,
-        undefined /* idReplacements */,
-        workflowParameters.definitions
-      )
+    const parameter = await fetchDynamicValuesForParameter(
+      details.groupId,
+      details.parameter.id,
+      operationInfo,
+      connectionReference,
+      nodeInputParameters,
+      nodeDependencies,
+      false /* showErrorWhenNotReady */,
+      undefined /* idReplacements */,
+      workflowParameters.definitions
     );
+
+    if (!isNullOrUndefined(parameter)) {
+      parameterDynamicValues.push(parameter);
+    }
   }
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
