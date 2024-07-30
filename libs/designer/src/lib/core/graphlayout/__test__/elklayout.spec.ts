@@ -277,6 +277,7 @@ describe('elklayout', () => {
             type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
             position: { x: 60, y: 80 },
             data: { label: 'Increment_variable' },
+            parentId: undefined,
           },
           {
             id: 'Initialize_variable',
@@ -289,6 +290,7 @@ describe('elklayout', () => {
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'ActionIf' },
+            parentId: undefined,
           },
           {
             id: 'ActionIf-#scope',
@@ -351,6 +353,7 @@ describe('elklayout', () => {
             type: WORKFLOW_NODE_TYPES.GRAPH_NODE,
             position: { x: 307, y: 308 },
             data: { label: 'EmptyScope' },
+            parentId: undefined,
           },
           {
             id: 'EmptyScope-#scope',
