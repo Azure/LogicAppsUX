@@ -330,7 +330,7 @@ export const dataMapSlice = createSlice({
         state.curDataMapOperation.targetParentChildEdgeMapping = newState.targetParentChildEdgeMapping;
       } else {
         destinationNode = newState.functionNodes[action.payload.reactFlowDestination];
-        if (destinationNode.maxNumberOfInputs === UnboundedInput) {
+        if (destinationNode?.maxNumberOfInputs === UnboundedInput) {
           action.payload.specificInput = 0;
         }
       }
@@ -487,6 +487,13 @@ export const dataMapSlice = createSlice({
           newState.sourceOpenKeys[key] = isExpanded;
           if (isExpanded) {
             // If node is expanded, remove all the temporary connections created for the child
+            // both from Target as well as Source schema
+            const connectedTargetNodes = newState.sourceTemporaryStateConnections[key] ?? {};
+            for (const targetNode of Object.keys(connectedTargetNodes)) {
+              if (newState.targetTemporaryStateConnections[targetNode]) {
+                delete newState.targetTemporaryStateConnections[targetNode][key];
+              }
+            }
             delete newState.sourceTemporaryStateConnections[key];
           } else {
             // Get all the nodes to which children are connected
@@ -528,6 +535,14 @@ export const dataMapSlice = createSlice({
         for (const key of keys) {
           newState.targetOpenKeys[key] = isExpanded;
           if (isExpanded) {
+            // If node is expanded, remove all the temporary connections created for the child
+            // both from Target as well as Source schema
+            const connectedSourceNodes = newState.targetTemporaryStateConnections[key] ?? {};
+            for (const sourceNode of Object.keys(connectedSourceNodes)) {
+              if (newState.sourceTemporaryStateConnections[sourceNode]) {
+                delete newState.sourceTemporaryStateConnections[sourceNode][key];
+              }
+            }
             delete newState.targetTemporaryStateConnections[key];
           } else {
             // Get all the nodes to which children are connected
@@ -566,6 +581,11 @@ export const dataMapSlice = createSlice({
           }
         }
       }
+
+      state.curDataMapOperation = {
+        ...newState,
+        lastAction: 'Toggle Node Expand/Collapse',
+      };
     },
   },
 });
@@ -661,7 +681,7 @@ export const deleteConnectionFromConnections = (
 
   const outputNode = connections[outputKey].self.node;
   const outputNodeInputs = connections[outputKey].inputs;
-  if (isFunctionData(outputNode) && outputNode.maxNumberOfInputs === -1) {
+  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === -1) {
     Object.values(outputNodeInputs).forEach((input, inputIndex) =>
       input.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {
