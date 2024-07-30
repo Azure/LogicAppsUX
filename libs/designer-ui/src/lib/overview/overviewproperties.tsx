@@ -1,7 +1,7 @@
 import { Label, Link, Pivot, PivotItem } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
-import { getCallbackUrl } from '@microsoft/logic-apps-shared';
-import type { CallbackInfo } from '@microsoft/logic-apps-shared';
+import { getCallbackUrl, getIsCallbackUrlSupported } from '@microsoft/logic-apps-shared';
+import type { CallbackInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -12,6 +12,7 @@ export interface OverviewPropertiesProps {
   statelessRunMode?: string;
   stateType: string;
   triggerName?: string;
+  definition?: LogicAppsV2.WorkflowDefinition;
 }
 
 export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
@@ -20,9 +21,13 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   operationOptions,
   statelessRunMode,
   stateType,
+  definition,
 }) => {
   const intl = useIntl();
-  const callbackUrl = useMemo(() => getCallbackUrl(callbackInfo), [callbackInfo]);
+  const callbackUrl = useMemo(() => {
+    const { isCallbackUrlSupported = false } = definition ? getIsCallbackUrlSupported(definition) : {};
+    return isCallbackUrlSupported ? getCallbackUrl(callbackInfo) : undefined;
+  }, [callbackInfo, definition]);
 
   const Resources = {
     CALLBACK_URL: intl.formatMessage({
