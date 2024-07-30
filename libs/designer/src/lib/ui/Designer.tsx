@@ -3,10 +3,9 @@ import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
-import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { clearPanel } from '../core/state/panelV2/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import Controls from './Controls';
@@ -34,9 +33,10 @@ import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from '@xyflow/react';
+import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/react';
 import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
+import { CanvasFinder } from './CanvasFinder';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -65,69 +65,6 @@ const edgeTypes = {
   ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
 } as EdgeTypes;
-export interface CanvasFinderProps {
-  panelLocation: PanelLocation;
-}
-export const CanvasFinder = (props: CanvasFinderProps) => {
-  const { panelLocation } = props;
-  const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
-  const isEmpty = useIsGraphEmpty();
-  const { setCenter, getZoom } = useReactFlow();
-  const height = useStore((state) => state.height);
-
-  const isPanelCollapsed = useIsPanelCollapsed();
-  const [firstLoad, setFirstLoad] = useState(true);
-
-  // If first load is an empty workflow, set canvas to center
-  useEffect(() => {
-    if (isEmpty && firstLoad) {
-      setCenter(DEFAULT_NODE_SIZE.width / 2, DEFAULT_NODE_SIZE.height, { zoom: 1 });
-      setFirstLoad(false);
-    }
-  }, [setCenter, height, isEmpty, firstLoad]);
-
-  const nodeData = useNodes().find((x) => x.id === focusNode);
-  const dispatch = useDispatch<AppDispatch>();
-  const handleTransform = useCallback(() => {
-    if (!focusNode) {
-      return;
-    }
-    if ((!nodeData?.position?.x && !nodeData?.position?.y) || !nodeData?.width || !nodeData?.height) {
-      return;
-    }
-
-    let xRawPos = nodeData?.position?.x ?? 0;
-    const yRawPos = nodeData?.position?.y ?? 0;
-
-    // If the panel is open, reduce X space
-    if (!isPanelCollapsed) {
-      // Move center to the right if Panel is located to the left; otherwise move center to the left.
-      const directionMultiplier = panelLocation === PanelLocation.Left ? -1 : 1;
-      xRawPos += (directionMultiplier * 630) / 2;
-    }
-
-    const xTarget = xRawPos + (nodeData?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
-    const yTarget = yRawPos + (nodeData?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
-
-    if (firstLoad) {
-      const firstNodeYPos = 150;
-      setCenter(xTarget, height / 2 - firstNodeYPos, { zoom: 1 });
-      setFirstLoad(false);
-    } else {
-      setCenter(xTarget, yTarget, {
-        zoom: getZoom(),
-        duration: 500,
-      });
-    }
-    dispatch(clearFocusNode());
-  }, [dispatch, firstLoad, focusNode, getZoom, nodeData, setCenter, height, isPanelCollapsed, panelLocation]);
-
-  useEffect(() => {
-    handleTransform();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodeData, focusNode]);
-  return null;
-};
 
 export const SearchPreloader = () => {
   usePreloadOperationsQuery();
