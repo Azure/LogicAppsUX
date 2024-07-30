@@ -13,12 +13,9 @@ import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerialize
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 
-export interface EditorCommandBarProps {
-  onUndoClick: () => void;
-}
+export type EditorCommandBarProps = {};
 
-export const EditorCommandBar = (props: EditorCommandBarProps) => {
-  const { onUndoClick } = props;
+export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -38,11 +35,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
-
-        dispatch(updateDataMapLML(newDataMapDefinition));
-
-        return newDataMapDefinition;
+        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
       } catch (error) {
         let errorMessage = '';
         if (typeof error === 'string') {
@@ -50,17 +43,14 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-
         LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
           message: errorMessage,
         });
-
         return '';
       }
     }
-
     return '';
-  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, dispatch]);
+  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
 
   const onTestClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -114,6 +104,11 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     dispatch(openDiscardWarningModal());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (dataMapDefinition) {
+      dispatch(updateDataMapLML(dataMapDefinition));
+    }
+  }, [dispatch, dataMapDefinition]);
   // Tracks modal (confirmation) state
   useEffect(() => {
     if (isDiscardConfirmed) {
@@ -172,7 +167,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         >
           {Resources.SAVE}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
+        <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={() => {}}>
           {Resources.UNDO}
         </ToolbarButton>
         <ToolbarButton
