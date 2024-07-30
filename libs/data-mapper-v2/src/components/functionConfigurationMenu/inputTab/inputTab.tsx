@@ -15,7 +15,7 @@ import { useStyles } from './styles';
 import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
 import { newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
-import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -81,6 +81,7 @@ export const InputTabContents = (props: {
           <div>
             <span className={styles.inputDropdownWrapper}>
               <InputDropdown
+                schemaListType={SchemaType.Source}
                 functionId={props.functionKey}
                 currentNode={props.func}
                 inputName={getInputName(inputConnection, connections)}
@@ -188,6 +189,7 @@ const UnlimitedInputs = (props: {
           return (
             <UnboundedDropdownListItem
               key={input[0]}
+              schemaListType={SchemaType.Source}
               removeItem={removeUnboundedInput}
               functionKey={props.functionKey}
               func={props.func}
@@ -356,6 +358,7 @@ interface UnboundedInputEntryProps {
   inputValue: string | undefined;
   inputType: string | undefined;
   removeItem: () => void;
+  schemaListType: SchemaType;
   draggable: boolean;
   validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
 }
@@ -380,6 +383,7 @@ export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
           <InputDropdown
             functionId={props.functionKey}
             currentNode={props.func}
+            schemaListType={props.schemaListType}
             inputName={props.inputName}
             inputValue={props.inputValue}
             validateAndCreateConnection={props.validateAndCreateConnection}

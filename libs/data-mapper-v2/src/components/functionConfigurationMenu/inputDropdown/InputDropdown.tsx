@@ -2,11 +2,11 @@ import type { RootState } from '../../../core/state/Store';
 import type { FunctionData } from '../../../models/Function';
 import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
-import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, Option } from '@fluentui/react-components';
-import { isNullOrEmpty, type NormalizedDataType } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, SchemaType, type NormalizedDataType } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -27,6 +27,7 @@ export interface InputDropdownProps {
   inputName: string | undefined;
   inputValue: string | undefined; // undefined, Node ID, or custom value (string)
   functionId: string;
+  schemaListType: SchemaType;
   labelId?: string;
   placeholder?: string;
   inputAllowsCustomValues?: boolean;
@@ -34,11 +35,24 @@ export interface InputDropdownProps {
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { inputName, inputValue, labelId, functionId, placeholder, inputAllowsCustomValues = true, validateAndCreateConnection } = props;
+  const {
+    inputName,
+    inputValue,
+    labelId,
+    schemaListType,
+    functionId,
+    placeholder,
+    inputAllowsCustomValues = true,
+    validateAndCreateConnection,
+  } = props;
   const intl = useIntl();
   const styles = useStyles();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const sourceSchemaDictionary = useSelector((state: RootState) =>
+    schemaListType === SchemaType.Source
+      ? state.dataMap.present.curDataMapOperation.flattenedSourceSchema
+      : state.dataMap.present.curDataMapOperation.flattenedTargetSchema
+  );
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
@@ -72,7 +86,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
         key: srcSchemaNode.key,
         text: srcSchemaNode.name,
         path: srcSchemaNode.parentKey,
-        value: addSourceReactFlowPrefix(srcSchemaNode.key),
+        value:
+          schemaListType === SchemaType.Source ? addSourceReactFlowPrefix(srcSchemaNode.key) : addTargetReactFlowPrefix(srcSchemaNode.key),
         isSchema: true,
         isFunction: false,
         type: srcSchemaNode.type,
@@ -100,7 +115,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return options;
-  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, props.functionId]);
+  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, props.functionId, schemaListType]);
 
   useEffect(() => {
     setMatchingOptions(originalOptions);
