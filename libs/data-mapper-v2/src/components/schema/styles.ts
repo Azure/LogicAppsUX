@@ -47,4 +47,11 @@ export const useStyles = makeStyles({
   rightDrawer: {
     ...shorthands.borderLeft('1px', 'solid', '#ddd'),
   },
+  treeWrapper: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    height: '100%',
+  },
 });

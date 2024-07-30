@@ -5,42 +5,58 @@ import { DataMapperWrappedContext } from '../../../core';
 
 type NodePositionProps = {
   key: string;
-  openKeys: Set<string>;
   schemaMap: Record<string, SchemaNodeExtended>;
   isLeftDirection: boolean;
-  nodeX?: number;
-  nodeY?: number;
+  nodePositionX?: number;
+  nodePositionY?: number;
+  treePositionX?: number;
+  treePositionY?: number;
+  onScreen?: boolean;
 };
 
-function isTreeNodeHidden(schemaMap: Record<string, SchemaNodeExtended>, openKeys: Set<string>, key?: string): boolean {
-  if (!key) {
-    return false;
-  }
-
-  if (!openKeys.has(key)) {
-    return true;
-  }
-
-  return isTreeNodeHidden(schemaMap, openKeys, schemaMap[key]?.parentKey);
-}
-
 const useNodePosition = (props: NodePositionProps) => {
-  const { schemaMap, openKeys, key, isLeftDirection, nodeY = -1 } = props;
+  const { schemaMap, key, isLeftDirection, onScreen, treePositionY, nodePositionY } = props;
   const [position, setPosition] = useState<XYPosition>();
 
   const {
-    canvasBounds: { y: canvasY = -1, width: canvasWidth = -1 } = {},
+    canvasBounds: { y: canvasY, width: canvasWidth } = {
+      y: undefined,
+      width: undefined,
+    },
   } = useContext(DataMapperWrappedContext);
 
   useLayoutEffect(() => {
-    if (isTreeNodeHidden(schemaMap, openKeys, schemaMap[key]?.parentKey)) {
-      setPosition({ x: -1, y: -1 });
-    } else if (canvasY >= 0 && nodeY >= 0 && canvasWidth >= 0) {
-      const x = isLeftDirection ? 0 : canvasWidth;
-      const y = nodeY - canvasY + 10;
-      setPosition({ x, y });
+    // if(isLeftDirection) {
+    //   console.log('Key: ', key, ' ;treeY: ', treePositionY, ' ;nodeY: ', nodePositionY, ' ;canvasY: ', canvasY, ' ;canvas: ', canvasWidth, ' ;Visible: ', onScreen, '; Map: ', schemaMap[key]);
+    // }
+    // Don't look for the node position if tree, node or canvas isn't on the screen yet
+    if (
+      treePositionY === undefined ||
+      nodePositionY === undefined ||
+      canvasY === undefined ||
+      canvasWidth === undefined ||
+      onScreen === undefined
+    ) {
+      return;
     }
-  }, [openKeys, schemaMap, canvasY, canvasWidth, nodeY, isLeftDirection, key]);
+
+    let x: number | undefined = undefined;
+    let y: number | undefined = undefined;
+
+    if (!schemaMap[key] || nodePositionY < treePositionY) {
+      x = -1;
+      y = -1;
+    } else if (nodePositionY >= 0 && canvasY >= 0 && canvasWidth >= 0) {
+      x = isLeftDirection ? 0 : canvasWidth;
+      y = nodePositionY - canvasY + 10;
+    }
+
+    if (x !== undefined && y !== undefined) {
+      setPosition({ x, y });
+    } else {
+      setPosition(undefined);
+    }
+  }, [onScreen, schemaMap, setPosition, canvasY, canvasWidth, nodePositionY, isLeftDirection, key, treePositionY]);
 
   return { position };
 };

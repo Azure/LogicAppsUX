@@ -96,7 +96,10 @@ export const FunctionList = (props: FunctionListProps) => {
 
       // Incase of searching, expand all categories
       if (searchTerm) {
-        setOpenItems(Object.values(FunctionCategory).filter((category) => updatedFunctionCategories[category].children.length > 0));
+        setOpenItems((openItems) => [
+          ...openItems,
+          ...Object.values(FunctionCategory).filter((category) => updatedFunctionCategories[category].children.length > 0),
+        ]);
       }
 
       // Add function categories as children to the tree root, filtering out any that don't have any children

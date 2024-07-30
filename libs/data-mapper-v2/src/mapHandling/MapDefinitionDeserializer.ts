@@ -199,8 +199,8 @@ export class MapDefinitionDeserializer {
     }
   };
 
-  private getTargetKey = (targetNode: SchemaNodeExtended | FunctionData) =>
-    isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key);
+  private getTargetKey = (targetNode?: SchemaNodeExtended | FunctionData) =>
+    targetNode ? (isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key)) : '';
 
   private addLoopConnectionIfNeeded = (connections: ConnectionDictionary, targetNode: SchemaNodeExtended) => {
     if (this._loop.length > 0) {

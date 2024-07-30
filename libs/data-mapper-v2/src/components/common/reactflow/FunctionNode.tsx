@@ -40,7 +40,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
     functionWithConnections.inputs[0] && functionWithConnections.inputs[0].length > 0 && functionWithConnections.inputs[0][0] !== undefined;
   const isRightConnected = functionWithConnections.outputs.length > 0;
 
-  const funcitonHasInputs = functionData.maxNumberOfInputs !== 0;
+  const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>

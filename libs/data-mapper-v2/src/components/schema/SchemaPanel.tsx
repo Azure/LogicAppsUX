@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { DataMapperFileService, getSelectedSchema } from '../../core';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
-import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
+import { closePanel, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
-import { DefaultButton, PrimaryButton } from '@fluentui/react';
-import { equals, SchemaType, type DataMapSchema } from '@microsoft/logic-apps-shared';
+import { convertSchemaToSchemaExtended, flattenSchemaNodeMap, getFileNameAndPath } from '../../utils/Schema.Utils';
+import { equals, type SchemaNodeExtended, SchemaType, type DataMapSchema } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -17,10 +16,20 @@ import { SchemaPanelBody } from './SchemaPanelBody';
 import type { SchemaFile } from '../../models/Schema';
 import { mergeClasses } from '@fluentui/react-components';
 import type { FileSelectorOption } from '../common/selector/FileSelector';
+import Fuse from 'fuse.js';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
   retry: false, // Don't retry as it stops error from making its way through
+};
+
+const fuseSchemaSearchOptions: Fuse.IFuseOptions<SchemaNodeExtended> = {
+  includeScore: true,
+  minMatchCharLength: 1,
+  includeMatches: true,
+  threshold: 0.4,
+  ignoreLocation: true,
+  keys: ['name', 'qName'],
 };
 
 export interface ConfigPanelProps {
@@ -43,15 +52,23 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [selectedSchema, _setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
+
   const schemaFromStore = useSelector((state: RootState) => {
     return schemaType === SchemaType.Source
       ? state.dataMap.present.curDataMapOperation.sourceSchema
       : state.dataMap.present.curDataMapOperation.targetSchema;
   });
 
+  const flattenedScehmaMap = useMemo(
+    () => (schemaFromStore ? flattenSchemaNodeMap(schemaFromStore.schemaTreeRoot) : {}),
+    [schemaFromStore]
+  );
+
+  const [filteredFlattenedScehmaMap, setFilteredFlattenedScehmaMap] = useState(flattenedScehmaMap);
+
   const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
 
-  const fetchedSourceSchema = useQuery(
+  const fetchSchema = useQuery(
     [selectedSchemaFile],
     async () => {
       if (selectedSchema && selectedSchemaFile) {
@@ -68,20 +85,17 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     }
   );
 
+  const { isSuccess, data, error } = fetchSchema;
+
   useEffect(() => {
-    if (fetchedSourceSchema.isSuccess && fetchedSourceSchema.data && schemaType) {
-      const extendedSchema = convertSchemaToSchemaExtended(fetchedSourceSchema.data);
+    if (isSuccess && data && schemaType) {
+      const extendedSchema = convertSchemaToSchemaExtended(data);
       dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
     }
-  }, [dispatch, schemaType, fetchedSourceSchema.data, fetchedSourceSchema.isSuccess]);
+  }, [dispatch, schemaType, data, isSuccess]);
 
   const stringResources = useMemo(
     () => ({
-      ADD_NEW: intl.formatMessage({
-        defaultMessage: 'Add new',
-        id: 'rv0Pn+',
-        description: 'Add new option',
-      }),
       SELECT_EXISTING: intl.formatMessage({
         defaultMessage: 'Select existing',
         id: '2ZfzaY',
@@ -105,24 +119,6 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     }),
     [intl]
   );
-
-  const addLoc = intl.formatMessage({
-    defaultMessage: 'Add',
-    id: 'F9dR1Q',
-    description: 'Add',
-  });
-
-  const saveLoc = intl.formatMessage({
-    defaultMessage: 'Save',
-    id: '0CvRZW',
-    description: 'Save',
-  });
-
-  const cancelLoc = intl.formatMessage({
-    defaultMessage: 'Cancel',
-    id: '6PdOcy',
-    description: 'Cancel',
-  });
 
   const genericErrorMsg = intl.formatMessage({
     defaultMessage: 'Failed to load the schema. Please try again.',
@@ -150,8 +146,6 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     [dispatch, schemaType]
   );
 
-  const schema = fetchedSourceSchema.data;
-
   // this is not being used yet
   const addOrUpdateSchema = useCallback(
     (isAddSchema?: boolean) => {
@@ -166,7 +160,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       });
 
       // Catch specific errors from GET schemaTree or otherwise
-      const schemaLoadError = fetchedSourceSchema.error;
+      const schemaLoadError = error;
       if (schemaLoadError) {
         if (typeof schemaLoadError === 'string') {
           setErrorMessage(schemaLoadError);
@@ -204,11 +198,63 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       selectedSchemaFile,
       fileSelectorOptions,
       onSubmitSchemaFileSelection,
-      fetchedSourceSchema,
+      error,
       onSubmitSchema,
       selectedSchema,
     ]
   );
+
+  const onSearchChange = useCallback(
+    (searchTerm?: string) => {
+      if (flattenedScehmaMap && searchTerm) {
+        if (!searchTerm) {
+          setFilteredFlattenedScehmaMap({ ...flattenedScehmaMap });
+          return;
+        }
+
+        const allSchemaNodes = Object.values(flattenedScehmaMap);
+        const parentSet = new Set<string>();
+        const fuse = new Fuse(allSchemaNodes, fuseSchemaSearchOptions);
+
+        const findParent = (node: SchemaNodeExtended, parentSet: Set<string>) => {
+          if (node.parentKey && !parentSet.has(node.parentKey)) {
+            parentSet.add(node.parentKey);
+            findParent(flattenedScehmaMap[node.parentKey], parentSet);
+          }
+        };
+
+        const filteredNodes = fuse.search(searchTerm).map((result) => result.item);
+
+        // Along with the filter results, also add in the root nodes
+        const filteredFlattenedScehmaMap = filteredNodes.reduce(
+          (acc, node) => {
+            acc[node.key] = node;
+            return acc;
+          },
+          {} as Record<string, SchemaNodeExtended>
+        );
+
+        for (const node of filteredNodes) {
+          findParent(node, parentSet);
+        }
+
+        for (const parentKey of parentSet) {
+          const parent = flattenedScehmaMap[parentKey];
+          if (parent) {
+            filteredFlattenedScehmaMap[parentKey] = parent;
+          }
+        }
+
+        setFilteredFlattenedScehmaMap(filteredFlattenedScehmaMap);
+      }
+    },
+    [flattenedScehmaMap, setFilteredFlattenedScehmaMap]
+  );
+
+  // if initial flat-map changes, filtered version needs to be reset
+  useEffect(() => {
+    setFilteredFlattenedScehmaMap(flattenedScehmaMap);
+  }, [setFilteredFlattenedScehmaMap, flattenedScehmaMap]);
 
   // Read current schema file options if method exists
   useEffect(() => {
@@ -216,50 +262,6 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       fileService.readCurrentSchemaOptions();
     }
   }, [fileService]);
-
-  const onRenderFooterContent = useCallback(() => {
-    if (currentPanelView === ConfigPanelView.DefaultConfig) {
-      return null;
-    }
-
-    let isNoNewSchemaSelected = true;
-
-    if (fileSelectorOptions === 'select-existing') {
-      if (schemaType === SchemaType.Source) {
-        isNoNewSchemaSelected = !selectedSchema || selectedSchema.name === curDataMapOperation.sourceSchema?.name;
-      } else {
-        isNoNewSchemaSelected = !selectedSchema || selectedSchema.name === curDataMapOperation.targetSchema?.name;
-      }
-    } else {
-      isNoNewSchemaSelected = !selectedSchemaFile;
-    }
-
-    return (
-      <div>
-        <PrimaryButton
-          className="panel-button-left"
-          onClick={() => addOrUpdateSchema(currentPanelView === ConfigPanelView.AddSchema)}
-          disabled={isNoNewSchemaSelected}
-        >
-          {currentPanelView === ConfigPanelView.AddSchema ? addLoc : saveLoc}
-        </PrimaryButton>
-
-        <DefaultButton onClick={goBackToDefaultConfigPanelView}>{cancelLoc}</DefaultButton>
-      </div>
-    );
-  }, [
-    currentPanelView,
-    schemaType,
-    curDataMapOperation,
-    saveLoc,
-    goBackToDefaultConfigPanelView,
-    cancelLoc,
-    addOrUpdateSchema,
-    selectedSchemaFile,
-    fileSelectorOptions,
-    addLoc,
-    selectedSchema,
-  ]);
 
   return (
     <Panel
@@ -273,7 +275,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
           ? undefined
           : {
               placeholder: stringResources.SEARCH_PROPERTIES,
-              onChange: (_?: string) => {},
+              onChange: onSearchChange,
             }
       }
       styles={{
@@ -289,6 +291,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
           fileSelectorOptions={fileSelectorOptions}
           setFileSelectorOptions={setFileSelectorOptions}
           showScehmaSelection={showScehmaSelection}
+          flattenedSchemaMap={filteredFlattenedScehmaMap}
         />
       }
     />

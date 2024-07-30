@@ -1,68 +1,134 @@
-import { Tree, TreeItem, TreeItemLayout, type TreeItemOpenChangeData, mergeClasses } from '@fluentui/react-components';
+import {
+  Tree,
+  TreeItem,
+  TreeItemLayout,
+  type TreeItemOpenChangeData,
+  type TreeItemOpenChangeEvent,
+  mergeClasses,
+} from '@fluentui/react-components';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { useStyles } from './styles';
-import type { Node } from '@xyflow/react';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
+import useOnScreen from './useOnScreen';
+import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { toogleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
   isLeftDirection: boolean;
-  openKeys: Set<string>;
-  setOpenKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   flattenedScehmaMap: Record<string, SchemaNodeExtended>;
-  setUpdatedNode: (node: Node) => void;
+  treePositionX?: number;
+  treePositionY?: number;
 };
 
 const RecursiveTree = (props: RecursiveTreeProps) => {
-  const { root, isLeftDirection, openKeys, setOpenKeys, flattenedScehmaMap, setUpdatedNode } = props;
+  const { root, isLeftDirection, flattenedScehmaMap, treePositionX, treePositionY } = props;
   const { key } = root;
+  const nodeVisble = useMemo(() => !!flattenedScehmaMap[key], [flattenedScehmaMap, key]);
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
+  const onScreen = useOnScreen(nodeRef);
+  const nodes = useNodes();
+  const dispatch = useDispatch<AppDispatch>();
+  const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const {
     position: { x, y } = { x: undefined, y: undefined },
   } = useNodePosition({
     key: key,
-    openKeys: openKeys,
+    onScreen: onScreen,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
-    nodeX: nodeRef.current?.getBoundingClientRect().x,
-    nodeY: nodeRef.current?.getBoundingClientRect().y,
+    nodePositionX: nodeRef?.current?.getBoundingClientRect().x,
+    nodePositionY: nodeRef?.current?.getBoundingClientRect().y,
+    treePositionX,
+    treePositionY,
   });
 
+  const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
+
   const onOpenChange = useCallback(
-    (_e: any, data: TreeItemOpenChangeData) => {
-      setOpenKeys((prev) => {
-        const newOpenKeys = new Set(prev);
-        const value = data.value as string;
-        if (newOpenKeys.has(value)) {
-          newOpenKeys.delete(value);
-        } else {
-          newOpenKeys.add(value);
-        }
-        return newOpenKeys;
-      });
+    (_e: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
+      dispatch(
+        toogleNodeExpandCollapse({
+          isSourceSchema: isLeftDirection,
+          keys: [data.value as string],
+          isExpanded: data.open,
+        })
+      );
     },
-    [setOpenKeys]
+    [dispatch, isLeftDirection]
   );
 
   useLayoutEffect(() => {
-    const nodeId = getReactFlowNodeId(root.key, isLeftDirection);
+    return () => {
+      dispatch(
+        updateReactFlowNode({
+          removeNode: true,
+          isSource: isLeftDirection,
+          id: nodeId,
+        })
+      );
+    };
+  }, [isLeftDirection, dispatch, nodeId]);
+
+  useLayoutEffect(() => {
     if (x !== undefined && y !== undefined) {
-      setUpdatedNode({
+      const updatedNode: Node = {
         id: nodeId,
-        selectable: true,
+        selectable: false,
+        draggable: false,
         data: {
           ...root,
           isLeftDirection: isLeftDirection,
         },
         type: 'schemaNode',
         position: { x, y },
-      });
+      };
+
+      const currentNode = nodes.find((node) => node.id === nodeId);
+
+      if (currentNode) {
+        if (x < 0 || y < 0) {
+          applyNodeChanges([{ type: 'remove', id: nodeId }], nodes);
+          dispatch(
+            updateReactFlowNode({
+              removeNode: true,
+              id: nodeId,
+              isSource: isLeftDirection,
+              node: updatedNode,
+            })
+          );
+        } else if (x >= 0 && y >= 0 && (x !== currentNode.position.x || y !== currentNode.position.y)) {
+          applyNodeChanges([{ type: 'position', id: nodeId, position: updatedNode.position }], nodes);
+          dispatch(
+            updateReactFlowNode({
+              isSource: isLeftDirection,
+              id: nodeId,
+              node: updatedNode,
+            })
+          );
+        }
+      } else if (x >= 0 && y >= 0) {
+        applyNodeChanges([{ type: 'add', item: updatedNode }], nodes);
+        dispatch(
+          updateReactFlowNode({
+            isSource: isLeftDirection,
+            id: nodeId,
+            node: updatedNode,
+          })
+        );
+      }
     }
-  }, [isLeftDirection, x, y, root, setUpdatedNode]);
+  }, [nodes, isLeftDirection, x, y, root, nodeId, dispatch]);
+
+  if (!nodeVisble) {
+    return null;
+  }
 
   if (root.children.length === 0) {
     return (
@@ -73,7 +139,14 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   }
 
   return (
-    <TreeItem itemType="branch" id={key} value={key} ref={nodeRef} open={openKeys.has(key)} onOpenChange={onOpenChange}>
+    <TreeItem
+      itemType="branch"
+      id={key}
+      value={key}
+      ref={nodeRef}
+      open={isLeftDirection ? sourceOpenKeys[key] : targetOpenKeys[key]}
+      onOpenChange={onOpenChange}
+    >
       <TreeItemLayout className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout)}>
         {root.name}
       </TreeItemLayout>
@@ -83,10 +156,9 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
             <RecursiveTree
               root={child}
               isLeftDirection={isLeftDirection}
-              openKeys={openKeys}
-              setOpenKeys={setOpenKeys}
               flattenedScehmaMap={flattenedScehmaMap}
-              setUpdatedNode={setUpdatedNode}
+              treePositionX={treePositionX}
+              treePositionY={treePositionY}
             />
           </span>
         ))}

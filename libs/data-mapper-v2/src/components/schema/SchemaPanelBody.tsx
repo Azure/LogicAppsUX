@@ -1,16 +1,17 @@
-import { equals, type ITreeFile, type IFileSysTreeItem, SchemaType } from '@microsoft/logic-apps-shared';
+import { equals, type ITreeFile, type IFileSysTreeItem, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
-import { SchemaItemView } from '../schemaView/schemaView';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
+import { SchemaTree } from './tree/SchemaTree';
 
 export interface SchemaPanelBodyProps {
   schemaType: SchemaType;
+  flattenedSchemaMap?: Record<string, SchemaNodeExtended>;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
@@ -27,11 +28,22 @@ export const SchemaPanelBody = ({
   fileSelectorOptions,
   setFileSelectorOptions,
   showScehmaSelection,
+  flattenedSchemaMap,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
+
+  const schema = useSelector((state: RootState) => {
+    if (schemaType === SchemaType.Source) {
+      return state.dataMap.present.curDataMapOperation.sourceSchema;
+    }
+    if (schemaType === SchemaType.Target) {
+      return state.dataMap.present.curDataMapOperation.targetSchema;
+    }
+    return undefined;
+  });
 
   const stringResources = useMemo(
     () => ({
@@ -136,7 +148,11 @@ export const SchemaPanelBody = ({
           }}
         />
       ) : (
-        <SchemaItemView schemaType={schemaType} />
+        <div className={styles.treeWrapper}>
+          {schema && flattenedSchemaMap && (
+            <SchemaTree isLeftDirection={equals(schemaType, SchemaType.Source)} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
+          )}
+        </div>
       )}
     </div>
   );

@@ -10477,7 +10477,7 @@ packages:
     hasBin: true
 
   rollup@4.16.4:
-    resolution: {integrity: sha1-/jKOtBKT8gyVk6CV7CO9xLXZMxc=}
+    resolution: {integrity: sha512-kuaTJSUbz+Wsb2ATGvEknkI12XV40vIiHmLuFlejoo7HtDok/O5eDDD0UpCVY5bBX5U5RYo8wWP83H7ZsqVEnA==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
