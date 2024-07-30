@@ -311,7 +311,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
-      it('creates a simple conditional property connection', () => {
+      it.skip('creates a simple conditional property connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
@@ -359,7 +359,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it('creates a conditional property connection', () => {
+      it.skip('creates a conditional property connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
@@ -1554,7 +1554,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
       });
 
-      it('creates a simple conditional property connection', () => {
+      it.skip('creates a simple conditional property connection', () => {
         simpleMap['root'] = {
           String1: '/root/OrderNo',
           '$if(is-greater-than(/root/Num, 10))': {

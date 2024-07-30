@@ -22,15 +22,109 @@
 // import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 // import { Position } from 'reactflow';
 
-import { guid, type SchemaType } from '@microsoft/logic-apps-shared';
+import { guid, type SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { FunctionData } from 'models';
+import type { FunctionData, FunctionDictionary } from 'models';
+import type { ConnectionDictionary } from '../models/Connection';
+import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
+import { isFunctionData } from './Function.Utils';
 
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
+
+const rootLayoutNodeId = 'root';
+export const LayoutContainer = {
+  SourceSchema: 'sourceSchemaBlock',
+  Functions: 'functionsBlock',
+  TargetSchema: 'targetSchemaBlock',
+} as const;
+type LayoutContainer = (typeof LayoutContainer)[keyof typeof LayoutContainer];
+
+export interface LayoutEdge {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  labels: string[];
+}
+
+export interface LayoutNode {
+  id: string;
+  x?: number;
+  y?: number;
+  children?: LayoutNode[];
+}
+
+export interface ContainerLayoutNode {
+  id: LayoutContainer;
+  children: LayoutNode[];
+}
+
+export interface RootLayoutNode {
+  id: typeof rootLayoutNodeId;
+  children: ContainerLayoutNode[];
+  edges: LayoutEdge[];
+  width?: number;
+  height?: number;
+}
+
+export const convertWholeDataMapToLayoutTree = (
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  functionNodes: FunctionDictionary,
+  connections: ConnectionDictionary
+): RootLayoutNode => {
+  let nextEdgeIndex = 0;
+  const layoutEdges: LayoutEdge[] = [];
+
+  Object.values(connections).forEach((connection) => {
+    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
+      inputValueArray.forEach((inputValue, inputValueIndex) => {
+        if (isConnectionUnit(inputValue)) {
+          const targetId = connection.self.reactFlowKey;
+          const labels = isFunctionData(connection.self.node)
+            ? connection.self.node.maxNumberOfInputs > -1
+              ? [connection.self.node.inputs[inputIndex].name]
+              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
+            : [];
+
+          const nextEdge: LayoutEdge = {
+            id: `e${nextEdgeIndex}`,
+            sourceId: inputValue.reactFlowKey,
+            targetId,
+            labels,
+          };
+
+          layoutEdges.push(nextEdge);
+          nextEdgeIndex += 1;
+        }
+      });
+    });
+  });
+
+  const layoutTree: RootLayoutNode = {
+    id: rootLayoutNodeId,
+    children: [
+      {
+        id: LayoutContainer.SourceSchema,
+        children: Object.values(flattenedSourceSchema).map((srcNode) => ({ id: addSourceReactFlowPrefix(srcNode.key) })),
+      },
+      {
+        id: LayoutContainer.Functions,
+        children: Object.keys(functionNodes).map((fnNodeKey) => ({ id: fnNodeKey })),
+      },
+      {
+        id: LayoutContainer.TargetSchema,
+        children: Object.values(flattenedTargetSchema).map((tgtNode) => ({ id: addTargetReactFlowPrefix(tgtNode.key) })),
+      },
+    ],
+    edges: layoutEdges,
+  };
+
+  return layoutTree;
+};
 
 // export const overviewTgtSchemaX = 600;
 

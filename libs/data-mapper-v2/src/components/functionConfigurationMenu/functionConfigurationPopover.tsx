@@ -164,7 +164,7 @@ const OutputTabContents = (props: {
   );
   return (
     <>
-      <div>{table}</div> {props.func.maxNumberOfInputs === UnboundedInput && addOutput}
+      <div>{table}</div> {props.func?.maxNumberOfInputs === UnboundedInput && addOutput}
     </>
   );
 };

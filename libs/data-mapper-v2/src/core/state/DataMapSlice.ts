@@ -11,13 +11,14 @@ import {
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { getParentId } from '../../utils/DataMap.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
+import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
   flattenSchemaIntoDictionary,
-  flattenSchemaIntoSortArray,
-  flattenSchemaNodeMap,
+  flattenSchemaNode,
+  getChildParentSchemaMapping,
   isSchemaNodeExtended,
+  flattenSchemaIntoSortArray,
 } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -30,10 +31,9 @@ import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, Edge, XYPosition } from '@xyflow/react';
+import type { Node, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
-
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
@@ -58,8 +58,22 @@ export interface DataMapOperationState {
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
   loadedMapMetadata?: MapMetadataV2;
-  nodes: Node[];
-  edges: Edge[];
+  // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
+  // This info is not saved in LML which is why it is stored separately in the store
+  sourceTemporaryStateConnections: Record<string, Record<string, boolean>>;
+  targetTemporaryStateConnections: Record<string, Record<string, boolean>>;
+  // Generic reactflow node mapping for each node in the scehma
+  sourceNodesMap: Record<string, Node>;
+  targetNodesMap: Record<string, Node>;
+  // Child Parent mapping stores the list of parent nodes for each child node up until the root
+  sourceChildParentMapping: Record<string, string[]>;
+  targetChildParentMapping: Record<string, string[]>;
+  // Parent child edge mapping stores the list of edges for each parent node for its children
+  sourceParentChildEdgeMapping: Record<string, Record<string, boolean>>;
+  targetParentChildEdgeMapping: Record<string, Record<string, boolean>>;
+  // Track open nodes in the scehma Tree
+  sourceOpenKeys: Record<string, boolean>;
+  targetOpenKeys: Record<string, boolean>;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -75,8 +89,16 @@ const emptyPristineState: DataMapOperationState = {
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
-  nodes: [],
-  edges: [],
+  sourceNodesMap: {},
+  targetNodesMap: {},
+  sourceChildParentMapping: {},
+  targetChildParentMapping: {},
+  sourceParentChildEdgeMapping: {},
+  targetParentChildEdgeMapping: {},
+  sourceOpenKeys: {},
+  targetOpenKeys: {},
+  sourceTemporaryStateConnections: {},
+  targetTemporaryStateConnections: {},
 };
 
 const initialState: DataMapState = {
@@ -98,7 +120,9 @@ export interface InitialDataMapAction {
 }
 
 export interface ReactFlowNodeAction {
-  node: Node;
+  isSource: boolean;
+  id: string;
+  node?: Node;
   removeNode?: boolean;
 }
 
@@ -116,10 +140,21 @@ export interface SetConnectionInputAction {
   findInputSlot?: boolean;
 }
 
+export interface ExpandCollapseAction {
+  isSourceSchema: boolean;
+  keys: string[];
+  isExpanded: boolean;
+}
+
 export interface DeleteConnectionAction {
   connectionKey: string;
   inputKey: string;
 }
+
+type ReactFlowNodesUpdateProps = {
+  isSource: boolean;
+  nodes: Record<string, Node>;
+};
 
 export const dataMapSlice = createSlice({
   name: 'dataMap',
@@ -140,12 +175,17 @@ export const dataMapSlice = createSlice({
       const currentState = state.curDataMapOperation;
 
       if (action.payload.schemaType === SchemaType.Source) {
-        const sourceSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const sourceCurrentFlattenedSchemaMap = currentState.sourceSchema
-          ? flattenSchemaNodeMap(currentState.sourceSchema.schemaTreeRoot)
-          : {};
+        const flattenedSourceSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
+        const sourceSchemaSortArray = flattenedSourceSchema.map((node) => node.key);
 
         currentState.sourceSchema = action.payload.schema;
+        currentState.sourceChildParentMapping = getChildParentSchemaMapping(action.payload.schema);
+        currentState.sourceOpenKeys = flattenedSourceSchema
+          .filter((node) => node.children.length > 0)
+          .reduce((acc: Record<string, boolean>, node: SchemaNodeExtended) => {
+            acc[node.key] = true;
+            return acc;
+          }, {});
         currentState.flattenedSourceSchema = flattenedSchema;
         currentState.sourceSchemaOrdering = sourceSchemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
@@ -153,14 +193,18 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.nodes = currentState.nodes.filter((node) => !sourceCurrentFlattenedSchemaMap[node.data.id as string]);
+        currentState.sourceNodesMap = {};
       } else {
-        const targetSchemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
-        const targetCurrentFlattenedSchemaMap = currentState.targetSchema
-          ? flattenSchemaNodeMap(currentState.targetSchema.schemaTreeRoot)
-          : {};
-
+        const flattenedTargetSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
+        const targetSchemaSortArray = flattenedTargetSchema.map((node) => node.key);
         currentState.targetSchema = action.payload.schema;
+        currentState.targetChildParentMapping = getChildParentSchemaMapping(action.payload.schema);
+        currentState.targetOpenKeys = flattenedTargetSchema
+          .filter((node) => node.children.length > 0)
+          .reduce((acc: Record<string, boolean>, node: SchemaNodeExtended) => {
+            acc[node.key] = true;
+            return acc;
+          }, {});
         currentState.flattenedTargetSchema = flattenedSchema;
         currentState.targetSchemaOrdering = targetSchemaSortArray;
         state.pristineDataMap.targetSchema = action.payload.schema;
@@ -168,11 +212,8 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.nodes = currentState.nodes.filter((node) => !targetCurrentFlattenedSchemaMap[node.data.id as string]);
+        currentState.targetNodesMap = {};
       }
-
-      // NOTE: Reset ReactFlow edges
-      currentState.edges = [];
 
       state.curDataMapOperation = { ...currentState };
     },
@@ -185,8 +226,20 @@ export const dataMapSlice = createSlice({
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
-      //let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
-      //functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+      assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
+
+      // const addedNodes = Object.entries(functionNodes).map((funcTuple) => {
+      //   const func = funcTuple[1];
+      //   const id = funcTuple[0];
+      //   const node: Node = {
+      //     id: id,
+      //     type: 'function',
+      //     position: func.position || { x: 100, y: 100 }, // find layout if none found
+      //     data: { id, func },
+      //   };
+      //   return node;
+      // });
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -195,7 +248,7 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
-        functionNodes: {},
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
@@ -232,22 +285,52 @@ export const dataMapSlice = createSlice({
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
         functionNodes: { ...state.curDataMapOperation.functionNodes },
+        sourceParentChildEdgeMapping: {
+          ...state.curDataMapOperation.sourceParentChildEdgeMapping,
+        },
+        targetParentChildEdgeMapping: {
+          ...state.curDataMapOperation.targetParentChildEdgeMapping,
+        },
       };
 
       let sourceNode: UnknownNode;
+      const { reactFlowSource, reactFlowDestination } = action.payload;
 
-      if (action.payload.reactFlowSource.startsWith(SchemaType.Source)) {
-        sourceNode = state.curDataMapOperation.flattenedSourceSchema[action.payload.reactFlowSource];
+      if (reactFlowSource.startsWith(SchemaType.Source)) {
+        sourceNode = state.curDataMapOperation.flattenedSourceSchema[reactFlowSource];
+        const nodeKey = sourceNode.key;
+
+        // Add connection mapping for all parents
+        const allParents = newState.sourceChildParentMapping[nodeKey] ?? [];
+        for (const parentKey of allParents) {
+          if (!newState.sourceParentChildEdgeMapping[parentKey]) {
+            newState.sourceParentChildEdgeMapping[parentKey] = {};
+          }
+          newState.sourceParentChildEdgeMapping[parentKey][nodeKey] = true;
+        }
+
+        state.curDataMapOperation.sourceParentChildEdgeMapping = newState.sourceParentChildEdgeMapping;
       } else {
-        sourceNode = newState.functionNodes[action.payload.reactFlowSource];
+        sourceNode = newState.functionNodes[reactFlowSource];
       }
       let destinationNode: UnknownNode;
 
-      if (action.payload.reactFlowDestination.startsWith(SchemaType.Target)) {
-        destinationNode = state.curDataMapOperation.flattenedTargetSchema[action.payload.reactFlowDestination];
+      if (reactFlowDestination.startsWith(SchemaType.Target)) {
+        destinationNode = state.curDataMapOperation.flattenedTargetSchema[reactFlowDestination];
+        const nodeKey = destinationNode.key;
+        // Add connection mapping for all parents
+        const allParents = newState.targetChildParentMapping[nodeKey] ?? [];
+        for (const parentKey of allParents) {
+          if (!newState.targetParentChildEdgeMapping[parentKey]) {
+            newState.targetParentChildEdgeMapping[parentKey] = {};
+          }
+          newState.targetParentChildEdgeMapping[parentKey][nodeKey] = true;
+        }
+
+        state.curDataMapOperation.targetParentChildEdgeMapping = newState.targetParentChildEdgeMapping;
       } else {
         destinationNode = newState.functionNodes[action.payload.reactFlowDestination];
-        if (destinationNode.maxNumberOfInputs === UnboundedInput) {
+        if (destinationNode?.maxNumberOfInputs === UnboundedInput) {
           action.payload.specificInput = 0;
         }
       }
@@ -323,33 +406,6 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation = newOp;
     },
 
-    updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
-      const currentState = state.curDataMapOperation;
-      const { nodes } = currentState;
-      const newNode = action.payload.node;
-      const oldNode = nodes.find((node) => node.id === newNode.id);
-      let updatedNodes = [];
-      if (action.payload.removeNode) {
-        updatedNodes = oldNode ? nodes.filter((node) => node.id !== newNode.id) : nodes;
-      } else if (oldNode) {
-        updatedNodes = nodes.map((node) => {
-          if (node.id === newNode.id) {
-            return newNode;
-          }
-          return node;
-        });
-      } else {
-        updatedNodes = [...nodes, newNode];
-      }
-
-      const newState = {
-        ...currentState,
-        nodes: updatedNodes,
-      };
-
-      state.curDataMapOperation = newState;
-    },
-
     deleteFunction: (state, action: PayloadAction<string>) => {
       const reactFlowKey = action.payload;
       const currentDataMap = state.curDataMapOperation;
@@ -372,22 +428,39 @@ export const dataMapSlice = createSlice({
         return;
       }
     },
+    updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
+      const newState = { ...state.curDataMapOperation };
+      const sourceNodesMap = { ...newState.sourceNodesMap };
+      const targetNodesMap = { ...newState.targetNodesMap };
+      if (action.payload.isSource) {
+        if (action.payload.removeNode) {
+          delete sourceNodesMap[action.payload.id];
+        } else if (action.payload.node) {
+          sourceNodesMap[action.payload.id] = action.payload.node;
+        }
+      } else if (action.payload.removeNode) {
+        delete targetNodesMap[action.payload.id];
+      } else if (action.payload.node) {
+        targetNodesMap[action.payload.id] = action.payload.node;
+      }
 
-    updateReactFlowEdges: (state, action: PayloadAction<Edge[]>) => {
-      const currentState = state.curDataMapOperation;
-      const newState = {
-        ...currentState,
-        edges: action.payload,
+      state.curDataMapOperation = {
+        ...newState,
+        sourceNodesMap,
+        targetNodesMap,
       };
-
-      state.curDataMapOperation = newState;
     },
-    updateReactFlowNodes: (state, action: PayloadAction<Node[]>) => {
+    updateReactFlowNodes: (state, action: PayloadAction<ReactFlowNodesUpdateProps>) => {
       const currentState = state.curDataMapOperation;
       const newState = {
         ...currentState,
-        nodes: action.payload,
       };
+
+      if (action.payload.isSource) {
+        newState.sourceNodesMap = action.payload.nodes;
+      } else {
+        newState.targetNodesMap = action.payload.nodes;
+      }
 
       state.curDataMapOperation = newState;
     },
@@ -406,6 +479,114 @@ export const dataMapSlice = createSlice({
         state.isDirty = true;
       }
     },
+    toogleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
+      const newState = { ...state.curDataMapOperation };
+      const { keys, isExpanded } = action.payload;
+      if (action.payload.isSourceSchema) {
+        for (const key of keys) {
+          newState.sourceOpenKeys[key] = isExpanded;
+          if (isExpanded) {
+            // If node is expanded, remove all the temporary connections created for the child
+            // both from Target as well as Source schema
+            const connectedTargetNodes = newState.sourceTemporaryStateConnections[key] ?? {};
+            for (const targetNode of Object.keys(connectedTargetNodes)) {
+              if (newState.targetTemporaryStateConnections[targetNode]) {
+                delete newState.targetTemporaryStateConnections[targetNode][key];
+              }
+            }
+            delete newState.sourceTemporaryStateConnections[key];
+          } else {
+            // Get all the nodes to which children are connected
+            const targetConnectedChildren = Object.keys(newState.sourceParentChildEdgeMapping[key] ?? {});
+            for (const child of targetConnectedChildren) {
+              // Get parents of the child connected to
+              const parents = newState.targetChildParentMapping[child];
+
+              // Fetch the first parent which is collapsed
+              let i = 0;
+              while (i < parents.length) {
+                if (!newState.targetOpenKeys[parents[i]]) {
+                  break;
+                }
+                ++i;
+              }
+
+              // Get the node to which temporary node needs to be connected to
+              let connectToChild = child;
+              if (i < parents.length) {
+                connectToChild = parents[i];
+              }
+
+              // Update Source-Target edge mapping
+              if (!newState.sourceTemporaryStateConnections[key]) {
+                newState.sourceTemporaryStateConnections[key] = {};
+              }
+              newState.sourceTemporaryStateConnections[key][connectToChild] = true;
+
+              // Update Target-Source edge mapping
+              if (!newState.targetTemporaryStateConnections[connectToChild]) {
+                newState.targetTemporaryStateConnections[connectToChild] = {};
+              }
+              newState.targetTemporaryStateConnections[connectToChild][key] = true;
+            }
+          }
+        }
+      } else {
+        for (const key of keys) {
+          newState.targetOpenKeys[key] = isExpanded;
+          if (isExpanded) {
+            // If node is expanded, remove all the temporary connections created for the child
+            // both from Target as well as Source schema
+            const connectedSourceNodes = newState.targetTemporaryStateConnections[key] ?? {};
+            for (const sourceNode of Object.keys(connectedSourceNodes)) {
+              if (newState.sourceTemporaryStateConnections[sourceNode]) {
+                delete newState.sourceTemporaryStateConnections[sourceNode][key];
+              }
+            }
+            delete newState.targetTemporaryStateConnections[key];
+          } else {
+            // Get all the nodes to which children are connected
+            const sourceConnectedChildren = Object.keys(newState.targetParentChildEdgeMapping[key] ?? {});
+            for (const child of sourceConnectedChildren) {
+              // Get parents of the child connected to
+              const parents = newState.sourceChildParentMapping[child];
+
+              // Fetch the first parent which is collapsed
+              let i = 0;
+              while (i < parents.length) {
+                if (!newState.sourceOpenKeys[parents[i]]) {
+                  break;
+                }
+                ++i;
+              }
+
+              // Get the node to which temporary node needs to be connected to
+              let connectToChild = child;
+              if (i < parents.length) {
+                connectToChild = parents[i];
+              }
+
+              // Update Source-Target edge mapping
+              if (!newState.targetTemporaryStateConnections[key]) {
+                newState.targetTemporaryStateConnections[key] = {};
+              }
+              newState.targetTemporaryStateConnections[key][connectToChild] = true;
+
+              // Update Target-Source edge mapping
+              if (!newState.sourceTemporaryStateConnections[connectToChild]) {
+                newState.sourceTemporaryStateConnections[connectToChild] = {};
+              }
+              newState.sourceTemporaryStateConnections[connectToChild][key] = true;
+            }
+          }
+        }
+      }
+
+      state.curDataMapOperation = {
+        ...newState,
+        lastAction: 'Toggle Node Expand/Collapse',
+      };
+    },
   },
 });
 
@@ -416,9 +597,8 @@ export const {
   setInitialDataMap,
   changeSourceSchema,
   changeTargetSchema,
-  updateReactFlowNode,
-  updateReactFlowEdges,
   updateReactFlowNodes,
+  updateReactFlowNode,
   makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
@@ -427,6 +607,7 @@ export const {
   addFunctionNode,
   deleteFunction,
   updateFunctionPosition,
+  toogleNodeExpandCollapse,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -500,7 +681,7 @@ export const deleteConnectionFromConnections = (
 
   const outputNode = connections[outputKey].self.node;
   const outputNodeInputs = connections[outputKey].inputs;
-  if (isFunctionData(outputNode) && outputNode.maxNumberOfInputs === -1) {
+  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === -1) {
     Object.values(outputNodeInputs).forEach((input, inputIndex) =>
       input.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {

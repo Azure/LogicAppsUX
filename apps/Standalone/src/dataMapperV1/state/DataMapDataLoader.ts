@@ -2,10 +2,11 @@ import type { MapDefDropdownOption } from '../components/DevToolbox';
 import type { RootState } from './Store';
 import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
 import { functionMock, loadMapDefinition } from '@microsoft/logic-apps-data-mapper';
-import type { MapDefinitionEntry, MapMetadataV1 } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, MapMetadata } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { testMetadata } from '../mapMetadata';
 
 export const LoadingMethod = {
   File: 'file',
@@ -21,24 +22,14 @@ export interface DataMapLoadingState {
   rawDefinition?: MapDefDropdownOption;
   loadingMethod: LoadingMethod;
   mapDefinition: MapDefinitionEntry;
-  mapMetadata?: MapMetadataV1;
+  mapMetadata?: MapMetadata;
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
   customXsltPaths: string[];
 }
 
-const mockMetadata: MapMetadataV1 = {
-  functionNodes: [
-    {
-      reactFlowGuid: 'Ceiling-52B496E3-E270-4A8E-AFB2-414989219B15',
-      functionKey: 'Ceiling',
-      positions: [{ targetKey: '/ns0:Root/DirectTranslation/Employee', position: { x: 126, y: 201 } }],
-      connections: [{ name: 'target-/ns0:Root/DirectTranslation/Employee/ID', inputOrder: 0 }],
-      connectionShorthand: '0-target-/ns0:Root/DirectTranslation/Employee/ID,',
-    },
-  ],
-};
+const mockMetadata: MapMetadata = testMetadata;
 
 const initialState: DataMapLoadingState = {
   theme: ThemeType.Light,
