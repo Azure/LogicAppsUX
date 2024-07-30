@@ -12,10 +12,8 @@ import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { flattenInputs, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
-import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { useState } from 'react';
 
-// TODO: Remove already existing connections ???
 export const OutputTabContents = (props: {
   func: FunctionData;
   functionId: string;
@@ -69,7 +67,7 @@ export const OutputTabContents = (props: {
     if (newOutput === undefined) {
       return;
     }
-    const dest = typeof newOutput === 'string' ? newOutput : addTargetReactFlowPrefix(newOutput.node.key);
+    const dest = getIDForTargetConnection(newOutput);
     dispatch(
       makeConnectionFromMap({
         reactFlowSource: props.functionId,
