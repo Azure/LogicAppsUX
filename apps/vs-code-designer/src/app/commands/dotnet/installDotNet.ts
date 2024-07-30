@@ -17,5 +17,5 @@ export async function installDotNet(context: IActionContext, majorVersion?: stri
   const scriptUrl = getDotNetBinariesReleaseUrl();
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractDependency(scriptUrl, targetDirectory, dotnetDependencyName, null, majorVersion);
+  await downloadAndExtractDependency(context, scriptUrl, targetDirectory, dotnetDependencyName, null, majorVersion);
 }
