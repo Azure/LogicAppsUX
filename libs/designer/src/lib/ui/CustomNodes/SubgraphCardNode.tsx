@@ -49,7 +49,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
 
-  const label = useNodeDisplayName(subgraphId);
+  const title = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -135,7 +135,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 id={subgraphId}
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
-                title={label}
+                title={title}
                 selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}

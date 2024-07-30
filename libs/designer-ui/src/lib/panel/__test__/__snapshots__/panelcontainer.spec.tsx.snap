@@ -27,3 +27,80 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
   </React.Fragment>
 </OverlayDrawer>
 `;
+
+exports[`ui/workflowparameters/workflowparameter > should construct 2`] = `
+<OverlayDrawer
+  aria-label="Operation details panel"
+  className="msla-panel-container"
+  modalType="non-modal"
+  mountNode={
+    {
+      "className": "msla-panel-host-container",
+    }
+  }
+  open={true}
+  position="end"
+  style={
+    {
+      "width": "630px",
+    }
+  }
+>
+  <React.Fragment>
+    <div
+      className="msla-panel-container-nested msla-panel-container-nested-right"
+    >
+      <React.Fragment />
+    </div>
+  </React.Fragment>
+</OverlayDrawer>
+`;
+
+exports[`ui/workflowparameters/workflowparameter > should construct. 2`] = `
+<StyledPanelBase
+  className="msla-panel-container"
+  customWidth="630px"
+  focusTrapZoneProps={
+    {
+      "disabled": false,
+      "firstFocusableTarget": "#msla-panel-header-collapse-nav",
+      "forceFocusInsideTrap": true,
+    }
+  }
+  hasCloseButton={false}
+  headerClassName="msla-panel-header"
+  isBlocking={false}
+  isOpen={true}
+  onRenderHeader={[Function]}
+  popupProps={
+    {
+      "ariaLabel": "Operation details panel",
+    }
+  }
+  styles={
+    {
+      "content": {
+        "height": "100%",
+        "overflow": "hidden",
+        "padding": "1rem 2rem 0rem",
+      },
+      "main": {
+        "overflow": "hidden",
+      },
+      "scrollableContent": {
+        "display": "flex",
+        "flexDirection": "column",
+        "height": "100%",
+      },
+    }
+  }
+  type={7}
+>
+  <React.Fragment>
+    <PanelContent
+      tabs={[]}
+      trackEvent={[MockFunction spy]}
+    />
+  </React.Fragment>
+</StyledPanelBase>
+`;

@@ -25,12 +25,12 @@ test.describe(
       await page.getByRole('menu').getByText('Run After').click();
       await expect(page.getByLabel('Expand Parse JSON Parse JSON')).toBeVisible();
 
-      await page.getByLabel('Initialize variable operation').click({
+      await page.getByText('Initialize ArrayVariable', { exact: true }).click({
         button: 'right',
       });
       await expect(page.getByRole('menuitem', { name: 'Run After' })).not.toBeVisible();
 
-      await page.getByLabel('When a HTTP request is').click({
+      await page.getByText('manual', { exact: true }).click({
         button: 'right',
       });
       await expect(page.getByRole('menuitem', { name: 'Run After' })).not.toBeVisible();
@@ -42,9 +42,8 @@ test.describe(
       await page.getByLabel('Insert a new step after HTTP').click();
       await page.getByText('Add an action').click();
       await page.getByPlaceholder('Search').fill('scope');
-      await page.getByLabel('Scope Encapsulate a block of').click();
-
-      await page.getByRole('button', { name: 'Scope', exact: true }).click({
+      await page.getByLabel('Scope').click();
+      await page.getByLabel('Scope', { exact: true }).click({
         button: 'right',
       });
       await expect(page.getByRole('menuitem', { name: 'Run After' })).toBeVisible();

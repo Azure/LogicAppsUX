@@ -39,6 +39,9 @@ const gapSpace = 10;
 const beakWidth = 20;
 
 let calloutStyles: Partial<ICalloutContentStyles> = {
+  root: {
+    zIndex: 1,
+  },
   calloutMain: {
     overflow: 'visible',
   },
