@@ -55,8 +55,6 @@ export const OutputTabContents = (props: {
     const destinationNode = connectionDictionary[dest];
     const flattened = flattenInputs(destinationNode.inputs);
     const index = flattened.findIndex((input) => getIDForTargetConnection(input) === props.functionId);
-    // const index = destinationNode.inputs.findIndex((input) => input === props.functionId);
-    // const targetNodeReactFlowKey = props.functionKey;
     dispatch(
       setConnectionInput({
         targetNode: destinationNode.self.node,

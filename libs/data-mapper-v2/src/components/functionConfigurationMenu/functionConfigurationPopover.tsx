@@ -76,7 +76,7 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
             icon={<DeleteRegular className={styles.deleteIcon} />}
           />
         </div>
-        <TabList onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
+        <TabList defaultSelectedValue={'input'} onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
           <Tab value="input">{stringResources.INPUT}</Tab>
           <Tab value="output">{stringResources.OUTPUT}</Tab>
           <Tab className={styles.detailsButton} value="details">

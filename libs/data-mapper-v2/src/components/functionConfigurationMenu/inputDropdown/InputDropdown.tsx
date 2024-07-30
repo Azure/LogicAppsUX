@@ -29,22 +29,12 @@ export interface InputDropdownProps {
   functionId: string;
   schemaListType: SchemaType;
   labelId?: string;
-  placeholder?: string;
   inputAllowsCustomValues?: boolean;
   validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const {
-    inputName,
-    inputValue,
-    labelId,
-    schemaListType,
-    functionId,
-    placeholder,
-    inputAllowsCustomValues = true,
-    validateAndCreateConnection,
-  } = props;
+  const { inputName, inputValue, labelId, schemaListType, functionId, inputAllowsCustomValues = true, validateAndCreateConnection } = props;
   const intl = useIntl();
   const styles = useStyles();
 
@@ -67,9 +57,17 @@ export const InputDropdown = (props: InputDropdownProps) => {
     description: 'Suffix for a custom value drop down value.',
   });
 
+  const placeholder = intl.formatMessage({
+    defaultMessage: 'Enter a value',
+    id: 'm8MjHH',
+    description: 'Placeholder for a dropdown',
+  });
+
   useEffect(() => {
     if (inputName) {
       setValue(inputName);
+    } else {
+      setValue('');
     }
   }, [inputName]);
 

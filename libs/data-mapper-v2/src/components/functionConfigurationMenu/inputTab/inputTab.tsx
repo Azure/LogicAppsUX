@@ -69,6 +69,18 @@ export const InputTabContents = (props: {
         }
       };
 
+      const removeConnection = (inputIndex: number) => {
+        const targetNodeReactFlowKey = props.functionKey;
+        dispatch(
+          setConnectionInput({
+            targetNode: props.func,
+            targetNodeReactFlowKey,
+            inputIndex,
+            input: undefined,
+          })
+        );
+      };
+
       return (
         <div className={styles.boundedInputRow} key={index}>
           <div className={styles.boundedInputTopRow}>
@@ -96,6 +108,12 @@ export const InputTabContents = (props: {
                 </Badge>
               )}
             </span>
+            <Button
+              className={styles.listButton}
+              appearance="transparent"
+              icon={<LinkDismissRegular />}
+              onClick={() => removeConnection(index)}
+            />
           </div>
         </div>
       );
@@ -364,13 +382,7 @@ interface UnboundedInputEntryProps {
 }
 
 export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
-  const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
-  //const intl = useIntl();
-
-  // const typeValidationMessage = useMemo<string | undefined>(() => {
-  //   return getTypeValidationMessge(intl);
-  // },[intl]);
 
   const [, drag] = useDrag(() => ({
     type: 'functionInput',
@@ -387,7 +399,6 @@ export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
             inputName={props.inputName}
             inputValue={props.inputValue}
             validateAndCreateConnection={props.validateAndCreateConnection}
-            placeholder={inputsFromManifest[0].placeHolder}
           />
         </span>
         <span className={styles.listButtons}>
