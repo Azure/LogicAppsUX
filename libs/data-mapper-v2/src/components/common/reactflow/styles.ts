@@ -54,6 +54,8 @@ export const useStyles = makeStyles({
     display: 'inline-flex',
     justifyContent: 'left',
     paddingRight: '20px',
+  },
+  activeFunctionButton: {
     ...shorthands.border('3px', 'solid', activeColor),
   },
   functionName: {

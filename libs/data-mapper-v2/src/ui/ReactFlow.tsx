@@ -14,6 +14,7 @@ import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../core';
 import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
+import { createEdgeId } from '../utils/Edge.Utils';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -39,7 +40,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
       return layout.edges.map((edge) => {
         const newEdge: Edge = {
-          id: `${edge.sourceId}-${edge.targetId}`,
+          id: createEdgeId(edge.sourceId, edge.targetId),
           source: edge.sourceId,
           target: edge.targetId,
           type: 'connectedEdge',

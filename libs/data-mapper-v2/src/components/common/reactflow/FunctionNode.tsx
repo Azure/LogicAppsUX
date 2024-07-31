@@ -77,7 +77,11 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
       {funcitonHasInputs && <Handle type={'target'} position={Position.Left} className={leftHandleStyle} style={{ left: '-7px' }} />}
       <Popover>
         <PopoverTrigger>
-          <Button onClick={() => onClick()} disabled={!!disabled} className={styles.functionButton}>
+          <Button
+            onClick={() => onClick()}
+            disabled={!!disabled}
+            className={mergeClasses(styles.functionButton, activeNode ? styles.activeFunctionButton : '')}
+          >
             <div
               className={styles.iconContainer}
               style={{

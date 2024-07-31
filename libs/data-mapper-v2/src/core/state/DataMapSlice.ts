@@ -1,9 +1,9 @@
-import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
+import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
   applyConnectionValue,
-  collectSourceNodesForConnectionChain,
-  collectTargetNodesForConnectionChain,
+  collectSourceNodeIdsForConnectionChain,
+  collectTargetNodeIdsForConnectionChain,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
@@ -54,7 +54,7 @@ export interface DataMapOperationState {
   targetSchemaOrdering: string[];
   functionNodes: FunctionDictionary;
   selectedItemKey?: string;
-  selectedItemConnectedNodes: Record<string, ConnectionUnit>; // danielle do we really need to store the whole node here?
+  selectedItemConnectedNodes: Record<string, string>; // not really using the second string yet...
   xsltFilename: string;
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
@@ -487,22 +487,34 @@ export const dataMapSlice = createSlice({
       const selectedItemKey = action.payload;
 
       state.curDataMapOperation.selectedItemKey = action.payload;
-      const connectedItems: Record<string, ConnectionUnit> = {};
+      const connectedItems: Record<string, string> = {};
 
       if (selectedItemKey) {
         const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
 
         const selectedItemConnectedNodes = [];
         if (connections[selectedItemKeyParts.sourceId]) {
-          selectedItemConnectedNodes.push(...collectSourceNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
-          selectedItemConnectedNodes.push(...collectTargetNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
+          selectedItemConnectedNodes.push(
+            ...collectSourceNodeIdsForConnectionChain(
+              selectedItemKeyParts.sourceId,
+              connections[selectedItemKeyParts.sourceId],
+              connections
+            )
+          );
+          selectedItemConnectedNodes.push(
+            ...collectTargetNodeIdsForConnectionChain(
+              selectedItemKeyParts.sourceId,
+              connections[selectedItemKeyParts.sourceId],
+              connections
+            )
+          );
         }
 
-        selectedItemConnectedNodes.forEach((node) => {
-          connectedItems[node.reactFlowKey] = node;
+        selectedItemConnectedNodes.forEach((key) => {
+          connectedItems[key] = key;
         });
 
-        connectedItems[selectedItemKey] = connections[selectedItemKey].self;
+        connectedItems[selectedItemKey] = selectedItemKey;
 
         state.curDataMapOperation.selectedItemConnectedNodes = connectedItems;
       } else {

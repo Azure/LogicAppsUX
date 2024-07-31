@@ -3,6 +3,7 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
+import { createEdgeId } from './Edge.Utils';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 //import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
@@ -362,6 +363,46 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   }
 
   return [currentFunction.self];
+};
+
+export const collectSourceNodeIdsForConnectionChain = (
+  previousNodeId: string,
+  currentFunction: Connection,
+  connections: ConnectionDictionary
+): string[] => {
+  const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+
+  if (connectionUnits.length > 0) {
+    return [
+      currentFunction.self.reactFlowKey,
+      createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
+      ...connectionUnits.flatMap((input) =>
+        collectSourceNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
+      ),
+    ];
+  }
+
+  return [currentFunction.self.reactFlowKey, createEdgeId(currentFunction.self.reactFlowKey, previousNodeId)];
+};
+
+export const collectTargetNodeIdsForConnectionChain = (
+  previousNodeId: string,
+  currentFunction: Connection,
+  connections: ConnectionDictionary
+): string[] => {
+  const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
+
+  if (connectionUnits.length > 0) {
+    return [
+      currentFunction.self.reactFlowKey,
+      createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
+      ...connectionUnits.flatMap((input) =>
+        collectTargetNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
+      ),
+    ];
+  }
+
+  return [currentFunction.self.reactFlowKey, createEdgeId(previousNodeId, currentFunction.self.reactFlowKey)];
 };
 
 export const collectTargetNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
