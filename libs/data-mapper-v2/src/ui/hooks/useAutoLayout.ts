@@ -22,7 +22,7 @@ const elkLayout: LayoutAlgorithm = async (nodes, edges, options) => {
   const graph = {
     id: 'elk-root',
     layoutOptions: {
-      'elk.algorithm': 'disco',
+      'elk.algorithm': 'sporeOverlap',
       'elk.direction': options.direction,
       'elk.spacing.nodeNode': `${options.spacing[0]}`,
     },
