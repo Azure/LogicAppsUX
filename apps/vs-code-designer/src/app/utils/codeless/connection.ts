@@ -30,6 +30,8 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
+import { window } from 'vscode';
+import { ext } from '../../../extensionVariables';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -201,6 +203,7 @@ export async function getConnectionsAndSettingsToUpdate(
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  let areKeysRefreshed = false;
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
@@ -222,10 +225,16 @@ export async function getConnectionsAndSettingsToUpdate(
       );
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
-      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
+      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 192)
     ) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
+      const connectionRefreshMessage = localize(
+        'connectionKeyRefresh',
+        'Connection key for {0} has expired. Refreshing connection key.',
+        referenceKey
+      );
 
+      ext.log(connectionRefreshMessage);
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -235,10 +244,16 @@ export async function getConnectionsAndSettingsToUpdate(
         settingsToAdd,
         parametersFromDefinition
       );
+
+      areKeysRefreshed = true;
     }
   }
 
   connectionsData.managedApiConnections = referencesToAdd;
+
+  if (areKeysRefreshed) {
+    window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed.'));
+  }
 
   return {
     connections: connectionsData,
