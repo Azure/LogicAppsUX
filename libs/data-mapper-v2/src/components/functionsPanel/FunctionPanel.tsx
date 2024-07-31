@@ -55,6 +55,7 @@ export const FunctionPanel = (_props: PanelProps) => {
             icon={<ChevronDoubleLeftRegular fontSize={18} />}
             onClick={() => {
               setExpandFunctionsPanel(false);
+              setSearchTerm('');
             }}
           />
         ),

@@ -129,54 +129,56 @@ export function loadInputValuesFromDefinition(
   basePath: string,
   shouldUsePathTemplateFormat = false
 ): InputParameter[] {
+  if (!inputValue) {
+    return [];
+  }
+
   let result: InputParameter[] = [];
 
-  if (inputValue) {
-    const cloneInputValue = clone(inputValue);
-    const formDataInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.FormData);
-    result = result.concat(loadFormDataValue(cloneInputValue, formDataInputParameters));
+  const cloneInputValue = clone(inputValue);
+  const formDataInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.FormData);
+  result = result.concat(loadFormDataValue(cloneInputValue, formDataInputParameters));
 
-    const bodyInputs = getPropertyValue(cloneInputValue, PropertyName.BODY);
-    result = result.concat(
-      loadBodyValue(
-        bodyInputs,
-        inputParameters.filter((parameter) => parameter.in === ParameterLocations.Body)
-      )
-    );
+  const bodyInputs = getPropertyValue(cloneInputValue, PropertyName.BODY);
+  result = result.concat(
+    loadBodyValue(
+      bodyInputs,
+      inputParameters.filter((parameter) => parameter.in === ParameterLocations.Body)
+    )
+  );
 
-    const headersInputs = getPropertyValue(cloneInputValue, PropertyName.HEADERS);
-    result = result.concat(
-      loadHeadersValue(
-        headersInputs,
-        inputParameters.filter((parameter) => parameter.in === ParameterLocations.Header)
-      )
-    );
+  const headersInputs = getPropertyValue(cloneInputValue, PropertyName.HEADERS);
+  result = result.concat(
+    loadHeadersValue(
+      headersInputs,
+      inputParameters.filter((parameter) => parameter.in === ParameterLocations.Header)
+    )
+  );
 
-    const queriesInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.Query);
-    const queriesInputs = getQueriesInputs(cloneInputValue, queriesInputParameters);
-    result = result.concat(loadQueryValue(queriesInputs, queriesInputParameters));
+  const queriesInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.Query);
+  const queriesInputs = getQueriesInputs(cloneInputValue, queriesInputParameters);
+  result = result.concat(loadQueryValue(queriesInputs, queriesInputParameters));
 
-    const pathInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.Path);
-    const pathInputs = getPathInputs(cloneInputValue, pathInputParameters, operationPath, basePath, shouldUsePathTemplateFormat);
+  const pathInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.Path);
+  const pathInputs = getPathInputs(cloneInputValue, pathInputParameters, operationPath, basePath, shouldUsePathTemplateFormat);
 
-    result = result.concat(loadPathValue(pathInputs, pathInputParameters));
+  result = result.concat(loadPathValue(pathInputs, pathInputParameters));
 
-    // some builtin input parameters
-    const miscInputParameters = inputParameters.filter(
-      (parameter) =>
-        parameter.in !== ParameterLocations.Body &&
-        parameter.in !== ParameterLocations.Header &&
-        parameter.in !== ParameterLocations.Query &&
-        parameter.in !== ParameterLocations.Path &&
-        parameter.in !== ParameterLocations.FormData
-    );
+  // some builtin input parameters
+  const miscInputParameters = inputParameters.filter(
+    (parameter) =>
+      parameter.in !== ParameterLocations.Body &&
+      parameter.in !== ParameterLocations.Header &&
+      parameter.in !== ParameterLocations.Query &&
+      parameter.in !== ParameterLocations.Path &&
+      parameter.in !== ParameterLocations.FormData
+  );
 
-    const extensionInputs = getExtensionInputs(cloneInputValue);
-    result = result.concat(loadExtensionValue(extensionInputs, miscInputParameters));
+  const extensionInputs = getExtensionInputs(cloneInputValue);
+  result = result.concat(loadExtensionValue(extensionInputs, miscInputParameters));
 
-    const sortingKeys = inputParameters.map((item) => item.key);
-    result = sortByOrderedKeys(result, sortingKeys);
-  }
+  const sortingKeys = inputParameters.map((item) => item.key);
+  result = sortByOrderedKeys(result, sortingKeys);
 
   return result;
 }

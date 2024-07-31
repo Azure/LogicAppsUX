@@ -16,7 +16,7 @@ import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
 import { SearchBox, DirectionalHint, Callout } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { LexicalEditor, NodeKey } from 'lexical';
+import { $getSelection, type LexicalEditor, type NodeKey } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
@@ -39,6 +39,9 @@ const gapSpace = 10;
 const beakWidth = 20;
 
 let calloutStyles: Partial<ICalloutContentStyles> = {
+  root: {
+    zIndex: 1,
+  },
   calloutMain: {
     overflow: 'visible',
   },
@@ -58,6 +61,14 @@ calloutStyles = isCopilotServiceEnabled()
       },
     }
   : calloutStyles;
+
+const calloutStylesWithTopMargin: Partial<ICalloutContentStyles> = {
+  ...calloutStyles,
+  root: {
+    ...(calloutStyles.root as object),
+    marginTop: '80px',
+  },
+};
 
 export type SearchTextChangedEventHandler = (e: string) => void;
 
@@ -101,6 +112,15 @@ export function TokenPicker({
   const searchBoxRef = useRef<ISearchBox | null>(null);
   const isExpression = selectedMode === TokenPickerMode.EXPRESSION;
   const isNl2fExpression = selectedMode === TokenPickerMode.NL2F_EXPRESSION;
+  const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
+  const [styleWithMargin, setStyleWithMargin] = useState(false);
+
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
 
   useEffect(() => {
     function handleResize() {
@@ -122,6 +142,27 @@ export function TokenPicker({
       }, 0);
     }
   }, [isExpression, isNl2fExpression]);
+
+  useEffect(() => {
+    editor?.getEditorState().read(() => {
+      setAnchorKey($getSelection()?.getNodes()[0]?.__key ?? null);
+    });
+  }, [editor]);
+
+  useEffect(() => {
+    if (anchorKey && containerRef && editor) {
+      const calloutContainer = containerRef.current;
+      const rootElement = editor.getRootElement();
+      if (calloutContainer && rootElement) {
+        const { height } = rootElement.getBoundingClientRect();
+        if (height / windowDimensions.height > 0.4) {
+          setStyleWithMargin(true);
+        } else {
+          setStyleWithMargin(false);
+        }
+      }
+    }
+  }, [anchorKey, editor, windowDimensions.height]);
 
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
@@ -180,13 +221,6 @@ export function TokenPicker({
     id: '+Agiub',
     description: 'Button text for the create expression with copilot feature',
   });
-
-  let editor: LexicalEditor | null;
-  try {
-    [editor] = useLexicalComposerContext();
-  } catch {
-    editor = null;
-  }
 
   const nl2fExpressionPane = (
     <Callout
@@ -274,7 +308,7 @@ export function TokenPicker({
         onRestoreFocus={() => {
           return;
         }}
-        styles={calloutStyles}
+        styles={styleWithMargin ? calloutStylesWithTopMargin : calloutStyles}
         layerProps={{
           hostId: 'msla-layer-host',
         }}

@@ -1,4 +1,45 @@
 # Logic Apps Designer
+## [4.52.0](https://github.com/Azure/LogicAppsUX/compare/v4.51.0...v4.52.0) (2024-07-31)
+
+
+### Features
+
+* **data mapper:** Auto-layout function nodes with canvas size changes ([#5234](https://github.com/Azure/LogicAppsUX/issues/5234)) ([52d20fb](https://github.com/Azure/LogicAppsUX/commit/52d20fb45837fde7b40316a6ff65369a8dd2f586))
+* **vscode:** Add telemetry for refreshing expired connection keys ([#5235](https://github.com/Azure/LogicAppsUX/issues/5235)) ([a4004a7](https://github.com/Azure/LogicAppsUX/commit/a4004a7065325e9fa789dbfbd14539055a67a035))
+
+
+### Bug Fixes
+
+* **designer:** Fixed issue with some advanced parameters not initializing properly ([#5240](https://github.com/Azure/LogicAppsUX/issues/5240)) ([67a004b](https://github.com/Azure/LogicAppsUX/commit/67a004be393e81cb6a096dc41829d7af40c11218))
+* **designer:** Improve types in `updateDynamicDataInNode` to prevent issues ([#5239](https://github.com/Azure/LogicAppsUX/issues/5239)) ([9ad9de1](https://github.com/Azure/LogicAppsUX/commit/9ad9de1bbfb97887a327a6b7c5140974346c9b16))
+
+## [4.51.0](https://github.com/Azure/LogicAppsUX/compare/v4.50.0...v4.51.0) (2024-07-30)
+
+
+### Bug Fixes
+
+* **Templates:** Creation Successful Only Upon on Successful Creation & Remove Template Card Unwanted Info ([#5230](https://github.com/Azure/LogicAppsUX/issues/5230)) ([a872051](https://github.com/Azure/LogicAppsUX/commit/a872051032ece2275143279b5b3e5a7d71b25632))
+* **Templates:** Fixed Build Fail Due to Templates with Non-Json Artifacts ([#5232](https://github.com/Azure/LogicAppsUX/issues/5232)) ([f40180b](https://github.com/Azure/LogicAppsUX/commit/f40180bed83ccb7d125cb77c620cc22d6eda0f83))
+
+## [4.50.0](https://github.com/Azure/LogicAppsUX/compare/v4.49.0...v4.50.0) (2024-07-30)
+
+
+### Features
+
+* **Data Mapper:** Create output connection through menu, and other UX bugs ([#5227](https://github.com/Azure/LogicAppsUX/issues/5227)) ([a1e9f21](https://github.com/Azure/LogicAppsUX/commit/a1e9f21295eb6a46281415d747f08fc23b11898f))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update node re-render logic ([#5179](https://github.com/Azure/LogicAppsUX/issues/5179)) ([73370a6](https://github.com/Azure/LogicAppsUX/commit/73370a660afa91735bb89604d3d4c22cad8701cb))
+* **designer-ui:** Fix token picker behind panel after latest changes ([#5218](https://github.com/Azure/LogicAppsUX/issues/5218)) ([430201b](https://github.com/Azure/LogicAppsUX/commit/430201bbb527e7bb56ef7e95188a91b25a59f44f))
+* **designer:** A11Y improvements to element roles and labels ([#5211](https://github.com/Azure/LogicAppsUX/issues/5211)) ([b76fd90](https://github.com/Azure/LogicAppsUX/commit/b76fd9008e4702f05b55d8b05431879654896ce4))
+* **designer:** Canvas properly centered on load ([#5226](https://github.com/Azure/LogicAppsUX/issues/5226)) ([13b018a](https://github.com/Azure/LogicAppsUX/commit/13b018a4d7123396cce9037a950422bdf45a2941))
+* **designer:** Canvas properly centered on load ([#5229](https://github.com/Azure/LogicAppsUX/issues/5229)) ([0fa74d9](https://github.com/Azure/LogicAppsUX/commit/0fa74d965a171b71abf7e566c2972fe161cd8103))
+* **designer:** Revert "Canvas properly centered on load ([#5226](https://github.com/Azure/LogicAppsUX/issues/5226))" ([#5228](https://github.com/Azure/LogicAppsUX/issues/5228)) ([30707f1](https://github.com/Azure/LogicAppsUX/commit/30707f1c380f64c4c0673b2b0ef65e4150b21c27))
+* **designer:** Top margin for token picker if input field spans multiple lines ([#5219](https://github.com/Azure/LogicAppsUX/issues/5219)) ([cd5b674](https://github.com/Azure/LogicAppsUX/commit/cd5b674d11b614f5f63b258041e32b8f116c4128))
+* **vscode:** Async Download for Dependencies and Graceful Error Handling ([#5225](https://github.com/Azure/LogicAppsUX/issues/5225)) ([e9d61de](https://github.com/Azure/LogicAppsUX/commit/e9d61de969436fd0fa61e2b79468823554fb7435))
+
 ## [4.49.0](https://github.com/Azure/LogicAppsUX/compare/v4.48.0...v4.49.0) (2024-07-29)
 
 
