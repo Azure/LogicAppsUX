@@ -28,7 +28,10 @@ const downloadTemplate = async (path) => {
   const templateManifestRes = await fetch(templateManifestUrl);
   const templateManifest = await templateManifestRes.json();
   for (const artifact of templateManifest.artifacts) {
-    await downloadArtifact(`${path}/${artifact.file}`);
+    if (artifact.file.endsWith('.json')) {
+      // We only support .json for now
+      await downloadJsonArtifact(`${path}/${artifact.file}`);
+    }
   }
   templateManifest.images = {
     light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
@@ -38,7 +41,7 @@ const downloadTemplate = async (path) => {
   await fs.writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2));
 };
 
-const downloadArtifact = async (path) => {
+const downloadJsonArtifact = async (path) => {
   const artifactUrl = `${baseURL}/${path}`;
   // eslint-disable-next-line no-undef
   const artifactRes = await fetch(artifactUrl);
