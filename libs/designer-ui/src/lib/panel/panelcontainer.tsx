@@ -177,8 +177,6 @@ export const PanelContainer = ({
       onRenderHeader={renderHeader ?? defaultRenderHeader}
       focusTrapZoneProps={{
         disabled: isCollapsed,
-        firstFocusableTarget: '#msla-panel-header-collapse-nav',
-        forceFocusInsideTrap: !isCollapsed,
       }}
       elementToFocusOnDismiss={selectedElement}
       isBlocking={false}

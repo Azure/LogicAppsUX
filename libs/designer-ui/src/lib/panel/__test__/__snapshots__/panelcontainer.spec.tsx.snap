@@ -8,8 +8,6 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
   focusTrapZoneProps={
     {
       "disabled": false,
-      "firstFocusableTarget": "#msla-panel-header-collapse-nav",
-      "forceFocusInsideTrap": true,
     }
   }
   hasCloseButton={false}
