@@ -32,6 +32,9 @@ export const useStyles = makeStyles({
       backgroundColor: '#D5E4FF',
     },
   },
+  nodeSelected: {
+    backgroundColor: '#D5E4FF',
+  },
   typeAnnotation: {
     display: 'inline-flex',
     marginLeft: 'auto',

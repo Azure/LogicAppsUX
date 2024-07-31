@@ -495,18 +495,10 @@ export const dataMapSlice = createSlice({
         const selectedItemConnectedNodes = [];
         if (connections[selectedItemKeyParts.sourceId]) {
           selectedItemConnectedNodes.push(
-            ...collectSourceNodeIdsForConnectionChain(
-              selectedItemKeyParts.sourceId,
-              connections[selectedItemKeyParts.sourceId],
-              connections
-            )
+            ...collectSourceNodeIdsForConnectionChain(selectedItemKeyParts.sourceId, connections[selectedItemKeyParts.sourceId])
           );
           selectedItemConnectedNodes.push(
-            ...collectTargetNodeIdsForConnectionChain(
-              selectedItemKeyParts.sourceId,
-              connections[selectedItemKeyParts.sourceId],
-              connections
-            )
+            ...collectTargetNodeIdsForConnectionChain(selectedItemKeyParts.sourceId, connections[selectedItemKeyParts.sourceId])
           );
         }
 
