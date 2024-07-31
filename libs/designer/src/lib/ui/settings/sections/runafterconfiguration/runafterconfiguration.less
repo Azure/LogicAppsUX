@@ -8,68 +8,6 @@
   box-sizing: border-box;
 }
 
-.msla-card {
-  .msla-run-after-edge,
-  .msla-run-after-edge-selected {
-    margin: 10px;
-    height: @card-header-logo-height;
-    line-height: @line-height;
-
-    .msla-card-title-group {
-      .msla-card-header-logo {
-        height: @card-header-logo-height;
-        width: @card-header-logo-width;
-        flex: 0 0 auto;
-      }
-
-      .msla-card-header-title-view {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-        align-items: flex-start;
-        padding: 0px;
-        margin: 0 10px;
-
-        & > div {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          word-wrap: break-word;
-          width: 100%;
-        }
-
-        & > div:last-child {
-          font-size: 12px;
-        }
-      }
-    }
-
-    .msla-run-after-edge-selected {
-      box-shadow: 0 0 10px @selectedShadowColor;
-      outline: 1px @defaultBrandColor;
-    }
-
-    .msla-card-title-button-group {
-      .msla-run-after-delete-button {
-        display: inline-block;
-        width: 32px;
-        height: 48px;
-        vertical-align: top;
-      }
-    }
-  }
-}
-
-.msla-tab-component-container {
-  .msla-card {
-    border: none;
-    box-shadow: none;
-
-    .msla-card-header.msla-run-after-logo {
-      display: flex;
-    }
-  }
-}
-
 .msla-run-after-edge-header {
   height: auto;
   display: inline-block;
@@ -100,16 +38,6 @@
   }
 }
 
-.msla-run-after-delete-icon {
-  width: 5%;
-  position: relative;
-  margin-left: auto;
-  bottom: 35px;
-  right: 1%;
-  vertical-align: middle;
-  height: 0px;
-}
-
 .msla-run-after-statuses {
   margin: 4px 0px 4px 39px;
   display: flex;
@@ -125,21 +53,6 @@
       height: 16px;
     }
   }
-}
-
-.msla-card-body div.msla-two-columns.msla-run-after-columns {
-  width: 100%;
-}
-
-.msla-run-after-section-description {
-  font-family: @font-family;
-  font-size: 14px;
-  margin: 12px;
-  width: 100%;
-}
-
-.msla-run-after-last-action-error {
-  margin-top: 275px;
 }
 
 .msla-run-after-action-search-input {

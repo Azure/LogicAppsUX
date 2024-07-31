@@ -1,13 +1,5 @@
 @import (reference) '../variables.less';
 
-.msla-trace-error {
-  overflow-x: hidden;
-
-  [class^='ms-MessageBar-content'] {
-    max-width: (@card-max-width - 30px);
-  }
-}
-
 .msla-trace-inputs-outputs {
   background-color: #fff;
   border: @defaultBorder;
@@ -124,47 +116,10 @@
   }
 }
 
-.msla-resizable-panel-container {
-  .msla-trace-inputs-outputs {
-    margin: 10px;
-  }
-}
-
-.msla-trace-link-panel {
-  background-color: #fff;
-  margin: 0.75em 0.75em 0;
-  height: 2em;
-}
-
 .msla-card-body.msla-has-errors {
   > .msla-monitoring-parameters-card-body {
     margin: 0;
   }
-}
-
-.msla-panel-callout {
-  .msla-pager {
-    .msla-pager-button-bar {
-      input {
-        font-size: @card-header-font-size;
-        font-family: @font-family;
-        line-height: 1.35;
-        margin: 0;
-        width: 18px;
-        border: none;
-        font-weight: bold;
-        text-align: center;
-      }
-    }
-  }
-}
-
-.msla-retrypanel-pager-title-div {
-  font-weight: bold;
-  font-family: @font-family;
-  margin: 0 10px;
-  display: inline-block;
-  vertical-align: 2px;
 }
 
 .msla-show-evaluation {
@@ -192,19 +147,11 @@
   margin-bottom: 1em;
 }
 
-.msla-inline {
-  display: inline;
-}
-
 .msla-theme-dark {
   .msla-trace-inputs-outputs {
     background-color: @ms-color-white;
 
     .msla-trace-values {
-      .msla-trace-inputs-outputs-obfuscated {
-        color: #fe4747;
-      }
-
       .msla-trace-value-label {
         .msla-trace-value-text {
           background-color: @ms-color-bodyBackground;
@@ -215,10 +162,5 @@
         }
       }
     }
-  }
-
-  .msla-trace-link-panel {
-    background-color: @ms-color-white;
-    color: @ms-color-black;
   }
 }
