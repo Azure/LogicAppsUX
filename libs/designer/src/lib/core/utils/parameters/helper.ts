@@ -1915,7 +1915,7 @@ export async function updateDynamicDataInNode(
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
 
-  const parameterDynamicValues = [] as any;
+  const parameterDynamicValues: UpdateParametersPayload['parameters'] = [];
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
     if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') {
       continue;
