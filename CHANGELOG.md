@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.45.4](https://github.com/Azure/LogicAppsUX/compare/v4.45.3...v4.45.4) (2024-07-31)
+
+
+### Bug Fixes
+
+* **designer-ui:** Remove `forceFocusInsideTrap` attribute (v4.45 only) ([#5241](https://github.com/Azure/LogicAppsUX/issues/5241)) ([a907760](https://github.com/Azure/LogicAppsUX/commit/a9077605e099521da7ac017f79c8dfc25c33eb4f))
+
 ### [4.45.3](https://github.com/Azure/LogicAppsUX/compare/v4.45.2...v4.45.3) (2024-07-31)
 
 ### [4.45.2](https://github.com/Azure/LogicAppsUX/compare/v4.45.1...v4.45.2) (2024-07-30)
