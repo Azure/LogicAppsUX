@@ -43,7 +43,9 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   const styles = useStyles();
   const fileService = DataMapperFileService();
 
-  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceChildParentMapping, targetChildParentMapping } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
@@ -58,6 +60,8 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       ? state.dataMap.present.curDataMapOperation.sourceSchema
       : state.dataMap.present.curDataMapOperation.targetSchema;
   });
+
+  const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
 
   const flattenedScehmaMap = useMemo(
     () => (schemaFromStore ? flattenSchemaNodeMap(schemaFromStore.schemaTreeRoot) : {}),
@@ -206,7 +210,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
 
   const onSearchChange = useCallback(
     (searchTerm?: string) => {
-      if (flattenedScehmaMap && searchTerm) {
+      if (flattenedScehmaMap) {
         if (!searchTerm) {
           setFilteredFlattenedScehmaMap({ ...flattenedScehmaMap });
           return;
@@ -215,13 +219,6 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         const allSchemaNodes = Object.values(flattenedScehmaMap);
         const parentSet = new Set<string>();
         const fuse = new Fuse(allSchemaNodes, fuseSchemaSearchOptions);
-
-        const findParent = (node: SchemaNodeExtended, parentSet: Set<string>) => {
-          if (node.parentKey && !parentSet.has(node.parentKey)) {
-            parentSet.add(node.parentKey);
-            findParent(flattenedScehmaMap[node.parentKey], parentSet);
-          }
-        };
 
         const filteredNodes = fuse.search(searchTerm).map((result) => result.item);
 
@@ -235,7 +232,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         );
 
         for (const node of filteredNodes) {
-          findParent(node, parentSet);
+          let currentParents = [];
+          if (isLeftDirection) {
+            currentParents = sourceChildParentMapping[node.key] ?? [];
+          } else {
+            currentParents = targetChildParentMapping[node.key] ?? [];
+          }
+
+          currentParents.forEach(parentSet.add, parentSet);
         }
 
         for (const parentKey of parentSet) {
@@ -248,7 +252,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         setFilteredFlattenedScehmaMap(filteredFlattenedScehmaMap);
       }
     },
-    [flattenedScehmaMap, setFilteredFlattenedScehmaMap]
+    [flattenedScehmaMap, setFilteredFlattenedScehmaMap, isLeftDirection, sourceChildParentMapping, targetChildParentMapping]
   );
 
   // if initial flat-map changes, filtered version needs to be reset

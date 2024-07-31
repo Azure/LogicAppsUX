@@ -365,45 +365,66 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   return [currentFunction.self];
 };
 
-export const collectSourceNodeIdsForConnectionChain = (
-  previousNodeId: string,
-  currentFunction: Connection,
-  connections: ConnectionDictionary
-): string[] => {
+// keep until we evaluate 'selected' experience
+
+// export const collectSourceNodeIdsForConnectionChain = (
+//   previousNodeId: string,
+//   currentFunction: Connection,
+//   connections: ConnectionDictionary
+// ): string[] => {
+//   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+
+//   if (connectionUnits.length > 0) {
+//     return [
+//       currentFunction.self.reactFlowKey,
+//       createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
+//       ...connectionUnits.flatMap((input) =>
+//         collectSourceNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
+//       ),
+//     ];
+//   }
+
+//   return [currentFunction.self.reactFlowKey, createEdgeId(currentFunction.self.reactFlowKey, previousNodeId)];
+// };
+
+export const collectSourceNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
-
-  if (connectionUnits.length > 0) {
-    return [
-      currentFunction.self.reactFlowKey,
-      createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
-      ...connectionUnits.flatMap((input) =>
-        collectSourceNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
-      ),
-    ];
-  }
-
-  return [currentFunction.self.reactFlowKey, createEdgeId(currentFunction.self.reactFlowKey, previousNodeId)];
+  return [
+    currentFunction.self.reactFlowKey,
+    createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
+    ...connectionUnits.flatMap((input) => createEdgeId(input.reactFlowKey, currentFunction.self.reactFlowKey)),
+  ];
 };
 
-export const collectTargetNodeIdsForConnectionChain = (
-  previousNodeId: string,
-  currentFunction: Connection,
-  connections: ConnectionDictionary
-): string[] => {
+export const collectTargetNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
   const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
-
-  if (connectionUnits.length > 0) {
-    return [
-      currentFunction.self.reactFlowKey,
-      createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
-      ...connectionUnits.flatMap((input) =>
-        collectTargetNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
-      ),
-    ];
-  }
-
-  return [currentFunction.self.reactFlowKey, createEdgeId(previousNodeId, currentFunction.self.reactFlowKey)];
+  return [
+    currentFunction.self.reactFlowKey,
+    createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
+    ...connectionUnits.flatMap((input) => createEdgeId(currentFunction.self.reactFlowKey, input.reactFlowKey)),
+  ];
 };
+
+// keep until we evaluate 'selected' experience
+// export const collectTargetNodeIdsForConnectionChain = (
+//   previousNodeId: string,
+//   currentFunction: Connection,
+//   connections: ConnectionDictionary
+// ): string[] => {
+//   const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
+
+//   if (connectionUnits.length > 0) {
+//     return [
+//       currentFunction.self.reactFlowKey,
+//       createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
+//       ...connectionUnits.flatMap((input) =>
+//         collectTargetNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
+//       ),
+//     ];
+//   }
+
+//   return [currentFunction.self.reactFlowKey, createEdgeId(previousNodeId, currentFunction.self.reactFlowKey)];
+// };
 
 export const collectTargetNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
   const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
