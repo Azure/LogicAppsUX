@@ -2,6 +2,9 @@ import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 const fnIconSize = '17px';
 
+const activeColor = '#62AAD8';
+const connectedColor = '#C6DEEE';
+
 export const useStyles = makeStyles({
   wrapper: {
     marginTop: '10px',
@@ -36,8 +39,8 @@ export const useStyles = makeStyles({
     left: '-7px',
   },
   handleConnected: {
-    backgroundColor: '#C6DEEE',
-    ...shorthands.border('1px', 'solid', '#C6DEEE'),
+    backgroundColor: connectedColor,
+    ...shorthands.border('1px', 'solid', connectedColor),
   },
   nodeWrapper: {
     width: '14px',
@@ -51,11 +54,15 @@ export const useStyles = makeStyles({
     display: 'inline-flex',
     justifyContent: 'left',
     paddingRight: '20px',
-    ...shorthands.border('3px', 'solid', '#62AAD8'),
+    ...shorthands.border('3px', 'solid', activeColor),
   },
   functionName: {
     textWrap: 'nowrap',
     display: 'inline-table',
+  },
+  activeHandle: {
+    backgroundColor: activeColor,
+    ...shorthands.border('1px', 'solid', activeColor),
   },
   iconContainer: {
     display: 'inline-flex',

@@ -54,7 +54,7 @@ export interface DataMapOperationState {
   targetSchemaOrdering: string[];
   functionNodes: FunctionDictionary;
   selectedItemKey?: string;
-  selectedItemConnectedNodes: ConnectionUnit[];
+  selectedItemConnectedNodes: Record<string, ConnectionUnit>; // danielle do we really need to store the whole node here?
   xsltFilename: string;
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
@@ -89,7 +89,7 @@ const emptyPristineState: DataMapOperationState = {
   xsltFilename: '',
   xsltContent: '',
   inlineFunctionInputOutputKeys: [],
-  selectedItemConnectedNodes: [],
+  selectedItemConnectedNodes: {},
   lastAction: 'Pristine',
   sourceNodesMap: {},
   targetNodesMap: {},
@@ -487,10 +487,10 @@ export const dataMapSlice = createSlice({
       const selectedItemKey = action.payload;
 
       state.curDataMapOperation.selectedItemKey = action.payload;
+      const connectedItems: Record<string, ConnectionUnit> = {};
 
       if (selectedItemKey) {
         const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
-        // state.curDataMapOperation.selectedItemKeyParts = selectedItemKeyParts;
 
         const selectedItemConnectedNodes = [];
         if (connections[selectedItemKeyParts.sourceId]) {
@@ -498,14 +498,15 @@ export const dataMapSlice = createSlice({
           selectedItemConnectedNodes.push(...collectTargetNodesForConnectionChain(connections[selectedItemKeyParts.sourceId], connections));
         }
 
-        const uniqueSelectedItemConnectedNodes = selectedItemConnectedNodes.filter((node, index, self) => {
-          return self.findIndex((subNode) => subNode.reactFlowKey === node.reactFlowKey) === index;
+        selectedItemConnectedNodes.forEach((node) => {
+          connectedItems[node.reactFlowKey] = node;
         });
 
-        state.curDataMapOperation.selectedItemConnectedNodes = uniqueSelectedItemConnectedNodes;
+        connectedItems[selectedItemKey] = connections[selectedItemKey].self;
+
+        state.curDataMapOperation.selectedItemConnectedNodes = connectedItems;
       } else {
-        //state.curDataMapOperation.selectedItemKeyParts = undefined;
-        state.curDataMapOperation.selectedItemConnectedNodes = [];
+        state.curDataMapOperation.selectedItemConnectedNodes = {};
       }
     },
     toogleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {

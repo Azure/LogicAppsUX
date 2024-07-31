@@ -12,6 +12,8 @@ import type { RootState } from '../../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setSelectedItem } from '../../../core/state/DataMapSlice';
+import { useActiveNode } from '../../../core/state/selectors/selectors';
+import { useMemo } from 'react';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -29,14 +31,11 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const dispatch = useDispatch();
   const { functionData, disabled, dataTestId } = props.data;
   const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
+  const activeNode = useActiveNode(props.id);
 
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
-
-  if (!functionWithConnections) {
-    return;
-  }
 
   const isLeftConnected =
     functionWithConnections.inputs[0] && functionWithConnections.inputs[0].length > 0 && functionWithConnections.inputs[0][0] !== undefined;
@@ -44,20 +43,38 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
 
   const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
 
+  const styleForLeftHandle = useMemo(() => {
+    const style = styles.handleWrapper;
+    if (activeNode !== undefined) {
+      return mergeClasses(style, styles.activeHandle);
+    }
+    if (isLeftConnected) {
+      return mergeClasses(style, styles.handleConnected);
+    }
+    return style;
+  }, [activeNode, styles, isLeftConnected]);
+
+  const styleForRightHandle = useMemo(() => {
+    const style = styles.handleWrapper;
+    if (activeNode !== undefined) {
+      return mergeClasses(style, styles.activeHandle);
+    }
+    if (isRightConnected) {
+      return mergeClasses(style, styles.handleConnected);
+    }
+    return style;
+  }, [activeNode, styles, isRightConnected]);
+
+  const leftHandleStyle = styleForLeftHandle;
+  const rightHandleStyle = styleForRightHandle;
+
   const onClick = () => {
     dispatch(setSelectedItem(props.id));
   };
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
-      {funcitonHasInputs && (
-        <Handle
-          type={'target'}
-          position={Position.Left}
-          className={mergeClasses(styles.handleWrapper, isLeftConnected ? styles.handleConnected : '')}
-          style={{ left: '-7px' }}
-        />
-      )}
+      {funcitonHasInputs && <Handle type={'target'} position={Position.Left} className={leftHandleStyle} style={{ left: '-7px' }} />}
       <Popover>
         <PopoverTrigger>
           <Button onClick={() => onClick()} disabled={!!disabled} className={styles.functionButton}>
@@ -82,11 +99,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
-      <Handle
-        type={'source'}
-        position={Position.Right}
-        className={mergeClasses(styles.handleWrapper, isRightConnected ? styles.handleConnected : '')}
-      />
+      <Handle type={'source'} position={Position.Right} className={rightHandleStyle} />
     </div>
   );
 };

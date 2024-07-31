@@ -7,7 +7,7 @@ import {
   type TreeItemOpenChangeEvent,
   mergeClasses,
 } from '@fluentui/react-components';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { setSelectedItem, toogleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
+import { addReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -67,17 +68,17 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [dispatch, isLeftDirection]
   );
 
-  useLayoutEffect(() => {
-    return () => {
-      dispatch(
-        updateReactFlowNode({
-          removeNode: true,
-          isSource: isLeftDirection,
-          id: nodeId,
-        })
-      );
-    };
-  }, [isLeftDirection, dispatch, nodeId]);
+  // useLayoutEffect(() => {
+  //   return () => {
+  //     dispatch(
+  //       updateReactFlowNode({
+  //         removeNode: true,
+  //         isSource: isLeftDirection,
+  //         id: nodeId,
+  //       })
+  //     );
+  //   };
+  // }, [isLeftDirection, dispatch, nodeId]);
 
   useLayoutEffect(() => {
     if (x !== undefined && y !== undefined) {
@@ -136,7 +137,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const aside = isHover ? <TypeAnnotation schemaNode={root} /> : undefined;
 
   const onClick = () => {
-    dispatch(setSelectedItem(key));
+    dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
   };
 
   if (root.children.length === 0) {
