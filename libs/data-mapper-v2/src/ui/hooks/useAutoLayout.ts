@@ -1,5 +1,5 @@
 import Elk, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { type Node, type Edge, type XYPosition, useStore } from '@xyflow/react';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
 import { useDispatch } from 'react-redux';
@@ -7,36 +7,23 @@ import type { AppDispatch } from '../../core/state/Store';
 import { updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
 
 // the layout direction (T = top, R = right, B = bottom, L = left, TB = top to bottom, ...)
-export type Direction = 'TB' | 'LR' | 'RL' | 'BT';
+export type Direction = 'DOWN' | 'RIGHT' | 'LEFT' | 'UP';
 
 export type LayoutOptions = {
   direction: Direction;
   spacing: [number, number];
 };
 
-export type LayoutAlgorithm = (nodes: Node[], options: LayoutOptions) => Promise<{ nodes: Node[] }>;
+export type LayoutAlgorithm = (nodes: Node[], edges: Edge[], options: LayoutOptions) => Promise<{ nodes: Node[] }>;
 
 const elk = new Elk();
 
-function getDirection(direction: Direction) {
-  switch (direction) {
-    case 'TB':
-      return 'DOWN';
-    case 'LR':
-      return 'RIGHT';
-    case 'BT':
-      return 'UP';
-    case 'RL':
-      return 'LEFT';
-  }
-}
-
-const elkLayout: LayoutAlgorithm = async (nodes, options) => {
+const elkLayout: LayoutAlgorithm = async (nodes, edges, options) => {
   const graph = {
     id: 'elk-root',
     layoutOptions: {
-      'elk.algorithm': 'mrtree',
-      'elk.direction': getDirection(options.direction),
+      'elk.algorithm': 'disco',
+      'elk.direction': options.direction,
       'elk.spacing.nodeNode': `${options.spacing[0]}`,
     },
     children: nodes.map((node) => ({
@@ -111,6 +98,7 @@ function compareNodes(xs: Map<string, Node>, ys: Map<string, Node>) {
 
 const useAutoLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [isLayouted, setIsLayouted] = useState(false);
   // Here we are storing a map of the nodes and edges in the flow. By using a
   // custom equality function as the second argument to `useStore`, we can make
   // sure the layout algorithm only runs when something has changed that should
@@ -126,37 +114,39 @@ const useAutoLayout = () => {
     compareElements
   );
 
-  const functionNodes = useMemo(() => [...elements.nodeMap.values()].filter((node) => isFunctionNode(node.id)), [elements]);
-
   useEffect(() => {
+    const nodes = [...elements.nodeMap.values()];
+    const edges = [...elements.edgeMap.values()];
+    const functionNodes = nodes.filter((node) => isFunctionNode(node.id));
     // Only run the layout if there are nodes and they have been initialized with
     // their dimensions
-    if (functionNodes.length === 0) {
+    if (functionNodes.length === 0 || isLayouted) {
       return;
     }
 
     // The callback passed to `useEffect` cannot be `async` itself, so instead we
     // create an async function here and call it immediately afterwards.
-    const runLayout = async (functionNodes: Node[]) => {
-      const { nodes: nextFunctionNodes } = await elkLayout(functionNodes, {
-        spacing: [5, 5],
-        direction: 'LR',
+    const runLayout = async (nodes: Node[], edges: Edge[]) => {
+      const { nodes: nextNodes } = await elkLayout(nodes, edges, {
+        spacing: [50, 50],
+        direction: 'LEFT',
       });
-
-      console.log('FunctionNodes: ', nextFunctionNodes);
 
       dispatch(
         updateFunctionNodesPosition(
-          nextFunctionNodes.reduce((acc: Record<string, XYPosition>, node) => {
-            acc[node.id] = node.position;
-            return acc;
-          }, {})
+          nextNodes
+            .filter((node) => isFunctionNode(node.id))
+            .reduce((acc: Record<string, XYPosition>, node) => {
+              acc[node.id] = node.position;
+              return acc;
+            }, {})
         )
       );
+      setIsLayouted(true);
     };
 
-    runLayout(functionNodes);
-  }, [functionNodes, dispatch]);
+    runLayout(nodes, edges);
+  }, [elements, dispatch, isLayouted]);
 };
 
 export default useAutoLayout;
