@@ -225,7 +225,7 @@ export async function getConnectionsAndSettingsToUpdate(
       );
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
-      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 192)
+      isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
     ) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
       const connectionRefreshMessage = localize(
