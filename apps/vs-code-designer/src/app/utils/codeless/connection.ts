@@ -30,6 +30,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
+import { window } from 'vscode';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -201,6 +202,7 @@ export async function getConnectionsAndSettingsToUpdate(
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  let areKeysRefreshed = false;
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
@@ -226,6 +228,7 @@ export async function getConnectionsAndSettingsToUpdate(
     ) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
+      context.telemetry.properties.connectionKeyRefresh = `${referenceKey}-connectionKey refreshed`;
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -235,10 +238,16 @@ export async function getConnectionsAndSettingsToUpdate(
         settingsToAdd,
         parametersFromDefinition
       );
+
+      areKeysRefreshed = true;
     }
   }
 
   connectionsData.managedApiConnections = referencesToAdd;
+
+  if (areKeysRefreshed) {
+    window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed.'));
+  }
 
   return {
     connections: connectionsData,
