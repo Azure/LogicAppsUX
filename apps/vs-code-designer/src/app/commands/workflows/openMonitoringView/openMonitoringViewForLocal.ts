@@ -24,7 +24,7 @@ import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
-import { ViewColumn } from 'vscode';
+import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
@@ -55,6 +55,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+    };
 
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
