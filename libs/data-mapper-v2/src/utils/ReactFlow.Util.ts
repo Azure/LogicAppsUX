@@ -22,7 +22,7 @@
 // import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 // import { Position } from 'reactflow';
 
-import { guid, type SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import { guid, SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData, FunctionDictionary } from 'models';
 import type { ConnectionDictionary } from '../models/Connection';
@@ -34,6 +34,7 @@ export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
+export const isFunctionNode = (key: string): boolean => !key.startsWith(SchemaType.Source) && !key.startsWith(SchemaType.Target);
 
 const rootLayoutNodeId = 'root';
 export const LayoutContainer = {
@@ -85,7 +86,7 @@ export const convertWholeDataMapToLayoutTree = (
         if (isConnectionUnit(inputValue)) {
           const targetId = connection.self.reactFlowKey;
           const labels = isFunctionData(connection.self.node)
-            ? connection.self.node.maxNumberOfInputs > -1
+            ? connection.self.node?.maxNumberOfInputs > -1
               ? [connection.self.node.inputs[inputIndex].name]
               : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
             : [];
