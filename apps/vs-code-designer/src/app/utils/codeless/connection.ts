@@ -31,7 +31,6 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
-import { ext } from '../../../extensionVariables';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -228,13 +227,8 @@ export async function getConnectionsAndSettingsToUpdate(
       isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
     ) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
-      const connectionRefreshMessage = localize(
-        'connectionKeyRefresh',
-        'Connection key for {0} has expired. Refreshing connection key.',
-        referenceKey
-      );
 
-      ext.log(connectionRefreshMessage);
+      context.telemetry.properties.connectionKeyRefresh = `${referenceKey}-connectionKey refreshed`;
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
