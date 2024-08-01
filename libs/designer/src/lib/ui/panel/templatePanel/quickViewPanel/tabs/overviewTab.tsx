@@ -97,11 +97,13 @@ export const OverviewPanel: React.FC = () => {
               description: 'Title for the tags section in the template overview tab',
             })}
           </Text>
-          {manifest.tags.map((key: string) => (
-            <Text key={key} className="msla-template-overview-section-tag" size={300}>
-              {key}
-            </Text>
-          ))}
+          <div className="msla-template-overview-section-tags-section">
+            {manifest.tags.map((key: string) => (
+              <Text key={key} className="msla-template-overview-section-tag" size={300}>
+                {key}
+              </Text>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>
