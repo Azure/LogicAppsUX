@@ -16,7 +16,9 @@ import {
   validateWorkflowName,
 } from '../../../../core/state/templates/templateSlice';
 
-export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
+export const useCreateWorkflowPanelTabs = ({
+  onCreateClick,
+}: { onCreateClick: (onSuccessfulCreation: () => void) => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
@@ -62,9 +64,8 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
 
   const handleCreateClick = useCallback(async () => {
     setIsLoadingCreate(true);
-    await onCreateClick();
+    await onCreateClick(() => setIsCreated(true));
     setIsLoadingCreate(false);
-    setIsCreated(true);
   }, [onCreateClick]);
 
   const connectionsTabItem = useMemo(

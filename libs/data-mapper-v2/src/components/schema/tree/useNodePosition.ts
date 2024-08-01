@@ -43,7 +43,7 @@ const useNodePosition = (props: NodePositionProps) => {
     let x: number | undefined = undefined;
     let y: number | undefined = undefined;
 
-    if (!schemaMap[key] || nodePositionY < treePositionY) {
+    if (!schemaMap[key] || !onScreen || nodePositionY < treePositionY) {
       x = -1;
       y = -1;
     } else if (nodePositionY >= 0 && canvasY >= 0 && canvasWidth >= 0) {

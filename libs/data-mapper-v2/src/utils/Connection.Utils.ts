@@ -34,8 +34,8 @@ export const createConnectionEntryIfNeeded = (
       outputs: [],
     };
 
-    if (isFunctionData(node)) {
-      if (node.maxNumberOfInputs !== -1) {
+    if (node && isFunctionData(node)) {
+      if (node?.maxNumberOfInputs !== -1) {
         for (let index = 0; index < node.maxNumberOfInputs; index++) {
           connections[reactFlowKey].inputs[index] = [];
         }
@@ -86,7 +86,7 @@ export const applyConnectionValue = (
 
   if (isSchemaNodeExtended(targetNode) && targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
-  } else if (isFunctionData(targetNode) && targetNode.maxNumberOfInputs === -1) {
+  } else if (isFunctionData(targetNode) && targetNode?.maxNumberOfInputs === -1) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   }
 
@@ -173,7 +173,7 @@ export const applyConnectionValue = (
       connection.inputs[0].push(input);
 
       const selfNode = connection.self.node;
-      if (isFunctionData(selfNode) && selfNode.maxNumberOfInputs !== -1 && connection.inputs[0].length > 1) {
+      if (isFunctionData(selfNode) && selfNode?.maxNumberOfInputs !== -1 && connection.inputs[0].length > 1) {
         LogService.log(LogCategory.ConnectionUtils, 'applyConnectionValue', {
           message: 'Too many inputs applied to connection',
           data: {
@@ -287,8 +287,8 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   const flattenedInputs = flattenInputs(currentConnection.inputs);
   const customValueInputs = flattenedInputs.filter(isCustomValue);
   const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
-  const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
-  const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
+  const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node?.maxNumberOfInputs !== 0);
+  const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node?.maxNumberOfInputs === 0);
 
   // All inputs are a mix of nodes and/or custom values
   if (nodeInputs.length + customValueInputs.length === flattenedInputs.length) {
@@ -562,7 +562,7 @@ export const bringInParentSourceNodesForRepeating = (
 
 export const generateInputHandleId = (inputName: string, inputNumber: number) => `${inputName}${inputNumber}`;
 export const inputFromHandleId = (inputHandleId: string, functionNode: FunctionData): number | undefined => {
-  if (functionNode.maxNumberOfInputs > -1) {
+  if (functionNode?.maxNumberOfInputs > -1) {
     const input = functionNode.inputs.find((input) => inputHandleId === input.name);
     if (input) {
       return functionNode.inputs.indexOf(input);

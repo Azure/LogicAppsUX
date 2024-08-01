@@ -15,6 +15,7 @@ import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../core';
 import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
 import { createEdgeId } from '../utils/Edge.Utils';
+import useAutoLayout from './hooks/useAutoLayout';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -54,6 +55,8 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
 
     return [];
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes]);
+
+  useAutoLayout();
 
   useLayoutEffect(() => {
     if (ref?.current) {
@@ -192,7 +195,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edgeTypes={edgeTypes}
         preventScrolling={false}
         minZoom={1}
-        elementsSelectable={false}
+        elementsSelectable={true}
         maxZoom={1}
         autoPanOnConnect={false}
         snapToGrid={true}
@@ -208,6 +211,15 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         isValidConnection={isValidConnection}
         onConnect={onEdgeConnect}
         connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
+        elevateEdgesOnSelect={true}
+        nodeExtent={
+          ref?.current?.getBoundingClientRect()
+            ? [
+                [0, 0],
+                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
+              ]
+            : undefined
+        }
         translateExtent={
           ref?.current?.getBoundingClientRect()
             ? [

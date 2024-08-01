@@ -398,7 +398,6 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = state.curDataMapOperation;
       state.isDirty = false;
     },
-
     updateFunctionPosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
       const newOp = { ...state.curDataMapOperation };
       const node = newOp.functionNodes[action.payload.id];
@@ -407,7 +406,6 @@ export const dataMapSlice = createSlice({
       }
       const position = node.position;
       newOp.functionNodes[action.payload.id].position = position;
-
       state.curDataMapOperation = newOp;
     },
 
@@ -517,7 +515,7 @@ export const dataMapSlice = createSlice({
             const targetConnectedChildren = Object.keys(newState.sourceParentChildEdgeMapping[key] ?? {});
             for (const child of targetConnectedChildren) {
               // Get parents of the child connected to
-              const parents = newState.targetChildParentMapping[child];
+              const parents = newState.targetChildParentMapping[child] ?? [];
 
               // Fetch the first parent which is collapsed
               let i = 0;
@@ -566,7 +564,7 @@ export const dataMapSlice = createSlice({
             const sourceConnectedChildren = Object.keys(newState.targetParentChildEdgeMapping[key] ?? {});
             for (const child of sourceConnectedChildren) {
               // Get parents of the child connected to
-              const parents = newState.sourceChildParentMapping[child];
+              const parents = newState.sourceChildParentMapping[child] ?? [];
 
               // Fetch the first parent which is collapsed
               let i = 0;
@@ -604,6 +602,19 @@ export const dataMapSlice = createSlice({
         lastAction: 'Toggle Node Expand/Collapse',
       };
     },
+    updateFunctionNodesPosition: (state, action: PayloadAction<Record<string, XYPosition>>) => {
+      const newFunctionsState = { ...state.curDataMapOperation.functionNodes };
+      for (const [key, position] of Object.entries(action.payload)) {
+        if (newFunctionsState[key]) {
+          newFunctionsState[key].position = position;
+        }
+      }
+      state.curDataMapOperation = {
+        ...state.curDataMapOperation,
+        functionNodes: newFunctionsState,
+        lastAction: 'Update function nodes',
+      };
+    },
   },
 });
 
@@ -626,6 +637,7 @@ export const {
   deleteFunction,
   updateFunctionPosition,
   toogleNodeExpandCollapse,
+  updateFunctionNodesPosition,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

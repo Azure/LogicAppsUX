@@ -64,7 +64,8 @@ export const TemplatesStandaloneDesigner = () => {
     workflowKind: string,
     workflowDefinition: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
-    parametersData: Record<string, Template.ParameterDefinition>
+    parametersData: Record<string, Template.ParameterDefinition>,
+    onSuccessfulCreation = () => {}
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
@@ -144,7 +145,7 @@ export const TemplatesStandaloneDesigner = () => {
             updatedParametersData,
             updatedSettingProperties,
             undefined,
-            () => {},
+            onSuccessfulCreation,
             true
           );
         } catch (error) {
