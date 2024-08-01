@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.53.0](https://github.com/Azure/LogicAppsUX/compare/v4.52.0...v4.53.0) (2024-08-01)
+
+
+### Bug Fixes
+
+* **vscode:** Load node settings to monitoring view in remote app ([#5242](https://github.com/Azure/LogicAppsUX/issues/5242)) ([9e10aa5](https://github.com/Azure/LogicAppsUX/commit/9e10aa56441dc5fcd94415693ea3dff16cbfc7ea))
+
 ## [4.52.0](https://github.com/Azure/LogicAppsUX/compare/v4.51.0...v4.52.0) (2024-07-31)
 
 
