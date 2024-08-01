@@ -18,6 +18,12 @@ import {
   mockOauthWithTenantParameters,
   mockParameterSetsWithCredentialMapping,
 } from './mocks/connectionParameters';
+
+vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
+  ...((await importOriginal()) as object),
+  isTenantServiceEnabled: () => true,
+}));
+
 describe('ui/createConnection', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 
