@@ -496,7 +496,7 @@ export default class DataMapperPanel {
 
   private getMapMetadataPath() {
     const projectPath = ext.logicAppWorkspace;
-    const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+    const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata-v2.json`);
     return vscodeFolderPath;
   }
 }
