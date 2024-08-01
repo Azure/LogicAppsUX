@@ -2,10 +2,11 @@ import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, index
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer, getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
+  customerSchema,
   deepNestedSequenceAndObject,
   sourceMockJsonSchema,
   sourceMockSchema,
@@ -37,6 +38,22 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     });
 
     describe('convertFromMapDefinition', () => {
+      it.only('customerSchema', () => {
+        const customerTarget = convertSchemaToSchemaExtended(customerSchema as any as DataMapSchema);
+        const customerSource = customerTarget;
+        simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
+          'tns:PROJECT_REQUEST': {
+            'tns:INTEGRATION_HEADER': {
+              'tns:senderSystem': '/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:INTEGRATION_HEADER/tns:senderSystem',
+            },
+          },
+        };
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, customerSource, customerTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+      });
+
       it('creates a simple connection between one source and target node', () => {
         simpleMap['ns0:Root'] = {
           DirectTranslation: {
