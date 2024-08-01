@@ -1,15 +1,9 @@
-import type { AppDispatch } from '../../core';
-import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
-import {
-  useAllGraphParents,
-  useGetAllOperationNodesWithin,
-  useNodeDisplayName,
-  useNodeMetadata,
-} from '../../core/state/workflow/workflowSelectors';
-import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
-import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
+import { memo, useCallback, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useDrop } from 'react-dnd';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { useIntl } from 'react-intl';
+import { useOnViewportChange } from '@xyflow/react';
 import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger, Tooltip } from '@fluentui/react-components';
 import {
   ArrowBetweenDown24Filled,
@@ -31,13 +25,21 @@ import {
   LogEntryLevel,
   LoggerService,
 } from '@microsoft/logic-apps-shared';
+
 import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
-import { useCallback, useMemo, useState } from 'react';
-import { useDrop } from 'react-dnd';
-import { useHotkeys } from 'react-hotkeys-hook';
-import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
-import { useOnViewportChange } from '@xyflow/react';
+import type { AppDispatch } from '../../core';
+import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
+import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
+import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
+import {
+  useAllGraphParents,
+  useGetAllOperationNodesWithin,
+  useNodeDisplayName,
+  useNodeMetadata,
+} from '../../core/state/workflow/workflowSelectors';
+import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
+import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
+import { retrieveClipboardData } from '../../core/utils/clipboard';
 
 export interface DropZoneProps {
   graphId: string;
@@ -51,12 +53,11 @@ const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
 const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
 
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
+const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const [showCallout, setShowCallout] = useState(false);
   const [showNoPasteCallout, setShowNoPasteCallout] = useState(false);
-  const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
   const [isPasteEnabled, setIsPasteEnabled] = useState(false);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
@@ -73,6 +74,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
   const upstreamScopeArr = useAllGraphParents(graphId);
   const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
+
   useOnViewportChange({
     onStart: useCallback(() => {
       if (showCallout) {
@@ -178,7 +180,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 
-  const ref = useHotkeys(
+  const hotkeyRef = useHotkeys(
     ['meta+v', 'ctrl+v'],
     async () => {
       const copiedNode = await retrieveClipboardData();
@@ -298,95 +300,78 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   );
 
   return (
-    <div ref={ref as any}>
-      <div
-        ref={drop}
-        className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
-        style={{
-          display: 'grid',
-          placeItems: 'center',
-          width: '100%',
-          height: '100%',
-        }}
-      >
-        <div ref={setRef}>
-          {isOver && (
-            <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
-              {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
-            </div>
-          )}
-          {!isOver && (
-            <Popover
-              open={showCallout}
-              positioning={'after'}
-              closeOnScroll={true}
-              withArrow
-              mouseLeaveDelay={500}
-              onOpenChange={(e, { open }) => setShowCallout(open)}
-              aria-describedby={buttonId}
-            >
-              <PopoverTrigger aria-describedby={buttonId}>
-                <div tabIndex={-1} role={undefined}>
-                  {' '}
-                  {/* Do not remove, this keeps tooltip position working */}
-                  <ActionButtonV2
-                    tabIndex={tabIndex}
-                    id={buttonId}
-                    title={tooltipText}
-                    dataAutomationId={automationId('plus')}
-                    onClick={actionButtonClick}
-                  />
-                </div>
-              </PopoverTrigger>
-              <PopoverSurface style={{ padding: '4px' }}>
-                <MenuList>
-                  <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
-                    {newActionText}
-                  </MenuItem>
-                  {showParallelBranchButton && (
-                    <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
-                      {newBranchText}
-                    </MenuItem>
-                  )}
-                  {isPasteEnabled && (
-                    <>
-                      <MenuDivider />
-                      <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
-                        {pasteFromClipboard}
-                      </MenuItem>
-                    </>
-                  )}
-                </MenuList>
-              </PopoverSurface>
-            </Popover>
-          )}
+    <div
+      ref={(node) => {
+        drop(node);
+        hotkeyRef.current = node;
+      }}
+      className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
+      style={{
+        display: 'grid',
+        placeItems: 'center',
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      {isOver && (
+        <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
+          {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
         </div>
-        <Tooltip
-          positioning={{ target: rootRef, position: 'below', align: 'end' }}
+      )}
+      {!isOver && (
+        <Popover
+          open={showCallout}
+          positioning={'after'}
+          closeOnScroll={true}
           withArrow
-          content={noPasteText}
-          relationship="description"
-          visible={showNoPasteCallout}
-        />
-      </div>
+          mouseLeaveDelay={500}
+          onOpenChange={(e, { open }) => setShowCallout(open)}
+          aria-describedby={buttonId}
+        >
+          <PopoverTrigger aria-describedby={buttonId}>
+            <div tabIndex={-1} role={undefined}>
+              {' '}
+              {/* Do not remove, this keeps tooltip position working */}
+              <ActionButtonV2
+                tabIndex={tabIndex}
+                id={buttonId}
+                title={tooltipText}
+                dataAutomationId={automationId('plus')}
+                onClick={actionButtonClick}
+              />
+            </div>
+          </PopoverTrigger>
+          <PopoverSurface style={{ padding: '4px' }}>
+            <MenuList>
+              <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
+                {newActionText}
+              </MenuItem>
+              {showParallelBranchButton && (
+                <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
+                  {newBranchText}
+                </MenuItem>
+              )}
+              {isPasteEnabled && (
+                <>
+                  <MenuDivider />
+                  <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
+                    {pasteFromClipboard}
+                  </MenuItem>
+                </>
+              )}
+            </MenuList>
+          </PopoverSurface>
+        </Popover>
+      )}
+      <Tooltip
+        positioning={{ position: 'below', align: 'end' }}
+        withArrow
+        content={noPasteText}
+        relationship="description"
+        visible={showNoPasteCallout}
+      />
     </div>
   );
 };
 
-async function retrieveClipboardData() {
-  try {
-    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
-      const clipboardData = await navigator.clipboard.readText();
-      if (clipboardData) {
-        const parsedData = JSON.parse(clipboardData);
-        if (parsedData.mslaNode) {
-          return parsedData;
-        }
-      }
-      return null;
-    }
-    return JSON.parse(localStorage.getItem('msla-clipboard') ?? '');
-  } catch (error) {
-    return null;
-  }
-}
+export default memo(DropZone);

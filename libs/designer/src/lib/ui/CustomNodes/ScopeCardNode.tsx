@@ -31,7 +31,7 @@ import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/w
 import type { AppDispatch, RootState } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
-import { DropZone } from '../connections/dropzone';
+import DropZone from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';

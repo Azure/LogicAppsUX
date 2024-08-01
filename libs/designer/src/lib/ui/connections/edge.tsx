@@ -1,6 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { DropZone } from './dropzone';
+import DropZone from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';

@@ -197,6 +197,7 @@ export const Designer = (props: DesignerProps) => {
             minZoom={0.05}
             onPaneClick={() => dispatch(clearPanel({}))}
             disableKeyboardA11y={true}
+            onlyRenderVisibleElements={true}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
