@@ -1,17 +1,14 @@
 .msla-template-quickview-header {
     display: flex;
     flex-direction: column;
-    padding: 10px 0 35px 0;
+    padding: 10px 0 20px 0;
+    width: 100%;
 }
 
 .msla-template-panel-header {
     font-size: 22px !important;
     font-weight: 600 !important;
     padding-bottom: 10px;
-}
-
-.msla-template-description {
-    padding-top: 10px;
 }
 
 .msla-template-quickview-tags {
@@ -30,7 +27,7 @@
     display: flex;
 
     .msla-template-workflow-preview-image {
-        width: 60%;
+        width: 70%;
         margin: 10px auto;
         height: fit-content
     }
@@ -120,12 +117,18 @@
             }
         }
 
-        .msla-template-overview-section-tag {
-            border: 5px solid #d9eefe;
-            border-radius: 2px;
-            padding: 1px 2px;
-            background-color: #d9eefe;
-            width: fit-content;
+        .msla-template-overview-section-tags-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            .msla-template-overview-section-tag {
+                border: 5px solid #d9eefe;
+                border-radius: 2px;
+                padding: 1px 2px;
+                background-color: #d9eefe;
+                width: fit-content;
+            }
         }
 
         .msla-template-overview-connections {
@@ -169,7 +172,7 @@
             }
         }
 
-        .msla-template-overview-markdown {
+        .msla-template-markdown {
             * {
                 margin: 0;
             }

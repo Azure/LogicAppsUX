@@ -200,8 +200,8 @@ export const TemplatesStandaloneDesigner = () => {
             >
               <TemplateFilters
                 detailFilters={{
-                  Categories: {
-                    displayName: 'Category',
+                  Category: {
+                    displayName: 'Categories',
                     items: [
                       {
                         value: 'Design Patterns',
@@ -222,6 +222,22 @@ export const TemplatesStandaloneDesigner = () => {
                       {
                         value: 'Approval',
                         displayName: 'Approval',
+                      },
+                      {
+                        value: 'RAG',
+                        displayName: 'RAG',
+                      },
+                      {
+                        value: 'Automation',
+                        displayName: 'Automation',
+                      },
+                      {
+                        value: 'BizTalk Migration',
+                        displayName: 'BizTalk Migration',
+                      },
+                      {
+                        value: 'Mainframe Modernization',
+                        displayName: 'Mainframe Modernization',
                       },
                     ],
                   },

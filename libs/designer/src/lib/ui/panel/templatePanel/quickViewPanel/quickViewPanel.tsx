@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl';
 import { useState } from 'react';
 import { TemplatesPanelContent } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
+import Markdown from 'react-markdown';
 
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,7 +59,7 @@ export const QuickViewPanelHeader = ({
           );
         })}
       </div>
-      <Text className="msla-template-description">{description}</Text>
+      <Markdown linkTarget="_blank">{description}</Markdown>
     </div>
   );
 };
