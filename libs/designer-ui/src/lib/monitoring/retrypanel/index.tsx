@@ -4,7 +4,7 @@ import { ErrorSection } from '../errorsection';
 import { calculateDuration } from '../utils';
 import { Value } from '../values';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RetryPanelProps {
@@ -19,6 +19,11 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
   const retryDuration = useMemo(() => {
     return calculateDuration(retryHistory.startTime, retryHistory.endTime);
   }, [retryHistory.endTime, retryHistory.startTime]);
+
+  useEffect(() => {
+    const newRetryHistory = retryHistories[currentPage - 1];
+    setRetryHistory(newRetryHistory);
+  }, [retryHistories, currentPage]);
 
   if (!visible) {
     return null;
@@ -64,14 +69,14 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
 
   const handlePagerChange: PageChangeEventHandler = ({ value }): void => {
     if (currentPage !== value) {
-      const newRetryHistory = retryHistories[value - 1];
       setCurrentPage(value);
-      setRetryHistory(newRetryHistory);
     }
   };
 
   const { clientRequestId, code, endTime, error, startTime, serviceRequestId } = retryHistory;
 
+  console.log('charlie', retryHistories);
+  console.log('charlie 2', retryHistory);
   return (
     <>
       <div className="msla-retrypanel-callout-pager">
