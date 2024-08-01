@@ -14,6 +14,8 @@ export type TestPanelState = {
   isOpen: boolean;
   showSelection: boolean;
   selectedFile?: SchemaFile;
+  sampleDataContent?: string;
+  result?: string;
 };
 
 export type CodeViewState = {
@@ -64,6 +66,10 @@ export const panelSlice = createSlice({
       state.testPanel.isOpen = !state.testPanel.isOpen;
     },
 
+    saveSampleData: (state, action: PayloadAction<string>) => {
+      state.testPanel.sampleDataContent = action.payload;
+    },
+
     toggleShowSelection: (state) => {
       state.testPanel.showSelection = !state.testPanel.showSelection;
     },
@@ -110,6 +116,7 @@ export const {
   toggleTestPanel,
   toggleShowSelection,
   setTestFile,
+  saveSampleData,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

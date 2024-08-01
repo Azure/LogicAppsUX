@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { Button, mergeClasses } from '@fluentui/react-components';
+import { Button } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
 import { Dismiss20Regular } from '@fluentui/react-icons';
@@ -16,7 +16,7 @@ export const TestPanel = (_props: TestPanelProps) => {
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
   const isTestPanelOpen = useSelector((state: RootState) => state.panel.testPanel.isOpen);
-  const showSelection = useSelector((state: RootState) => state.panel.testPanel.showSelection);
+  const { sampleDataContent } = useSelector((state: RootState) => state.panel.testPanel);
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -34,9 +34,21 @@ export const TestPanel = (_props: TestPanelProps) => {
         id: '6oOQnD',
         description: 'Close code view button',
       }),
+      CLOSE: intl.formatMessage({
+        defaultMessage: 'Close',
+        id: 'Px7S/2',
+        description: 'Close button',
+      }),
+      TEST: intl.formatMessage({
+        defaultMessage: 'Test',
+        id: 'ldn/IC',
+        description: 'Test button',
+      }),
     }),
     [intl]
   );
+
+  const onTestClick = useCallback(() => {}, []);
 
   return (
     <Panel
@@ -46,7 +58,7 @@ export const TestPanel = (_props: TestPanelProps) => {
         text: resources.TEST_MAP,
         rightAction: (
           <Button
-            className={styles.closeButton}
+            className={styles.closeHeaderButton}
             appearance="transparent"
             aria-label={resources.CLOSE_TEST_MAP}
             icon={<Dismiss20Regular />}
@@ -56,8 +68,18 @@ export const TestPanel = (_props: TestPanelProps) => {
         size: 500,
       }}
       body={<TestPanelBody />}
+      footer={
+        <div>
+          <Button appearance="primary" onClick={onTestClick} disabled={!sampleDataContent}>
+            {resources.TEST}
+          </Button>
+          <Button appearance="secondary" onClick={onCloseClick} className={styles.closeButton}>
+            {resources.CLOSE}
+          </Button>
+        </div>
+      }
       styles={{
-        root: mergeClasses(styles.root, showSelection ? styles.selection : ''),
+        root: styles.root,
       }}
     />
   );
