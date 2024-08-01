@@ -2,11 +2,10 @@ import type { ConnectionDictionary, InputConnection } from '../../models/Connect
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
   applyConnectionValue,
-  collectSourceNodeIdsForConnectionChain,
-  collectTargetNodeIdsForConnectionChain,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
+  getActiveNodes,
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
@@ -34,7 +33,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, XYPosition } from '@xyflow/react';
-import { createReactFlowFunctionKey, getSplitIdsFromReactFlowConnectionId } from '../../utils/ReactFlow.Util';
+import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -279,6 +278,8 @@ export const dataMapSlice = createSlice({
 
       applyConnectionValue(newState.dataMapConnections, action.payload);
 
+      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, state.curDataMapOperation.selectedItemKey);
+
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
@@ -338,6 +339,8 @@ export const dataMapSlice = createSlice({
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
+
+      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, state.curDataMapOperation.selectedItemKey);
 
       if (isFunctionData(sourceNode)) {
         doDataMapOperation(state, newState, 'Updated function node locations by adding');
@@ -413,6 +416,7 @@ export const dataMapSlice = createSlice({
       const currentDataMap = state.curDataMapOperation;
       const functionNode = currentDataMap.functionNodes[reactFlowKey];
       const newFunctionsState = { ...currentDataMap.functionNodes };
+
       if (functionNode) {
         delete newFunctionsState[reactFlowKey];
 
@@ -424,6 +428,8 @@ export const dataMapSlice = createSlice({
             ...currentDataMap,
             functionNodes: newFunctionsState,
             dataMapConnections: newConnections,
+            selectedItemConnectedNodes: {},
+            selectedItemKey: '',
           },
           'Delete function by key'
         );
@@ -487,31 +493,8 @@ export const dataMapSlice = createSlice({
       const selectedItemKey = action.payload;
 
       state.curDataMapOperation.selectedItemKey = action.payload;
-      const connectedItems: Record<string, string> = {};
 
-      if (selectedItemKey) {
-        const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
-
-        const selectedItemConnectedNodes = [];
-        if (connections[selectedItemKeyParts.sourceId]) {
-          selectedItemConnectedNodes.push(
-            ...collectSourceNodeIdsForConnectionChain(selectedItemKeyParts.sourceId, connections[selectedItemKeyParts.sourceId])
-          );
-          selectedItemConnectedNodes.push(
-            ...collectTargetNodeIdsForConnectionChain(selectedItemKeyParts.sourceId, connections[selectedItemKeyParts.sourceId])
-          );
-        }
-
-        selectedItemConnectedNodes.forEach((key) => {
-          connectedItems[key] = key;
-        });
-
-        connectedItems[selectedItemKey] = selectedItemKey;
-
-        state.curDataMapOperation.selectedItemConnectedNodes = connectedItems;
-      } else {
-        state.curDataMapOperation.selectedItemConnectedNodes = {};
-      }
+      state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(connections, selectedItemKey);
     },
     toogleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };

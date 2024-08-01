@@ -5,9 +5,12 @@ import { useStyles } from './styles';
 import { useRef, useEffect, useMemo } from 'react';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { useActiveNode } from '../../../core/state/selectors/selectors';
+import { useDispatch } from 'react-redux';
+import { setSelectedItem } from '../../../core/state/DataMapSlice';
 
 const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataProps>, 'schema'>>) => {
   const divRef = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch();
   const { data, id } = props;
   const { isLeftDirection } = data;
   const updateNodeInternals = useUpdateNodeInternals();
@@ -33,6 +36,10 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
 
   const handleStyle = styleForState;
 
+  const setActiveNode = () => {
+    dispatch(setSelectedItem(id));
+  };
+
   useEffect(() => {
     updateNodeInternals(id);
   }, [id, updateNodeInternals]);
@@ -42,7 +49,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
         type={isLeftDirection ? 'source' : 'target'}
         position={isLeftDirection ? Position.Left : Position.Right}
         className={handleStyle}
-        isConnectable={true}
+        onMouseDown={setActiveNode}
       />
     </div>
   );

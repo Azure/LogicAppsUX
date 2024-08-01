@@ -8,7 +8,7 @@ import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { updateFunctionPosition, makeConnectionFromMap } from '../core/state/DataMapSlice';
+import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
@@ -116,6 +116,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         reactFlowDestination: connection.target ?? '',
       };
       dispatch(makeConnectionFromMap(connectionAction));
+      dispatch(setSelectedItem(connection.target));
     },
     [edges, dispatch]
   );
@@ -186,7 +187,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
-        nodesConnectable={true}
         zoomOnDoubleClick={false}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}

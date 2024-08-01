@@ -37,11 +37,13 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
-  const isLeftConnected =
-    functionWithConnections.inputs[0] && functionWithConnections.inputs[0].length > 0 && functionWithConnections.inputs[0][0] !== undefined;
-  const isRightConnected = functionWithConnections.outputs.length > 0;
-
   const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
+
+  const isLeftConnected =
+    functionWithConnections?.inputs[0] &&
+    functionWithConnections?.inputs[0].length > 0 &&
+    functionWithConnections?.inputs[0][0] !== undefined;
+  const isRightConnected = functionWithConnections?.outputs.length > 0;
 
   const styleForLeftHandle = useMemo(() => {
     const style = styles.handleWrapper;
@@ -72,9 +74,26 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
     dispatch(setSelectedItem(props.id));
   };
 
+  const setActiveNode = () => {
+    dispatch(setSelectedItem(props.id));
+  };
+
+  if (functionWithConnections === undefined) {
+    return;
+  }
+
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
-      {funcitonHasInputs && <Handle type={'target'} position={Position.Left} className={leftHandleStyle} style={{ left: '-7px' }} />}
+      {funcitonHasInputs && (
+        <Handle
+          type={'target'}
+          isConnectable={true}
+          onConnect={setActiveNode}
+          position={Position.Left}
+          className={leftHandleStyle}
+          style={{ left: '-7px' }}
+        />
+      )}
       <Popover>
         <PopoverTrigger>
           <Button

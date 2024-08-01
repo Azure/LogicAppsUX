@@ -11,6 +11,7 @@ import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import type { WritableDraft } from 'immer/dist/internal';
+import { getSplitIdsFromReactFlowConnectionId } from './ReactFlow.Util';
 
 /**
  * Creates a connection entry in the connections dictionary if it doesn't already exist.
@@ -387,12 +388,37 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
 //   return [currentFunction.self.reactFlowKey, createEdgeId(currentFunction.self.reactFlowKey, previousNodeId)];
 // };
 
+export const getActiveNodes = (connections: ConnectionDictionary, selectedItemKey: string | undefined) => {
+  const connectedItems: Record<string, string> = {};
+  if (selectedItemKey) {
+    const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
+
+    const selectedItemConnectedNodes = [];
+    if (connections[selectedItemKeyParts.sourceId]) {
+      selectedItemConnectedNodes.push(
+        ...collectSourceNodeIdsForConnectionChain(selectedItemKeyParts.sourceId, connections[selectedItemKeyParts.sourceId])
+      );
+      selectedItemConnectedNodes.push(
+        ...collectTargetNodeIdsForConnectionChain(selectedItemKeyParts.sourceId, connections[selectedItemKeyParts.sourceId])
+      );
+    }
+
+    selectedItemConnectedNodes.forEach((key) => {
+      connectedItems[key] = key;
+    });
+
+    connectedItems[selectedItemKey] = selectedItemKey;
+  }
+  return connectedItems;
+};
+
 export const collectSourceNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
   return [
     currentFunction.self.reactFlowKey,
     createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
     ...connectionUnits.flatMap((input) => createEdgeId(input.reactFlowKey, currentFunction.self.reactFlowKey)),
+    ...connectionUnits.flatMap((input) => (isSchemaNodeExtended(input.node) ? input.reactFlowKey : '')),
   ];
 };
 
@@ -402,6 +428,7 @@ export const collectTargetNodeIdsForConnectionChain = (previousNodeId: string, c
     currentFunction.self.reactFlowKey,
     createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
     ...connectionUnits.flatMap((input) => createEdgeId(currentFunction.self.reactFlowKey, input.reactFlowKey)),
+    ...connectionUnits.flatMap((input) => (isSchemaNodeExtended(input.node) ? input.reactFlowKey : '')),
   ];
 };
 
