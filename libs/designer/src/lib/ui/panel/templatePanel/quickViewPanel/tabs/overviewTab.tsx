@@ -61,7 +61,7 @@ export const OverviewPanel: React.FC = () => {
               description: 'Title for the prerequisites section in the template overview tab',
             })}
           </Text>
-          <Markdown className="msla-template-overview-markdown" linkTarget="_blank">
+          <Markdown className="msla-template-markdown" linkTarget="_blank">
             {manifest.prerequisites}
           </Markdown>
         </div>
@@ -74,6 +74,11 @@ export const OverviewPanel: React.FC = () => {
             description: 'Title for the details section in the template overview tab',
           })}
         </Text>
+        {manifest?.detailsDescription && (
+          <Markdown className="msla-template-overview-section-detail msla-template-markdown" linkTarget="_blank">
+            {manifest?.detailsDescription}
+          </Markdown>
+        )}
         {Object.keys(detailsTags).map((key: string) => {
           return (
             <div className="msla-template-overview-section-detail" key={key}>
