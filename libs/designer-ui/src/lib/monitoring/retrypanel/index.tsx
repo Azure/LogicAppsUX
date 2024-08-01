@@ -75,8 +75,6 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
 
   const { clientRequestId, code, endTime, error, startTime, serviceRequestId } = retryHistory;
 
-  console.log('charlie', retryHistories);
-  console.log('charlie 2', retryHistory);
   return (
     <>
       <div className="msla-retrypanel-callout-pager">
