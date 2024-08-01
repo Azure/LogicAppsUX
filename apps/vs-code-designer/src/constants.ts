@@ -26,6 +26,7 @@ export const diagnosticsDirectory = 'diagnostics';
 export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
+export const libDirectory = 'lib';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
 
@@ -334,3 +335,4 @@ export const COMMON_ERRORS = {
 export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';
+export const sqlConnectionStringSecretName = 'sqlconnectionstring';

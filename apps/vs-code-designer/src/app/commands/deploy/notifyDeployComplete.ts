@@ -24,7 +24,11 @@ export async function notifyDeployComplete(
   isHybridLogiApp: boolean,
   settingsToExclude?: string[]
 ): Promise<void> {
-  const deployComplete: string = localize('deployComplete', 'Deployment to "{0}" completed.', node.site.fullName);
+  const deployComplete: string = localize(
+    'deployComplete',
+    'Deployment to "{0}" completed.',
+    node.isHybridLogicApp ? node.hybridSite.name : node.site.fullName
+  );
 
   if (isHybridLogiApp) {
     window.showInformationMessage(deployComplete);
@@ -34,7 +38,10 @@ export async function notifyDeployComplete(
   const streamLogs: MessageItem = { title: localize('streamLogs', 'Stream logs') };
   const uploadSettings: MessageItem = { title: localize('uploadAppSettings', 'Upload settings') };
 
-  window.showInformationMessage(deployComplete, streamLogs, uploadSettings, viewOutput).then(async (result) => {
+  // NOTE(anandgmenon): For hybrid, we update app settings by default already.
+  const items = node.isHybridLogicApp ? [viewOutput, streamLogs] : [viewOutput, streamLogs, uploadSettings];
+
+  window.showInformationMessage(deployComplete, ...items).then(async (result) => {
     await callWithTelemetryAndErrorHandling('postDeploy', async (postDeployContext: IActionContext) => {
       postDeployContext.telemetry.properties.dialogResult = result && result.title;
       if (result === viewOutput) {

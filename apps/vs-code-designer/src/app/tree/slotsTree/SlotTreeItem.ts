@@ -19,7 +19,6 @@ import type {
   IProjectTreeItem,
 } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectSource } from '@microsoft/vscode-extension-logic-apps';
-
 export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeItem {
   public logStreamPath = '';
   public configurationsTreeItem: ConfigurationsTreeItem;
@@ -54,14 +53,14 @@ export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeIte
   ) {
     super(parent);
     this.resourceTree = resourceTree;
-    if (options?.isHybridLogiApp) {
-      this.isHybridLogicApp = options.isHybridLogiApp;
-      this.location = options.location;
-      this.fileShare = options.fileShare;
-      this.connectedEnvironment = options.connectedEnvironment;
-      this.hybridSite = options.hybridSite;
-      this.resourceGroupName = options.resourceGroupName;
-      this.sqlConnectionString = options.sqlConnectionString;
+    if (options?.isHybridLogiApp || resourceTree.hybridSite) {
+      this.isHybridLogicApp = options?.isHybridLogiApp ?? true;
+      this.location = options?.location ?? resourceTree.hybridSite?.location;
+      this.fileShare = options?.fileShare;
+      this.connectedEnvironment = options?.connectedEnvironment;
+      this.hybridSite = options?.hybridSite ?? resourceTree.hybridSite;
+      this.resourceGroupName = options?.resourceGroupName;
+      this.sqlConnectionString = options?.sqlConnectionString;
     } else {
       const slotContextValue = this.resourceTree.site.isSlot
         ? LogicAppResourceTree.slotContextValue

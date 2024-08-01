@@ -28,9 +28,11 @@ import {
   AppInsightsCreateStep,
   AppInsightsListStep,
   AppKind,
+  CustomLocationListStep,
   ParsedSite,
   SiteNameStep,
   WebsiteOS,
+  getWebLocations,
 } from '@microsoft/vscode-azext-azureappservice';
 import type { IAppServiceWizardContext, SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
@@ -122,6 +124,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const executeSteps: AzureWizardExecuteStep<IAppServiceWizardContext>[] = [];
 
     promptSteps.push(new SiteNameStep());
+
+    const locations = await getWebLocations(wizardContext);
+    CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
+    CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
     promptSteps.push(new CustomLocationStorageAccountStep());
 

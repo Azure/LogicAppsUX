@@ -49,6 +49,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
 import { deployHybridLogicApp } from './hybridLogicApp';
+import { createContainerClient } from '../../utils/azureClients';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -203,7 +204,9 @@ async function deploy(
     }
   });
 
-  await node.loadAllChildren(context);
+  if (!isHybridLogicApp) {
+    await node.loadAllChildren(context);
+  }
   await notifyDeployComplete(node, context.workspaceFolder, isHybridLogicApp, settingsToExclude);
 }
 
@@ -216,14 +219,21 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
   const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
 
-  const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
+  let [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
   if (!site) {
     if (isAdvance) {
       return await createLogicAppAdvanced(context, sub);
     }
     return await createLogicApp(context, sub);
   }
+
+  if (site.id.includes('Microsoft.App')) {
+    // NOTE(anandgmenon): Getting latest metadata for hybrid app as the one loaded from the cache can have outdateed definition and cause deployment to fail.
+    const clientContainer = await createContainerClient({ ...context, ...sub.subscription });
+    site = (await clientContainer.containerApps.get(site.id.split('/')[4], site.name)) as undefined as Site;
+  }
   const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+
   return new SlotTreeItem(sub, resourceTree);
 }
 

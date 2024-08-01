@@ -1,20 +1,24 @@
 import { type FileShare, isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import { localize } from '../../../../localize';
-import type { ConnectedEnvironment } from '@azure/arm-appcontainers';
 import { azurePublicBaseUrl } from '../../../../constants';
 
 export const updateSMBConnectedEnvironment = async (
   accessToken: string,
   subscriptionId: string,
-  connectedEnvironment: ConnectedEnvironment,
+  connectedEnvironmentId: string,
   siteName: string,
   fileShare: FileShare
 ) => {
-  const resourceGroup = connectedEnvironment.id.split('/')[4];
-
-  const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/connectedEnvironments/${connectedEnvironment.name}/storages/${siteName}?api-version=2024-02-02-preview`;
-
+  const url = `${azurePublicBaseUrl}/${connectedEnvironmentId}/storages/${siteName}?api-version=2024-02-02-preview`;
+  let domain: string = null;
+  let username: string = null;
+  if (fileShare.userName.includes('\\')) {
+    username = fileShare.userName.split('\\')[1];
+    domain = fileShare.userName.split('\\')[0];
+  } else {
+    username = fileShare.userName;
+  }
   try {
     const options = {
       headers: { authorization: accessToken },
@@ -24,7 +28,8 @@ export const updateSMBConnectedEnvironment = async (
             host: fileShare.hostName,
             shareName: fileShare.path,
             password: fileShare.password,
-            username: fileShare.userName,
+            username: username,
+            domain: domain,
             accessMode: 'ReadWrite',
           },
         },

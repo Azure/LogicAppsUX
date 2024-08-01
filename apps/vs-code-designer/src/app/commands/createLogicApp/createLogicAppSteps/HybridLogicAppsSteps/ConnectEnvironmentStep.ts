@@ -35,7 +35,7 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
       await updateSMBConnectedEnvironment(
         accessToken,
         context.subscriptionId,
-        context.connectedEnvironment,
+        context.connectedEnvironment.id,
         context.newSiteName,
         context.fileShare
       );

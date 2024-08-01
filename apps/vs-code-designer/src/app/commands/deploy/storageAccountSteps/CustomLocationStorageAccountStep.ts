@@ -32,7 +32,7 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
   }
 
   public async getSubWizard(wizardContext: ILogicAppWizardContext): Promise<IWizardOptions<ILogicAppWizardContext> | undefined> {
-    if (wizardContext.customLocation) {
+    if (wizardContext.useHybrid) {
       const { storageType } = wizardContext;
       const storageAccountCreateOptions: INewStorageAccountDefaults = {
         kind: StorageAccountKind.Storage,

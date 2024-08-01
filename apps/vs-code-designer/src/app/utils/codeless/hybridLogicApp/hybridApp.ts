@@ -9,12 +9,13 @@ import {
   extensionVersionKey,
   localSettingsFileName,
   logicAppKind,
+  sqlConnectionStringSecretName,
   sqlStorageConnectionStringKey,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkspaceFolder } from '../../workspace';
-import type { ConnectedEnvironment } from '@azure/arm-appcontainers';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { ConnectedEnvironment, ContainerApp, EnvironmentVar } from '@azure/arm-appcontainers';
 
 interface createHybridAppOptions {
   sqlConnectionString: string;
@@ -24,9 +25,10 @@ interface createHybridAppOptions {
   subscriptionId: string;
   resourceGroup: string;
   siteName: string;
+  hybridApp?: ContainerApp;
 }
 
-const getAppSettingsFromLocal = async (context) => {
+const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
   const appSettingsToskip = ['AzureWebJobsStorage', 'ProjectDirectoryPath', 'FUNCTIONS_WORKER_RUNTIME'];
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
@@ -39,13 +41,18 @@ const getAppSettingsFromLocal = async (context) => {
     .filter((p) => !appSettingsToskip.includes(p.name));
 };
 
-export const createHybridApp = async (context: IActionContext, accessToken: string, options: createHybridAppOptions) => {
-  const { sqlConnectionString, location, connectedEnvironment, storageName, subscriptionId, resourceGroup, siteName } = options;
+export const createOrUpdateHybridApp = async (context: IActionContext, accessToken: string, options: createHybridAppOptions) => {
+  const { sqlConnectionString, location, connectedEnvironment, storageName, subscriptionId, resourceGroup, siteName, hybridApp } = options;
+
+  const sqlConnectionappSetting = hybridApp
+    ? hybridApp.template.containers[0].env.find((e) => e.name === sqlStorageConnectionStringKey)
+    : {
+        name: sqlStorageConnectionStringKey,
+        secretRef: sqlConnectionStringSecretName,
+      };
+
   const defaultAppSettings = [
-    {
-      name: sqlStorageConnectionStringKey,
-      value: sqlConnectionString,
-    },
+    sqlConnectionappSetting,
     {
       name: appKindSetting,
       value: logicAppKind,
@@ -65,65 +72,92 @@ export const createHybridApp = async (context: IActionContext, accessToken: stri
   ];
 
   const appSettings = (await getAppSettingsFromLocal(context)).concat(defaultAppSettings);
-  const containerAppPayload = {
-    type: 'Microsoft.App/containerApps',
-    kind: logicAppKind,
-    location: location,
-    extendedLocation: connectedEnvironment.extendedLocation,
-    properties: {
-      environmentId: connectedEnvironment.id,
-      configuration: {
-        activeRevisionsMode: 'Single',
-        ingress: {
-          external: true,
-          targetPort: 80,
-          allowInsecure: true,
+  const templatePayload = {
+    containers: [
+      {
+        image: 'mcr.microsoft.com/azurelogicapps/logicapps-base:latest',
+        name: 'logicapps-container',
+        env: appSettings,
+        resources: {
+          cpu: 1.0,
+          memory: '2.0Gi',
         },
-      },
-      template: {
-        containers: [
+        volumeMounts: [
           {
-            image: 'mcr.microsoft.com/azurelogicapps/logicapps-base:preview',
-            name: 'logicapps-container',
-            env: appSettings,
-            resources: {
-              cpu: 1.0,
-              memory: '2.0Gi',
-            },
-            volumeMounts: [
+            volumeName: 'artifacts-store',
+            mountPath: '/home/site/wwwroot',
+          },
+        ],
+      },
+    ],
+    scale: {
+      minReplicas: 1,
+      maxReplicas: 30,
+    },
+    volumes: [
+      {
+        name: 'artifacts-store',
+        storageType: 'Smb',
+        storageName: storageName,
+      },
+    ],
+  };
+
+  const containerAppPayload = hybridApp
+    ? {
+        type: 'Microsoft.App/containerApps',
+        kind: logicAppKind,
+        location: location,
+        extendedLocation: hybridApp.extendedLocation,
+        properties: {
+          environmentId: hybridApp.environmentId,
+          template: templatePayload,
+        },
+      }
+    : {
+        type: 'Microsoft.App/containerApps',
+        kind: logicAppKind,
+        location: location,
+        extendedLocation: connectedEnvironment.extendedLocation,
+        properties: {
+          environmentId: connectedEnvironment.id,
+          configuration: {
+            secrets: [
               {
-                volumeName: 'artifacts-store',
-                mountPath: '/home/site/wwwroot',
+                name: sqlConnectionStringSecretName,
+                value: sqlConnectionString,
               },
             ],
+            activeRevisionsMode: 'Single',
+            ingress: {
+              external: true,
+              targetPort: 80,
+              allowInsecure: true,
+            },
           },
-        ],
-        scale: {
-          minReplicas: 1,
-          maxReplicas: 30,
+          template: templatePayload,
         },
-        volumes: [
-          {
-            name: 'artifacts-store',
-            storageType: 'Smb',
-            storageName: storageName,
-          },
-        ],
-      },
-    },
-  };
+      };
 
   const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/containerApps/${siteName}?api-version=2024-02-02-preview`;
 
   try {
-    const response = await axios.put(url, containerAppPayload, {
+    const method = hybridApp ? 'PATCH' : 'PUT';
+    const response = await axios({
+      method,
+      url,
       headers: { authorization: accessToken },
+      data: containerAppPayload,
     });
 
     if (!isSuccessResponse(response.status)) {
       throw new Error(response.statusText);
     }
-    return response.data;
+    return {
+      ...response.data?.properties,
+      name: siteName,
+      type: 'Microsoft.App/containerApps',
+    };
   } catch (error) {
     throw new Error(`${localize('errorCreatingHybrid', 'Error in creating hybrid logic app')} - ${error.message}`);
   }
