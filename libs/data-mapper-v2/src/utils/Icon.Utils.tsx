@@ -163,7 +163,7 @@ export const iconForNormalizedDataType = (
       break;
     }
   }
-  return bundled ? bundleIcon(icons[1], icons[0]) : icon;
+  return bundled && icons.length > 1 ? bundleIcon(icons[1], icons[0]) : icon;
 };
 
 export const iconBaseUrl = 'https://logicappsv2resources.blob.core.windows.net/icons/datamapper/';
