@@ -183,51 +183,53 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
   );
 
   return (
-    <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
-      {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} />}
-      {!noNodeOnCardLevel && !isCollapsed ? (
-        <>
-          <div className={'msla-panel-card-header'}>
-            {iconComponent}
-            <div className={'msla-panel-card-title-container'}>
-              <PanelHeaderTitle
-                key={nodeId}
-                titleId={titleId}
-                readOnlyMode={readOnlyMode}
-                renameTitleDisabled={renameTitleDisabled}
-                titleValue={title}
-                onChange={(newId) => onTitleChange(nodeId, newId)}
-                onBlur={onTitleBlur}
-              />
+    <>
+      <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
+        {shouldHideCollapseButton ? undefined : <CollapseButton {...props} isRight={isRight} nodeId={nodeId} />}
+        {!noNodeOnCardLevel && !isCollapsed ? (
+          <>
+            <div className={'msla-panel-card-header'}>
+              {iconComponent}
+              <div className={'msla-panel-card-title-container'}>
+                <PanelHeaderTitle
+                  key={nodeId}
+                  titleId={titleId}
+                  readOnlyMode={readOnlyMode}
+                  renameTitleDisabled={renameTitleDisabled}
+                  titleValue={title}
+                  onChange={(newId) => onTitleChange(nodeId, newId)}
+                  onBlur={onTitleBlur}
+                />
+              </div>
+              {onUnpinAction ? (
+                <Tooltip content={unpinButtonText} relationship="label">
+                  <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
+                </Tooltip>
+              ) : null}
+              <OverflowButton {...props} />
             </div>
-            {onUnpinAction ? (
-              <Tooltip content={unpinButtonText} relationship="label">
-                <Button appearance="subtle" icon={<PinOffRegular />} onClick={onUnpinAction} />
-              </Tooltip>
+            {onRenderWarningMessage ? onRenderWarningMessage() : null}
+            {comment ? (
+              <PanelHeaderComment
+                comment={comment}
+                isCollapsed={isCollapsed}
+                noNodeSelected={noNodeOnCardLevel}
+                readOnlyMode={readOnlyMode}
+                commentChange={commentChange}
+              />
             ) : null}
-            <OverflowButton {...props} />
-          </div>
-          {onRenderWarningMessage ? onRenderWarningMessage() : null}
-          {comment ? (
-            <PanelHeaderComment
-              comment={comment}
-              isCollapsed={isCollapsed}
-              noNodeSelected={noNodeOnCardLevel}
-              readOnlyMode={readOnlyMode}
-              commentChange={commentChange}
-            />
-          ) : null}
-          {canResubmit ? (
-            <Button
-              style={{ marginLeft: '2rem', marginTop: '1rem', marginBottom: 0 }}
-              icon={<Icon iconName="PlaybackRate1x" />}
-              onClick={() => resubmitOperation?.()}
-            >
-              {resubmitButtonText}
-            </Button>
-          ) : null}
-        </>
+          </>
+        ) : null}
+      </div>
+      {canResubmit ? (
+        <Button
+          style={{ margin: '0 2rem 0.5rem', alignSelf: 'flex-start' }}
+          icon={<Icon iconName="PlaybackRate1x" />}
+          onClick={() => resubmitOperation?.()}
+        >
+          {resubmitButtonText}
+        </Button>
       ) : null}
-    </div>
+    </>
   );
 };
