@@ -7,8 +7,8 @@ import { useOnViewportChange } from '@xyflow/react';
 export interface CardContextMenuProps {
   contextMenuLocation?: { x: number; y: number };
   menuItems: JSX.Element[];
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
   title: string;
 }
 
@@ -25,7 +25,7 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
   const intl = useIntl();
 
   useOnViewportChange({
-    onStart: useCallback(() => open && setOpen(false), [open, setOpen]),
+    onStart: useCallback(() => open && setOpen?.(false), [open, setOpen]),
   });
 
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
@@ -39,7 +39,13 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
     }
   );
 
-  const onOpenChange = useCallback((_e: any, data: MenuOpenChangeData) => setOpen(data.open), [setOpen]);
+  const onOpenChange = useCallback(
+    (_e: any, data: MenuOpenChangeData) => {
+      console.log('### onOpenChange', data);
+      return setOpen?.(data.open);
+    },
+    [setOpen]
+  );
 
   const positioning = useMemo(() => {
     const offset = contextMenuLocation ? { mainAxis: contextMenuLocation.y, crossAxis: contextMenuLocation.x } : undefined;

@@ -37,6 +37,7 @@ import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/re
 import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
+import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -240,6 +241,7 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
+          <DesignerContextualMenu />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}
