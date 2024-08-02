@@ -1,4 +1,23 @@
 # Logic Apps Designer
+## [4.54.0](https://github.com/Azure/LogicAppsUX/compare/v4.53.0...v4.54.0) (2024-08-02)
+
+
+### Features
+
+* **Data Mapper:** Active/selected states ([#5249](https://github.com/Azure/LogicAppsUX/issues/5249)) ([e9adeb3](https://github.com/Azure/LogicAppsUX/commit/e9adeb3b2c158652466a05936e6d058acd8e4bd4))
+* **Data Mapper:** Renaming metadata file to be compatible with V1 ([#5253](https://github.com/Azure/LogicAppsUX/issues/5253)) ([2786e5d](https://github.com/Azure/LogicAppsUX/commit/2786e5d20793bb032ab0a581618526605b20b774))
+* **designer:** Flow perf improvements ([#5261](https://github.com/Azure/LogicAppsUX/issues/5261)) ([1648394](https://github.com/Azure/LogicAppsUX/commit/164839465155cdeab47736ee7a5a98b642c8af24))
+* **Templates:** Added DetailDescription + Description as Link Render ([#5254](https://github.com/Azure/LogicAppsUX/issues/5254)) ([1c721bd](https://github.com/Azure/LogicAppsUX/commit/1c721bd9037d02363b8734ff518a7031dc8597fc))
+* **vscode:** Added additional telemetry and information for connection keys ([#5252](https://github.com/Azure/LogicAppsUX/issues/5252)) ([c65b34f](https://github.com/Azure/LogicAppsUX/commit/c65b34f647e6fc236c69f73346f29a403b8d52cc))
+
+
+### Bug Fixes
+
+* **designer-ui:** Prevent `AriaSearchResultsAlert` from returning `undefined` ([#5258](https://github.com/Azure/LogicAppsUX/issues/5258)) ([f842974](https://github.com/Azure/LogicAppsUX/commit/f842974547cbd5e18b3ceca01d2d7238aaee2e04))
+* **designer:** Do not show tenant picker if tenant service is not enabled ([#5251](https://github.com/Azure/LogicAppsUX/issues/5251)) ([799fe27](https://github.com/Azure/LogicAppsUX/commit/799fe27ed73955bf99708178212c9c0a78170478))
+* **Templates:** connector filter not working properly ([#5257](https://github.com/Azure/LogicAppsUX/issues/5257)) ([b013782](https://github.com/Azure/LogicAppsUX/commit/b0137824772a9cb6865b768addbaf13c02ee695f))
+* **vscode:** Auto Runtime Dependencies installation of latest FuncCoreTools ([#5263](https://github.com/Azure/LogicAppsUX/issues/5263)) ([cda359e](https://github.com/Azure/LogicAppsUX/commit/cda359ecbcb1cecafd01fe62a79fdf3c1bdf8c2b))
+
 ## [4.53.0](https://github.com/Azure/LogicAppsUX/compare/v4.52.0...v4.53.0) (2024-08-01)
 
 
