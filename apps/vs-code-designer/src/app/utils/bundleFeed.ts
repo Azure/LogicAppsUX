@@ -168,7 +168,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
   if (envVarVer) {
     const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
-    await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+    await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
     return;
   }
 
@@ -191,12 +191,6 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
   if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
     const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
-    await downloadAndExtractDependency(
-      context,
-      extensionBundleUrl,
-      defaultExtensionBundlePathValue,
-      extensionBundleId,
-      latestFeedBundleVersion
-    );
+    await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, latestFeedBundleVersion);
   }
 }
