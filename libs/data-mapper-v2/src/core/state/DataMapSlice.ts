@@ -1,10 +1,11 @@
-import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
+import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
+  getActiveNodes,
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
@@ -52,7 +53,7 @@ export interface DataMapOperationState {
   targetSchemaOrdering: string[];
   functionNodes: FunctionDictionary;
   selectedItemKey?: string;
-  selectedItemConnectedNodes: ConnectionUnit[];
+  selectedItemConnectedNodes: Record<string, string>; // not really using the second string yet...
   xsltFilename: string;
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
@@ -87,7 +88,7 @@ const emptyPristineState: DataMapOperationState = {
   xsltFilename: '',
   xsltContent: '',
   inlineFunctionInputOutputKeys: [],
-  selectedItemConnectedNodes: [],
+  selectedItemConnectedNodes: {},
   lastAction: 'Pristine',
   sourceNodesMap: {},
   targetNodesMap: {},
@@ -277,6 +278,8 @@ export const dataMapSlice = createSlice({
 
       applyConnectionValue(newState.dataMapConnections, action.payload);
 
+      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, state.curDataMapOperation.selectedItemKey);
+
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
@@ -336,6 +339,8 @@ export const dataMapSlice = createSlice({
       }
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
+
+      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, state.curDataMapOperation.selectedItemKey);
 
       if (isFunctionData(sourceNode)) {
         doDataMapOperation(state, newState, 'Updated function node locations by adding');
@@ -409,6 +414,7 @@ export const dataMapSlice = createSlice({
       const currentDataMap = state.curDataMapOperation;
       const functionNode = currentDataMap.functionNodes[reactFlowKey];
       const newFunctionsState = { ...currentDataMap.functionNodes };
+
       if (functionNode) {
         delete newFunctionsState[reactFlowKey];
 
@@ -420,6 +426,8 @@ export const dataMapSlice = createSlice({
             ...currentDataMap,
             functionNodes: newFunctionsState,
             dataMapConnections: newConnections,
+            selectedItemConnectedNodes: {},
+            selectedItemKey: '',
           },
           'Delete function by key'
         );
@@ -476,6 +484,15 @@ export const dataMapSlice = createSlice({
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
       }
+    },
+
+    setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
+      const connections = state.curDataMapOperation.dataMapConnections;
+      const selectedItemKey = action.payload;
+
+      state.curDataMapOperation.selectedItemKey = action.payload;
+
+      state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(connections, selectedItemKey);
     },
     toogleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
@@ -606,6 +623,7 @@ export const {
   setXsltContent,
   setInitialSchema,
   setInitialDataMap,
+  setSelectedItem,
   changeSourceSchema,
   changeTargetSchema,
   updateReactFlowNodes,

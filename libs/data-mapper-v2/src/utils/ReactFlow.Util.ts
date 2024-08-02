@@ -71,6 +71,26 @@ export interface RootLayoutNode {
   height?: number;
 }
 
+export interface ReactFlowIdParts {
+  sourceId: string;
+  destinationId: string | undefined;
+  portId: string | undefined;
+}
+
+export const reactFlowConnectionIdSeparator = '-to-';
+export const reactFlowConnectionPortSeparator = '-port-';
+
+export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): ReactFlowIdParts => {
+  const sourceDestSplit = reactFlowId.split(reactFlowConnectionIdSeparator);
+  const destPortSplit = sourceDestSplit.length > 1 ? sourceDestSplit[1].split(reactFlowConnectionPortSeparator) : [undefined, undefined];
+
+  return {
+    sourceId: sourceDestSplit[0],
+    destinationId: destPortSplit[0],
+    portId: destPortSplit[1],
+  };
+};
+
 export const convertWholeDataMapToLayoutTree = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,

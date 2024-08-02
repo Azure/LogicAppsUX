@@ -9,8 +9,11 @@ import { useStyles } from './styles';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/functionConfigurationPopover';
 import type { RootState } from '../../../core/state/Store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
+import { setSelectedItem } from '../../../core/state/DataMapSlice';
+import { useActiveNode } from '../../../core/state/selectors/selectors';
+import { useMemo } from 'react';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -25,36 +28,79 @@ export interface CardProps {
 }
 
 export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardProps>, 'function'>>) => {
+  const dispatch = useDispatch();
   const { functionData, disabled, dataTestId } = props.data;
   const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
+  const activeNode = useActiveNode(props.id);
 
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
-  if (!functionWithConnections) {
-    return;
-  }
+  const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
 
   const isLeftConnected =
-    functionWithConnections.inputs[0] && functionWithConnections.inputs[0].length > 0 && functionWithConnections.inputs[0][0] !== undefined;
-  const isRightConnected = functionWithConnections.outputs.length > 0;
+    functionWithConnections?.inputs[0] &&
+    functionWithConnections?.inputs[0].length > 0 &&
+    functionWithConnections?.inputs[0][0] !== undefined;
+  const isRightConnected = functionWithConnections?.outputs.length > 0;
 
-  const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
+  const styleForLeftHandle = useMemo(() => {
+    const style = styles.handleWrapper;
+    if (activeNode !== undefined) {
+      return mergeClasses(style, styles.activeHandle);
+    }
+    if (isLeftConnected) {
+      return mergeClasses(style, styles.handleConnected);
+    }
+    return style;
+  }, [activeNode, styles, isLeftConnected]);
+
+  const styleForRightHandle = useMemo(() => {
+    const style = styles.handleWrapper;
+    if (activeNode !== undefined) {
+      return mergeClasses(style, styles.activeHandle);
+    }
+    if (isRightConnected) {
+      return mergeClasses(style, styles.handleConnected);
+    }
+    return style;
+  }, [activeNode, styles, isRightConnected]);
+
+  const leftHandleStyle = styleForLeftHandle;
+  const rightHandleStyle = styleForRightHandle;
+
+  const onClick = () => {
+    dispatch(setSelectedItem(props.id));
+  };
+
+  const setActiveNode = () => {
+    dispatch(setSelectedItem(props.id));
+  };
+
+  if (functionWithConnections === undefined) {
+    return;
+  }
 
   return (
     <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
       {funcitonHasInputs && (
         <Handle
           type={'target'}
+          isConnectable={true}
+          onConnect={setActiveNode}
           position={Position.Left}
-          className={mergeClasses(styles.handleWrapper, isLeftConnected ? styles.handleConnected : '')}
+          className={leftHandleStyle}
           style={{ left: '-7px' }}
         />
       )}
       <Popover>
         <PopoverTrigger>
-          <Button disabled={!!disabled} className={styles.functionButton}>
+          <Button
+            onClick={() => onClick()}
+            disabled={!!disabled}
+            className={mergeClasses(styles.functionButton, activeNode ? styles.activeFunctionButton : '')}
+          >
             <div
               className={styles.iconContainer}
               style={{
@@ -76,11 +122,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
-      <Handle
-        type={'source'}
-        position={Position.Right}
-        className={mergeClasses(styles.handleWrapper, isRightConnected ? styles.handleConnected : '')}
-      />
+      <Handle type={'source'} position={Position.Right} className={rightHandleStyle} />
     </div>
   );
 };
