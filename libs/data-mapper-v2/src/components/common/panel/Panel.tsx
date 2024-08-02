@@ -7,6 +7,7 @@ import {
   Text,
   type Slot,
   DrawerBody,
+  DrawerFooter,
   type InputOnChangeData,
   mergeClasses,
 } from '@fluentui/react-components';
@@ -28,6 +29,7 @@ type PanelProps = {
     onChange: (value?: string) => void;
   };
   body?: React.ReactNode;
+  footer?: React.ReactNode;
   styles?: {
     root?: string;
     header?: string;
@@ -35,12 +37,13 @@ type PanelProps = {
     search?: string;
     titleIcon?: string;
     body?: string;
+    footer?: string;
   };
 };
 
 export const Panel = (props: PanelProps) => {
   const defaultStyles = useStyles();
-  const { title, body, isOpen, styles, search } = props;
+  const { title, body, isOpen, styles, search, footer } = props;
 
   return (
     <InlineDrawer className={mergeClasses(defaultStyles.root, styles?.root)} open={isOpen}>
@@ -66,6 +69,7 @@ export const Panel = (props: PanelProps) => {
         </DrawerHeader>
       ) : null}
       {body ? <DrawerBody className={mergeClasses(defaultStyles.body, styles?.body)}>{body}</DrawerBody> : null}
+      {footer ? <DrawerFooter className={mergeClasses(defaultStyles.footer, styles?.footer)}>{footer}</DrawerFooter> : null}
     </InlineDrawer>
   );
 };

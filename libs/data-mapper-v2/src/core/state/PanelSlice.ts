@@ -2,6 +2,7 @@ import { SchemaType } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { SchemaFile } from '../../models/Schema';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { TestMapResponse } from '../services/dataMapperApiService';
 
 export const ConfigPanelView = {
   DefaultConfig: 'defaultConfig',
@@ -14,6 +15,9 @@ export type TestPanelState = {
   isOpen: boolean;
   showSelection: boolean;
   selectedFile?: SchemaFile;
+  testMapInput?: string;
+  testMapOutput?: TestMapResponse;
+  testMapOutputError?: Error;
 };
 
 export type CodeViewState = {
@@ -25,6 +29,11 @@ export interface PanelState {
   schemaType?: SchemaType;
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
+}
+
+export interface TestMapOutput {
+  response?: TestMapResponse;
+  error?: Error;
 }
 
 const initialState: PanelState = {
@@ -62,6 +71,15 @@ export const panelSlice = createSlice({
         state.codeViewPanel.isOpen = false;
       }
       state.testPanel.isOpen = !state.testPanel.isOpen;
+    },
+
+    updateTestInput: (state, action: PayloadAction<string>) => {
+      state.testPanel.testMapInput = action.payload;
+    },
+
+    updateTestOutput: (state, action: PayloadAction<TestMapOutput>) => {
+      state.testPanel.testMapOutput = action.payload.response;
+      state.testPanel.testMapOutputError = action.payload.error;
     },
 
     toggleShowSelection: (state) => {
@@ -110,6 +128,8 @@ export const {
   toggleTestPanel,
   toggleShowSelection,
   setTestFile,
+  updateTestInput,
+  updateTestOutput,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
