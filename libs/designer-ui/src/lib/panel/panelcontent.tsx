@@ -54,7 +54,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
   return (
     <div id={`msla-node-details-panel-${nodeId}`} className="msla-node-details-panel">
       <Overflow aria-label={overflowLabel}>
-        <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
+        <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px 5px' }}>
           {tabs.map(({ id, visible, hasErrors, title }) =>
             visible ? (
               <OverflowItem key={id} id={id} priority={id === selectedTabId ? 2 : 1}>
