@@ -11,12 +11,7 @@ export interface CopyTooltipProps {
 }
 
 export const CopyTooltip = ({ targetRef: ref, location, hideTooltip }: CopyTooltipProps) => {
-  useOnViewportChange({
-    onStart: () => {
-      console.log('### Triggered');
-      hideTooltip();
-    },
-  });
+  useOnViewportChange({ onStart: hideTooltip });
 
   const intl = useIntl();
   const copiedText = intl.formatMessage({
