@@ -40,5 +40,5 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
   }
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractDependency(context, nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
+  await downloadAndExtractDependency(nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
 }
