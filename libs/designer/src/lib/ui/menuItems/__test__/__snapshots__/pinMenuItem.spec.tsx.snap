@@ -46,7 +46,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=fals
   <span
     className="fui-MenuItem__content r1ls86vo"
   >
-    Pin Action
+    Pin action
   </span>
 </div>
 `;
@@ -97,7 +97,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=true
   <span
     className="fui-MenuItem__content r1ls86vo"
   >
-    Unpin Action
+    Unpin action
   </span>
 </div>
 `;

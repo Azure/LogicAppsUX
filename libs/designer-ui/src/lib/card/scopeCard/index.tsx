@@ -9,6 +9,7 @@ import type { CardProps } from '../index';
 import { css, Icon } from '@fluentui/react';
 import { Spinner, Tooltip } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { useIntl } from 'react-intl';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -21,7 +22,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   brandColor,
   collapsed,
   commentBox,
-  describedBy,
   drag,
   draggable,
   dragPreview,
@@ -58,6 +58,19 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
       : []),
   ];
 
+  const intl = useIntl();
+
+  const cardAltText = intl.formatMessage(
+    {
+      defaultMessage: '{title} operation',
+      id: 'Aui3Mq',
+      description: 'Alt text on action card including the operation name',
+    },
+    {
+      title,
+    }
+  );
+
   const colorVars = { ['--brand-color' as any]: brandColor };
   const cardIcon = isLoading ? (
     <Spinner className="msla-card-header-spinner" size={'tiny'} appearance="inverted" />
@@ -66,7 +79,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ) : null;
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
-      <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title}>
+      <div className={'msla-content-fit'} aria-label={title}>
         <div
           ref={drag}
           className="msla-scope-v2--header msla-scope-card-wrapper"
@@ -88,12 +101,14 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
               id={`msla-node-${id}`}
+              name={title}
               className="msla-scope-card-title-button"
               ref={focusRef as any}
               onClick={handleClick}
               onKeyDown={keyboardInteraction.keyDown}
               onKeyUp={keyboardInteraction.keyUp}
               tabIndex={nodeIndex}
+              aria-label={cardAltText}
             >
               <div className="msla-scope-card-title-box">
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>

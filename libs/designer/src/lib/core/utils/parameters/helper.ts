@@ -1309,6 +1309,7 @@ export function updateParameterWithValues(
 
   const clonedParameterValue =
     typeof parameterValue === 'object' && !Array.isArray(parameterValue) ? clone(parameterValue) : parameterValue;
+  const unreadParameterValues = clone(clonedParameterValue);
 
   if (isNullOrUndefined(clonedParameterValue) && useDefault) {
     // assign the default value to input parameter
@@ -1363,19 +1364,19 @@ export function updateParameterWithValues(
             }
 
             parameters.push(transformInputParameter(descendantInputParameter, descendantValue, /* invisible */ false));
-            deletePropertyValueWithSpecifiedPathSegment(clonedParameterValue, extraSegments);
+            deletePropertyValueWithSpecifiedPathSegment(unreadParameterValues, extraSegments);
             if (alternativeParameterKeyExtraSegment) {
-              deletePropertyValueWithSpecifiedPathSegment(clonedParameterValue, alternativeParameterKeyExtraSegment);
+              deletePropertyValueWithSpecifiedPathSegment(unreadParameterValues, alternativeParameterKeyExtraSegment);
             }
           }
 
           // for the rest properties, create corresponding invisible parameter to preserve the value when serialize
           if (createInvisibleParameter) {
-            for (const restPropertyName of Object.keys(clonedParameterValue)) {
+            for (const restPropertyName of Object.keys(unreadParameterValues)) {
               if (dynamicSchemaKeyPrefixes.some((prefix) => restPropertyName.startsWith(prefix))) {
                 continue;
               }
-              const propertyValue = clonedParameterValue[restPropertyName];
+              const propertyValue = unreadParameterValues[restPropertyName];
               if (propertyValue !== undefined) {
                 const childKeySegments = [...keySegments, { value: restPropertyName, type: SegmentType.Property }];
                 const restInputParameter: ResolvedParameter = {
@@ -1914,7 +1915,7 @@ export async function updateDynamicDataInNode(
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
 
-  const parameterDynamicValues = [] as any;
+  const parameterDynamicValues: UpdateParametersPayload['parameters'] = [];
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
     if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') {
       continue;
@@ -1923,19 +1924,21 @@ export async function updateDynamicDataInNode(
     if (!details) {
       continue;
     }
-    parameterDynamicValues.push(
-      await fetchDynamicValuesForParameter(
-        details.groupId,
-        details.parameter.id,
-        operationInfo,
-        connectionReference,
-        nodeInputParameters,
-        nodeDependencies,
-        false /* showErrorWhenNotReady */,
-        undefined /* idReplacements */,
-        workflowParameters.definitions
-      )
+    const parameter = await fetchDynamicValuesForParameter(
+      details.groupId,
+      details.parameter.id,
+      operationInfo,
+      connectionReference,
+      nodeInputParameters,
+      nodeDependencies,
+      false /* showErrorWhenNotReady */,
+      undefined /* idReplacements */,
+      workflowParameters.definitions
     );
+
+    if (!isNullOrUndefined(parameter)) {
+      parameterDynamicValues.push(parameter);
+    }
   }
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
@@ -1993,121 +1996,127 @@ export const loadDynamicContentForInputsInNode = async (
   getState: () => RootState,
   operationDefinition?: any
 ): Promise<void> => {
-  for (const inputKey of Object.keys(inputDependencies)) {
-    const info = inputDependencies[inputKey];
-    if (info.dependencyType === 'ApiSchema') {
-      dispatch(
-        clearDynamicIO({
-          nodeId,
-          inputs: true,
-          outputs: false,
-          dynamicParameterKeys: getAllDependentDynamicParameters(
-            inputKey,
-            getState().operations.dependencies[nodeId].inputs,
-            getState().operations.inputParameters[nodeId]
-          ),
-        })
+  for (const [inputKey, info] of Object.entries(inputDependencies)) {
+    if (info.dependencyType !== 'ApiSchema') {
+      continue;
+    }
+
+    dispatch(
+      clearDynamicIO({
+        nodeId,
+        inputs: true,
+        outputs: false,
+        dynamicParameterKeys: getAllDependentDynamicParameters(
+          inputKey,
+          getState().operations.dependencies[nodeId].inputs,
+          getState().operations.inputParameters[nodeId]
+        ),
+      })
+    );
+
+    if (!isDynamicDataReadyToLoad(info)) {
+      continue;
+    }
+
+    const rootState = getState();
+    const allInputs = rootState.operations.inputParameters[nodeId];
+    const variables = getAllVariables(rootState.tokens.variables);
+
+    try {
+      const inputSchema = await tryGetInputDynamicSchema(
+        nodeId,
+        operationInfo,
+        info,
+        allInputs,
+        variables,
+        connectionReference,
+        rootState.workflowParameters.definitions,
+        dispatch
       );
-      if (isDynamicDataReadyToLoad(info)) {
-        const rootState = getState();
-        const allInputs = rootState.operations.inputParameters[nodeId];
-        const variables = getAllVariables(rootState.tokens.variables);
+      const allInputParameters = getAllInputParameters(allInputs);
 
-        try {
-          const inputSchema = await tryGetInputDynamicSchema(
-            nodeId,
+      // In the case of retry policy, it is treated as an input
+      // avoid pushing a parameter for it as it is already being
+      // handled in the settings store.
+      // NOTE: this could be expanded to more settings that are treated as inputs.
+      const newOperationDefinition = operationDefinition ? clone(operationDefinition) : operationDefinition;
+      if (newOperationDefinition?.inputs?.[PropertyName.RETRYPOLICY]) {
+        delete newOperationDefinition.inputs.retryPolicy;
+      }
+
+      const allInputKeys = allInputParameters.map((param) => param.parameterKey);
+      const schemaInputs = inputSchema
+        ? await getDynamicInputsFromSchema(
+            inputSchema,
+            info.parameter as InputParameter,
             operationInfo,
-            info,
-            allInputs,
-            variables,
-            connectionReference,
-            rootState.workflowParameters.definitions,
-            dispatch
-          );
-          const allInputParameters = getAllInputParameters(allInputs);
+            allInputKeys,
+            newOperationDefinition
+          )
+        : [];
+      const inputsWithSchema = schemaInputs.map((input) => ({ ...input, schema: input }));
+      const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
 
-          // In the case of retry policy, it is treated as an input
-          // avoid pushing a parameter for it as it is already being
-          // handled in the settings store.
-          // NOTE: this could be expanded to more settings that are treated as inputs.
-          const newOperationDefinition = operationDefinition ? clone(operationDefinition) : operationDefinition;
-          if (newOperationDefinition?.inputs?.[PropertyName.RETRYPOLICY]) {
-            delete newOperationDefinition.inputs.retryPolicy;
-          }
+      updateTokenMetadataInParameters(nodeId, inputParameters, getState());
 
-          const allInputKeys = allInputParameters.map((param) => param.parameterKey);
-          const schemaInputs = inputSchema
-            ? await getDynamicInputsFromSchema(
-                inputSchema,
-                info.parameter as InputParameter,
-                operationInfo,
-                allInputKeys,
-                newOperationDefinition
-              )
-            : [];
-          const inputsWithSchema = schemaInputs.map((input) => ({ ...input, schema: input }));
-          const inputParameters = toParameterInfoMap(inputsWithSchema, operationDefinition);
+      let swagger: SwaggerParser | undefined = undefined;
+      if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+        const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+        swagger = parsedSwagger;
+      }
 
-          updateTokenMetadataInParameters(nodeId, inputParameters, getState());
+      const updatedParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].parameters];
 
-          let swagger: SwaggerParser | undefined = undefined;
-          if (!OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
-            const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
-            swagger = parsedSwagger;
-          }
-
-          const updatedParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].parameters];
-          for (const input of inputParameters) {
-            const index = updatedParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
-            if (index > -1) {
-              updatedParameters.splice(index, 1, input);
-            } else {
-              updatedParameters.push(input);
-            }
-          }
-          const newNodeInputs = {
-            ...allInputs,
-            parameterGroups: {
-              ...allInputs.parameterGroups,
-              [ParameterGroupKeys.DEFAULT]: { ...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT], parameters: updatedParameters },
-            },
-          };
-
-          const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
-
-          dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, dependencies }));
-
-          // Recursively load dynamic content for the newly added dynamic inputs
-          return updateDynamicDataInNode(
-            nodeId,
-            isTrigger,
-            operationInfo,
-            connectionReference,
-            { outputs: {}, inputs: dependencies },
-            dispatch,
-            getState,
-            operationDefinition
-          );
-        } catch (error: any) {
-          const message = parseErrorMessage(error);
-          const intl = getIntl();
-          const errorMessage = intl.formatMessage(
-            {
-              defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
-              id: 'sytRna',
-              description: 'Error message to show when loading dynamic inputs failed',
-            },
-            { message }
-          );
-
-          dispatch(
-            updateErrorDetails({
-              id: nodeId,
-              errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
-            })
-          );
+      for (const input of inputParameters) {
+        const index = updatedParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
+        if (index > -1) {
+          updatedParameters.splice(index, 1, input);
+        } else {
+          updatedParameters.push(input);
         }
       }
+
+      const newNodeInputs = {
+        ...allInputs,
+        parameterGroups: {
+          ...allInputs.parameterGroups,
+          [ParameterGroupKeys.DEFAULT]: { ...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT], parameters: updatedParameters },
+        },
+      };
+
+      const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
+
+      dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, dependencies }));
+
+      // Recursively load dynamic content for the newly added dynamic inputs
+      return updateDynamicDataInNode(
+        nodeId,
+        isTrigger,
+        operationInfo,
+        connectionReference,
+        { outputs: {}, inputs: dependencies },
+        dispatch,
+        getState,
+        operationDefinition
+      );
+    } catch (error: any) {
+      const message = parseErrorMessage(error);
+      const intl = getIntl();
+      const errorMessage = intl.formatMessage(
+        {
+          defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+          id: 'sytRna',
+          description: 'Error message to show when loading dynamic inputs failed',
+        },
+        { message }
+      );
+
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: { level: ErrorLevel.DynamicInputs, message: errorMessage, error, code: error.code },
+        })
+      );
     }
   }
 };

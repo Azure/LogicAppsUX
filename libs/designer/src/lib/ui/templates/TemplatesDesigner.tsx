@@ -16,7 +16,8 @@ export const TemplatesDesigner = ({
     workflowKind: string,
     workflow: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
-    parametersData: Record<string, Template.ParameterDefinition>
+    parametersData: Record<string, Template.ParameterDefinition>,
+    onSuccessfulCreation: () => void
   ) => Promise<void>;
 }) => {
   const intl = useIntl();
@@ -43,7 +44,7 @@ export const TemplatesDesigner = ({
     }),
   };
 
-  const onCreateClick = async () => {
+  const onCreateClick = async (onSuccessfulCreation: () => void) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (
       !workflowNameToUse ||
@@ -58,7 +59,7 @@ export const TemplatesDesigner = ({
       console.log('Error checking conditions before calling createWorkflowCall');
       return;
     }
-    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
+    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions, onSuccessfulCreation);
   };
 
   return (

@@ -1,6 +1,14 @@
 import type { PanelLocation } from '@microsoft/designer-ui';
 
-export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
+export const PANEL_MODE = {
+  Operation: 'Operation',
+  Discovery: 'Discovery',
+  WorkflowParameters: 'WorkflowParameters',
+  NodeSearch: 'NodeSearch',
+  Error: 'Error',
+  Connection: 'Connection',
+};
+export type PanelMode = keyof typeof PANEL_MODE;
 
 export interface PanelState {
   collapsed: boolean;

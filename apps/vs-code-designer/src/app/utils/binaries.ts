@@ -33,8 +33,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
-import request = require('request');
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Download and Extracts dependency zip.
@@ -46,6 +45,7 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
  */
 
 export async function downloadAndExtractDependency(
+  context: IActionContext,
   downloadUrl: string,
   targetFolder: string,
   dependencyName: string,
@@ -68,13 +68,20 @@ export async function downloadAndExtractDependency(
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
-    // Download the compressed dependency
-    await new Promise<void>((resolve, reject) => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-      const downloadStream = request(downloadUrl).pipe(fs.createWriteStream(dependencyFilePath));
-      downloadStream.on('finish', async () => {
-        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
+    const downloadPromise = axios({
+      method: HTTP_METHODS.GET,
+      url: downloadUrl,
+      responseType: 'stream',
+    });
 
+    executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+
+    downloadPromise.then((response) => {
+      const writer = fs.createWriteStream(dependencyFilePath);
+      response.data.pipe(writer);
+
+      writer.on('finish', async () => {
+        executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
         fs.chmodSync(dependencyFilePath, 0o777);
 
         // Extract to targetFolder
@@ -104,15 +111,20 @@ export async function downloadAndExtractDependency(
           await extractDependency(dependencyFilePath, targetFolder, dependencyName);
           vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         }
-        resolve();
       });
-      downloadStream.on('error', reject);
+      writer.on('error', async (error) => {
+        throw error;
+      });
     });
   } catch (error) {
-    vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip file: ${error.message}`);
+    // log the error message the VSCode window and to telemetry.
+    const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
+    vscode.window.showErrorMessage(errorMessage);
+    context.telemetry.properties.error = errorMessage;
+
+    // remove the target folder.
     await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Remove ${targetFolder}`);
     fs.rmSync(targetFolder, { recursive: true });
-    throw error;
   } finally {
     fs.rmSync(tempFolderPath, { recursive: true });
     await executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);

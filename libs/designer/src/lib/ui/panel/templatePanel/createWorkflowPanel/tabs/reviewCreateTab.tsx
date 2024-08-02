@@ -4,7 +4,7 @@ import { Label, Text } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
@@ -135,24 +135,30 @@ export const reviewCreateTab = (
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
-    defaultMessage: 'Review and Create',
-    id: 'vlWl7f',
+    defaultMessage: 'Review and create',
+    id: 'MjmFeR',
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
   description: isCreated ? (
     <MessageBar messageBarType={MessageBarType.success}>
       {intl.formatMessage({
-        defaultMessage:
-          'Your workflow has been created. You will be automatically redirected to Workflows in Logic Apps. If nothing happens click the button below to navigate to the page.',
-        id: 'eiv5l8',
+        defaultMessage: 'Your workflow has been created. ',
+        id: 'J+bMkk',
         description: 'The message displayed when the workflow is successfully created',
       })}
+      <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
+        {intl.formatMessage({
+          defaultMessage: 'Go to workflow.',
+          id: 'OqrmYm',
+          description: 'The link displayed to navigate to workflow when the workflow is successfully created',
+        })}
+      </Link>
     </MessageBar>
   ) : (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
-      id: 'BPSraP',
-      description: 'An accessability label that describes the objective of review and create tab',
+      id: 'xDHpeS',
+      description: 'An accessibility label that describes the objective of review and create tab',
     })
   ),
   hasError: false,
@@ -161,8 +167,8 @@ export const reviewCreateTab = (
   footerContent: {
     primaryButtonText: isCreated ? (
       intl.formatMessage({
-        defaultMessage: 'Take me to my workflow',
-        id: '//uf06',
+        defaultMessage: 'Go to my workflow',
+        id: 'P3OMN/',
         description: 'The button text for navigating to the workflows page after creating the workflow',
       })
     ) : isLoadingCreate ? (

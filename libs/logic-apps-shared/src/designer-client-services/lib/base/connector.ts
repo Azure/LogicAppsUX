@@ -124,7 +124,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     }
     const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
     const defaultErrorMessage = intl.formatMessage(
-      { defaultMessage: 'Error executing the api - {url}', id: '8BoVtZ', description: 'Error message to show on dynamic call failure' },
+      { defaultMessage: 'Error executing the API - {url}', id: 'XHQwyJ', description: 'Error message to show on dynamic call failure' },
       { url: requestUrl }
     );
     const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);

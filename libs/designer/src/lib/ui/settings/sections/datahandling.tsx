@@ -10,6 +10,7 @@ export interface DataHandlingSectionProps extends SectionProps {
 }
 
 export const DataHandling = ({
+  nodeId,
   readOnly,
   expanded,
   requestSchemaValidation,
@@ -20,13 +21,13 @@ export const DataHandling = ({
 }: DataHandlingSectionProps): JSX.Element => {
   const intl = useIntl();
   const dataHandlingTitle = intl.formatMessage({
-    defaultMessage: 'Data Handling',
-    id: 'aK4iLW',
+    defaultMessage: 'Data handling',
+    id: 'z/vIwi',
     description: 'title for data handling setting section',
   });
   const requestSchemaValidationLabelText = intl.formatMessage({
-    defaultMessage: 'Schema Validation',
-    id: '7S2wtE',
+    defaultMessage: 'Schema validation',
+    id: 'Valy81',
     description: 'A label for the schema validation setting',
   });
   const requestSchemaValidationLabelTooltip = intl.formatMessage({
@@ -35,8 +36,8 @@ export const DataHandling = ({
     description: 'tool tip explaining what schema validation setting does',
   });
   const automaticDecompressionLabelText = intl.formatMessage({
-    defaultMessage: 'Automatic Decompression',
-    id: 'BeqBP7',
+    defaultMessage: 'Automatic decompression',
+    id: 'YC56Tr',
     description: 'A label for the automatic decompression setting',
   });
   const automaticDecompressionLabelTooltip = intl.formatMessage({
@@ -48,6 +49,7 @@ export const DataHandling = ({
 
   const dataHandlingSectionProps: SettingsSectionProps = {
     id: 'dataHandling',
+    nodeId,
     title: dataHandlingTitle,
     expanded,
     isReadOnly: readOnly,

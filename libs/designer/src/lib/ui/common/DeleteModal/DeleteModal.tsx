@@ -1,19 +1,19 @@
 import type { AppDispatch } from '../../../core';
-import { useSelectedNodeId, useNodeMetadata, useNodeDisplayName } from '../../../core';
+import { useNodeMetadata, useNodeDisplayName } from '../../../core';
 import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
-import { useShowDeleteModal } from '../../../core/state/designerView/designerViewSelectors';
-import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
+import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
+import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
 import { deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
-import { WORKFLOW_NODE_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 const DeleteModal = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const nodeId = removeIdTag(useSelectedNodeId()) ?? '';
+  const nodeId = useShowDeleteModalNodeId();
   const nodeName = useNodeDisplayName(nodeId);
   const nodeData = useWorkflowNode(nodeId);
   const metadata = useNodeMetadata(nodeId);
@@ -21,11 +21,10 @@ const DeleteModal = () => {
 
   const isTrigger = useMemo(() => !!(metadata?.graphId === 'root' && metadata?.isRoot), [metadata]);
 
-  const showDeleteModal = useShowDeleteModal();
-  const onDismiss = useCallback(() => dispatch(setShowDeleteModal(false)), [dispatch]);
+  const onDismiss = useCallback(() => dispatch(setShowDeleteModalNodeId(undefined)), [dispatch]);
 
   const handleDelete = useCallback(() => {
-    if (!nodeData) {
+    if (!nodeId || !nodeData) {
       return;
     }
     const { type } = nodeData;
@@ -59,10 +58,10 @@ const DeleteModal = () => {
 
   return (
     <DeleteNodeModal
-      nodeId={nodeId}
+      nodeId={nodeId ?? ''}
       nodeName={nodeName}
       nodeType={nodeData?.type}
-      isOpen={showDeleteModal}
+      isOpen={!!nodeId}
       onDismiss={onDismiss}
       onConfirm={handleDelete}
     />

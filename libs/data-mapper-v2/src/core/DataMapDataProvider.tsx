@@ -1,14 +1,13 @@
-//import { MapDefinitionDeserializer } from '../mapDefinitions';
 import { ReactFlowProvider } from '@xyflow/react';
 import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
-import { setInitialSchema, setXsltContent, setXsltFilename, setInitialDataMap } from './state/DataMapSlice';
+import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import type { MapMetadata, MapDefinitionEntry, DataMapSchema, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, DataMapSchema, IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect, useMemo } from 'react';
@@ -19,7 +18,7 @@ export interface DataMapDataProviderProps {
   xsltFilename?: string;
   xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
-  dataMapMetadata?: MapMetadata;
+  dataMapMetadata?: MapMetadataV2;
   sourceSchema?: DataMapSchema;
   targetSchema?: DataMapSchema;
   availableSchemas?: IFileSysTreeItem[];
@@ -34,15 +33,15 @@ const DataProviderInner = ({
   xsltContent,
   sourceSchema,
   targetSchema,
-  mapDefinition,
   availableSchemas,
   fetchedFunctions,
   customXsltPaths,
+  mapDefinition,
+  dataMapMetadata,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
 
@@ -69,11 +68,11 @@ const DataProviderInner = ({
           sourceSchema: extendedSourceSchema,
           targetSchema: extendedTargetSchema,
           dataMapConnections: connections,
-          metadata: undefined,
+          metadata: dataMapMetadata,
         })
       );
     }
-  }, [dispatch, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, mapDefinition]);
+  }, [dispatch, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, mapDefinition, dataMapMetadata]);
 
   useEffect(() => {
     if (extendedSourceSchema) {

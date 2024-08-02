@@ -147,10 +147,10 @@ exports[`lib/checkbox > should render an info button if description text is set 
     </label>
   </div>
   <button
-    aria-label="More Info"
+    aria-label="More info"
     className="msla-button msla-checkbox-description-icon-button"
     onClick={[Function]}
-    title="More Info"
+    title="More info"
   >
     <i
       aria-hidden={true}

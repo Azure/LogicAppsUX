@@ -11,6 +11,7 @@ export const GoToRealWorkflow = async (page: Page, appName: string, workflowName
 };
 
 export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
+  await page.getByText('Local', { exact: true }).click();
   await page.getByText('Select an option').click();
   await page.getByRole('option', { name: workflowName, exact: true }).click();
   await page.getByRole('button', { name: 'Toolbox' }).click();

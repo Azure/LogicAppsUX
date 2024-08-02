@@ -19,19 +19,19 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
   const intl = useIntl();
 
   const copyAction = intl.formatMessage({
-    defaultMessage: 'Copy Action',
-    id: 'i1vHaT',
+    defaultMessage: 'Copy action',
+    id: 'UD330h',
     description: 'Copy Action text',
   });
   const copyTrigger = intl.formatMessage({
-    defaultMessage: 'Copy Trigger',
-    id: 'oRxmXb',
+    defaultMessage: 'Copy trigger',
+    id: 'twr0pi',
     description: 'Copy Trigger text',
   });
   const copyScope = intl.formatMessage({
-    defaultMessage: 'Copy Entire Action',
+    defaultMessage: 'Copy entire action',
     description: 'Copy Scope text',
-    id: 'kDIgbw',
+    id: 'G0gnge',
   });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',

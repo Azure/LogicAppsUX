@@ -62,8 +62,9 @@ const getInitialNodeSearchContentState = (): NodeSearchPanelContentState => ({
 const getInitialOperationContentState = (): OperationPanelContentState => ({
   panelMode: 'Operation',
   pinnedNodeId: undefined,
+  pinnedNodeActiveTabId: undefined,
   selectedNodeId: undefined,
-  selectedTabId: undefined,
+  selectedNodeActiveTabId: undefined,
 });
 
 const getInitialWorkflowParametersContentState = (): WorkflowParametersPanelContentState => ({
@@ -87,7 +88,7 @@ const initialState: PanelState = {
 const area = 'Designer:PanelV2 Slice';
 
 export const panelSlice = createSlice({
-  name: 'panel',
+  name: 'panelV2',
   initialState,
   reducers: {
     expandPanel: (state) => {
@@ -98,24 +99,53 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedOperationGroupId = '';
       state.discoveryContent.isAddingTrigger = false;
     },
-    clearPanel: (state) => {
+    clearPanel: (state, action: PayloadAction<{ clearPinnedState?: boolean } | undefined>) => {
+      const { clearPinnedState } = action.payload ?? {};
+
       state.connectionContent = getInitialConnectionContentState();
       state.currentPanelMode = 'Operation';
       state.discoveryContent = getInitialDiscoveryContentState();
       state.errorContent = getInitialErrorContentState();
-      state.isCollapsed = true;
       state.nodeSearchContent = getInitialNodeSearchContentState();
-      state.operationContent = getInitialOperationContentState();
       state.previousPanelMode = undefined;
       state.workflowParametersContent = getInitialWorkflowParametersContentState();
+
+      if (clearPinnedState) {
+        state.operationContent = getInitialOperationContentState();
+      } else {
+        state.operationContent = {
+          ...getInitialOperationContentState(),
+          pinnedNodeId: state.operationContent.pinnedNodeId,
+          pinnedNodeActiveTabId: state.operationContent.pinnedNodeActiveTabId,
+        };
+      }
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.location) {
         state.location = action.payload;
       }
     },
-    setPinnedNodeId: (state, action: PayloadAction<string>) => {
-      state.operationContent.pinnedNodeId = action.payload;
+    setPinnedNode: (state, action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean }>) => {
+      const { nodeId, updatePanelOpenState } = action.payload;
+      const hasSelectedNode = !!state.operationContent.selectedNodeId;
+
+      if (nodeId && !hasSelectedNode) {
+        state.connectionContent.selectedNodeIds = [nodeId];
+        state.discoveryContent.selectedNodeIds = [nodeId];
+        state.operationContent.selectedNodeId = nodeId;
+      }
+
+      state.operationContent.pinnedNodeId = nodeId;
+      state.operationContent.pinnedNodeActiveTabId = undefined;
+
+      if (updatePanelOpenState) {
+        if (nodeId) {
+          state.isCollapsed = false;
+          state.currentPanelMode = 'Operation';
+        } else {
+          state.isCollapsed = !hasSelectedNode;
+        }
+      }
     },
     setSelectedNodeId: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
@@ -140,7 +170,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = 'Operation';
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
-      state.operationContent.selectedTabId = undefined;
+      state.operationContent.selectedNodeActiveTabId = undefined;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -212,9 +242,19 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
     },
-    selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
+    setPinnedPanelActiveTab: (state, action: PayloadAction<string | undefined>) => {
+      state.operationContent.pinnedNodeActiveTabId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area,
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    setSelectedPanelActiveTab: (state, action: PayloadAction<string | undefined>) => {
       state.errorContent.selectedTabId = action.payload;
-      state.operationContent.selectedTabId = action.payload;
+      state.operationContent.selectedNodeActiveTabId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -248,7 +288,9 @@ export const panelSlice = createSlice({
     // Once v1 panel is deprecated & deleted, these can be safely removed.
     builder.addMatcher(isAnyOf(panelV1ExpandPanel), (state) => panelSlice.caseReducers.expandPanel(state));
     builder.addMatcher(isAnyOf(panelV1CollapsePanel), (state) => panelSlice.caseReducers.collapsePanel(state));
-    builder.addMatcher(isAnyOf(panelV1ClearPanel), (state) => panelSlice.caseReducers.clearPanel(state));
+    builder.addMatcher(isAnyOf(panelV1ClearPanel), (state, action) =>
+      panelSlice.caseReducers.clearPanel(state, { ...action, payload: { clearPinnedState: true } })
+    );
     builder.addMatcher(isAnyOf(panelV1UpdatePanelLocation), (state, action) => panelSlice.caseReducers.updatePanelLocation(state, action));
     builder.addMatcher(isAnyOf(panelV1SetSelectedNodeId), (state, action) => panelSlice.caseReducers.setSelectedNodeId(state, action));
     builder.addMatcher(isAnyOf(panelV1SetSelectedNodeIds), (state, action) => panelSlice.caseReducers.setSelectedNodeIds(state, action));
@@ -261,7 +303,7 @@ export const panelSlice = createSlice({
     );
     builder.addMatcher(isAnyOf(panelV1SelectOperationId), (state, action) => panelSlice.caseReducers.selectOperationId(state, action));
     builder.addMatcher(isAnyOf(panelV1OpenPanel), (state, action) => panelSlice.caseReducers.openPanel(state, action));
-    builder.addMatcher(isAnyOf(panelV1SelectPanelTab), (state, action) => panelSlice.caseReducers.selectPanelTab(state, action));
+    builder.addMatcher(isAnyOf(panelV1SelectPanelTab), (state, action) => panelSlice.caseReducers.setSelectedPanelActiveTab(state, action));
     builder.addMatcher(isAnyOf(panelV1SetIsPanelLoading), (state, action) => panelSlice.caseReducers.setIsPanelLoading(state, action));
     builder.addMatcher(isAnyOf(panelV1SetIsCreatingConnection), (state, action) =>
       panelSlice.caseReducers.setIsCreatingConnection(state, action)
@@ -283,10 +325,11 @@ export const {
   selectErrorsPanelTab,
   selectOperationGroupId,
   selectOperationId,
-  selectPanelTab,
+  setPinnedPanelActiveTab,
+  setSelectedPanelActiveTab,
   setIsCreatingConnection,
   setIsPanelLoading,
-  setPinnedNodeId,
+  setPinnedNode,
   setSelectedNodeId,
   setSelectedNodeIds,
   updatePanelLocation,

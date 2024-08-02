@@ -64,7 +64,8 @@ export const TemplatesStandaloneDesigner = () => {
     workflowKind: string,
     workflowDefinition: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
-    parametersData: Record<string, Template.ParameterDefinition>
+    parametersData: Record<string, Template.ParameterDefinition>,
+    onSuccessfulCreation = () => {}
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
@@ -144,7 +145,7 @@ export const TemplatesStandaloneDesigner = () => {
             updatedParametersData,
             updatedSettingProperties,
             undefined,
-            () => {},
+            onSuccessfulCreation,
             true
           );
         } catch (error) {
@@ -199,8 +200,8 @@ export const TemplatesStandaloneDesigner = () => {
             >
               <TemplateFilters
                 detailFilters={{
-                  Categories: {
-                    displayName: 'Category',
+                  Category: {
+                    displayName: 'Categories',
                     items: [
                       {
                         value: 'Design Patterns',
@@ -221,6 +222,22 @@ export const TemplatesStandaloneDesigner = () => {
                       {
                         value: 'Approval',
                         displayName: 'Approval',
+                      },
+                      {
+                        value: 'RAG',
+                        displayName: 'RAG',
+                      },
+                      {
+                        value: 'Automation',
+                        displayName: 'Automation',
+                      },
+                      {
+                        value: 'BizTalk Migration',
+                        displayName: 'BizTalk Migration',
+                      },
+                      {
+                        value: 'Mainframe Modernization',
+                        displayName: 'Mainframe Modernization',
                       },
                     ],
                   },

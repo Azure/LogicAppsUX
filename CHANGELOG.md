@@ -1,4 +1,123 @@
 # Logic Apps Designer
+## [4.53.0](https://github.com/Azure/LogicAppsUX/compare/v4.52.0...v4.53.0) (2024-08-01)
+
+
+### Bug Fixes
+
+* **vscode:** Load node settings to monitoring view in remote app ([#5242](https://github.com/Azure/LogicAppsUX/issues/5242)) ([9e10aa5](https://github.com/Azure/LogicAppsUX/commit/9e10aa56441dc5fcd94415693ea3dff16cbfc7ea))
+
+## [4.52.0](https://github.com/Azure/LogicAppsUX/compare/v4.51.0...v4.52.0) (2024-07-31)
+
+
+### Features
+
+* **data mapper:** Auto-layout function nodes with canvas size changes ([#5234](https://github.com/Azure/LogicAppsUX/issues/5234)) ([52d20fb](https://github.com/Azure/LogicAppsUX/commit/52d20fb45837fde7b40316a6ff65369a8dd2f586))
+* **vscode:** Add telemetry for refreshing expired connection keys ([#5235](https://github.com/Azure/LogicAppsUX/issues/5235)) ([a4004a7](https://github.com/Azure/LogicAppsUX/commit/a4004a7065325e9fa789dbfbd14539055a67a035))
+
+
+### Bug Fixes
+
+* **designer:** Fixed issue with some advanced parameters not initializing properly ([#5240](https://github.com/Azure/LogicAppsUX/issues/5240)) ([67a004b](https://github.com/Azure/LogicAppsUX/commit/67a004be393e81cb6a096dc41829d7af40c11218))
+* **designer:** Improve types in `updateDynamicDataInNode` to prevent issues ([#5239](https://github.com/Azure/LogicAppsUX/issues/5239)) ([9ad9de1](https://github.com/Azure/LogicAppsUX/commit/9ad9de1bbfb97887a327a6b7c5140974346c9b16))
+
+## [4.51.0](https://github.com/Azure/LogicAppsUX/compare/v4.50.0...v4.51.0) (2024-07-30)
+
+
+### Bug Fixes
+
+* **Templates:** Creation Successful Only Upon on Successful Creation & Remove Template Card Unwanted Info ([#5230](https://github.com/Azure/LogicAppsUX/issues/5230)) ([a872051](https://github.com/Azure/LogicAppsUX/commit/a872051032ece2275143279b5b3e5a7d71b25632))
+* **Templates:** Fixed Build Fail Due to Templates with Non-Json Artifacts ([#5232](https://github.com/Azure/LogicAppsUX/issues/5232)) ([f40180b](https://github.com/Azure/LogicAppsUX/commit/f40180bed83ccb7d125cb77c620cc22d6eda0f83))
+
+## [4.50.0](https://github.com/Azure/LogicAppsUX/compare/v4.49.0...v4.50.0) (2024-07-30)
+
+
+### Features
+
+* **Data Mapper:** Create output connection through menu, and other UX bugs ([#5227](https://github.com/Azure/LogicAppsUX/issues/5227)) ([a1e9f21](https://github.com/Azure/LogicAppsUX/commit/a1e9f21295eb6a46281415d747f08fc23b11898f))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update node re-render logic ([#5179](https://github.com/Azure/LogicAppsUX/issues/5179)) ([73370a6](https://github.com/Azure/LogicAppsUX/commit/73370a660afa91735bb89604d3d4c22cad8701cb))
+* **designer-ui:** Fix token picker behind panel after latest changes ([#5218](https://github.com/Azure/LogicAppsUX/issues/5218)) ([430201b](https://github.com/Azure/LogicAppsUX/commit/430201bbb527e7bb56ef7e95188a91b25a59f44f))
+* **designer:** A11Y improvements to element roles and labels ([#5211](https://github.com/Azure/LogicAppsUX/issues/5211)) ([b76fd90](https://github.com/Azure/LogicAppsUX/commit/b76fd9008e4702f05b55d8b05431879654896ce4))
+* **designer:** Canvas properly centered on load ([#5226](https://github.com/Azure/LogicAppsUX/issues/5226)) ([13b018a](https://github.com/Azure/LogicAppsUX/commit/13b018a4d7123396cce9037a950422bdf45a2941))
+* **designer:** Canvas properly centered on load ([#5229](https://github.com/Azure/LogicAppsUX/issues/5229)) ([0fa74d9](https://github.com/Azure/LogicAppsUX/commit/0fa74d965a171b71abf7e566c2972fe161cd8103))
+* **designer:** Revert "Canvas properly centered on load ([#5226](https://github.com/Azure/LogicAppsUX/issues/5226))" ([#5228](https://github.com/Azure/LogicAppsUX/issues/5228)) ([30707f1](https://github.com/Azure/LogicAppsUX/commit/30707f1c380f64c4c0673b2b0ef65e4150b21c27))
+* **designer:** Top margin for token picker if input field spans multiple lines ([#5219](https://github.com/Azure/LogicAppsUX/issues/5219)) ([cd5b674](https://github.com/Azure/LogicAppsUX/commit/cd5b674d11b614f5f63b258041e32b8f116c4128))
+* **vscode:** Async Download for Dependencies and Graceful Error Handling ([#5225](https://github.com/Azure/LogicAppsUX/issues/5225)) ([e9d61de](https://github.com/Azure/LogicAppsUX/commit/e9d61de969436fd0fa61e2b79468823554fb7435))
+
+## [4.49.0](https://github.com/Azure/LogicAppsUX/compare/v4.48.0...v4.49.0) (2024-07-29)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix UI issues with pinned node when using left-side panel ([#5213](https://github.com/Azure/LogicAppsUX/issues/5213)) ([90f0538](https://github.com/Azure/LogicAppsUX/commit/90f05386e4f6460abe3d3f3b2b0ede5af0c42e0f))
+* **designer:** Add mixed input editor ([#5190](https://github.com/Azure/LogicAppsUX/issues/5190)) ([3a1ab79](https://github.com/Azure/LogicAppsUX/commit/3a1ab794548f0f4fd2600f0881b3f375e06aa581))
+* **vscode:** Remove never from copy settings from publish directory in dotnet projects ([#5212](https://github.com/Azure/LogicAppsUX/issues/5212)) ([fac4c6b](https://github.com/Azure/LogicAppsUX/commit/fac4c6b5caedc097bacb2bf42ef0428246f1c72b))
+
+## [4.48.0](https://github.com/Azure/LogicAppsUX/compare/v4.47.1...v4.48.0) (2024-07-26)
+
+
+### Features
+
+* **designer-ui:** Add badge for read-only connection to show reason ([#5200](https://github.com/Azure/LogicAppsUX/issues/5200)) ([54d2463](https://github.com/Azure/LogicAppsUX/commit/54d2463372c90f3d171c00c8619d91b1e1bbeebc))
+* **designer:** Allow pinning a node to panel to view side-by-side with selected node ([#5202](https://github.com/Azure/LogicAppsUX/issues/5202)) ([be1a455](https://github.com/Azure/LogicAppsUX/commit/be1a455267e108ed865683cb4fe9cceec35f1504)), closes [#5148](https://github.com/Azure/LogicAppsUX/issues/5148)
+
+
+### Bug Fixes
+
+* **all:** Convert all label strings to `Standard case` except when referring to proper nouns ([#5209](https://github.com/Azure/LogicAppsUX/issues/5209)) ([dc3acfc](https://github.com/Azure/LogicAppsUX/commit/dc3acfcedc90087a9d6630f5e338a459948cbcd1))
+* **designer:** Add validation for parameters with dynamic values ([#5207](https://github.com/Azure/LogicAppsUX/issues/5207)) ([cd36666](https://github.com/Azure/LogicAppsUX/commit/cd366662b50f19855b444d70154d687e6d36b772))
+* **designer:** Fixed fluent `autoload` property causing console error issue ([#5198](https://github.com/Azure/LogicAppsUX/issues/5198)) ([f704d77](https://github.com/Azure/LogicAppsUX/commit/f704d7748c5193145ee0a22c39eb2b5f13aaffd2))
+
+### [4.47.1](https://github.com/Azure/LogicAppsUX/compare/v4.47.0...v4.47.1) (2024-07-25)
+
+
+### Features
+
+* **designer:** Decouple panel tabs from `useSelectedNodeId()` ([#5183](https://github.com/Azure/LogicAppsUX/issues/5183)) ([4113a4f](https://github.com/Azure/LogicAppsUX/commit/4113a4fa618457b63e0487f8a33dae09384f0a65))
+
+
+### Bug Fixes
+
+* **designer:** Fixed small portal css issue with upgrading reactflow ([#5196](https://github.com/Azure/LogicAppsUX/issues/5196)) ([45199cb](https://github.com/Azure/LogicAppsUX/commit/45199cb3cce3d16cb9ce5ec2b99ed13564160fb2))
+
+## [4.47.0](https://github.com/Azure/LogicAppsUX/compare/v4.46.0...v4.47.0) (2024-07-25)
+
+
+### Features
+
+* **Data Mapper:** Able to select function inputs from the popover ([#5187](https://github.com/Azure/LogicAppsUX/issues/5187)) ([f511ebd](https://github.com/Azure/LogicAppsUX/commit/f511ebd6813c13dc5a549d3c01f7d58dd09c0d4a))
+* **designer:** Allow deleting a node without affecting selected node ID in state ([#5182](https://github.com/Azure/LogicAppsUX/issues/5182)) ([da1473d](https://github.com/Azure/LogicAppsUX/commit/da1473d74c511239e29a19227ab4650e29f95f04))
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixed missing handle bug, improved schema handle styling ([#5181](https://github.com/Azure/LogicAppsUX/issues/5181)) ([d9af6f9](https://github.com/Azure/LogicAppsUX/commit/d9af6f9391a55dc7cc28ed7baef52849bbf81f50))
+* **Designer:** Updated HTML Editor to support newline and carriage return characters (for dynamic content)  ([#5117](https://github.com/Azure/LogicAppsUX/issues/5117)) ([ef36f8a](https://github.com/Azure/LogicAppsUX/commit/ef36f8a65d165d273d413eb035f8232b3dc4733c))
+* **vscode:** DependenciesDownloadRefactoring: Part1: Increase Dependencies Download Timeout to 5 Minutes ([#5171](https://github.com/Azure/LogicAppsUX/issues/5171)) ([20e2f1e](https://github.com/Azure/LogicAppsUX/commit/20e2f1e193ad98b4ddd332be094df69459228b1a))
+
+## [4.46.0](https://github.com/Azure/LogicAppsUX/compare/v4.45.0...v4.46.0) (2024-07-23)
+
+
+### Features
+
+* Adding UI for NL2F Expression Assistant and Copilot Service Interface ([#5107](https://github.com/Azure/LogicAppsUX/issues/5107)) ([6cef0e1](https://github.com/Azure/LogicAppsUX/commit/6cef0e16021f44c1851f0e1e6a3d961d4b108b2b))
+* **designer-ui:** Add `PinMenuItem` component & styles ([#5159](https://github.com/Azure/LogicAppsUX/issues/5159)) ([4136033](https://github.com/Azure/LogicAppsUX/commit/413603319a5867290359e77dd69ed2e4e900ebd3))
+* **designer:** Add unit testing for parseErrorMessage function ([#5177](https://github.com/Azure/LogicAppsUX/issues/5177)) ([fe186de](https://github.com/Azure/LogicAppsUX/commit/fe186dee95fcc0380cf5e095792b7d398caab6f4))
+
+
+### Bug Fixes
+
+* **designer-ui:** Extract toolbar format buttons into component files ([#5162](https://github.com/Azure/LogicAppsUX/issues/5162)) ([d51c797](https://github.com/Azure/LogicAppsUX/commit/d51c797cd1bb4b2178730be72af18d0b11cf71a4))
+* **designer-ui:** Fix wrapping of connection display when panel is narrow ([#5160](https://github.com/Azure/LogicAppsUX/issues/5160)) ([50ba269](https://github.com/Azure/LogicAppsUX/commit/50ba269219a4ce246c08e7b2011d0f5e71f701ff))
+* **designer:** Added accessible names to search filter dropdowns ([#5178](https://github.com/Azure/LogicAppsUX/issues/5178)) ([09ba8b9](https://github.com/Azure/LogicAppsUX/commit/09ba8b95b2be2fd0769fd1e7ef34ebb4e0f1817a))
+* **Designer:** Fixed foreach dynamic item() / items() token issue ([#5149](https://github.com/Azure/LogicAppsUX/issues/5149)) ([17b9cad](https://github.com/Azure/LogicAppsUX/commit/17b9cadf31530b570ff93502e282f66d41c7d56d))
+* **designer:** Workflow canvas proper tab ordering ([#5169](https://github.com/Azure/LogicAppsUX/issues/5169)) ([0c9aec7](https://github.com/Azure/LogicAppsUX/commit/0c9aec70549215306870fbfe3d90840b5afe3cbf))
+* **shared:** Add `objectId` and `tenantId` to `authenticatedUser` ([#5180](https://github.com/Azure/LogicAppsUX/issues/5180)) ([8c2733a](https://github.com/Azure/LogicAppsUX/commit/8c2733a4b89ef22c9809a4799b508665097b1a74))
+* **vscode:** Add validation for error response structure ([#5170](https://github.com/Azure/LogicAppsUX/issues/5170)) ([064b65d](https://github.com/Azure/LogicAppsUX/commit/064b65de92b09e4a1c7579df8f5b9db884e0ab07))
+
 ## [4.45.0](https://github.com/Azure/LogicAppsUX/compare/v4.44.0...v4.45.0) (2024-07-19)
 
 
