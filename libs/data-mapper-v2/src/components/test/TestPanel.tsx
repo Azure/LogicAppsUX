@@ -5,18 +5,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
-import { toggleTestPanel } from '../../core/state/PanelSlice';
+import { toggleTestPanel, updateTestOutput } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 import { TestPanelBody } from './TestPanelBody';
-
+import { testDataMap } from '../../core/queries/datamap';
+import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { guid } from '@microsoft/logic-apps-shared';
 type TestPanelProps = {};
 
 export const TestPanel = (_props: TestPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const isTestPanelOpen = useSelector((state: RootState) => state.panel.testPanel.isOpen);
-  const { sampleDataContent } = useSelector((state: RootState) => state.panel.testPanel);
+  const { testMapInput, isOpen } = useSelector((state: RootState) => state.panel.testPanel);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -48,12 +50,48 @@ export const TestPanel = (_props: TestPanelProps) => {
     [intl]
   );
 
-  const onTestClick = useCallback(() => {}, []);
+  const onTestClick = useCallback(() => {
+    if (!!xsltFilename && !!testMapInput) {
+      const attempt = guid();
+
+      testDataMap(xsltFilename, testMapInput)
+        .then((response) => {
+          dispatch(
+            updateTestOutput({
+              response: response,
+            })
+          );
+
+          LogService.log(LogCategory.TestMapPanel, 'testDataMap', {
+            message: 'Successfully tested data map',
+            data: {
+              attempt,
+              statusCode: response.statusCode,
+              statusText: response.statusText,
+            },
+          });
+        })
+        .catch((error: Error) => {
+          LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
+            message: error.message,
+            data: {
+              attempt,
+            },
+          });
+
+          dispatch(
+            updateTestOutput({
+              error: error,
+            })
+          );
+        });
+    }
+  }, [testMapInput, xsltFilename, dispatch]);
 
   return (
     <Panel
       id={'test-panel'}
-      isOpen={isTestPanelOpen}
+      isOpen={isOpen}
       title={{
         text: resources.TEST_MAP,
         rightAction: (
@@ -70,7 +108,7 @@ export const TestPanel = (_props: TestPanelProps) => {
       body={<TestPanelBody />}
       footer={
         <div>
-          <Button appearance="primary" onClick={onTestClick} disabled={!sampleDataContent}>
+          <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput || !xsltFilename}>
             {resources.TEST}
           </Button>
           <Button appearance="secondary" onClick={onCloseClick} className={styles.closeButton}>

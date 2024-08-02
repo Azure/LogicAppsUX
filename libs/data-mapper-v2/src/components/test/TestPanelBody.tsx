@@ -6,7 +6,7 @@ import type { RootState, AppDispatch } from '../../core/state/Store';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from '@fluentui/react-components';
 import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage, SchemaFileFormat } from '@microsoft/logic-apps-shared';
-import { saveSampleData } from '../../core/state/PanelSlice';
+import { updateTestInput } from '../../core/state/PanelSlice';
 
 type TestPanelBodyProps = {};
 
@@ -14,7 +14,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { sampleDataContent, result } = useSelector((state: RootState) => state.panel.testPanel);
+  const { testMapInput, testMapOutput, testMapOutputError } = useSelector((state: RootState) => state.panel.testPanel);
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
@@ -47,10 +47,32 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
 
   const onSampleDataChange = useCallback(
     (e: EditorContentChangedEventArgs) => {
-      dispatch(saveSampleData(e.value ?? ''));
+      dispatch(updateTestInput(e.value ?? ''));
     },
     [dispatch]
   );
+
+  const error = useMemo(() => {
+    let error: any;
+
+    if (testMapOutputError) {
+      error = testMapOutputError;
+    }
+
+    if (testMapOutput?.statusCode && testMapOutput?.statusCode >= 300) {
+      error = testMapOutput?.outputInstance?.$content;
+    }
+
+    if (error) {
+      try {
+        return JSON.stringify(JSON.parse(error), null, 2);
+      } catch (_err) {
+        return error;
+      }
+    }
+
+    return undefined;
+  }, [testMapOutput, testMapOutputError]);
 
   return (
     <div className={styles.bodyWrapper}>
@@ -62,7 +84,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
           <AccordionPanel>
             <MonacoEditor
               language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
-              value={sampleDataContent ?? ''}
+              value={testMapInput ?? ''}
               className={styles.editorStyle}
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
@@ -79,8 +101,10 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
           </AccordionHeader>
           <AccordionPanel>
             <MonacoEditor
-              language={targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
-              value={result ?? ''}
+              language={
+                error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
+              }
+              value={error ?? testMapOutput?.outputInstance?.$content ?? ''}
               className={styles.editorStyle}
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}

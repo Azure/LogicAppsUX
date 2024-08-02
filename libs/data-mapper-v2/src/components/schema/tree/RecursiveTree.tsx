@@ -74,6 +74,8 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [dispatch, isLeftDirection]
   );
 
+  const aside = useMemo(() => (isHover || activeNode ? <TypeAnnotation schemaNode={root} /> : <div />), [isHover, activeNode, root]);
+
   useLayoutEffect(() => {
     return () => {
       dispatch(
@@ -139,8 +141,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   if (!nodeVisble) {
     return null;
   }
-
-  const aside = isHover || activeNode ? <TypeAnnotation schemaNode={root} /> : undefined;
 
   const onClick = () => {
     dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
