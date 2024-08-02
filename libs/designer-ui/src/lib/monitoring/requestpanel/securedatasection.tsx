@@ -1,4 +1,4 @@
-import { getBrandColorRgbA } from '../../card/utils';
+import { getBrandColorWithOpacity } from '../../card/utils';
 import Constants from '../../constants';
 import { useIntl } from 'react-intl';
 
@@ -19,7 +19,7 @@ export const SecureDataSection: React.FC<SecureDataSectionProps> = ({ brandColor
   };
 
   const borderStyle = {
-    borderColor: getBrandColorRgbA(brandColor, 0.7),
+    borderColor: getBrandColorWithOpacity(brandColor, 0.7),
   };
 
   return (
