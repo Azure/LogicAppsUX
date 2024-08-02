@@ -47,7 +47,6 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
 import { RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -58,6 +57,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -222,10 +222,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyOperation({ nodeId: id }));
-    setTimeout(() => {
-      setShowCopyCallout(false);
-    }, 3000);
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
+
+  const [copyCalloutTimeout, setCopyCalloutTimeout] = useState<NodeJS.Timeout>();
+  const clearCopyTooltip = useCallback(() => {
+    copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
+    setShowCopyCallout(false);
+  }, [copyCalloutTimeout]);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
 
@@ -297,12 +301,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
 
-  const copiedText = intl.formatMessage({
-    defaultMessage: 'Copied!',
-    id: 'NE54Uu',
-    description: 'Copied text',
-  });
-
   const nodeIndex = useNodeIndex(id);
 
   return (
@@ -338,13 +336,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isSecureInputsOutputs={isSecureInputsOutputs}
           nodeIndex={nodeIndex}
         />
-        <Tooltip
-          positioning={{ target: ref.current, position: 'below', align: 'end' }}
-          withArrow
-          content={copiedText}
-          relationship="description"
-          visible={showCopyCallout}
-        />
+        {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (

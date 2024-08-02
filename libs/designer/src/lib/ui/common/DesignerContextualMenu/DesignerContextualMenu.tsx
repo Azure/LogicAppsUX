@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useOnViewportChange } from '@xyflow/react';
 import { CardContextMenu } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { SUBGRAPH_TYPES, WorkflowService, getRecordEntry } from '@microsoft/logic-apps-shared';
@@ -21,12 +20,14 @@ import {
   useSuppressDefaultNodeSelectFunctionality,
   useNodeSelectAdditionalCallback,
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { copyOperation } from '../../../core/actions/bjsworkflow/copypaste';
+import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import constants from '../../../common/constants';
+import { CopyTooltip } from './CopyTooltip';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
-  const nodeId = menuData?.nodeId ?? '';
+  const nodeId = useMemo(() => menuData?.nodeId ?? '', [menuData?.nodeId]);
+  const title = useNodeDisplayName(nodeId);
 
   const [open, setOpen] = useState<boolean>(false);
   useEffect(() => setOpen(!!menuData?.location), [menuData?.location]);
@@ -83,24 +84,17 @@ export const DesignerContextualMenu = () => {
   }, [runInstance, nodeId]);
 
   const [showCopyCallout, setShowCopyCallout] = useState(false);
-
-  useOnViewportChange({
-    onStart: useCallback(() => {
-      if (showCopyCallout) {
-        setShowCopyCallout(false);
-      }
-    }, [showCopyCallout]),
-  });
-
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
-    dispatch(copyOperation({ nodeId }));
-    setTimeout(() => {
-      setShowCopyCallout(false);
-    }, 3000);
-  }, [dispatch, nodeId]);
+    dispatch((isScopeNode ? copyScopeOperation : copyOperation)?.({ nodeId }));
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
+  }, [dispatch, nodeId, isScopeNode]);
 
-  const title = useNodeDisplayName(nodeId);
+  const [copyCalloutTimeout, setCopyCalloutTimeout] = useState<NodeJS.Timeout>();
+  const clearCopyCallout = useCallback(() => {
+    copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
+    setShowCopyCallout(false);
+  }, [copyCalloutTimeout]);
 
   const actionContextMenuItems: JSX.Element[] = useMemo(
     () => [
@@ -128,6 +122,15 @@ export const DesignerContextualMenu = () => {
   );
 
   return (
-    <CardContextMenu contextMenuLocation={menuData?.location} menuItems={menuItems} open={open} title={title} setOpen={(o) => setOpen(o)} />
+    <>
+      <CardContextMenu
+        contextMenuLocation={menuData?.location}
+        menuItems={menuItems}
+        open={open}
+        title={title}
+        setOpen={(o) => setOpen(o)}
+      />
+      {showCopyCallout ? <CopyTooltip location={menuData?.location} hideTooltip={clearCopyCallout} /> : null}
+    </>
   );
 };

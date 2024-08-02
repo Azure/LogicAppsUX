@@ -43,9 +43,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -155,8 +155,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(scopeId);
 
-  const [showCopyCallout, setShowCopyCallout] = useState(false);
-
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
   }, [dispatch, scopeId]);
@@ -170,13 +168,18 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     dispatch(setShowDeleteModalNodeId(scopeId));
   }, [dispatch, scopeId]);
 
+  const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyScopeOperation({ nodeId: id }));
-    setTimeout(() => {
-      setShowCopyCallout(false);
-    }, 3000);
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
+
+  const [copyCalloutTimeout, setCopyCalloutTimeout] = useState<NodeJS.Timeout>();
+  const clearCopyCallout = useCallback(() => {
+    copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
+    setShowCopyCallout(false);
+  }, [copyCalloutTimeout]);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
 
@@ -298,12 +301,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  const copiedText = intl.formatMessage({
-    defaultMessage: 'Copied!',
-    id: 'NE54Uu',
-    description: 'Copied text',
-  });
-
   return (
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
@@ -334,13 +331,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             setFocus={shouldFocus}
             nodeIndex={nodeIndex}
           />
-          <Tooltip
-            positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
-            withArrow
-            content={copiedText}
-            relationship="description"
-            visible={showCopyCallout}
-          />
+          {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
           ) : null}

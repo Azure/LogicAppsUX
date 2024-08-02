@@ -234,6 +234,7 @@ export const Designer = (props: DesignerProps) => {
             <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
+            <DesignerContextualMenu />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />
@@ -241,7 +242,6 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
-          <DesignerContextualMenu />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}

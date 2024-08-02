@@ -39,13 +39,7 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
     }
   );
 
-  const onOpenChange = useCallback(
-    (_e: any, data: MenuOpenChangeData) => {
-      console.log('### onOpenChange', data);
-      return setOpen?.(data.open);
-    },
-    [setOpen]
-  );
+  const onOpenChange = useCallback((_e: any, data: MenuOpenChangeData) => setOpen?.(data.open), [setOpen]);
 
   const positioning = useMemo(() => {
     const offset = contextMenuLocation ? { mainAxis: contextMenuLocation.y, crossAxis: contextMenuLocation.x } : undefined;
