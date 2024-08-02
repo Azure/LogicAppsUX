@@ -2,7 +2,7 @@ import { PanelLocation } from '@microsoft/designer-ui';
 import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import {
   changePanelNode as panelV1ChangePanelNode,
   clearPanel as panelV1ClearPanel,
@@ -31,6 +31,7 @@ import type {
   RelationshipIds,
   WorkflowParametersPanelContentState,
 } from './panelTypes';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 const getInitialConnectionContentState = (): ConnectionPanelContentState => ({
   isCreatingConnection: false,
@@ -241,6 +242,7 @@ export const panelSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.panelV2);
 
     // The below matchers are used to ensure that dispatches made to v1 panel are consumed by v2 panel as well.
     // Once v1 panel is deprecated & deleted, these can be safely removed.

@@ -1,5 +1,6 @@
 import type { ValidationError } from '../../../ui/settings/validation/validation';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { SettingSectionName, type SettingsState } from './settingInterface';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -45,6 +46,7 @@ export const settingsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.settings);
   },
 });
 

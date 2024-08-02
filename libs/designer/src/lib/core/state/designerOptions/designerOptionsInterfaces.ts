@@ -41,6 +41,7 @@ export interface DesignerOptionsState {
     forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
+    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

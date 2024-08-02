@@ -13,7 +13,7 @@ import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
@@ -39,6 +39,7 @@ import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/li
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -479,6 +480,7 @@ export const workflowSlice = createSlice({
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
     });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addMatcher(
       isAnyOf(
         addNode,

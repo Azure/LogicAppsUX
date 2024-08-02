@@ -74,3 +74,5 @@ export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
 } from './utils/card';
+export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
+export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
