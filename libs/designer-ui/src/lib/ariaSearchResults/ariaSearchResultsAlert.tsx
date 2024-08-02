@@ -24,5 +24,5 @@ export const AriaSearchResultsAlert = ({ resultCount, resultDescription }: AriaS
 
   return showAlert ? (
     <div className={'msla-aria-search-results'} role="alert">{`${resultCount} ${resultDescription} ${ariaResultCount}`}</div>
-  ) : undefined;
+  ) : null;
 };
