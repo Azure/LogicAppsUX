@@ -176,7 +176,7 @@ export const Card: React.FC<CardProps> = memo(
             cloned && 'msla-card-ghost-image',
             isDragging && 'dragging'
           )}
-          style={{ ...getCardStyle(brandColor), position: 'relative' }}
+          style={getCardStyle(brandColor)}
           data-testid={`card-${title}`}
           data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
           onClick={handleClick}
