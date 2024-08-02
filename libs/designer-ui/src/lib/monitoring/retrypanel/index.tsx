@@ -15,15 +15,10 @@ export interface RetryPanelProps {
 export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible = true }) => {
   const intl = useIntl();
   const [currentPage, setCurrentPage] = useState(1);
-  const [retryHistory, setRetryHistory] = useState(retryHistories[0]);
+  const retryHistory = useMemo(() => retryHistories[currentPage - 1], [retryHistories, currentPage]);
   const retryDuration = useMemo(() => {
     return calculateDuration(retryHistory.startTime, retryHistory.endTime);
   }, [retryHistory.endTime, retryHistory.startTime]);
-
-  useMemo(() => {
-    const newRetryHistory = retryHistories[currentPage - 1];
-    setRetryHistory(newRetryHistory);
-  }, [retryHistories, currentPage]);
 
   if (!visible) {
     return null;
