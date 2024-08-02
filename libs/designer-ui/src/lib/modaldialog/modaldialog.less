@@ -1,12 +1,27 @@
-.msla-modal-content {
-  background-color: #fff;
-  overflow: auto;
-  width: 100%;
+.msla-modal-dialog {
+  div[class^='ms-Dialog-main'] {
+    width: 80vw;
 
-  .msla-modal-body {
-    text-align: center;
+    @media (min-width: 480px) {
+      max-width: none;
+    }
+
+    @media only screen and (max-width: 800px) {
+      width: 100%;
+    }
   }
+	
+	.msla-modal-content {
+		background-color: #fff;
+		overflow: auto;
+		width: 100%;
+
+		.msla-modal-body {
+			text-align: center;
+		}
+	}
 }
+
 
 .msla-theme-dark {
   .msla-modal-content {

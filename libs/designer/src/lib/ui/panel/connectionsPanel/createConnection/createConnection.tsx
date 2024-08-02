@@ -22,6 +22,7 @@ import {
   usesLegacyManagedIdentity,
   isUsingAadAuthentication,
   equals,
+  isTenantServiceEnabled,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -296,6 +297,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
   const showTenantIdSelection = useMemo(
     () =>
+      isTenantServiceEnabled() &&
       usingAadConnection &&
       isUsingOAuth &&
       Object.keys(connectionParameters ?? {}).some((key) => equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)),
