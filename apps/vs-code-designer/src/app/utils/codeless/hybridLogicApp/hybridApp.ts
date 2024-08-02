@@ -16,6 +16,7 @@ import { localize } from '../../../../localize';
 import { getWorkspaceFolder } from '../../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ConnectedEnvironment, ContainerApp, EnvironmentVar } from '@azure/arm-appcontainers';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 
 interface createHybridAppOptions {
   sqlConnectionString: string;
@@ -142,7 +143,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
   const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/containerApps/${siteName}?api-version=2024-02-02-preview`;
 
   try {
-    const method = hybridApp ? 'PATCH' : 'PUT';
+    const method = hybridApp ? HTTP_METHODS.PATCH : HTTP_METHODS.PUT;
     const response = await axios({
       method,
       url,

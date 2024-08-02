@@ -118,7 +118,7 @@ const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName
       hostName: response.data?.properties?.smb?.host,
       path: response.data?.properties?.smb?.shareName,
     };
-    const fileSharePath = `\\\\${node.fileShare.hostName}\\${node.fileShare.path.split(path.sep)[0]}`;
+    const fileSharePath = `${path.sep}${path.sep}${node.fileShare.hostName}${path.sep}${node.fileShare.path.split(path.sep)[0]}`;
     node.fileShare.userName = await context.ui.showInputBox({
       placeHolder: localize('userNameFileShare', `User name for ${fileSharePath}`),
       prompt: localize('userNamePrompt', 'Provide the user name for SMB authentication.'),
