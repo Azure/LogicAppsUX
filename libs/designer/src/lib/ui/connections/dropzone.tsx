@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDrop } from 'react-dnd';
@@ -53,7 +54,7 @@ const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
 const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
 
-const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
+export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const [showCallout, setShowCallout] = useState(false);
@@ -372,6 +373,4 @@ const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, isLeaf 
       />
     </div>
   );
-};
-
-export default memo(DropZone);
+});

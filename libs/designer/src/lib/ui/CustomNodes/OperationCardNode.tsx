@@ -46,7 +46,7 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
-import DropZone from '../connections/dropzone';
+import { DropZone } from '../connections/dropzone';
 import { CopyMenuItem } from '../menuItems/copyMenuItem';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
