@@ -203,6 +203,7 @@ export async function getConnectionsAndSettingsToUpdate(
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
   let areKeysRefreshed = false;
+  let areKeysGenerated = false;
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
@@ -222,13 +223,15 @@ export async function getConnectionsAndSettingsToUpdate(
         settingsToAdd,
         parametersFromDefinition
       );
+
+      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and are valid for 7 days`;
+      areKeysGenerated = true;
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
       isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
     ) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
-      context.telemetry.properties.connectionKeyRefresh = `${referenceKey}-connectionKey refreshed`;
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
@@ -239,6 +242,7 @@ export async function getConnectionsAndSettingsToUpdate(
         parametersFromDefinition
       );
 
+      context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and are valid for 7 days`;
       areKeysRefreshed = true;
     }
   }
@@ -246,7 +250,11 @@ export async function getConnectionsAndSettingsToUpdate(
   connectionsData.managedApiConnections = referencesToAdd;
 
   if (areKeysRefreshed) {
-    window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed.'));
+    window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed and are valid for 7 days.'));
+  }
+
+  if (areKeysGenerated) {
+    window.showInformationMessage(localize('connectionKeysGenerated', 'New connection keys have been generated and are valid for 7 days.'));
   }
 
   return {
