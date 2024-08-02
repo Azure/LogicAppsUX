@@ -34,7 +34,8 @@ import {
   Delete24Regular,
   bundleIcon,
 } from '@fluentui/react-icons';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu } from '../cardContextMenu/CardContextMenu';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState } from 'react';
