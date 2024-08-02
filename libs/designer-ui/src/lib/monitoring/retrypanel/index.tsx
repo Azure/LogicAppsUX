@@ -4,7 +4,7 @@ import { ErrorSection } from '../errorsection';
 import { calculateDuration } from '../utils';
 import { Value } from '../values';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RetryPanelProps {
@@ -20,7 +20,7 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
     return calculateDuration(retryHistory.startTime, retryHistory.endTime);
   }, [retryHistory.endTime, retryHistory.startTime]);
 
-  useEffect(() => {
+  useMemo(() => {
     const newRetryHistory = retryHistories[currentPage - 1];
     setRetryHistory(newRetryHistory);
   }, [retryHistories, currentPage]);
