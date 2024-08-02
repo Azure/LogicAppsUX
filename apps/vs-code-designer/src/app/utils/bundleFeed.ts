@@ -68,7 +68,7 @@ async function getBundleDependencyFeed(
   }
 
   const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
-  const url = `${baseUrl}/ExtensionBundles/${bundleId}.Workflows/dependency.json`;
+  const url = `${baseUrl}/ExtensionBundles/${bundleId}/dependency.json`;
   return getJsonFeed(context, url);
 }
 
