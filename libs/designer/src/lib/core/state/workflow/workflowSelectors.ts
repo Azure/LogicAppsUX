@@ -122,12 +122,7 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!nodeId || !state.graph) {
-        return [];
-      }
-      return getRecordEntry(state.edgeIdsBySource, nodeId) ?? [];
-    })
+    createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.edgeIdsBySource ?? {}, nodeId ?? '') ?? [])
   );
 };
 

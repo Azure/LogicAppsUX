@@ -2,7 +2,7 @@ import type { SecureDataSectionProps } from '../securedatasection';
 import { SecureDataSection } from '../securedatasection';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 describe('lib/monitoring/requestpanel/securedatasection', () => {
   let minimal: SecureDataSectionProps, renderer: ShallowRenderer.ShallowRenderer;
 
@@ -29,7 +29,7 @@ describe('lib/monitoring/requestpanel/securedatasection', () => {
 
     const header = React.Children.only(headerContainer.props.children);
     expect(header.props.style).toEqual({
-      borderColor: 'rgba(71,71,71, 0.7)',
+      borderColor: '#474747B3',
     });
     expect(header.props.children).toBe(minimal.headerText);
 

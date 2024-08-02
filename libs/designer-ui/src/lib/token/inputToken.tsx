@@ -1,4 +1,3 @@
-import { getBrandColorRgbA } from '../card/utils';
 import { TokenType } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
@@ -13,6 +12,7 @@ import type { NodeKey } from 'lexical';
 import type { TokenNode } from '../editor/base/nodes/tokenNode';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { getBrandColorWithOpacity } from '../card/utils';
 
 export interface InputTokenProps {
   brandColor?: string;
@@ -78,7 +78,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   };
 
   const tokenStyle = {
-    backgroundColor: brandColor ? getBrandColorRgbA(brandColor) : 'rgba(71, 71, 71, 0.15)',
+    backgroundColor: brandColor ? getBrandColorWithOpacity(brandColor, 0.15) : 'rgba(71, 71, 71, 0.15)',
     backgroundImage: icon ?? `url(${iconSvg})`,
   };
 

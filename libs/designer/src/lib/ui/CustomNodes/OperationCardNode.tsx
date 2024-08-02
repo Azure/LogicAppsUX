@@ -55,7 +55,7 @@ import { Tooltip } from '@fluentui/react-components';
 import { RunService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -115,11 +115,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
   };
 
-  const {
-    refetch,
-    isLoading: isRepetitionLoading,
-    isRefetching: isRepetitionRefetching,
-  } = useQuery<any>(
+  const { refetch, isFetching: isRepetitionLoading } = useQuery<any>(
     ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
     getRunRepetition,
     {
@@ -267,12 +263,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [copyClick, deleteClick, id, isTrigger, pinClick, resubmitClick, runData?.canResubmit, runAfterClick, runAfter]
   );
 
-  const opQuery = useOperationQuery(id);
+  const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = useOperationQuery(id);
 
-  const isLoading = useMemo(
-    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading,
-    [opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
-  );
+  const isLoading = useMemo(() => isRepetitionLoading || isOperationQueryLoading, [isRepetitionLoading, isOperationQueryLoading]);
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
@@ -304,7 +297,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       };
     }
 
-    if (opQuery?.isError) {
+    if (isOperationQueryError) {
       return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
     }
 
@@ -323,7 +316,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return { errorMessage: undefined, errorLevel: undefined };
   }, [
     errorInfo,
-    opQuery?.isError,
+    isOperationQueryError,
     settingValidationErrors?.length,
     parameterValidationErrors?.length,
     isMonitoringView,
@@ -344,53 +337,49 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     description: 'Copied text',
   });
 
-  const rootRef = useRef<HTMLDivElement | null>(null);
-
   const nodeIndex = useNodeIndex(id);
 
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <div ref={rootRef}>
-          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-          <Card
-            title={label}
-            icon={iconUri}
-            draggable={!readOnly && !isTrigger}
-            brandColor={brandColor}
-            id={id}
-            connectionRequired={isConnectionRequired}
-            connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
-            connectorName={connectorName?.result}
-            commentBox={comment}
-            drag={drag}
-            dragPreview={dragPreview}
-            errorMessage={errorMessage}
-            errorLevel={errorLevel}
-            isDragging={isDragging}
-            isLoading={isLoading}
-            isMonitoringView={isMonitoringView}
-            runData={runData}
-            readOnly={readOnly}
-            onClick={nodeClick}
-            onDeleteClick={deleteClick}
-            onCopyClick={copyClick}
-            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
-            contextMenuItems={contextMenuItems}
-            setFocus={shouldFocus}
-            staticResultsEnabled={!!staticResults}
-            isSecureInputsOutputs={isSecureInputsOutputs}
-            nodeIndex={nodeIndex}
-          />
-          <Tooltip
-            positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
-            withArrow
-            content={copiedText}
-            relationship="description"
-            visible={showCopyCallout}
-          />
-          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
-        </div>
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <Card
+          title={label}
+          icon={iconUri}
+          draggable={!readOnly && !isTrigger}
+          brandColor={brandColor}
+          id={id}
+          connectionRequired={isConnectionRequired}
+          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
+          connectorName={connectorName?.result}
+          commentBox={comment}
+          drag={drag}
+          dragPreview={dragPreview}
+          errorMessage={errorMessage}
+          errorLevel={errorLevel}
+          isDragging={isDragging}
+          isLoading={isLoading}
+          isMonitoringView={isMonitoringView}
+          runData={runData}
+          readOnly={readOnly}
+          onClick={nodeClick}
+          onDeleteClick={deleteClick}
+          onCopyClick={copyClick}
+          selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
+          contextMenuItems={contextMenuItems}
+          setFocus={shouldFocus}
+          staticResultsEnabled={!!staticResults}
+          isSecureInputsOutputs={isSecureInputsOutputs}
+          nodeIndex={nodeIndex}
+        />
+        <Tooltip
+          positioning={{ target: ref.current, position: 'below', align: 'end' }}
+          withArrow
+          content={copiedText}
+          relationship="description"
+          visible={showCopyCallout}
+        />
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

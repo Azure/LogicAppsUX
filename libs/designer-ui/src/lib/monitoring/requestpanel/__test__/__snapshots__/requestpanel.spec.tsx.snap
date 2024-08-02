@@ -3152,7 +3152,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
           className="msla-trace-inputs-outputs-header-text"
           style={
             {
-              "borderColor": "rgba(71,71,71, 0.7)",
+              "borderColor": "#474747B3",
             }
           }
         >
@@ -3759,7 +3759,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
           className="msla-trace-inputs-outputs-header-text"
           style={
             {
-              "borderColor": "rgba(71,71,71, 0.7)",
+              "borderColor": "#474747B3",
             }
           }
         >
