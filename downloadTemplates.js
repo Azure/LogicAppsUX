@@ -1,32 +1,40 @@
-import fs from 'fs-extra';
+/* eslint-disable no-undef */
+import { existsSync, createWriteStream } from 'fs';
+import { mkdir, writeFile, rm } from 'fs/promises';
+import { Readable } from 'stream';
+import { finished } from 'stream/promises';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/master`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
 
-const removeTemplatesFolderIfPresent = () => {
-  if (fs.existsSync(templatesFolder)) {
-    fs.rmSync(templatesFolder, { recursive: true });
+const downloadFile = async (url, fileName) => {
+  const res = await fetch(url);
+  const fileStream = createWriteStream(fileName, { flags: 'wx' });
+  await finished(Readable.fromWeb(res.body).pipe(fileStream));
+  return fetch(url);
+};
+
+const removeTemplatesFolderIfPresent = async () => {
+  if (existsSync(templatesFolder)) {
+    await rm(templatesFolder, { recursive: true });
   }
 };
 
 const createTemplatesFolder = async (path) => {
-  await fs.mkdir(`${templatesFolder}/${path}`, { recursive: true });
+  await mkdir(`${templatesFolder}/${path}`, { recursive: true });
 };
 
 const downloadManifest = async () => {
   const manifestUrl = `${baseURL}/manifest.json`;
-  // eslint-disable-next-line no-undef
-  const manifestRes = await fetch(manifestUrl);
-  const data = await manifestRes.json();
-  await fs.writeFile(`${templatesFolder}/manifest.json`, JSON.stringify(data, null, 2));
-  return data;
+  const manifestLocation = `${templatesFolder}/manifest.json`;
+  const res = await downloadFile(manifestUrl, manifestLocation);
+  return await res.json();
 };
 
 const downloadTemplate = async (path) => {
   const templateManifestUrl = `${baseURL}/${path}/manifest.json`;
-  // eslint-disable-next-line no-undef
-  const templateManifestRes = await fetch(templateManifestUrl);
-  const templateManifest = await templateManifestRes.json();
+  const templateManifestFileLocation = `${templatesFolder}/${path}/manifest.json`;
+  const templateManifest = await (await downloadFile(templateManifestUrl, templateManifestFileLocation)).json();
   for (const artifact of templateManifest.artifacts) {
     if (artifact.file.endsWith('.json')) {
       // We only support .json for now
@@ -37,20 +45,16 @@ const downloadTemplate = async (path) => {
     light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
     dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
   };
-
-  await fs.writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2));
+  await await writeFile(templateManifestFileLocation, JSON.stringify(templateManifest, null, 2));
 };
 
 const downloadJsonArtifact = async (path) => {
   const artifactUrl = `${baseURL}/${path}`;
-  // eslint-disable-next-line no-undef
-  const artifactRes = await fetch(artifactUrl);
-  const data = await artifactRes.json();
-  await fs.writeFile(`${templatesFolder}/${path}`, JSON.stringify(data, null, 2));
+  await downloadFile(artifactUrl, `${templatesFolder}/${path}`);
 };
 
 const run = async () => {
-  removeTemplatesFolderIfPresent();
+  await removeTemplatesFolderIfPresent();
   await createTemplatesFolder('');
   const value = await downloadManifest();
   for (const path of value) {
