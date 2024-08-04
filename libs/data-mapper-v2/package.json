@@ -22,6 +22,7 @@
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
     "js-yaml": "4.1.0",
+    "lodash": "^4.17.21",
     "pathfinding": "0.4.18",
     "react-dnd": "16.0.1",
     "react-dnd-html5-backend": "16.0.1",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
+    "@types/lodash": "^4.17.7",
     "@types/pathfinding": "^0.0.9"
   },
   "engines": {

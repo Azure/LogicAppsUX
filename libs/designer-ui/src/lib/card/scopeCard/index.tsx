@@ -119,22 +119,24 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             </button>
             <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
           </div>
-          <div className="msla-card-v2-footer" onClick={handleClick}>
-            <div className="msla-badges">
-              {badges.map(({ title, content, darkBackground, iconProps }) => (
-                <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
-                  <div>
-                    <Icon
-                      className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-                      {...iconProps}
-                      aria-label={`${title}: ${content}`}
-                      tabIndex={nodeIndex}
-                    />
-                  </div>
-                </Tooltip>
-              ))}
+          {badges.length > 0 && (
+            <div className="msla-card-v2-footer" onClick={handleClick}>
+              <div className="msla-badges">
+                {badges.map(({ title, content, darkBackground, iconProps }) => (
+                  <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
+                    <div>
+                      <Icon
+                        className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
+                        {...iconProps}
+                        aria-label={`${title}: ${content}`}
+                        tabIndex={nodeIndex}
+                      />
+                    </div>
+                  </Tooltip>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         {contextMenuItems?.length > 0 ? (
           <CardContextMenu
