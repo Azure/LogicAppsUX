@@ -886,7 +886,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
+      it('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
         simpleMap['ns0:Root'] = {
           LoopingWithIndex: {
             WeatherSummary: {
@@ -1220,7 +1220,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
       });
 
-      it.skip('Everything test', () => {
+      it('Everything test', () => {
         const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {

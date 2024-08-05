@@ -87,8 +87,8 @@ export class MapDefinitionDeserializer {
 
   private removePropertySymbolFromKey = (key: string) => {
     let formattedTargetKey = key;
-    if (key.startsWith('$@')) {
-      formattedTargetKey = key.substring(2);
+    if (key.startsWith('$')) {
+      formattedTargetKey = key.substring(1);
     }
     return formattedTargetKey;
   };
@@ -390,9 +390,8 @@ export class MapDefinitionDeserializer {
       this._createdNodes
     ) as FunctionData;
     const funcKey = createReactFlowFunctionKey(func);
-    func.key = funcKey;
 
-    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], func, connections);
+    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], { ...func, key: funcKey }, connections);
     this.getFunctionForKey(funcKey);
     this._conditional.key = funcKey;
     this._conditional.needsConnection = true;
