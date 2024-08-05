@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../../core';
+import { useAllOperations, type AppDispatch } from '../../core';
 import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
@@ -30,7 +30,7 @@ import {
   replaceWhiteSpaceWithUnderscore,
   LogEntryLevel,
   LoggerService,
-} from '@microsoft/logic-apps-shared';
+  UiInteractionsService} from '@microsoft/logic-apps-shared';
 import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -38,6 +38,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useOnViewportChange } from '@xyflow/react';
+import { CustomMenu } from './customMenu';
 
 export interface DropZoneProps {
   graphId: string;
@@ -58,6 +59,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const [showNoPasteCallout, setShowNoPasteCallout] = useState(false);
   const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
   const [isPasteEnabled, setIsPasteEnabled] = useState(false);
+  const { data: preloadedOperations } = useAllOperations();
+  // Remove duplicates from allOperations and activeSearchOperations
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -356,6 +359,13 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                       </MenuItem>
                     </>
                   )}
+                  {UiInteractionsService()?.getAddButtonDropdownMenuItems?.({graphId, parentId, childId, preloadedOperations, dispatch}).map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <CustomMenu item={item}/>
+                      </div>
+                    )
+                  })}
                 </MenuList>
               </PopoverSurface>
             </Popover>
@@ -390,3 +400,5 @@ async function retrieveClipboardData() {
     return null;
   }
 }
+
+
