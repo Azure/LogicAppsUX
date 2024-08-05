@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.7](https://github.com/Azure/LogicAppsUX/compare/v4.44.6...v4.44.7) (2024-08-05)
+
+
+### Bug Fixes
+
+* **vscode:** Auto Runtime Dependencies installation of latest FuncCoreTools ([#5282](https://github.com/Azure/LogicAppsUX/issues/5282)) ([77f580a](https://github.com/Azure/LogicAppsUX/commit/77f580a49a878a22d0e2eb543268b9bc3180a72c)), closes [#5263](https://github.com/Azure/LogicAppsUX/issues/5263)
+
 ### [4.44.6](https://github.com/Azure/LogicAppsUX/compare/v4.44.5...v4.44.6) (2024-08-05)
 
 
