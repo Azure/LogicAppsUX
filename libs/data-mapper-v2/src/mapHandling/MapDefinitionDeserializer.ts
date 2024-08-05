@@ -300,9 +300,9 @@ export class MapDefinitionDeserializer {
       if (typeof rightSideStringOrObject === 'string') {
         // must connect conditional
 
-        // danielle this is messsyyyyyy- basically connects the right side to the if function instead of the node directly
+        // danielle this is messsyyyyyy- basically connects the right side (source) to the if function instead of the node directly
         if (this._conditional.needsConnection) {
-          const ifFunction = this.getFunctionForKey(this._conditional.key) as FunctionData;
+          const ifFunction = connections[this._conditional.key].self.node as FunctionData;
           this.handleSingleValueOrFunction(rightSideStringOrObject, undefined, ifFunction, connections);
           this._conditional.needsConnection = false;
         } else {

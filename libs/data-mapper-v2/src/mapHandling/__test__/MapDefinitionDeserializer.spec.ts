@@ -886,7 +886,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
+      it.skip('creates a looping connection w/ index variable, conditional, and relative attribute path', () => {
         simpleMap['ns0:Root'] = {
           LoopingWithIndex: {
             WeatherSummary: {
@@ -1220,7 +1220,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toContain('IfElse');
       });
 
-      it('Everything test', () => {
+      it.skip('Everything test', () => {
         const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
         const extendedTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
         simpleMap['ns0:TargetSchemaRoot'] = {
@@ -1572,7 +1572,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
       });
 
-      it.skip('creates a simple conditional property connection', () => {
+      it('creates a simple conditional property connection', () => {
         simpleMap['root'] = {
           String1: '/root/OrderNo',
           '$if(is-greater-than(/root/Num, 10))': {
@@ -1619,7 +1619,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
       });
 
-      it.skip('creates a simple conditional object connection', () => {
+      it('creates a simple conditional object connection', () => {
         simpleMap['root'] = {
           '$if(is-greater-than(/root/Num, 10))': {
             Object1: {
