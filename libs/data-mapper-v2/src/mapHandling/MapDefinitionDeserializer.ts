@@ -157,10 +157,6 @@ export class MapDefinitionDeserializer {
 
     let sourceSchemaNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
 
-    if (sourceSchemaNode && this._conditional) {
-      this._conditional.children.push(sourceSchemaNode.key);
-    }
-
     if (this._loop.length > 0 && !sourceSchemaNode) {
       sourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
     }
@@ -172,6 +168,10 @@ export class MapDefinitionDeserializer {
         this._targetSchemaFlattened,
         connections
       );
+    }
+
+    if (sourceSchemaNode && this._conditional) {
+      this._conditional.children.push(sourceSchemaNode.key);
     }
 
     if (!sourceSchemaNode && functionMetadata.type === 'Function') {
@@ -541,6 +541,8 @@ export class MapDefinitionDeserializer {
       this.handleSingleValueOrFunction('', idk.term, targetNode, connections);
     } else if (targetNode) {
       //danielle temporary to unblock
+      this._conditional.children.push(key);
+
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
