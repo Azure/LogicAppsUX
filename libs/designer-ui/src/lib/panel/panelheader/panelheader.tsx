@@ -133,12 +133,6 @@ export const PanelHeader = ({
 
     const ref = useRef<HTMLButtonElement>(null);
 
-    useEffect(() => {
-      if (!isCollapsed) {
-        ref.current?.focus();
-      }
-    }, [isCollapsed]);
-
     return (
       <Tooltip relationship="label" positioning={'before'} content={buttonText}>
         <Button
