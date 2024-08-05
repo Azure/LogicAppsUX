@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.44.6](https://github.com/Azure/LogicAppsUX/compare/v4.44.5...v4.44.6) (2024-08-05)
+
+
+### Bug Fixes
+
+* **designer:** Fix node rename focus issue ([#5280](https://github.com/Azure/LogicAppsUX/issues/5280)) ([d6c3a84](https://github.com/Azure/LogicAppsUX/commit/d6c3a84dfa49a58a07453fa4d2d497b276756503))
+* **designer:** Update selector for retry history and add useMemo ([#5255](https://github.com/Azure/LogicAppsUX/issues/5255)) ([#5281](https://github.com/Azure/LogicAppsUX/issues/5281)) ([ed77a67](https://github.com/Azure/LogicAppsUX/commit/ed77a67f7e9c5bf96687985782b97a1dc4cffdd3))
+
 ### [4.44.5](https://github.com/Azure/LogicAppsUX/compare/v4.44.4...v4.44.5) (2024-07-31)
 
 
