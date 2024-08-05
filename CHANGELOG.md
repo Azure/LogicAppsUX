@@ -1,4 +1,44 @@
 # Logic Apps Designer
+## [4.54.0](https://github.com/Azure/LogicAppsUX/compare/v4.53.0...v4.54.0) (2024-08-02)
+
+
+### Features
+
+* **Data Mapper:** Active/selected states ([#5249](https://github.com/Azure/LogicAppsUX/issues/5249)) ([e9adeb3](https://github.com/Azure/LogicAppsUX/commit/e9adeb3b2c158652466a05936e6d058acd8e4bd4))
+* **Data Mapper:** Renaming metadata file to be compatible with V1 ([#5253](https://github.com/Azure/LogicAppsUX/issues/5253)) ([2786e5d](https://github.com/Azure/LogicAppsUX/commit/2786e5d20793bb032ab0a581618526605b20b774))
+* **designer:** Flow perf improvements ([#5261](https://github.com/Azure/LogicAppsUX/issues/5261)) ([1648394](https://github.com/Azure/LogicAppsUX/commit/164839465155cdeab47736ee7a5a98b642c8af24))
+* **Templates:** Added DetailDescription + Description as Link Render ([#5254](https://github.com/Azure/LogicAppsUX/issues/5254)) ([1c721bd](https://github.com/Azure/LogicAppsUX/commit/1c721bd9037d02363b8734ff518a7031dc8597fc))
+* **vscode:** Added additional telemetry and information for connection keys ([#5252](https://github.com/Azure/LogicAppsUX/issues/5252)) ([c65b34f](https://github.com/Azure/LogicAppsUX/commit/c65b34f647e6fc236c69f73346f29a403b8d52cc))
+
+
+### Bug Fixes
+
+* **designer-ui:** Prevent `AriaSearchResultsAlert` from returning `undefined` ([#5258](https://github.com/Azure/LogicAppsUX/issues/5258)) ([f842974](https://github.com/Azure/LogicAppsUX/commit/f842974547cbd5e18b3ceca01d2d7238aaee2e04))
+* **designer:** Do not show tenant picker if tenant service is not enabled ([#5251](https://github.com/Azure/LogicAppsUX/issues/5251)) ([799fe27](https://github.com/Azure/LogicAppsUX/commit/799fe27ed73955bf99708178212c9c0a78170478))
+* **Templates:** connector filter not working properly ([#5257](https://github.com/Azure/LogicAppsUX/issues/5257)) ([b013782](https://github.com/Azure/LogicAppsUX/commit/b0137824772a9cb6865b768addbaf13c02ee695f))
+* **vscode:** Auto Runtime Dependencies installation of latest FuncCoreTools ([#5263](https://github.com/Azure/LogicAppsUX/issues/5263)) ([cda359e](https://github.com/Azure/LogicAppsUX/commit/cda359ecbcb1cecafd01fe62a79fdf3c1bdf8c2b))
+
+## [4.53.0](https://github.com/Azure/LogicAppsUX/compare/v4.52.0...v4.53.0) (2024-08-01)
+
+
+### Bug Fixes
+
+* **vscode:** Load node settings to monitoring view in remote app ([#5242](https://github.com/Azure/LogicAppsUX/issues/5242)) ([9e10aa5](https://github.com/Azure/LogicAppsUX/commit/9e10aa56441dc5fcd94415693ea3dff16cbfc7ea))
+
+## [4.52.0](https://github.com/Azure/LogicAppsUX/compare/v4.51.0...v4.52.0) (2024-07-31)
+
+
+### Features
+
+* **data mapper:** Auto-layout function nodes with canvas size changes ([#5234](https://github.com/Azure/LogicAppsUX/issues/5234)) ([52d20fb](https://github.com/Azure/LogicAppsUX/commit/52d20fb45837fde7b40316a6ff65369a8dd2f586))
+* **vscode:** Add telemetry for refreshing expired connection keys ([#5235](https://github.com/Azure/LogicAppsUX/issues/5235)) ([a4004a7](https://github.com/Azure/LogicAppsUX/commit/a4004a7065325e9fa789dbfbd14539055a67a035))
+
+
+### Bug Fixes
+
+* **designer:** Fixed issue with some advanced parameters not initializing properly ([#5240](https://github.com/Azure/LogicAppsUX/issues/5240)) ([67a004b](https://github.com/Azure/LogicAppsUX/commit/67a004be393e81cb6a096dc41829d7af40c11218))
+* **designer:** Improve types in `updateDynamicDataInNode` to prevent issues ([#5239](https://github.com/Azure/LogicAppsUX/issues/5239)) ([9ad9de1](https://github.com/Azure/LogicAppsUX/commit/9ad9de1bbfb97887a327a6b7c5140974346c9b16))
+
 ## [4.51.0](https://github.com/Azure/LogicAppsUX/compare/v4.50.0...v4.51.0) (2024-07-30)
 
 

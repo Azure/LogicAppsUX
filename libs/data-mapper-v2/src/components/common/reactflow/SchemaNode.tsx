@@ -4,20 +4,41 @@ import { mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { useRef, useEffect, useMemo } from 'react';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
+import { useActiveNode } from '../../../core/state/selectors/selectors';
+import { useDispatch } from 'react-redux';
+import { setSelectedItem } from '../../../core/state/DataMapSlice';
 
 const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataProps>, 'schema'>>) => {
   const divRef = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch();
   const { data, id } = props;
   const { isLeftDirection } = data;
   const updateNodeInternals = useUpdateNodeInternals();
   const edges = useEdges();
   const styles = useStyles();
-  const handleStyle = mergeClasses(
-    styles.handleWrapper,
-    isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper
-  );
-  // danielle update this to move away from edges
+
   const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
+  const isActive = useActiveNode(id);
+
+  const styleForState = useMemo(() => {
+    const directionalStyle = mergeClasses(
+      styles.handleWrapper,
+      isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper
+    );
+    if (isActive !== undefined) {
+      return mergeClasses(directionalStyle, styles.activeHandle);
+    }
+    if (isConnected) {
+      return mergeClasses(directionalStyle, styles.handleConnected);
+    }
+    return directionalStyle;
+  }, [isActive, isConnected, styles, isLeftDirection]);
+
+  const handleStyle = styleForState;
+
+  const setActiveNode = () => {
+    dispatch(setSelectedItem(id));
+  };
 
   useEffect(() => {
     updateNodeInternals(id);
@@ -27,8 +48,8 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
       <Handle
         type={isLeftDirection ? 'source' : 'target'}
         position={isLeftDirection ? Position.Left : Position.Right}
-        className={mergeClasses(handleStyle, isConnected ? styles.handleConnected : '')}
-        isConnectable={true}
+        className={handleStyle}
+        onMouseDown={setActiveNode}
       />
     </div>
   );
