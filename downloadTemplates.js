@@ -3,6 +3,7 @@ import { existsSync, createWriteStream } from 'fs';
 import { mkdir, writeFile, rm } from 'fs/promises';
 import { Readable } from 'stream';
 import { finished } from 'stream/promises';
+import client from 'https';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/master`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
@@ -41,16 +42,21 @@ const downloadTemplate = async (path) => {
       await downloadJsonArtifact(`${path}/${artifact.file}`);
     }
   }
-  templateManifest.images = {
-    light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
-    dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
-  };
-  await await writeFile(templateManifestFileLocation, JSON.stringify(templateManifest, null, 2));
+  await downloadImage(`${path}/${templateManifest.images.light}.png`);
+  await downloadImage(`${path}/${templateManifest.images.dark}.png`);
+  await writeFile(templateManifestFileLocation, JSON.stringify(templateManifest, null, 2));
 };
 
 const downloadJsonArtifact = async (path) => {
   const artifactUrl = `${baseURL}/${path}`;
   await downloadFile(artifactUrl, `${templatesFolder}/${path}`);
+};
+
+const downloadImage = async (path) => {
+  const artifactUrl = `${baseURL}/${path}`;
+  client.get(artifactUrl, (res) => {
+    res.pipe(createWriteStream(`${templatesFolder}/${path}`));
+  });
 };
 
 const run = async () => {
