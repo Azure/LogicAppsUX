@@ -19,8 +19,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
     let simpleMap: MapDefinitionEntry = {};
 
-    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
-    const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
+    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
 
     beforeEach(() => {
       simpleMap = {
@@ -38,13 +38,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     });
 
     describe('convertFromMapDefinition', () => {
-      it.only('customerSchema', () => {
+      it('processes schemas with an sName', () => {
         const customerTarget = convertSchemaToSchemaExtended(customerSchema as any as DataMapSchema);
         const customerSource = customerTarget;
         simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
           'tns:PROJECT_REQUEST': {
             'tns:INTEGRATION_HEADER': {
-              'tns:senderSystem': '/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:INTEGRATION_HEADER/tns:senderSystem',
+              'tns:SenderSystem': '/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:INTEGRATION_HEADER/tns:SenderSystem',
             },
           },
         };
@@ -82,6 +82,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       });
 
       it('creates a connection between one source and target node with leading @', () => {
+        // danielle diagnose this
         simpleMap['ns0:Root'] = {
           DataTranslation: {
             EmployeeName: {
@@ -328,7 +329,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
-      it.skip('creates a simple conditional property connection', () => {
+      it('creates a simple conditional property connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
@@ -376,7 +377,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it.skip('creates a conditional property connection', () => {
+      it('creates a conditional property connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
@@ -434,7 +435,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it.skip('creates a simple conditional object connection', () => {
+      it('creates a simple conditional object connection', () => {
         simpleMap['ns0:Root'] = {
           '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemQuantity, 200))': {
             ConditionalMapping: {
@@ -485,7 +486,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it.skip('creates a conditional object connection', () => {
+      it('creates a conditional object connection', () => {
         simpleMap['ns0:Root'] = {
           '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
             ConditionalMapping: {
@@ -650,7 +651,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
       });
 
-      it.skip('creates a looping conditional connection', () => {
+      it('creates a looping conditional connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalLooping: {
             '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
@@ -2279,8 +2280,29 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     });
   });
 
+  describe('getLowestCommonParentForConditional', () => {
+    let simpleMap: MapDefinitionEntry = {};
+
+    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
+    const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+
+    it('gets correct lowest common parent for two nodes', () => {
+      const children = ['/ns0:Root/ConditionalMapping/ItemQuantity', '/ns0:Root/ConditionalMapping/ItemPrice'];
+      const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
+      expect(lowestCommonParent).toEqual('/ns0:Root/ConditionalMapping');
+    });
+
+    it('gets correct lowest common parent when parent is an input', () => {
+      const children = ['/ns0:Root/idk/ConditionalMapping/ItemQuantity', '/ns0:Root/idk/ConditionalMapping/ItemPrice', '/ns0:Root/idk'];
+
+      const lowestCommonParent = mapDefinitionDeserializer.getLowestCommonParentForConditional(children);
+      expect(lowestCommonParent).toEqual('/ns0:Root/idk');
+    });
+  });
+
   it('gets correct target node for json schema', () => {
-    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema as any as DataMapSchema);
     const root = extendedTarget.schemaTreeRoot;
     const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
 
