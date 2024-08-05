@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.45.5](https://github.com/Azure/LogicAppsUX/compare/v4.45.4...v4.45.5) (2024-08-05)
+
+
+### Bug Fixes
+
+* **designer:** Fix node rename focus issue ([#5284](https://github.com/Azure/LogicAppsUX/issues/5284)) ([dc7fe03](https://github.com/Azure/LogicAppsUX/commit/dc7fe03cc778d33c8330743f573546cc2c22c1af))
+
 ### [4.45.4](https://github.com/Azure/LogicAppsUX/compare/v4.45.3...v4.45.4) (2024-07-31)
 
 
