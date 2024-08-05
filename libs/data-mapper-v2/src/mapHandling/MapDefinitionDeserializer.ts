@@ -15,7 +15,7 @@ import {
 } from '../utils/DataMap.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
-import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
+import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 
@@ -30,6 +30,7 @@ interface ConditionalMetadata {
   needsConnection: boolean;
   key: string;
   children: string[];
+  needsObjectConnection: boolean;
 }
 export class MapDefinitionDeserializer {
   private readonly _mapDefinition: MapDefinitionEntry;
@@ -58,6 +59,7 @@ export class MapDefinitionDeserializer {
       key: '',
       needsConnection: false,
       children: [],
+      needsObjectConnection: false,
     };
     this._loop = [];
 
@@ -258,7 +260,11 @@ export class MapDefinitionDeserializer {
     return this._functions.find((func) => func.key === key);
   };
 
-  private addConditionalConnectionIfNeeded = (connections: ConnectionDictionary, targetNode: SchemaNodeExtended | FunctionData) => {
+  // connection from the conditional function to the target node
+  private addConnectionFromConditionalToTargetIfNeeded = (
+    connections: ConnectionDictionary,
+    targetNode: SchemaNodeExtended | FunctionData
+  ) => {
     if (this._conditional.needsConnection) {
       const ifFunction = connections[this._conditional.key].self.node as FunctionData;
       applyConnectionValue(connections, {
@@ -270,7 +276,10 @@ export class MapDefinitionDeserializer {
           node: ifFunction,
         },
       });
-      this._conditional.needsConnection = false;
+      if (isSchemaNodeExtended(targetNode) && targetNode.children.length !== 0) {
+        this._conditional.needsObjectConnection = true;
+        this._conditional.needsConnection = false;
+      }
     }
   };
 
@@ -285,12 +294,13 @@ export class MapDefinitionDeserializer {
       const targetNode = this.getTargetNodeInContextOfParent(currentTarget, parentTargetNode);
 
       this.addLoopConnectionIfNeeded(connections, targetNode as SchemaNodeExtended);
-      this.addConditionalConnectionIfNeeded(connections, targetNode);
+      this.addConnectionFromConditionalToTargetIfNeeded(connections, targetNode);
 
       // if right side is string- process it, if object, process all children
       if (typeof rightSideStringOrObject === 'string') {
         // must connect conditional
-        // danielle this is messsyyyyyy
+
+        // danielle this is messsyyyyyy- basically connects the right side to the if function instead of the node directly
         if (this._conditional.needsConnection) {
           const ifFunction = this.getFunctionForKey(this._conditional.key) as FunctionData;
           this.handleSingleValueOrFunction(rightSideStringOrObject, undefined, ifFunction, connections);
@@ -349,22 +359,25 @@ export class MapDefinitionDeserializer {
     Object.entries(rightSideStringOrObject).forEach((child) => {
       this.createConnectionsForLMLObject(child[1], child[0], parentTargetNode, connections);
     });
-    const lowestCommonParent = this.getLowestCommonParentForConditional(this._conditional.children);
-    if (lowestCommonParent) {
-      applyConnectionValue(connections, {
-        targetNode: this.getFunctionForKey(this._conditional.key) as FunctionData,
-        targetNodeReactFlowKey: this._conditional.key,
-        inputIndex: 1,
-        input: {
-          reactFlowKey: addSourceReactFlowPrefix(lowestCommonParent),
-          node: findNodeForKey(lowestCommonParent, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended,
-        },
-      });
+    if (this._conditional.needsObjectConnection) {
+      const lowestCommonParent = this.getLowestCommonParentForConditional(this._conditional.children);
+      if (lowestCommonParent) {
+        applyConnectionValue(connections, {
+          targetNode: this.getFunctionForKey(this._conditional.key) as FunctionData,
+          targetNodeReactFlowKey: this._conditional.key,
+          inputIndex: 1,
+          input: {
+            reactFlowKey: addSourceReactFlowPrefix(lowestCommonParent),
+            node: findNodeForKey(lowestCommonParent, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended,
+          },
+        });
+      }
     }
     this._conditional = {
       key: '',
       needsConnection: false,
       children: [],
+      needsObjectConnection: false,
     };
   };
 
