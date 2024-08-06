@@ -37,6 +37,7 @@ import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/re
 import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
+import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -174,6 +175,33 @@ export const Designer = (props: DesignerProps) => {
   // This delayes the query until the workflowKind is available
   useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
 
+  // Our "onlyRenderVisibleElements" prop makes offscreen nodes inaccessible to tab navigation.
+  // In order to maintain accessibility, we are disabling this prop for tab navigation users
+  // We are inferring tab nav users if they press the tab key 5 times within the first 10 seconds
+  // This is not exact but should cover most cases
+  const [userInferredTabNavigation, setUserInferredTabNavigation] = useState(false);
+  useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+    const tabCountTimeout = 10;
+    const tabCountThreshold = 4;
+    let tabCount = 0;
+    const tabListener = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        tabCount++;
+        if (tabCount > tabCountThreshold) {
+          document.removeEventListener('keydown', tabListener);
+          setUserInferredTabNavigation(true);
+        }
+      }
+    };
+    document.addEventListener('keydown', tabListener);
+    setTimeout(() => {
+      document.removeEventListener('keydown', tabListener);
+    }, tabCountTimeout * 1000);
+  }, [isInitialized]);
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
@@ -197,6 +225,7 @@ export const Designer = (props: DesignerProps) => {
             minZoom={0.05}
             onPaneClick={() => dispatch(clearPanel({}))}
             disableKeyboardA11y={true}
+            onlyRenderVisibleElements={!userInferredTabNavigation}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
@@ -205,6 +234,7 @@ export const Designer = (props: DesignerProps) => {
             <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
+            <DesignerContextualMenu />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />

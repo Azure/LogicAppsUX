@@ -737,6 +737,9 @@ importers:
       '@xyflow/react':
         specifier: ^12.0.2
         version: 12.0.2(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      elkjs:
+        specifier: 0.9.1
+        version: 0.9.1
       fuse.js:
         specifier: 6.6.2
         version: 6.6.2
@@ -746,6 +749,9 @@ importers:
       js-yaml:
         specifier: 4.1.0
         version: 4.1.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       pathfinding:
         specifier: 0.4.18
         version: 0.4.18
@@ -783,6 +789,9 @@ importers:
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
+      '@types/lodash':
+        specifier: ^4.17.7
+        version: 4.17.7
       '@types/pathfinding':
         specifier: ^0.0.9
         version: 0.0.9
@@ -5195,6 +5204,9 @@ packages:
   '@types/lodash@4.17.0':
     resolution: {integrity: sha512-t7dhREVv6dbNj0q17X12j7yDG4bD/DHYX7o5/DbDxobP0HnGPgpRz2Ej77aL7TZT3DSw13fqUTj8J4mMnqa7WA==}
 
+  '@types/lodash@4.17.7':
+    resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
+
   '@types/mdast@3.0.15':
     resolution: {integrity: sha512-LnwD+mUEfxWMa1QpDraczIn6k0Ee3SMicuYSSzS6ZYl2gKS09EClnJYGd8Du6rfc5r/GZEk5o1mRb8TaTj03sQ==}
 
@@ -6892,6 +6904,9 @@ packages:
 
   elkjs@0.8.2:
     resolution: {integrity: sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==}
+
+  elkjs@0.9.1:
+    resolution: {integrity: sha512-JWKDyqAdltuUcyxaECtYG6H4sqysXSLeoXuGUBfRNESMTkj+w+qdb0jya8Z/WI0jVd03WQtCGhS6FOFtlhD5FQ==}
 
   elliptic@6.5.5:
     resolution: {integrity: sha512-7EjbcmUm17NQFu4Pmgmq2olYMj8nwMnpcddByChSUjArp8F5DQWcIcpriwO4ZToLNAJig0yiyjswfyGNje/ixw==}
@@ -18519,7 +18534,7 @@ snapshots:
   '@testing-library/react-hooks@8.0.1(@types/react@18.3.0)(react-test-renderer@18.2.0)':
     dependencies:
       '@babel/runtime': 7.24.1
-      react-error-boundary: 3.1.4
+      react-error-boundary: 3.1.4(react@18.2.0)
     optionalDependencies:
       '@types/react': 18.3.0
       react-test-renderer: 18.2.0
@@ -18819,6 +18834,8 @@ snapshots:
       '@types/lodash': 4.17.0
 
   '@types/lodash@4.17.0': {}
+
+  '@types/lodash@4.17.7': {}
 
   '@types/mdast@3.0.15':
     dependencies:
@@ -20867,6 +20884,8 @@ snapshots:
   electron-to-chromium@1.4.716: {}
 
   elkjs@0.8.2: {}
+
+  elkjs@0.9.1: {}
 
   elliptic@6.5.5:
     dependencies:
@@ -24776,13 +24795,9 @@ snapshots:
       react: 18.2.0
       scheduler: 0.23.0
 
-  react-error-boundary@3.1.4:
-    dependencies:
-      '@babel/runtime': 7.24.1
-
   react-error-boundary@3.1.4(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.24.1
       react: 18.2.0
 
   react-error-overlay@6.0.11: {}

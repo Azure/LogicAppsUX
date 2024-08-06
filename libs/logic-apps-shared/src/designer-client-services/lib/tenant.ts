@@ -21,3 +21,7 @@ export const TenantService = (): ITenantService => {
 
   return service;
 };
+
+export const isTenantServiceEnabled = (): boolean => {
+  return !!service;
+};

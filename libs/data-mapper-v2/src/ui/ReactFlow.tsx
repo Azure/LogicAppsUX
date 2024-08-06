@@ -8,12 +8,15 @@ import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { updateFunctionPosition, makeConnectionFromMap } from '../core/state/DataMapSlice';
+import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../core';
 import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
+import { createEdgeId } from '../utils/Edge.Utils';
+import useAutoLayout from './hooks/useAutoLayout';
+import cloneDeep from 'lodash/cloneDeep';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -39,7 +42,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
       return layout.edges.map((edge) => {
         const newEdge: Edge = {
-          id: `${edge.sourceId}-${edge.targetId}`,
+          id: createEdgeId(edge.sourceId, edge.targetId),
           source: edge.sourceId,
           target: edge.targetId,
           type: 'connectedEdge',
@@ -53,6 +56,8 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
 
     return [];
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes]);
+
+  useAutoLayout();
 
   useLayoutEffect(() => {
     if (ref?.current) {
@@ -115,6 +120,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         reactFlowDestination: connection.target ?? '',
       };
       dispatch(makeConnectionFromMap(connectionAction));
+      dispatch(setSelectedItem(connection.target));
     },
     [edges, dispatch]
   );
@@ -174,24 +180,28 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     [dispatch]
   );
 
+  const nodes = useMemo(
+    () => [...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop],
+    [sourceNodesMap, targetNodesMap, functionNodesForDragDrop]
+  );
+
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
       <ReactFlow
         id="dm-react-flow"
         ref={drop}
-        nodes={[...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop]}
+        nodes={cloneDeep(nodes)}
         edges={edges}
         nodeDragThreshold={0}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
-        nodesConnectable={true}
         zoomOnDoubleClick={false}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         preventScrolling={false}
         minZoom={1}
-        elementsSelectable={false}
+        elementsSelectable={true}
         maxZoom={1}
         autoPanOnConnect={false}
         snapToGrid={true}
@@ -207,6 +217,15 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         isValidConnection={isValidConnection}
         onConnect={onEdgeConnect}
         connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
+        elevateEdgesOnSelect={true}
+        nodeExtent={
+          ref?.current?.getBoundingClientRect()
+            ? [
+                [0, 0],
+                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
+              ]
+            : undefined
+        }
         translateExtent={
           ref?.current?.getBoundingClientRect()
             ? [

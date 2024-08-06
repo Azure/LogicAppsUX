@@ -27,4 +27,7 @@ export const useStyles = makeStyles({
     paddingRight: '5px',
     paddingLeft: '10px',
   },
+  footer: {
+    backgroundColor: 'transparent',
+  },
 });
