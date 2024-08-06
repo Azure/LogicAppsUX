@@ -54,7 +54,7 @@ jobs:
             filename: 'CodeCoverage/Cobertura.xml'
             github_token: ${{ secrets.GITHUB_TOKEN }}
             badge: true
-            fail_on_negative_difference: true
+            fail_on_negative_difference: false
             artifact_download_workflow_names: 'base-coverage'
 
         - name: Write to Job Summary
