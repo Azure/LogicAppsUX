@@ -2,8 +2,8 @@ import Elk, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { useEffect, useState } from 'react';
 import { type Node, type Edge, type XYPosition, useStore } from '@xyflow/react';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../core/state/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
 
 // the layout direction (T = top, R = right, B = bottom, L = left, TB = top to bottom, ...)
@@ -99,6 +99,7 @@ function compareNodes(xs: Map<string, Node>, ys: Map<string, Node>) {
 const useAutoLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [isLayouted, setIsLayouted] = useState(false);
+  const fullLayoutNeeded = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.fullLayoutNeeded);
   // Here we are storing a map of the nodes and edges in the flow. By using a
   // custom equality function as the second argument to `useStore`, we can make
   // sure the layout algorithm only runs when something has changed that should
@@ -121,7 +122,7 @@ const useAutoLayout = () => {
     // Only run the layout if there are nodes and they have been initialized with
     // their dimensions
     // does not run on first node placed
-    if (functionNodes.length === 0 || isLayouted || (functionNodes.length === 1 && functionNodes[0].position.x !== 0)) {
+    if (functionNodes.length === 0 || isLayouted || !fullLayoutNeeded) {
       return;
     }
 
