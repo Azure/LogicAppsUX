@@ -1,9 +1,10 @@
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { clearDynamicIO, type ClearDynamicIOPayload } from '../operation/operationMetadataSlice';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export type UpdateUpstreamNodesPayload = Record<string, string[]>;
 export interface NodeTokens {
@@ -130,6 +131,7 @@ export const tokensSlice = createSlice({
       }
     });
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.tokens);
   },
 });
 

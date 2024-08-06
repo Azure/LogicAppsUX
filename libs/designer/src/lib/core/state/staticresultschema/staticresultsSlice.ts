@@ -1,7 +1,8 @@
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface StaticResultsState {
   schemas: Record<string, OpenApiSchema>; // { [connectorid-operationid]: Schema }
@@ -46,6 +47,7 @@ export const staticResultsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.staticResults);
   },
 });
 
