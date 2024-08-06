@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.8](https://github.com/Azure/LogicAppsUX/compare/v4.44.7...v4.44.8) (2024-08-06)
+
+
+### Bug Fixes
+
+* **vscode:** Fixed issue where isDesignTime is not set properly and to correct workflow-designtime local.settings.json  ([#5298](https://github.com/Azure/LogicAppsUX/issues/5298)) ([b5a4d6c](https://github.com/Azure/LogicAppsUX/commit/b5a4d6c9b227cb00ad53898f456d51b2bf4c858d))
+
 ### [4.44.7](https://github.com/Azure/LogicAppsUX/compare/v4.44.6...v4.44.7) (2024-08-05)
 
 
