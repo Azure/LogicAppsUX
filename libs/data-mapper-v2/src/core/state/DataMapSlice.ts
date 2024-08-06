@@ -404,8 +404,7 @@ export const dataMapSlice = createSlice({
       if (!node) {
         return;
       }
-      const position = node.position;
-      newOp.functionNodes[action.payload.id].position = position;
+      newOp.functionNodes[action.payload.id] = { ...node, position: action.payload.position };
       state.curDataMapOperation = newOp;
     },
 

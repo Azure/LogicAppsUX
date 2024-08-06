@@ -26,6 +26,7 @@ interface DMReactFlowProps {
 export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DMReactFlowProps) => {
   useStaticStyles();
   const styles = useStyles();
+  const { screenToFlowPosition } = useReactFlow();
   const reactFlowInstance = useReactFlow();
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
@@ -175,9 +176,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
 
   const onFunctionNodeDragStop: OnNodeDrag = useCallback(
     (_event, node, _nodes) => {
-      dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
+      dispatch(updateFunctionPosition({ id: node.id, position: screenToFlowPosition({ x: _event.clientX, y: _event.clientY }) }));
     },
-    [dispatch]
+    [dispatch, screenToFlowPosition]
   );
 
   const nodes = useMemo(
@@ -201,7 +202,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edgeTypes={edgeTypes}
         preventScrolling={false}
         minZoom={1}
-        elementsSelectable={true}
+        elementsSelectable={false}
         maxZoom={1}
         autoPanOnConnect={false}
         snapToGrid={true}

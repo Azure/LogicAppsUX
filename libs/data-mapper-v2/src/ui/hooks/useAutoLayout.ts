@@ -120,7 +120,8 @@ const useAutoLayout = () => {
     const functionNodes = nodes.filter((node) => isFunctionNode(node.id));
     // Only run the layout if there are nodes and they have been initialized with
     // their dimensions
-    if (functionNodes.length === 0 || isLayouted) {
+    // does not run on first node placed
+    if (functionNodes.length === 0 || isLayouted || (functionNodes.length === 1 && functionNodes[0].position.x !== 0)) {
       return;
     }
 
