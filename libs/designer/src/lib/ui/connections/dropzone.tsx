@@ -139,7 +139,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             relationshipIds,
             nodeId: copiedNode.nodeId,
             nodeData: copiedNode.nodeData,
-            nodeTokenData: copiedNode.nodeTokenData,
             operationInfo: copiedNode.nodeOperationInfo,
             connectionData: copiedNode.nodeConnectionData,
           })
