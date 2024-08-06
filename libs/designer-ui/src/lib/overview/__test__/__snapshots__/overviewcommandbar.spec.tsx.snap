@@ -84,8 +84,8 @@ exports[`lib/overview/overviewcommandbar > renders with Run trigger button 1`] =
 >
   <button
     aria-label="Run trigger"
-    className="fui-Button r1alrhcs ___oidc8n0_qp3se90 f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1s2aq7o f9ql6rf f1s2uweq fr80ssc f1ukrpxl fecsdlb fvgxktp f19vpps7 fv5swzo f3h1zc4 f1h0usnq fs4ktlq f16h9ulv fx2bmrt fcvwxyo f1ol4fw6 f1q1lw4e f1vmkb5g f1kc2mi9 f1y0svfh fb3rf2x fdrzuqr f15x8b5r fphbwmw f1al02dq f8w4c43 f1dwjv2g f4lkoma fg455y9 f1rvyvqg f1cwzwz f14g86mu f1dcs8yz fjwq6ea f1lr3nhc fn5gmvv f1mbxvi6 f53ppgq f1663y11 f18v5270 f80fkiy fihuait fnxhupq fx507ft fyd6l6x"
-    disabled={true}
+    className="fui-Button r1alrhcs ___eduuxo0_1tclg4b f1c21dwh f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb fjxutwb f1s2uweq fr80ssc f1ukrpxl fecsdlb f139oj5f ft1hn21 fuxngvv fwiml72 f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1fg1p5m f1dfjoow f1j98vj9 f1tme0vf f4xjyn1 f18onu3q f9ddjv3"
+    disabled={false}
     onClick={[Function]}
     title="Run trigger"
     type="button"

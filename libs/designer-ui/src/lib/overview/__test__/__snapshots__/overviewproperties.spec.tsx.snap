@@ -172,6 +172,26 @@ exports[`lib/overview/overviewproperties > renders the callback URL property 1`]
             stateType
           </span>
         </label>
+        <label
+          className="ms-Label root-127"
+        >
+          <span
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+          >
+            Callback URL:
+          </span>
+          <div>
+            <a
+              className="ms-Link root-128"
+              href="callbackInfo.value"
+              onClick={[Function]}
+              rel="noopener"
+              target="_blank"
+            >
+              callbackInfo.value
+            </a>
+          </div>
+        </label>
       </div>
     </div>
   </div>
