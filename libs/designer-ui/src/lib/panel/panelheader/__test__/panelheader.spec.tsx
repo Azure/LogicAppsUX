@@ -33,7 +33,6 @@ describe('lib/panel/panelHeader/main', () => {
       isOutermostPanel: true,
       headerItems: [],
       headerLocation: PanelLocation.Right,
-      horizontalPadding: '',
       panelScope: PanelScope.CardLevel,
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
@@ -87,7 +86,7 @@ describe('lib/panel/panelHeader/main', () => {
       isOutermostPanel: true,
     };
     shallow.render(<PanelHeader {...props} />);
-    const panelHeader = shallow.getRenderOutput();
+    const panelHeader = shallow.getRenderOutput().props.children[0];
     expect(panelHeader.props.className).toBe('msla-panel-header');
 
     const [, fragment]: any[] = React.Children.toArray(panelHeader.props.children);

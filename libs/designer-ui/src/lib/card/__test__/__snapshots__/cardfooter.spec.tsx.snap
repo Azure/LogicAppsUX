@@ -10,6 +10,8 @@ exports[`lib/card/cardfooter > should render 1`] = `
 </div>
 `;
 
+exports[`lib/card/cardfooter > should render 2`] = `null`;
+
 exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
 <div
   className="msla-card-v2-footer"

@@ -64,6 +64,8 @@ const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRa
   return `L ${midX},${midY + bendSize * yDir}Q ${midX},${midY} ${midX + bendSize * xDir},${midY}`;
 };
 
+export const createEdgeId = (sourceId: string, targetId: string) => `${sourceId}-${targetId}`;
+
 const getNextPointFromPosition = (curPoint: XYPosition, position: Position): XYPosition => {
   switch (position) {
     case Position.Top:
