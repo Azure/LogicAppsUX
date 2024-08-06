@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.9](https://github.com/Azure/LogicAppsUX/compare/v4.44.8...v4.44.9) (2024-08-06)
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixed dependency causing issue with React Flow v12 upgrade ([#5271](https://github.com/Azure/LogicAppsUX/issues/5271)) ([9f013b7](https://github.com/Azure/LogicAppsUX/commit/9f013b73b99f9e717fd3085371ebfb0bb2ae01ff))
+
 ### [4.44.8](https://github.com/Azure/LogicAppsUX/compare/v4.44.7...v4.44.8) (2024-08-06)
 
 
