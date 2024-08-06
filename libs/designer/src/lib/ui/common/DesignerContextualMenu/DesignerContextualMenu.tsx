@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CardContextMenu } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { SUBGRAPH_TYPES, WorkflowService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, WorkflowService, getRecordEntry, isScopeOperation } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem } from '../../../ui/menuItems';
@@ -21,7 +21,6 @@ import {
   useNodeSelectAdditionalCallback,
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
-import constants from '../../../common/constants';
 import { CopyTooltip } from './CopyTooltip';
 
 export const DesignerContextualMenu = () => {
@@ -76,7 +75,7 @@ export const DesignerContextualMenu = () => {
   const metadata = useNodeMetadata(nodeId);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const operationInfo = useOperationInfo(nodeId);
-  const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
+  const isScopeNode = useMemo(() => isScopeOperation(operationInfo?.type), [operationInfo?.type]);
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
 
   const resubmitClick = useCallback(() => {
