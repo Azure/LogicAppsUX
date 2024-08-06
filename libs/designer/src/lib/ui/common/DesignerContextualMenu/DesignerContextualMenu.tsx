@@ -115,10 +115,14 @@ export const DesignerContextualMenu = () => {
     [deleteClick, metadata?.subgraphType]
   );
 
-  const menuItems = useMemo(
-    () => (metadata?.subgraphType ? subgraphMenuItems : actionContextMenuItems),
-    [metadata?.subgraphType, subgraphMenuItems, actionContextMenuItems]
-  );
+  const menuItems = useMemo(() => {
+    // Do-Until is a special case, we show normal action context menu items
+    if (metadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO) {
+      return actionContextMenuItems;
+    }
+    // For all other subgraph types, we show the subgraph context menu items
+    return metadata?.subgraphType ? subgraphMenuItems : actionContextMenuItems;
+  }, [metadata, subgraphMenuItems, actionContextMenuItems]);
 
   return (
     <>
