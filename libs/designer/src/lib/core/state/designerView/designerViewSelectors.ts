@@ -12,3 +12,7 @@ export const useClampPan = () => {
 export const useShowDeleteModalNodeId = () => {
   return useSelector((state: RootState) => state.designerView.showDeleteModalNodeId);
 };
+
+export const useNodeContextMenuData = () => {
+  return useSelector((state: RootState) => state.designerView.nodeContextMenuData);
+};

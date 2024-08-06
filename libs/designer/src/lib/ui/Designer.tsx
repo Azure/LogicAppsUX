@@ -37,6 +37,7 @@ import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/re
 import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
+import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -233,6 +234,7 @@ export const Designer = (props: DesignerProps) => {
             <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
+            <DesignerContextualMenu />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />

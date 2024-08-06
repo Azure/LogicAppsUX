@@ -4,7 +4,7 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
@@ -21,7 +21,6 @@ import {
 import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
@@ -99,13 +98,20 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
-  const contextMenuItems: JSX.Element[] = useMemo(
-    () => [
-      ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']
-        ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
-        : []),
-    ],
-    [deleteClick, metadata?.subgraphType]
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: subgraphId,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, subgraphId]
   );
 
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
@@ -139,9 +145,10 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}
+                onContextMenu={onContextMenu}
+                onDeleteClick={deleteClick}
                 collapsed={graphCollapsed}
                 handleCollapse={handleGraphCollapse}
-                contextMenuItems={contextMenuItems}
                 errorLevel={errorLevel}
                 errorMessage={errorMessage}
                 nodeIndex={nodeIndex}
