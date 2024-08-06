@@ -16,7 +16,6 @@ import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/Remo
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
@@ -220,21 +219,4 @@ export async function verifyDeploymentResourceGroup(
     const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
     await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
   }
-}
-
-export const getRequestTriggerName = (definition: LogicAppsV2.WorkflowDefinition): string | undefined => {
-  const { triggers } = definition;
-  for (const triggerName of Object.keys(triggers)) {
-    if (triggers[triggerName].type.toLowerCase() === 'request') {
-      return triggerName;
-    }
-  }
-
-  return undefined;
-};
-
-export function getTriggerName(definition: LogicAppsV2.WorkflowDefinition): string | undefined {
-  const { triggers } = definition;
-  const triggerNames = Object.keys(triggers);
-  return triggerNames.length === 1 ? triggerNames[0] : undefined;
 }

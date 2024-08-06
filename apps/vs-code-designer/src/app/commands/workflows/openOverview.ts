@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -11,9 +11,7 @@ import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWor
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import {
   cacheWebviewPanel,
-  getRequestTriggerName,
   getStandardAppData,
-  getTriggerName,
   getWorkflowManagementBaseURI,
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
