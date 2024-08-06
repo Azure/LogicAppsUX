@@ -8,10 +8,21 @@ import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../../workflows/switchDebugMode/switchDebugMode';
 import type { File } from '../../../utils/codeless/common';
 import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject } from '../../../utils/codeless/common';
-import { connectionsFileName, hostFileName, localSettingsFileName, parametersFileName, Platform, workflowFileName } from '../../../../constants';
+import {
+  artifactsDirectory,
+  connectionsFileName,
+  hostFileName,
+  libDirectory,
+  localSettingsFileName,
+  mapsDirectory,
+  parametersFileName,
+  Platform,
+  schemasDirectory,
+  workflowFileName,
+} from '../../../../constants';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
 
-export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive:string) => {
+export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, smbFolderName: string, mountDrive: string) => {
   const message: string = localize('connectingToMSB', 'Connecting to logic app SMB storage...');
   ext.outputChannel.appendLog(message);
 
@@ -20,17 +31,18 @@ export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, 
     const { hostName, path: fileSharePath, userName, password } = node.fileShare || {};
     await mountSMB(hostName, fileSharePath, userName, password, mountDrive);
     const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-    const smbFolderPath = path.join(mountDrive,smbFolderName)
+    const smbFolderPath = path.join(mountDrive, smbFolderName);
     await fse.ensureDir(smbFolderPath);
     await uploadRootFiles(projectPath, smbFolderPath);
     await uploadWorkflowsFiles(projectPath, smbFolderPath);
     await uploadArtifactsFiles(projectPath, smbFolderPath);
+    await uploadLibFolderFiles(projectPath, smbFolderPath);
   } catch (error) {
-    console.error(`Error deploying to file share: ${error.message}`);
+    throw new Error(`Error uploading files to SMB: ${error.message}`);
   }
 };
 
-const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string, mountDrive:string) => {
+const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string, mountDrive: string) => {
   let mountCommand: string;
   if (process.platform === Platform.windows) {
     mountCommand = `net use ${mountDrive} \\\\${hostName}\\${fileSharePath} ${password} /user:${userName}`;
@@ -69,7 +81,7 @@ const uploadRootFiles = async (projectPath: string | undefined, smbFolderPath: s
 const uploadWorkflowsFiles = async (projectPath: string | undefined, smbFolderPath: string) => {
   const workflowFiles = await getWorkflowsPathInLocalProject(projectPath);
   for (const workflowFile of workflowFiles) {
-    await uploadFiles([{ ...workflowFile, name: workflowFileName }], smbFolderPath);
+    await uploadFiles([{ ...workflowFile, name: path.join(workflowFile.name, workflowFileName) }], smbFolderPath);
   }
 };
 
@@ -77,10 +89,19 @@ const uploadArtifactsFiles = async (projectPath: string | undefined, smbFolderPa
   const artifactsFiles = await getArtifactsPathInLocalProject(projectPath);
 
   if (artifactsFiles.maps.length > 0) {
-    await uploadFiles(artifactsFiles.maps, smbFolderPath);
+    await uploadFiles(artifactsFiles.maps, path.join(smbFolderPath, artifactsDirectory, mapsDirectory));
   }
 
   if (artifactsFiles.schemas.length > 0) {
-    await uploadFiles(artifactsFiles.schemas, smbFolderPath);
+    await uploadFiles(artifactsFiles.schemas, path.join(smbFolderPath, artifactsDirectory, schemasDirectory));
+  }
+};
+
+const uploadLibFolderFiles = async (projectPath: string, smbFolderPath: string) => {
+  const libFolderPath = path.join(projectPath, libDirectory);
+  const remoteFolderPath = path.join(smbFolderPath, libDirectory);
+
+  if (await fse.pathExists(libFolderPath)) {
+    await fse.copy(libFolderPath, remoteFolderPath, { overwrite: true });
   }
 };

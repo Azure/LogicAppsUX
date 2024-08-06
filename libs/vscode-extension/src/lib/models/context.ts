@@ -23,6 +23,7 @@ export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreat
   fileShare?: {
     hostName?: string;
     path?: string;
+    domain?: string;
     userName?: string;
     password?: string;
   };

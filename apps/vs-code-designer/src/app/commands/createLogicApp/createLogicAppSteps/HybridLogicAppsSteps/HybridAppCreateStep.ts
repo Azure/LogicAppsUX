@@ -8,7 +8,7 @@ import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-a
 import type { Progress } from 'vscode';
 import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
-import { createHybridApp, createLogicAppExtension } from '../../../../utils/codeless/hybridLogicApp/hybridApp';
+import { createOrUpdateHybridApp, createLogicAppExtension } from '../../../../utils/codeless/hybridLogicApp/hybridApp';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getAccountCredentials } from '../../../../utils/credentials';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
@@ -35,7 +35,7 @@ export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardC
         siteName: context.newSiteName,
       };
 
-      context.hybridSite = await createHybridApp(context, accessToken, hybridAppOptions);
+      context.hybridSite = await createOrUpdateHybridApp(context, accessToken, hybridAppOptions);
       await createLogicAppExtension(context, accessToken);
     } catch (error) {
       throw new Error(error);
