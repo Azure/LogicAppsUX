@@ -16,6 +16,7 @@ import type { Bounds } from '../core';
 import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
 import { createEdgeId } from '../utils/Edge.Utils';
 import useAutoLayout from './hooks/useAutoLayout';
+import cloneDeep from 'lodash/cloneDeep';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -179,12 +180,17 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     [dispatch]
   );
 
+  const nodes = useMemo(
+    () => [...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop],
+    [sourceNodesMap, targetNodesMap, functionNodesForDragDrop]
+  );
+
   return (
     <div ref={ref} id="editorView" className={styles.canvasWrapper}>
       <ReactFlow
         id="dm-react-flow"
         ref={drop}
-        nodes={[...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop]}
+        nodes={cloneDeep(nodes)}
         edges={edges}
         nodeDragThreshold={0}
         onlyRenderVisibleElements={false}
