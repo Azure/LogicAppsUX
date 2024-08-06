@@ -52,9 +52,9 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, UiInteractionsService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -66,6 +66,9 @@ import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
 import { PinMenuItem } from '../menuItems/pinMenuItem';
+import { Priorities } from './Priorities';
+import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
+import { CustomMenu } from '../connections/customMenu';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -252,16 +255,35 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
-  const contextMenuItems: JSX.Element[] = useMemo(
+
+  const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
+    return items.map((item) => ({
+      priority: item?.priority,
+      renderCustomComponent: () => <CustomMenu item={item} />,
+    }));
+  };
+  const contextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-      <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
-      <PinMenuItem key={'pin'} nodeId={id} onClick={pinClick} />,
-      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
+      ...transformMenuItems(UiInteractionsService()?.getNodeDropdownMenuItems?.({ graphId: metadata?.graphId, nodeId: id }) ?? []),
+      { priority: Priorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      {
+        priority: Priorities.Copy,
+        renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
+      },
+      { priority: Priorities.Pin, renderCustomComponent: () => <PinMenuItem key={'pin'} nodeId={id} onClick={pinClick} /> },
+      ...(runData?.canResubmit
+        ? [{ priority: Priorities.Resubmit, renderCustomComponent: () => <ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} /> }]
+        : []),
+      ...(runAfter
+        ? [{ priority: Priorities.RunAfter, renderCustomComponent: () => <RunAfterMenuItem key={'run after'} onClick={runAfterClick} /> }]
+        : []),
     ],
-    [copyClick, deleteClick, id, isTrigger, pinClick, resubmitClick, runData?.canResubmit, runAfterClick, runAfter]
+    [metadata?.graphId, id, runData?.canResubmit, runAfter, deleteClick, copyClick, pinClick, resubmitClick, runAfterClick]
   );
+
+  const contextMenuItems: JSX.Element[] = contextMenuOptions
+    .sort((a, b) => (a?.priority ?? Priorities.Default) - (b?.priority ?? Priorities.Default))
+    .map((option) => option.renderCustomComponent() as JSX.Element);
 
   const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = useOperationQuery(id);
 

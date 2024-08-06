@@ -1,3 +1,4 @@
 export interface DropdownMenuCustomNode {
-    renderCustomComponent: () => React.ReactNode;
-  }
+  priority?: number;
+  renderCustomComponent: () => React.ReactNode;
+}

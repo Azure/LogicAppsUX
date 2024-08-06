@@ -35,9 +35,16 @@ import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService, getRecordEntry, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import {
+  RunService,
+  UiInteractionsService,
+  WorkflowService,
+  getRecordEntry,
+  removeIdTag,
+  useNodeIndex,
+} from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -54,6 +61,9 @@ import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
 import { RUN_AFTER_PANEL_TAB } from './constants';
 import { shouldDisplayRunAfter } from './helpers';
 import { PinMenuItem } from '../menuItems/pinMenuItem';
+import { Priorities } from './Priorities';
+import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
+import { CustomMenu } from '../connections/customMenu';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -219,16 +229,34 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
-  const contextMenuItems: JSX.Element[] = useMemo(
+  const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
+    return items.map((item) => ({
+      priority: item?.priority,
+      renderCustomComponent: () => <CustomMenu item={item} />,
+    }));
+  };
+  const contextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-      <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
-      <PinMenuItem key={'pin'} nodeId={scopeId} onClick={pinClick} />,
-      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
+      ...transformMenuItems(UiInteractionsService()?.getNodeDropdownMenuItems?.({ graphId: metadata?.graphId, nodeId: scopeId }) ?? []),
+      { priority: Priorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      {
+        priority: Priorities.Copy,
+        renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
+      },
+      { priority: Priorities.Pin, renderCustomComponent: () => <PinMenuItem key={'pin'} nodeId={scopeId} onClick={pinClick} /> },
+      ...(runData?.canResubmit
+        ? [{ priority: Priorities.Resubmit, renderCustomComponent: () => <ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} /> }]
+        : []),
+      ...(runAfter
+        ? [{ priority: Priorities.RunAfter, renderCustomComponent: () => <RunAfterMenuItem key={'run after'} onClick={runAfterClick} /> }]
+        : []),
     ],
-    [deleteClick, copyClick, pinClick, runData?.canResubmit, resubmitClick, runAfterClick, runAfter, scopeId]
+    [metadata?.graphId, scopeId, runData?.canResubmit, runAfter, deleteClick, copyClick, pinClick, resubmitClick, runAfterClick]
   );
+
+  const contextMenuItems: JSX.Element[] = contextMenuOptions
+    .sort((a, b) => (a?.priority ?? Priorities.Default) - (b?.priority ?? Priorities.Default))
+    .map((option) => option.renderCustomComponent() as JSX.Element);
 
   const opQuery = useOperationQuery(scopeId);
 

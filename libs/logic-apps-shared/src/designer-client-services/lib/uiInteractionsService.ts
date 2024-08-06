@@ -2,10 +2,10 @@ import type { UiInteractionData } from '../../utils/src/lib/models/uiInteraction
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 import type { TopLevelDropdownMenuItem } from '../../utils/src/lib/models/topLevelDropdownMenuItem';
 
-
 export interface IDesignerUiInteractionsService {
-    getAddButtonDropdownMenuItems?: (previousNodeData: UiInteractionData | undefined) => TopLevelDropdownMenuItem[];
-  }
+  getAddButtonDropdownMenuItems?: (previousNodeData: UiInteractionData | undefined) => TopLevelDropdownMenuItem[];
+  getNodeDropdownMenuItems?: (nodeData: UiInteractionData | undefined) => TopLevelDropdownMenuItem[];
+}
 let service: IDesignerUiInteractionsService;
 
 export const InitUiInteractionsService = (uiInteractionsService: IDesignerUiInteractionsService): void => {

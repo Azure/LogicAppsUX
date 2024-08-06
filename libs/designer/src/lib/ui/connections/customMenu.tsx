@@ -1,4 +1,4 @@
-import { MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
+import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 import type { DropdownMenuOption } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuOption';
 import type { TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/topLevelDropdownMenuItem';
@@ -15,20 +15,13 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
   return (
     <div>
       {item.subMenuItems ? (
-        <Popover
-          open={openState}
-          positioning="after"
-          closeOnScroll={true}
-          withArrow
-          mouseLeaveDelay={500}
-          onOpenChange={(e, { open }) => setOpenState(open)}
-        >
-          <PopoverTrigger>
-            <MenuItem icon={item.icon} onClick={() => setOpenState(!openState)}>
+        <Menu>
+          <MenuTrigger>
+            <MenuItem icon={item?.icon} onClick={() => setOpenState(!openState)}>
               {item.text}
             </MenuItem>
-          </PopoverTrigger>
-          <PopoverSurface>
+          </MenuTrigger>
+          <MenuPopover>
             <MenuList>
               {item.subMenuItems?.map((subItem: DropdownMenuOption, subindex: number) => {
                 if (isDropdownMenuCustomNode(subItem)) {
@@ -41,10 +34,10 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
                 );
               })}
             </MenuList>
-          </PopoverSurface>
-        </Popover>
+          </MenuPopover>
+        </Menu>
       ) : (
-        <MenuItem icon={item.icon} onClick={item?.onClick}>
+        <MenuItem icon={item?.icon} onClick={item?.onClick}>
           {item.text}
         </MenuItem>
       )}

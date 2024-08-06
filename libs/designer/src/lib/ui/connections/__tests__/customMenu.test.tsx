@@ -1,13 +1,12 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { CustomMenu, CustomMenuProps } from '../CustomMenu';
+import { CustomMenu, type CustomMenuProps } from '../CustomMenu';
 
 vi.mock('@fluentui/react-components', () => ({
+  Menu: ({ children, ...props }) => <div {...props}>{children}</div>,
+  MenuPopover: ({ children, ...props }) => <div {...props}>{children}</div>,
+  MenuTrigger: ({ children, ...props }) => <div {...props}>{children}</div>,
   MenuItem: ({ children, ...props }) => <div {...props}>{children}</div>,
-  Popover: ({ children, ...props }) => <div {...props}>{children}</div>,
-  PopoverTrigger: ({ children, ...props }) => <div {...props}>{children}</div>,
-  PopoverSurface: ({ children, ...props }) => <div {...props}>{children}</div>,
   MenuList: ({ children, ...props }) => <div {...props}>{children}</div>,
 }));
 
@@ -27,7 +26,7 @@ const renderCustomMenu = (props: CustomMenuProps) => {
 describe('CustomMenu', () => {
   it('should render main menu item', () => {
     renderCustomMenu({ item: mockItem });
-    
+
     expect(screen.getByText('Main Item')).toBeDefined();
   });
 

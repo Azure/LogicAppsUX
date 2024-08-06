@@ -119,8 +119,8 @@ const tenantService = new BaseTenantService({
 });
 
 const uiInteractionsService = {
-  getAddButtonDropdownMenuItems: 
-  () => [],
+  getAddButtonDropdownMenuItems: () => [],
+  getNodeDropdownMenuItems: () => [],
 };
 
 const functionService = new BaseFunctionService({
@@ -206,7 +206,7 @@ export const LocalDesigner = () => {
       editorService,
       connectionParameterEditorService,
       customCodeService,
-      uiInteractionsService
+      uiInteractionsService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
