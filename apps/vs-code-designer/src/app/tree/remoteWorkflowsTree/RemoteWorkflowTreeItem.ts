@@ -6,6 +6,7 @@ import { managementApiPrefix, workflowAppApiVersion } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWorkflow } from '../../utils/codeless/apiUtils';
+import { getRequestTriggerName } from '../../utils/codeless/common';
 import { resolveSettingsInConnection } from '../../utils/codeless/connection';
 import { sendAzureRequest } from '../../utils/requestUtils';
 import { getThemedIconPath } from '../../utils/tree/assets';
@@ -98,14 +99,26 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
     return appSettings.properties || {};
   }
 
-  public async getCallbackUrl(node: RemoteWorkflowTreeItem, triggerName: string): Promise<ICallbackUrlResponse | undefined> {
-    const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
-
-    try {
-      const response = await sendAzureRequest(url, this.parent._context, HTTP_METHODS.POST, node.subscription);
-      return response.parsedBody;
-    } catch (error) {
-      return undefined;
+  public async getCallbackUrl(
+    node: RemoteWorkflowTreeItem,
+    baseUrl: string,
+    triggerName: string,
+    apiVersion: string
+  ): Promise<ICallbackUrlResponse | undefined> {
+    const requestTriggerName = getRequestTriggerName(node.workflowFileContent.definition);
+    if (requestTriggerName) {
+      try {
+        const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
+        const response = await sendAzureRequest(url, this.parent._context, HTTP_METHODS.POST, node.subscription);
+        return response.parsedBody;
+      } catch (error) {
+        return undefined;
+      }
+    } else {
+      return {
+        value: `${baseUrl}/workflows/${node.name}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+        method: HTTP_METHODS.POST,
+      };
     }
   }
 

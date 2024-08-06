@@ -74,7 +74,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     baseUrl = getWorkflowManagementBaseURI(workflowNode);
     apiVersion = workflowAppApiVersion;
     triggerName = getTriggerName(workflowContent.definition);
-    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, triggerName);
+    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isWorkflowRuntimeRunning = true;
   }
