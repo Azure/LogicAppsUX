@@ -2,13 +2,14 @@ import { MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fl
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 import type { DropdownMenuOption } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuOption';
 import type { TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/topLevelDropdownMenuItem';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 export interface CustomMenuProps {
-  item: TopLevelDropdownMenuItem; 
+  item: TopLevelDropdownMenuItem;
 }
 
-export const CustomMenu: React.FC<CustomMenuProps> = ({item}) => {
+export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
   const [openState, setOpenState] = useState(false);
 
   return (
@@ -31,28 +32,19 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({item}) => {
             <MenuList>
               {item.subMenuItems?.map((subItem: DropdownMenuOption, subindex: number) => {
                 if (isDropdownMenuCustomNode(subItem)) {
-                  return (
-                    <div key={subindex}> 
-                      {subItem.renderCustomComponent()}
-                    </div>)
-                } else {
-                    return (
-                      <MenuItem
-                        key={subindex} 
-                        aria-label={subItem?.ariaLabel}
-                        icon={subItem?.icon}
-                        onClick={subItem?.onClick}
-                      >
-                        {subItem.text}
-                      </MenuItem>
-                    );
+                  return <div key={subindex}>{subItem.renderCustomComponent()}</div>;
                 }
+                return (
+                  <MenuItem key={subindex} aria-label={subItem?.ariaLabel} icon={subItem?.icon} onClick={subItem?.onClick}>
+                    {subItem.text}
+                  </MenuItem>
+                );
               })}
             </MenuList>
           </PopoverSurface>
         </Popover>
       ) : (
-        <MenuItem icon={item.icon} onClick={() => item.onClick}>
+        <MenuItem icon={item.icon} onClick={item?.onClick}>
           {item.text}
         </MenuItem>
       )}
