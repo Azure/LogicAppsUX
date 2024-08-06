@@ -64,6 +64,7 @@ import {
   AutosumRegular,
   bundleIcon,
   CalendarAddRegular,
+  CalendarClockFilled,
   CalendarClockRegular,
   CalendarDateRegular,
   CalendarLtrRegular,
@@ -74,6 +75,7 @@ import {
   EqualOffRegular,
   GatherRegular,
   MathSymbolsRegular,
+  NumberSymbolFilled,
   NumberSymbolRegular,
   ReOrderRegular,
   SubtractCircleRegular,
@@ -103,7 +105,7 @@ export const iconForNormalizedDataType = (
 
   switch (nodeType) {
     case NormalizedDataType.Number: {
-      icon = NumberSymbolRegular;
+      icons = [NumberSymbolRegular, NumberSymbolFilled];
       break;
     }
     case NormalizedDataType.Integer: {
@@ -119,7 +121,7 @@ export const iconForNormalizedDataType = (
       break;
     }
     case NormalizedDataType.Boolean: {
-      icon = AddSubtractCircleRegular;
+      icons = [AddSubtractCircleRegular, AddSubtractCircleFilled];
       break;
     }
     case NormalizedDataType.String: {
@@ -127,10 +129,13 @@ export const iconForNormalizedDataType = (
       break;
     }
     case NormalizedDataType.DateTime: {
-      icon = CalendarClockRegular;
+      icons = [CalendarClockRegular, CalendarClockFilled];
       break;
     }
-    case NormalizedDataType.Complex:
+    case NormalizedDataType.Complex: {
+      icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];
+      break;
+    }
     case NormalizedDataType.Object: {
       if (nodeProperties && nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1) {
         icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];
@@ -158,7 +163,7 @@ export const iconForNormalizedDataType = (
       break;
     }
   }
-  return bundled ? bundleIcon(icons[1], icons[0]) : icon;
+  return bundled && icons.length > 1 ? bundleIcon(icons[1], icons[0]) : icon;
 };
 
 export const iconBaseUrl = 'https://logicappsv2resources.blob.core.windows.net/icons/datamapper/';

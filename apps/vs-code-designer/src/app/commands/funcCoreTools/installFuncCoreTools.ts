@@ -44,7 +44,7 @@ export async function installFuncCoreToolsBinaries(context: IActionContext, majo
     }
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractDependency(context, azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
+  await downloadAndExtractDependency(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
 }
 
 export async function installFuncCoreToolsSystem(

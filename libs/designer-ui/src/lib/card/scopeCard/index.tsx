@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { StatusPill } from '../../monitoring';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
-import { CardContextMenu } from '../cardcontextmenu';
 import { ErrorBanner } from '../errorbanner';
-import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
+import { useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon } from '@fluentui/react';
@@ -32,15 +31,14 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   isLoading,
   title,
   onClick,
+  onContextMenu,
   onDeleteClick,
   handleCollapse,
   selectionMode,
-  contextMenuItems = [],
   runData,
   setFocus,
   nodeIndex,
 }) => {
-  const contextMenu = useCardContextMenu();
   const focusRef = useRef<HTMLDivElement | null>(null);
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
@@ -77,6 +75,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ) : icon ? (
     <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
+
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div className={'msla-content-fit'} aria-label={title}>
@@ -86,7 +85,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
           draggable={draggable}
           style={colorVars}
-          onContextMenu={contextMenu.handle}
+          onContextMenu={onContextMenu}
         >
           {isMonitoringView ? (
             <StatusPill
@@ -119,32 +118,25 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             </button>
             <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
           </div>
-          <div className="msla-card-v2-footer" onClick={handleClick}>
-            <div className="msla-badges">
-              {badges.map(({ title, content, darkBackground, iconProps }) => (
-                <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
-                  <div>
-                    <Icon
-                      className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-                      {...iconProps}
-                      aria-label={`${title}: ${content}`}
-                      tabIndex={nodeIndex}
-                    />
-                  </div>
-                </Tooltip>
-              ))}
+          {badges.length > 0 && (
+            <div className="msla-card-v2-footer" onClick={handleClick}>
+              <div className="msla-badges">
+                {badges.map(({ title, content, darkBackground, iconProps }) => (
+                  <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
+                    <div>
+                      <Icon
+                        className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
+                        {...iconProps}
+                        aria-label={`${title}: ${content}`}
+                        tabIndex={nodeIndex}
+                      />
+                    </div>
+                  </Tooltip>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
-        {contextMenuItems?.length > 0 ? (
-          <CardContextMenu
-            contextMenuLocation={contextMenu.location}
-            menuItems={contextMenuItems}
-            open={contextMenu.isShowing}
-            title={title}
-            setOpen={contextMenu.setIsShowing}
-          />
-        ) : null}
       </div>
     </div>
   );
