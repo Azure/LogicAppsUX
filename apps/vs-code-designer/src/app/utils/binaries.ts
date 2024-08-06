@@ -64,10 +64,6 @@ export async function downloadAndExtractDependency(
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
   try {
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
-    fs.mkdirSync(tempFolderPath, { recursive: true });
-    fs.chmodSync(tempFolderPath, 0o777);
-
     const downloadPromise = axios({
       method: HTTP_METHODS.GET,
       url: downloadUrl,
@@ -78,6 +74,10 @@ export async function downloadAndExtractDependency(
 
     downloadPromise.then((response) => {
       try {
+        executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
+        fs.mkdirSync(tempFolderPath, { recursive: true });
+        fs.chmodSync(tempFolderPath, 0o777);
+
         const writer = fs.createWriteStream(dependencyFilePath);
         response.data.pipe(writer);
 
