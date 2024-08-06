@@ -38,7 +38,7 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
   const localSettingsPath: string = await getLocalSettingsFile(context, message);
   const localSettingsUri: vscode.Uri = vscode.Uri.file(localSettingsPath);
 
-  let localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath, true /* allowOverwrite */);
+  let localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
   const isEncrypted: boolean | undefined = localSettings.IsEncrypted;
 

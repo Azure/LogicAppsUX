@@ -1,4 +1,26 @@
 # Logic Apps Designer
+### [4.44.8](https://github.com/Azure/LogicAppsUX/compare/v4.44.7...v4.44.8) (2024-08-06)
+
+
+### Bug Fixes
+
+* **vscode:** Fixed issue where isDesignTime is not set properly and to correct workflow-designtime local.settings.json  ([#5298](https://github.com/Azure/LogicAppsUX/issues/5298)) ([b5a4d6c](https://github.com/Azure/LogicAppsUX/commit/b5a4d6c9b227cb00ad53898f456d51b2bf4c858d))
+
+### [4.44.7](https://github.com/Azure/LogicAppsUX/compare/v4.44.6...v4.44.7) (2024-08-05)
+
+
+### Bug Fixes
+
+* **vscode:** Auto Runtime Dependencies installation of latest FuncCoreTools ([#5282](https://github.com/Azure/LogicAppsUX/issues/5282)) ([77f580a](https://github.com/Azure/LogicAppsUX/commit/77f580a49a878a22d0e2eb543268b9bc3180a72c)), closes [#5263](https://github.com/Azure/LogicAppsUX/issues/5263)
+
+### [4.44.6](https://github.com/Azure/LogicAppsUX/compare/v4.44.5...v4.44.6) (2024-08-05)
+
+
+### Bug Fixes
+
+* **designer:** Fix node rename focus issue ([#5280](https://github.com/Azure/LogicAppsUX/issues/5280)) ([d6c3a84](https://github.com/Azure/LogicAppsUX/commit/d6c3a84dfa49a58a07453fa4d2d497b276756503))
+* **designer:** Update selector for retry history and add useMemo ([#5255](https://github.com/Azure/LogicAppsUX/issues/5255)) ([#5281](https://github.com/Azure/LogicAppsUX/issues/5281)) ([ed77a67](https://github.com/Azure/LogicAppsUX/commit/ed77a67f7e9c5bf96687985782b97a1dc4cffdd3))
+
 ### [4.44.5](https://github.com/Azure/LogicAppsUX/compare/v4.44.4...v4.44.5) (2024-07-31)
 
 
