@@ -45,5 +45,31 @@ test.describe(
       // Should be the first terminate node
       expect(await page.locator('*:focus').innerText()).toBe('Terminate');
     });
+
+    test('Should open node details panel with proper focus', async ({ page }) => {
+      const tab = async () => page.locator('*:focus').press('Tab');
+      const backTab = async () => page.locator('*:focus').press('Shift+Tab');
+
+      await page.goto('/');
+      await GoToMockWorkflow(page, 'Panel');
+
+      // Find element with text 'manual'
+      await page.getByText('manual', { exact: true }).click();
+      // Focus should be on the collapse button
+      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Collapse');
+      await tab();
+      // Focus should be on the node name textfield
+      expect(await page.locator('*:focus').getAttribute('value')).toBe('manual');
+      // Delete one character
+      await page.locator('*:focus').press('ArrowRight');
+      await page.locator('*:focus').press('Backspace');
+      // Focus should be on the node name textfield
+      expect(await page.locator('*:focus').getAttribute('value')).toBe('manua');
+      await backTab();
+      // Focus should be on the collapse button
+      expect(await page.locator('*:focus').getAttribute('aria-label')).toBe('Collapse');
+      // Close node panel
+      await page.locator('body').press('Enter');
+    });
   }
 );
