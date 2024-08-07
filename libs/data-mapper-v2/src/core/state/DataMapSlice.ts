@@ -35,6 +35,7 @@ import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } fr
 import type { Node, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
+import { splitEdgeId } from '../../utils/Edge.Utils';
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
@@ -58,6 +59,7 @@ export interface DataMapOperationState {
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
+  fullLayoutNeeded: boolean;
   loadedMapMetadata?: MapMetadataV2;
   // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
   // This info is not saved in LML which is why it is stored separately in the store
@@ -75,10 +77,15 @@ export interface DataMapOperationState {
   // Track open nodes in the scehma Tree
   sourceOpenKeys: Record<string, boolean>;
   targetOpenKeys: Record<string, boolean>;
+  // Mapping used to store which connection is a loop
+  edgeLoopMapping: Record<string, boolean>;
+  // This is used to store the temporary state of the edge for which popover is visible
+  edgePopOverId?: string;
 }
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
+  fullLayoutNeeded: false,
   dataMapLML: '',
   functionNodes: {},
   flattenedSourceSchema: {},
@@ -100,6 +107,7 @@ const emptyPristineState: DataMapOperationState = {
   targetOpenKeys: {},
   sourceTemporaryStateConnections: {},
   targetTemporaryStateConnections: {},
+  edgeLoopMapping: {},
 };
 
 const initialState: DataMapState = {
@@ -228,19 +236,8 @@ export const dataMapSlice = createSlice({
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
       const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+      const fullLayoutNeeded = !metadata;
       assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
-
-      // const addedNodes = Object.entries(functionNodes).map((funcTuple) => {
-      //   const func = funcTuple[1];
-      //   const id = funcTuple[0];
-      //   const node: Node = {
-      //     id: id,
-      //     type: 'function',
-      //     position: func.position || { x: 100, y: 100 }, // find layout if none found
-      //     data: { id, func },
-      //   };
-      //   return node;
-      // });
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -250,6 +247,7 @@ export const dataMapSlice = createSlice({
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
         functionNodes,
+        fullLayoutNeeded,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
@@ -404,8 +402,7 @@ export const dataMapSlice = createSlice({
       if (!node) {
         return;
       }
-      const position = node.position;
-      newOp.functionNodes[action.payload.id].position = position;
+      newOp.functionNodes[action.payload.id] = { ...node, position: action.payload.position };
       state.curDataMapOperation = newOp;
     },
 
@@ -615,6 +612,30 @@ export const dataMapSlice = createSlice({
         lastAction: 'Update function nodes',
       };
     },
+    updateEdgePopOverId: (state, action: PayloadAction<string | undefined>) => {
+      state.curDataMapOperation.edgePopOverId = action.payload;
+    },
+    deleteEdge: (state, action: PayloadAction<string>) => {
+      const edgeId = action.payload;
+      const splitId = splitEdgeId(edgeId);
+      if (splitId.length === 2) {
+        const updatedConnections = {
+          ...state.curDataMapOperation.dataMapConnections,
+        };
+        deleteConnectionFromConnections(updatedConnections, splitId[0], splitId[1], undefined);
+
+        doDataMapOperation(
+          state,
+          {
+            ...state.curDataMapOperation,
+            dataMapConnections: updatedConnections,
+          },
+          'Delete edge by key'
+        );
+      } else {
+        //Throw error
+      }
+    },
   },
 });
 
@@ -638,6 +659,8 @@ export const {
   updateFunctionPosition,
   toogleNodeExpandCollapse,
   updateFunctionNodesPosition,
+  updateEdgePopOverId,
+  deleteEdge,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

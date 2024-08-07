@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect, type MouseEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { Connection, Node, Edge, ConnectionLineComponent, NodeProps, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
 import { ReactFlow, addEdge, useReactFlow } from '@xyflow/react';
@@ -8,7 +8,7 @@ import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
 import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
 import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem } from '../core/state/DataMapSlice';
+import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem, updateEdgePopOverId } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
@@ -17,7 +17,7 @@ import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
 import { createEdgeId } from '../utils/Edge.Utils';
 import useAutoLayout from './hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
-
+import EdgePopOver from '../components/canvas/EdgePopOver';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
@@ -36,6 +36,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const { width = undefined, height = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
   });
+  const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
 
   const edges: Edge[] = useMemo(() => {
     if (Object.entries(dataMapConnections).length > 0) {
@@ -80,6 +81,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         position: node[1].position || { x: 10, y: 200 },
         draggable: true,
         selectable: false,
+        measured: { width: 1, height: 1 },
       }))
     );
   }, [functionNodes]);
@@ -180,6 +182,22 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     [dispatch]
   );
 
+  const onEdgeContextMenu = useCallback(
+    (e: MouseEvent, edge: Edge) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      dispatch(updateEdgePopOverId(edge.id));
+      setEdgePopoverBounds({
+        x: e.clientX,
+        y: e.clientY,
+        width: 5,
+        height: 5,
+      });
+    },
+    [dispatch, setEdgePopoverBounds]
+  );
+
   const nodes = useMemo(
     () => [...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop],
     [sourceNodesMap, targetNodesMap, functionNodesForDragDrop]
@@ -192,7 +210,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         ref={drop}
         nodes={cloneDeep(nodes)}
         edges={edges}
-        nodeDragThreshold={0}
+        nodeDragThreshold={1}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
@@ -201,7 +219,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edgeTypes={edgeTypes}
         preventScrolling={false}
         minZoom={1}
-        elementsSelectable={true}
+        elementsSelectable={false}
         maxZoom={1}
         autoPanOnConnect={false}
         snapToGrid={true}
@@ -215,6 +233,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         onNodeDrag={onFunctionNodeDrag}
         onNodeDragStop={onFunctionNodeDragStop}
         isValidConnection={isValidConnection}
+        onEdgeContextMenu={onEdgeContextMenu}
         onConnect={onEdgeConnect}
         connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
         elevateEdgesOnSelect={true}
@@ -235,6 +254,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
             : undefined
         }
       />
+      {edgePopoverBounds && <EdgePopOver {...edgePopoverBounds} />}
     </div>
   );
 };

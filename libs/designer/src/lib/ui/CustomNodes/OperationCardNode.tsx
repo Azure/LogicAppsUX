@@ -1,6 +1,6 @@
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
-import type { AppDispatch, RootState } from '../../core';
+import type { AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
@@ -9,7 +9,7 @@ import {
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -20,9 +20,8 @@ import {
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../core/state/panel/panelSlice';
-import { useIsNodePinnedToOperationPanel, useOperationPanelPinnedNodeId } from '../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../core/state/panelV2/panelSlice';
+import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import {
   useAllOperations,
   useConnectorName,
@@ -47,25 +46,18 @@ import {
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { CopyMenuItem } from '../menuItems/copyMenuItem';
-import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
-import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService, getRecordEntry, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch, useSelector } from 'react-redux';
-import { Handle, Position, useOnViewportChange, type NodeProps } from '@xyflow/react';
+import { useDispatch } from 'react-redux';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
-import { RUN_AFTER_PANEL_TAB } from './constants';
-import { shouldDisplayRunAfter } from './helpers';
-import { PinMenuItem } from '../menuItems/pinMenuItem';
+import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -73,8 +65,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
-  const rootState = useSelector((state: RootState) => state);
-  const pinnedNodeId = useOperationPanelPinnedNodeId();
   const operationsInfo = useAllOperations();
   const errorInfo = useOperationErrorInfo(id);
   const metadata = useNodeMetadata(id);
@@ -193,16 +183,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [brandColor, nodeComment]
   );
 
-  const [showCopyCallout, setShowCopyCallout] = useState(false);
-
-  useOnViewportChange({
-    onStart: useCallback(() => {
-      if (showCopyCallout) {
-        setShowCopyCallout(false);
-      }
-    }, [showCopyCallout]),
-  });
-
   const handleNodeSelection = useCallback(() => {
     if (nodeSelectCallbackOverride) {
       nodeSelectCallbackOverride(id);
@@ -218,50 +198,40 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     handleNodeSelection();
   }, [handleNodeSelection]);
 
-  const runAfterClick = useCallback(() => {
-    handleNodeSelection();
-    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
-  }, [dispatch, handleNodeSelection]);
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: id,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, id]
+  );
 
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
-  const pinClick = useCallback(() => {
-    dispatch(
-      setPinnedNode({
-        nodeId: id === pinnedNodeId ? '' : id,
-        updatePanelOpenState: true,
-      })
-    );
-  }, [dispatch, id, pinnedNodeId]);
-
+  const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyOperation({ nodeId: id }));
-    setTimeout(() => {
-      setShowCopyCallout(false);
-    }, 3000);
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
 
-  const resubmitClick = useCallback(() => {
-    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
-  }, [runInstance, id]);
-
-  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, id) as LogicAppsV2.OperationDefinition;
-  const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
+  const [copyCalloutTimeout, setCopyCalloutTimeout] = useState<NodeJS.Timeout>();
+  const clearCopyTooltip = useCallback(() => {
+    copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
+    setShowCopyCallout(false);
+  }, [copyCalloutTimeout]);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
-  const contextMenuItems: JSX.Element[] = useMemo(
-    () => [
-      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-      <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
-      <PinMenuItem key={'pin'} nodeId={id} onClick={pinClick} />,
-      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
-    ],
-    [copyClick, deleteClick, id, isTrigger, pinClick, resubmitClick, runData?.canResubmit, runAfterClick, runAfter]
-  );
 
   const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = useOperationQuery(id);
 
@@ -331,12 +301,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
 
-  const copiedText = intl.formatMessage({
-    defaultMessage: 'Copied!',
-    id: 'NE54Uu',
-    description: 'Copied text',
-  });
-
   const nodeIndex = useNodeIndex(id);
 
   return (
@@ -363,22 +327,16 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
+          onContextMenu={onContextMenu}
           onDeleteClick={deleteClick}
           onCopyClick={copyClick}
           selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
-          contextMenuItems={contextMenuItems}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults}
           isSecureInputsOutputs={isSecureInputsOutputs}
           nodeIndex={nodeIndex}
         />
-        <Tooltip
-          positioning={{ target: ref.current, position: 'below', align: 'end' }}
-          withArrow
-          content={copiedText}
-          relationship="description"
-          visible={showCopyCallout}
-        />
+        {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (
