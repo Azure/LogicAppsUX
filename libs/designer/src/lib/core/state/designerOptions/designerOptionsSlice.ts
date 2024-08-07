@@ -65,7 +65,7 @@ export const initializeServices = createAsyncThunk(
     chatbotService,
     customCodeService,
     copilotService,
-    uiInteractionsService
+    uiInteractionsService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -117,7 +117,7 @@ export const initializeServices = createAsyncThunk(
       InitRunService(runService);
     }
 
-    if(uiInteractionsService) {
+    if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
     }
 

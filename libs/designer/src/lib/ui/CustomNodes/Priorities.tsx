@@ -1,4 +1,4 @@
-export const Priorities = {
+export const NodeMenuPriorities = {
   Delete: 1000,
   Copy: 2000,
   Pin: 3000,

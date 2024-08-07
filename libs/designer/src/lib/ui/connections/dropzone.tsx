@@ -29,7 +29,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
-import { useAllOperations, type AppDispatch } from '../../core';
+import type { AppDispatch } from '../../core';
 import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
@@ -62,7 +62,6 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const [showCallout, setShowCallout] = useState(false);
   const [showNoPasteCallout, setShowNoPasteCallout] = useState(false);
   const [isPasteEnabled, setIsPasteEnabled] = useState(false);
-  const { data: preloadedOperations } = useAllOperations();
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -363,7 +362,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
                 </>
               )}
               {UiInteractionsService()
-                ?.getAddButtonMenuItems?.({ graphId, parentId, childId, preloadedOperations, dispatch })
+                ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
                 ?.map((item) => (
                   <CustomMenu key={item.text} item={item} />
                 ))}

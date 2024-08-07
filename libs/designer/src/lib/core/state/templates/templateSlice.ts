@@ -79,7 +79,7 @@ export const initializeTemplateServices = createAsyncThunk(
     connectionParameterEditorService,
     templateService,
     loggerService,
-    uiInteractionsService
+    uiInteractionsService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
@@ -117,7 +117,7 @@ export const initializeTemplateServices = createAsyncThunk(
       InitTemplateService(templateService);
     }
 
-    if(uiInteractionsService) {
+    if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
     }
 

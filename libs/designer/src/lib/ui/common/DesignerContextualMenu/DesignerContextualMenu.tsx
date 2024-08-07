@@ -23,7 +23,7 @@ import {
 import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from './CopyTooltip';
 import { CustomMenu } from '../../connections/customMenu';
-import { Priorities } from '../../CustomNodes/Priorities';
+import { NodeMenuPriorities } from '../../CustomNodes/Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 
 export const DesignerContextualMenu = () => {
@@ -108,17 +108,27 @@ export const DesignerContextualMenu = () => {
   const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
       ...transformMenuItems(UiInteractionsService()?.getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? []),
-      { priority: Priorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
       {
-        priority: Priorities.Copy,
+        priority: NodeMenuPriorities.Copy,
         renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,
       },
-      { priority: Priorities.Pin, renderCustomComponent: () => <PinMenuItem key={'pin'} nodeId={nodeId} onClick={pinClick} /> },
+      { priority: NodeMenuPriorities.Pin, renderCustomComponent: () => <PinMenuItem key={'pin'} nodeId={nodeId} onClick={pinClick} /> },
       ...(runData?.canResubmit
-        ? [{ priority: Priorities.Resubmit, renderCustomComponent: () => <ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} /> }]
+        ? [
+            {
+              priority: NodeMenuPriorities.Resubmit,
+              renderCustomComponent: () => <ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />,
+            },
+          ]
         : []),
       ...(runAfter
-        ? [{ priority: Priorities.RunAfter, renderCustomComponent: () => <RunAfterMenuItem key={'run after'} onClick={runAfterClick} /> }]
+        ? [
+            {
+              priority: NodeMenuPriorities.RunAfter,
+              renderCustomComponent: () => <RunAfterMenuItem key={'run after'} onClick={runAfterClick} />,
+            },
+          ]
         : []),
     ],
     [
@@ -137,7 +147,7 @@ export const DesignerContextualMenu = () => {
   );
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
-    .sort((a, b) => (a?.priority ?? Priorities.Default) - (b?.priority ?? Priorities.Default))
+    .sort((a, b) => (a?.priority ?? NodeMenuPriorities.Default) - (b?.priority ?? NodeMenuPriorities.Default))
     .map((option) => option.renderCustomComponent() as JSX.Element);
 
   const subgraphMenuItems: JSX.Element[] = useMemo(

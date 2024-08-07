@@ -28,7 +28,7 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
                   return subItem.renderCustomComponent();
                 }
                 return (
-                  <MenuItem key={subItem.text} aria-label={subItem?.ariaLabel} icon={subItem?.icon} onClick={subItem?.onClick}>
+                  <MenuItem key={subItem.text} aria-label={subItem.ariaLabel} icon={subItem.icon} onClick={subItem.onClick}>
                     {subItem.text}
                   </MenuItem>
                 );
@@ -37,7 +37,7 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
           </MenuPopover>
         </Menu>
       ) : (
-        <MenuItem icon={item?.icon} onClick={item?.onClick}>
+        <MenuItem icon={item.icon} onClick={item.onClick}>
           {item.text}
         </MenuItem>
       )}
