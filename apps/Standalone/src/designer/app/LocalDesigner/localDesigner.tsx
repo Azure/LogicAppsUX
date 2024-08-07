@@ -119,8 +119,8 @@ const tenantService = new BaseTenantService({
 });
 
 const uiInteractionsService = {
-  getAddButtonDropdownMenuItems: () => [],
-  getNodeDropdownMenuItems: () => [],
+  getAddButtonMenuItems: () => [],
+  getNodeContextMenuItems: () => [],
 };
 
 const functionService = new BaseFunctionService({
