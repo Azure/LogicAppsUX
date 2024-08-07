@@ -25,6 +25,7 @@ import {
   replaceWhiteSpaceWithUnderscore,
   LogEntryLevel,
   LoggerService,
+  UiInteractionsService,
 } from '@microsoft/logic-apps-shared';
 
 import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
@@ -41,6 +42,7 @@ import {
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
+import { CustomMenu } from './customMenu';
 
 export interface DropZoneProps {
   graphId: string;
@@ -359,6 +361,11 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
                   </MenuItem>
                 </>
               )}
+              {UiInteractionsService()
+                ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
+                ?.map((item) => (
+                  <CustomMenu key={item.text} item={item} />
+                ))}
             </MenuList>
           </PopoverSurface>
         </Popover>
