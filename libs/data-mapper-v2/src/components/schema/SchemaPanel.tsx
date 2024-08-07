@@ -14,9 +14,10 @@ import { useStyles } from './styles';
 import { Panel } from '../../components/common/panel/Panel';
 import { SchemaPanelBody } from './SchemaPanelBody';
 import type { SchemaFile } from '../../models/Schema';
-import { mergeClasses } from '@fluentui/react-components';
+import { Button, mergeClasses } from '@fluentui/react-components';
 import type { FileSelectorOption } from '../common/selector/FileSelector';
 import Fuse from 'fuse.js';
+import { EditRegular } from '@fluentui/react-icons';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -50,11 +51,20 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
+  const selectedSchema = useSelector((state: RootState) => {
+    if (schemaType === SchemaType.Source) {
+      return state.dataMap.present.curDataMapOperation.sourceSchema;
+    }
+    if (schemaType === SchemaType.Target) {
+      return state.dataMap.present.curDataMapOperation.targetSchema;
+    }
+    return undefined;
+  });
 
   const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
-  const [selectedSchema, _setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
+  const [editSchema, setEditScehma] = useState(true);
 
   const schemaFromStore = useSelector((state: RootState) => {
     return schemaType === SchemaType.Source
@@ -69,7 +79,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
 
   const [filteredFlattenedScehmaMap, setFilteredFlattenedScehmaMap] = useState(flattenedScehmaMap);
 
-  const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
+  const showScehmaSelection = useMemo(() => !schemaFromStore || editSchema, [schemaFromStore, editSchema]);
 
   const fetchSchema = useQuery(
     [selectedSchemaFile],
@@ -79,8 +89,8 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         const schema = await getSelectedSchema(fileName ?? '', filePath);
         return schema;
       }
-      const schema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
-      return schema;
+      const updatedSchema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      return updatedSchema;
     },
     {
       ...schemaFileQuerySettings,
@@ -89,6 +99,12 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   );
 
   const { isSuccess, data, error } = fetchSchema;
+
+  useEffect(() => {
+    if (selectedSchema) {
+      setEditScehma(false);
+    }
+  }, [selectedSchema]);
 
   useEffect(() => {
     if (isSuccess && data && schemaType) {
@@ -119,15 +135,19 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         id: 'BnkCwH',
         description: 'Seach source or target properties',
       }),
+      EDIT_SCHEMA: intl.formatMessage({
+        defaultMessage: 'Edit schema',
+        id: 'KqJ14/',
+        description: 'Edit scehma',
+      }),
+      GENERIC_ERROR: intl.formatMessage({
+        defaultMessage: 'Failed to load the schema. Please try again.',
+        id: '6fDYzG',
+        description: 'Load schema error message',
+      }),
     }),
     [intl]
   );
-
-  const genericErrorMsg = intl.formatMessage({
-    defaultMessage: 'Failed to load the schema. Please try again.',
-    id: '6fDYzG',
-    description: 'Load schema error message',
-  });
 
   const goBackToDefaultConfigPanelView = useCallback(() => {
     dispatch(openDefaultConfigPanelView());
@@ -190,14 +210,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         isAddSchema ? closeEntirePanel() : goBackToDefaultConfigPanelView();
         setErrorMessage('');
       } else {
-        setErrorMessage(genericErrorMsg);
+        setErrorMessage(stringResources.GENERIC_ERROR);
       }
     },
     [
       schemaType,
       closeEntirePanel,
       goBackToDefaultConfigPanelView,
-      genericErrorMsg,
+      stringResources,
       selectedSchemaFile,
       fileSelectorOptions,
       onSubmitSchemaFileSelection,
@@ -272,6 +292,17 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       isOpen={!!currentPanelView}
       title={{
         text: isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION,
+        rightAction: (
+          <Button
+            appearance="transparent"
+            aria-label={stringResources.EDIT_SCHEMA}
+            icon={<EditRegular fontSize={18} />}
+            onClick={() => {
+              setEditScehma(true);
+            }}
+            disabled={showScehmaSelection}
+          />
+        ),
       }}
       search={
         showScehmaSelection
@@ -287,7 +318,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       body={
         <SchemaPanelBody
           schemaType={schemaType}
-          selectedSchema={selectedSchema?.name}
+          schema={selectedSchema}
           setSelectedSchemaFile={setSelectedSchemaFile}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
