@@ -2,10 +2,19 @@ export interface DesignerViewState {
   showMinimap?: boolean;
   clampPan?: boolean;
   showDeleteModalNodeId?: string;
-  nodeContextMenuData?: ContextMenuObject;
+  nodeContextMenuData?: NodeContextMenuObject;
+  edgeContextMenuData?: EdgeContextMenuObject;
 }
 
-export interface ContextMenuObject {
+export interface NodeContextMenuObject {
   nodeId: string;
   location: { x: number; y: number };
+}
+
+export interface EdgeContextMenuObject {
+  graphId: string;
+  parentId?: string;
+  childId?: string;
+  isLeaf?: boolean;
+  target: HTMLElement;
 }
