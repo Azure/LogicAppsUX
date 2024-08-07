@@ -1,8 +1,18 @@
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect, type MouseEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, Node, Edge, ConnectionLineComponent, NodeProps, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
-import { ReactFlow, addEdge, useReactFlow } from '@xyflow/react';
+import type {
+  Connection,
+  Node,
+  Edge,
+  ConnectionLineComponent,
+  NodeProps,
+  NodeTypes,
+  OnNodeDrag,
+  IsValidConnection,
+  EdgeChange,
+} from '@xyflow/react';
+import { ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
 import ConnectionLine from '../components/common/reactflow/ConnectionLine';
@@ -18,6 +28,7 @@ import { createEdgeId } from '../utils/Edge.Utils';
 import useAutoLayout from './hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
 import EdgePopOver from '../components/canvas/EdgePopOver';
+import { getReactFlowNodeId } from '../utils/Schema.Utils';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
@@ -29,19 +40,27 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const reactFlowInstance = useReactFlow();
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const { sourceNodesMap, targetNodesMap, functionNodes, flattenedSourceSchema, flattenedTargetSchema, dataMapConnections } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
+  const edges = useEdges();
+  const {
+    sourceNodesMap,
+    targetNodesMap,
+    functionNodes,
+    flattenedSourceSchema,
+    flattenedTargetSchema,
+    dataMapConnections,
+    sourceStateConnections,
+  } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const [functionNodesForDragDrop, setFunctionNodesForDragDrop] = useState<Node[]>([]);
   const { width = undefined, height = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
 
-  const edges: Edge[] = useMemo(() => {
+  const realEdges: Edge[] = useMemo(() => {
+    let edges: Edge[] = [];
     if (Object.entries(dataMapConnections).length > 0) {
       const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
-      return layout.edges.map((edge) => {
+      edges = layout.edges.map((edge) => {
         const newEdge: Edge = {
           id: createEdgeId(edge.sourceId, edge.targetId),
           source: edge.sourceId,
@@ -55,8 +74,41 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       });
     }
 
-    return [];
+    return edges;
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes]);
+
+  // Edges created when node is expanded/Collapsed
+  const temporaryEdgesMap: Record<string, Edge> = useMemo(() => {
+    const newEdgesMap: Record<string, Edge> = {};
+    const sourceStateConnectionsEntries = Object.entries(sourceStateConnections);
+
+    if (sourceStateConnectionsEntries.length > 0) {
+      for (const entry of sourceStateConnectionsEntries) {
+        const sourceNodeId = getReactFlowNodeId(entry[0], true);
+        const targetIds = Object.keys(entry[1]);
+        for (const targetId of targetIds) {
+          const targetNodeId = getReactFlowNodeId(targetId, false);
+          const id = createEdgeId(sourceNodeId, targetNodeId);
+          const edge: Edge = {
+            id: id,
+            source: sourceNodeId,
+            target: targetNodeId,
+            type: 'connectedEdge',
+            reconnectable: 'target',
+            focusable: true,
+            deletable: true,
+            animated: true,
+            data: {
+              isTemporary: true,
+            },
+          };
+          newEdgesMap[id] = edge;
+        }
+      }
+    }
+
+    return newEdgesMap;
+  }, [sourceStateConnections]);
 
   useAutoLayout();
 
@@ -85,6 +137,35 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
       }))
     );
   }, [functionNodes]);
+
+  useLayoutEffect(() => {
+    const edgeChanges: Record<string, EdgeChange> = {};
+
+    for (const [id, edge] of Object.entries(temporaryEdgesMap)) {
+      edgeChanges[id] = {
+        type: 'add',
+        item: edge,
+      };
+    }
+
+    for (const edge of edges) {
+      if (edge.data?.isTemporary) {
+        const id = edge.id;
+        if (temporaryEdgesMap[id]) {
+          delete edgeChanges[id];
+        } else {
+          edgeChanges[id] = {
+            type: 'remove',
+            id: id,
+          };
+        }
+      }
+    }
+
+    if (Object.entries(edgeChanges).length > 0) {
+      applyEdgeChanges(Object.values(edgeChanges), edges);
+    }
+  }, [edges, temporaryEdgesMap]);
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
@@ -209,7 +290,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         id="dm-react-flow"
         ref={drop}
         nodes={cloneDeep(nodes)}
-        edges={edges}
+        edges={[...realEdges, ...Object.values(temporaryEdgesMap)]}
         nodeDragThreshold={1}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}

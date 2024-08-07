@@ -18,6 +18,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const styles = useStyles();
 
   const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
+
   const isActive = useActiveNode(id);
 
   const styleForState = useMemo(() => {
@@ -28,13 +29,12 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     if (isActive !== undefined) {
       return mergeClasses(directionalStyle, styles.activeHandle);
     }
+
     if (isConnected) {
       return mergeClasses(directionalStyle, styles.handleConnected);
     }
     return directionalStyle;
   }, [isActive, isConnected, styles, isLeftDirection]);
-
-  const handleStyle = styleForState;
 
   const setActiveNode = () => {
     dispatch(setSelectedItem(id));
@@ -48,7 +48,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
       <Handle
         type={isLeftDirection ? 'source' : 'target'}
         position={isLeftDirection ? Position.Left : Position.Right}
-        className={handleStyle}
+        className={styleForState}
         onMouseDown={setActiveNode}
       />
     </div>

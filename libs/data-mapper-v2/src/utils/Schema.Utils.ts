@@ -248,3 +248,67 @@ export const removePrefixFromNodeID = (nodeID: string): string => {
   const splitID = nodeID.split('-');
   return splitID[1];
 };
+
+/* This is to update the temporary connections when a tree item is expanded/collapsed
+  Source and target are used interchangeably here. as the logic is same for both sides
+  Source becomes the side where node is collapsed/expanded and Target becomes the other side
+*/
+export const getUpdatedStateConnections = (
+  key: string,
+  targetOpenKeys: Record<string, boolean>,
+  itemExpanded: boolean,
+  sourceParentChildEdgeMapping: string[],
+  targetChildParentMapping: Record<string, string[]>,
+  sourceStateConnections: Record<string, Record<string, boolean>>,
+  targetStateConnections: Record<string, Record<string, boolean>>
+) => {
+  if (itemExpanded) {
+    const connectedTargetNodes = sourceStateConnections[key] ?? {};
+    for (const targetNode of Object.keys(connectedTargetNodes)) {
+      if (targetStateConnections[targetNode]) {
+        delete targetStateConnections[targetNode][key];
+      }
+    }
+    delete sourceStateConnections[key];
+  } else {
+    // Get all the nodes to which children are connected
+    for (const child of sourceParentChildEdgeMapping) {
+      // Get parents of the child connected to
+      const parents = targetChildParentMapping[child] ?? [];
+
+      // Fetch the first parent which is collapsed
+      let i = 0;
+      while (i < parents.length) {
+        if (!targetOpenKeys[parents[i]]) {
+          break;
+        }
+        ++i;
+      }
+
+      // Get the node to which temporary node needs to be connected to
+      let connectToChild = child;
+      if (i < parents.length) {
+        connectToChild = parents[i];
+      }
+
+      // Update Source-Target edge mapping
+      if (!sourceStateConnections[key]) {
+        sourceStateConnections[key] = {};
+      }
+      if (!Object.prototype.hasOwnProperty.call(sourceStateConnections[key], connectToChild)) {
+        sourceStateConnections[key][connectToChild] = true;
+      }
+
+      // Update Target-Source edge mapping
+      if (!targetStateConnections[connectToChild]) {
+        targetStateConnections[connectToChild] = {};
+      }
+
+      if (!Object.prototype.hasOwnProperty.call(targetStateConnections[connectToChild], key)) {
+        targetStateConnections[connectToChild][key] = true;
+      }
+    }
+  }
+
+  return [sourceStateConnections, targetStateConnections];
+};
