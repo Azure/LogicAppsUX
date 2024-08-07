@@ -264,7 +264,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   };
   const contextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      ...transformMenuItems(UiInteractionsService()?.getNodeDropdownMenuItems?.({ graphId: metadata?.graphId, nodeId: id }) ?? []),
+      ...transformMenuItems(UiInteractionsService()?.getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: id }) ?? []),
       { priority: Priorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
       {
         priority: Priorities.Copy,

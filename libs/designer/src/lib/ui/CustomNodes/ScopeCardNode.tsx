@@ -237,7 +237,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   };
   const contextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      ...transformMenuItems(UiInteractionsService()?.getNodeDropdownMenuItems?.({ graphId: metadata?.graphId, nodeId: scopeId }) ?? []),
+      ...transformMenuItems(UiInteractionsService()?.getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: scopeId }) ?? []),
       { priority: Priorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
       {
         priority: Priorities.Copy,

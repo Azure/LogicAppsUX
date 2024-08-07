@@ -363,13 +363,11 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
                   </MenuItem>
                 </>
               )}
-              {UiInteractionsService()?.getAddButtonDropdownMenuItems?.({graphId, parentId, childId, preloadedOperations, dispatch}).map((item, index) => {
-                    return (
-                      <div key={index}>
-                        <CustomMenu item={item}/>
-                      </div>
-                    )
-                  })}
+              {UiInteractionsService()
+                ?.getAddButtonMenuItems?.({ graphId, parentId, childId, preloadedOperations, dispatch })
+                ?.map((item) => (
+                  <CustomMenu key={item.text} item={item} />
+                ))}
             </MenuList>
           </PopoverSurface>
         </Popover>

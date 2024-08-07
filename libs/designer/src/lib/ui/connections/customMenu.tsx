@@ -23,12 +23,12 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
           </MenuTrigger>
           <MenuPopover>
             <MenuList>
-              {item.subMenuItems?.map((subItem: DropdownMenuOption, subindex: number) => {
+              {item.subMenuItems?.map((subItem: DropdownMenuOption) => {
                 if (isDropdownMenuCustomNode(subItem)) {
-                  return <div key={subindex}>{subItem.renderCustomComponent()}</div>;
+                  return subItem.renderCustomComponent();
                 }
                 return (
-                  <MenuItem key={subindex} aria-label={subItem?.ariaLabel} icon={subItem?.icon} onClick={subItem?.onClick}>
+                  <MenuItem key={subItem.text} aria-label={subItem?.ariaLabel} icon={subItem?.icon} onClick={subItem?.onClick}>
                     {subItem.text}
                   </MenuItem>
                 );
