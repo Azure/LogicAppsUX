@@ -17,6 +17,7 @@ import {
   DevLogger,
   InitLoggerService,
   InitOperationManifestService,
+  InitUiInteractionsService,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -78,6 +79,7 @@ export const initializeTemplateServices = createAsyncThunk(
     connectionParameterEditorService,
     templateService,
     loggerService,
+    uiInteractionsService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
@@ -113,6 +115,10 @@ export const initializeTemplateServices = createAsyncThunk(
     }
     if (templateService) {
       InitTemplateService(templateService);
+    }
+
+    if (uiInteractionsService) {
+      InitUiInteractionsService(uiInteractionsService);
     }
 
     return true;

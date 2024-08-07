@@ -13,6 +13,8 @@ export * from './theme';
 export * from './dataMap';
 export * from './dataMapSchema';
 export * from './helpers';
+export * from './uiInteractionData';
+export * from './topLevelDropdownMenuItem';
 
 import * as LogicApps from './logicApps';
 import * as LogicAppsV2 from './logicAppsV2';

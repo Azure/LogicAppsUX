@@ -27,3 +27,4 @@ export * from './lib/chatbot';
 export * from './lib/copilot';
 export * from './lib/customcode';
 export * from './lib/tenant';
+export * from './lib/uiInteractionsService';

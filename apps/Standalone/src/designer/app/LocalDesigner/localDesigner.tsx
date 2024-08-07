@@ -118,6 +118,11 @@ const tenantService = new BaseTenantService({
   httpClient,
 });
 
+const uiInteractionsService = {
+  getAddButtonMenuItems: () => [],
+  getNodeContextMenuItems: () => [],
+};
+
 const functionService = new BaseFunctionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
@@ -201,6 +206,7 @@ export const LocalDesigner = () => {
       editorService,
       connectionParameterEditorService,
       customCodeService,
+      uiInteractionsService,
     },
     readOnly: isReadOnly,
     isMonitoringView,
