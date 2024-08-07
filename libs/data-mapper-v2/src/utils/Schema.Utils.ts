@@ -295,7 +295,7 @@ export const getUpdatedStateConnections = (
       if (!sourceStateConnections[key]) {
         sourceStateConnections[key] = {};
       }
-      if (!Object.prototype.hasOwnProperty.call(targetStateConnections[key], connectToChild)) {
+      if (!Object.prototype.hasOwnProperty.call(sourceStateConnections[key], connectToChild)) {
         sourceStateConnections[key][connectToChild] = true;
       }
 
