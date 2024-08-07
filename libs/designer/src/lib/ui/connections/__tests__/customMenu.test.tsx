@@ -50,6 +50,10 @@ describe('CustomMenu', () => {
     const subMenuItem1 = screen.getByText('Sub Item 1');
     fireEvent.click(subMenuItem1);
 
+    const subMenuItem2 = screen.getByText('Sub Item 2');
+    fireEvent.click(subMenuItem1);
+
     expect(mockItem.subMenuItems[0].onClick).toHaveBeenCalled();
+    expect(mockItem.subMenuItems[1].onClick).toHaveBeenCalled();
   });
 });
