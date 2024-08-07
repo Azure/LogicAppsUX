@@ -142,12 +142,16 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     const case2 = '<h1>hello</h1>';
     const case3 = `<h3>dfg<span style="background-color: rgb(184, 233, 134);">dfg</span><span style="background-color: rgb(184, 233, 134); font-size: 11px;">dfg</span><a href="https://www.bing.com"><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;">dfgdfg dfgdfg dg zd</span></a><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;"> </span><u>asa</u></h3>`;
     const case4 = '<section>hello</section>';
+    const case5 = `<p style="background-color: rgb(184, 233, 134);">hello</p>`;
+    const case6 = '<p class="editor-paragraph">hello</p>';
 
     it.each<[string, boolean, string]>([
       ['empty string', true, case1],
       ['small string using <h1>', true, case2],
       ['large string using <a>, <u>, <h3>, <span>', true, case3],
       ['small string using <section>', false, case4],
+      ['style attribute inside <p>', false, case5],
+      ['no style attribute inside <p>', true, case6],
     ])('should return "%s" as supported="%s"', (_caseName, expected, inputString) => {
       const nodeMap = new Map<string, ValueSegment>();
       expect(isHtmlStringValueSafeForLexical(inputString, nodeMap)).toBe(expected);
