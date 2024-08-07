@@ -3,7 +3,6 @@ import type { FunctionData } from '../../../models';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { Button, Caption1, tokens, Popover, PopoverTrigger, mergeClasses } from '@fluentui/react-components';
 import { useCardContextMenu } from '@microsoft/designer-ui';
-
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useStyles } from './styles';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
