@@ -19,7 +19,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
@@ -153,17 +153,16 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   );
 
   const toolbarStyles = useStyles();
-  const bothSchemasDefined = useMemo(() => sourceSchema && targetSchema, [sourceSchema, targetSchema]);
 
   const disabledState = useMemo(
     () => ({
-      save: !bothSchemasDefined || !isStateDirty,
+      save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
-      discard: !isStateDirty,
-      test: !bothSchemasDefined,
-      codeView: !bothSchemasDefined,
+      discard: !isDirty,
+      test: sourceInEditState || targetInEditState,
+      codeView: sourceInEditState || targetInEditState,
     }),
-    [bothSchemasDefined, isStateDirty, undoStack]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState]
   );
 
   return (
