@@ -1,4 +1,11 @@
-import { equals, type ITreeFile, type IFileSysTreeItem, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  type ITreeFile,
+  type IFileSysTreeItem,
+  SchemaType,
+  type SchemaNodeExtended,
+  type SchemaExtended,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
@@ -12,7 +19,7 @@ import { SchemaTree } from './tree/SchemaTree';
 export interface SchemaPanelBodyProps {
   schemaType: SchemaType;
   flattenedSchemaMap?: Record<string, SchemaNodeExtended>;
-  selectedSchema?: string;
+  schema?: SchemaExtended;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
@@ -29,21 +36,12 @@ export const SchemaPanelBody = ({
   setFileSelectorOptions,
   showScehmaSelection,
   flattenedSchemaMap,
+  schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
-
-  const schema = useSelector((state: RootState) => {
-    if (schemaType === SchemaType.Source) {
-      return state.dataMap.present.curDataMapOperation.sourceSchema;
-    }
-    if (schemaType === SchemaType.Target) {
-      return state.dataMap.present.curDataMapOperation.targetSchema;
-    }
-    return undefined;
-  });
 
   const stringResources = useMemo(
     () => ({

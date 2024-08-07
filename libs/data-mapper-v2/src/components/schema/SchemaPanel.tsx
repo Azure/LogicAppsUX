@@ -140,15 +140,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         id: 'KqJ14/',
         description: 'Edit scehma',
       }),
+      GENERIC_ERROR: intl.formatMessage({
+        defaultMessage: 'Failed to load the schema. Please try again.',
+        id: '6fDYzG',
+        description: 'Load schema error message',
+      }),
     }),
     [intl]
   );
-
-  const genericErrorMsg = intl.formatMessage({
-    defaultMessage: 'Failed to load the schema. Please try again.',
-    id: '6fDYzG',
-    description: 'Load schema error message',
-  });
 
   const goBackToDefaultConfigPanelView = useCallback(() => {
     dispatch(openDefaultConfigPanelView());
@@ -211,14 +210,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         isAddSchema ? closeEntirePanel() : goBackToDefaultConfigPanelView();
         setErrorMessage('');
       } else {
-        setErrorMessage(genericErrorMsg);
+        setErrorMessage(stringResources.GENERIC_ERROR);
       }
     },
     [
       schemaType,
       closeEntirePanel,
       goBackToDefaultConfigPanelView,
-      genericErrorMsg,
+      stringResources,
       selectedSchemaFile,
       fileSelectorOptions,
       onSubmitSchemaFileSelection,
@@ -319,7 +318,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       body={
         <SchemaPanelBody
           schemaType={schemaType}
-          selectedSchema={selectedSchema?.name}
+          schema={selectedSchema}
           setSelectedSchemaFile={setSelectedSchemaFile}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
