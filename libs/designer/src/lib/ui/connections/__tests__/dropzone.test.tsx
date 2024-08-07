@@ -23,7 +23,7 @@ vi.mock('@fluentui/react-components', async (importOriginal) => {
 });
 
 vi.mock('@microsoft/designer-ui', async (importOriginal) => {
-  const original = await importOriginal();
+  const original: { key: [object] } = await importOriginal();
   return {
     ...original,
     ActionButtonV2: ({ children, ...props }) => <div className={'action-button'}>{'action button'}</div>,
