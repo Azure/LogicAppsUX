@@ -10,8 +10,6 @@ import { createContainerClient } from '../../../../utils/azureClients';
 import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
-  public hideStepCount = true;
-
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
     const hasValidName = await ContainerAppNameStep.isNameAvailable(context, context.resourceGroup.name, context.newSiteName);
 
