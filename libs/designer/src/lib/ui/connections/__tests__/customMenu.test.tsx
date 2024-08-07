@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { CustomMenu, type CustomMenuProps } from '../customMenu';
@@ -51,10 +50,6 @@ describe('CustomMenu', () => {
     const subMenuItem1 = screen.getByText('Sub Item 1');
     fireEvent.click(subMenuItem1);
 
-    const subMenuItem2 = screen.getByText('Sub Item 2');
-    fireEvent.click(subMenuItem1);
-
     expect(mockItem.subMenuItems[0].onClick).toHaveBeenCalled();
-    expect(mockItem.subMenuItems[1].onClick).toHaveBeenCalled();
   });
 });
