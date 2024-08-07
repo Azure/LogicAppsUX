@@ -118,6 +118,7 @@ export const CreateConnectionInternal = (props: {
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled?: () => void;
+  createButtonText?: string;
   description?: string;
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
@@ -135,6 +136,7 @@ export const CreateConnectionInternal = (props: {
     nodeIds = [],
     hideCancelButton,
     showActionBar,
+    createButtonText,
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
@@ -358,6 +360,7 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
+      createText={createButtonText}
       description={description}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
