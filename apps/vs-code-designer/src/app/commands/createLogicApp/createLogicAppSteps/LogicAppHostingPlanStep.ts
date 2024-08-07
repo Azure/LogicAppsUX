@@ -12,6 +12,7 @@ import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { workflowAppApiVersion } from '../../../../constants';
+import { ContainerAppNameStep } from './HybridLogicAppsSteps/ContainerAppNameStep';
 
 export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(wizardContext: ILogicAppWizardContext): Promise<void> {
@@ -42,7 +43,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
     CustomLocationListStep.addStep(wizardContext as any, promptSteps);
     if (useHybrid) {
       this.setHybridPlanProperties(wizardContext);
-      promptSteps.push(new ResourceGroupListStep(), new ConnectedEnvironmentStep());
+      promptSteps.push(new ResourceGroupListStep(), new ContainerAppNameStep(), new ConnectedEnvironmentStep());
     } else {
       promptSteps.push(new AppServicePlanListStep(suppressCreate), new ResourceGroupListStep());
     }
