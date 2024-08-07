@@ -59,6 +59,7 @@ export interface DataMapOperationState {
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
+  fullLayoutNeeded: boolean;
   loadedMapMetadata?: MapMetadataV2;
   // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
   // This info is not saved in LML which is why it is stored separately in the store
@@ -84,6 +85,7 @@ export interface DataMapOperationState {
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
+  fullLayoutNeeded: false,
   dataMapLML: '',
   functionNodes: {},
   flattenedSourceSchema: {},
@@ -234,6 +236,7 @@ export const dataMapSlice = createSlice({
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
       const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
+      const fullLayoutNeeded = !metadata;
       assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
 
       const newState: DataMapOperationState = {
@@ -244,6 +247,7 @@ export const dataMapSlice = createSlice({
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
         functionNodes,
+        fullLayoutNeeded,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
@@ -398,8 +402,7 @@ export const dataMapSlice = createSlice({
       if (!node) {
         return;
       }
-      const position = node.position;
-      newOp.functionNodes[action.payload.id].position = position;
+      newOp.functionNodes[action.payload.id] = { ...node, position: action.payload.position };
       state.curDataMapOperation = newOp;
     },
 

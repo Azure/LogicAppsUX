@@ -1,9 +1,8 @@
 /* eslint-disable react/display-name */
 import { StatusPill } from '../monitoring';
-import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
-import { useCardContextMenu, useCardKeyboardInteraction } from './hooks';
+import { useCardKeyboardInteraction } from './hooks';
 import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
@@ -12,6 +11,7 @@ import { Icon, css } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import type { MouseEventHandler } from 'react';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -24,7 +24,6 @@ export interface CardProps {
   connectionDisplayName?: string;
   connectionRequired?: boolean;
   connectorName?: string;
-  contextMenuItems?: JSX.Element[];
   drag: ConnectDragSource;
   draggable: boolean;
   dragPreview: ConnectDragPreview;
@@ -42,6 +41,7 @@ export interface CardProps {
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
+  onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   onCopyClick?(): void;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
@@ -64,7 +64,6 @@ export const Card: React.FC<CardProps> = memo(
     connectionDisplayName,
     connectionRequired,
     connectorName,
-    contextMenuItems = [],
     drag,
     draggable,
     dragPreview,
@@ -79,6 +78,7 @@ export const Card: React.FC<CardProps> = memo(
     onClick,
     onDeleteClick,
     onCopyClick,
+    onContextMenu,
     selectionMode,
     staticResultsEnabled,
     title,
@@ -92,7 +92,6 @@ export const Card: React.FC<CardProps> = memo(
     };
     const focusRef = useRef<HTMLElement | null>(null);
     const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
-    const contextMenu = useCardContextMenu();
 
     useEffect(() => {
       if (setFocus) {
@@ -159,74 +158,63 @@ export const Card: React.FC<CardProps> = memo(
     );
 
     return (
-      <>
-        <div
-          ref={(node) => {
-            dragPreview(node);
-            focusRef.current = node;
-            drag(node);
-          }}
-          role={'button'}
-          id={`msla-node-${id}`}
-          aria-label={cardAltText}
-          className={css(
-            'msla-panel-card-container',
-            selectionMode === 'selected' && 'msla-panel-card-container-selected',
-            !active && 'inactive',
-            cloned && 'msla-card-ghost-image',
-            isDragging && 'dragging'
-          )}
-          style={getCardStyle(brandColor)}
-          data-testid={`card-${title}`}
-          data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
-          onClick={handleClick}
-          onContextMenu={contextMenu.handle}
-          onKeyDown={keyboardInteraction.keyDown}
-          tabIndex={nodeIndex}
-          onKeyUp={keyboardInteraction.keyUp}
-        >
-          {isMonitoringView ? (
-            <StatusPill
-              id={`${title}-status`}
-              status={runData?.status}
-              duration={runData?.duration}
-              startTime={runData?.startTime}
-              endTime={runData?.endTime}
-              resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
-            />
-          ) : null}
-          <div className={css('msla-selection-box', selectionMode)} />
-          <div className="panel-card-main">
-            <div className="panel-card-header" role="button">
-              <div className="panel-card-content-container">
-                <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-                <div className="panel-card-content-icon-section">{cardIcon}</div>
-                <div className="panel-card-top-content">
-                  <div className="panel-msla-title">{title}</div>
-                </div>
-              </div>
-              {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
-            </div>
-            <CardFooter
-              commentBox={commentBox}
-              connectionDisplayName={connectionDisplayName}
-              connectionRequired={connectionRequired}
-              staticResultsEnabled={staticResultsEnabled}
-              isSecureInputsOutputs={isSecureInputsOutputs}
-              nodeIndex={nodeIndex}
-            />
-          </div>
-        </div>
-        {contextMenuItems.length > 0 && (
-          <CardContextMenu
-            contextMenuLocation={contextMenu.location}
-            menuItems={contextMenuItems}
-            open={contextMenu.isShowing}
-            title={title}
-            setOpen={contextMenu.setIsShowing}
-          />
+      <div
+        ref={(node) => {
+          dragPreview(node);
+          focusRef.current = node;
+          drag(node);
+        }}
+        role={'button'}
+        id={`msla-node-${id}`}
+        aria-label={cardAltText}
+        className={css(
+          'msla-panel-card-container',
+          selectionMode === 'selected' && 'msla-panel-card-container-selected',
+          !active && 'inactive',
+          cloned && 'msla-card-ghost-image',
+          isDragging && 'dragging'
         )}
-      </>
+        style={getCardStyle(brandColor)}
+        data-testid={`card-${title}`}
+        data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
+        onClick={handleClick}
+        onContextMenu={onContextMenu}
+        onKeyDown={keyboardInteraction.keyDown}
+        tabIndex={nodeIndex}
+        onKeyUp={keyboardInteraction.keyUp}
+      >
+        {isMonitoringView ? (
+          <StatusPill
+            id={`${title}-status`}
+            status={runData?.status}
+            duration={runData?.duration}
+            startTime={runData?.startTime}
+            endTime={runData?.endTime}
+            resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
+          />
+        ) : null}
+        <div className={css('msla-selection-box', selectionMode)} />
+        <div className="panel-card-main">
+          <div className="panel-card-header" role="button">
+            <div className="panel-card-content-container">
+              <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
+              <div className="panel-card-content-icon-section">{cardIcon}</div>
+              <div className="panel-card-top-content">
+                <div className="panel-msla-title">{title}</div>
+              </div>
+            </div>
+            {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
+          </div>
+          <CardFooter
+            commentBox={commentBox}
+            connectionDisplayName={connectionDisplayName}
+            connectionRequired={connectionRequired}
+            staticResultsEnabled={staticResultsEnabled}
+            isSecureInputsOutputs={isSecureInputsOutputs}
+            nodeIndex={nodeIndex}
+          />
+        </div>
+      </div>
     );
   }
 );

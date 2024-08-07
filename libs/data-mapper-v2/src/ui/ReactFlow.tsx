@@ -81,6 +81,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         position: node[1].position || { x: 10, y: 200 },
         draggable: true,
         selectable: false,
+        measured: { width: 1, height: 1 },
       }))
     );
   }, [functionNodes]);
@@ -218,7 +219,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edgeTypes={edgeTypes}
         preventScrolling={false}
         minZoom={1}
-        elementsSelectable={true}
+        elementsSelectable={false}
         maxZoom={1}
         autoPanOnConnect={false}
         snapToGrid={true}
