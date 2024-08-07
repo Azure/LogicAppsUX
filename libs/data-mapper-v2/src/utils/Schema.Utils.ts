@@ -295,13 +295,18 @@ export const getUpdatedStateConnections = (
       if (!sourceStateConnections[key]) {
         sourceStateConnections[key] = {};
       }
-      sourceStateConnections[key][connectToChild] = true;
+      if (!Object.prototype.hasOwnProperty.call(targetStateConnections[key], connectToChild)) {
+        sourceStateConnections[key][connectToChild] = true;
+      }
 
       // Update Target-Source edge mapping
       if (!targetStateConnections[connectToChild]) {
         targetStateConnections[connectToChild] = {};
       }
-      targetStateConnections[connectToChild][key] = true;
+
+      if (!Object.prototype.hasOwnProperty.call(targetStateConnections[connectToChild], key)) {
+        targetStateConnections[connectToChild][key] = true;
+      }
     }
   }
 
