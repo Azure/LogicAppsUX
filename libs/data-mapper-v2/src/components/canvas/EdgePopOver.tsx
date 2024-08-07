@@ -12,7 +12,7 @@ import {
 } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { deleteEdge, updateEdgePopOverId } from '../../core/state/DataMapSlice';
+import { updateEdgePopOverId } from '../../core/state/DataMapSlice';
 import type { Bounds } from '../../core';
 import { useStyles } from './styles';
 import { ArrowRepeatAllRegular, DeleteRegular, ArrowRepeatAllOffRegular } from '@fluentui/react-icons';
