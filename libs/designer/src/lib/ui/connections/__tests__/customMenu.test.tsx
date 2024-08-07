@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { CustomMenu, type CustomMenuProps } from '../CustomMenu';
+import { CustomMenu, type CustomMenuProps } from '../customMenu';
 
 vi.mock('@fluentui/react-components', () => ({
   Menu: ({ children, ...props }) => <div {...props}>{children}</div>,

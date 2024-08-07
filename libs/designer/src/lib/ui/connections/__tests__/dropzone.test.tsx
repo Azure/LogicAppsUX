@@ -9,7 +9,7 @@ import { getReactQueryClient } from '../../../core';
 const queryClient = getReactQueryClient();
 const intlOnError = vi.fn();
 vi.mock('@fluentui/react-components', async (importOriginal) => {
-  const original = await importOriginal();
+  const original: { key: [object] } = await importOriginal();
   return {
     ...original,
     Popover: ({ children, ...props }) => <div {...props}>{children}</div>,
@@ -31,7 +31,7 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
   };
 });
 
-vi.mock('../CustomMenu', () => ({
+vi.mock('../customMenu', () => ({
   CustomMenu: ({ children, ...props }) => <div className={'custom-menu'}>{'custom menu'}</div>,
 }));
 
