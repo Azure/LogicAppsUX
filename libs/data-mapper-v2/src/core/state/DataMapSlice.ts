@@ -660,6 +660,7 @@ export const {
   toogleNodeExpandCollapse,
   updateFunctionNodesPosition,
   updateEdgePopOverId,
+  deleteEdge,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
