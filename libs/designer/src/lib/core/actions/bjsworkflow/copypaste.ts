@@ -9,7 +9,7 @@ import { pasteNode, pasteScopeNode } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
 import { createIdCopy, getRecordEntry, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { batch } from 'react-redux';
+import { batch } from 'react-redux'; 
 import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
