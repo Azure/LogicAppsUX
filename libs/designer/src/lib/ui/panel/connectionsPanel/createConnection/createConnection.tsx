@@ -56,6 +56,7 @@ export interface CreateConnectionProps {
   description?: string;
   identity?: ManagedIdentity;
   isLoading?: boolean;
+  createText?: string;
   createConnectionCallback?: (
     newName?: string,
     selectedParameterSet?: ConnectionParameterSet,
@@ -82,6 +83,7 @@ export interface CreateConnectionProps {
 export const CreateConnection = (props: CreateConnectionProps) => {
   const {
     classes,
+    createText,
     nodeIds = [],
     showActionBar = true,
     iconUri = '',
@@ -482,12 +484,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return '';
   }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
 
+  const createConnectionText = createText ?? createButtonText;
   const submitButtonText = useMemo(() => {
     if (isLoading) {
       return isUsingOAuth ? signInButtonLoadingText : createButtonLoadingText;
     }
-    return isUsingOAuth ? signInButtonText : createButtonText;
-  }, [createButtonLoadingText, createButtonText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
+    return isUsingOAuth ? signInButtonText : createConnectionText;
+  }, [createButtonLoadingText, createConnectionText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
 
   const submitButtonAriaLabel = useMemo(() => {
     return isUsingOAuth ? signInButtonAria : createButtonAria;
