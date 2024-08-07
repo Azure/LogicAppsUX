@@ -11,7 +11,7 @@ import {
   isConnectionUnit,
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
-import { getParentId } from '../../utils/DataMap.Utils';
+import { addParentConnectionForRepeatingElementsNested, getParentId, isIdForFunctionNode } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
@@ -302,6 +302,48 @@ export const dataMapSlice = createSlice({
 
       let sourceNode: UnknownNode;
       const { reactFlowSource, reactFlowDestination } = action.payload;
+
+      // Add any repeating parent nodes as well (except for Direct Access's)
+      // Get all the source nodes in case we have sources from multiple source chains
+      const originalSourceNodeId = action.payload.reactFlowSource;
+      let schemaSources: SchemaNodeExtended[];
+
+      if (!(isIdForFunctionNode(originalSourceNodeId) && originalSourceNodeId === directAccessPseudoFunctionKey)) {
+        if (isIdForFunctionNode(originalSourceNodeId)) {
+          const sourceNodes = getConnectedSourceSchemaNodes(
+            [newState.dataMapConnections[action.payload.reactFlowSource]],
+            newState.dataMapConnections
+          );
+          schemaSources = sourceNodes;
+        } else {
+          schemaSources = [state.curDataMapOperation.flattenedSourceSchema[originalSourceNodeId]];
+        }
+
+        // We'll only have one output node in this case
+        const originalTargetNodeId = action.payload.reactFlowDestination;
+        let actualTarget: SchemaNodeExtended[];
+        if (isIdForFunctionNode(originalTargetNodeId)) {
+          const targetNodes = getConnectedTargetSchemaNodes(
+            [newState.dataMapConnections[action.payload.reactFlowDestination]],
+            newState.dataMapConnections
+          );
+          actualTarget = targetNodes;
+        } else {
+          actualTarget = [state.curDataMapOperation.flattenedTargetSchema[originalTargetNodeId]];
+        }
+
+        schemaSources.forEach((sourceNode) => {
+          if (actualTarget.length > 0) {
+            addParentConnectionForRepeatingElementsNested(
+              sourceNode,
+              actualTarget[0],
+              newState.flattenedSourceSchema,
+              newState.flattenedTargetSchema,
+              newState.dataMapConnections
+            );
+          }
+        });
+      }
 
       if (reactFlowSource.startsWith(SchemaType.Source)) {
         sourceNode = state.curDataMapOperation.flattenedSourceSchema[reactFlowSource];
