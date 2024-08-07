@@ -135,8 +135,8 @@ export const reviewCreateTab = (
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
-    defaultMessage: 'Review and create',
-    id: 'MjmFeR',
+    defaultMessage: 'Review + create',
+    id: 'JQBEOg',
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
   description: isCreated ? (
