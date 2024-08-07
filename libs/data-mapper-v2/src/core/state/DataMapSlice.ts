@@ -168,11 +168,6 @@ type ReactFlowNodesUpdateProps = {
   nodes: Record<string, Node>;
 };
 
-type StateConnectionProps = {
-  sourceStateConnections: Record<string, Record<string, boolean>>;
-  targetStateConnections: Record<string, Record<string, boolean>>;
-};
-
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
@@ -284,7 +279,7 @@ export const dataMapSlice = createSlice({
 
       applyConnectionValue(newState.dataMapConnections, action.payload);
 
-      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, state.curDataMapOperation.selectedItemKey);
+      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, {}, state.curDataMapOperation.selectedItemKey);
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
@@ -344,7 +339,7 @@ export const dataMapSlice = createSlice({
 
       addConnection(newState.dataMapConnections, action.payload, destinationNode, sourceNode);
 
-      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, state.curDataMapOperation.selectedItemKey);
+      newState.selectedItemConnectedNodes = getActiveNodes(newState.dataMapConnections, {}, state.curDataMapOperation.selectedItemKey);
 
       if (isFunctionData(sourceNode)) {
         doDataMapOperation(state, newState, 'Updated function node locations by adding');
@@ -583,13 +578,6 @@ export const dataMapSlice = createSlice({
         //Throw error
       }
     },
-    updateStateConnection: (state, action: PayloadAction<StateConnectionProps>) => {
-      state.curDataMapOperation = {
-        ...state.curDataMapOperation,
-        sourceStateConnections: action.payload.sourceStateConnections,
-        targetStateConnections: action.payload.targetStateConnections,
-      };
-    },
   },
 });
 
@@ -615,7 +603,6 @@ export const {
   updateFunctionNodesPosition,
   updateEdgePopOverId,
   deleteEdge,
-  updateStateConnection,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
