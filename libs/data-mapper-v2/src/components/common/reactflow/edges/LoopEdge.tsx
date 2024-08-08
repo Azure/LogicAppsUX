@@ -1,6 +1,6 @@
 import { getStraightPath, type EdgeProps } from '@xyflow/react';
 import { useActiveEdge } from '../../../../core/state/selectors/selectors';
-import { activeColor, loopColor } from '../styles';
+import { colors } from '../styles';
 
 const LoopEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY } = props;
@@ -13,7 +13,7 @@ const LoopEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  const strokeColor = activeEdge ? activeColor : loopColor;
+  const strokeColor = activeEdge ? colors.active : colors.loop;
 
   return (
     <g id={`${id}_customEdge`}>
