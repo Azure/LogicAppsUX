@@ -1,4 +1,5 @@
 import { getStraightPath, type ConnectionLineComponentProps } from '@xyflow/react';
+import { activeColor } from '../styles';
 
 const ConnectionLineComponent = (props: ConnectionLineComponentProps) => {
   const { fromX, fromY, toX, toY, fromNode } = props;
@@ -12,9 +13,9 @@ const ConnectionLineComponent = (props: ConnectionLineComponentProps) => {
 
   return (
     <g id={`${fromNode?.id}_customConnectionLine`}>
-      <circle cx={fromX} cy={fromY} r={8} strokeWidth={2} stroke="#62AAD8" fill="transparent" />
-      <path fill="none" stroke="#62AAD8" strokeWidth={6} className="animated" d={path} />
-      <circle cx={toX} cy={toY} r={8} strokeWidth={2} stroke="#62AAD8" fill="transparent" />
+      <circle cx={fromX} cy={fromY} r={8} strokeWidth={2} stroke={activeColor} fill="transparent" />
+      <path fill="none" stroke={activeColor} strokeWidth={6} className="animated" d={path} />
+      <circle cx={toX} cy={toY} r={8} strokeWidth={2} stroke={activeColor} fill="transparent" />
     </g>
   );
 };

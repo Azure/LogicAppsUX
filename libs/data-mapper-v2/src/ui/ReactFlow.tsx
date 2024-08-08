@@ -15,8 +15,8 @@ import type {
 import { ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
 import SchemaNode from '../components/common/reactflow/SchemaNode';
-import ConnectionLine from '../components/common/reactflow/ConnectionLine';
-import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
+import ConnectionLine from '../components/common/reactflow/edges/ConnectionLine';
+import ConnectedEdge from '../components/common/reactflow/edges/ConnectedEdge';
 import type { ConnectionAction } from '../core/state/DataMapSlice';
 import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem, updateEdgePopOverId } from '../core/state/DataMapSlice';
 import { FunctionNode } from '../components/common/reactflow/FunctionNode';
@@ -27,6 +27,8 @@ import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
 import { createEdgeId } from '../utils/Edge.Utils';
 import useAutoLayout from './hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
+import LoopEdge from '../components/common/reactflow/edges/LoopEdge';
+
 import EdgePopOver from '../components/canvas/EdgePopOver';
 import { getReactFlowNodeId } from '../utils/Schema.Utils';
 interface DMReactFlowProps {
@@ -65,8 +67,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           id: createEdgeId(edge.sourceId, edge.targetId),
           source: edge.sourceId,
           target: edge.targetId,
-          type: 'connectedEdge',
+          type: edge.isRepeating ? 'loopEdge' : 'connectedEdge',
           reconnectable: 'target',
+          data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
         };
@@ -181,6 +184,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const edgeTypes = useMemo(
     () => ({
       connectedEdge: ConnectedEdge,
+      loopEdge: LoopEdge,
     }),
     []
   );
