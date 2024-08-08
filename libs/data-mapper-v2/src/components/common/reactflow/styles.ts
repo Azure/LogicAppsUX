@@ -2,9 +2,9 @@ import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 const fnIconSize = '17px';
 
-const activeColor = '#62AAD8';
-const connectedColor = '#C6DEEE';
-const loopColor = '#88AEC7';
+export const activeColor = '#62AAD8';
+export const connectedColor = '#C6DEEE';
+export const loopColor = '#88AEC7';
 
 export const useStyles = makeStyles({
   wrapper: {
@@ -59,13 +59,16 @@ export const useStyles = makeStyles({
   activeFunctionButton: {
     ...shorthands.border('3px', 'solid', activeColor),
   },
-  loopHandle: {
+  loopSourceHandle: {
     height: '22px',
     width: '22px',
     backgroundColor: loopColor,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loopTargetHandle: {
+    backgroundColor: loopColor,
   },
   loopIcon: {
     color: 'white',

@@ -19,7 +19,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const styles = useStyles();
 
   const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
-  const isLoop = useMemo(() => edges.some((edge) => edge.source === id && edge.data?.isRepeating), [edges, id]);
+  const isLoop = useMemo(() => edges.some((edge) => (edge.source === id || edge.target === id) && edge.data?.isRepeating), [edges, id]);
   const isActive = useActiveNode(id);
 
   const styleForState = useMemo(() => {
@@ -27,11 +27,14 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
       styles.handleWrapper,
       isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper
     );
-    if (isLoop) {
-      return mergeClasses(directionalStyle, styles.loopHandle);
-    }
     if (isActive !== undefined) {
       return mergeClasses(directionalStyle, styles.activeHandle);
+    }
+    if (isLoop && !isLeftDirection) {
+      return mergeClasses(directionalStyle, styles.loopTargetHandle);
+    }
+    if (isLoop && isLeftDirection) {
+      return mergeClasses(directionalStyle, styles.loopSourceHandle);
     }
     if (isConnected) {
       return mergeClasses(directionalStyle, styles.handleConnected);
@@ -51,12 +54,13 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag', styles.nodeWrapper)} ref={divRef}>
       <Handle
+        style={{ zIndex: 1000 }}
         type={isLeftDirection ? 'source' : 'target'}
         position={isLeftDirection ? Position.Left : Position.Right}
         className={handleStyle}
         onMouseDown={setActiveNode}
       >
-        {isLoop && <ArrowClockwiseFilled className={styles.loopIcon} />}
+        {isLoop && isLeftDirection && <ArrowClockwiseFilled className={styles.loopIcon} />}
       </Handle>
     </div>
   );

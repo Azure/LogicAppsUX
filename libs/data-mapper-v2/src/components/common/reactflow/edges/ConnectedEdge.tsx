@@ -1,5 +1,6 @@
 import { getStraightPath, type EdgeProps } from '@xyflow/react';
-import { useActiveEdge } from '../../../core/state/selectors/selectors';
+import { useActiveEdge } from '../../../../core/state/selectors/selectors';
+import { activeColor, connectedColor } from '../styles';
 
 const ConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY } = props;
@@ -12,7 +13,7 @@ const ConnectedEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  const strokeColor = activeEdge ? '#62AAD8' : '#C6DEEE';
+  const strokeColor = activeEdge ? activeColor : connectedColor;
 
   return (
     <g id={`${id}_customEdge`}>
