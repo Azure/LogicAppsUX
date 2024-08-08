@@ -1,10 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
-import { DropZone } from '../dropzone';
-import { InitUiInteractionsService, IntlProvider, type TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
-import { renderWithRedux } from '../../../__test__/redux-test-helper';
+import { getReactQueryClient } from '../../../../core';
+import { InitUiInteractionsService, type TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { getReactQueryClient } from '../../../core';
+import { IntlProvider } from 'react-intl';
+import { renderWithRedux } from '../../../../__test__/redux-test-helper';
+import { EdgeContextualMenu } from '../EdgeContextualMenu';
 
 const queryClient = getReactQueryClient();
 const intlOnError = vi.fn();
@@ -52,21 +53,6 @@ vi.mock('react-redux', async () => {
   };
 });
 
-vi.mock('react-dnd', async () => {
-  const actual = await vi.importActual('react-dnd');
-  return {
-    ...actual,
-    useDrop: vi.fn(() => [
-      { isOver: false, canDrop: true },
-      (node) => {
-        if (node) {
-          node.current = node; // Mock setting the current property
-        }
-      },
-    ]),
-  };
-});
-
 vi.mock('react-intl', async () => {
   const actualIntl = await vi.importActual('react-intl');
   return {
@@ -77,28 +63,20 @@ vi.mock('react-intl', async () => {
   };
 });
 
-vi.mock('react-hotkeys-hook', async () => {
-  const actualHotkeysHook = await vi.importActual('react-hotkeys-hook');
-  return {
-    ...actualHotkeysHook,
-    useHotkeys: vi.fn(() => [{ current: null }, vi.fn()]),
-  };
-});
-
-describe('DropZone component handling of empty or undefined menu items', () => {
+describe('EdgeContextualMenu component handling of empty or undefined menu items', () => {
   it('renders correctly when getAddButtonMenuItems returns undefined', async () => {
     const uiInteractionsService = { getAddButtonMenuItems: vi.fn() };
     InitUiInteractionsService(uiInteractionsService);
     uiInteractionsService.getAddButtonMenuItems.mockReturnValue(undefined);
+
     const renderer = renderWithRedux(
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale={''} defaultLocale={''} onError={intlOnError}>
-          <DropZone graphId="root" parentId="parent" />
+          <EdgeContextualMenu />
         </IntlProvider>
       </QueryClientProvider>
     );
     const container = renderer.root;
-    expect(container.findByProps({ className: 'action-button' }).children).toEqual(['action button']);
     expect(container.findAllByProps({ className: 'custom-menu' })).toEqual([]);
   });
 
@@ -110,12 +88,11 @@ describe('DropZone component handling of empty or undefined menu items', () => {
     const renderer = renderWithRedux(
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale={''} defaultLocale={''} onError={intlOnError}>
-          <DropZone graphId="root" parentId="parent" />
+          <EdgeContextualMenu />
         </IntlProvider>
       </QueryClientProvider>
     );
     const container = renderer.root;
-    expect(container.findByProps({ className: 'action-button' }).children).toEqual(['action button']);
     expect(container.findAllByProps({ className: 'custom-menu' })).toEqual([]);
   });
 
@@ -131,12 +108,11 @@ describe('DropZone component handling of empty or undefined menu items', () => {
     const renderer = renderWithRedux(
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale={''} defaultLocale={''} onError={intlOnError}>
-          <DropZone graphId="root" parentId="parent" />
+          <EdgeContextualMenu />
         </IntlProvider>
       </QueryClientProvider>
     );
     const container = renderer.root;
-    expect(container.findByProps({ className: 'action-button' }).children).toEqual(['action button']);
     expect(container.findByProps({ className: 'custom-menu' }).children).toEqual(['custom menu']);
   });
 });

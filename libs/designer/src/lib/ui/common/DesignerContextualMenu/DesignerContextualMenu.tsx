@@ -22,8 +22,8 @@ import {
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from './CopyTooltip';
-import { CustomMenu } from '../../connections/customMenu';
-import { NodeMenuPriorities } from '../../CustomNodes/Priorities';
+import { CustomMenu } from '../EdgeContextualMenu/customMenu';
+import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 
 export const DesignerContextualMenu = () => {
