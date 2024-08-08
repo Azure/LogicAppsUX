@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Popover, PopoverSurface, MenuList, MenuItem, MenuDivider } from '@fluentui/react-components';
 import {
@@ -43,7 +43,7 @@ export const EdgeContextualMenu = () => {
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
-  const target = useMemo(() => menuData?.target, [menuData]);
+  const location = useMemo(() => menuData?.location, [menuData]);
 
   const [open, setOpen] = useState<boolean>(false);
   useEffect(() => setOpen(!!menuData), [menuData]);
@@ -180,39 +180,44 @@ export const EdgeContextualMenu = () => {
     [parentName, childName]
   );
 
+  const ref = useRef<HTMLDivElement>(null);
+
   return (
-    <Popover
-      onOpenChange={(_, data) => setOpen(data.open)}
-      trapFocus
-      open={open}
-      withArrow={true}
-      positioning={{ target, position: 'after' }}
-    >
-      <PopoverSurface style={{ padding: '4px' }}>
-        <MenuList onClick={() => setOpen(false)}>
-          <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
-            {newActionText}
-          </MenuItem>
-          {showParallelBranchButton && (
-            <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
-              {newBranchText}
+    <>
+      <div ref={ref} style={{ position: 'absolute', top: location?.y, left: location?.x }} />
+      <Popover
+        onOpenChange={(_, data) => setOpen(data.open)}
+        trapFocus
+        open={open}
+        withArrow={true}
+        positioning={{ target: ref.current, position: 'after' }}
+      >
+        <PopoverSurface style={{ padding: '4px' }}>
+          <MenuList onClick={() => setOpen(false)}>
+            <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
+              {newActionText}
             </MenuItem>
-          )}
-          {isPasteEnabled && (
-            <>
-              <MenuDivider />
-              <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
-                {pasteFromClipboard}
+            {showParallelBranchButton && (
+              <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
+                {newBranchText}
               </MenuItem>
-            </>
-          )}
-          {UiInteractionsService()
-            ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
-            ?.map((item) => (
-              <CustomMenu key={item.text} item={item} />
-            ))}
-        </MenuList>
-      </PopoverSurface>
-    </Popover>
+            )}
+            {isPasteEnabled && (
+              <>
+                <MenuDivider />
+                <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
+                  {pasteFromClipboard}
+                </MenuItem>
+              </>
+            )}
+            {UiInteractionsService()
+              ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
+              ?.map((item) => (
+                <CustomMenu key={item.text} item={item} />
+              ))}
+          </MenuList>
+        </PopoverSurface>
+      </Popover>
+    </>
   );
 };

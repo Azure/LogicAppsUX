@@ -16,5 +16,5 @@ export interface EdgeContextMenuObject {
   parentId?: string;
   childId?: string;
   isLeaf?: boolean;
-  target: HTMLElement;
+  location: { x: number; y: number };
 }

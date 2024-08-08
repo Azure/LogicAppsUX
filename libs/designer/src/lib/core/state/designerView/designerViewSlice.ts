@@ -15,19 +15,19 @@ export const designerViewSlice = createSlice({
   name: 'designerView',
   initialState,
   reducers: {
-    toggleMinimap: (state: DesignerViewState) => {
+    toggleMinimap: (state) => {
       state.showMinimap = !state.showMinimap;
     },
-    toggleClampPan: (state: DesignerViewState) => {
+    toggleClampPan: (state) => {
       state.clampPan = !state.clampPan;
     },
-    setShowDeleteModalNodeId: (state: DesignerViewState, action: PayloadAction<string | undefined>) => {
+    setShowDeleteModalNodeId: (state, action: PayloadAction<string | undefined>) => {
       state.showDeleteModalNodeId = action.payload;
     },
-    setNodeContextMenuData: (state: DesignerViewState, action: PayloadAction<NodeContextMenuObject>) => {
+    setNodeContextMenuData: (state, action: PayloadAction<NodeContextMenuObject>) => {
       state.nodeContextMenuData = action.payload;
     },
-    setEdgeContextMenuData: (state: DesignerViewState, action: PayloadAction<EdgeContextMenuObject>) => {
+    setEdgeContextMenuData: (state, action: PayloadAction<EdgeContextMenuObject>) => {
       state.edgeContextMenuData = action.payload;
     },
   },

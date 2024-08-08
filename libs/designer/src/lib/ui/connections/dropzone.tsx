@@ -186,6 +186,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
 
   const actionButtonClick = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
+      const rect = buttonRef.current?.getBoundingClientRect();
       e.preventDefault();
       dispatch(
         setEdgeContextMenuData({
@@ -193,7 +194,10 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
           parentId,
           childId,
           isLeaf,
-          target: buttonRef.current,
+          location: {
+            x: (rect?.left ?? 0) + (rect?.width ?? 0),
+            y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
+          },
         })
       );
     },
