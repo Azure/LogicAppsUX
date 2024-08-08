@@ -74,3 +74,4 @@ export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
 } from './utils/card';
+export { addOperation } from './actions/bjsworkflow/add';

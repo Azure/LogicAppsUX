@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CardContextMenu } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { SUBGRAPH_TYPES, WorkflowService, getRecordEntry, isScopeOperation } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, UiInteractionsService, WorkflowService, getRecordEntry, isScopeOperation } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem } from '../../../ui/menuItems';
@@ -22,6 +22,9 @@ import {
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from './CopyTooltip';
+import { CustomMenu } from '../../connections/customMenu';
+import { NodeMenuPriorities } from '../../CustomNodes/Priorities';
+import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -95,16 +98,57 @@ export const DesignerContextualMenu = () => {
     setShowCopyCallout(false);
   }, [copyCalloutTimeout]);
 
-  const actionContextMenuItems: JSX.Element[] = useMemo(
+  const transformMenuItems = (items: TopLevelDropdownMenuItem[]): DropdownMenuCustomNode[] => {
+    return items.map((item) => ({
+      priority: item?.priority,
+      renderCustomComponent: () => <CustomMenu item={item} />,
+    }));
+  };
+
+  const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-      <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,
-      <PinMenuItem key={'pin'} nodeId={nodeId} onClick={pinClick} />,
-      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
+      ...transformMenuItems(UiInteractionsService()?.getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? []),
+      { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
+      {
+        priority: NodeMenuPriorities.Copy,
+        renderCustomComponent: () => <CopyMenuItem key={'copy'} isTrigger={isTrigger} isScope={isScopeNode} onClick={copyClick} showKey />,
+      },
+      { priority: NodeMenuPriorities.Pin, renderCustomComponent: () => <PinMenuItem key={'pin'} nodeId={nodeId} onClick={pinClick} /> },
+      ...(runData?.canResubmit
+        ? [
+            {
+              priority: NodeMenuPriorities.Resubmit,
+              renderCustomComponent: () => <ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />,
+            },
+          ]
+        : []),
+      ...(runAfter
+        ? [
+            {
+              priority: NodeMenuPriorities.RunAfter,
+              renderCustomComponent: () => <RunAfterMenuItem key={'run after'} onClick={runAfterClick} />,
+            },
+          ]
+        : []),
     ],
-    [deleteClick, isTrigger, isScopeNode, copyClick, nodeId, pinClick, runData?.canResubmit, resubmitClick, runAfter, runAfterClick]
+    [
+      metadata?.graphId,
+      nodeId,
+      runData?.canResubmit,
+      runAfter,
+      deleteClick,
+      isTrigger,
+      isScopeNode,
+      copyClick,
+      pinClick,
+      resubmitClick,
+      runAfterClick,
+    ]
   );
+
+  const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
+    .sort((a, b) => (a?.priority ?? NodeMenuPriorities.Default) - (b?.priority ?? NodeMenuPriorities.Default))
+    .map((option) => option.renderCustomComponent() as JSX.Element);
 
   const subgraphMenuItems: JSX.Element[] = useMemo(
     () => [
