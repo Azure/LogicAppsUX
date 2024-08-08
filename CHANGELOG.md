@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [4.56.0](https://github.com/Azure/LogicAppsUX/compare/v4.55.0...v4.56.0) (2024-08-08)
+
+
+### Features
+
+* **Data Mapper:** Add discard option  ([#5330](https://github.com/Azure/LogicAppsUX/issues/5330)) ([f85e59f](https://github.com/Azure/LogicAppsUX/commit/f85e59fb5757eba59fa3344f26f1746d281fdb75))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Move options for Radio button below the option instead of after RadioGroup ([#5327](https://github.com/Azure/LogicAppsUX/issues/5327)) ([7871eaf](https://github.com/Azure/LogicAppsUX/commit/7871eaff0794b446097b56ac4c5bde493e3949e5))
+* **designer:** add token data to paste action ([#5335](https://github.com/Azure/LogicAppsUX/issues/5335)) ([fb412e6](https://github.com/Azure/LogicAppsUX/commit/fb412e6fc85f91a5d030a67092032faf84a530d9))
+* **designer:** Import copy control CSS ([#5328](https://github.com/Azure/LogicAppsUX/issues/5328)) ([166139b](https://github.com/Azure/LogicAppsUX/commit/166139bf0172846ba92d283d2f5350ada06372bd))
+
 ## [4.55.0](https://github.com/Azure/LogicAppsUX/compare/v4.54.0...v4.55.0) (2024-08-07)
 
 
