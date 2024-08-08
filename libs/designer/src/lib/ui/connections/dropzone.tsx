@@ -1,37 +1,23 @@
 /* eslint-disable react/display-name */
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDrop } from 'react-dnd';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
-import { useOnViewportChange } from '@xyflow/react';
-import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger, Tooltip } from '@fluentui/react-components';
-import {
-  ArrowBetweenDown24Filled,
-  ArrowBetweenDown24Regular,
-  ArrowSplit24Filled,
-  ArrowSplit24Regular,
-  ClipboardPasteFilled,
-  ClipboardPasteRegular,
-  bundleIcon,
-} from '@fluentui/react-icons';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
 import {
   containsIdTag,
-  guid,
   normalizeAutomationId,
   removeIdTag,
   replaceWhiteSpaceWithUnderscore,
   LogEntryLevel,
   LoggerService,
-  UiInteractionsService,
 } from '@microsoft/logic-apps-shared';
 
 import { useNodesTokenDependencies } from '../../core/state/operation/operationSelector';
 import type { AppDispatch } from '../../core';
 import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import {
   useAllGraphParents,
@@ -42,7 +28,7 @@ import {
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
-import { CustomMenu } from './customMenu';
+import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
 
 export interface DropZoneProps {
   graphId: string;
@@ -52,16 +38,9 @@ export interface DropZoneProps {
   tabIndex?: number;
 }
 
-const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
-const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
-const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
-
 export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const [showCallout, setShowCallout] = useState(false);
-  const [showNoPasteCallout, setShowNoPasteCallout] = useState(false);
-  const [isPasteEnabled, setIsPasteEnabled] = useState(false);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -77,52 +56,6 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
   const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);
   const upstreamScopeArr = useAllGraphParents(graphId);
   const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
-
-  useOnViewportChange({
-    onStart: useCallback(() => {
-      if (showCallout) {
-        setShowCallout(false);
-      } else if (showNoPasteCallout) {
-        setShowNoPasteCallout(false);
-      }
-    }, [showCallout, showNoPasteCallout]),
-  });
-
-  const newActionText = intl.formatMessage({
-    defaultMessage: 'Add an action',
-    id: 'mCzkXX',
-    description: 'Text for button to add a new action',
-  });
-
-  const newBranchText = intl.formatMessage({
-    defaultMessage: 'Add a parallel branch',
-    id: 'LZm3ze',
-    description: 'Text for button to add a parallel branch',
-  });
-
-  const pasteFromClipboard = intl.formatMessage({
-    defaultMessage: 'Paste an action',
-    id: 'ZUCTVP',
-    description: 'Text for button to paste an action from clipboard',
-  });
-
-  const noPasteText = intl.formatMessage({
-    defaultMessage: 'No action to paste',
-    id: 'MmldTM',
-    description: 'Text for tooltip when there is no action to paste',
-  });
-
-  const openAddNodePanel = useCallback(() => {
-    const newId = guid();
-    const relationshipIds = { graphId, childId, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
-    setShowCallout(false);
-    LoggerService().log({
-      area: 'DropZone:openAddNodePanel',
-      level: LogEntryLevel.Verbose,
-      message: 'Side-panel opened to add a new node.',
-    });
-  }, [dispatch, graphId, childId, parentId]);
 
   const handlePasteClicked = useCallback(async () => {
     const relationshipIds = { graphId, childId, parentId };
@@ -156,32 +89,8 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
         level: LogEntryLevel.Verbose,
         message: 'New node added via paste.',
       });
-    } else {
-      setShowNoPasteCallout(true);
-      setTimeout(() => {
-        setShowNoPasteCallout(false);
-      }, 3000);
     }
-    setShowCallout(false);
   }, [graphId, childId, parentId, dispatch, upstreamNodesOfChild]);
-
-  const addParallelBranch = useCallback(() => {
-    const newId = guid();
-    const relationshipIds = { graphId, childId: undefined, parentId };
-    dispatch(
-      expandDiscoveryPanel({
-        nodeId: newId,
-        relationshipIds,
-        isParallelBranch: true,
-      })
-    );
-    LoggerService().log({
-      area: 'DropZone:addParallelBranch',
-      level: LogEntryLevel.Verbose,
-      message: 'Side-panel opened to add a new parallel branch node.',
-    });
-    setShowCallout(false);
-  }, [dispatch, graphId, parentId]);
 
   const hotkeyRef = useHotkeys(
     ['meta+v', 'ctrl+v'],
@@ -278,19 +187,27 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
 
   const actionButtonClick = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement>) => {
+      const rect = buttonRef.current?.getBoundingClientRect();
       e.preventDefault();
-      const copiedNode = await retrieveClipboardData();
-      setIsPasteEnabled(!!copiedNode);
-      setShowCallout(!showCallout);
+      dispatch(
+        setEdgeContextMenuData({
+          graphId,
+          parentId,
+          childId,
+          isLeaf,
+          location: {
+            x: (rect?.left ?? 0) + (rect?.width ?? 0),
+            y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
+          },
+        })
+      );
     },
-    [showCallout]
+    [dispatch, graphId, parentId, childId, isLeaf]
   );
 
   const buttonId = normalizeAutomationId(
     `msla-edge-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${replaceWhiteSpaceWithUnderscore(childName) || 'undefined'}`
   );
-
-  const showParallelBranchButton = !isLeaf && parentId;
 
   const automationId = useCallback(
     (buttonName: string) =>
@@ -301,6 +218,8 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
       ),
     [parentName, childName]
   );
+
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
@@ -322,62 +241,16 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
         </div>
       )}
       {!isOver && (
-        <Popover
-          open={showCallout}
-          positioning={'after'}
-          closeOnScroll={true}
-          withArrow
-          mouseLeaveDelay={500}
-          onOpenChange={(e, { open }) => setShowCallout(open)}
-          aria-describedby={buttonId}
-        >
-          <PopoverTrigger aria-describedby={buttonId}>
-            <div tabIndex={-1} role={undefined}>
-              {' '}
-              {/* Do not remove, this keeps tooltip position working */}
-              <ActionButtonV2
-                tabIndex={tabIndex}
-                id={buttonId}
-                title={tooltipText}
-                dataAutomationId={automationId('plus')}
-                onClick={actionButtonClick}
-              />
-            </div>
-          </PopoverTrigger>
-          <PopoverSurface style={{ padding: '4px' }}>
-            <MenuList>
-              <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
-                {newActionText}
-              </MenuItem>
-              {showParallelBranchButton && (
-                <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
-                  {newBranchText}
-                </MenuItem>
-              )}
-              {isPasteEnabled && (
-                <>
-                  <MenuDivider />
-                  <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
-                    {pasteFromClipboard}
-                  </MenuItem>
-                </>
-              )}
-              {UiInteractionsService()
-                ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
-                ?.map((item) => (
-                  <CustomMenu key={item.text} item={item} />
-                ))}
-            </MenuList>
-          </PopoverSurface>
-        </Popover>
+        <div ref={buttonRef}>
+          <ActionButtonV2
+            id={buttonId}
+            dataAutomationId={automationId('plus')}
+            tabIndex={tabIndex}
+            title={tooltipText}
+            onClick={actionButtonClick}
+          />
+        </div>
       )}
-      <Tooltip
-        positioning={{ position: 'below', align: 'end' }}
-        withArrow
-        content={noPasteText}
-        relationship="description"
-        visible={showNoPasteCallout}
-      />
     </div>
   );
 });
