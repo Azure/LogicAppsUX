@@ -64,7 +64,7 @@ export const createConnectionEntryIfNeeded = (
  */
 export const applyConnectionValue = (
   connections: ConnectionDictionary,
-  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot }: SetConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot, isRepeating }: SetConnectionInputAction
 ) => {
   if (!findInputSlot && inputIndex === undefined) {
     console.error('Invalid Connection Input Op: inputIndex was not provided for a non-handle-drawn/deserialized connection');
@@ -159,6 +159,9 @@ export const applyConnectionValue = (
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       if (confirmedInputIndex === -1) {
         // Repeating schema node
+        if (typeof input !== 'string') {
+          input.isRepeating = isRepeating;
+        }
         connection.inputs[0].push(input);
       } else {
         // Function unbounded input
@@ -190,6 +193,7 @@ export const applyConnectionValue = (
       const tgtConUnit: ConnectionUnit = {
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
+        isRepeating: isRepeating,
       };
 
       createConnectionEntryIfNeeded(connections, input.node, input.reactFlowKey);

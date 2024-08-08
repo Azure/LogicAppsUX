@@ -7,6 +7,7 @@ import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { useActiveNode } from '../../../core/state/selectors/selectors';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../../../core/state/DataMapSlice';
+import { ArrowClockwiseFilled } from '@fluentui/react-icons';
 
 const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataProps>, 'schema'>>) => {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -18,6 +19,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const styles = useStyles();
 
   const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
+  const isLoop = useMemo(() => edges.some((edge) => edge.source === id && edge.data?.isRepeating), [edges, id]);
   const isActive = useActiveNode(id);
 
   const styleForState = useMemo(() => {
@@ -25,6 +27,9 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
       styles.handleWrapper,
       isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper
     );
+    if (isLoop) {
+      return mergeClasses(directionalStyle, styles.loopHandle);
+    }
     if (isActive !== undefined) {
       return mergeClasses(directionalStyle, styles.activeHandle);
     }
@@ -32,7 +37,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
       return mergeClasses(directionalStyle, styles.handleConnected);
     }
     return directionalStyle;
-  }, [isActive, isConnected, styles, isLeftDirection]);
+  }, [isActive, isConnected, styles, isLeftDirection, isLoop]);
 
   const handleStyle = styleForState;
 
@@ -50,7 +55,9 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
         position={isLeftDirection ? Position.Left : Position.Right}
         className={handleStyle}
         onMouseDown={setActiveNode}
-      />
+      >
+        {isLoop && <ArrowClockwiseFilled className={styles.loopIcon} />}
+      </Handle>
     </div>
   );
 };

@@ -47,7 +47,6 @@ export interface DataMapOperationState {
   dataMapLML: string;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
-  sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
   targetSchemaOrdering: string[];
@@ -84,7 +83,6 @@ const emptyPristineState: DataMapOperationState = {
   dataMapLML: '',
   functionNodes: {},
   flattenedSourceSchema: {},
-  sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
   targetSchemaOrdering: [],
   xsltFilename: '',
@@ -141,6 +139,7 @@ export interface SetConnectionInputAction {
   inputIndex?: number;
   input: InputConnection | null; // null is indicator to remove an unbounded input value
   findInputSlot?: boolean;
+  isRepeating?: boolean;
 }
 
 export interface ExpandCollapseAction {
@@ -179,7 +178,6 @@ export const dataMapSlice = createSlice({
 
       if (action.payload.schemaType === SchemaType.Source) {
         const flattenedSourceSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
-        const sourceSchemaSortArray = flattenedSourceSchema.map((node) => node.key);
 
         currentState.sourceSchema = action.payload.schema;
         currentState.sourceChildParentMapping = getChildParentSchemaMapping(action.payload.schema);
@@ -190,10 +188,8 @@ export const dataMapSlice = createSlice({
             return acc;
           }, {});
         currentState.flattenedSourceSchema = flattenedSchema;
-        currentState.sourceSchemaOrdering = sourceSchemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
-        state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
         currentState.sourceNodesMap = {};
@@ -225,7 +221,6 @@ export const dataMapSlice = createSlice({
       const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
       const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
-      const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
@@ -250,7 +245,6 @@ export const dataMapSlice = createSlice({
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
-        sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
         functionNodes,
         fullLayoutNeeded,

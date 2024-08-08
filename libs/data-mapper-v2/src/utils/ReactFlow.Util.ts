@@ -49,6 +49,7 @@ export interface LayoutEdge {
   sourceId: string;
   targetId: string;
   labels: string[];
+  isRepeating: boolean;
 }
 
 export interface LayoutNode {
@@ -116,6 +117,7 @@ export const convertWholeDataMapToLayoutTree = (
             sourceId: inputValue.reactFlowKey,
             targetId,
             labels,
+            isRepeating: inputValue.isRepeating ?? false,
           };
 
           layoutEdges.push(nextEdge);

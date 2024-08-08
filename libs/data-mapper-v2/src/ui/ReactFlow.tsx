@@ -47,6 +47,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           target: edge.targetId,
           type: 'connectedEdge',
           reconnectable: 'target',
+          data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
         };
