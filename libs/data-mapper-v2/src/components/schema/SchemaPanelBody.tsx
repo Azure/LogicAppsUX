@@ -17,7 +17,7 @@ import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
 
 export interface SchemaPanelBodyProps {
-  schemaType: SchemaType;
+  isLeftDirection: boolean;
   flattenedSchemaMap?: Record<string, SchemaNodeExtended>;
   schema?: SchemaExtended;
   selectedSchemaFile?: SchemaFile;
@@ -29,7 +29,7 @@ export interface SchemaPanelBodyProps {
 }
 
 export const SchemaPanelBody = ({
-  schemaType,
+  isLeftDirection,
   selectedSchemaFile,
   setSelectedSchemaFile,
   fileSelectorOptions,
@@ -89,10 +89,10 @@ export const SchemaPanelBody = ({
       setSelectedSchemaFile({
         name: item.name ?? '',
         path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
-        type: schemaType ?? SchemaType.Source,
+        type: isLeftDirection ? SchemaType.Source : SchemaType.Target,
       });
     },
-    [setSelectedSchemaFile, schemaType]
+    [setSelectedSchemaFile, isLeftDirection]
   );
 
   const onOpenClose = useCallback(() => {
@@ -109,17 +109,17 @@ export const SchemaPanelBody = ({
       const schemaFile = files[0] as FileWithVsCodePath;
       if (!schemaFile.path) {
         console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile && schemaType) {
+      } else if (schemaFile && isLeftDirection) {
         setSelectedSchemaFile({
           name: schemaFile.name,
           path: schemaFile.path,
-          type: schemaType,
+          type: isLeftDirection ? SchemaType.Source : SchemaType.Target,
         });
       } else {
         console.error('Missing schemaType');
       }
     },
-    [schemaType, setSelectedSchemaFile]
+    [isLeftDirection, setSelectedSchemaFile]
   );
 
   return (
@@ -148,7 +148,7 @@ export const SchemaPanelBody = ({
       ) : (
         <div className={styles.treeWrapper}>
           {schema && flattenedSchemaMap && (
-            <SchemaTree isLeftDirection={equals(schemaType, SchemaType.Source)} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
+            <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
           )}
         </div>
       )}
