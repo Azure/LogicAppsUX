@@ -38,6 +38,7 @@ import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
+import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -242,6 +243,7 @@ export const Designer = (props: DesignerProps) => {
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
             <DesignerContextualMenu />
+            <EdgeContextualMenu />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />
