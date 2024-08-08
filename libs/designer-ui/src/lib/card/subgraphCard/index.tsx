@@ -1,14 +1,14 @@
 import { ActionButtonV2 } from '../../actionbuttonv2';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
-import { CardContextMenu } from '../cardcontextmenu';
 import { ErrorBanner } from '../errorbanner';
-import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
+import { useCardKeyboardInteraction } from '../hooks';
 import type { CardProps } from '..';
 import type { MessageBarType } from '@fluentui/react';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft/logic-apps-shared';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import type { MouseEventHandler } from 'react';
 import { useMemo } from 'react';
 
 interface SubgraphCardProps {
@@ -21,6 +21,7 @@ interface SubgraphCardProps {
   selectionMode?: CardProps['selectionMode'];
   readOnly?: boolean;
   onClick?(id?: string): void;
+  onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
   showAddButton?: boolean;
   contextMenuItems?: JSX.Element[];
@@ -39,8 +40,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   selectionMode = false,
   readOnly = false,
   onClick,
+  onContextMenu,
   onDeleteClick,
-  contextMenuItems = [],
   errorLevel,
   errorMessage,
   nodeIndex,
@@ -49,7 +50,6 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const mainKeyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
   const collapseKeyboardInteraction = useCardKeyboardInteraction(handleCollapse);
-  const contextMenu = useCardContextMenu();
 
   const addCaseLabel = intl.formatMessage({
     defaultMessage: 'Add case',
@@ -156,7 +156,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           className="msla-subgraph-title"
           aria-label={cardAltText}
           onClick={handleTitleClick}
-          onContextMenu={contextMenu.handle}
+          onContextMenu={onContextMenu}
           onKeyDown={mainKeyboardInteraction.keyDown}
           onKeyUp={mainKeyboardInteraction.keyUp}
           tabIndex={nodeIndex}
@@ -165,15 +165,6 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
         <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
-        {contextMenuItems?.length > 0 ? (
-          <CardContextMenu
-            contextMenuLocation={contextMenu.location}
-            menuItems={contextMenuItems}
-            open={contextMenu.isShowing}
-            title={data.title}
-            setOpen={contextMenu.setIsShowing}
-          />
-        ) : null}
       </div>
     );
   }

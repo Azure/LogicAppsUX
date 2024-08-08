@@ -114,7 +114,7 @@ export const Overview: React.FC<OverviewProps> = ({
   return (
     <div>
       <OverviewCommandBar
-        callbackInfo={workflowProperties.callbackInfo}
+        triggerName={workflowProperties.triggerName}
         isRefreshing={isRefreshing}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}

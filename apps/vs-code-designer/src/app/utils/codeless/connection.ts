@@ -146,6 +146,7 @@ function formatSetting(setting: string): string {
 }
 
 async function getConnectionReference(
+  context: IActionContext,
   referenceKey: string,
   reference: any,
   accessToken: string,
@@ -186,6 +187,7 @@ async function getConnectionReference(
       return connectionReference;
     })
     .catch((error) => {
+      context.telemetry.properties.connectionKeyFailure = `Error fetching ${referenceKey}-connectionKey`;
       throw new Error(`Error in fetching connection keys for ${connectionId}. ${error}`);
     });
 }
@@ -213,9 +215,11 @@ export async function getConnectionsAndSettingsToUpdate(
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
 
+    context.telemetry.properties.checkingConnectionKey = `Checking ${referenceKey}-connectionKey validity`;
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
+        context,
         referenceKey,
         reference,
         accessToken,
@@ -224,7 +228,7 @@ export async function getConnectionsAndSettingsToUpdate(
         parametersFromDefinition
       );
 
-      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and are valid for 7 days`;
+      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
       areKeysGenerated = true;
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
@@ -234,6 +238,7 @@ export async function getConnectionsAndSettingsToUpdate(
 
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
+        context,
         referenceKey,
         resolvedConnectionReference,
         accessToken,
@@ -242,8 +247,10 @@ export async function getConnectionsAndSettingsToUpdate(
         parametersFromDefinition
       );
 
-      context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and are valid for 7 days`;
+      context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
       areKeysRefreshed = true;
+    } else {
+      context.telemetry.properties.connectionKeyValid = `${referenceKey}-connectionKey exists and is valid`;
     }
   }
 
