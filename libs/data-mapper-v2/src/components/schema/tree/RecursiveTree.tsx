@@ -16,7 +16,7 @@ import useOnScreen from './useOnScreen';
 import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setSelectedItem, toogleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
+import { setSelectedItem, toggleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 
@@ -61,17 +61,25 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
 
   const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
 
+  const onClick = useCallback(() => {
+    dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
+  }, [key, isLeftDirection, dispatch]);
+
   const onOpenChange = useCallback(
     (_e: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
+      const key = data.value as string;
+      const isExpaned = data.open;
       dispatch(
-        toogleNodeExpandCollapse({
+        toggleNodeExpandCollapse({
           isSourceSchema: isLeftDirection,
-          keys: [data.value as string],
-          isExpanded: data.open,
+          keys: [key],
+          isExpanded: isExpaned,
         })
       );
+
+      onClick();
     },
-    [dispatch, isLeftDirection]
+    [dispatch, isLeftDirection, onClick]
   );
 
   const aside = useMemo(() => (isHover || activeNode ? <TypeAnnotation schemaNode={root} /> : <div />), [isHover, activeNode, root]);
@@ -141,10 +149,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   if (!nodeVisble) {
     return null;
   }
-
-  const onClick = () => {
-    dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
-  };
 
   if (root.children.length === 0) {
     let style = styles.leafNode;

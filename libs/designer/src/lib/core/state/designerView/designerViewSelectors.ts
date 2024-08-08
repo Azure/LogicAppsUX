@@ -16,3 +16,7 @@ export const useShowDeleteModalNodeId = () => {
 export const useNodeContextMenuData = () => {
   return useSelector((state: RootState) => state.designerView.nodeContextMenuData);
 };
+
+export const useEdgeContextMenuData = () => {
+  return useSelector((state: RootState) => state.designerView.edgeContextMenuData);
+};

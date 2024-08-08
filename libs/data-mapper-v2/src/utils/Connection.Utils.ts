@@ -370,29 +370,7 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   return [currentFunction.self];
 };
 
-// keep until we evaluate 'selected' experience
-
-// export const collectSourceNodeIdsForConnectionChain = (
-//   previousNodeId: string,
-//   currentFunction: Connection,
-//   connections: ConnectionDictionary
-// ): string[] => {
-//   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
-
-//   if (connectionUnits.length > 0) {
-//     return [
-//       currentFunction.self.reactFlowKey,
-//       createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
-//       ...connectionUnits.flatMap((input) =>
-//         collectSourceNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
-//       ),
-//     ];
-//   }
-
-//   return [currentFunction.self.reactFlowKey, createEdgeId(currentFunction.self.reactFlowKey, previousNodeId)];
-// };
-
-export const getActiveNodes = (connections: ConnectionDictionary, selectedItemKey: string | undefined) => {
+export const getActiveNodes = (connections: ConnectionDictionary, stateConnections?: Record<string, boolean>, selectedItemKey?: string) => {
   const connectedItems: Record<string, string> = {};
   if (selectedItemKey) {
     const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
@@ -410,6 +388,12 @@ export const getActiveNodes = (connections: ConnectionDictionary, selectedItemKe
     selectedItemConnectedNodes.forEach((key) => {
       connectedItems[key] = key;
     });
+
+    if (stateConnections) {
+      Object.keys(stateConnections).forEach((connectedKey) => {
+        connectedItems[selectedItemKey] = connectedKey;
+      });
+    }
 
     connectedItems[selectedItemKey] = selectedItemKey;
   }
@@ -435,27 +419,6 @@ export const collectTargetNodeIdsForConnectionChain = (previousNodeId: string, c
     ...connectionUnits.flatMap((input) => (isSchemaNodeExtended(input.node) ? input.reactFlowKey : '')),
   ];
 };
-
-// keep until we evaluate 'selected' experience
-// export const collectTargetNodeIdsForConnectionChain = (
-//   previousNodeId: string,
-//   currentFunction: Connection,
-//   connections: ConnectionDictionary
-// ): string[] => {
-//   const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
-
-//   if (connectionUnits.length > 0) {
-//     return [
-//       currentFunction.self.reactFlowKey,
-//       createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
-//       ...connectionUnits.flatMap((input) =>
-//         collectTargetNodeIdsForConnectionChain(currentFunction.self.reactFlowKey, connections[input.reactFlowKey], connections)
-//       ),
-//     ];
-//   }
-
-//   return [currentFunction.self.reactFlowKey, createEdgeId(previousNodeId, currentFunction.self.reactFlowKey)];
-// };
 
 export const collectTargetNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
   const connectionUnits: ConnectionUnit[] = currentFunction.outputs;

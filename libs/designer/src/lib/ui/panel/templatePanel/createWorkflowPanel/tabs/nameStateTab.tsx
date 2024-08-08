@@ -188,8 +188,8 @@ export const nameStateTab = (
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
-    defaultMessage: 'Name and state',
-    id: 'zmsJrW',
+    defaultMessage: 'Name + state',
+    id: 'BX0M13',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   description: intl.formatMessage({

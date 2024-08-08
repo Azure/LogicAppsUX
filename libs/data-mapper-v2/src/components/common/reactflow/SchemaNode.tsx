@@ -42,8 +42,6 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     return directionalStyle;
   }, [isActive, isConnected, styles, isLeftDirection, isLoop]);
 
-  const handleStyle = styleForState;
-
   const setActiveNode = () => {
     dispatch(setSelectedItem(id));
   };
@@ -57,7 +55,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
         style={{ zIndex: 1000 }}
         type={isLeftDirection ? 'source' : 'target'}
         position={isLeftDirection ? Position.Left : Position.Right}
-        className={handleStyle}
+        className={styleForState}
         onMouseDown={setActiveNode}
       >
         {isLoop && isLeftDirection && <ArrowClockwiseFilled className={styles.loopIcon} />}

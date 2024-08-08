@@ -1,10 +1,11 @@
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 const fnIconSize = '17px';
-
-export const activeColor = '#62AAD8';
-export const connectedColor = '#C6DEEE';
-export const loopColor = '#88AEC7';
+export const colors = {
+  active: '#62AAD8',
+  connected: '#C6DEEE',
+  loop: '#88AEC7',
+};
 
 export const useStyles = makeStyles({
   wrapper: {
@@ -40,8 +41,8 @@ export const useStyles = makeStyles({
     left: '-7px',
   },
   handleConnected: {
-    backgroundColor: connectedColor,
-    ...shorthands.border('1px', 'solid', connectedColor),
+    backgroundColor: colors.connected,
+    ...shorthands.border('1px', 'solid', colors.connected),
   },
   nodeWrapper: {
     width: '14px',
@@ -57,18 +58,18 @@ export const useStyles = makeStyles({
     paddingRight: '20px',
   },
   activeFunctionButton: {
-    ...shorthands.border('3px', 'solid', activeColor),
+    ...shorthands.border('3px', 'solid', colors.active),
   },
   loopSourceHandle: {
     height: '22px',
     width: '22px',
-    backgroundColor: loopColor,
+    backgroundColor: colors.loop,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
   loopTargetHandle: {
-    backgroundColor: loopColor,
+    backgroundColor: colors.loop,
   },
   loopIcon: {
     color: 'white',
@@ -78,8 +79,8 @@ export const useStyles = makeStyles({
     display: 'inline-table',
   },
   activeHandle: {
-    backgroundColor: activeColor,
-    ...shorthands.border('1px', 'solid', activeColor),
+    backgroundColor: colors.active,
+    ...shorthands.border('1px', 'solid', colors.active),
   },
   iconContainer: {
     display: 'inline-flex',

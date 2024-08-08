@@ -6,12 +6,15 @@ import { Button } from '@fluentui/react-components';
 import { FunctionList } from '../functionList/FunctionList';
 import { FunctionsSVG } from '../../images/icons';
 import { Panel } from '../../components/common/panel/Panel';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../core/state/Store';
 
 type PanelProps = {};
 
 export const FunctionPanel = (_props: PanelProps) => {
   const [isFunctionsPanelExpanded, setExpandFunctionsPanel] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const styles = useStyles();
   const intl = useIntl();
 
@@ -83,6 +86,7 @@ export const FunctionPanel = (_props: PanelProps) => {
         <Button
           className={styles.chevronButton}
           appearance="transparent"
+          disabled={!sourceSchema || !targetSchema}
           aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
           icon={<ChevronDoubleRightRegular fontSize={13} className={styles.functionsChevronIcon} />}
           onClick={() => {
