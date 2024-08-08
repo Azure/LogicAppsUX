@@ -4,11 +4,14 @@ import { Popover, PopoverSurface, MenuList, MenuItem, MenuDivider } from '@fluen
 import {
   LogEntryLevel,
   LoggerService,
+  UiInteractionsService,
   guid,
   normalizeAutomationId,
   removeIdTag,
   replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/logic-apps-shared';
+import { useIntl } from 'react-intl';
+import { useOnViewportChange } from '@xyflow/react';
 
 import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
@@ -16,6 +19,7 @@ import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { pasteScopeOperation, pasteOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
+import { CustomMenu } from './customMenu';
 
 import {
   ArrowBetweenDown24Filled,
@@ -26,8 +30,6 @@ import {
   ClipboardPasteRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
-import { useIntl } from 'react-intl';
-import { useOnViewportChange } from '@xyflow/react';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -204,6 +206,11 @@ export const EdgeContextualMenu = () => {
               </MenuItem>
             </>
           )}
+          {UiInteractionsService()
+            ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
+            ?.map((item) => (
+              <CustomMenu key={item.text} item={item} />
+            ))}
         </MenuList>
       </PopoverSurface>
     </Popover>

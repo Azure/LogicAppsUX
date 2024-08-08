@@ -1,4 +1,11 @@
-import { equals, type ITreeFile, type IFileSysTreeItem, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  type ITreeFile,
+  type IFileSysTreeItem,
+  SchemaType,
+  type SchemaNodeExtended,
+  type SchemaExtended,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
@@ -10,9 +17,9 @@ import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
 
 export interface SchemaPanelBodyProps {
-  schemaType: SchemaType;
+  isLeftDirection: boolean;
   flattenedSchemaMap?: Record<string, SchemaNodeExtended>;
-  selectedSchema?: string;
+  schema?: SchemaExtended;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
@@ -22,28 +29,19 @@ export interface SchemaPanelBodyProps {
 }
 
 export const SchemaPanelBody = ({
-  schemaType,
+  isLeftDirection,
   selectedSchemaFile,
   setSelectedSchemaFile,
   fileSelectorOptions,
   setFileSelectorOptions,
   showScehmaSelection,
   flattenedSchemaMap,
+  schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
-
-  const schema = useSelector((state: RootState) => {
-    if (schemaType === SchemaType.Source) {
-      return state.dataMap.present.curDataMapOperation.sourceSchema;
-    }
-    if (schemaType === SchemaType.Target) {
-      return state.dataMap.present.curDataMapOperation.targetSchema;
-    }
-    return undefined;
-  });
 
   const stringResources = useMemo(
     () => ({
@@ -91,10 +89,10 @@ export const SchemaPanelBody = ({
       setSelectedSchemaFile({
         name: item.name ?? '',
         path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
-        type: schemaType ?? SchemaType.Source,
+        type: isLeftDirection ? SchemaType.Source : SchemaType.Target,
       });
     },
-    [setSelectedSchemaFile, schemaType]
+    [setSelectedSchemaFile, isLeftDirection]
   );
 
   const onOpenClose = useCallback(() => {
@@ -111,17 +109,17 @@ export const SchemaPanelBody = ({
       const schemaFile = files[0] as FileWithVsCodePath;
       if (!schemaFile.path) {
         console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile && schemaType) {
+      } else if (schemaFile && isLeftDirection) {
         setSelectedSchemaFile({
           name: schemaFile.name,
           path: schemaFile.path,
-          type: schemaType,
+          type: isLeftDirection ? SchemaType.Source : SchemaType.Target,
         });
       } else {
         console.error('Missing schemaType');
       }
     },
-    [schemaType, setSelectedSchemaFile]
+    [isLeftDirection, setSelectedSchemaFile]
   );
 
   return (
@@ -150,7 +148,7 @@ export const SchemaPanelBody = ({
       ) : (
         <div className={styles.treeWrapper}>
           {schema && flattenedSchemaMap && (
-            <SchemaTree isLeftDirection={equals(schemaType, SchemaType.Source)} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
+            <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
           )}
         </div>
       )}
