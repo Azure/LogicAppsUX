@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [4.57.0](https://github.com/Azure/LogicAppsUX/compare/v4.56.0...v4.57.0) (2024-08-09)
+
+
+### Features
+
+* **designer:** Moved edge context menu to one shared component ([#5321](https://github.com/Azure/LogicAppsUX/issues/5321)) ([f76684b](https://github.com/Azure/LogicAppsUX/commit/f76684bbf7b9b6ebf069172db191b31c95d34803))
+
+
+### Bug Fixes
+
+* **designer:** Add UI Interaction Service  ([#5338](https://github.com/Azure/LogicAppsUX/issues/5338)) ([bcda2ea](https://github.com/Azure/LogicAppsUX/commit/bcda2ea7264cac9948b8f3a95a8b257c17e887ac))
+* **designer:** Check for UIINteractionService before using that ([2842d1e](https://github.com/Azure/LogicAppsUX/commit/2842d1e836e9e797a459855ea0418f3b48c8d8c9))
+* **Templates:** Content Re-wording & Design NITs ([#5342](https://github.com/Azure/LogicAppsUX/issues/5342)) ([402fe55](https://github.com/Azure/LogicAppsUX/commit/402fe55c64d84294e0d78d3b441285d781f4542a))
+
 ## [4.56.0](https://github.com/Azure/LogicAppsUX/compare/v4.55.0...v4.56.0) (2024-08-08)
 
 
