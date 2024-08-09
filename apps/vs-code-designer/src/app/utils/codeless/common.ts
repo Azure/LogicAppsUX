@@ -220,9 +220,3 @@ export async function verifyDeploymentResourceGroup(
     await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
   }
 }
-
-export function getTriggerName(definition: any): string | undefined {
-  const { triggers } = definition;
-  const triggerNames = Object.keys(triggers);
-  return triggerNames.length === 1 ? triggerNames[0] : undefined;
-}
