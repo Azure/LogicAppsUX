@@ -701,6 +701,11 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const uiInteractionsService = {
+    getAddButtonMenuItems: () => [],
+    getNodeContextMenuItems: () => [],
+  };
+
   return {
     appService,
     connectionService,
@@ -718,6 +723,7 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    uiInteractionsService,
   };
 };
 
