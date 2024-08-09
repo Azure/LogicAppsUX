@@ -1,6 +1,6 @@
 import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
-import { overviewTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/overviewTab';
+import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
@@ -8,7 +8,7 @@ import Fuse from 'fuse.js';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
 export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
-  return [workflowTab(intl, dispatch), overviewTab(intl, dispatch)];
+  return [workflowTab(intl, dispatch), summaryTab(intl, dispatch)];
 };
 
 export const getUniqueConnectors = (
