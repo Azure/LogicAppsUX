@@ -191,7 +191,6 @@ export const nameStateTab = (
     id: 'BX0M13',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
-  description: undefined,
   hasError: hasError,
   order: 2,
   content: <NameStatePanel />,
