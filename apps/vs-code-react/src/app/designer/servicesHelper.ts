@@ -20,7 +20,6 @@ import type {
   ApiHubServiceDetails,
   ConnectionCreationInfo,
   ContentType,
-  IDesignerUiInteractionsService,
   IHostService,
   IWorkflowService,
   ManagedIdentity,
@@ -57,7 +56,6 @@ export const getDesignerServices = (
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
-  uiInteractionsService: IDesignerUiInteractionsService;
 } => {
   let authToken = '';
   let panelId = '';
@@ -305,11 +303,6 @@ export const getDesignerServices = (
     },
   });
 
-  const uiInteractionsService = {
-    getAddButtonMenuItems: () => [],
-    getNodeContextMenuItems: () => [],
-  };
-
   return {
     connectionService,
     connectorService,
@@ -324,7 +317,6 @@ export const getDesignerServices = (
     editorService,
     apimService,
     functionService,
-    uiInteractionsService,
   };
 };
 

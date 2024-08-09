@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CardContextMenu } from '@microsoft/designer-ui';
 import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
-import { SUBGRAPH_TYPES, UiInteractionsService, WorkflowService, getRecordEntry, isScopeOperation } from '@microsoft/logic-apps-shared';
+import {
+  SUBGRAPH_TYPES,
+  UiInteractionsService,
+  WorkflowService,
+  getRecordEntry,
+  isScopeOperation,
+  isUiInteractionsServiceEnabled,
+} from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem } from '../../../ui/menuItems';
@@ -107,7 +114,9 @@ export const DesignerContextualMenu = () => {
 
   const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      ...transformMenuItems(UiInteractionsService()?.getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? []),
+      ...(isUiInteractionsServiceEnabled()
+        ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
+        : []),
       { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
       {
         priority: NodeMenuPriorities.Copy,
