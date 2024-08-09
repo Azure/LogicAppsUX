@@ -172,6 +172,55 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   }
 }
 
+  private insertNewTasks(existingTasks: ITask[] | undefined, newTasks: ITask[]): ITask[] {
+    // tslint:disable-next-line: strict-boolean-expressions
+    existingTasks = existingTasks || [];
+    // Remove tasks that match the ones we're about to add
+    existingTasks = existingTasks.filter(
+      (t1) =>
+        !newTasks.find((t2) => {
+          if (t1.type === t2.type) {
+            switch (t1.type) {
+              case func:
+                return t1.command === t2.command;
+              case 'shell':
+              case 'process':
+                return t1.label === t2.label && t1.identifier === t2.identifier;
+              default:
+                // Not worth throwing an error for unrecognized task type
+                // Worst case the user has an extra task in their tasks.json
+                return false;
+            }
+          }
+          return false;
+        })
+    );
+    existingTasks.push(...newTasks);
+    return existingTasks;
+  }
+
+  private insertNewTaskInputs(context: IProjectWizardContext, existingInputs: ITaskInputs[] = [], newInputs: ITaskInputs[]): ITaskInputs[] {
+    if (context.workflowProjectType === WorkflowProjectType.Bundle) {
+      // Remove inputs that match the ones we're about to add
+      existingInputs = existingInputs.filter(
+        (t1) =>
+          !newInputs.find((t2) => {
+            if (t1.type === t2.type) {
+              switch (t1.type) {
+                case 'command':
+                  return t1.command === t2.command;
+                default:
+                  return false;
+              }
+            }
+            return false;
+          })
+      );
+      existingInputs.push(...newInputs);
+    }
+    return existingInputs;
+  }
+
   private async writeLaunchJson(
     context: IActionContext,
     folder: WorkspaceFolder | undefined,
