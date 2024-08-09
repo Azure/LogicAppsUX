@@ -13,7 +13,7 @@ import { WorkflowStateTypeStep } from './createCodelessSteps/WorkflowStateTypeSt
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { WorkspaceFolder } from 'vscode';
 import * as fs from 'fs';
@@ -38,7 +38,7 @@ export async function createCodeless(
     workspaceFolder = getContainingWorkspace(workspacePath);
   }
 
-  //project path changed to account for SWA. need to add flag depending on if SWA initialized TODO
+  //TODO 2: project path changed to account for SWA. need to add flag depending on if SWA initialized
 
   // const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspacePath);
   // if (!projectPath) {

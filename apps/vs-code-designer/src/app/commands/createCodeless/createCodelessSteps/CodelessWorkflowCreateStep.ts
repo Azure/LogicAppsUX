@@ -34,6 +34,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import * as vscodeExtension from 'vscode';
+import * as fs from 'fs';
 
 export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -46,9 +47,9 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
   }
 
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    // Check if the user chose to initialize a static web app
-    if (context.initializeStaticWebApp) {
+    if (context.shouldInitializeStaticWebApp) {
       context.telemetry.properties.initializeStaticWebApp = 'true';
+      //TODO 10: Here is just better to call the function if possible, rather than calling the command
       vscodeExtension.commands.executeCommand('azureLogicAppsStandard.deploy');
     } else {
       context.telemetry.properties.initializeStaticWebApp = 'false';
@@ -57,45 +58,9 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
     let emptyStatefulDefinition: StandardApp;
-    if (context.initializeStaticWebApp) {
-      //initiate basic logic app which can be called from SWA
-      emptyStatefulDefinition = {
-        definition: {
-          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-          actions: {
-            Compose: {
-              type: 'Compose',
-              inputs: {
-                status: 'Hello from Logic App',
-              },
-              runAfter: {},
-            },
-            Response: {
-              type: 'Response',
-              kind: 'Http',
-              inputs: {
-                statusCode: 200,
-                body: "@outputs('Compose')",
-              },
-              runAfter: {
-                Compose: ['SUCCEEDED'],
-              },
-            },
-          },
-          contentVersion: '1.0.0.0',
-          outputs: {},
-          triggers: {
-            When_a_HTTP_request_is_received: {
-              type: 'Request',
-              kind: 'Http',
-              inputs: {
-                method: 'GET',
-              },
-            },
-          },
-        },
-        kind: 'Stateful',
-      };
+    if (context.shouldInitializeStaticWebApp) {
+      const templatePath = path.join(__dirname, '..', 'src', 'app', 'templates', 'LogicAppSWAWorkflowTemp.json');
+      emptyStatefulDefinition = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
     } else {
       emptyStatefulDefinition = {
         definition: {

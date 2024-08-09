@@ -28,12 +28,11 @@ export class SetLogicAppType extends AzureWizardPromptStep<IProjectWizardContext
 
     const placeHolder = localize('logicAppProjectTemplatePlaceHolder', 'Select a project template for your logic app workspace');
     const selectedPick = await context.ui.showQuickPick(picks, { placeHolder });
-
     context.isCustomCodeLogicApp = selectedPick.data.isCustomCodeLogicApp;
-    context.initializeStaticWebApp = selectedPick.data.initializeStaticWebApp;
+    context.shouldInitializeStaticWebApp = selectedPick.data.initializeStaticWebApp;
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.isCustomCodeLogicApp === undefined && context.initializeStaticWebApp === undefined;
+    return context.isCustomCodeLogicApp === undefined && context.shouldInitializeStaticWebApp === undefined;
   }
 }

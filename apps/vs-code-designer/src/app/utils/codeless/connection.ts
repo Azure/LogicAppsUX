@@ -69,7 +69,7 @@ export async function addConnectionData(
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  //need to add flag for how workspace found depending on if SWA initialized TODO
+  //TODO 1: need to add flag for how workspace found depending on if SWA initialized 
 
   //const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   //const workspacePath: string = workspaceFolder.uri.fsPath;

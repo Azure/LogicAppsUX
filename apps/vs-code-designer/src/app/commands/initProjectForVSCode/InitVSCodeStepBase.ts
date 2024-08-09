@@ -16,10 +16,12 @@ import {
   extensionCommand,
   vscodeFolderName,
   logicAppsStandardExtensionId,
+  tasksFileName,
+  tasksVersion,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { isSubpath, confirmEditJsonFile } from '../../utils/fs';
+import { isSubpath, confirmEditJsonFile, isPathEqual } from '../../utils/fs';
 import {
   getDebugConfigs,
   getLaunchVersion,
@@ -28,6 +30,7 @@ import {
   updateLaunchVersion,
 } from '../../utils/vsCodeConfig/launch';
 import { updateWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { getInputs, getTasks, getTasksVersion, updateInputs, updateTasks, updateTasksVersion } from '../../utils/vsCodeConfig/tasks';
 import { isMultiRootWorkspace } from '../../utils/workspace';
 import { AzureWizardExecuteStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -39,6 +42,7 @@ import type {
   ITaskInputs,
   ILaunchJson,
   IExtensionsJson,
+  ITasksJson,
 } from '@microsoft/vscode-extension-logic-apps';
 import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
@@ -77,9 +81,11 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
-    //creating all .vscode files in the root of the workspace
-    //TODO add flag here for initial creation depending on if SWA initialized
-    context.workspacePath = path.join(context.workspacePath, '../..');
+    //creating all .vscode files in the root of the workspace if initialized with SWA
+    if (context.shouldInitializeStaticWebApp){
+      context.workspacePath = path.join(context.workspacePath, '../..');
+    }
+
     const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
     await this.writeTasksJson(context, vscodePath);
@@ -113,10 +119,10 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   }
 
   private async writeTasksJson(context: IProjectWizardContext, vscodePath: string): Promise<void> {
-    //writing custom Task json which will start LA and SWA. not following how tasks are originally added; should be fixed TODO
+    if (context.shouldInitializeStaticWebApp) {
     const tasksJsonPath: string = path.join(vscodePath, 'tasks.json');
     const logicAppFolderPathUri = Uri.parse(context.logicAppFolderPath);
-
+      //TODO 9: Read the below from a file
     const tasksJsonContent = `{
   "version": "2.0.0",
   "tasks": [
@@ -164,7 +170,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 }`;
     await fse.writeFile(tasksJsonPath, tasksJsonContent);
   }
-
+}
   private insertNewTasks(existingTasks: ITask[] | undefined, newTasks: ITask[]): ITask[] {
     // tslint:disable-next-line: strict-boolean-expressions
     existingTasks = existingTasks || [];
