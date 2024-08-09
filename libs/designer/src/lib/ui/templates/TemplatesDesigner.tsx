@@ -7,10 +7,13 @@ import type { ConnectionMapping } from '../../core/state/templates/workflowSlice
 import { EmptySearch } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { TemplateFilters, type TemplateDetailFilterType } from './filters/templateFilters';
 
 export const TemplatesDesigner = ({
+  detailFilters,
   createWorkflowCall,
 }: {
+  detailFilters: TemplateDetailFilterType;
   createWorkflowCall: (
     workflowName: string,
     workflowKind: string,
@@ -64,6 +67,8 @@ export const TemplatesDesigner = ({
 
   return (
     <>
+      <TemplateFilters detailFilters={detailFilters} />
+      <br />
       <TemplatePanel onCreateClick={onCreateClick} />
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div className="msla-templates-list">

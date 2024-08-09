@@ -23,8 +23,8 @@ export const WorkflowPanel: React.FC = () => {
 export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
-    defaultMessage: 'Workflow preview',
-    id: '1nykVf',
+    defaultMessage: 'Workflow',
+    id: 'lFWXhc',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
@@ -32,8 +32,8 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
   order: 0,
   footerContent: {
     primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Create a workflow with this template',
-      id: 'wGkH/j',
+      defaultMessage: 'Use this template',
+      id: '5szzYP',
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {

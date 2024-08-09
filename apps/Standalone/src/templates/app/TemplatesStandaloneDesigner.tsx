@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplateFilters, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -199,7 +199,7 @@ export const TemplatesStandaloneDesigner = () => {
                 margin: '20px',
               }}
             >
-              <TemplateFilters
+              <TemplatesDesigner
                 detailFilters={{
                   Category: {
                     displayName: 'Categories',
@@ -209,8 +209,8 @@ export const TemplatesStandaloneDesigner = () => {
                         displayName: 'Design Patterns',
                       },
                       {
-                        value: 'Generative AI',
-                        displayName: 'Generative AI',
+                        value: 'AI',
+                        displayName: 'AI',
                       },
                       {
                         value: 'B2B',
@@ -243,9 +243,8 @@ export const TemplatesStandaloneDesigner = () => {
                     ],
                   },
                 }}
+                createWorkflowCall={createWorkflowCall}
               />
-              <br />
-              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
             </div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
