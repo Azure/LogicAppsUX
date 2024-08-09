@@ -7,12 +7,12 @@ import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/sta
 import { Text } from '@fluentui/react-components';
 import { getUniqueConnectors } from '../../../../../core/templates/utils/helper';
 import { List } from '@fluentui/react';
-import { ConnectorWithDetails } from '../../../../../ui/templates/connections/connector';
+import { ConnectorWithDetails } from '../../../../templates/connections/connector';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
 
-export const OverviewPanel: React.FC = () => {
+export const SummaryPanel: React.FC = () => {
   const intl = useIntl();
   const { manifest } = useSelector((state: RootState) => state.template);
   const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
@@ -110,7 +110,7 @@ export const OverviewPanel: React.FC = () => {
   );
 };
 
-export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
@@ -118,7 +118,7 @@ export const overviewTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
-  content: <OverviewPanel />,
+  content: <SummaryPanel />,
   order: 1,
   footerContent: {
     primaryButtonText: intl.formatMessage({
