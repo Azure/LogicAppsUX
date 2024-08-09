@@ -479,11 +479,6 @@ const getDesignerServices = (
 
   const hostService = {};
 
-  const uiInteractionsService = {
-    getAddButtonMenuItems: () => [],
-    getNodeContextMenuItems: () => [],
-  };
-
   return {
     appServiceService,
     connectionService,
@@ -501,7 +496,6 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
-    uiInteractionsService,
   };
 };
 
