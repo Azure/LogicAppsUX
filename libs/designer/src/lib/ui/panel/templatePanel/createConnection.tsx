@@ -37,19 +37,26 @@ export const CreateConnectionInTemplate = (props: {
     [connectionKey, dispatch]
   );
 
+  const createButtonText = intl.formatMessage({
+    defaultMessage: 'Add connection',
+    id: 'cwHxwb',
+    description: 'Text for create connection button',
+  });
   const description = intl.formatMessage(
     {
-      defaultMessage: 'Fill out the fields below to create a connection for {connectorName}',
-      id: 'N+qRUv',
+      defaultMessage: '{connectorName} connection',
+      id: '0w/olE',
       description: 'Message to show in title for connection creation',
     },
     { connectorName: connector?.properties.displayName ?? '' }
   );
+
   return (
     <CreateConnectionInternal
       classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
       connectionName={isInAppConnector ? connectionKey : undefined}
       connectorId={connectorId}
+      createButtonText={createButtonText}
       description={description}
       operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
       existingReferences={references}

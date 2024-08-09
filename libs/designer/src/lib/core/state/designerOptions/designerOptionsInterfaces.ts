@@ -20,6 +20,7 @@ import type {
   ICustomCodeService,
   LogicApps,
   ICopilotService,
+  IDesignerUiInteractionsService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -69,4 +70,5 @@ export interface ServiceOptions {
   chatbotService?: IChatbotService;
   customCodeService?: ICustomCodeService;
   copilotService?: ICopilotService;
+  uiInteractionsService?: IDesignerUiInteractionsService;
 }

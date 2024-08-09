@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { DataMapperFileService, getSelectedSchema } from '../../core';
-import { setInitialSchema } from '../../core/state/DataMapSlice';
+import { setInitialSchema, toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
 import { closePanel, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
@@ -14,9 +14,10 @@ import { useStyles } from './styles';
 import { Panel } from '../../components/common/panel/Panel';
 import { SchemaPanelBody } from './SchemaPanelBody';
 import type { SchemaFile } from '../../models/Schema';
-import { mergeClasses } from '@fluentui/react-components';
+import { Button, mergeClasses } from '@fluentui/react-components';
 import type { FileSelectorOption } from '../common/selector/FileSelector';
 import Fuse from 'fuse.js';
+import { EditRegular } from '@fluentui/react-icons';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -50,26 +51,29 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
+  const { sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
+  const selectedSchema = useSelector((state: RootState) => {
+    if (schemaType === SchemaType.Source) {
+      return state.dataMap.present.curDataMapOperation.sourceSchema;
+    }
+    if (schemaType === SchemaType.Target) {
+      return state.dataMap.present.curDataMapOperation.targetSchema;
+    }
+    return undefined;
+  });
 
   const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
-  const [selectedSchema, _setSelectedSchema] = useState<DataMapSchema>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const schemaFromStore = useSelector((state: RootState) => {
-    return schemaType === SchemaType.Source
-      ? state.dataMap.present.curDataMapOperation.sourceSchema
-      : state.dataMap.present.curDataMapOperation.targetSchema;
-  });
-
-  const flattenedScehmaMap = useMemo(
-    () => (schemaFromStore ? flattenSchemaNodeMap(schemaFromStore.schemaTreeRoot) : {}),
-    [schemaFromStore]
-  );
+  const flattenedScehmaMap = useMemo(() => (selectedSchema ? flattenSchemaNodeMap(selectedSchema.schemaTreeRoot) : {}), [selectedSchema]);
 
   const [filteredFlattenedScehmaMap, setFilteredFlattenedScehmaMap] = useState(flattenedScehmaMap);
 
-  const showScehmaSelection = useMemo(() => !schemaFromStore, [schemaFromStore]);
+  const scehmaInEditState = useMemo(
+    () => (isLeftDirection ? sourceInEditState : targetInEditState),
+    [isLeftDirection, sourceInEditState, targetInEditState]
+  );
 
   const fetchSchema = useQuery(
     [selectedSchemaFile],
@@ -79,8 +83,8 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         const schema = await getSelectedSchema(fileName ?? '', filePath);
         return schema;
       }
-      const schema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
-      return schema;
+      const updatedSchema = await getSelectedSchema(selectedSchemaFile?.name ?? '', selectedSchemaFile?.path ?? '');
+      return updatedSchema;
     },
     {
       ...schemaFileQuerySettings,
@@ -119,15 +123,19 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         id: 'BnkCwH',
         description: 'Seach source or target properties',
       }),
+      EDIT_SCHEMA: intl.formatMessage({
+        defaultMessage: 'Edit schema',
+        id: 'KqJ14/',
+        description: 'Edit scehma',
+      }),
+      GENERIC_ERROR: intl.formatMessage({
+        defaultMessage: 'Failed to load the schema. Please try again.',
+        id: '6fDYzG',
+        description: 'Load schema error message',
+      }),
     }),
     [intl]
   );
-
-  const genericErrorMsg = intl.formatMessage({
-    defaultMessage: 'Failed to load the schema. Please try again.',
-    id: '6fDYzG',
-    description: 'Load schema error message',
-  });
 
   const goBackToDefaultConfigPanelView = useCallback(() => {
     dispatch(openDefaultConfigPanelView());
@@ -190,14 +198,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
         isAddSchema ? closeEntirePanel() : goBackToDefaultConfigPanelView();
         setErrorMessage('');
       } else {
-        setErrorMessage(genericErrorMsg);
+        setErrorMessage(stringResources.GENERIC_ERROR);
       }
     },
     [
       schemaType,
       closeEntirePanel,
       goBackToDefaultConfigPanelView,
-      genericErrorMsg,
+      stringResources,
       selectedSchemaFile,
       fileSelectorOptions,
       onSubmitSchemaFileSelection,
@@ -254,6 +262,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     [flattenedScehmaMap, setFilteredFlattenedScehmaMap, isLeftDirection, sourceChildParentMapping, targetChildParentMapping]
   );
 
+  const onEditClick = useCallback(() => {
+    if (isLeftDirection) {
+      dispatch(toggleSourceEditState(true));
+    } else {
+      dispatch(toggleTargetEditState(true));
+    }
+  }, [dispatch, isLeftDirection]);
+
   // if initial flat-map changes, filtered version needs to be reset
   useEffect(() => {
     setFilteredFlattenedScehmaMap(flattenedScehmaMap);
@@ -272,9 +288,17 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       isOpen={!!currentPanelView}
       title={{
         text: isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION,
+        rightAction: scehmaInEditState ? null : (
+          <Button
+            appearance="transparent"
+            aria-label={stringResources.EDIT_SCHEMA}
+            icon={<EditRegular fontSize={18} />}
+            onClick={onEditClick}
+          />
+        ),
       }}
       search={
-        showScehmaSelection
+        scehmaInEditState
           ? undefined
           : {
               placeholder: stringResources.SEARCH_PROPERTIES,
@@ -282,18 +306,18 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
             }
       }
       styles={{
-        root: mergeClasses(styles.root, showScehmaSelection ? styles.rootWithSchemaSelection : styles.rootWithSchemaTree),
+        root: mergeClasses(styles.root, scehmaInEditState ? styles.rootWithSchemaSelection : styles.rootWithSchemaTree),
       }}
       body={
         <SchemaPanelBody
-          schemaType={schemaType}
-          selectedSchema={selectedSchema?.name}
+          isLeftDirection={isLeftDirection}
+          schema={selectedSchema}
           setSelectedSchemaFile={setSelectedSchemaFile}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
           fileSelectorOptions={fileSelectorOptions}
           setFileSelectorOptions={setFileSelectorOptions}
-          showScehmaSelection={showScehmaSelection}
+          showScehmaSelection={scehmaInEditState}
           flattenedSchemaMap={filteredFlattenedScehmaMap}
         />
       }
