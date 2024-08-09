@@ -128,10 +128,6 @@ export async function downloadAndExtractDependency(
     // remove the target folder.
     fs.rmSync(targetFolder, { recursive: true });
     await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
-
-    // remove the temp folder.
-    fs.rmSync(tempFolderPath, { recursive: true });
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
   }
 }
 
