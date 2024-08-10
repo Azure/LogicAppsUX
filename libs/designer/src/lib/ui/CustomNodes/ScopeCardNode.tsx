@@ -33,7 +33,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -70,7 +70,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const getRunRepetition = () => {
     if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
@@ -89,14 +89,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
-    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
-  };
-
   const {
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
+    data: repetitionData,
   } = useQuery<any>(
     ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
     getRunRepetition,
@@ -104,10 +101,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetchOnWindowFocus: false,
       initialData: null,
       refetchOnMount: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+      enabled: parentRunIndex !== undefined && isMonitoringView,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionData)) {
+      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionData.properties as LogicAppsV2.WorkflowRunAction }));
+    }
+  }, [dispatch, scopeId, repetitionData]);
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
