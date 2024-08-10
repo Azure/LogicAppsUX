@@ -110,7 +110,7 @@ export function TokenPicker({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<ISearchBox | null>(null);
-  const isExpression = selectedMode === TokenPickerMode.EXPRESSION;
+  const isExpression = initialMode === TokenPickerMode.EXPRESSION;
   const isNl2fExpression = selectedMode === TokenPickerMode.NL2F_EXPRESSION;
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
   const [styleWithMargin, setStyleWithMargin] = useState(false);
