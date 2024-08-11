@@ -19,3 +19,7 @@ export const UiInteractionsService = (): IDesignerUiInteractionsService => {
 
   return service;
 };
+
+export const isUiInteractionsServiceEnabled = (): boolean => {
+  return !!service;
+};

@@ -8,15 +8,16 @@ import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnectors } from '../../../core/state/connection/connectionSelector';
 
+export type TemplateDetailFilterType = Record<
+  string,
+  {
+    displayName: string;
+    items: FilterObject[];
+  }
+>;
+
 export interface TemplateFiltersProps {
-  connectors?: FilterObject[];
-  detailFilters: Record<
-    string,
-    {
-      displayName: string;
-      items: FilterObject[];
-    }
-  >;
+  detailFilters: TemplateDetailFilterType;
 }
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {

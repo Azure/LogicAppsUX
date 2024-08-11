@@ -6,6 +6,7 @@ import {
   LoggerService,
   UiInteractionsService,
   guid,
+  isUiInteractionsServiceEnabled,
   normalizeAutomationId,
   removeIdTag,
   replaceWhiteSpaceWithUnderscore,
@@ -211,11 +212,11 @@ export const EdgeContextualMenu = () => {
                 </MenuItem>
               </>
             )}
-            {UiInteractionsService()
-              ?.getAddButtonMenuItems?.({ graphId, parentId, childId })
-              ?.map((item) => (
-                <CustomMenu key={item.text} item={item} />
-              ))}
+            {isUiInteractionsServiceEnabled()
+              ? UiInteractionsService()
+                  .getAddButtonMenuItems?.({ graphId, parentId, childId })
+                  ?.map((item) => <CustomMenu key={item.text} item={item} />)
+              : null}
           </MenuList>
         </PopoverSurface>
       </Popover>

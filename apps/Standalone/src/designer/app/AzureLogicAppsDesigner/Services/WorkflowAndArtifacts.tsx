@@ -181,12 +181,7 @@ const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<W
   return response.data;
 };
 
-export const useRunInstanceStandard = (
-  workflowName: string,
-  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
-  appId?: string,
-  runId?: string
-) => {
+export const useRunInstanceStandard = (workflowName: string, appId?: string, runId?: string) => {
   return useQuery(
     ['getRunInstance', appId, workflowName, runId],
     async () => {
@@ -218,7 +213,6 @@ export const useRunInstanceStandard = (
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      onSuccess: onRunInstanceSuccess,
     }
   );
 };
