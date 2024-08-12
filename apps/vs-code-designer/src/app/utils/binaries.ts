@@ -116,10 +116,6 @@ export async function downloadAndExtractDependency(
         executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
       });
       writer.on('error', async (error) => {
-        // remove the temp folder.
-        fs.rmSync(tempFolderPath, { recursive: true });
-        executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-
         throw error;
       });
     });
