@@ -2,9 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetExtensionId, functionsExtensionId } from '../../../../../constants';
+import {
+  dotnetExtensionId,
+  extensionsFileName,
+  functionsExtensionId,
+  launchFileName,
+  settingsFileName,
+  tasksFileName,
+} from '../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -37,7 +45,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
     await this.generateSettingsJson(vscodePath);
 
     // Generate the tasks.json file
-    await this.generateTasksJson(vscodePath);
+    await this.generateTasksJson(context, vscodePath);
   }
 
   /**
@@ -54,7 +62,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
    * @param folderPath The path to the folder where the extensions.json file should be generated.
    */
   private async generateExtensionsJson(folderPath: string): Promise<void> {
-    const filePath = path.join(folderPath, 'extensions.json');
+    const filePath = path.join(folderPath, extensionsFileName);
     const content = {
       recommendations: [functionsExtensionId, dotnetExtensionId],
     };
@@ -66,7 +74,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
    * @param folderPath The path to the folder where the launch.json file should be generated.
    */
   private async generateLaunchJson(folderPath: string): Promise<void> {
-    const filePath = path.join(folderPath, 'launch.json');
+    const filePath = path.join(folderPath, launchFileName);
     const content = {
       version: '0.2.0',
       configurations: [
@@ -86,7 +94,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
    * @param folderPath The path to the folder where the settings.json file should be generated.
    */
   private async generateSettingsJson(folderPath: string): Promise<void> {
-    const filePath = path.join(folderPath, 'settings.json');
+    const filePath = path.join(folderPath, settingsFileName);
     const content = {
       'azureFunctions.deploySubpath': 'bin/Release/net472/publish',
       'azureFunctions.projectLanguage': 'C#',
@@ -104,22 +112,35 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
    * Generates the tasks.json file in the specified folder.
    * @param folderPath The path to the folder where the tasks.json file should be generated.
    */
-  private async generateTasksJson(folderPath: string): Promise<void> {
-    const filePath = path.join(folderPath, 'tasks.json');
+  private async generateTasksJson(context: IProjectWizardContext, folderPath: string): Promise<void> {
+    const filePath = path.join(folderPath, tasksFileName);
+    const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
+    const targetFramework: TargetFramework = context.targetFramework;
+
+    const tasks: any = [
+      {
+        label: 'build',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        type: 'process',
+        args: ['build', '${workspaceFolder}'],
+        group: {
+          kind: 'build',
+          isDefault: true,
+        },
+      },
+    ];
+    if (targetFramework === TargetFramework.Net8) {
+      tasks.unshift({
+        label: 'clean',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
+        args: ['clean', ...commonArgs],
+        type: 'process',
+        problemMatcher: '$msCompile',
+      });
+    }
     const content = {
       version: '2.0.0',
-      tasks: [
-        {
-          label: 'build',
-          command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
-          type: 'process',
-          args: ['build', '${workspaceFolder}'],
-          group: {
-            kind: 'build',
-            isDefault: true,
-          },
-        },
-      ],
+      tasks: tasks,
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }
