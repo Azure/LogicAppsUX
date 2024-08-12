@@ -1,5 +1,16 @@
-import type { IColumn, IDetailsRowProps } from '@fluentui/react';
-import { DetailsList, DetailsRow, Icon, Link, SelectionMode, Shimmer, ShimmerElementType, SpinnerSize } from '@fluentui/react';
+import type { IColumn, IContextualMenuProps, IDetailsRowProps } from '@fluentui/react';
+import {
+  ContextualMenuItemType,
+  DetailsList,
+  DetailsRow,
+  Icon,
+  IconButton,
+  Link,
+  SelectionMode,
+  Shimmer,
+  ShimmerElementType,
+  SpinnerSize,
+} from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
 import { ConnectionService, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
@@ -11,10 +22,11 @@ import { ConnectorIconWithName } from './connector';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import { CreateConnectionInTemplate } from '../../panel/templatePanel/createConnection';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getConnector } from '../../../core/queries/operation';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
+import { isConnectionValid } from '../../../core/utils/connectors/connections';
 
 const createPlaceholderKey = '##create##';
 const connectionStatus: Record<string, any> = {
@@ -56,6 +68,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
     status: intl.formatMessage({ defaultMessage: 'Status', id: 't7ytOJ', description: 'Column name for connection status' }),
     connection: intl.formatMessage({ defaultMessage: 'Connection', id: 'hlrKDC', description: 'Column name for connection display name' }),
+    connectionsList: intl.formatMessage({ defaultMessage: 'Connections list', id: 'w+7aGo', description: 'Connections list' }),
   };
   const [isConnectionInCreate, setConnectionInCreate] = useState(false);
   const [connectionsList, setConnectionsList] = useFunctionalState<ConnectionItem[]>(
@@ -127,6 +140,14 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
       targetWidthProportion: 6,
       onColumnClick: _onColumnClick,
     },
+    {
+      ariaLabel: columnsNames.connectionsList,
+      fieldName: '$connectionsList',
+      key: '$connectionsList',
+      minWidth: 1,
+      maxWidth: 10,
+      name: '',
+    },
   ]);
 
   const onConnectionsLoaded = async (connections: Connection[], item: ConnectionItem): Promise<void> => {
@@ -137,15 +158,11 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
       ...item,
       allConnections: connections,
       hasConnection,
-      connection: connectionToUse
-        ? { id: connectionToUse.id, displayName: connectionToUse.properties.displayName ?? connectionToUse.id.split('/').slice(-1)[0] }
-        : undefined,
+      connection: connectionToUse ? { id: connectionToUse.id, displayName: getConnectionDisplayName(connectionToUse) } : undefined,
     });
 
     if (!itemHasConnection && connectionToUse) {
-      await ConnectionService().setupConnectionIfNeeded(connectionToUse);
-      const connector = await getConnector(item.connectorId);
-      dispatch(updateTemplateConnection({ connector, connection: connectionToUse, nodeId: item.key }));
+      setupTemplateConnection(item.key, item.connectorId, connectionToUse, dispatch);
     }
   };
 
@@ -252,6 +269,16 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
       case '$connection':
         return <ConnectionName item={item} intl={intl} disabled={isConnectionInCreate} onCreate={handleConnectionCreateClick} />;
 
+      case '$connectionsList':
+        return (
+          <ConnectionsList
+            item={item}
+            intl={intl}
+            onSelect={(newItem: ConnectionItem) => updateItemInConnectionsList(item.key, newItem)}
+            onCreate={handleConnectionCreateClick}
+          />
+        );
+
       default:
         return null;
     }
@@ -281,7 +308,7 @@ const ConnectionStatusWithProgress = ({
 
   useEffect(() => {
     if (data && item.allConnections === undefined) {
-      onConnectionLoaded(data);
+      onConnectionLoaded(data.filter(isConnectionValid));
     }
   }, [data, item.allConnections, onConnectionLoaded]);
 
@@ -332,6 +359,81 @@ const ConnectionName = ({
       {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })}
     </Link>
   );
+};
+
+const ConnectionsList = ({
+  item,
+  intl,
+  onSelect,
+  onCreate,
+}: {
+  item: ConnectionItem;
+  intl: IntlShape;
+  onSelect: (newItem: ConnectionItem) => void;
+  onCreate: (item: ConnectionItem) => void;
+}): JSX.Element | null => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { allConnections } = item;
+  const existingConnections = React.useMemo(() => {
+    return (allConnections ?? []).map((connection) => {
+      return {
+        key: connection.id,
+        text: getConnectionDisplayName(connection),
+        data: connection,
+      };
+    });
+  }, [allConnections]);
+
+  if (!allConnections || allConnections.length <= 0) {
+    return null;
+  }
+
+  const onCreateConnection = () => onCreate(item);
+  const onConnectionSelection = (id: string, displayName: string, connection: Connection) => {
+    onSelect({
+      ...item,
+      connection: { id, displayName },
+    });
+
+    setupTemplateConnection(item.key, item.connectorId, connection, dispatch);
+  };
+
+  const menuProps: IContextualMenuProps = {
+    shouldFocusOnMount: true,
+    items: [
+      ...existingConnections.map(({ key, text, data }) => {
+        return {
+          key,
+          text,
+          canCheck: true,
+          isChecked: key === item.connection?.id,
+          onRenderIcon: () => null,
+          onClick: () => onConnectionSelection(key, text, data),
+        };
+      }),
+      { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
+      {
+        key: '$addConnection',
+        iconProps: { iconName: 'Add', style: { marginLeft: '-15px' } },
+        name: intl.formatMessage({ defaultMessage: 'Add connection', description: 'Add connection', id: 'Q/V4Uc' }),
+        canCheck: false,
+        isChecked: false,
+        onClick: onCreateConnection,
+      },
+    ],
+  };
+
+  return <IconButton menuIconProps={{ iconName: 'More' }} menuProps={menuProps} className="msla-template-connection-list" />;
+};
+
+const setupTemplateConnection = async (key: string, connectorId: string, connection: Connection, dispatch: AppDispatch): Promise<void> => {
+  await ConnectionService().setupConnectionIfNeeded(connection);
+  const connector = await getConnector(connectorId);
+  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: key }));
+};
+
+const getConnectionDisplayName = (connection: Connection): string => {
+  return connection.properties.displayName ?? connection.id.split('/').slice(-1)[0];
 };
 
 function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] {
