@@ -1,4 +1,4 @@
-import { Dropdown, SearchBox } from '@fluentui/react';
+import { Dropdown, SearchBox, Text } from '@fluentui/react';
 import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-ui';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
@@ -110,6 +110,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         ))}
       </div>
       <div className="msla-templates-filters-sort">
+        <Text>Sort by</Text>
         <Dropdown
           className="msla-templates-filters-sort-dropdown"
           options={templateDropdownOptions}
