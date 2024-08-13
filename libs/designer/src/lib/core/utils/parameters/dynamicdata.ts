@@ -277,10 +277,11 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required || schemaHasRequiredParameters,
-    useAliasedIndexing: true,
+    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
     excludeAdvanced: false,
     excludeInternal: false,
     includeParentObject: true,
+    isInputSchema: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
@@ -291,13 +292,14 @@ export async function getDynamicInputsFromSchema(
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
+  // TODO: This code should be removed once keys are correctly stamped for aliasing inputs since in normal parsing this does not happen.
   // We are recieving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
   //     body.$.content.appId
   for (const inputParameter of dynamicInputs) {
-    if (isOpenApiParameter(inputParameter) && inputParameter?.in) {
-      const { key: _key, in: _in } = inputParameter;
+    const { key: _key, in: _in } = inputParameter;
+    if (isOpenApiParameter(inputParameter) && _in && _key !== `${_in}.$`) {
       // _key = body.$.body/content.body/content/appId
       const path = replaceSubsegmentSeparator(_key.split('.').pop() ?? '');
       // path = body.content.appId

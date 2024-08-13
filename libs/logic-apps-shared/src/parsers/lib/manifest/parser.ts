@@ -38,9 +38,11 @@ export function getSplitOnArrayAliasMetadata(schema: SchemaObject, required: boo
 
 export class ManifestParser {
   private _operationManifest: OperationManifest;
+  private _isAliasingSupported: boolean;
 
-  constructor(operationManifest: OperationManifest) {
+  constructor(operationManifest: OperationManifest, isAliasingSupported: boolean) {
     this._operationManifest = operationManifest;
+    this._isAliasingSupported = isAliasingSupported;
   }
 
   /**
@@ -72,7 +74,7 @@ export class ManifestParser {
       keyPrefix: 'inputs.$',
       excludeAdvanced: false,
       excludeInternal: false,
-      useAliasedIndexing: true,
+      useAliasedIndexing: this._isAliasingSupported,
     };
 
     const inputParams = {
@@ -121,7 +123,7 @@ export class ManifestParser {
       isInputSchema: false,
       excludeAdvanced: false,
       excludeInternal: true,
-      useAliasedIndexing: true,
+      useAliasedIndexing: this._isAliasingSupported,
       outputKey: SwaggerConstants.OutputKeys.Outputs,
     };
 

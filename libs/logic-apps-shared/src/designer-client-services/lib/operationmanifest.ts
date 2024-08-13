@@ -14,6 +14,14 @@ export interface IOperationManifestService {
   isSupported(operationType?: string, operationKind?: string): boolean;
 
   /**
+   * Checks if the operation type has aliasing supported.
+   * @arg [string] operationType - The operation type.
+   * @arg [string] operationKind - The operation kind.
+   * @return {boolean}
+   */
+  isAliasingSupported(operationType?: string, operationKind?: string): boolean;
+
+  /**
    * Gets the operation info.
    * @arg {any} definition - The operation definition.
    * @arg {boolean} isTrigger - Flag to determine if the definition is of a trigger operation.

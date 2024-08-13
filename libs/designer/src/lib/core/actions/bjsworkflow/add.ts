@@ -129,7 +129,12 @@ export const initializeOperationDetails = async (
 
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      operationInfo,
+      manifest,
+      presetParameterValues
+    );
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
@@ -138,11 +143,11 @@ export const initializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
       operationInfo,
+      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
       nodeId
     );
-    parsedManifest = new ManifestParser(manifest);
+    parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(
@@ -163,8 +168,8 @@ export const initializeOperationDetails = async (
         manifest,
         isTrigger,
         nodeInputs,
-        settings.splitOn?.value?.value,
         operationInfo,
+        settings.splitOn?.value?.value,
         nodeId
       ).outputs;
     }
@@ -274,13 +279,17 @@ export const initializeOperationDetails = async (
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
-  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest);
+  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+    id,
+    { type: '', kind: '', connectorId: '', operationId: '' },
+    manifest
+  );
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
     manifest,
     false,
     nodeInputs,
+    { type: '', kind: '', connectorId: '', operationId: '' },
     /* splitOnValue */ undefined,
-    /* operationInfo */ undefined,
     id
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
