@@ -292,14 +292,14 @@ export async function getDynamicInputsFromSchema(
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
-  // TODO: This code should be removed once all manifest service is correctly identifying aliasing inputs based on operation types.
+  // TODO: This code should be removed once keys are correctly stamped for aliasing inputs since in normal parsing this does not happen.
   // We are recieving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
   //     body.$.content.appId
   for (const inputParameter of dynamicInputs) {
-    if (isOpenApiParameter(inputParameter) && inputParameter?.in) {
-      const { key: _key, in: _in } = inputParameter;
+    const { key: _key, in: _in } = inputParameter;
+    if (isOpenApiParameter(inputParameter) && _in && _key !== `${_in}.$`) {
       // _key = body.$.body/content.body/content/appId
       const path = replaceSubsegmentSeparator(_key.split('.').pop() ?? '');
       // path = body.content.appId
