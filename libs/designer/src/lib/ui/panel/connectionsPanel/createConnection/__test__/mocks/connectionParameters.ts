@@ -105,6 +105,9 @@ export const mockOauthWithTenantParameters: Record<string, ConnectionParameter> 
         IsFirstParty: 'True',
         AzureActiveDirectoryResourceId: 'https://management.core.windows.net/',
       },
+      customParameters: {
+        tenantId: {},
+      },
     },
   },
   'token:clientId': {

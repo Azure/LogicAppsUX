@@ -238,7 +238,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
-    () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }) ?? {},
+    () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }),
     [isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
@@ -302,7 +302,10 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       isTenantServiceEnabled() &&
       usingAadConnection &&
       isUsingOAuth &&
-      Object.keys(connectionParameters ?? {}).some((key) => equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)),
+      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
+      Object.keys(connectionParameters ?? {}).some((key: string) =>
+        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+      ),
     [connectionParameters, isUsingOAuth, usingAadConnection]
   );
 
