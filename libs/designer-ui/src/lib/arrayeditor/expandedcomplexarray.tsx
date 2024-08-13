@@ -106,13 +106,14 @@ export const ExpandedComplexArray = ({
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
               const comboboxOptions =
                 options ??
-                schemaItem.enum?.map(
-                  (val: string): ComboboxItem => ({
-                    displayName: val,
-                    key: val,
-                    value: val,
-                  })
-                );
+                schemaItem.enum?.map((val: string): ComboboxItem => {
+                  const value = String(val);
+                  return {
+                    displayName: value,
+                    key: value,
+                    value: value,
+                  };
+                });
 
               return (
                 <div key={schemaItem.key + i}>
