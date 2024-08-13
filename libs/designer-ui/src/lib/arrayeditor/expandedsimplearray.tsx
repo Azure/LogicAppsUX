@@ -75,13 +75,14 @@ export const ExpandedSimpleArray = ({
 
   const comboboxOptions =
     options ??
-    itemEnum?.map(
-      (val: string): ComboboxItem => ({
-        displayName: val,
-        key: val,
-        value: val,
-      })
-    );
+    itemEnum?.map((val: string): ComboboxItem => {
+      const value = String(val);
+      return {
+        displayName: value,
+        key: value,
+        value: value,
+      };
+    });
 
   return (
     <div className="msla-array-container msla-array-item-container">
