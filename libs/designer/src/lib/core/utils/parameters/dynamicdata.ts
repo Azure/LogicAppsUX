@@ -277,10 +277,11 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required || schemaHasRequiredParameters,
-    useAliasedIndexing: true,
+    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
     excludeAdvanced: false,
     excludeInternal: false,
     includeParentObject: true,
+    isInputSchema: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
@@ -291,6 +292,7 @@ export async function getDynamicInputsFromSchema(
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
+  // TODO: This code should be removed once all manifest service is correctly identifying aliasing inputs based on operation types.
   // We are recieving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
