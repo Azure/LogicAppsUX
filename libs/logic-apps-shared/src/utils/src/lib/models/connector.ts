@@ -131,7 +131,7 @@ export interface OAuthSetting {
   redirectMode?: string;
   redirectUrl: string;
   properties: OAuthSettingProperties;
-  customParameters: Record<string, any>;
+  customParameters?: Record<string, any>;
 }
 
 export interface ManagedIdentitySetting {
