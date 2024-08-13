@@ -1,4 +1,22 @@
 # Logic Apps Designer
+## [4.58.0](https://github.com/Azure/LogicAppsUX/compare/v4.57.0...v4.58.0) (2024-08-13)
+
+
+### Features
+
+* **templates:** Add connection selection in create connection tab ([#5358](https://github.com/Azure/LogicAppsUX/issues/5358)) ([83609ce](https://github.com/Azure/LogicAppsUX/commit/83609ce047eef0bdd66e1b1d635718a8c7d06868))
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix Monaco editor disappearing in Dynamic Content view ([#5350](https://github.com/Azure/LogicAppsUX/issues/5350)) ([a4a337b](https://github.com/Azure/LogicAppsUX/commit/a4a337b2b9e67c77f33e72d604890ccb3ec07867))
+* **designer:** Dynamic input parameters have extra $ parameter for parent key when aliases are present ([#5360](https://github.com/Azure/LogicAppsUX/issues/5360)) ([2e27773](https://github.com/Azure/LogicAppsUX/commit/2e27773cd24e5a67fd33a1656a789b3ec0d8c10a))
+* **designer:** Ensure panel is closed when nodes are deselected ([#5371](https://github.com/Azure/LogicAppsUX/issues/5371)) ([9e2cee1](https://github.com/Azure/LogicAppsUX/commit/9e2cee14eadb5a3134afacfb777a430060c25082))
+* **designer:** Fix Comments on nodes ([#5370](https://github.com/Azure/LogicAppsUX/issues/5370)) ([87320dc](https://github.com/Azure/LogicAppsUX/commit/87320dc1d1d87e1e9b0615f53e9ae84dc04fbe8f))
+* **Designer:** OAuth tenant selection visibility logic fix ([#5369](https://github.com/Azure/LogicAppsUX/issues/5369)) ([f1b4287](https://github.com/Azure/LogicAppsUX/commit/f1b428724735166d13fbdf12b308b1e1b4ab61c4))
+* **designer:** Sets right run data from repetition for nested components instead of general run data ([#5347](https://github.com/Azure/LogicAppsUX/issues/5347)) ([76a7400](https://github.com/Azure/LogicAppsUX/commit/76a74001a4860de4b1857a2dc26834fb5502e534))
+* **vscode:** Remove cycle dependency in useEffect for monitoring view ([#5355](https://github.com/Azure/LogicAppsUX/issues/5355)) ([5583ca0](https://github.com/Azure/LogicAppsUX/commit/5583ca0b7feab360959e64efad3207ac1333432f))
+
 ## [4.57.0](https://github.com/Azure/LogicAppsUX/compare/v4.56.0...v4.57.0) (2024-08-09)
 
 
