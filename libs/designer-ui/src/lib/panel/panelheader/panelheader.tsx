@@ -14,6 +14,7 @@ import {
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -37,7 +38,7 @@ export interface PanelHeaderProps {
   canResubmit?: boolean;
   resubmitOperation?: () => void;
   onUnpinAction?: () => void;
-  commentChange(panelCommentChangeEvent?: string): void;
+  commentChange(newValue?: string): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
@@ -209,18 +210,18 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
               <OverflowButton {...props} />
             </div>
             {onRenderWarningMessage ? onRenderWarningMessage() : null}
-            {comment ? (
-              <PanelHeaderComment
-                comment={comment}
-                isCollapsed={isCollapsed}
-                noNodeSelected={noNodeOnCardLevel}
-                readOnlyMode={readOnlyMode}
-                commentChange={commentChange}
-              />
-            ) : null}
           </>
         ) : null}
       </div>
+      {!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed ? (
+        <PanelHeaderComment
+          comment={comment}
+          isCollapsed={isCollapsed}
+          noNodeSelected={noNodeOnCardLevel}
+          readOnlyMode={readOnlyMode}
+          commentChange={commentChange}
+        />
+      ) : null}
       {canResubmit ? (
         <Button
           style={{ margin: '0 2rem 0.5rem', alignSelf: 'flex-start' }}

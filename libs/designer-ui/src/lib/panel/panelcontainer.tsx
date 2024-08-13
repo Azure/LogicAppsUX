@@ -104,7 +104,7 @@ export const PanelContainer = ({
           canResubmit={canResubmit}
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
-          commentChange={() => onCommentChange(nodeId)}
+          commentChange={(newValue) => onCommentChange(nodeId, newValue)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           onTitleBlur={onTitleBlur}

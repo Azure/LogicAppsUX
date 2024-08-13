@@ -60,13 +60,7 @@ export const PanelHeaderComment = ({
       description: 'Label for the comment textfield',
     });
 
-    const onCommentChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-      commentChange(newValue);
-    };
-
     const onCommentBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-      const newComment = comment;
-      commentChange && commentChange(newComment);
       setCommentHasFocus(false);
     };
 
@@ -96,7 +90,7 @@ export const PanelHeaderComment = ({
         ariaLabel={commentTitle}
         maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
         value={comment ?? ''}
-        onChange={onCommentChange}
+        onChange={(_e, value) => commentChange(value)}
         onBlur={readOnlyMode ? undefined : onCommentBlur}
         onFocus={onFocusComment}
         onKeyUp={onCommentTextFieldEscape}

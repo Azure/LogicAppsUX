@@ -306,7 +306,14 @@ const getDesignerServices = (
     includeBasePathInTemplate: true,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl, siteResourceId: workflowId, httpClient, workflowName });
+
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl,
+    siteResourceId: workflowId,
+    httpClient,
+    workflowName,
+  });
 
   const appServiceService = new BaseAppServiceService({
     ...defaultServiceParams,
