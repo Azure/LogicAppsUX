@@ -110,8 +110,10 @@ export const panelSlice = createSlice({
       state.workflowParametersContent = getInitialWorkflowParametersContentState();
 
       if (clearPinnedState) {
+        state.isCollapsed = true;
         state.operationContent = getInitialOperationContentState();
       } else {
+        state.isCollapsed = !state.operationContent.pinnedNodeId;
         state.operationContent = {
           ...getInitialOperationContentState(),
           pinnedNodeId: state.operationContent.pinnedNodeId,
@@ -162,8 +164,6 @@ export const panelSlice = createSlice({
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
-
-      clearPanel();
 
       state.isCollapsed = false;
       state.currentPanelMode = 'Operation';
@@ -230,8 +230,6 @@ export const panelSlice = createSlice({
     ) => {
       const { focusReturnElementId, nodeId, nodeIds, panelMode, referencePanelMode } = action.payload;
       const selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
-
-      clearPanel();
 
       state.currentPanelMode = panelMode;
       state.isCollapsed = false;
