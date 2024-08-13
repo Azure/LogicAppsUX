@@ -122,20 +122,16 @@ export const DesignerApp = () => {
   });
 
   useEffect(() => {
-    if (isMonitoringView) {
-      if (isNullOrUndefined(runData)) {
-        setRunInstance(null);
-        setStandardApp(undefined);
-      } else {
-        const standardAppInstance = {
-          ...standardApp,
+    if (isMonitoringView && !isNullOrUndefined(runData)) {
+      setRunInstance(runData);
+      setStandardApp((previousApp: any) => {
+        return {
+          ...previousApp,
           definition: runData.properties.workflow.properties.definition,
-        } as StandardApp;
-        setRunInstance(runData);
-        setStandardApp(standardAppInstance);
-      }
+        };
+      });
     }
-  }, [runData, standardApp, isMonitoringView]);
+  }, [runData, isMonitoringView]);
 
   useEffect(() => {
     if (isMonitoringView && !isEmptyString(runId)) {
