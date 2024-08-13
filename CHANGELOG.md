@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.57.1](https://github.com/Azure/LogicAppsUX/compare/v4.57.0...v4.57.1) (2024-08-13)
+
+
+### Bug Fixes
+
+* **Templates:** Image not Rendering in Prod + Sort By Text ([#5359](https://github.com/Azure/LogicAppsUX/issues/5359)) ([ee75030](https://github.com/Azure/LogicAppsUX/commit/ee750305553fa08976d5af9b96f1eecb86208ed9))
+
 ## [4.57.0](https://github.com/Azure/LogicAppsUX/compare/v4.56.0...v4.57.0) (2024-08-09)
 
 
