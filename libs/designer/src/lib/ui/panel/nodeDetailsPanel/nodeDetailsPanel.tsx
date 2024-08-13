@@ -167,7 +167,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   const onCommentChange = (nodeId: string, newDescription?: string) => {
-    console.log(nodeId, newDescription);
     dispatch(setNodeDescription({ nodeId, description: newDescription }));
   };
 
