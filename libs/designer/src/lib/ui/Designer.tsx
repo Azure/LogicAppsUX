@@ -197,7 +197,7 @@ export const Designer = (props: DesignerProps) => {
             translateExtent={clampPan ? translateExtent : undefined}
             onMove={(_e, viewport) => setZoom(viewport.zoom)}
             minZoom={0.05}
-            onPaneClick={() => dispatch(clearPanel({}))}
+            onPaneClick={() => dispatch(clearPanel())}
             disableKeyboardA11y={true}
             proOptions={{
               account: 'paid-sponsor',
