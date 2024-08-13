@@ -173,7 +173,7 @@ export const getLegacyDynamicTreeItems = async (
   const { collectionPath, titlePath, folderPropertyPath, mediaPropertyPath } = pickerInfo;
   const values = collectionPath ? getPropertyValue(response, collectionPath) : response;
 
-  if (values && values.length) {
+  if (values && Array.isArray(values)) {
     return values.map((value: any) => {
       return {
         value,
