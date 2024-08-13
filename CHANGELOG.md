@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.57.2](https://github.com/Azure/LogicAppsUX/compare/v4.57.1...v4.57.2) (2024-08-13)
+
+
+### Bug Fixes
+
+* **designer:** Fix Comments on nodes ([#5370](https://github.com/Azure/LogicAppsUX/issues/5370)) ([#5374](https://github.com/Azure/LogicAppsUX/issues/5374)) ([ee81caf](https://github.com/Azure/LogicAppsUX/commit/ee81caf63f5d95af15213dfbba65e00563389ee7))
+* **designer:** Fixing dynamic input parameters issues CRIs ([#5372](https://github.com/Azure/LogicAppsUX/issues/5372)) ([efa479c](https://github.com/Azure/LogicAppsUX/commit/efa479cb94be7b44dbf0593c5d1bd9de19fd53ec)), closes [#5360](https://github.com/Azure/LogicAppsUX/issues/5360)
+
 ### [4.57.1](https://github.com/Azure/LogicAppsUX/compare/v4.57.0...v4.57.1) (2024-08-13)
 
 
