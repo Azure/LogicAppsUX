@@ -81,6 +81,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
             nodeTokenData: copiedNode.nodeTokenData,
             operationInfo: copiedNode.nodeOperationInfo,
             connectionData: copiedNode.nodeConnectionData,
+            comment: copiedNode.nodeComment,
           })
         );
       }

@@ -159,6 +159,7 @@ export const EdgeContextualMenu = () => {
           nodeTokenData: copiedNode.nodeTokenData,
           operationInfo: copiedNode.nodeOperationInfo,
           connectionData: copiedNode.nodeConnectionData,
+          comment: copiedNode.nodeComment,
         })
       );
     }
