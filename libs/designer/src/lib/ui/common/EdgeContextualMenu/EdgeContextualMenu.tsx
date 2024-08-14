@@ -187,7 +187,7 @@ export const EdgeContextualMenu = () => {
 
   return (
     <>
-      <div ref={ref} style={{ position: 'absolute', top: location?.y, left: location?.x }} />
+      <div ref={ref} style={{ position: 'fixed', top: location?.y, left: location?.x }} />
       <Popover
         onOpenChange={(_, data) => setOpen(data.open)}
         trapFocus

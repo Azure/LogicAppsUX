@@ -17,7 +17,8 @@ import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/sr
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from './operationdeserializer';
 import type { NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { updateAllUpstreamNodes } from './initialize';
-import { addDynamicTokens, type NodeTokens } from '../../state/tokens/tokensSlice';
+import type { NodeTokens } from '../../state/tokens/tokensSlice';
+import { addDynamicTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
