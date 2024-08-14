@@ -3,7 +3,7 @@ import { Combobox, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { ItemMenuButton } from './expandedsimplearray';
-import { hideComplexArray, type ItemSchemaItemProps } from './util/util';
+import { getComoboxEnumOptions, hideComplexArray, type ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { css, DefaultButton } from '@fluentui/react';
 import { Label } from '../label';
@@ -104,16 +104,7 @@ export const ExpandedComplexArray = ({
           <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
-              const comboboxOptions =
-                options ??
-                schemaItem.enum?.map((val: string): ComboboxItem => {
-                  const value = String(val);
-                  return {
-                    displayName: value,
-                    key: value,
-                    value: value,
-                  };
-                });
+              const comboboxOptions = getComoboxEnumOptions(options, schemaItem.enum);
 
               return (
                 <div key={schemaItem.key + i}>
@@ -154,6 +145,7 @@ export const ExpandedComplexArray = ({
                             {comboboxOptions ? (
                               <Combobox
                                 {...props}
+                                valueType={schemaItem?.type}
                                 options={comboboxOptions}
                                 placeholder={schemaItem.description}
                                 initialValue={complexItem?.value ?? []}

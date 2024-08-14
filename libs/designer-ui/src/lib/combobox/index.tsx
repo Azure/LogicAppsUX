@@ -114,7 +114,6 @@ export const Combobox = ({
 
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
-    console.log(options);
     if (shouldSort) {
       options.sort((currentItem, nextItem) => {
         const currentName = currentItem?.displayName;
