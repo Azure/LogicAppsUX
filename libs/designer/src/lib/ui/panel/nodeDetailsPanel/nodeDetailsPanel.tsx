@@ -194,7 +194,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   const commonPanelProps: CommonPanelProps = {
-    ...props,
     isCollapsed: collapsed,
     toggleCollapse: dismissPanel,
     overrideWidth,
