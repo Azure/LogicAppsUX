@@ -3,7 +3,9 @@ import { existsSync, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/master`;
+const releaseBranch = 'release/20240812';
+
+const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
 
 const downloadFile = async (path) => {

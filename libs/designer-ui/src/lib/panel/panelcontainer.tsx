@@ -59,7 +59,6 @@ export const PanelContainer = ({
   setOverrideWidth,
   overrideWidth,
   isResizeable,
-  mountNode,
 }: PanelContainerProps) => {
   const intl = useIntl();
 
@@ -104,7 +103,7 @@ export const PanelContainer = ({
           canResubmit={canResubmit}
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
-          commentChange={() => onCommentChange(nodeId)}
+          commentChange={(newValue) => onCommentChange(nodeId, newValue)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           onTitleBlur={onTitleBlur}
@@ -182,11 +181,10 @@ export const PanelContainer = ({
       modalType="non-modal"
       mountNode={{
         className: 'msla-panel-host-container',
-        element: mountNode,
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', width: drawerWidth }}
+      style={{ width: drawerWidth }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button
