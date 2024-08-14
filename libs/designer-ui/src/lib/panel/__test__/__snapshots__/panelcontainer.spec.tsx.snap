@@ -8,14 +8,12 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
   mountNode={
     {
       "className": "msla-panel-host-container",
-      "element": undefined,
     }
   }
   open={true}
   position="end"
   style={
     {
-      "position": "absolute",
       "width": "630px",
     }
   }
