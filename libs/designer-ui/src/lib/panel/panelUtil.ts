@@ -50,5 +50,4 @@ export interface CommonPanelProps {
   layerProps?: any;
   panelLocation: PanelLocation;
   isResizeable?: boolean;
-  mountNode?: HTMLElement;
 }
