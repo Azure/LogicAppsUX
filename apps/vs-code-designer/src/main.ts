@@ -56,7 +56,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
-    await downloadExtensionBundle(activateContext);
+    try {
+      await downloadExtensionBundle(activateContext);
+    } catch (error) {
+      // log the error message the VSCode window and to telemetry.
+      const errorMessage = `Error downloading and extracting the Logic Apps Standard Extension Bundle: ${error.message}`;
+      vscode.window.showErrorMessage(errorMessage);
+    }
     promptParameterizeConnections(activateContext);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
