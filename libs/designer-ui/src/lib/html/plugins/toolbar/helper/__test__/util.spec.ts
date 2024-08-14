@@ -14,7 +14,9 @@ import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, exp
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
     it.each([
-      ['<p>text1<span>\n</span>text2</p>', '<p>text1<span>\n</span>text2</p>'],
+      ['<p class="editor-paragraph"><br></p>', '<p class="editor-paragraph"><br></p>'],
+      ['<p>text1<span>\n</span>text2</p>', '<p>text1<br>text2</p>'],
+      ['<p>line1<span>\n</span>line2<span>\n\n</span>line3<span>\n\n</span>line4</p>', '<p>line1<br>line2<br><br>line3<br><br>line4</p>'],
       ['<p>text</p>', '<p>text</p>'],
       ['<p>text1</p><p><br></p><p>text2</p>', '<p>text1</p><br><p>text2</p>'],
       ['<p>text1<br></p><p><br></p><p>text2</p>', '<p>text1</p><br><br><p>text2</p>'],
