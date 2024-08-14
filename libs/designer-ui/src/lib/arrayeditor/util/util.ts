@@ -1,4 +1,4 @@
-import type { ComboboxItem } from 'lib/combobox';
+import type { ComboboxItem } from '../../combobox';
 import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
