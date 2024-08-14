@@ -235,9 +235,7 @@ export const DesignerCommandBar = ({
       styles={{
         root: {
           borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
-          position: 'absolute',
-          width: '100%',
-          zIndex: 1,
+          position: 'relative',
           // we should modify what we pass back from logic app designer to simplify this logic
           left: rightShift ?? 0,
           padding: '4px 8px',
