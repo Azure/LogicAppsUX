@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.57.3](https://github.com/Azure/LogicAppsUX/compare/v4.57.2...v4.57.3) (2024-08-14)
+
+
+### Bug Fixes
+
+* **designer:** Fixed edge context menu positioning ([#5391](https://github.com/Azure/LogicAppsUX/issues/5391)) ([4a36909](https://github.com/Azure/LogicAppsUX/commit/4a369099947afd7f4139a50962f45c554f88d8e3))
+* **designer:** Fixed scrolling issue on panels (v4.57) ([#5394](https://github.com/Azure/LogicAppsUX/issues/5394)) ([b56950d](https://github.com/Azure/LogicAppsUX/commit/b56950d456735d37fab27a1b2546c5818ebd2634)), closes [#5259](https://github.com/Azure/LogicAppsUX/issues/5259)
+
 ### [4.57.2](https://github.com/Azure/LogicAppsUX/compare/v4.57.1...v4.57.2) (2024-08-13)
 
 
