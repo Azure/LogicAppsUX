@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplateFilters, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -45,13 +45,14 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 };
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowAppData } = useWorkflowApp(appId as string, isConsumption ? 'consumption' : 'standard');
+  const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
+  const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: settingsData } = useAppSettings(appId as string);
+  const isConsumption = hostingPlan === 'consumption';
 
   const connectionsData = useMemo(() => {
     return JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {})));
@@ -69,8 +70,8 @@ export const TemplatesStandaloneDesigner = () => {
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
-      if (isConsumption) {
-        console.log('Consumption is not ready yet!');
+      if (hostingPlan !== 'standard') {
+        console.log('Hosting plan is not ready yet!');
       } else {
         let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
         const sanitizedParameterData: ParametersData = {};
@@ -198,7 +199,7 @@ export const TemplatesStandaloneDesigner = () => {
                 margin: '20px',
               }}
             >
-              <TemplateFilters
+              <TemplatesDesigner
                 detailFilters={{
                   Category: {
                     displayName: 'Categories',
@@ -208,8 +209,8 @@ export const TemplatesStandaloneDesigner = () => {
                         displayName: 'Design Patterns',
                       },
                       {
-                        value: 'Generative AI',
-                        displayName: 'Generative AI',
+                        value: 'AI',
+                        displayName: 'AI',
                       },
                       {
                         value: 'B2B',
@@ -242,9 +243,8 @@ export const TemplatesStandaloneDesigner = () => {
                     ],
                   },
                 }}
+                createWorkflowCall={createWorkflowCall}
               />
-              <br />
-              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
             </div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>

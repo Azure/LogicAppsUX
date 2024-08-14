@@ -30,9 +30,8 @@ export const NameStatePanel = () => {
   const intlText = useMemo(
     () => ({
       WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
-        defaultMessage:
-          'Provide a unique, descriptive name. Use underscores (_) or dashes (-) instead of spaces to keep names clean and searchable. To prevent any issues, avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
-        id: 'xtDCgy',
+        defaultMessage: 'Avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'sa/O/N',
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
@@ -116,7 +115,7 @@ export const NameStatePanel = () => {
   );
 
   return (
-    <div className="msla-templates-tab">
+    <div className="msla-templates-tab msla-panel-no-description-tab">
       <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
         {intlText.WORKFLOW_NAME}
       </Label>
@@ -188,14 +187,9 @@ export const nameStateTab = (
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
-    defaultMessage: 'Name and state',
-    id: 'zmsJrW',
+    defaultMessage: 'Name + state',
+    id: 'BX0M13',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
-  }),
-  description: intl.formatMessage({
-    defaultMessage: 'Provide a unique, descriptive name and review the state type to ensure your workflow is properly configured.',
-    id: 'jgy58N',
-    description: 'An accessibility label that describes the objective of name and state tab',
   }),
   hasError: hasError,
   order: 2,

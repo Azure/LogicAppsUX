@@ -138,10 +138,21 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   // replace new nodeId if there exists a copy of the copied node
   dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
 
+  const updatedTokens = nodeTokenData.tokens.map((token) => {
+    // Modify the actionName to a unique value
+    return {
+      ...token,
+      outputInfo: {
+        ...token.outputInfo,
+        actionName: nodeId,
+      },
+    };
+  });
+
   dispatch(
     addDynamicTokens({
       nodeId,
-      tokens: nodeTokenData.tokens,
+      tokens: updatedTokens,
     })
   );
 

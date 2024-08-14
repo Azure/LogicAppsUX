@@ -1,6 +1,6 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup, Switch } from '@fluentui/react-components';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens } from '@fluentui/react-components';
 import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -19,7 +19,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
@@ -153,37 +153,57 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   );
 
   const toolbarStyles = useStyles();
-  const bothSchemasDefined = useMemo(() => sourceSchema && targetSchema, [sourceSchema, targetSchema]);
+
+  const disabledState = useMemo(
+    () => ({
+      save: !isDirty || sourceInEditState || targetInEditState,
+      undo: undoStack.length === 0,
+      discard: !isDirty,
+      test: sourceInEditState || targetInEditState,
+      codeView: sourceInEditState || targetInEditState,
+    }),
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState]
+  );
 
   return (
     <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
       <ToolbarGroup className={toolbarStyles.toolbarGroup}>
         <ToolbarButton
           aria-label={Resources.SAVE}
-          icon={<Save20Regular />}
-          disabled={!bothSchemasDefined || !isStateDirty}
+          icon={<Save20Regular color={disabledState.save ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.save}
           onClick={onSaveClick}
           className={toolbarStyles.button}
         >
           {Resources.SAVE}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={() => {}}>
+        <ToolbarButton
+          aria-label={Resources.UNDO}
+          icon={<ArrowUndo20Regular color={disabledState.undo ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.undo}
+          onClick={() => {}}
+        >
           {Resources.UNDO}
         </ToolbarButton>
         <ToolbarButton
           aria-label={Resources.DISCARD}
-          icon={<Dismiss20Regular />}
-          disabled={!isStateDirty}
+          icon={<Dismiss20Regular color={disabledState.discard ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.discard}
           onClick={triggerDiscardWarningModal}
         >
           {Resources.DISCARD}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!bothSchemasDefined} onClick={onTestClick}>
+        <ToolbarButton
+          aria-label={Resources.RUN_TEST}
+          icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.test}
+          onClick={onTestClick}
+        >
           {Resources.RUN_TEST}
         </ToolbarButton>
       </ToolbarGroup>
       <ToolbarGroup>
-        <Switch label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
+        <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
       </ToolbarGroup>
     </Toolbar>
   );

@@ -25,9 +25,8 @@ export const connectionsTab = (
     description: 'The tab label for the monitoring connections tab on the create workflow panel',
   }),
   description: intl.formatMessage({
-    defaultMessage:
-      'Configure connections to authenticate the following services and link your workflows with various services and applications, enabling seamless data integration and automation. Connections are required.',
-    id: 'eHYwI0',
+    defaultMessage: 'Configure connections to authenticate and link your workflows with services and applications.',
+    id: 'pqprxZ',
     description: 'An accessibility label that describes the objective of connections tab',
   }),
   hasError: hasError,

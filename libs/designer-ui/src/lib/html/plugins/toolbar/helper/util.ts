@@ -162,6 +162,11 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
       return false;
     }
 
+    // Styling inside <p> tags is not supported by the lexical editor.
+    if (element.tagName.toLowerCase() === 'p' && element.hasAttribute('style')) {
+      return false;
+    }
+
     const attributes = Array.from(element.attributes);
     for (const attribute of attributes) {
       if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {

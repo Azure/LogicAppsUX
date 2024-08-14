@@ -1,4 +1,82 @@
 # Logic Apps Designer
+## [4.58.0](https://github.com/Azure/LogicAppsUX/compare/v4.57.0...v4.58.0) (2024-08-13)
+
+
+### Features
+
+* **templates:** Add connection selection in create connection tab ([#5358](https://github.com/Azure/LogicAppsUX/issues/5358)) ([83609ce](https://github.com/Azure/LogicAppsUX/commit/83609ce047eef0bdd66e1b1d635718a8c7d06868))
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix Monaco editor disappearing in Dynamic Content view ([#5350](https://github.com/Azure/LogicAppsUX/issues/5350)) ([a4a337b](https://github.com/Azure/LogicAppsUX/commit/a4a337b2b9e67c77f33e72d604890ccb3ec07867))
+* **designer:** Dynamic input parameters have extra $ parameter for parent key when aliases are present ([#5360](https://github.com/Azure/LogicAppsUX/issues/5360)) ([2e27773](https://github.com/Azure/LogicAppsUX/commit/2e27773cd24e5a67fd33a1656a789b3ec0d8c10a))
+* **designer:** Ensure panel is closed when nodes are deselected ([#5371](https://github.com/Azure/LogicAppsUX/issues/5371)) ([9e2cee1](https://github.com/Azure/LogicAppsUX/commit/9e2cee14eadb5a3134afacfb777a430060c25082))
+* **designer:** Fix Comments on nodes ([#5370](https://github.com/Azure/LogicAppsUX/issues/5370)) ([87320dc](https://github.com/Azure/LogicAppsUX/commit/87320dc1d1d87e1e9b0615f53e9ae84dc04fbe8f))
+* **Designer:** OAuth tenant selection visibility logic fix ([#5369](https://github.com/Azure/LogicAppsUX/issues/5369)) ([f1b4287](https://github.com/Azure/LogicAppsUX/commit/f1b428724735166d13fbdf12b308b1e1b4ab61c4))
+* **designer:** Sets right run data from repetition for nested components instead of general run data ([#5347](https://github.com/Azure/LogicAppsUX/issues/5347)) ([76a7400](https://github.com/Azure/LogicAppsUX/commit/76a74001a4860de4b1857a2dc26834fb5502e534))
+* **vscode:** Remove cycle dependency in useEffect for monitoring view ([#5355](https://github.com/Azure/LogicAppsUX/issues/5355)) ([5583ca0](https://github.com/Azure/LogicAppsUX/commit/5583ca0b7feab360959e64efad3207ac1333432f))
+
+## [4.57.0](https://github.com/Azure/LogicAppsUX/compare/v4.56.0...v4.57.0) (2024-08-09)
+
+
+### Features
+
+* **designer:** Moved edge context menu to one shared component ([#5321](https://github.com/Azure/LogicAppsUX/issues/5321)) ([f76684b](https://github.com/Azure/LogicAppsUX/commit/f76684bbf7b9b6ebf069172db191b31c95d34803))
+
+
+### Bug Fixes
+
+* **designer:** Add UI Interaction Service  ([#5338](https://github.com/Azure/LogicAppsUX/issues/5338)) ([bcda2ea](https://github.com/Azure/LogicAppsUX/commit/bcda2ea7264cac9948b8f3a95a8b257c17e887ac))
+* **designer:** Check for UIINteractionService before using that ([2842d1e](https://github.com/Azure/LogicAppsUX/commit/2842d1e836e9e797a459855ea0418f3b48c8d8c9))
+* **Templates:** Content Re-wording & Design NITs ([#5342](https://github.com/Azure/LogicAppsUX/issues/5342)) ([402fe55](https://github.com/Azure/LogicAppsUX/commit/402fe55c64d84294e0d78d3b441285d781f4542a))
+
+## [4.56.0](https://github.com/Azure/LogicAppsUX/compare/v4.55.0...v4.56.0) (2024-08-08)
+
+
+### Features
+
+* **Data Mapper:** Add discard option  ([#5330](https://github.com/Azure/LogicAppsUX/issues/5330)) ([f85e59f](https://github.com/Azure/LogicAppsUX/commit/f85e59fb5757eba59fa3344f26f1746d281fdb75))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Move options for Radio button below the option instead of after RadioGroup ([#5327](https://github.com/Azure/LogicAppsUX/issues/5327)) ([7871eaf](https://github.com/Azure/LogicAppsUX/commit/7871eaff0794b446097b56ac4c5bde493e3949e5))
+* **designer:** add token data to paste action ([#5335](https://github.com/Azure/LogicAppsUX/issues/5335)) ([fb412e6](https://github.com/Azure/LogicAppsUX/commit/fb412e6fc85f91a5d030a67092032faf84a530d9))
+* **designer:** Import copy control CSS ([#5328](https://github.com/Azure/LogicAppsUX/issues/5328)) ([166139b](https://github.com/Azure/LogicAppsUX/commit/166139bf0172846ba92d283d2f5350ada06372bd))
+
+## [4.55.0](https://github.com/Azure/LogicAppsUX/compare/v4.54.0...v4.55.0) (2024-08-07)
+
+
+### Features
+
+* **Data Mapper:** Add delete mapping/remove loop/add loop options ([#5304](https://github.com/Azure/LogicAppsUX/issues/5304)) ([0611c0f](https://github.com/Azure/LogicAppsUX/commit/0611c0f2ab6b441bc8b98bf3d5c5f8b8a55235c1))
+* **Data Mapper:** Add edit option for schema ([#5323](https://github.com/Azure/LogicAppsUX/issues/5323)) ([7a80c48](https://github.com/Azure/LogicAppsUX/commit/7a80c483681a6c1540157c363a839e6f92335e37))
+* **Data Mapper:** Add intermediate connections for collapsed elements ([#5320](https://github.com/Azure/LogicAppsUX/issues/5320)) ([d819179](https://github.com/Azure/LogicAppsUX/commit/d819179dce382d195e411b7ab0ba16cadb523921))
+* **Data Mapper:** Add Test map panel + some bug fixes ([#5268](https://github.com/Azure/LogicAppsUX/issues/5268)) ([8340c74](https://github.com/Azure/LogicAppsUX/commit/8340c74b42b9ee212b3cd358ca9d10db4212d8f2))
+* **Data mapper:** More deserialization tests pass ([#5289](https://github.com/Azure/LogicAppsUX/issues/5289)) ([6b9f8c6](https://github.com/Azure/LogicAppsUX/commit/6b9f8c6029e3d0f3af13ed29eeba99929c32bfd7))
+* **designer:** [PERF] All nodes share one context component ([#5285](https://github.com/Azure/LogicAppsUX/issues/5285)) ([79e26bc](https://github.com/Azure/LogicAppsUX/commit/79e26bc13e1ddd08f8abdef165a1f4385c4aa7ba))
+* Implementation of UiInteractionsService with custom menu component ([#5287](https://github.com/Azure/LogicAppsUX/issues/5287)) ([5931b14](https://github.com/Azure/LogicAppsUX/commit/5931b148fe1e04f4fd613feca32cd4a4ae50984f))
+* **Templates:** Download Template Image Instead of Using URL ([#5288](https://github.com/Azure/LogicAppsUX/issues/5288)) ([a5fa2d6](https://github.com/Azure/LogicAppsUX/commit/a5fa2d6707474a6ac58d0efda4eb48560e4790e8))
+* **vscode:** Added more telemetry to connection ACLs ([#5301](https://github.com/Azure/LogicAppsUX/issues/5301)) ([5b693c4](https://github.com/Azure/LogicAppsUX/commit/5b693c48b838052929dd942704998394578ae3be))
+* **vscode:** Execute different types of triggers from Overview page ([#5299](https://github.com/Azure/LogicAppsUX/issues/5299)) ([209ebb5](https://github.com/Azure/LogicAppsUX/commit/209ebb55f78ce77e65df52d7632bf8daa111d416))
+
+
+### Bug Fixes
+
+* **Data Mapper:** able to move nodes again after rf upgrade and only layout nodes if no metadata is found on load ([#5302](https://github.com/Azure/LogicAppsUX/issues/5302)) ([44111f2](https://github.com/Azure/LogicAppsUX/commit/44111f2c23c12aa18977ad859d057863463f3410))
+* **Data Mapper:** Fix function node dragging ([#5276](https://github.com/Azure/LogicAppsUX/issues/5276)) ([f8f0a20](https://github.com/Azure/LogicAppsUX/commit/f8f0a20094577ccdec10a5153ab361dc967f65a3))
+* **Data Mapper:** fixed dependency causing issue with React Flow v12 upgrade ([#5270](https://github.com/Azure/LogicAppsUX/issues/5270)) ([61f8838](https://github.com/Azure/LogicAppsUX/commit/61f8838eda4211033fb4166e1686ca46c5a2453b))
+* **Data Mapper:** Update auto layout logic ([#5325](https://github.com/Azure/LogicAppsUX/issues/5325)) ([5b67337](https://github.com/Azure/LogicAppsUX/commit/5b67337fd95edc973f95800b93f948d317b5eb33))
+* **designer:** block wysiwyg when user add style attribute inside p element ([#5318](https://github.com/Azure/LogicAppsUX/issues/5318)) ([c3c16ee](https://github.com/Azure/LogicAppsUX/commit/c3c16ee5556f528b3a18775ae2a25bf93e9a8885))
+* **designer:** Fix panel not respecting designer container ([#5259](https://github.com/Azure/LogicAppsUX/issues/5259)) ([a38b9e3](https://github.com/Azure/LogicAppsUX/commit/a38b9e3381ea69dca86007d7c02e254b33492f4a))
+* **designer:** Fix revert changes in copypaste ([#5294](https://github.com/Azure/LogicAppsUX/issues/5294)) ([c5d919a](https://github.com/Azure/LogicAppsUX/commit/c5d919aabad91bdf9525fb1e3020614e3c9e9725))
+* **Designer:** Fixed operation monitoring view panel issues ([#5267](https://github.com/Azure/LogicAppsUX/issues/5267)) ([59d5e5b](https://github.com/Azure/LogicAppsUX/commit/59d5e5b228976741b42bda5a679221d7b991bf49))
+* **designer:** Update selector for retry history and add useMemo ([#5255](https://github.com/Azure/LogicAppsUX/issues/5255)) ([ff5e40a](https://github.com/Azure/LogicAppsUX/commit/ff5e40a04f72f623a08ef83b4aec839fe9c67c0f))
+* **templates:** Minor text fixes in connections tab ([#5319](https://github.com/Azure/LogicAppsUX/issues/5319)) ([cbd5712](https://github.com/Azure/LogicAppsUX/commit/cbd5712f04604f333806979bf9e3a9c2d971cc26))
+* **vscode:** Fixed issue where isDesignTime is not set properly and to correct workflow-designtime local.settings.json ([#5290](https://github.com/Azure/LogicAppsUX/issues/5290)) ([b0315bf](https://github.com/Azure/LogicAppsUX/commit/b0315bf146d2851569655a1c45dc12c83d773ec5))
+* **vscode:** Revert change for: Async Download for Dependencies and Graceful Error Handling ([#5269](https://github.com/Azure/LogicAppsUX/issues/5269)) ([6bf424b](https://github.com/Azure/LogicAppsUX/commit/6bf424b258e027e55bcfa2545cbfbff4b4cf9aa2))
+
 ## [4.54.0](https://github.com/Azure/LogicAppsUX/compare/v4.53.0...v4.54.0) (2024-08-02)
 
 

@@ -93,7 +93,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       dispatch(
         setNodeDescription({
           nodeId,
-          ...(showCommentBox && { description: '' }),
+          description: showCommentBox ? undefined : '',
         })
       );
     },
@@ -109,7 +109,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'];
       const headerMenuItems: JSX.Element[] = [];
       if (!isSubgraphContainer) {
-        headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!!comment} />);
+        headerMenuItems.push(
+          <CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!isNullOrUndefined(comment)} />
+        );
       }
       if (nodeId !== pinnedNode) {
         headerMenuItems.push(<PinMenuItem key={'pin'} nodeId={selectedNode} onClick={() => handlePinClick(nodeId)} />);
@@ -192,6 +194,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   const commonPanelProps: CommonPanelProps = {
+    ...props,
     isCollapsed: collapsed,
     toggleCollapse: dismissPanel,
     overrideWidth,
