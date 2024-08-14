@@ -115,7 +115,17 @@ export const Combobox = ({
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
     if (shouldSort) {
-      options.sort((currentItem, nextItem) => currentItem.displayName?.localeCompare(nextItem.displayName));
+      options.sort((currentItem, nextItem) => {
+        const currentName = currentItem?.displayName;
+        const nextName = nextItem?.displayName;
+        if (typeof currentName === 'number' && typeof nextName === 'number') {
+          return currentName - nextName;
+        }
+        if (typeof currentName === 'string' && typeof nextName === 'string') {
+          return currentName?.localeCompare(nextName);
+        }
+        return String(currentName).localeCompare(String(nextName));
+      });
     }
   }, [options, shouldSort]);
 
@@ -138,7 +148,7 @@ export const Combobox = ({
       displayName: errorDetails?.message ?? '',
       type: 'errorrender',
     };
-    if (searchValue) {
+    if (searchValue && typeof searchValue === 'string') {
       const newOptions = isLoading
         ? [loadingOption]
         : errorDetails
@@ -210,15 +220,15 @@ export const Combobox = ({
 
   const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
+      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : String(option.key))]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else if (setSelectedKey && option) {
-      const currSelectedKey = option.key.toString();
+      const currSelectedKey = String(option.key);
       setSelectedKey(currSelectedKey);
       setMode(Mode.Default);
       const selectedValue = getSelectedValue(options, currSelectedKey);
-      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
+      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : String(selectedValue);
       onChange?.({
         value: [createLiteralValueSegment(currSelectedKey ? value : '')],
       });
