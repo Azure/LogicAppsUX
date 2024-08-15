@@ -27,6 +27,10 @@ export type FileSelectorProps<T> = {
     onSelect: (item: IFileSysTreeItem) => void;
     onOpenClose: () => void;
   };
+  cancel?: {
+    onCancel: () => void;
+    cancelButtonText: string;
+  };
 };
 
 const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
@@ -35,6 +39,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     options = {},
     onOptionChange,
     upload: { onUpload, acceptedExtensions, uploadButtonText, inputPlaceholder, fileName },
+    cancel,
     existing: { fileList = [], onSelect, onOpenClose },
   } = props;
   const uploadFileRef = useRef<HTMLInputElement>(null);
@@ -95,6 +100,13 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
           );
         })}
       </RadioGroup>
+      {cancel && (
+        <div className={styles.cancelButton}>
+          <Button size="small" shape="square" appearance="primary" onClick={cancel.onCancel}>
+            {cancel.cancelButtonText}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
