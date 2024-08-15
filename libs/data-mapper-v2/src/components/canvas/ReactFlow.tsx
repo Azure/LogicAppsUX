@@ -97,7 +97,6 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
             reconnectable: 'target',
             focusable: true,
             deletable: true,
-            animated: true,
             data: {
               isTemporary: true,
             },
