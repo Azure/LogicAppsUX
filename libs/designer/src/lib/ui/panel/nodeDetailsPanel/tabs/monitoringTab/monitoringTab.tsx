@@ -10,12 +10,15 @@ import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { FooterPanel } from './footerPanel';
+import { setRunDataInputOutputs } from '../../../../../core/state/workflow/workflowSlice';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../../../../core';
 
 export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = useRunData(selectedNodeId);
+  const dispatch = useDispatch<AppDispatch>();
 
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
@@ -39,6 +42,10 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
     refetch();
   }, [runMetaData, refetch]);
 
+  useEffect(() => {
+    dispatch(setRunDataInputOutputs({ nodeId: selectedNodeId, inputs: inputOutputs.inputs, outputs: inputOutputs.outputs }));
+  }, [dispatch, inputOutputs, selectedNodeId]);
+
   return isNullOrUndefined(runMetaData) ? null : (
     <>
       <ErrorSection error={error} />
@@ -59,7 +66,6 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         values={inputOutputs.outputs}
       />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
-      <FooterPanel selectedNodeId={selectedNodeId} outputs={inputOutputs.outputs} />
     </>
   );
 };
