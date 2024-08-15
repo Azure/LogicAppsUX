@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.64.0](https://github.com/Azure/LogicAppsUX/compare/v4.63.0...v4.64.0) (2024-08-15)
+
+
+### Features
+
+* **Data Mapper:** Initial looping ([#5408](https://github.com/Azure/LogicAppsUX/issues/5408)) ([2e15393](https://github.com/Azure/LogicAppsUX/commit/2e15393c18e2e618145f6eafb5fec796225f391c))
+
 ## [4.63.0](https://github.com/Azure/LogicAppsUX/compare/v4.62.0...v4.63.0) (2024-08-15)
 
 
