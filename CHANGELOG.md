@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.60.0](https://github.com/Azure/LogicAppsUX/compare/v4.59.0...v4.60.0) (2024-08-15)
+
+
+### Features
+
+* **Data Mapper:** Add onClick on function node ([#5399](https://github.com/Azure/LogicAppsUX/issues/5399)) ([ef9c743](https://github.com/Azure/LogicAppsUX/commit/ef9c743e143b46b1ac0f9b811fb7e72ba22c6e78))
+
 ## [4.59.0](https://github.com/Azure/LogicAppsUX/compare/v4.58.0...v4.59.0) (2024-08-15)
 
 
