@@ -12,7 +12,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useActiveNode } from '../../../core/state/selectors/selectors';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -31,12 +32,15 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const { functionData, disabled, dataTestId } = props.data;
   const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
   const activeNode = useActiveNode(props.id);
+  const [isHandleHovered, setIsHandleHovered] = useState<boolean>(false);
 
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
   const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
+
+  const functionInputsFull = isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs);
 
   const isLeftConnected =
     functionWithConnections?.inputs[0] &&
@@ -45,23 +49,25 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
   const styleForLeftHandle = useMemo(() => {
-    const style = styles.handleWrapper;
+    let style = styles.handleWrapper;
     if (activeNode !== undefined) {
-      return mergeClasses(style, styles.activeHandle);
+      style = mergeClasses(style, styles.activeHandle);
+    } else if (isLeftConnected) {
+      style = mergeClasses(style, styles.handleConnected);
     }
-    if (isLeftConnected) {
-      return mergeClasses(style, styles.handleConnected);
+    if (functionInputsFull && isHandleHovered) {
+      style = mergeClasses(style, styles.fullNode);
     }
     return style;
-  }, [activeNode, styles, isLeftConnected]);
+  }, [activeNode, styles, isLeftConnected, functionInputsFull, isHandleHovered]);
 
   const styleForRightHandle = useMemo(() => {
-    const style = styles.handleWrapper;
+    let style = styles.handleWrapper;
+
     if (activeNode !== undefined) {
-      return mergeClasses(style, styles.activeHandle);
-    }
-    if (isRightConnected) {
-      return mergeClasses(style, styles.handleConnected);
+      style = mergeClasses(style, styles.activeHandle);
+    } else if (isRightConnected) {
+      style = mergeClasses(style, styles.handleConnected);
     }
     return style;
   }, [activeNode, styles, isRightConnected]);
@@ -82,11 +88,16 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   }
 
   return (
-    <div onContextMenu={contextMenu.handle} data-testid={dataTestId}>
+    <div
+      onContextMenu={contextMenu.handle}
+      data-testid={dataTestId}
+      onMouseEnter={() => setIsHandleHovered(true)}
+      onMouseLeave={() => setIsHandleHovered(false)}
+    >
       {funcitonHasInputs && (
         <Handle
           type={'target'}
-          isConnectable={true}
+          isConnectable={!functionInputsFull}
           onConnect={setActiveNode}
           position={Position.Left}
           className={leftHandleStyle}

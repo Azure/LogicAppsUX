@@ -683,7 +683,7 @@ const addConnection = (
   applyConnectionValue(newConnections, {
     targetNode: destinationNode,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
-    findInputSlot: nodes.specificInput === undefined, // 0 should be counted as truthy
+    findInputSlot: true,
     inputIndex: nodes.specificInput,
     input: {
       reactFlowKey: nodes.reactFlowSource,
@@ -731,7 +731,7 @@ export const deleteConnectionFromConnections = (
 
   const outputNode = connections[outputKey].self.node;
   const outputNodeInputs = connections[outputKey].inputs;
-  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === -1) {
+  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     Object.values(outputNodeInputs).forEach((input, inputIndex) =>
       input.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {

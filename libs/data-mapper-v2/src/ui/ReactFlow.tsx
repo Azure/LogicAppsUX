@@ -198,6 +198,8 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edges
       );
 
+      // danielle maybe get the input number from here?
+
       const connectionAction: ConnectionAction = {
         reactFlowSource: connection.source ?? '',
         reactFlowDestination: connection.target ?? '',
