@@ -48,9 +48,9 @@ export const FooterPanel: React.FC<FooterPanelProps> = (props) => {
     }
   }, [runInstance]);
 
-  return (
+  return showFooterLink ? (
     <div style={{ float: 'right' }}>
       <ValueLink linkText={intlText.showLogicAppRun} visible={showFooterLink} onLinkClick={handleFooterLinkClick} />
     </div>
-  );
+  ) : null;
 };
