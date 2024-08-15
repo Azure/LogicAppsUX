@@ -758,7 +758,6 @@ function getSwaggerBasedInputParameters(
           inputParameter.value = parameterValue ? getObjectValue(key, parameterValue) : undefined;
         }
       }
-      inputParameter.suppressCasting = !operationDefinition.parameters?.autoCast;
 
       result.push(inputParameter);
     }
