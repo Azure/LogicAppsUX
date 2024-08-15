@@ -15,6 +15,7 @@ import {
   validateParameters,
   validateWorkflowName,
 } from '../../../../core/state/templates/templateSlice';
+import { LoggerService, Status } from '@microsoft/logic-apps-shared';
 
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
@@ -62,14 +63,21 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     }
   }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
 
-  const handleCreateClick = useCallback(async () => {
+  const createWorkflowFromTemplate = useCallback(async () => {
     setIsCreating(true);
     setIsCreateFailed(false);
+    const logId = LoggerService().startTrace({
+      name: 'Create Workflow from Template',
+      action: 'createWorkflowFromTemplate',
+      source: 'usePanelTabs.tsx',
+    });
     try {
       await onCreateClick();
       setIsCreated(true);
+      LoggerService().endTrace(logId, { status: Status.Success });
     } catch (e) {
       setIsCreateFailed(true);
+      LoggerService().endTrace(logId, { status: Status.Failure });
     } finally {
       setIsCreating(false);
     }
@@ -114,7 +122,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, dispatch, handleCreateClick, {
+      ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
         workflowName: existingWorkflowName ?? workflowName ?? '',
         isCreating,
         isCreated,
@@ -125,7 +133,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     [
       intl,
       dispatch,
-      handleCreateClick,
+      createWorkflowFromTemplate,
       existingWorkflowName,
       workflowName,
       isCreating,
