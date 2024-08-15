@@ -24,7 +24,7 @@ import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/desig
 import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
   equals,
-  getPropertyValue,
+  getObjectPropertyValue,
   HostService,
   isNullOrEmpty,
   isNullOrUndefined,
@@ -211,17 +211,14 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const getChildRunNameFromOutputs = (outputs: any): string | undefined => {
     if (!isNullOrEmpty(outputs)) {
-      const headers = getPropertyValue(outputs, 'headers');
-      if (headers && headers.value) {
-        return getPropertyValue(headers.value, 'x-ms-workflow-run-id');
-      }
+      return getObjectPropertyValue(outputs, ['headers', 'value', 'x-ms-workflow-run-id']);
     }
     return undefined;
   };
 
   const canShowLogicAppRun = useMemo(() => {
     const runName = getChildRunNameFromOutputs(runData?.outputs);
-    return !!HostService() && !!HostService()?.openMonitorView && equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName;
+    return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
   }, [nodeType, runData?.outputs]);
 
   const showLogicAppRunClick = useCallback(() => {
