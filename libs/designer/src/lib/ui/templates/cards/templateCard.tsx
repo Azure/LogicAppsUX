@@ -33,12 +33,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       level: LogEntryLevel.Trace,
       area: 'Templates.TemplateCard',
       message: 'Template is selected',
-      args: [
-        {
-          templateId: templateName,
-          workflowAppName: subscriptionId,
-        },
-      ],
+      args: [templateName, subscriptionId],
     });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
