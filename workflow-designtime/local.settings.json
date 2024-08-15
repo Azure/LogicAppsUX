@@ -1,9 +1,0 @@
-{
-  "IsEncrypted": false,
-  "Values": {
-    "APP_KIND": "workflowapp",
-    "FUNCTIONS_WORKER_RUNTIME": "node",
-    "ProjectDirectoryPath": "/Users/krrishmittal/Documents/Code/LogicApps/LogicAppsUX",
-    "AzureWebJobsSecretStorageType": "Files"
-  }
-}
