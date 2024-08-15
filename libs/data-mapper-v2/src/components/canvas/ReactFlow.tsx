@@ -15,8 +15,8 @@ import type {
 import { PanOnScrollMode, ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
 import SchemaNode from '../common/reactflow/SchemaNode';
-import ConnectionLine from '../common/reactflow/ConnectionLine';
-import ConnectedEdge from '../common/reactflow/ConnectedEdge';
+import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
+import ConnectedEdge from '../common/reactflow/edges/ConnectedEdge';
 import type { ConnectionAction } from '../../core/state/DataMapSlice';
 import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem, updateEdgePopOverId } from '../../core/state/DataMapSlice';
 import { FunctionNode } from '../common/reactflow/FunctionNode';
@@ -30,6 +30,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import EdgePopOver from './EdgePopOver';
 import { getReactFlowNodeId } from '../../utils/Schema.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
+import LoopEdge from '../common/reactflow/edges/LoopEdge';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
@@ -65,8 +66,9 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
           id: createEdgeId(edge.sourceId, edge.targetId),
           source: edge.sourceId,
           target: edge.targetId,
-          type: 'connectedEdge',
+          type: edge.isRepeating ? 'loopEdge' : 'connectedEdge',
           reconnectable: 'target',
+          data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
         };
@@ -172,6 +174,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
   const edgeTypes = useMemo(
     () => ({
       connectedEdge: ConnectedEdge,
+      loopEdge: LoopEdge,
     }),
     []
   );
@@ -188,6 +191,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
         },
         edges
       );
+
+      // danielle maybe get the input number from here?
 
       const connectionAction: ConnectionAction = {
         reactFlowSource: connection.source ?? '',
