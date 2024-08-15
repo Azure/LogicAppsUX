@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.65.0](https://github.com/Azure/LogicAppsUX/compare/v4.64.0...v4.65.0) (2024-08-15)
+
+
+### Features
+
+* **designer:** Open monitoring view panel from host service ([#5401](https://github.com/Azure/LogicAppsUX/issues/5401)) ([7385861](https://github.com/Azure/LogicAppsUX/commit/738586172d53b024055a8fa53acf00eeafa411c8))
+
+
+### Bug Fixes
+
+* **designer:** Adding support for multiple types in the schema processor ([#5409](https://github.com/Azure/LogicAppsUX/issues/5409)) ([6ab7f47](https://github.com/Azure/LogicAppsUX/commit/6ab7f47d5a200dd7f5eb34ff6f83809606559290)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
 ## [4.64.0](https://github.com/Azure/LogicAppsUX/compare/v4.63.0...v4.64.0) (2024-08-15)
 
 
