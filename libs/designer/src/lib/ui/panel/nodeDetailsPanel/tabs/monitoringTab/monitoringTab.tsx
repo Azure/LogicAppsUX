@@ -1,14 +1,14 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
 import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
-import { useActionMetadata, useRunData } from '../../../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useRunData, useRunInstance } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
 import { RunService, isNullOrUndefined, HostService, isNullOrEmpty, getPropertyValue, equals } from '@microsoft/logic-apps-shared';
 import { ErrorSection, ValueLink } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useIntl } from 'react-intl';
 
@@ -18,6 +18,7 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const runMetaData = useRunData(selectedNodeId);
   const actionMetadata = useActionMetadata(selectedNodeId);
   const nodeType = actionMetadata?.type ?? '';
+  const runInstance = useRunInstance();
 
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
@@ -42,14 +43,7 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         return getPropertyValue(headers.value, 'x-ms-workflow-run-id');
       }
     }
-
     return undefined;
-  };
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const isChildWorkflowRunDetailAvailable = (nodeType: string, outputs: any): boolean => {
-    const runName = getChildRunNameFromOutputs(outputs);
-    return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName;
   };
 
   const {
@@ -68,15 +62,20 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   }, [runMetaData, refetch]);
 
   const showFooterLink = useMemo(() => {
-    return (
-      !!HostService() && !!HostService().openMonitorView && isChildWorkflowRunDetailAvailable(nodeType?.toLowerCase(), inputOutputs.outputs)
-    );
-  }, [inputOutputs.outputs, isChildWorkflowRunDetailAvailable, nodeType]);
+    const runName = getChildRunNameFromOutputs(inputOutputs.outputs);
+    return !!HostService() && !!HostService().openMonitorView && equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName;
+  }, [nodeType, inputOutputs.outputs]);
+
+  const handleFooterLinkClick = useCallback(() => {
+    if (runInstance?.id && runInstance?.properties && !!HostService()) {
+      HostService().openMonitorView?.(runInstance.properties.workflow.id, runInstance?.id);
+    }
+  }, [runInstance]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <>
       <ErrorSection error={error} />
-      <ValueLink linkText={intlText.showLogicAppRun} visible={showFooterLink} onLinkClick={() => {}} />
+      <ValueLink linkText={intlText.showLogicAppRun} visible={showFooterLink} onLinkClick={handleFooterLinkClick} />
       <InputsPanel
         runMetaData={runMetaData}
         brandColor={brandColor}

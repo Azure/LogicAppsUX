@@ -485,8 +485,7 @@ const getDesignerServices = (
   });
 
   const hostService = {
-    openMonitorView: (resourceId: string, runName: string, identifier: string) =>
-      console.log('openMonitorView:', resourceId, runName, identifier),
+    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
   };
 
   return {

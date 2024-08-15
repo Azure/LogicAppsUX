@@ -16,7 +16,7 @@ export interface IHostService {
   isPremiumConnector?: IsConnectorFn;
   openWorkflowParametersBlade?(): void;
   openConnectionResource?(connectionId: string): void;
-  openMonitorView?(resourceId: string, runName: string, identifier: string): void;
+  openMonitorView?(resourceId: string, runName: string): void;
 }
 
 let service: IHostService;
