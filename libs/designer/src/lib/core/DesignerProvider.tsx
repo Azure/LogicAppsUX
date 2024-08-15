@@ -51,7 +51,11 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
         <ProviderWrappedContext.Provider value={options.services}>
           <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
-              <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
+              <div
+                data-color-scheme={themeName}
+                className={`msla-theme-${themeName}`}
+                style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}
+              >
                 <IntlProvider
                   locale={locale}
                   defaultLocale={locale}
