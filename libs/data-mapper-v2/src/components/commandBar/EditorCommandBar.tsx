@@ -1,7 +1,7 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens } from '@fluentui/react-components';
-import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
+import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -176,14 +176,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           className={toolbarStyles.button}
         >
           {Resources.SAVE}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={Resources.UNDO}
-          icon={<ArrowUndo20Regular color={disabledState.undo ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.undo}
-          onClick={() => {}}
-        >
-          {Resources.UNDO}
         </ToolbarButton>
         <ToolbarButton
           aria-label={Resources.DISCARD}

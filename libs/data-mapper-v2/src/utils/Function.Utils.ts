@@ -211,7 +211,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
           return input;
         }
 
-        if (isFunctionData(input.node)) {
+        if (input.node && isFunctionData(input.node)) {
           if (input.node.key === indexPseudoFunctionKey) {
             const sourceNode = connections[input.reactFlowKey].inputs[0][0];
             return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
@@ -224,7 +224,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
         }
 
         // Source schema node
-        return input.node.name;
+        return input.node?.name;
       })
       .filter((value) => !!value) as string[];
   }

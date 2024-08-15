@@ -44,7 +44,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     updateNodeInternals(id);
   }, [id, updateNodeInternals]);
   return (
-    <div className={mergeClasses('nodrag', styles.nodeWrapper)} ref={divRef}>
+    <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
         type={isLeftDirection ? 'source' : 'target'}
         position={isLeftDirection ? Position.Left : Position.Right}

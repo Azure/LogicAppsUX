@@ -7,9 +7,25 @@ export type Bounds = {
   width?: number;
 };
 
+export type ScrollProps = {
+  scrollTop: number;
+  scrollHeight: number;
+  onScroll: (scrollTop: number) => void;
+  preventScroll?: boolean;
+};
+
+export type ScrollLocation = 'source' | 'target' | 'canvas';
 export interface DataMapperDesignerContext {
   readOnly?: boolean;
   canvasBounds?: Bounds;
+  scroll: {
+    source?: ScrollProps;
+    target?: ScrollProps;
+    canvas?: ScrollProps;
+    setScroll: (scrollProps: ScrollProps, location: ScrollLocation) => void;
+  };
 }
 
-export const DataMapperWrappedContext = createContext<DataMapperDesignerContext>({});
+export const DataMapperWrappedContext = createContext<DataMapperDesignerContext>({
+  scroll: { setScroll: (_s, _l) => {} },
+});

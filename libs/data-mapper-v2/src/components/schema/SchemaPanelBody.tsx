@@ -11,10 +11,11 @@ import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
+import { toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
 
 export interface SchemaPanelBodyProps {
   isLeftDirection: boolean;
@@ -42,6 +43,7 @@ export const SchemaPanelBody = ({
   const styles = useStyles();
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
+  const dispatch = useDispatch<AppDispatch>();
 
   const stringResources = useMemo(
     () => ({
@@ -79,6 +81,11 @@ export const SchemaPanelBody = ({
         defaultMessage: 'Select a file to upload',
         id: '2CXCOt',
         description: 'Placeholder for input to load a schema file',
+      }),
+      CANCEL: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: '6PdOcy',
+        description: 'Cancel',
       }),
     }),
     [intl]
@@ -122,6 +129,14 @@ export const SchemaPanelBody = ({
     [isLeftDirection, setSelectedSchemaFile]
   );
 
+  const onCancel = useCallback(() => {
+    if (isLeftDirection) {
+      dispatch(toggleSourceEditState(false));
+    } else {
+      dispatch(toggleTargetEditState(false));
+    }
+  }, [isLeftDirection, dispatch]);
+
   return (
     <div className={styles.bodyWrapper}>
       {showScehmaSelection ? (
@@ -144,14 +159,20 @@ export const SchemaPanelBody = ({
             onSelect: onSelectExistingFile,
             onOpenClose: onOpenClose,
           }}
+          cancel={
+            schema && flattenedSchemaMap
+              ? {
+                  onCancel: onCancel,
+                  cancelButtonText: stringResources.CANCEL,
+                }
+              : undefined
+          }
         />
-      ) : (
+      ) : schema && flattenedSchemaMap ? (
         <div className={styles.treeWrapper}>
-          {schema && flattenedSchemaMap && (
-            <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
-          )}
+          <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
