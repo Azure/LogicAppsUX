@@ -1,4 +1,37 @@
 # Logic Apps Designer
+## [4.61.0](https://github.com/Azure/LogicAppsUX/compare/v4.60.0...v4.61.0) (2024-08-15)
+
+
+### Bug Fixes
+
+* **designer:** Fixed local designer height issue ([#5404](https://github.com/Azure/LogicAppsUX/issues/5404)) ([b938522](https://github.com/Azure/LogicAppsUX/commit/b9385222bcaf96265abcb969d0e38ba45d1a96f8))
+* **designer:** Un-revert panel changes & fix sizing to accommodate that change ([#5397](https://github.com/Azure/LogicAppsUX/issues/5397)) ([77d00d0](https://github.com/Azure/LogicAppsUX/commit/77d00d0df42317fe4e1629138c9fbece55e43c7a)), closes [#5393](https://github.com/Azure/LogicAppsUX/issues/5393) [#5395](https://github.com/Azure/LogicAppsUX/issues/5395)
+
+## [4.60.0](https://github.com/Azure/LogicAppsUX/compare/v4.59.0...v4.60.0) (2024-08-15)
+
+
+### Features
+
+* **Data Mapper:** Add onClick on function node ([#5399](https://github.com/Azure/LogicAppsUX/issues/5399)) ([ef9c743](https://github.com/Azure/LogicAppsUX/commit/ef9c743e143b46b1ac0f9b811fb7e72ba22c6e78))
+
+## [4.59.0](https://github.com/Azure/LogicAppsUX/compare/v4.58.0...v4.59.0) (2024-08-15)
+
+
+### Features
+
+* **Data Mapper:** Scroll schemas together part I ([#5396](https://github.com/Azure/LogicAppsUX/issues/5396)) ([13a62f7](https://github.com/Azure/LogicAppsUX/commit/13a62f7b2f25ab642e8cff8843ca57b43be0d021))
+
+
+### Bug Fixes
+
+* **designer:** Copy Paste to include Comments ([#5389](https://github.com/Azure/LogicAppsUX/issues/5389)) ([5317353](https://github.com/Azure/LogicAppsUX/commit/5317353d38f08ae2b79716d91c0748c810cb3366)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Fix Combobox in Complex/Simple Array editor to properly handle item types ([#5382](https://github.com/Azure/LogicAppsUX/issues/5382)) ([a710d65](https://github.com/Azure/LogicAppsUX/commit/a710d657323126bc274a6187ca7e081d7dbaaa9a))
+* **designer:** fix linebreak issues ([#5392](https://github.com/Azure/LogicAppsUX/issues/5392)) ([d3fe9a0](https://github.com/Azure/LogicAppsUX/commit/d3fe9a0546f0fd10d1760c8d6d5118f9a182cbf2))
+* **designer:** Fix Standalone Designer Command offsetting Add Action popup ([#5386](https://github.com/Azure/LogicAppsUX/issues/5386)) ([f59212f](https://github.com/Azure/LogicAppsUX/commit/f59212feb3fd0c372bef90bdf76caeb76154b535))
+* **designer:** Fixed edge context menu positioning ([#5390](https://github.com/Azure/LogicAppsUX/issues/5390)) ([4fe9bd8](https://github.com/Azure/LogicAppsUX/commit/4fe9bd8719fd076fd95a7f7a4f5f41dcb268461e))
+* **designer:** Fixed scrolling issue on panels ([#5393](https://github.com/Azure/LogicAppsUX/issues/5393)) ([077cf16](https://github.com/Azure/LogicAppsUX/commit/077cf16c728daa0c444cf94fcc0f42e1637202e2)), closes [#5259](https://github.com/Azure/LogicAppsUX/issues/5259)
+* **designer:** Remove old extensions api for dynamic content call for swagger based operation ([#5381](https://github.com/Azure/LogicAppsUX/issues/5381)) ([af0cf49](https://github.com/Azure/LogicAppsUX/commit/af0cf4909045a898c2c684941d110d21604f5bc5))
+
 ## [4.58.0](https://github.com/Azure/LogicAppsUX/compare/v4.57.0...v4.58.0) (2024-08-13)
 
 
