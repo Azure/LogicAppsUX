@@ -29,6 +29,7 @@ import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
 import EdgePopOver from './EdgePopOver';
 import { getReactFlowNodeId } from '../../utils/Schema.Utils';
+import { getFunctionNode } from '../../utils/Function.Utils';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
   updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
@@ -125,15 +126,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
 
   useEffect(() => {
     setFunctionNodesForDragDrop(
-      Object.entries(functionNodes).map((node) => ({
-        id: node[0],
-        type: 'functionNode',
-        data: { functionData: node[1] },
-        position: node[1].position || { x: 10, y: 200 },
-        draggable: true,
-        selectable: false,
-        measured: { width: 1, height: 1 },
-      }))
+      Object.entries(functionNodes).map(([key, functionData]) => getFunctionNode(functionData, key, functionData.position))
     );
   }, [functionNodes]);
 

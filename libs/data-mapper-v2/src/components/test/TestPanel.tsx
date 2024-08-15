@@ -108,7 +108,7 @@ export const TestPanel = (_props: TestPanelProps) => {
       body={<TestPanelBody />}
       footer={
         <div>
-          <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput || !xsltFilename}>
+          <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput}>
             {resources.TEST}
           </Button>
           <Button appearance="secondary" onClick={onCloseClick} className={styles.closeButton}>
