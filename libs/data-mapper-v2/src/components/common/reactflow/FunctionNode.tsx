@@ -40,7 +40,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
 
   const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
 
-  const functionInputsFull = isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs);
+  const functionInputsFull = !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs);
 
   const isLeftConnected =
     functionWithConnections?.inputs[0] &&
