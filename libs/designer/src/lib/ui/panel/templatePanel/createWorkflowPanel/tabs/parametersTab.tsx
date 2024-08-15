@@ -14,9 +14,11 @@ export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
+    isCreating,
     previousTabId,
     hasError,
   }: {
+    isCreating: boolean;
     previousTabId: string | undefined;
     hasError: boolean;
   }
@@ -63,5 +65,6 @@ export const parametersTab = (
           dispatch(closePanel());
           dispatch(clearTemplateDetails());
         },
+    secondaryButtonDisabled: isCreating,
   },
 });

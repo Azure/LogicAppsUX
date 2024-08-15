@@ -16,7 +16,7 @@ export const ConnectionsPanel: React.FC = () => {
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { nextTabId, hasError }: { nextTabId: string; hasError: boolean }
+  { isCreating, nextTabId, hasError }: { isCreating: boolean; nextTabId: string; hasError: boolean }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -50,5 +50,6 @@ export const connectionsTab = (
       dispatch(closePanel());
       dispatch(clearTemplateDetails());
     },
+    secondaryButtonDisabled: isCreating,
   },
 });

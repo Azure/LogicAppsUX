@@ -178,9 +178,11 @@ export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
+    isCreating,
     previousTabId,
     hasError,
   }: {
+    isCreating: boolean;
     previousTabId: string | undefined;
     hasError: boolean;
   }
@@ -222,5 +224,6 @@ export const nameStateTab = (
           dispatch(closePanel());
           dispatch(clearTemplateDetails());
         },
+    secondaryButtonDisabled: isCreating,
   },
 });

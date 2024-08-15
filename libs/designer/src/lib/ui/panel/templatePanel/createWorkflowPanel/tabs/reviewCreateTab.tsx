@@ -123,13 +123,15 @@ export const reviewCreateTab = (
   onCreateClick: () => Promise<void>,
   {
     workflowName,
-    isLoadingCreate,
+    isCreating,
     isCreated,
+    isCreateFailed,
     isPrimaryButtonDisabled,
   }: {
     workflowName: string;
-    isLoadingCreate: boolean;
+    isCreating: boolean;
     isCreated: boolean;
+    isCreateFailed: boolean;
     isPrimaryButtonDisabled: boolean;
   }
 ): TemplatePanelTab => ({
@@ -142,9 +144,24 @@ export const reviewCreateTab = (
   description: isCreated ? (
     <MessageBar messageBarType={MessageBarType.success}>
       {intl.formatMessage({
-        defaultMessage: 'Your workflow has been created. ',
-        id: 'J+bMkk',
+        defaultMessage: 'Your workflow has been created.',
+        id: 'gKS4NW',
         description: 'The message displayed when the workflow is successfully created',
+      })}
+      <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
+        {intl.formatMessage({
+          defaultMessage: 'Go to workflow.',
+          id: 'OqrmYm',
+          description: 'The link displayed to navigate to workflow when the workflow is successfully created',
+        })}
+      </Link>
+    </MessageBar>
+  ) : isCreateFailed ? (
+    <MessageBar messageBarType={MessageBarType.error}>
+      {intl.formatMessage({
+        defaultMessage: 'Failed to save workflow.',
+        id: 'bxYAWD',
+        description: 'The message displayed when there was an error in workflow creation',
       })}
       <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
         {intl.formatMessage({
@@ -171,7 +188,7 @@ export const reviewCreateTab = (
         id: 'P3OMN/',
         description: 'The button text for navigating to the workflows page after creating the workflow',
       })
-    ) : isLoadingCreate ? (
+    ) : isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />
     ) : (
       intl.formatMessage({
@@ -180,12 +197,8 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated
-      ? () => TemplateService()?.openBladeAfterCreate(workflowName)
-      : isLoadingCreate
-        ? () => {}
-        : onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
+    primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate(workflowName) : isCreating ? () => {} : onCreateClick,
+    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
     secondaryButtonText: isCreated
       ? intl.formatMessage({
           defaultMessage: 'Close',
@@ -205,6 +218,6 @@ export const reviewCreateTab = (
       : () => {
           dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
         },
-    secondaryButtonDisabled: isLoadingCreate,
+    secondaryButtonDisabled: isCreating,
   },
 });
