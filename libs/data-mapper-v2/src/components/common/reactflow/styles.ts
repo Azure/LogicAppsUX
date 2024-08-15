@@ -4,12 +4,16 @@ const fnIconSize = '17px';
 export const colors = {
   active: '#62AAD8',
   connected: '#C6DEEE',
+  loop: '#88AEC7',
 };
 
 export const useStyles = makeStyles({
   wrapper: {
     marginTop: '10px',
     fontSize: '18px',
+  },
+  fullNode: {
+    backgroundColor: tokens.colorPaletteYellowBackground3,
   },
   leftWrapper: {
     marginLeft: '23px',
@@ -58,6 +62,20 @@ export const useStyles = makeStyles({
   },
   activeFunctionButton: {
     ...shorthands.border('3px', 'solid', colors.active),
+  },
+  loopSourceHandle: {
+    height: '22px',
+    width: '22px',
+    backgroundColor: colors.loop,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loopTargetHandle: {
+    backgroundColor: colors.loop,
+  },
+  loopIcon: {
+    color: 'white',
   },
   functionName: {
     textWrap: 'nowrap',

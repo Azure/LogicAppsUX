@@ -1,7 +1,7 @@
 import { getStraightPath, type EdgeProps } from '@xyflow/react';
-import { useActiveEdge } from '../../../core/state/selectors/selectors';
+import { useActiveEdge } from '../../../../core/state/selectors/selectors';
 import { useMemo } from 'react';
-import { colors } from './styles';
+import { colors } from '../styles';
 
 const ConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY } = props;
