@@ -484,7 +484,9 @@ const getDesignerServices = (
     httpClient,
   });
 
-  const hostService = {};
+  const hostService = {
+    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
+  };
 
   return {
     appServiceService,

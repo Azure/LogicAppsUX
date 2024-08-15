@@ -918,11 +918,13 @@ export interface WorkflowRunAction {
     metadata?: Record<string, any>;
     contentSize: number;
   };
+  inputs?: Record<string, any>;
   outputsLink: {
     uri?: string;
     secureData?: Record<string, any>;
     contentSize: number;
   };
+  outputs?: Record<string, any>;
   retryHistory: RetryHistory[];
   startTime: string;
   endTime: string;
