@@ -25,7 +25,8 @@ import { useDispatch } from 'react-redux';
 import { useIntl } from 'react-intl';
 
 export interface PanelRootProps {
-  panelLocation?: PanelLocation;
+  panelContainerRef: React.MutableRefObject<HTMLElement | null>;
+  panelLocation: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
   isResizeable?: boolean;
 }
@@ -36,13 +37,15 @@ const layerProps = {
 };
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation = PanelLocation.Right, customPanelLocations, isResizeable } = props;
+  const { panelContainerRef, panelLocation, customPanelLocations, isResizeable } = props;
   const dispatch = useDispatch<AppDispatch>();
   const isDarkMode = useIsDarkMode();
 
   const collapsed = useIsPanelCollapsed();
   const currentPanelMode = useCurrentPanelMode();
   const focusReturnElementId = useFocusReturnElementId();
+
+  const panelContainerElement = panelContainerRef.current;
 
   const [width, setWidth] = useState<PanelSize | string>(PanelSize.Auto);
 
@@ -99,8 +102,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       layerProps,
       panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
       isResizeable,
+      mountNode: panelContainerElement || undefined,
     };
-  }, [customPanelLocations, collapsed, dismissPanel, width, panelLocation, isResizeable, currentPanelMode]);
+  }, [customPanelLocations, collapsed, dismissPanel, width, panelContainerElement, panelLocation, isResizeable, currentPanelMode]);
 
   const onRenderFooterContent = useMemo(
     () => (currentPanelMode === 'WorkflowParameters' ? () => <WorkflowParametersPanelFooter /> : undefined),
