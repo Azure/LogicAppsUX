@@ -11,6 +11,9 @@ export const useStyles = makeStyles({
     marginTop: '10px',
     fontSize: '18px',
   },
+  fullNode: {
+    backgroundColor: tokens.colorPaletteYellowBackground3,
+  },
   leftWrapper: {
     marginLeft: '23px',
   },
