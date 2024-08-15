@@ -232,14 +232,23 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           commentChange={commentChange}
         />
       ) : null}
-      <div style={{ margin: '0 2rem 0.5rem' }}>
+      <div className="msla-panel-header-buttons">
         {canResubmit ? (
-          <Button style={{ alignSelf: 'flex-start' }} icon={<Icon iconName="PlaybackRate1x" />} onClick={() => resubmitOperation?.()}>
+          <Button
+            className="msla-panel-header-buttons__button"
+            icon={<Icon iconName="PlaybackRate1x" />}
+            onClick={() => resubmitOperation?.()}
+          >
             {resubmitButtonText}
           </Button>
         ) : null}
         {canShowLogicAppRun ? (
-          <Button style={{ alignSelf: 'flex-start' }} icon={<Icon iconName="PlaybackRate1x" />} onClick={() => showLogicAppRun?.()}>
+          <Button
+            iconPosition="after"
+            className="msla-panel-header-buttons__button"
+            icon={<Icon iconName="ChevronRight" />}
+            onClick={() => showLogicAppRun?.()}
+          >
             {showLogicAppRunText}
           </Button>
         ) : null}
