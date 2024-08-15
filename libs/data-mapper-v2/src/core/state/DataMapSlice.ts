@@ -648,7 +648,6 @@ export const dataMapSlice = createSlice({
       }
     },
     toggleSourceEditState: (state, action: PayloadAction<boolean>) => {
-      console.log(action.payload);
       doDataMapOperation(
         state,
         {

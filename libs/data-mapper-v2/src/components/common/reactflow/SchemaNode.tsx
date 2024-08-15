@@ -50,7 +50,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     updateNodeInternals(id);
   }, [id, updateNodeInternals]);
   return (
-    <div className={mergeClasses('nodrag', styles.nodeWrapper)} ref={divRef}>
+    <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
         style={{ zIndex: 1000 }}
         type={isLeftDirection ? 'source' : 'target'}
