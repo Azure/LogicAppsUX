@@ -337,7 +337,7 @@ const DesignerEditor = () => {
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
           >
-            <div style={{ height: 'inherit', width: 'inherit' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
                 saveWorkflow={saveWorkflowFromDesigner}
