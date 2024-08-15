@@ -6,12 +6,12 @@ import { ValueLink } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
-interface FooterProps {
+interface FooterPanelProps {
   selectedNodeId: string;
   outputs: BoundParameters;
 }
 
-export const Footer: React.FC<FooterProps> = (props) => {
+export const FooterPanel: React.FC<FooterPanelProps> = (props) => {
   const { selectedNodeId, outputs } = props;
   const actionMetadata = useActionMetadata(selectedNodeId);
 

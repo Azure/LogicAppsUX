@@ -10,7 +10,7 @@ import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Footer } from './footer';
+import { FooterPanel } from './footerPanel';
 
 export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
@@ -59,7 +59,7 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         values={inputOutputs.outputs}
       />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
-      <Footer selectedNodeId={selectedNodeId} outputs={inputOutputs.outputs} />
+      <FooterPanel selectedNodeId={selectedNodeId} outputs={inputOutputs.outputs} />
     </>
   );
 };
