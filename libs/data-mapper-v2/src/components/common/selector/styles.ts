@@ -24,7 +24,7 @@ export const useStyles = makeStyles({
     marginTop: '20px',
   },
   cancelButton: {
-    marginTop: '50px',
-    alignSelf: 'center',
+    marginTop: '30px',
+    alignSelf: 'left',
   },
 });

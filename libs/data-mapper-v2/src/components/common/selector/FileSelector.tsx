@@ -102,7 +102,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
       </RadioGroup>
       {cancel && (
         <div className={styles.cancelButton}>
-          <Button size="small" shape="square" appearance="primary" onClick={cancel.onCancel}>
+          <Button size="small" shape="square" appearance="secondary" onClick={cancel.onCancel}>
             {cancel.cancelButtonText}
           </Button>
         </div>

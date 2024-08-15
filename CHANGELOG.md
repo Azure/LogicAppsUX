@@ -1,4 +1,27 @@
 # Logic Apps Designer
+## [4.63.0](https://github.com/Azure/LogicAppsUX/compare/v4.62.0...v4.63.0) (2024-08-15)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fixing connection order ([#5407](https://github.com/Azure/LogicAppsUX/issues/5407)) ([73834ad](https://github.com/Azure/LogicAppsUX/commit/73834adf8b9f4a020445342e1b38ff8bb5ee81f1))
+
+## [4.62.0](https://github.com/Azure/LogicAppsUX/compare/v4.61.0...v4.62.0) (2024-08-15)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove animated for the collapsed temporary edge ([#5405](https://github.com/Azure/LogicAppsUX/issues/5405)) ([0917ab2](https://github.com/Azure/LogicAppsUX/commit/0917ab2dbd5fdc2a726881cbe120e4642a74105d))
+* **designer:** Fix casting issue for manifest-based dynamic data input parameters ([#5406](https://github.com/Azure/LogicAppsUX/issues/5406)) ([71fe220](https://github.com/Azure/LogicAppsUX/commit/71fe22017ac5e161202201c158b65d699f812701)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
+## [4.61.0](https://github.com/Azure/LogicAppsUX/compare/v4.60.0...v4.61.0) (2024-08-15)
+
+
+### Bug Fixes
+
+* **designer:** Fixed local designer height issue ([#5404](https://github.com/Azure/LogicAppsUX/issues/5404)) ([b938522](https://github.com/Azure/LogicAppsUX/commit/b9385222bcaf96265abcb969d0e38ba45d1a96f8))
+* **designer:** Un-revert panel changes & fix sizing to accommodate that change ([#5397](https://github.com/Azure/LogicAppsUX/issues/5397)) ([77d00d0](https://github.com/Azure/LogicAppsUX/commit/77d00d0df42317fe4e1629138c9fbece55e43c7a)), closes [#5393](https://github.com/Azure/LogicAppsUX/issues/5393) [#5395](https://github.com/Azure/LogicAppsUX/issues/5395)
+
 ## [4.60.0](https://github.com/Azure/LogicAppsUX/compare/v4.59.0...v4.60.0) (2024-08-15)
 
 

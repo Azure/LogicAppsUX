@@ -117,6 +117,7 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
+  isStringLiteral,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -3535,23 +3536,19 @@ export function parameterValueToString(
         } else if (!isUndefinedOrEmptyString(expressionValue)) {
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
-          expressionValue =
+          const shouldCastToString =
             !remappedParameterInfo.suppressCasting &&
             parameterType === 'string' &&
             segment.token?.type !== 'string' &&
-            !shouldUseLiteralValues(segment.token?.expression)
-              ? `@{${expressionValue}}`
-              : `@${expressionValue}`;
+            segment.token?.expression &&
+            isStringLiteral(segment.token.expression);
+          expressionValue = `@${shouldCastToString ? `{${expressionValue}}` : expressionValue}`;
         }
       }
 
       return expressionValue;
     })
     .join('');
-}
-
-export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
-  return (expression?.type as ExpressionType) !== ExpressionType.StringLiteral;
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {

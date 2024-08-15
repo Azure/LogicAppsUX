@@ -97,7 +97,6 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
             reconnectable: 'target',
             focusable: true,
             deletable: true,
-            animated: true,
             data: {
               isTemporary: true,
             },
@@ -189,6 +188,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
         },
         edges
       );
+
+      // danielle maybe get the input number from here?
 
       const connectionAction: ConnectionAction = {
         reactFlowSource: connection.source ?? '',
