@@ -572,9 +572,11 @@ export function getManifestBasedInputParameters(
   let formDataInputKeyPrefix = '';
   let formDataLocation = '';
   // Load known parameters directly by key.
+  const suppressCasting = !manifest.properties?.autoCast;
 
   for (const inputParameter of dynamicInputs) {
     const clonedInputParameter = copy({ copyNonEnumerableProps: false }, {}, inputParameter);
+    clonedInputParameter.suppressCasting = suppressCasting;
     if (inputParameter.key === keyPrefix) {
       // Load the entire input if the key is the entire input.
       clonedInputParameter.value = stepInputs;
