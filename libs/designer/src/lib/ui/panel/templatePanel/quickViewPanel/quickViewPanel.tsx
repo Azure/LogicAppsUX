@@ -11,11 +11,15 @@ import Markdown from 'react-markdown';
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { manifest } = useSelector((state: RootState) => ({
+  const { manifest, templateName, subscriptionId } = useSelector((state: RootState) => ({
     manifest: state.template.manifest,
     templateName: state.template.templateName,
+    subscriptionId: state.workflow.subscriptionId,
   }));
-  const panelTabs = getQuickViewTabs(intl, dispatch);
+  const panelTabs = getQuickViewTabs(intl, dispatch, {
+    templateId: templateName ?? '',
+    workflowAppName: subscriptionId,
+  });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
   if (!manifest) {

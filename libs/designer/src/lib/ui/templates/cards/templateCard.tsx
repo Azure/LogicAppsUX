@@ -10,7 +10,7 @@ import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/mo
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { getBuiltInOperationInfo, isBuiltInOperation } from '@microsoft/logic-apps-shared';
+import { getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 interface TemplateCardProps {
   templateName: string;
@@ -29,6 +29,17 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const templateManifest = templates?.[templateName];
 
   const onSelectTemplate = () => {
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'Templates.TemplateCard',
+      message: 'Template is selected',
+      args: [
+        {
+          templateId: templateName,
+          workflowAppName: subscriptionId,
+        },
+      ],
+    });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
     dispatch(openQuickViewPanelView());

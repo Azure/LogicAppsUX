@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export const WorkflowPanel: React.FC = () => {
   const { manifest, images } = useSelector((state: RootState) => state.template);
@@ -20,7 +21,17 @@ export const WorkflowPanel: React.FC = () => {
   ) : null;
 };
 
-export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const workflowTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  {
+    templateId,
+    workflowAppName,
+  }: {
+    templateId: string;
+    workflowAppName: string;
+  }
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',
@@ -37,6 +48,17 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'Templates.workflowTab',
+        message: 'Template create button clicked',
+        args: [
+          {
+            templateId,
+            workflowAppName,
+          },
+        ],
+      });
       dispatch(openCreateWorkflowPanelView());
     },
     secondaryButtonText: intl.formatMessage({
