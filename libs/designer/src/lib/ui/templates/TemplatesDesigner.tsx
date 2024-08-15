@@ -57,10 +57,9 @@ export const TemplatesDesigner = ({
       connectionsError ||
       Object.values(parametersError)?.filter((error) => error).length > 0
     ) {
-      // TODO: Show error message
-      console.log('Error checking conditions before calling createWorkflowCall');
-      return;
+      throw new Error('Missing information for workflow creation');
     }
+    
     await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
   };
 

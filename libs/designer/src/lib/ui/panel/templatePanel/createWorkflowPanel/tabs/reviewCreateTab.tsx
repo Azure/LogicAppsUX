@@ -144,8 +144,8 @@ export const reviewCreateTab = (
   description: isCreated ? (
     <MessageBar messageBarType={MessageBarType.success}>
       {intl.formatMessage({
-        defaultMessage: 'Your workflow has been created.',
-        id: 'gKS4NW',
+        defaultMessage: 'Your workflow has been created. ',
+        id: 'J+bMkk',
         description: 'The message displayed when the workflow is successfully created',
       })}
       <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
@@ -163,13 +163,6 @@ export const reviewCreateTab = (
         id: 'bxYAWD',
         description: 'The message displayed when there was an error in workflow creation',
       })}
-      <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
-        {intl.formatMessage({
-          defaultMessage: 'Go to workflow.',
-          id: 'OqrmYm',
-          description: 'The link displayed to navigate to workflow when the workflow is successfully created',
-        })}
-      </Link>
     </MessageBar>
   ) : (
     intl.formatMessage({

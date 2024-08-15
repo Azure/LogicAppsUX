@@ -125,32 +125,28 @@ export const TemplatesStandaloneDesigner = () => {
             return error?.response?.status === 404 ? {} : undefined;
           }
         };
-        try {
-          const existingParametersData = await getExistingParametersData();
+        const existingParametersData = await getExistingParametersData();
 
-          if (!existingParametersData) {
-            alert('Error fetching parameters');
-            return;
-          }
-
-          const updatedParametersData: ParametersData = {
-            ...existingParametersData,
-            ...sanitizedParameterData,
-          };
-          await saveWorkflowStandard(
-            appId,
-            workflowNameToUse,
-            workflow,
-            updatedConnectionsData,
-            updatedParametersData,
-            updatedSettingProperties,
-            undefined,
-            () => {},
-            true
-          );
-        } catch (error) {
-          console.log(error);
+        if (!existingParametersData) {
+          alert('Error fetching parameters');
+          throw new Error('Error fetching parameters');
         }
+
+        const updatedParametersData: ParametersData = {
+          ...existingParametersData,
+          ...sanitizedParameterData,
+        };
+        await saveWorkflowStandard(
+          appId,
+          workflowNameToUse,
+          workflow,
+          updatedConnectionsData,
+          updatedParametersData,
+          updatedSettingProperties,
+          undefined,
+          () => {},
+          { skipValidation: true, throwError: true }
+        );
       }
     } else {
       console.log('Select App Id first!');
