@@ -10,11 +10,14 @@ import {
   splitKeyIntoChildren,
   isValidToMakeMapDefinition,
   amendSourceKeyForDirectAccessIfNeeded,
+  addParentConnectionForRepeatingElementsNested,
 } from '../DataMap.Utils';
-import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../__mocks__/schemas';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
+import { applyConnectionValue } from '../Connection.Utils';
 
 describe('utils/DataMap', () => {
   describe('isValidToMakeMapDefinition', () => {
@@ -504,6 +507,45 @@ describe('utils/DataMap', () => {
       };
 
       expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
+    });
+  });
+
+  describe('addParentConnectionForRepeatingElementsNested', () => {
+    it('adds parent connection for repeating elements simple', () => {
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+      const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
+
+      const flattenedSource = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+      const flattenedTarget = flattenSchemaIntoDictionary(extendedTarget, SchemaType.Target);
+
+      const targetChildNodeId = 'target-/ns0:Root/Looping/Person/Name';
+      const sourceChildNodeId = 'source-/ns0:Root/Looping/Employee/TelephoneNumber';
+
+      const sourceChildNode = flattenedSource[sourceChildNodeId];
+      const targetChildNode = flattenedTarget[targetChildNodeId];
+
+      const connections: ConnectionDictionary = {};
+
+      applyConnectionValue(connections, {
+        targetNode: targetChildNode,
+        targetNodeReactFlowKey: targetChildNodeId,
+        findInputSlot: true,
+        input: {
+          reactFlowKey: sourceChildNodeId,
+          node: sourceChildNode,
+        },
+      });
+
+      addParentConnectionForRepeatingElementsNested(sourceChildNode, targetChildNode, flattenedSource, flattenedTarget, connections);
+
+      const targetParentKey = 'target-/ns0:Root/Looping/Person';
+      const sourceParentKey = 'source-/ns0:Root/Looping/Employee';
+
+      expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
+      expect(connections[sourceParentKey].outputs[0].isRepeating).toEqual(true);
+
+      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
+      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
   });
 
