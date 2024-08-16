@@ -43,6 +43,8 @@ export interface PanelHeaderProps {
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
+  canShowLogicAppRun?: boolean;
+  showLogicAppRun?: () => void;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -141,6 +143,8 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     onRenderWarningMessage,
     onTitleChange,
     onTitleBlur,
+    canShowLogicAppRun,
+    showLogicAppRun,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -157,6 +161,12 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     defaultMessage: 'Unpin action',
     id: 'iTz1lp',
     description: 'Text indicating a menu button to unpin a pinned action from the side panel',
+  });
+
+  const showLogicAppRunText = intl.formatMessage({
+    defaultMessage: 'Show Logic App run details',
+    id: 'y6aoMi',
+    description: 'Show Logic App run details text',
   });
 
   const isRight = headerLocation === PanelLocation.Right;
@@ -222,15 +232,27 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           commentChange={commentChange}
         />
       ) : null}
-      {canResubmit ? (
-        <Button
-          style={{ margin: '0 2rem 0.5rem', alignSelf: 'flex-start' }}
-          icon={<Icon iconName="PlaybackRate1x" />}
-          onClick={() => resubmitOperation?.()}
-        >
-          {resubmitButtonText}
-        </Button>
-      ) : null}
+      <div className="msla-panel-header-buttons">
+        {canResubmit ? (
+          <Button
+            className="msla-panel-header-buttons__button"
+            icon={<Icon iconName="PlaybackRate1x" />}
+            onClick={() => resubmitOperation?.()}
+          >
+            {resubmitButtonText}
+          </Button>
+        ) : null}
+        {canShowLogicAppRun ? (
+          <Button
+            iconPosition="after"
+            className="msla-panel-header-buttons__button"
+            icon={<Icon iconName="ChevronRight" />}
+            onClick={() => showLogicAppRun?.()}
+          >
+            {showLogicAppRunText}
+          </Button>
+        ) : null}
+      </div>
     </>
   );
 };
