@@ -30,7 +30,8 @@ export class LogicAppResolver implements AppResourceResolver {
     const subscriptionSites = new Map<string, Site>();
 
     listOfSites.forEach((item: Site) => {
-      subscriptionSites.set(item.id, item);
+      const workflowId = item.id.toLowerCase();
+      subscriptionSites.set(workflowId, item);
     });
 
     ext.logicAppSitesMap.set(subContext.subscriptionId, subscriptionSites);
@@ -40,13 +41,13 @@ export class LogicAppResolver implements AppResourceResolver {
   static async getAppResourceSite(context: IActionContext, subContext: ISubscriptionContext, resource: AppResource): Promise<Site> {
     const logicAppsSites = ext.logicAppSitesMap.get(subContext.subscriptionId);
     let site: Site;
+    const workflowId = resource.id.toLowerCase();
 
     if (logicAppsSites) {
-      site = ext.logicAppSitesMap.get(subContext.subscriptionId).get(resource.id);
+      site = logicAppsSites.get(workflowId);
     } else {
       const subscriptionSites = await LogicAppResolver.getSubscriptionSites(context, subContext);
-
-      site = subscriptionSites.get(resource.id);
+      site = subscriptionSites.get(workflowId);
     }
     return site;
   }
