@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.44.10](https://github.com/Azure/LogicAppsUX/compare/v4.44.9...v4.44.10) (2024-08-16)
+
+
+### Bug Fixes
+
+* **vscode:** Standarize workflow id when resolving resource ([#5422](https://github.com/Azure/LogicAppsUX/issues/5422)) ([#5423](https://github.com/Azure/LogicAppsUX/issues/5423)) ([5b995e2](https://github.com/Azure/LogicAppsUX/commit/5b995e2ce341a89700f04813ee8961cdb57f120b))
+
 ### [4.44.9](https://github.com/Azure/LogicAppsUX/compare/v4.44.8...v4.44.9) (2024-08-06)
 
 
