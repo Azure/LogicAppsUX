@@ -6,6 +6,7 @@ import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { guid } from '@microsoft/logic-apps-shared';
+import type { DropdownItem } from '../../dropdown';
 
 export interface ItemSchemaItemProps {
   key: string;
@@ -327,4 +328,11 @@ export const getComoboxEnumOptions = (options?: ComboboxItem[], schemaItems?: st
       };
     })
   );
+};
+
+export const getBooleanDropdownOptions = (): DropdownItem[] => {
+  return [
+    { key: 'true', displayName: 'true', value: true },
+    { key: 'false', displayName: 'false', value: false },
+  ];
 };

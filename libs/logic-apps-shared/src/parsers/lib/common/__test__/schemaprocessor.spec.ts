@@ -1110,4 +1110,105 @@ describe('SchemaProcessor Tests', () => {
       })
     );
   });
+
+  it('should be able to process multiple schema types', () => {
+    const schema = {
+      properties: {
+        description: {
+          type: ['string', 'null'],
+        },
+        execarray: {
+          items: {
+            properties: {
+              name: {
+                type: ['array', 'string'],
+              },
+              param1: {
+                type: 'string',
+              },
+            },
+            type: 'object',
+          },
+          type: 'array',
+        },
+        mode: {
+          type: 'string',
+        },
+      },
+      required: ['description', 'mode', 'execarray'],
+      type: 'object',
+    };
+
+    const options = {
+      prefix: '',
+      keyPrefix: 'body.$',
+      isInputSchema: true,
+      expandArrayOutputs: true,
+      required: true,
+    };
+    const parameters = new SchemaProcessor(options).getSchemaProperties(schema);
+    expect(parameters.length).toBe(8);
+    expect(parameters[0]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.description',
+        name: 'description',
+        type: 'string',
+      })
+    );
+
+    expect(parameters[1]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.description',
+        name: 'description',
+        type: 'null',
+      })
+    );
+    expect(parameters[2]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.execarray',
+        name: 'execarray',
+        type: 'array',
+      })
+    );
+    expect(parameters[3]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.execarray.[*]',
+        name: 'execarray.[*]',
+        parentArray: 'execarray',
+        title: 'execarray Item',
+        type: 'object',
+      })
+    );
+    expect(parameters[4]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.mode',
+        name: 'mode',
+        type: 'string',
+      })
+    );
+    expect(parameters[5]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.execarray.[*].name',
+        name: 'execarray.name',
+        type: 'array',
+      })
+    );
+    expect(parameters[6]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.execarray.[*].name',
+        name: 'execarray.name',
+        parentArray: 'execarray',
+        title: 'execarray name',
+        type: 'string',
+      })
+    );
+    expect(parameters[7]).toEqual(
+      expect.objectContaining({
+        key: 'body.$.execarray.[*].param1',
+        name: 'execarray.param1',
+        title: 'execarray param1',
+        type: 'string',
+      })
+    );
+  });
 });

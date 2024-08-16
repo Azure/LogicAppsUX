@@ -329,7 +329,7 @@ export class SchemaProcessor {
       schemaProperties.push({
         alias: this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined,
         default: schema.default,
-        description: description,
+        description,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
         editor: getEditorForParameter(schema, dynamicValues),
