@@ -35,6 +35,8 @@ export type PanelContainerProps = {
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
+  canShowLogicAppRun?: boolean;
+  showLogicAppRun?: () => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -59,6 +61,9 @@ export const PanelContainer = ({
   setOverrideWidth,
   overrideWidth,
   isResizeable,
+  mountNode,
+  canShowLogicAppRun,
+  showLogicAppRun,
 }: PanelContainerProps) => {
   const intl = useIntl();
 
@@ -101,6 +106,8 @@ export const PanelContainer = ({
           suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
           readOnlyMode={readOnlyMode}
           canResubmit={canResubmit}
+          canShowLogicAppRun={canShowLogicAppRun}
+          showLogicAppRun={showLogicAppRun}
           onUnpinAction={canUnpin ? onUnpinAction : undefined}
           resubmitOperation={() => resubmitOperation?.(nodeId)}
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
@@ -111,23 +118,25 @@ export const PanelContainer = ({
       );
     },
     [
+      pinnedNodeIfDifferent,
+      pinnedNodeId,
+      onUnpinAction,
       isCollapsed,
+      pinnedNodeHeaderItems,
+      nodeHeaderItems,
       panelLocation,
       noNodeSelected,
       panelScope,
       suppressDefaultNodeSelectFunctionality,
       readOnlyMode,
       canResubmit,
-      nodeHeaderItems,
-      pinnedNodeHeaderItems,
-      pinnedNodeId,
-      pinnedNodeIfDifferent,
-      resubmitOperation,
-      onUnpinAction,
-      onCommentChange,
+      canShowLogicAppRun,
+      showLogicAppRun,
       toggleCollapse,
       onTitleChange,
       onTitleBlur,
+      resubmitOperation,
+      onCommentChange,
     ]
   );
 
@@ -181,10 +190,11 @@ export const PanelContainer = ({
       modalType="non-modal"
       mountNode={{
         className: 'msla-panel-host-container',
+        element: mountNode,
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ width: drawerWidth }}
+      style={{ position: 'absolute', width: drawerWidth }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button

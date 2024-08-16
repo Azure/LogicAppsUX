@@ -12,7 +12,7 @@ import {
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panelV2/panelSelectors';
 import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
-import { useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
 import { getCustomCodeFileName, getParameterFromName, ParameterGroupKeys } from '../../../core/utils/parameters/helper';
@@ -23,13 +23,17 @@ import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
+  equals,
+  getObjectPropertyValue,
+  HostService,
+  isNullOrEmpty,
   isNullOrUndefined,
   replaceWhiteSpaceWithUnderscore,
   splitFileName,
   SUBGRAPH_TYPES,
   WorkflowService,
 } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
@@ -56,6 +60,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const pinnedNodeData = usePanelNodeData(pinnedNode);
   const selectedNodeData = usePanelNodeData(selectedNode);
+  const actionMetadata = useActionMetadata(selectedNode);
+  const nodeType = actionMetadata?.type ?? '';
 
   const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
 
@@ -194,6 +200,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   const commonPanelProps: CommonPanelProps = {
+    ...props,
     isCollapsed: collapsed,
     toggleCollapse: dismissPanel,
     overrideWidth,
@@ -201,6 +208,24 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     panelLocation,
     isResizeable,
   };
+
+  const getChildRunNameFromOutputs = (outputs: any): string | undefined => {
+    if (!isNullOrEmpty(outputs)) {
+      return getObjectPropertyValue(outputs, ['headers', 'value', 'x-ms-workflow-run-id']);
+    }
+    return undefined;
+  };
+
+  const canShowLogicAppRun = useMemo(() => {
+    const runName = getChildRunNameFromOutputs(runData?.outputs);
+    return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
+  }, [nodeType, runData?.outputs]);
+
+  const showLogicAppRunClick = useCallback(() => {
+    if (runInstance?.id && runInstance?.properties && !!HostService()) {
+      HostService().openMonitorView?.(runInstance.properties.workflow.id, runInstance?.id);
+    }
+  }, [runInstance]);
 
   return (
     <PanelContainer
@@ -214,6 +239,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       pinnedNodeHeaderItems={getHeaderMenuItems(pinnedNode)}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}
+      canShowLogicAppRun={canShowLogicAppRun}
+      showLogicAppRun={showLogicAppRunClick}
       resubmitOperation={resubmitClick}
       onUnpinAction={unpinAction}
       toggleCollapse={() => {

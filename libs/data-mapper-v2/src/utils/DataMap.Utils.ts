@@ -142,6 +142,10 @@ export const collectSequenceValue = (
   return result;
 };
 
+export const isIdForFunctionNode = (id: string): boolean => {
+  return !id.startsWith(SchemaType.Source) && !id.startsWith(SchemaType.Target);
+};
+
 export const collectConditionalValues = (currentConnection: Connection, connections: ConnectionDictionary): [string, string] => {
   const inputValues = getInputValues(currentConnection, connections);
 
@@ -565,7 +569,6 @@ export const addParentConnectionForRepeatingElementsNested = (
   dataMapConnections: ConnectionDictionary
 ): boolean => {
   if (sourceNode && sourceNode.parentKey) {
-    //danielle temporary to unblock
     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
@@ -595,6 +598,7 @@ export const addParentConnectionForRepeatingElementsNested = (
             reactFlowKey: prefixedSourceKey,
             node: firstRepeatingSourceNode,
           },
+          isRepeating: true,
         });
       }
 

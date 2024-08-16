@@ -114,7 +114,7 @@ export const Combobox = ({
 
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
-    if (shouldSort) {
+    if (shouldSort && !isLoading) {
       options.sort((currentItem, nextItem) => {
         const currentName = currentItem?.displayName;
         const nextName = nextItem?.displayName;
@@ -127,7 +127,7 @@ export const Combobox = ({
         return String(currentName).localeCompare(String(nextName));
       });
     }
-  }, [options, shouldSort]);
+  }, [isLoading, options, shouldSort]);
 
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
