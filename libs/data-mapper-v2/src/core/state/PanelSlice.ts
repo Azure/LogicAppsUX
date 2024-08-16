@@ -20,6 +20,10 @@ export type TestPanelState = {
   testMapOutputError?: Error;
 };
 
+export type FunctionPanelState = {
+  isOpen: boolean;
+};
+
 export type CodeViewState = {
   isOpen: boolean;
 };
@@ -29,6 +33,7 @@ export interface PanelState {
   schemaType?: SchemaType;
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
+  functionPanel: FunctionPanelState;
 }
 
 export interface TestMapOutput {
@@ -45,6 +50,9 @@ const initialState: PanelState = {
     isOpen: false,
     showSelection: true,
   },
+  functionPanel: {
+    isOpen: false,
+  },
 };
 
 export const panelSlice = createSlice({
@@ -58,19 +66,39 @@ export const panelSlice = createSlice({
     },
 
     toggleCodeView: (state) => {
-      // Close test panel first if code view needs to open
-      if (!state.codeViewPanel.isOpen && state.testPanel.isOpen) {
+      const newState = !state.codeViewPanel.isOpen;
+
+      // Close other panels if code view panel is opened
+      if (newState) {
         state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
       }
-      state.codeViewPanel.isOpen = !state.codeViewPanel.isOpen;
+
+      state.codeViewPanel.isOpen = newState;
     },
 
     toggleTestPanel: (state) => {
-      // Close code view first if test panel needs to open
-      if (!state.testPanel.isOpen && state.codeViewPanel.isOpen) {
+      const newState = !state.testPanel.isOpen;
+
+      // Close other panels if test panel is opened
+      if (newState) {
         state.codeViewPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
       }
-      state.testPanel.isOpen = !state.testPanel.isOpen;
+
+      state.testPanel.isOpen = newState;
+    },
+
+    toggleFunctionPanel: (state) => {
+      const newState = !state.functionPanel.isOpen;
+
+      // Close other panels if function panel is opened
+      if (newState) {
+        state.codeViewPanel.isOpen = false;
+        state.testPanel.isOpen = false;
+      }
+
+      state.functionPanel.isOpen = newState;
     },
 
     updateTestInput: (state, action: PayloadAction<string>) => {
@@ -130,6 +158,7 @@ export const {
   setTestFile,
   updateTestInput,
   updateTestOutput,
+  toggleFunctionPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

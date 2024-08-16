@@ -270,6 +270,14 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
     }
   }, [dispatch, isLeftDirection]);
 
+  const title = useMemo(
+    () =>
+      `${isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION} ${
+        selectedSchemaFile?.name && !scehmaInEditState ? `(${selectedSchemaFile?.name})` : ''
+      }`,
+    [isLeftDirection, scehmaInEditState, selectedSchemaFile?.name, stringResources.DESTINATION, stringResources.SOURCE]
+  );
+
   // if initial flat-map changes, filtered version needs to be reset
   useEffect(() => {
     setFilteredFlattenedScehmaMap(flattenedScehmaMap);
@@ -287,7 +295,7 @@ export const SchemaPanel = ({ onSubmitSchemaFileSelection, schemaType }: ConfigP
       id={`panel_${schemaType}`}
       isOpen={!!currentPanelView}
       title={{
-        text: isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION,
+        text: title,
         rightAction: scehmaInEditState ? null : (
           <Button
             appearance="transparent"
