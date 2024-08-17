@@ -54,4 +54,8 @@ export const useStyles = makeStyles({
     flexDirection: 'column',
     height: '100%',
   },
+  body: {
+    paddingRight: '0px',
+    paddingLeft: '5px',
+  },
 });

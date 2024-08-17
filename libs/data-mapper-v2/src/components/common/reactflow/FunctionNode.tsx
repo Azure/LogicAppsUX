@@ -1,4 +1,3 @@
-import { customTokens } from '../../../core';
 import type { FunctionData } from '../../../models';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { Button, Caption1, tokens, Popover, PopoverTrigger, mergeClasses } from '@fluentui/react-components';
@@ -14,6 +13,7 @@ import { setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useActiveNode } from '../../../core/state/selectors/selectors';
 import { useMemo, useState } from 'react';
 import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
+import { customTokens } from '../../../core/ThemeConect';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
