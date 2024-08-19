@@ -120,18 +120,18 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  onCreateClick: () => Promise<void>,
+  onCreateClick: () => void,
   {
     workflowName,
     isCreating,
     isCreated,
-    isCreateFailed,
+    errorMessage,
     isPrimaryButtonDisabled,
   }: {
     workflowName: string;
     isCreating: boolean;
     isCreated: boolean;
-    isCreateFailed: boolean;
+    errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
   }
 ): TemplatePanelTab => ({
@@ -156,14 +156,8 @@ export const reviewCreateTab = (
         })}
       </Link>
     </MessageBar>
-  ) : isCreateFailed ? (
-    <MessageBar messageBarType={MessageBarType.error}>
-      {intl.formatMessage({
-        defaultMessage: 'Failed to save workflow.',
-        id: 'bxYAWD',
-        description: 'The message displayed when there was an error in workflow creation',
-      })}
-    </MessageBar>
+  ) : errorMessage ? (
+    <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
   ) : (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',

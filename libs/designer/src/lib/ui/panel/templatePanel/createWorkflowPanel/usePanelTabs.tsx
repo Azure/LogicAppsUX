@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
@@ -16,6 +16,7 @@ import {
   validateWorkflowName,
 } from '../../../../core/state/templates/templateSlice';
 import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import { useMutation } from '@tanstack/react-query';
 
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
   const intl = useIntl();
@@ -31,18 +32,15 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
 
   const { mapping } = useSelector((state: RootState) => state.workflow.connections);
   const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId);
-  const [isCreating, setIsCreating] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
-  const [isCreateFailed, setIsCreateFailed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
   const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
   const hasParametersValidationErrors = useMemo(() => Object.values(parameterErrors).some((error) => !!error), [parameterErrors]);
 
   useEffect(() => {
-    setIsCreating(false);
     setIsCreated(false);
-    setIsCreateFailed(false);
   }, [selectedManifest]);
 
   useEffect(() => {
@@ -63,9 +61,8 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     }
   }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
 
-  const createWorkflowFromTemplate = useCallback(async () => {
-    setIsCreating(true);
-    setIsCreateFailed(false);
+  const { isLoading: isCreating, mutate: createWorkflowFromTemplate } = useMutation(async () => {
+    setErrorMessage(undefined);
     const logId = LoggerService().startTrace({
       name: 'Create Workflow from Template',
       action: 'createWorkflowFromTemplate',
@@ -75,13 +72,11 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       await onCreateClick();
       setIsCreated(true);
       LoggerService().endTrace(logId, { status: Status.Success });
-    } catch (e) {
-      setIsCreateFailed(true);
+    } catch (e: any) {
+      setErrorMessage(e.message);
       LoggerService().endTrace(logId, { status: Status.Failure });
-    } finally {
-      setIsCreating(false);
     }
-  }, [onCreateClick]);
+  });
 
   const connectionsTabItem = useMemo(
     () => ({
@@ -126,7 +121,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
         workflowName: existingWorkflowName ?? workflowName ?? '',
         isCreating,
         isCreated,
-        isCreateFailed,
+        errorMessage,
         isPrimaryButtonDisabled: !!workflowError || !kind || !!connectionsError || hasParametersValidationErrors,
       }),
     }),
@@ -140,7 +135,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       workflowError,
       kind,
       isCreated,
-      isCreateFailed,
+      errorMessage,
       connectionsError,
       hasParametersValidationErrors,
     ]
