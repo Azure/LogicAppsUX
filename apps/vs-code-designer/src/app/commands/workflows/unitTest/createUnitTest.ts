@@ -41,8 +41,22 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
       validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
     });
 
-    const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, null, runId);
-    await openDesignerObj?.createPanel();
+    //Ask user to choose between codeless and codeful scenarios
+    const scenarioChoice = await context.ui.showQuickPick(
+      [
+        { label: 'Codeless', description: 'Create unit test using designer' },
+        { label: 'Codeful', description: 'Create empty C# test project' },
+      ],
+      { placeHolder: 'Select unit test creation method' }
+    );
+
+    if (scenarioChoice.label === 'Codeless') {
+      const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, null, runId);
+      await openDesignerObj?.createPanel();
+    } else {
+      //Create empty C# test project
+      await createEmptyCSharpTestProject(context, projectPath, workflowName, unitTestName);
+    }
   } else {
     vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
@@ -73,3 +87,17 @@ const getWorkflowsPick = async (projectPath: string) => {
   picks.sort((a, b) => a.label.localeCompare(b.label));
   return picks;
 };
+
+// Function to create an empty C# test project
+async function createEmptyCSharpTestProject(
+  context: IAzureConnectorsContext,
+  projectPath: string,
+  workflowName: string,
+  unitTestName: string
+): Promise<void> {
+  // TODO: Implement the creation of an empty C# test project
+  // This function should create the necessary files and folder structure for a C# test project
+  // You may want to use the 'fs' module to create files and folders
+
+  vscode.window.showInformationMessage(`Created empty C# test project for ${workflowName} with test name ${unitTestName}`);
+}
