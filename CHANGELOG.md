@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.57.4](https://github.com/Azure/LogicAppsUX/compare/v4.57.3...v4.57.4) (2024-08-19)
+
+
+### Bug Fixes
+
+* **designer:** Un-revert panel changes & fix sizing to accommodate that change ([#5430](https://github.com/Azure/LogicAppsUX/issues/5430)) ([622dd3f](https://github.com/Azure/LogicAppsUX/commit/622dd3ff56e548525b26d0f6348e3050b9849c9d)), closes [#5397](https://github.com/Azure/LogicAppsUX/issues/5397) [#5393](https://github.com/Azure/LogicAppsUX/issues/5393) [#5395](https://github.com/Azure/LogicAppsUX/issues/5395)
+
 ### [4.57.3](https://github.com/Azure/LogicAppsUX/compare/v4.57.2...v4.57.3) (2024-08-14)
 
 
