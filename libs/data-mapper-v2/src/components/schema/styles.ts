@@ -56,6 +56,6 @@ export const useStyles = makeStyles({
   },
   body: {
     paddingRight: '0px',
-    paddingLeft: '5px',
+    paddingLeft: '0px',
   },
 });
