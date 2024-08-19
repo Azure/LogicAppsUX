@@ -6,7 +6,7 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 ## Azure Logic Apps - Automatic Regeneration of Connection ACL keys
 
-Starting with version 4.57.0, the Azure Logic Apps (Standard) extension for Visual Studio Code will automatically regenerate  the keys required to allow the extension to access Azure Managed Connections. This will allow the same Azure Managed Connection to be used for projects for longer than 7 days without any user intervention. For more information, see [Regneration Azure Managed Connection ACL for Local Development](https://go.microsoft.com/fwlink/?linkid=2283427).
+Starting with version 4.57.0, the Azure Logic Apps (Standard) extension for Visual Studio Code will automatically regenerate  the keys required to allow the extension to access Azure Managed Connections. This will allow the same Azure Managed Connection to be used for projects for longer than 7 days without any user intervention. For more information, see [Regeneration Azure Managed Connection ACL for Local Development](https://go.microsoft.com/fwlink/?linkid=2283427).
 
 ## Azure Logic Apps - Introducing Azure Logic Apps Rules Engine (preview)
 
