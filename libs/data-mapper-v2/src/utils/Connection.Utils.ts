@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
+import type { SetConnectionInputAction } from '../core/state/DataMapSlice';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { createEdgeId } from './Edge.Utils';
@@ -10,7 +10,6 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
-import type { WritableDraft } from 'immer/dist/internal';
 import { getSplitIdsFromReactFlowConnectionId } from './ReactFlow.Util';
 import { UnboundedInput } from '../constants/FunctionConstants';
 
@@ -202,6 +201,24 @@ export const applyConnectionValue = (
       connections[input.reactFlowKey].outputs = connections[input.reactFlowKey].outputs.filter(onlyUniqueConnections);
     }
   }
+};
+
+export const findInputByID = (source: Connection, target: string): InputConnection | undefined => {
+  if (source.inputs) {
+    let foundInput: InputConnection;
+    Object.entries(source.inputs).forEach((input) => {
+      const firstInput = input[1];
+      if (typeof firstInput === 'string') {
+        foundInput = firstInput;
+      }
+      const innerInput = firstInput.find((inputInner) => typeof inputInner !== 'string' && inputInner?.reactFlowKey === target);
+      if (innerInput) {
+        foundInput = innerInput;
+      }
+    });
+    return foundInput;
+  }
+  return undefined;
 };
 
 export const isValidCustomValueByType = (customValue: string, tgtDataType: NormalizedDataType) => {
@@ -505,29 +522,6 @@ export const getFunctionConnectionUnits = (
     .flatMap((connectedNode) => collectSourceNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
 };
-
-export const bringInParentSourceNodesForRepeating = (
-  parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
-  _newState: DataMapOperationState
-) => {
-  if (parentTargetNode) {
-    // const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
-    // if (inputsToParentTarget) {
-    //   Object.keys(inputsToParentTarget).forEach((key) => {
-    //     const inputs = inputsToParentTarget[key];
-    //     inputs.forEach((input) => {
-    //       if (input && typeof input !== 'string') {
-    //         const inputSrc = input.node;
-    //         if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
-    //           newState.currentSourceSchemaNodes.push(inputSrc);
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
-  }
-};
-
 export const generateInputHandleId = (inputName: string, inputNumber: number) => `${inputName}${inputNumber}`;
 export const inputFromHandleId = (inputHandleId: string, functionNode: FunctionData): number | undefined => {
   if (functionNode?.maxNumberOfInputs > UnboundedInput) {

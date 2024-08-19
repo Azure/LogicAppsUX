@@ -11,22 +11,36 @@ import {
 } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { deleteEdge, updateEdgePopOverId } from '../../core/state/DataMapSlice';
+import { addLoopToConnection, deleteEdge, updateEdgePopOverId } from '../../core/state/DataMapSlice';
 import type { Bounds } from '../../core';
 import { useStyles } from './styles';
 import { ArrowRepeatAllRegular, DeleteRegular, ArrowRepeatAllOffRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { useLooping } from '../../core/state/selectors/selectors';
+import { SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 
 type EdgePopOverProps = Bounds & {};
 
 const EdgePopOver = (props: EdgePopOverProps) => {
+  const { edgePopOverIds: edgePopOverId } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  if (edgePopOverId === undefined) {
+    return;
+  }
+  return <EdgePopOverInner {...props} />;
+};
+
+const EdgePopOverInner = (props: EdgePopOverProps) => {
   const { x, y, height, width } = props;
-  const { edgePopOverId } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { edgePopOverIds: edgePopOverId } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const intl = useIntl();
-  const loopingScenario = useLooping(edgePopOverId);
+  const edgeSource = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[edgePopOverId?.source || '']
+  );
+  const edge = edgeSource?.outputs.find((output) => output.reactFlowKey === edgePopOverId?.target);
+  const schemaSource = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema[edgePopOverId?.source || '']
+  );
 
   const stringResources = useMemo(
     () => ({
@@ -50,7 +64,7 @@ const EdgePopOver = (props: EdgePopOverProps) => {
   );
 
   const closePopup = useCallback(() => {
-    dispatch(updateEdgePopOverId());
+    dispatch(updateEdgePopOverId(undefined));
   }, [dispatch]);
 
   const onOpenChange = useCallback(
@@ -65,13 +79,23 @@ const EdgePopOver = (props: EdgePopOverProps) => {
   const onDelete = useCallback(() => {
     closePopup();
     if (edgePopOverId) {
-      dispatch(deleteEdge(edgePopOverId));
+      dispatch(deleteEdge(edgePopOverId.id));
     }
   }, [dispatch, closePopup, edgePopOverId]);
+
+  const onAddLoop = useCallback(() => {
+    closePopup();
+    if (edgePopOverId) {
+      dispatch(addLoopToConnection(edgePopOverId));
+    }
+  }, [dispatch, edgePopOverId, closePopup]);
 
   if (!edgePopOverId || x === undefined || y === undefined || height === undefined || width === undefined) {
     return null;
   }
+
+  const isLoopRemovingAllowed = typeof edge !== 'string' && edge?.isRepeating;
+  const isLoopAddingAllowed = schemaSource && schemaSource.nodeProperties.includes(SchemaNodeProperty.Repeating) && !isLoopRemovingAllowed;
 
   return (
     <Popover
@@ -94,12 +118,14 @@ const EdgePopOver = (props: EdgePopOverProps) => {
       </PopoverTrigger>
       <PopoverSurface as={'div'}>
         <MenuList>
-          {loopingScenario.loopPresent ? (
+          {isLoopRemovingAllowed ? (
             <MenuItem icon={<ArrowRepeatAllOffRegular color={tokens.colorPaletteBlueBorderActive} />}>
               {stringResources.REMOVE_LOOP}
             </MenuItem>
-          ) : loopingScenario.isLoopable ? (
-            <MenuItem icon={<ArrowRepeatAllRegular color={tokens.colorPaletteBlueBorderActive} />}>{stringResources.ADD_LOOP}</MenuItem>
+          ) : isLoopAddingAllowed ? (
+            <MenuItem onClick={onAddLoop} icon={<ArrowRepeatAllRegular color={tokens.colorPaletteBlueBorderActive} />}>
+              {stringResources.ADD_LOOP}
+            </MenuItem>
           ) : null}
           <MenuItem onClick={onDelete} icon={<DeleteRegular color={tokens.colorPaletteBlueBorderActive} />}>
             {stringResources.DELETE}

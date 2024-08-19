@@ -264,7 +264,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
       e.preventDefault();
       e.stopPropagation();
 
-      dispatch(updateEdgePopOverId(edge.id));
+      dispatch(updateEdgePopOverId({ id: edge.id, source: edge.source, target: edge.target }));
       setEdgePopoverBounds({
         x: e.clientX,
         y: e.clientY,

@@ -5,19 +5,24 @@ import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
 import {
   applyConnectionValue,
-  bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
+  findInputByID,
   inputFromHandleId,
   isCustomValue,
   isFunctionInputSlotAvailable,
   isValidConnectionByType,
   newConnectionWillHaveCircularLogic,
-  nodeHasSourceNodeEventually,
-  nodeHasSpecificInputEventually,
-  nodeHasSpecificOutputEventually,
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
-import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
+import {
+  fullConnectionDictionaryForOneToManyLoop,
+  fullMapForSimplifiedLoop,
+  isGreaterMockId,
+  setInputFunctionConnection,
+  sourceMockIdForConcat,
+  sourceMockIdForIsGreater,
+  unlimitedFunctionInputConnection,
+} from '../__mocks__';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -203,6 +208,19 @@ describe('utils/Connections', () => {
         expect(mockConnections[mockSelfReactFlowKey]).toBeDefined();
         expect(mockConnections[mockSelfReactFlowKey].inputs[0].length).toEqual(0);
         expect(mockConnections[mockSelfReactFlowKey].inputs[1].length).toEqual(1);
+      });
+    });
+
+    describe('findInputByID', () => {
+      it('finds input for function with set inputs', () => {
+        const obj = findInputByID(setInputFunctionConnection.isGreaterMockId, sourceMockIdForIsGreater);
+        expect(obj).toBeDefined();
+        expect((obj as ConnectionUnit).reactFlowKey).toEqual(sourceMockIdForIsGreater);
+      });
+      it('finds input for function unlimited set inputs', () => {
+        const obj = findInputByID(unlimitedFunctionInputConnection.concatConnectionMockId, sourceMockIdForConcat);
+        expect(obj).toBeDefined();
+        expect((obj as ConnectionUnit).reactFlowKey).toEqual(sourceMockIdForConcat);
       });
     });
 

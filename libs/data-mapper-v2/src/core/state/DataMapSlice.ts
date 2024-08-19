@@ -1,8 +1,9 @@
-import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
 import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
+  findInputByID,
   flattenInputs,
   generateInputHandleId,
   getActiveNodes,
@@ -83,7 +84,7 @@ export interface DataMapOperationState {
   // Mapping used to store which connection is a loop
   edgeLoopMapping: Record<string, boolean>;
   // This is used to store the temporary state of the edge for which popover is visible
-  edgePopOverId?: string;
+  edgePopOverIds?: EdgePopOverIds;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -118,6 +119,12 @@ const initialState: DataMapState = {
   sourceInEditState: true,
   targetInEditState: true,
 };
+
+export interface EdgePopOverIds {
+  id: string;
+  source: string;
+  target: string;
+}
 
 export interface InitialSchemaAction {
   schema: SchemaExtended;
@@ -604,6 +611,16 @@ export const dataMapSlice = createSlice({
 
       doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Toggle Node Expand/Collapse');
     },
+
+    addLoopToConnection: (state, action: PayloadAction<EdgePopOverIds>) => {
+      const source = state.curDataMapOperation.dataMapConnections[action.payload.source];
+      const target = state.curDataMapOperation.dataMapConnections[action.payload.target];
+
+      addRepeatingToConnection(source, target);
+
+      doDataMapOperation(state, { ...state, curDataMapOperation: { ...state.curDataMapOperation } }, 'Add loop to connection');
+    },
+
     updateFunctionNodesPosition: (state, action: PayloadAction<Record<string, XYPosition>>) => {
       const newFunctionsState = { ...state.curDataMapOperation.functionNodes };
       for (const [key, position] of Object.entries(action.payload)) {
@@ -620,8 +637,8 @@ export const dataMapSlice = createSlice({
         lastAction: 'Update function nodes',
       };
     },
-    updateEdgePopOverId: (state, action: PayloadAction<string | undefined>) => {
-      state.curDataMapOperation.edgePopOverId = action.payload;
+    updateEdgePopOverId: (state, action: PayloadAction<EdgePopOverIds | undefined>) => {
+      state.curDataMapOperation.edgePopOverIds = action.payload;
     },
     deleteEdge: (state, action: PayloadAction<string>) => {
       const edgeId = action.payload;
@@ -678,6 +695,7 @@ export const {
   setSelectedItem,
   updateReactFlowNodes,
   updateReactFlowNode,
+  addLoopToConnection,
   makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
@@ -707,6 +725,18 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, 
   state.sourceInEditState = newCurrentState.sourceInEditState;
   state.targetInEditState = newCurrentState.targetInEditState;
   state.isDirty = true;
+};
+
+const addRepeatingToConnection = (source: Connection, target: Connection) => {
+  const connectionSourceOutput = source.outputs.find((output) => output.reactFlowKey === target.self.reactFlowKey);
+  if (connectionSourceOutput) {
+    connectionSourceOutput.isRepeating = true;
+  }
+
+  const connectionTargetInput = findInputByID(target, source.self.reactFlowKey);
+  if (connectionTargetInput) {
+    (connectionTargetInput as ConnectionUnit).isRepeating = true;
+  }
 };
 
 const addConnection = (
