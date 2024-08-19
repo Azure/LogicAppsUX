@@ -88,39 +88,46 @@ export class SchemaProcessor {
     schema = this._dereferenceRefSchema(schema) as SchemaObject;
 
     let properties: SchemaProperty[];
-    switch (schema.type) {
-      case SwaggerConstants.Types.Array: {
-        properties = this._getArrayProperties(schema);
-        break;
+    if (Array.isArray(schema.type)) {
+      properties = [];
+      for (const type of schema.type) {
+        properties = properties.concat(this.getSchemaProperties({ ...schema, type }));
       }
-
-      case SwaggerConstants.Types.Boolean:
-      case SwaggerConstants.Types.Integer:
-      case SwaggerConstants.Types.Null:
-      case SwaggerConstants.Types.Number:
-      case SwaggerConstants.Types.String:
-      case undefined: {
-        properties = this._getScalarProperties(schema);
-        break;
-      }
-
-      case SwaggerConstants.Types.Object: {
-        // TODO: this condition will go away once Button trigger can fupport Object in the UI
-        if (
-          this.options.fileParameterAware &&
-          schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.CONTENT] &&
-          schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.FILENAME]
-        ) {
-          properties = this._getFileProperties(schema);
-        } else {
-          properties = this._getObjectProperties(schema, this.options.keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
+    } else {
+      switch (schema.type) {
+        case SwaggerConstants.Types.Array: {
+          properties = this._getArrayProperties(schema);
+          break;
         }
-        break;
-      }
 
-      default: {
-        properties = [];
-        break;
+        case SwaggerConstants.Types.Boolean:
+        case SwaggerConstants.Types.Integer:
+        case SwaggerConstants.Types.Null:
+        case SwaggerConstants.Types.Number:
+        case SwaggerConstants.Types.String:
+        case undefined: {
+          properties = this._getScalarProperties(schema);
+          break;
+        }
+
+        case SwaggerConstants.Types.Object: {
+          // TODO: this condition will go away once Button trigger can support Object in the UI
+          if (
+            this.options.fileParameterAware &&
+            schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.CONTENT] &&
+            schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.FILENAME]
+          ) {
+            properties = this._getFileProperties(schema);
+          } else {
+            properties = this._getObjectProperties(schema, this.options.keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
+          }
+          break;
+        }
+
+        default: {
+          properties = [];
+          break;
+        }
       }
     }
 
@@ -322,7 +329,7 @@ export class SchemaProcessor {
       schemaProperties.push({
         alias: this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined,
         default: schema.default,
-        description: description,
+        description,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
         editor: getEditorForParameter(schema, dynamicValues),

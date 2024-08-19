@@ -207,14 +207,11 @@ export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): 
 
   const files = fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
   if (Array.isArray(files)) {
-    for (const file of files) {
-      if (file.isDirectory()) {
-        const version = file.name;
-        if (semver.major(version).toString() === majorVersion) {
-          await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
-          return version;
-        }
-      }
+    const sdkFolders = files.filter((file) => file.isDirectory()).map((file) => file.name);
+    const version = semver.maxSatisfying(sdkFolders, `~${majorVersion}`);
+    if (version !== null) {
+      await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
+      return version;
     }
   }
 
