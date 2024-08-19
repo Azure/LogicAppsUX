@@ -89,8 +89,15 @@ const getWorkflowsPick = async (projectPath: string) => {
   return picks;
 };
 
-// Function to create an empty C# test project
-//TODO: Add Doc String
+/**
+ * Creates an empty C# test project within the specified project directory.
+ *
+ * @param {IAzureConnectorsContext} context - The context for Azure Connectors.
+ * @param {string} projectPath - The path to the project directory.
+ * @param {string} workflowName - The name of the workflow for which the test project is being created.
+ * @param {string} unitTestName - The name of the unit test to be created.
+ * @returns {Promise<void>} - A promise that resolves when the test project has been created.
+ */
 export async function createEmptyCSharpTestProject(
   context: IAzureConnectorsContext,
   projectPath: string,
@@ -119,14 +126,29 @@ export async function createEmptyCSharpTestProject(
     // Copy and modify .csproj file
     await createCsprojFile(testProjectPath, testProjectName, templateFolderName, csprojFileName);
 
-    //TODO: Localize Info Message
-    vscode.window.showInformationMessage(`Created C# test project: ${testProjectName} in ${testsDirectory}`);
+    vscode.window.showInformationMessage(
+      localize('info.createCSharpTestProject', 'Created C# test project: {0} in {1}', testProjectName, testsDirectory)
+    );
   } catch (error) {
-    //TODO: Localize Error
-    vscode.window.showErrorMessage(`Failed to create C# test project: ${error instanceof Error ? error.message : String(error)}`);
+    vscode.window.showErrorMessage(
+      localize(
+        'error.createCSharpTestProject',
+        'Failed to create C# test project: {0}',
+        error instanceof Error ? error.message : String(error)
+      )
+    );
   }
 
-  //TODO: Add doc string
+  /**
+   * Creates a .cs file in the specified test project path by using a template.
+   *
+   * @param {string} testProjectPath - The path to the test project directory.
+   * @param {string} unitTestName - The name of the unit test to be created.
+   * @param {string} workflowName - The name of the workflow for which the test project is being created.
+   * @param {string} templateFolderName - The folder name where the template is located.
+   * @param {string} csFileName - The name of the .cs file template.
+   * @returns {Promise<void>} - A promise that resolves when the .cs file has been created.
+   */
   async function createCsFile(
     testProjectPath: string,
     unitTestName: string,
@@ -144,7 +166,15 @@ export async function createEmptyCSharpTestProject(
     await fs.writeFile(csFilePath, csFileContent);
   }
 
-  ///Todo: Add doc String
+  /**
+   * Creates a .csproj file in the specified test project path by using a template.
+   *
+   * @param {string} testProjectPath - The path to the test project directory.
+   * @param {string} testProjectName - The name of the test project.
+   * @param {string} templateFolderName - The folder name where the template is located.
+   * @param {string} csprojFileName - The name of the .csproj file template.
+   * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
+   */
   async function createCsprojFile(
     testProjectPath: string,
     testProjectName: string,
