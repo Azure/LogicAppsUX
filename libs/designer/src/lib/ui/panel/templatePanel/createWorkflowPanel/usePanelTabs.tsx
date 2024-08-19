@@ -15,7 +15,7 @@ import {
   validateParameters,
   validateWorkflowName,
 } from '../../../../core/state/templates/templateSlice';
-import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, Status } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
 
 export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
@@ -29,9 +29,13 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     kind,
     manifest: selectedManifest,
   } = useSelector((state: RootState) => state.template);
+  const { mapping, selectedTabId, templateName, subscriptionId } = useSelector((state: RootState) => ({
+    mapping: state.workflow.connections.mapping,
+    selectedTabId: state.panel.selectedTabId,
+    templateName: state.template.templateName,
+    subscriptionId: state.workflow.subscriptionId,
+  }));
 
-  const { mapping } = useSelector((state: RootState) => state.workflow.connections);
-  const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId);
   const [isCreated, setIsCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
@@ -71,9 +75,22 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     try {
       await onCreateClick();
       setIsCreated(true);
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'Templates.usePanelTabs',
+        message: 'Template is created',
+        args: [templateName, subscriptionId],
+      });
       LoggerService().endTrace(logId, { status: Status.Success });
     } catch (e: any) {
       setErrorMessage(e.message);
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'Templates.usePanelTabs',
+        message: e.message,
+        error: e instanceof Error ? e : undefined,
+        args: [templateName, subscriptionId],
+      });
       LoggerService().endTrace(logId, { status: Status.Failure });
     }
   });
