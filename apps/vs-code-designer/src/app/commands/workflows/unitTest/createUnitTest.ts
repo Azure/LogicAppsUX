@@ -5,7 +5,7 @@
 import { workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
-import { validateUnitTestName } from '../../../utils/unitTests';
+import { getTestsDirectory, validateUnitTestName } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
@@ -13,6 +13,7 @@ import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalPro
 import type { IAzureQuickPickItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as fs from 'fs-extra';
 
 /**
  * Creates a unit test for a Logic App workflow.
@@ -89,15 +90,73 @@ const getWorkflowsPick = async (projectPath: string) => {
 };
 
 // Function to create an empty C# test project
-async function createEmptyCSharpTestProject(
+//TODO: Add Doc String
+export async function createEmptyCSharpTestProject(
   context: IAzureConnectorsContext,
   projectPath: string,
   workflowName: string,
   unitTestName: string
 ): Promise<void> {
-  // TODO: Implement the creation of an empty C# test project
-  // This function should create the necessary files and folder structure for a C# test project
-  // You may want to use the 'fs' module to create files and folders
+  try {
+    // Get the tests directory
+    const testsDirectoryUri = getTestsDirectory(projectPath);
+    const testsDirectory = testsDirectoryUri.fsPath;
 
-  vscode.window.showInformationMessage(`Created empty C# test project for ${workflowName} with test name ${unitTestName}`);
+    const testProjectName = `${workflowName}.Tests`;
+    const testProjectPath = path.join(testsDirectory, testProjectName);
+
+    // Create test project directory
+    await fs.ensureDir(testProjectPath);
+
+    // Define template paths
+    const templateFolderName = 'UnitTestTemplates';
+    const csFileName = 'TestClassFile';
+    const csprojFileName = 'TestProjectFile';
+
+    // Copy and modify .cs file
+    await createCsFile(testProjectPath, unitTestName, workflowName, templateFolderName, csFileName);
+
+    // Copy and modify .csproj file
+    await createCsprojFile(testProjectPath, testProjectName, templateFolderName, csprojFileName);
+
+    //TODO: Localize Info Message
+    vscode.window.showInformationMessage(`Created C# test project: ${testProjectName} in ${testsDirectory}`);
+  } catch (error) {
+    //TODO: Localize Error
+    vscode.window.showErrorMessage(`Failed to create C# test project: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  //TODO: Add doc string
+  async function createCsFile(
+    testProjectPath: string,
+    unitTestName: string,
+    workflowName: string,
+    templateFolderName: string,
+    csFileName: string
+  ): Promise<void> {
+    const templatePath = path.join(__dirname, 'assets', templateFolderName, csFileName);
+
+    //TODO[Sami]:Update template content per SDK contents
+    const templateContent = await fs.readFile(templatePath, 'utf-8');
+
+    const csFilePath = path.join(testProjectPath, `${unitTestName}.cs`);
+    const csFileContent = templateContent.replace(/<%= unitTestName %>/g, unitTestName).replace(/<%= workflowName %>/g, workflowName);
+    await fs.writeFile(csFilePath, csFileContent);
+  }
+
+  ///Todo: Add doc String
+  async function createCsprojFile(
+    testProjectPath: string,
+    testProjectName: string,
+    templateFolderName: string,
+    csprojFileName: string
+  ): Promise<void> {
+    const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojFileName);
+    //TODO [Sami]: Update template content per SDK contents
+    const templateContent = await fs.readFile(templatePath, 'utf-8');
+
+    const csprojFilePath = path.join(testProjectPath, `${testProjectName}.csproj`);
+    const csprojFileContent = templateContent.replace(/<%= testProjectName %>/g, testProjectName);
+    await fs.writeFile(csprojFilePath, csprojFileContent);
+  }
 }
