@@ -44,6 +44,17 @@ body:
       required: true
 
   - type: dropdown
+    id: operatingSystem
+    attributes:
+      label: Which operating system are you using?
+      options:
+        - Windows
+        - MacOS
+        - Linux
+    validations:
+      required: true
+
+  - type: dropdown
     id: designerType
     attributes:
       label: Are you using new designer or old designer
