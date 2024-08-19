@@ -26,7 +26,7 @@ import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
@@ -87,6 +87,8 @@ export const Designer = (props: DesignerProps) => {
     },
     [dispatch]
   );
+
+  const designerContainerRef = useRef<HTMLDivElement>(null);
 
   const emptyWorkflowPlaceholderNodes = [
     {
@@ -206,7 +208,7 @@ export const Designer = (props: DesignerProps) => {
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" style={copilotPadding}>
+      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef} style={copilotPadding}>
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -232,7 +234,12 @@ export const Designer = (props: DesignerProps) => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
+            <PanelRoot
+              panelContainerRef={designerContainerRef}
+              panelLocation={panelLocation}
+              customPanelLocations={customPanelLocations}
+              isResizeable={true}
+            />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
             <DesignerContextualMenu />
