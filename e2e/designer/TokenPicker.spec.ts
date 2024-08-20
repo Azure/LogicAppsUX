@@ -11,6 +11,7 @@ test.describe(
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Panel');
+
       await page.getByLabel('Parse JSON operation, Data').click();
       await page.getByLabel('Content').click();
       await page.locator('button').filter({ hasText: '' }).click();
@@ -24,6 +25,20 @@ test.describe(
       await page.getByPlaceholder('Search').click();
       await page.getByPlaceholder('Search').fill('OCSR');
       await expect(page.getByRole('button', { name: 'EILCO Admin Nominations-OCSA' })).toBeVisible();
+    });
+
+    test('Expression Editor works with dynamic content', async ({ page }) => {
+      await page.goto('/');
+
+      await GoToMockWorkflow(page, 'Panel');
+      await page.getByLabel('Parse JSON operation, Data').click();
+      await page.getByLabel('Content').click();
+      await page.locator('button').filter({ hasText: '' }).click();
+      await page.getByRole('button', { name: 'length(collection) Returns' }).click();
+      await page.getByRole('tab', { name: 'Dynamic content Dynamic' }).click();
+      await expect(page.locator('.msla-expression-editor-container')).toBeVisible();
+      await page.getByRole('button', { name: 'ArrayVariable', exact: true }).click();
+      await expect(page.locator('.msla-expression-editor-container')).toContainText("length(variables('ArrayVariable'))");
     });
   }
 );
