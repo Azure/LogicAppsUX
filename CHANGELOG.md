@@ -1,4 +1,22 @@
 # Logic Apps Designer
+## [4.66.0](https://github.com/Azure/LogicAppsUX/compare/v4.65.0...v4.66.0) (2024-08-20)
+
+
+### Features
+
+* **vscode:** Update params to openMonitor in host service ([#5432](https://github.com/Azure/LogicAppsUX/issues/5432)) ([4cb85b0](https://github.com/Azure/LogicAppsUX/commit/4cb85b039d12b1d8834971f21f89531093ee9def))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Hide other panels if one panel opens + Title changes ([#5418](https://github.com/Azure/LogicAppsUX/issues/5418)) ([9cbab96](https://github.com/Azure/LogicAppsUX/commit/9cbab96c88313540195bb7dcc88aefcc48ebf625))
+* **designer:** Complex Array Editor Now Supports booleans ([#5421](https://github.com/Azure/LogicAppsUX/issues/5421)) ([66cdfab](https://github.com/Azure/LogicAppsUX/commit/66cdfab73801fab69d5c84c17c905a7f9c6902c2)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Fetch only logic container apps in hybrid ([#5438](https://github.com/Azure/LogicAppsUX/issues/5438)) ([378840f](https://github.com/Azure/LogicAppsUX/commit/378840f11bacbf8ae50e4badf875593d546967e1)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Fixing the token expression when property name is body and is nested in body ([#5414](https://github.com/Azure/LogicAppsUX/issues/5414)) ([3288066](https://github.com/Azure/LogicAppsUX/commit/3288066503629b85c69e8acceda48a9a366477da))
+* **vscode:** Fix Async Download for Dependencies ([#5354](https://github.com/Azure/LogicAppsUX/issues/5354)) ([cfa556e](https://github.com/Azure/LogicAppsUX/commit/cfa556e5ddbb37534b95ab91f676c30985602736))
+* **vscode:** Fix determining latest local .NET SDK version ([#5417](https://github.com/Azure/LogicAppsUX/issues/5417)) ([f693418](https://github.com/Azure/LogicAppsUX/commit/f69341855bcb17623a710e9a9627802d735f5e15))
+* **vscode:** Standarize workflow id when resolving resource ([#5422](https://github.com/Azure/LogicAppsUX/issues/5422)) ([cdc5006](https://github.com/Azure/LogicAppsUX/commit/cdc50065af833d22730f879c71731bbd640583ee))
+
 ## [4.65.0](https://github.com/Azure/LogicAppsUX/compare/v4.64.0...v4.65.0) (2024-08-15)
 
 
