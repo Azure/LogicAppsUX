@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.57.5](https://github.com/Azure/LogicAppsUX/compare/v4.57.4...v4.57.5) (2024-08-20)
+
+
+### Bug Fixes
+
+* **designer-ui:** Fix Monaco editor disappearing in Dynamic Content view ([#5350](https://github.com/Azure/LogicAppsUX/issues/5350)) ([eecfcbb](https://github.com/Azure/LogicAppsUX/commit/eecfcbb2c68aee8b26d710feba9aea1c1fd1deb4))
+
 ### [4.57.4](https://github.com/Azure/LogicAppsUX/compare/v4.57.3...v4.57.4) (2024-08-19)
 
 
