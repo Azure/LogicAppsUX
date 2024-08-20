@@ -44,7 +44,13 @@ import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ConnectionsData,
+  Parameter,
+  FuncVersion,
+  IIdentityWizardContext,
+  ProjectLanguage,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
@@ -287,9 +293,23 @@ async function getProjectPathToDeploy(
   const parametersJson = await getParametersJson(workspaceFolderPath);
   let connectionsData: ConnectionsData;
   let parametizedConnections: ConnectionsData;
+  let parametersMSIAuth: Record<string, Parameter>;
+
+  for (const parameterKey of Object.keys(parametersJson)) {
+    if (parameterKey.includes('Authentication')) {
+      parametersMSIAuth[parameterKey] = {
+        type: 'Object',
+        value: {
+          type: 'ManagedServiceIdentity',
+        },
+      };
+    } else {
+      parametersMSIAuth[parameterKey] = parametersJson[parameterKey];
+    }
+  }
 
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
+  const resolutionService = new ResolutionService(parametersMSIAuth, targetAppSettings);
   try {
     parametizedConnections = JSON.parse(connectionsJson);
     connectionsData = resolutionService.resolve(parametizedConnections);
