@@ -23,5 +23,6 @@ export interface IHttpClient {
   get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
   post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
   put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
+  patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
   delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
 }

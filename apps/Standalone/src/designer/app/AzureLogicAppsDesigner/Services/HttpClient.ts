@@ -73,6 +73,26 @@ export class HttpClient implements IHttpClient {
     }
   }
 
+  async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+    const response = await axios.patch(getRequestUrl(options), options.content, {
+      headers: {
+        ...this._extraHeaders,
+        ...options.headers,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+    if (!isSuccessResponse(response.status)) {
+      return Promise.reject(response);
+    }
+
+    try {
+      return response.data;
+    } catch {
+      return response as any;
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType> {
     const response = await axios.delete(getRequestUrl(options), {
