@@ -1,4 +1,3 @@
-import type { IComboBoxOption } from '@fluentui/react';
 import constants from '../../../constants';
 import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
@@ -6,6 +5,7 @@ import { $isTokenNode } from '../nodes/tokenNode';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
+import type { ComboboxItem } from '../../../combobox';
 
 /**
  * Creates a literal value segment.
@@ -178,19 +178,28 @@ export const removeQuotes = (s: string): string => {
   return s;
 };
 
-export const getDropdownOptionsFromOptions = (editorOptions: any) => {
-  let dropdownOptions: IComboBoxOption[] = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+export const getDropdownOptionsFromOptions = (editorOptions: any): ComboboxItem[] => {
+  let dropdownOptions: ComboboxItem[] = editorOptions?.options?.value ?? editorOptions?.options ?? [];
+  // sometimes the options are nested in an object, this does a search to find the array of options
   if (!Array.isArray(dropdownOptions)) {
-    Object.values(dropdownOptions).forEach((value) => {
-      if (Array.isArray(value)) {
-        dropdownOptions = value.map((option) => {
-          return {
-            key: option,
-            text: option,
-          };
-        });
-      }
-    });
+    const valuesArray = Object.values(dropdownOptions).find(Array.isArray);
+    if (valuesArray) {
+      dropdownOptions = valuesArray.map((option) => {
+        const { displayName, key, value } = option ?? {};
+        return {
+          key: key ?? option,
+          value: value ?? option,
+          displayName: displayName ?? option,
+        };
+      });
+    }
   }
+
+  // handle cases where the displayName is not a string
+  dropdownOptions = dropdownOptions.map((option) => {
+    const stringifiedDisplayName = typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName);
+    return { ...option, displayName: stringifiedDisplayName, key: option.key ?? stringifiedDisplayName };
+  });
+
   return dropdownOptions;
 };

@@ -216,16 +216,30 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return undefined;
   };
 
+  const getChildWorkflowIdFromInputs = (inputs: any): string | undefined => {
+    if (!isNullOrEmpty(inputs)) {
+      const workflow = getObjectPropertyValue(inputs, ['host', 'value', 'workflow']);
+      if (!isNullOrEmpty(workflow)) {
+        return workflow.id;
+      }
+    }
+    return undefined;
+  };
+
+  const runName = useMemo(() => {
+    return getChildRunNameFromOutputs(runData?.outputs);
+  }, [runData?.outputs]);
+
   const canShowLogicAppRun = useMemo(() => {
-    const runName = getChildRunNameFromOutputs(runData?.outputs);
     return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
-  }, [nodeType, runData?.outputs]);
+  }, [nodeType, runName]);
 
   const showLogicAppRunClick = useCallback(() => {
-    if (runInstance?.id && runInstance?.properties && !!HostService()) {
-      HostService().openMonitorView?.(runInstance.properties.workflow.id, runInstance?.id);
+    const workflowId = getChildWorkflowIdFromInputs(runData?.inputs);
+    if (workflowId && runName && !!HostService()) {
+      HostService().openMonitorView?.(workflowId, runName);
     }
-  }, [runInstance]);
+  }, [runData?.inputs, runName]);
 
   return (
     <PanelContainer
