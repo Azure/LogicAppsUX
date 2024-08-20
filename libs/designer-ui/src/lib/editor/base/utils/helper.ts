@@ -181,7 +181,7 @@ export const removeQuotes = (s: string): string => {
 export const getDropdownOptionsFromOptions = (editorOptions: any): ComboboxItem[] => {
   let dropdownOptions: ComboboxItem[] = editorOptions?.options?.value ?? editorOptions?.options ?? [];
   // sometimes the options are nested in an object, this does a search to find the array of options
-  if (!Array.isArray(dropdownOptions)) {
+  if (dropdownOptions && !Array.isArray(dropdownOptions)) {
     const valuesArray = Object.values(dropdownOptions).find(Array.isArray);
     if (valuesArray) {
       dropdownOptions = valuesArray.map((option) => {
@@ -197,7 +197,8 @@ export const getDropdownOptionsFromOptions = (editorOptions: any): ComboboxItem[
 
   // handle cases where the displayName is not a string
   dropdownOptions = dropdownOptions.map((option) => {
-    const stringifiedDisplayName = typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName);
+    const displayName = option.displayName ?? option.key ?? option;
+    const stringifiedDisplayName = typeof displayName === 'string' ? displayName : JSON.stringify(displayName);
     return { ...option, displayName: stringifiedDisplayName, key: option.key ?? stringifiedDisplayName };
   });
 

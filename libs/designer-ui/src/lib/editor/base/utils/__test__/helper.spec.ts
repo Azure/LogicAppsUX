@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ValueSegmentType } from '../../../models/parameter';
-import { createLiteralValueSegment, createEmptyLiteralValueSegment, removeFirstAndLast } from '../helper';
+import { createLiteralValueSegment, createEmptyLiteralValueSegment, removeFirstAndLast, getDropdownOptionsFromOptions } from '../helper';
 
 describe('Helper functions', () => {
   it('creates a literal value segment', () => {
@@ -31,5 +31,51 @@ describe('Helper functions', () => {
       { id: '1', type: ValueSegmentType.LITERAL, value: 'est' },
       { id: '2', type: ValueSegmentType.LITERAL, value: 'exampl' },
     ]);
+  });
+});
+
+describe('getDropdownOptionsFromOptions', () => {
+  it('returns options directly when they are available', () => {
+    const editorOptions = {
+      options: [
+        { key: '1', value: 'Option 1', displayName: 'Option 1' },
+        { key: '2', value: 'Option 2', displayName: 'Option 2' },
+      ],
+    };
+    const result = getDropdownOptionsFromOptions(editorOptions);
+    expect(result).toEqual(editorOptions.options);
+  });
+
+  it('returns options when they are nested in an object', () => {
+    const editorOptions = {
+      options: {
+        nested: [
+          { key: '1', value: 'Option 1', displayName: 'Option 1' },
+          { key: '2', value: 'Option 2', displayName: 'Option 2' },
+        ],
+      },
+    };
+    const result = getDropdownOptionsFromOptions(editorOptions);
+    expect(result).toEqual(editorOptions.options.nested);
+  });
+
+  it('handles cases where displayName is not a string', () => {
+    const editorOptions = {
+      options: [
+        { key: '1', value: 'Option 1', displayName: { text: 'Option 1' } },
+        { key: '2', value: 'Option 2', displayName: ['Option 2'] },
+      ],
+    };
+    const result = getDropdownOptionsFromOptions(editorOptions);
+    expect(result).toEqual([
+      { key: '1', value: 'Option 1', displayName: '{"text":"Option 1"}' },
+      { key: '2', value: 'Option 2', displayName: '["Option 2"]' },
+    ]);
+  });
+
+  it('returns an empty array when no options are available', () => {
+    const editorOptions = {};
+    const result = getDropdownOptionsFromOptions(editorOptions);
+    expect(result).toEqual([]);
   });
 });
