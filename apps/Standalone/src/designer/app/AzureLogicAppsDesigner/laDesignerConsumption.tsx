@@ -18,7 +18,7 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -485,6 +485,7 @@ const getDesignerServices = (
   });
 
   const hostService = {
+    fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
     openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
   };
 
