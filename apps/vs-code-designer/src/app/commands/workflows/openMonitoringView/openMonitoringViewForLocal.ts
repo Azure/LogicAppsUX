@@ -9,7 +9,6 @@ import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import {
   removeWebviewPanelFromCache,
   cacheWebviewPanel,
-  getTriggerName,
   getAzureConnectorDetailsForLocalProject,
   getStandardAppData,
 } from '../../../utils/codeless/common';
@@ -18,14 +17,15 @@ import { sendRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { createUnitTest } from '../unitTest/createUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
-import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { ViewColumn, Uri, type WebviewPanel } from 'vscode';
+import type { WebviewPanel } from 'vscode';
+import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
@@ -56,6 +56,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+    };
 
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),

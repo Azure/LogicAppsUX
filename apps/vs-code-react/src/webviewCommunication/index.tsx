@@ -37,6 +37,7 @@ export const VSCodeContext = React.createContext(vscode);
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
   const projectState = useSelector((state: RootState) => state.project);
+  const dataMapperVersion = projectState.dataMapperVersion;
 
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
@@ -69,51 +70,92 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         break;
       }
       case ProjectName.dataMapper: {
-        switch (message.command) {
-          case ExtensionCommand.setRuntimePort: {
-            dispatch(changeRuntimePort(message.data));
-            break;
-          }
-          case ExtensionCommand.fetchSchema: {
-            if (message.data.type === SchemaType.Source) {
-              dispatch(changeSourceSchemaFilename(message.data.fileName));
-            } else {
-              dispatch(changeTargetSchemaFilename(message.data.fileName));
+        if (message.command === ExtensionCommand.getDataMapperVersion) {
+          dispatch(changeDataMapperVersion(message.data));
+        } else if (dataMapperVersion === 2) {
+          switch (message.command) {
+            case ExtensionCommand.setRuntimePort: {
+              dispatch(changeRuntimePortV2(message.data));
+              break;
             }
-            break;
+            case ExtensionCommand.fetchSchema: {
+              if (message.data.type === SchemaType.Source) {
+                dispatch(changeSourceSchemaFilenameV2(message.data.fileName));
+              } else {
+                dispatch(changeTargetSchemaFilenameV2(message.data.fileName));
+              }
+              break;
+            }
+            case ExtensionCommand.loadDataMap: {
+              // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
+              dispatch(changeSourceSchemaFilenameV2(message.data.sourceSchemaFileName));
+              dispatch(changeTargetSchemaFilenameV2(message.data.targetSchemaFileName));
+              dispatch(changeMapDefinitionV2(message.data.mapDefinition));
+              dispatch(changeDataMapMetadataV2(message.data.metadata));
+              break;
+            }
+            case ExtensionCommand.showAvailableSchemasV2: {
+              dispatch(changeSchemaTreeList(message.data));
+              break;
+            }
+            case ExtensionCommand.getAvailableCustomXsltPaths: {
+              dispatch(changeCustomXsltPathListV2(message.data));
+              break;
+            }
+            case ExtensionCommand.setXsltData: {
+              dispatch(changeXsltFilenameV2(message.data.filename));
+              dispatch(changeXsltContentV2(message.data.fileContents));
+              break;
+            }
+            case ExtensionCommand.getConfigurationSetting: {
+              dispatch(changeUseExpandedFunctionCardsV2(message.data));
+              break;
+            }
+            default:
+              throw new Error('Unknown post message received');
           }
-          case ExtensionCommand.loadDataMap: {
-            // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
-            dispatch(changeSourceSchemaFilename(message.data.sourceSchemaFileName));
-            dispatch(changeTargetSchemaFilename(message.data.targetSchemaFileName));
-            dispatch(changeMapDefinition(message.data.mapDefinition));
-            dispatch(changeDataMapMetadata(message.data.metadata));
-            break;
+        } else {
+          switch (message.command) {
+            case ExtensionCommand.setRuntimePort: {
+              dispatch(changeRuntimePort(message.data));
+              break;
+            }
+            case ExtensionCommand.fetchSchema: {
+              if (message.data.type === SchemaType.Source) {
+                dispatch(changeSourceSchemaFilename(message.data.fileName));
+              } else {
+                dispatch(changeTargetSchemaFilename(message.data.fileName));
+              }
+              break;
+            }
+            case ExtensionCommand.loadDataMap: {
+              // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
+              dispatch(changeSourceSchemaFilename(message.data.sourceSchemaFileName));
+              dispatch(changeTargetSchemaFilename(message.data.targetSchemaFileName));
+              dispatch(changeMapDefinition(message.data.mapDefinition));
+              dispatch(changeDataMapMetadata(message.data.metadata));
+              break;
+            }
+            case ExtensionCommand.showAvailableSchemas: {
+              dispatch(changeSchemaList(message.data));
+              break;
+            }
+            case ExtensionCommand.getAvailableCustomXsltPaths: {
+              dispatch(changeCustomXsltPathList(message.data));
+              break;
+            }
+            case ExtensionCommand.setXsltData: {
+              dispatch(changeXsltFilename(message.data.filename));
+              dispatch(changeXsltContent(message.data.fileContents));
+              break;
+            }
+            case ExtensionCommand.getConfigurationSetting: {
+              dispatch(changeUseExpandedFunctionCards(message.data));
+              break;
+            }
+            default:
+              throw new Error('Unknown post message received');
           }
-          case ExtensionCommand.showAvailableSchemas: {
-            dispatch(changeSchemaList(message.data));
-            break;
-          }
-          case ExtensionCommand.getAvailableCustomXsltPaths: {
-            dispatch(changeCustomXsltPathList(message.data));
-            break;
-          }
-          case ExtensionCommand.setXsltData: {
-            dispatch(changeXsltFilename(message.data.filename));
-            dispatch(changeXsltContent(message.data.fileContents));
-            break;
-          }
-          case ExtensionCommand.getConfigurationSetting: {
-            dispatch(changeUseExpandedFunctionCards(message.data));
-            break;
-          }
-          case ExtensionCommand.getDataMapperVersion: {
-            dispatch(changeDataMapperVersion(message.data));
-            break;
-          }
-
-          default:
-            throw new Error('Unknown post message received');
         }
         break;
       }

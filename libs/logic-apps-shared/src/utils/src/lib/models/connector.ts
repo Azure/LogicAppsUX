@@ -105,6 +105,10 @@ export interface ParameterCredentialMapping {
    */
   type: string;
   /**
+   * Ordinal value of the type enum.
+   */
+  typeEnumValue: number;
+  /**
    * The key used to read the expected value from the credential for this parameter.
    */
   credentialKeyName: string;
@@ -123,9 +127,11 @@ export interface OAuthSettingProperties {
 export interface OAuthSetting {
   clientId: string;
   identityProvider: string;
-  redirectUrl: string;
   scopes: string[];
+  redirectMode?: string;
+  redirectUrl: string;
   properties: OAuthSettingProperties;
+  customParameters?: Record<string, any>;
 }
 
 export interface ManagedIdentitySetting {

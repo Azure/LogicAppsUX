@@ -2,7 +2,6 @@
 @import './config/config.less';
 @import './connectiontypeselector/connectiontypeselector.less';
 @import '../selector/listitem.less';
-@import './operationconfigurations/operationconfigurations.less';
 @import '../flyout/flyout.less';
 @import './parameters/parameters.less';
 @import './function/function.less';
@@ -15,14 +14,6 @@
   padding: 10px;
 }
 
-.msla-component-error {
-  & > span {
-    color: rgb(224, 2, 2);
-    font-size: 14px;
-    vertical-align: top;
-  }
-}
-
 .card-narrow-width-mixin() {
   /* For mobile the min width cannot be the maximum width */
   min-width: @card-min-width;
@@ -31,88 +22,7 @@
 }
 
 .msla-card {
-  &.msla-card-fixed-width {
-    margin: 0 auto;
-    min-width: @card-min-fixed-width;
-    width: @card-max-width;
-
-    @media only screen and (max-width: @designer-desktop-max-width) {
-      .card-narrow-width-mixin();
-    }
-
-    &.msla-no-triggers {
-      font-family: @font-family;
-      font-size: @card-header-font-size;
-      padding: 0.5em;
-      text-align: center;
-    }
-  }
-
-  &.msla-card-variable-width {
-    display: table;
-    margin: 0 auto;
-    min-width: @card-max-width;
-
-    @media only screen and (max-width: @designer-desktop-max-width) {
-      .card-narrow-width-mixin();
-    }
-  }
-}
-
-.msla-connectionwizard-canvas--narrow {
-  .msla-card {
-    &.msla-card-fixed-width {
-      .card-narrow-width-mixin();
-    }
-
-    &.msla-card-variable-width {
-      .card-narrow-width-mixin();
-    }
-  }
-}
-
-.msla-card {
   margin: 0 auto;
-}
-
-.msla-card-container,
-.msla-card-container-cell {
-  margin: 0 auto;
-  box-sizing: border-box;
-  position: relative;
-  vertical-align: top;
-  width: 100%;
-}
-
-.msla-card-container-empty {
-  width: 0;
-  display: inline-block;
-}
-
-.msla-card-view {
-  box-sizing: border-box;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.msla-card-caption {
-  padding: 0 3px;
-  .msla-drop-zone > .msla-connector-add-step {
-    left: @insert-button-offset;
-  }
-}
-
-.msla-card-children {
-  display: flex;
-  text-align: center;
-}
-
-.msla-diet-view .msla-card-children {
-  text-align: left;
-}
-
-.msla-card-recommendation-placeholder {
-  background-color: '#FFF';
 }
 
 .msla-card {
@@ -132,119 +42,6 @@
         font-size: 16px;
       }
     }
-
-    .msla-recommendation-v3 {
-      .msla-connectors {
-        padding: 12px 7px 3px 7px;
-      }
-    }
-  }
-
-  .msla-card-header.msla-dark-header {
-    .msla-card-title-group {
-      .msla-card-header-title-view {
-        color: #f7f7f7;
-      }
-    }
-  }
-
-  .msla-card-header {
-    font-family: @header-font-family;
-    font-size: @card-header-font-size;
-    text-align: left;
-    height: @card-header-height;
-    line-height: @card-header-height;
-    color: @card-text-color;
-
-    display: flex;
-    justify-content: space-between;
-
-    .msla-card-title-group {
-      display: flex;
-      overflow: hidden;
-      flex: 1 1 auto;
-      align-items: center;
-      cursor: pointer;
-
-      .msla-card-header-title-view,
-      .msla-card-header-title-edit {
-        display: flex;
-        align-items: center;
-      }
-
-      .msla-card-header-title-edit {
-        flex: 1 1 auto;
-      }
-
-      .msla-card-header-title-view {
-        cursor: pointer;
-        color: @card-text-color;
-        overflow: hidden;
-        outline: none;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        height: inherit;
-        padding-left: 10px;
-        display: flex;
-
-        &:link,
-        &:visited {
-          text-decoration: none;
-        }
-
-        .msla-card-header-title-tag {
-          color: #646464;
-          padding-left: 4px;
-        }
-      }
-
-      .msla-card-header-title-edit {
-        height: inherit;
-      }
-
-      .msla-card-header-logo {
-        width: @card-header-height;
-        height: @card-header-height;
-        display: inline-block;
-        vertical-align: top;
-        cursor: pointer;
-        flex: 0 0 auto;
-
-        .msla-card-header-icon {
-          width: 100%;
-          height: 100%;
-        }
-      }
-
-      .msla-card-title {
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-
-      .msla-ise {
-        border: @badge-border solid #666;
-        color: #666;
-        display: inline-block;
-        font-size: 11px;
-        height: 14px;
-        line-height: 13px;
-        margin-left: @badge-margin-left;
-        margin-right: @badge-margin-right;
-        text-align: center;
-        text-transform: uppercase;
-        min-width: @badge-width;
-        max-width: @badge-width;
-      }
-    }
-
-    &.msla-component-error {
-      display: block;
-
-      & > span {
-        color: rgb(224, 2, 2);
-        vertical-align: top;
-      }
-    }
   }
 
   .msla-iframe-terms-of-service {
@@ -260,412 +57,8 @@
   }
 }
 
-.msla-card-selected {
-  box-shadow: 0 0 12px @selectedShadowColor;
-  border-width: 2px;
-}
-
-.msla-card,
-.msla-recommendation-dropdown,
-.msla-recommendation-footer,
-.msla-recommendation-empty {
+.msla-card {
   background-color: @card-background-color;
-}
-
-.msla-recommendation-container {
-  text-align: justify;
-}
-
-.msla-card-auth-body {
-  padding: 10px;
-  text-align: center;
-
-  .msla-card-button-primary,
-  .msla-card-button-secondary {
-    margin-top: 10px;
-    margin-right: 10px;
-    min-width: 150px;
-  }
-
-  .msla-card-config-item {
-    text-align: left;
-
-    > label {
-      flex-basis: 24%;
-      margin-right: 0;
-    }
-  }
-
-  .msla-auth-options {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .errorMessage-managed-identity {
-    color: #a4262c;
-    text-align: left;
-    margin-bottom: 10px;
-    margin-left: 27%;
-    @width-offset: (@parameter-label-width + @parameter-label-inputbox-margin);
-    max-width: calc(100% ~'-' @width-offset);
-  }
-}
-
-.msla-card-auth-description {
-  margin: 0;
-  padding-bottom: 10px;
-  word-wrap: break-word;
-}
-
-.msla-card-button-primary {
-  line-height: 30px;
-  padding: 0 40px;
-}
-
-.msla-card-button-secondary {
-  line-height: 30px;
-  padding: 0 40px;
-}
-
-.msla-card-profile-body {
-  padding: 0 0 12px 0;
-}
-
-.msla-card-profile-description {
-  line-height: @parameter-inputbox-height;
-  margin: 0;
-}
-
-.msla-card-profile-list {
-  max-height: 380px;
-  /* 10 items */
-  overflow-y: auto;
-}
-
-.msla-card-profile-buttons {
-  text-align: center;
-
-  [class^='ms-Button']:not(:last-child) {
-    margin-right: 4px;
-  }
-}
-
-.msla-card-swagger-body {
-  padding: @parameter-label-inputbox-margin;
-}
-
-.msla-swagger-endpoint-label {
-  text-transform: uppercase;
-  color: @card-text-color;
-}
-
-.msla-swagger-endpoint-box {
-  border: 1px solid #989898;
-}
-
-.msla-swagger-endpoint-confirm {
-  padding-top: 12px;
-  text-align: center;
-}
-
-.msla-function-inputs-footer {
-  margin-top: @parameter-interval-margin;
-  padding-bottom: 12px;
-  text-align: center;
-}
-
-.msla-card-title-button-group {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-}
-
-.msla-card-title-button {
-  height: @card-header-height;
-  width: @card-header-height;
-  float: left;
-  /* float:left is needed to workaround for IE-only bug */
-  color: #323130;
-
-  .msla-card-title-button-icon {
-    vertical-align: middle;
-    font-size: calc(@card-header-height / 2);
-  }
-}
-
-.msla-card-title-button-static-result {
-  color: @static-result-icon-color;
-}
-
-.msla-card-title-img {
-  height: calc(@card-header-height / 2);
-  width: @card-header-height;
-  float: left;
-}
-
-.msla-connector-top {
-  border-top: 2px solid @defaultConnectorColor;
-}
-
-.msla-step-connector-arrow-down {
-  display: table;
-  width: 100%;
-  margin: auto;
-  height: @card-connector-default-height;
-
-  & > div {
-    display: table-row;
-    height: inherit;
-
-    & > div {
-      display: table-cell;
-    }
-  }
-}
-
-.msla-step-connector-info-section {
-  position: absolute;
-  left: calc(50% - 55px);
-  top: 0;
-  z-index: 1;
-
-  .msla-step-connector-info-button {
-    height: @card-connector-default-height;
-    width: 40px;
-    position: absolute;
-    top: 0;
-    color: black;
-  }
-}
-
-.msla-connector-add-step {
-  height: inherit;
-  position: absolute;
-  left: @insert-button-offset;
-  top: 4px;
-  z-index: 1;
-
-  &.msla-connector-arrow-left,
-  &.msla-connector-arrow-right {
-    height: @card-connector-default-height;
-  }
-
-  &.viewmanager2 {
-    position: static;
-    left: auto;
-    top: auto;
-
-    .msla-connector-add-step-button {
-      position: relative;
-      left: 1px;
-    }
-  }
-}
-
-.msla-connector-add-step-button:focus {
-  outline: 2px dotted #000;
-}
-
-.msla-main-page {
-  .msla-connector-add-step-button:focus {
-    outline: none;
-  }
-}
-
-.msla-step-connector-arrow-right,
-.msla-step-connector-arrow-left,
-.msla-step-connector-join,
-.msla-step-connector-arrow-both {
-  display: table;
-  width: 100%;
-  height: @card-connector-default-height;
-  min-height: @card-connector-default-height;
-
-  & > div {
-    display: table-row;
-    height: 100%;
-
-    & > div {
-      display: table-cell;
-
-      &.msla-connector-arrow {
-        width: 50%;
-        box-sizing: border-box;
-
-        .msla-connector-top-line {
-          border-top: 2px solid @defaultConnectorColor;
-        }
-      }
-
-      &.msla-connector-arrow-right {
-        width: 100%;
-        box-sizing: border-box;
-        position: relative;
-
-        &.background {
-          padding-left: 50%;
-        }
-
-        .msla-connector-top-line {
-          top: 0;
-          width: 100%;
-          border-top: 2px solid @defaultConnectorColor;
-        }
-      }
-
-      &.msla-connector-arrow-left {
-        width: 100%;
-        box-sizing: border-box;
-        position: relative;
-
-        &.background {
-          padding-right: 50%;
-        }
-
-        .msla-connector-top-line {
-          top: 0;
-          width: 100%;
-          border-top: 2px solid @defaultConnectorColor;
-        }
-      }
-
-      &.msla-connector-right {
-        width: 50%;
-        box-sizing: border-box;
-
-        &.background {
-          padding-left: 9px;
-        }
-
-        .msla-connector-top-line {
-          border-top: 2px solid @defaultConnectorColor;
-        }
-      }
-
-      &.msla-connector-left {
-        width: 50%;
-        box-sizing: border-box;
-
-        &.background {
-          padding-right: 9px;
-        }
-
-        .msla-connector-top-line {
-          border-top: 2px solid @defaultConnectorColor;
-        }
-      }
-    }
-  }
-}
-
-.msla-card-flex {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: auto;
-}
-
-.msla-card-view-div {
-  height: auto;
-}
-
-.msla-card-connector-flex {
-  box-sizing: border-box;
-  flex: 1;
-  height: 100%;
-  min-height: @card-connector-default-height;
-}
-
-.msla-connector-vertical-flex {
-  flex: 1 0 30px;
-}
-
-.msla-step-connector-bottom-left,
-.msla-step-connector-bottom-right,
-.msla-step-connector-bottom-both,
-.msla-step-connector-vertical {
-  width: 100%;
-  height: 100%;
-  position: relative;
-
-  & > div {
-    display: flex;
-    height: 100%;
-
-    & > div {
-      flex: 1;
-
-      &.msla-connector-vertical-line {
-        border-right: 2px solid @defaultConnectorColor;
-        min-height: 30px;
-      }
-
-      &.msla-connector-bottom-right-line {
-        border-left: 2px solid @defaultConnectorColor;
-        border-bottom: 2px solid @defaultConnectorColor;
-      }
-
-      &.msla-connector-bottom-left-line {
-        border-right: 2px solid @defaultConnectorColor;
-        border-bottom: 2px solid @defaultConnectorColor;
-      }
-
-      &.msla-connector-bottom-line {
-        border-bottom: 2px solid @defaultConnectorColor;
-      }
-    }
-  }
-}
-
-.msla-step-connector-dummy-div {
-  height: 0;
-  width: 0;
-}
-
-.msla-node-margin {
-  margin-bottom: 20px;
-}
-
-/* Style still in use that used to be in informationbox.less which was removed */
-.msla-information-box-container {
-  .msla-information-box {
-    font-size: 12px;
-    padding: 12px;
-    right: 25px;
-    width: 248px;
-
-    a {
-      &:active,
-      &:link,
-      &:hover,
-      &:visited {
-        text-decoration: underline;
-        color: @brandColor;
-      }
-    }
-  }
-}
-
-.msla-service-principal-div,
-.msla-managed-identity-div,
-.msla-sign-in-div {
-  text-align: left;
-  margin-top: 10px;
-  margin-right: 5px;
-
-  button {
-    display: inline-block;
-  }
-
-  .msla-button {
-    line-height: 28px;
-    img {
-      width: 15px;
-      height: 15px;
-      vertical-align: sub;
-      cursor: pointer;
-    }
-  }
 }
 
 .msla-designer-canvas {
@@ -704,6 +97,9 @@
       outline-offset: -3px;
     }
   }
+  &.pinned {
+    border: 2px solid @pinned-item-color;
+  }
 }
 
 .msla-panel-card-container {
@@ -720,10 +116,9 @@
 
   &:focus {
     outline: none;
-    // TODO: This overlaps the selection blue, looks strange
-    // .msla-selection-box {
-    //   border: 2px solid #605e5c;
-    // }
+    .msla-selection-box {
+      border: 2px solid #000000;
+    }
   }
 
   &:focus,
@@ -763,6 +158,10 @@
     .panel-card-content-gripper-section {
       visibility: visible;
     }
+  }
+
+  .msla-selection-box {
+    border-left: 0;
   }
 
   .panel-card-main {
@@ -898,65 +297,6 @@
     width: 100%;
   }
 
-  .panel-card-slideout {
-    position: absolute;
-    right: 0;
-    top: 0;
-    z-index: 100;
-
-    .panel-card-badges-container {
-      padding-left: 10px;
-      flex: 0 0 30px;
-      display: flex;
-      font-size: 12px;
-      justify-content: space-between;
-
-      .panel-card-badges-section {
-        display: flex;
-        margin-right: 5px;
-      }
-
-      .panel-badge-icon {
-        align-self: center;
-        justify-self: flex-end;
-      }
-    }
-
-    .panel-card-slideout-content {
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.35);
-      width: 350px;
-      position: absolute;
-      top: -2px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow-y: auto;
-      background-color: white;
-
-      .panel-card-fields-container {
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 10px;
-
-        .panel-card-field {
-          display: flex;
-          flex-direction: column;
-          margin: 0 5px 0 5px;
-          text-align: left;
-
-          .panel-card-field-title {
-            padding-left: 7px;
-            margin: 10px 0 5px 0;
-          }
-
-          .panel-card-field-value {
-            padding-left: 7px;
-          }
-        }
-      }
-    }
-  }
-
   .panel-card-badge {
     align-items: center;
     display: flex;
@@ -992,32 +332,6 @@
       font: 14px/20px normal @semibold-font-family;
       margin: 10px 8px 10px 0;
       word-break: break-word;
-    }
-  }
-}
-
-.msla-main-page {
-  .msla-panel-card-container {
-    &.inactive {
-      opacity: 0.5;
-
-      .panel-card-main {
-        cursor: default;
-      }
-    }
-  }
-}
-
-.msla-tab-component-container,
-.msla-tab-component-container > .msla-if {
-  .msla-card:not(.msla-run-after-logo) {
-    border: none;
-    box-shadow: none;
-
-    > .msla-card-header {
-      height: 0;
-      overflow: hidden;
-      visibility: hidden;
     }
   }
 }
@@ -1070,18 +384,6 @@
 }
 
 .msla-theme-dark {
-  .msla-information-box-container {
-    .msla-information-box {
-      a {
-        &:active,
-        &:link,
-        &:hover,
-        &:visited {
-          color: @ms-color-themePrimary;
-        }
-      }
-    }
-  }
 
   .msla-panel-card-container {
     background-color: @ms-color-primaryBackground;
@@ -1095,12 +397,11 @@
       background-color: @ms-color-primaryBackgroundHover;
     }
 
-    .panel-card-slideout {
-      .panel-card-slideout-content {
-        background-color: @ms-color-white;
-        color: @ms-color-black;
-      }
-    }
+		&:focus {
+			.msla-selection-box {
+				border: 2px solid #ffffff;
+			}
+		}
   }
 
   .msla-panel-card-container--no-action {
@@ -1126,30 +427,6 @@
   }
 }
 
-// Note: diet view related overrides must come last to take precedence
-.msla-diet-view {
-  .msla-card-container {
-    min-width: @diet-view-card-min-width;
-  }
-
-  .msla-card-caption {
-    padding: 0;
-    float: left;
-    display: block;
-  }
-}
-
-.msla-actions-container {
-  border: 1px solid #1a192b;
-  border-radius: 3px;
-  color: #222;
-  font-size: 12px;
-  padding: 0 10px 10px 0;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-}
-
 .react-flow__edges {
   z-index: 100 !important;
 }
@@ -1160,32 +437,6 @@
 }
 
 .msla-theme-dark {
-  .msla-tab-component-container {
-    .msla-card,
-    .msla-card-placeolder {
-      background-color: inherit;
-    }
-  }
-
-  .msla-card-header {
-    color: @ms-color-black;
-
-    .msla-card-title-group {
-      .msla-card-header-title-view {
-        color: @ms-color-black;
-
-        .msla-card-header-title-tag {
-          color: @ms-color-neutralTertiary;
-        }
-      }
-
-      .msla-ise {
-        border-color: @ms-color-neutralTertiary;
-        color: @ms-color-neutralTertiary;
-      }
-    }
-  }
-
   .msla-badge {
     border-color: @ms-color-neutralTertiary;
     color: @ms-color-neutralTertiary;

@@ -1,4 +1,4 @@
-import { isBuiltInConnector, isCustomConnector } from '../connectors';
+import { isBuiltInConnector, isCustomConnector, isPremiumConnector } from '../connectors';
 import Constants from '../constants';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { equals, getIntl } from '@microsoft/logic-apps-shared';
@@ -341,8 +341,8 @@ export function getStatusString(status: string, hasRetries: boolean): string {
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
-        defaultMessage: 'Timed Out',
-        id: 'MsCHhQ',
+        defaultMessage: 'Timed out',
+        id: 'BRMOfD',
         description: 'The status message to show in monitoring view.',
       });
 
@@ -395,11 +395,29 @@ export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, 
 };
 
 export const getConnectorCategoryString = (connector: Connector | OperationApi | string): string => {
+  const allStrings = getConnectorAllCategories();
+
+  let connectorCategory: string;
+
+  if (isBuiltInConnector(connector)) {
+    connectorCategory = allStrings['inapp'];
+  } else if (isCustomConnector(connector)) {
+    connectorCategory = allStrings['custom'];
+  } else if (isPremiumConnector(connector)) {
+    connectorCategory = allStrings['premium'];
+  } else {
+    connectorCategory = allStrings['shared'];
+  }
+
+  return connectorCategory;
+};
+
+export const getConnectorAllCategories = (): Record<string, string> => {
   const intl = getIntl();
   const builtInText = intl.formatMessage({
-    defaultMessage: 'In App',
-    id: 'VA7M1u',
-    description: '"In App" category name',
+    defaultMessage: 'In-app',
+    id: 'RatwOB',
+    description: 'In-app category name text',
   });
   const azureText = intl.formatMessage({
     defaultMessage: 'Shared',
@@ -411,8 +429,13 @@ export const getConnectorCategoryString = (connector: Connector | OperationApi |
     id: 'nRpM02',
     description: 'Custom category name text',
   });
+  const premiumText = intl.formatMessage({
+    defaultMessage: 'Premium',
+    id: 'cuKbLw',
+    description: 'Premium category name text',
+  });
 
-  return isBuiltInConnector(connector) ? builtInText : isCustomConnector(connector) ? customText : azureText;
+  return { inapp: builtInText, shared: azureText, custom: customText, premium: premiumText };
 };
 
 export const getPreviewTag = (status: string | undefined): string | undefined => {
@@ -424,4 +447,12 @@ export const getPreviewTag = (status: string | undefined): string | undefined =>
         description: 'The preview tag for a preview connector.',
       })
     : undefined;
+};
+
+export const removeAllNewlines = (inputStr: string): string => {
+  return inputStr.replace(/\n/g, '').replace(/\r/g, '');
+};
+
+export const removeAllSpaces = (inputStr: string): string => {
+  return inputStr.replace(/\s+/g, '');
 };

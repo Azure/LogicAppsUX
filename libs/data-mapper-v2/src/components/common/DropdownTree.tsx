@@ -1,8 +1,8 @@
-import { Tree, TreeItem, TreeItemLayout, Text } from '@fluentui/react-components';
+import { Tree, TreeItem, TreeItemLayout, Text, mergeClasses } from '@fluentui/react-components';
 import { SearchBox } from '@fluentui/react';
 import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import type { IFileSysTreeItem } from 'models/Tree';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import useStyles from './styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
@@ -11,9 +11,10 @@ interface DropdownTreeProps {
   items: IFileSysTreeItem[];
   onItemSelect: (item: IFileSysTreeItem) => void;
   onDropdownOpenClose: () => void;
+  className?: string;
 }
 
-export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: DropdownTreeProps) => {
+export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose, className }: DropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
@@ -92,7 +93,7 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: Dropd
   };
 
   return (
-    <div className={styles.componentWrapper}>
+    <div className={mergeClasses(styles.componentWrapper, className ?? '')}>
       <div
         className={styles.dropdownInputWrapper}
         onClick={() => {

@@ -35,8 +35,14 @@ export {
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
-export { serializeWorkflow, serializeUnitTestDefinition } from './actions/bjsworkflow/serializer';
-export { setSelectedNodeId, changePanelNode, clearPanel, openPanel, collapsePanel } from './state/panel/panelSlice';
+export { serializeWorkflow, serializeUnitTestDefinition, parseWorkflowParameterValue } from './actions/bjsworkflow/serializer';
+export {
+  setSelectedNodeId,
+  changePanelNode,
+  clearPanel,
+  openPanel,
+  collapsePanel,
+} from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export {
@@ -70,3 +76,4 @@ export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
 } from './utils/card';
+export { addOperation } from './actions/bjsworkflow/add';

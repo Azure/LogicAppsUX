@@ -1,4 +1,4 @@
-import { getBrandColorRgbA } from '../../card/utils';
+import { getBrandColorWithOpacity } from '../../card/utils';
 import Constants from '../../constants';
 import { ValueDownload } from './valuedownload';
 import { ValueLink } from './valuelink';
@@ -36,7 +36,7 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   isDownload,
 }) => {
   const borderStyle = {
-    borderColor: getBrandColorRgbA(brandColor, 0.7),
+    borderColor: getBrandColorWithOpacity(brandColor, 0.7),
   };
 
   return (

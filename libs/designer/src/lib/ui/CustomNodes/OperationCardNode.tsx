@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
@@ -11,7 +10,7 @@ import {
   useSuppressDefaultNodeSelectFunctionality,
   useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -23,6 +22,7 @@ import {
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import {
   useAllOperations,
   useConnectorName,
@@ -30,7 +30,6 @@ import {
   useNodeConnectionName,
   useOperationInfo,
   useOperationQuery,
-  useOperationSummary,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
@@ -49,22 +48,17 @@ import {
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { CopyMenuItem } from '../menuItems/copyMenuItem';
-import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
-import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
-import { RunService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
-import { Handle, Position, useOnViewportChange } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -79,7 +73,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const connectorName = useConnectorName(operationInfo);
-  const operationSummary = useOperationSummary(operationInfo);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
@@ -91,7 +84,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
-  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -113,14 +106,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
-  };
-
   const {
     refetch,
-    isLoading: isRepetitionLoading,
-    isRefetching: isRepetitionRefetching,
+    isFetching: isRepetitionLoading,
+    data: repetitionData,
   } = useQuery<any>(
     ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
     getRunRepetition,
@@ -128,10 +117,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       refetchOnWindowFocus: false,
       initialData: null,
       refetchIntervalInBackground: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+      enabled: parentRunIndex !== undefined && isMonitoringView,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionData)) {
+      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionData.properties as any }));
+    }
+  }, [dispatch, id, repetitionData, runInstance?.id]);
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
@@ -175,6 +169,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
 
   const selected = useIsNodeSelected(id);
+  const isPinned = useIsNodePinnedToOperationPanel(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
@@ -198,17 +193,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [brandColor, nodeComment]
   );
 
-  const [showCopyCallout, setShowCopyCallout] = useState(false);
-
-  useOnViewportChange({
-    onStart: useCallback(() => {
-      if (showCopyCallout) {
-        setShowCopyCallout(false);
-      }
-    }, [showCopyCallout]),
-  });
-
-  const nodeClick = useCallback(() => {
+  const handleNodeSelection = useCallback(() => {
     if (nodeSelectCallbackOverride) {
       nodeSelectCallbackOverride(id);
     }
@@ -219,38 +204,48 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
   }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
+  const nodeClick = useCallback(() => {
+    handleNodeSelection();
+  }, [handleNodeSelection]);
+
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: id,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, id]
+  );
+
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
+  const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyOperation({ nodeId: id }));
-    setTimeout(() => {
-      setShowCopyCallout(false);
-    }, 3000);
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
 
-  const resubmitClick = useCallback(() => {
-    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
-  }, [runInstance, id]);
+  const [copyCalloutTimeout, setCopyCalloutTimeout] = useState<NodeJS.Timeout>();
+  const clearCopyTooltip = useCallback(() => {
+    copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
+    setShowCopyCallout(false);
+  }, [copyCalloutTimeout]);
+
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
-  const contextMenuItems: JSX.Element[] = useMemo(
-    () => [
-      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-      <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
-      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-    ],
-    [copyClick, deleteClick, isTrigger, resubmitClick, runData?.canResubmit]
-  );
 
-  const opQuery = useOperationQuery(id);
+  const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = useOperationQuery(id);
 
-  const isLoading = useMemo(
-    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading,
-    [opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
-  );
+  const isLoading = useMemo(() => isRepetitionLoading || isOperationQueryLoading, [isRepetitionLoading, isOperationQueryLoading]);
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
@@ -282,7 +277,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       };
     }
 
-    if (opQuery?.isError) {
+    if (isOperationQueryError) {
       return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
     }
 
@@ -301,7 +296,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return { errorMessage: undefined, errorLevel: undefined };
   }, [
     errorInfo,
-    opQuery?.isError,
+    isOperationQueryError,
     settingValidationErrors?.length,
     parameterValidationErrors?.length,
     isMonitoringView,
@@ -316,64 +311,50 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
 
-  const copiedText = intl.formatMessage({
-    defaultMessage: 'Copied!',
-    id: 'NE54Uu',
-    description: 'Copied text',
-  });
-
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const nodeIndex = useNodeIndex(id);
 
   return (
     <>
       <div className="nopan" ref={ref as any}>
-        <div ref={rootRef}>
-          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-          <Card
-            title={label}
-            icon={iconUri}
-            draggable={!readOnly && !isTrigger}
-            brandColor={brandColor}
-            id={id}
-            connectionRequired={isConnectionRequired}
-            connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
-            connectorName={connectorName?.result}
-            commentBox={comment}
-            drag={drag}
-            dragPreview={dragPreview}
-            errorMessage={errorMessage}
-            errorLevel={errorLevel}
-            isDragging={isDragging}
-            isLoading={isLoading}
-            isMonitoringView={isMonitoringView}
-            isUnitTest={isUnitTest}
-            nodeMockResults={nodeMockResults}
-            isMockSupported={isMockSupported}
-            runData={runData}
-            readOnly={readOnly}
-            onClick={nodeClick}
-            onDeleteClick={deleteClick}
-            onCopyClick={copyClick}
-            operationName={operationSummary?.result}
-            selected={selected}
-            contextMenuItems={contextMenuItems}
-            setFocus={shouldFocus}
-            staticResultsEnabled={!!staticResults}
-            isSecureInputsOutputs={isSecureInputsOutputs}
-          />
-          <Tooltip
-            positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
-            withArrow
-            content={copiedText}
-            relationship="description"
-            visible={showCopyCallout}
-          />
-          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
-        </div>
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <Card
+          title={label}
+          icon={iconUri}
+          draggable={!readOnly && !isTrigger}
+          brandColor={brandColor}
+          id={id}
+          connectionRequired={isConnectionRequired}
+          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
+          connectorName={connectorName?.result}
+          commentBox={comment}
+          drag={drag}
+          dragPreview={dragPreview}
+          errorMessage={errorMessage}
+          errorLevel={errorLevel}
+          isDragging={isDragging}
+          isLoading={isLoading}
+          isMonitoringView={isMonitoringView}
+          isUnitTest={isUnitTest}
+          nodeMockResults={nodeMockResults}
+          isMockSupported={isMockSupported}
+          runData={runData}
+          readOnly={readOnly}
+          onClick={nodeClick}
+          onContextMenu={onContextMenu}
+          onDeleteClick={deleteClick}
+          onCopyClick={copyClick}
+          selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
+          setFocus={shouldFocus}
+          staticResultsEnabled={!!staticResults}
+          isSecureInputsOutputs={isSecureInputsOutputs}
+          nodeIndex={nodeIndex}
+        />
+        {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
+          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
         </div>
       ) : null}
     </>

@@ -8,6 +8,7 @@ import {
   toArrayViewModelSchema,
   toHybridConditionViewModel,
   getTokenExpressionMethodFromKey,
+  generateExpressionFromKey,
   loadDynamicContentForInputsInNode,
   loadParameterValue,
 } from '../helper';
@@ -1274,7 +1275,7 @@ describe('core/utils/parameters/helper', () => {
         parameter.info.format = '';
 
         const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-        expect(expressionString).toEqual(`@{body('action')['path']}`);
+        expect(expressionString).toEqual(`@body('action')['path']`);
       });
     }
 
@@ -2511,8 +2512,20 @@ describe('core/utils/parameters/helper', () => {
 
       // For values using `body/*` syntax, use OUTPUTS.
       ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
-    ])('correctly gets the token expression for %p', (key, actionName, expected) => {
+    ])('correctly gets the token expression for "%s"', (key, actionName, expected) => {
       expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
+    });
+  });
+
+  describe('generateExpressionFromKey', () => {
+    it.each<[string, string, string | undefined, string]>([
+      // For `body.$` and its first-class properties, use BODY.
+      ['triggerBody()', 'body.$', undefined, `triggerBody()`],
+      ['triggerBody()', 'body.$.Body', undefined, `triggerBody()['Body']`],
+      [`body('A1')`, 'body.$', 'A1', `body('A1')`],
+      [`body('A1')`, 'body.$.body.B1', 'A1', `body('A1')['body']['B1']`],
+    ])('correctly gets the token expression for nested body property for "%s"', (method, key, actionName, expected) => {
+      expect(generateExpressionFromKey(method, key, actionName, /* isInsideArray */ false, /* required */ true)).toBe(expected);
     });
   });
 

@@ -685,12 +685,21 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
     if (!isNullOrUndefined(nodeRunData)) {
+      const repetitionRunData = isNullOrUndefined(nodeRunData.repetitionCount)
+        ? {
+            runData: {
+              ...nodeRunData,
+              duration: getDurationStringPanelMode(
+                Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
+                /* abbreviated */ true
+              ),
+            },
+          }
+        : {};
+
       updatedNodesData[key] = {
         ...node,
-        runData: {
-          ...nodeRunData,
-          duration: getDurationStringPanelMode(Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime), /* abbreviated */ true),
-        },
+        ...repetitionRunData,
         runIndex: 0,
       };
     }

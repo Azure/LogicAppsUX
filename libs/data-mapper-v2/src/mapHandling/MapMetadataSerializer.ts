@@ -1,16 +1,21 @@
+import type { Dimensions } from '@xyflow/react';
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { ConnectionAndOrder, FunctionMetadata, MapMetadata } from '@microsoft/logic-apps-shared';
+import type { ConnectionAndOrder, FunctionMetadata, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 
-export const generateMapMetadata = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadata => {
+export const generateMapMetadata = (
+  functionDictionary: FunctionDictionary,
+  connections: ConnectionDictionary,
+  canvasDimensions: Dimensions
+): MapMetadataV2 => {
   const functionMetadata: FunctionMetadata[] = [];
 
   Object.entries(functionDictionary).forEach(([functionKey, functionValue]) => {
     const connectionIdMetadata = generateFunctionConnectionMetadata(functionKey, connections);
     functionMetadata.push({
       reactFlowGuid: functionKey,
-      functionKey: functionValue.functionData.key,
-      positions: functionValue.functionData.positions || [],
+      functionKey: functionValue.key,
+      position: functionValue.position || { x: 0, y: 0 },
       connections: connectionIdMetadata,
       connectionShorthand: convertConnectionShorthandToId(connectionIdMetadata),
     });
@@ -18,6 +23,7 @@ export const generateMapMetadata = (functionDictionary: FunctionDictionary, conn
 
   return {
     functionNodes: functionMetadata,
+    canvasDimensions,
   };
 };
 

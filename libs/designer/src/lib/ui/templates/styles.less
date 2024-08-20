@@ -1,1 +1,54 @@
 @import './cards/templateCard.less';
+@import '../panel/templatePanel/panel.less';
+
+.msla-templates-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 373px);
+
+    gap: 24px;
+    justify-content: center;
+}
+
+.msla-templates-empty-list {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .msla-template-empty-list-title {
+        padding-top: 24px;
+        padding-bottom: 8px;
+    }
+}
+
+.msla-templates-filters {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    .msla-templates-filters-search {
+        align-items: center;
+        justify-content: center;
+        width: 585px;
+        margin: auto;
+    }
+
+    .msla-templates-filters-dropdowns {
+        justify-content: center;
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+    }
+    
+    .msla-templates-filters-sort {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 10px;
+    }
+
+    .msla-templates-filters-sort-dropdown {
+        width: 200px;
+    }
+}

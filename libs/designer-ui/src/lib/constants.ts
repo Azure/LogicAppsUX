@@ -79,10 +79,6 @@ export default {
     SECOND: 'second',
   },
 
-  CHECKBOX_OPACITY: 0.2,
-  DURATION_OPACITY: 0.3,
-  DEFAULT_HEADER_AND_TOKEN_OPACITY: 0.15,
-
   DARK_BRAND_COLOR: '#3A4148',
   DEFAULT_BRAND_COLOR: '#474747',
   BRAND_COLOR: '#0058AD',
@@ -460,6 +456,7 @@ export default {
       SCHEMA: 'schema',
       STRING: 'string',
       TABLE: 'table',
+      MIXEDINPUTEDITOR: 'mixedinputeditor',
       CUSTOM: 'custom', // To align with back-end types, not used to render editor
     },
     EDITOR_OPTIONS: {

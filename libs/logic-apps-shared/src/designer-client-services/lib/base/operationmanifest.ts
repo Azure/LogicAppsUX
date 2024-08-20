@@ -121,6 +121,7 @@ const x12decode = 'x12decode';
 const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
+const parsedocument = 'parsedocument';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -145,6 +146,7 @@ const azurefunction = 'azurefunction';
 const appservice = 'appservice';
 const appservicetrigger = 'appservicetrigger';
 const invokeworkflow = 'invokeworkflow';
+const chunktext = 'chunktext';
 
 export const supportedBaseManifestTypes = [
   apimanagement,
@@ -208,6 +210,8 @@ export const supportedBaseManifestTypes = [
   edifactencode,
   edifactbatchencode,
   edifactdecode,
+  chunktext,
+  parsedocument,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -239,6 +243,10 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
       : supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;
+  }
+
+  isAliasingSupported(): boolean {
+    return false;
   }
 
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
@@ -313,6 +321,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case appservice:
     case azurefunction:
     case invokeworkflow:
+    case parsedocument:
+    case chunktext:
       return true;
 
     default:
@@ -684,6 +694,14 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [edifactbatchencode]: {
     connectorId: edifactConnectorId,
     operationId: edifactbatchencode,
+  },
+  [chunktext]: {
+    connectorId: dataOperationConnectorId,
+    operationId: chunktext,
+  },
+  [parsedocument]: {
+    connectorId: dataOperationConnectorId,
+    operationId: parsedocument,
   },
 };
 

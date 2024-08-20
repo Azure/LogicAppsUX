@@ -1,8 +1,7 @@
-import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
+import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler, MaximumWaitingRunsMetadata } from '..';
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useOutputParameters } from '../../../core/state/selectors/actionMetadataSelector';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
@@ -10,10 +9,13 @@ import { SettingsSection } from '../settingsection';
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import type { FormEvent } from 'react';
 
 export interface GeneralSectionProps extends SectionProps {
+  maximumWaitingRunsMetadata: MaximumWaitingRunsMetadata;
   onConcurrencyToggle: ToggleHandler;
-  onConcurrencyValueChange: NumberChangeHandler;
+  onConcurrencyRunValueChange: NumberChangeHandler;
+  onConcurrencyMaxWaitRunChange: NumberChangeHandler;
   onInvokerConnectionToggle: ToggleHandler;
   onSplitOnToggle: ToggleHandler;
   onSplitOnSelectionChanged: DropdownSelectionChangeHandler;
@@ -23,6 +25,7 @@ export interface GeneralSectionProps extends SectionProps {
 }
 
 export const General = ({
+  nodeId,
   readOnly,
   expanded,
   splitOn,
@@ -31,8 +34,10 @@ export const General = ({
   concurrency,
   conditionExpressions,
   invokerConnection,
+  maximumWaitingRunsMetadata,
   onConcurrencyToggle,
-  onConcurrencyValueChange,
+  onConcurrencyRunValueChange,
+  onConcurrencyMaxWaitRunChange,
   onInvokerConnectionToggle,
   onSplitOnToggle,
   onSplitOnSelectionChanged,
@@ -43,7 +48,6 @@ export const General = ({
   validationErrors,
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
-  const nodeId = useSelectedNodeId();
   const nodesMetadata = useNodeMetadata(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const nodeOutputs = useOutputParameters(nodeId);
@@ -54,13 +58,13 @@ export const General = ({
     description: 'title for general setting section',
   });
   const degreeOfParallelism = intl.formatMessage({
-    defaultMessage: 'Degree of Parallelism',
-    id: 'sW47JR',
+    defaultMessage: 'Degree of parallelism',
+    id: 'eOAJQk',
     description: 'label for slider indicating the degree of parallelism',
   });
   const splitOnTitle = intl.formatMessage({
-    defaultMessage: 'Split On',
-    id: 'FUhNu4',
+    defaultMessage: 'Split on',
+    id: 'f7cxXb',
     description: 'title for split on setting',
   });
   const splitOnTooltipText = intl.formatMessage({
@@ -70,8 +74,8 @@ export const General = ({
     description: 'description of the split on setting',
   });
   const actionTimeoutTitle = intl.formatMessage({
-    defaultMessage: 'Action Timeout',
-    id: 'XKDZXi',
+    defaultMessage: 'Action timeout',
+    id: 'M/m3nG',
     description: 'title for action timeout setting',
   });
   const actionTimeoutTooltipText = intl.formatMessage({
@@ -86,11 +90,10 @@ export const General = ({
     description: 'description of action timeout format description',
   });
   const concurrencyTitle = intl.formatMessage({
-    defaultMessage: 'Concurrency Control',
-    id: 'ZM1mRy',
+    defaultMessage: 'Concurrency control',
+    id: 'Sy4cFC',
     description: 'title for concurrency setting',
   });
-
   const concurrencyTooltipText = intl.formatMessage({
     defaultMessage: 'Control how new runs are queued',
     id: '2MOA1x',
@@ -106,6 +109,25 @@ export const General = ({
     id: 'g7/EKC',
     description: 'sublabel for concurrency limit toggle button',
   });
+  const maxWaitingRunsTitle = intl.formatMessage({
+    defaultMessage: 'Maximum waiting runs',
+    id: 'FEYdkx',
+    description: 'Label for maximum waiting runs',
+  });
+  const maximumWaitingRunsTooltipText = intl.formatMessage({
+    defaultMessage:
+      'The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances.',
+    id: 'Eyxa6q',
+    description: 'tooltip of maximum waiting runs setting',
+  });
+  const maximumWaitingDescription = intl.formatMessage(
+    {
+      defaultMessage: 'Enter a positive integer between {min} and {max}',
+      id: '+l5XmZ',
+      description: 'description of maximum waiting runs setting',
+    },
+    { max: maximumWaitingRunsMetadata.max, min: maximumWaitingRunsMetadata.min }
+  );
   const triggerConditionsTitle = intl.formatMessage({
     defaultMessage: 'Trigger conditions',
     id: 'YDoc9z',
@@ -117,13 +139,13 @@ export const General = ({
     description: 'The description for the trigger condition expression setting.',
   });
   const splitOnTrackingId = intl.formatMessage({
-    defaultMessage: 'Split-On Tracking Id',
-    id: 'Pl/fcn',
+    defaultMessage: 'Split-on tracking ID',
+    id: '0BO/tO',
     description: 'Title for split on client tracking id setting',
   });
   const splitOnTrackingIdTooltipText = intl.formatMessage({
-    defaultMessage: 'Distinct Tracking id for each split-on instance',
-    id: 'ahFd/S',
+    defaultMessage: 'Distinct tracking ID for each split-on instance',
+    id: 'N8LgJq',
     description: 'Description of tracking id input field of split on setting',
   });
   const arrayDropdownTitle = intl.formatMessage({
@@ -149,6 +171,7 @@ export const General = ({
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
+    nodeId,
     title: generalTitle,
     sectionName: SettingSectionName.GENERAL,
     isReadOnly: readOnly,
@@ -229,14 +252,29 @@ export const General = ({
           maxVal: isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.MAX : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MAX,
           minVal: isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.MIN : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MIN,
           value:
-            concurrency?.value?.value ??
+            concurrency?.value?.runs ??
             (isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.DEFAULT : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT),
-          onValueChange: onConcurrencyValueChange,
+          onValueChange: onConcurrencyRunValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,
           ariaLabel: concurrencyTitle,
         },
         visible: concurrency?.isSupported && concurrency?.value?.enabled,
+      },
+      {
+        settingType: 'SettingTextField',
+        settingProp: {
+          readOnly,
+          value: concurrency?.value?.maximumWaitingRuns ?? 10,
+          placeholder: maximumWaitingDescription,
+          customLabel: getSettingLabel(maxWaitingRunsTitle, maximumWaitingRunsTooltipText),
+          onValueChange: (_e: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) =>
+            onConcurrencyMaxWaitRunChange(Number(newValue)),
+          max: maximumWaitingRunsMetadata.max,
+          min: maximumWaitingRunsMetadata.min,
+          type: 'number',
+        },
+        visible: isTrigger && concurrency?.isSupported && concurrency?.value?.enabled,
       },
       {
         settingType: 'MultiAddExpressionEditor',

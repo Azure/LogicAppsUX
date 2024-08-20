@@ -1,15 +1,17 @@
 import { environment } from '../../../../environments/environment';
 import type { AppDispatch } from '../../../state/store';
-import { useAppId, useIsMonitoringView, useRunId, useWorkflowName } from '../../../state/workflowLoadingSelectors';
+import { useAppId, useIsMonitoringView, useRunId, useWorkflowName, useHostingPlan } from '../../../state/workflowLoadingSelectors';
 import { setAppid, setResourcePath, changeRunId, setWorkflowName } from '../../../state/workflowLoadingSlice';
 import type { WorkflowList, RunList } from '../Models/WorkflowListTypes';
 import { useFetchStandardApps } from '../Queries/FetchStandardApps';
+import { useFetchHybridApps } from '../Queries/FetchHybridApps';
 import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } from '@fluentui/react';
 import { ComboBox, Dropdown, Spinner, Stack } from '@fluentui/react';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
+import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
 
 const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
@@ -25,7 +27,10 @@ export const AzureStandardLogicAppSelector = () => {
   const workflowName = useWorkflowName();
   const runId = useRunId();
   const isMonitoringView = useIsMonitoringView();
-  const { data: appList, isLoading: isAppsLoading } = useFetchStandardApps();
+  const hostingPlan = useHostingPlan();
+  const standardList = useFetchStandardApps();
+  const hybridList = useFetchHybridApps();
+  const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -33,7 +38,13 @@ export const AzureStandardLogicAppSelector = () => {
     if (!validApp) {
       return null;
     }
-    const results = await axios.get<WorkflowList>(`https://management.azure.com${appId}/workflows?api-version=2018-11-01`, {
+
+    const getWorkflowUrl =
+      hostingPlan === 'hybrid'
+        ? `https://management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows?api-version=2024-02-02-preview`
+        : `https://management.azure.com${appId}/workflows?api-version=2018-11-01`;
+
+    const results = await axios.get<WorkflowList>(getWorkflowUrl, {
       headers: {
         Authorization: `Bearer ${environment.armToken}`,
       },
@@ -51,11 +62,24 @@ export const AzureStandardLogicAppSelector = () => {
       if (!validApp) {
         return null;
       }
+
+      const authToken = {
+        Authorization: `Bearer ${environment.armToken}`,
+      };
+
+      if (hostingPlan === 'hybrid') {
+        return HybridAppUtility.getProxy<RunList>(
+          `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs`,
+          null,
+          authToken
+        );
+      }
+
       const results = await axios.get<RunList>(
         `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`,
         {
           headers: {
-            Authorization: `Bearer ${environment.armToken}`,
+            ...authToken,
           },
         }
       );
@@ -139,8 +163,14 @@ export const AzureStandardLogicAppSelector = () => {
           disabled={workflowOptions.length === 0 || !appId || isWorkflowsLoading}
           defaultValue={workflowName}
           onChange={(_, option) => {
-            dispatch(setResourcePath(`${appId}/workflows/${option?.key}`));
             dispatch(setWorkflowName(option?.key as string));
+            dispatch(
+              setResourcePath(
+                hostingPlan === 'hybrid'
+                  ? `${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows/${option?.key}`
+                  : `${appId}/workflows/${option?.key}`
+              )
+            );
           }}
         />
         {isWorkflowsLoading ? (

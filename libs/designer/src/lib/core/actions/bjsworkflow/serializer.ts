@@ -232,28 +232,30 @@ const getWorkflowParameters = (
     delete parameterDefinition['name'];
     delete parameterDefinition['isEditable'];
 
-    const isStringParameter =
-      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
-      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
-
-    parameterDefinition.value = isStringParameter
-      ? value
-      : value === ''
-        ? undefined
-        : typeof value !== 'string'
-          ? value
-          : JSON.parse(value);
-
-    parameterDefinition.defaultValue = isStringParameter
-      ? defaultValue
-      : defaultValue === ''
-        ? undefined
-        : typeof defaultValue !== 'string'
-          ? defaultValue
-          : JSON.parse(defaultValue);
+    parameterDefinition.value = parseWorkflowParameterValue(parameterDefinition.type, value);
+    parameterDefinition.defaultValue = parseWorkflowParameterValue(parameterDefinition.type, defaultValue);
     result[parameter?.name ?? parameterId] = parameterDefinition;
     return result;
   }, {});
+};
+
+export const parseWorkflowParameterValue = (parameterType: any, parameterValue: any) => {
+  try {
+    const isStringParameter =
+      equals(parameterType, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
+      equals(parameterType, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
+
+    return isStringParameter
+      ? parameterValue
+      : parameterValue === ''
+        ? undefined
+        : typeof parameterValue !== 'string'
+          ? parameterValue
+          : JSON.parse(parameterValue);
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 };
 
 export const serializeOperation = async (
@@ -932,7 +934,7 @@ const getSerializedRuntimeConfiguration = (
 
   if (!isTrigger) {
     if (!settings.sequential) {
-      const repetitions = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+      const repetitions = settings.concurrency?.value?.enabled ? settings.concurrency.value.runs : undefined;
 
       if (repetitions !== undefined) {
         safeSetObjectPropertyValue(
@@ -943,13 +945,19 @@ const getSerializedRuntimeConfiguration = (
       }
     }
   } else if (!settings.singleInstance) {
-    const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+    const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.runs : undefined;
+    const maximumWaitingRuns = settings.concurrency?.value?.enabled ? settings.concurrency.value.maximumWaitingRuns : undefined;
 
     if (runs !== undefined) {
       safeSetObjectPropertyValue(
         runtimeConfiguration,
         [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
         runs
+      );
+      safeSetObjectPropertyValue(
+        runtimeConfiguration,
+        [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.MAXIMUM_WAITING_RUNS],
+        maximumWaitingRuns
       );
     }
   }

@@ -1,77 +1,69 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import {
-  clearPanel,
-  collapsePanel,
-  updateParameterValidation,
-  useNodeDisplayName,
-  useNodeMetadata,
-  useSelectedNodeId,
-  validateParameter,
-} from '../../../core';
+import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
-import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
-import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
-import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
-import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
-import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
+import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
+import { expandPanel, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import {
+  useIsPanelCollapsed,
+  useOperationPanelPinnedNodeId,
+  useOperationPanelSelectedNodeId,
+} from '../../../core/state/panelV2/panelSelectors';
+import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
+import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
-import { ParameterGroupKeys, getCustomCodeFileName, getParameterFromName } from '../../../core/utils/parameters/helper';
+import { getCustomCodeFileName, getParameterFromName, ParameterGroupKeys } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
-import { usePanelTabs } from './usePanelTabs';
+import { PinMenuItem } from '../../menuItems/pinMenuItem';
+import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { PanelContainer, PanelScope, PanelSize, isCustomCode } from '@microsoft/designer-ui';
+import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
-  WorkflowService,
-  SUBGRAPH_TYPES,
+  equals,
+  getObjectPropertyValue,
+  HostService,
+  isNullOrEmpty,
   isNullOrUndefined,
   replaceWhiteSpaceWithUnderscore,
   splitFileName,
+  SUBGRAPH_TYPES,
+  WorkflowService,
 } from '@microsoft/logic-apps-shared';
-import type { ReactElement } from 'react';
-import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
-  const { panelLocation } = props;
+  const { isResizeable, panelLocation } = props;
 
   const dispatch = useDispatch<AppDispatch>();
 
   const readOnly = useReadOnly();
-
-  const panelTabs = usePanelTabs();
-  const selectedTab = useSelectedPanelTabId();
-
   const collapsed = useIsPanelCollapsed();
-  const selectedNode = useSelectedNodeId();
+
+  const pinnedNode = useOperationPanelPinnedNodeId();
+  const selectedNode = useOperationPanelSelectedNodeId();
+
   const runData = useRunData(selectedNode);
   const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
     nodesMetadata: state.workflow.nodesMetadata,
     idReplacements: state.workflow.idReplacements,
   }));
-  const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
 
-  const [width, setWidth] = useState<string>(PanelSize.Auto);
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
-  const comment = useNodeDescription(selectedNode);
-  const iconUri = useIconUri(selectedNode);
-  const nodeMetaData = useNodeMetadata(selectedNode);
-  let showCommentBox = !isNullOrUndefined(comment);
-  const errorInfo = useOperationErrorInfo(selectedNode);
+
+  const pinnedNodeData = usePanelNodeData(pinnedNode);
+  const selectedNodeData = usePanelNodeData(selectedNode);
+  const actionMetadata = useActionMetadata(selectedNode);
+  const nodeType = actionMetadata?.type ?? '';
 
   const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
-
-  useEffect(() => {
-    collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
-  }, [collapsed]);
 
   useEffect(() => {
     dispatch(updatePanelLocation(panelLocation));
@@ -85,34 +77,62 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(expandPanel());
   }, [dispatch]);
 
-  const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(selectedNode));
-    dispatch(setShowDeleteModal(true));
-  }, [dispatch, selectedNode]);
+  const handleDeleteClick = useCallback(
+    (nodeId: string) => {
+      dispatch(setShowDeleteModalNodeId(nodeId));
+    },
+    [dispatch]
+  );
 
-  const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
-    showCommentBox = !showCommentBox;
-    dispatch(
-      setNodeDescription({
-        nodeId: selectedNode,
-        ...(showCommentBox && { description: '' }),
-      })
-    );
-  };
+  const handlePinClick = useCallback(
+    (nodeId: string) => {
+      dispatch(setPinnedNode({ nodeId }));
+    },
+    [dispatch]
+  );
 
-  // Removing the 'add a note' button for subgraph nodes
-  const isSubgraphContainer = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
-  const headerMenuItems: ReactElement[] = [];
-  if (!isSubgraphContainer) {
-    headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />);
-  }
-  headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={deleteClick} />);
+  const handleCommentMenuClick = useCallback(
+    (nodeId: string): void => {
+      const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
+      const comment = nodeData?.comment;
+      const showCommentBox = !isNullOrUndefined(comment);
+      dispatch(
+        setNodeDescription({
+          nodeId,
+          description: showCommentBox ? undefined : '',
+        })
+      );
+    },
+    [dispatch, pinnedNode, pinnedNodeData, selectedNodeData]
+  );
 
-  const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
-    const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
-    dispatch(replaceId({ originalId: selectedNode, newId }));
+  const getHeaderMenuItems = useCallback(
+    (nodeId: string): JSX.Element[] => {
+      const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
+      const comment = nodeData?.comment;
 
-    return { valid: isValid, oldValue: isValid ? newId : selectedNode };
+      // Removing the 'add a note' button for subgraph nodes
+      const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'];
+      const headerMenuItems: JSX.Element[] = [];
+      if (!isSubgraphContainer) {
+        headerMenuItems.push(
+          <CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!isNullOrUndefined(comment)} />
+        );
+      }
+      if (nodeId !== pinnedNode) {
+        headerMenuItems.push(<PinMenuItem key={'pin'} nodeId={selectedNode} onClick={() => handlePinClick(nodeId)} />);
+      }
+      headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={() => handleDeleteClick(nodeId)} />);
+      return headerMenuItems;
+    },
+    [handleCommentMenuClick, handleDeleteClick, handlePinClick, pinnedNode, pinnedNodeData, selectedNode, selectedNodeData]
+  );
+
+  const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
+    const isValid = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements);
+    dispatch(replaceId({ originalId, newId }));
+
+    return { valid: isValid, oldValue: isValid ? newId : originalId };
   };
 
   // if is customcode file, on blur title,
@@ -152,31 +172,27 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     }
   };
 
-  const onCommentChange = (newDescription?: string) => {
-    dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
+  const onCommentChange = (nodeId: string, newDescription?: string) => {
+    dispatch(setNodeDescription({ nodeId, description: newDescription }));
   };
 
   const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
-  const opQuery = useOperationQuery(selectedNode);
-
-  const isLoading = useMemo(() => {
-    if (nodeMetaData?.subgraphType) {
-      return false;
-    }
-    return opQuery.isLoading;
-  }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
+  const unpinAction = () => dispatch(setPinnedNode({ nodeId: '' }));
 
   const runInstance = useRunInstance();
 
-  const resubmitClick = useCallback(() => {
-    if (!runInstance) {
-      return;
-    }
-    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [selectedNode]);
-    dispatch(clearPanel());
-  }, [dispatch, runInstance, selectedNode]);
+  const resubmitClick = useCallback(
+    (nodeId: string) => {
+      if (!runInstance) {
+        return;
+      }
+      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [nodeId]);
+      dispatch(clearPanel());
+    },
+    [dispatch, runInstance]
+  );
 
   const layerProps = {
     hostId: 'msla-layer-host',
@@ -184,36 +200,63 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   const commonPanelProps: CommonPanelProps = {
+    ...props,
     isCollapsed: collapsed,
     toggleCollapse: dismissPanel,
-    width,
+    overrideWidth,
     layerProps,
     panelLocation,
-    isResizeable: props.isResizeable,
+    isResizeable,
   };
+
+  const getChildRunNameFromOutputs = (outputs: any): string | undefined => {
+    if (!isNullOrEmpty(outputs)) {
+      return getObjectPropertyValue(outputs, ['headers', 'value', 'x-ms-workflow-run-id']);
+    }
+    return undefined;
+  };
+
+  const getChildWorkflowIdFromInputs = (inputs: any): string | undefined => {
+    if (!isNullOrEmpty(inputs)) {
+      const workflow = getObjectPropertyValue(inputs, ['host', 'value', 'workflow']);
+      if (!isNullOrEmpty(workflow)) {
+        return workflow.id;
+      }
+    }
+    return undefined;
+  };
+
+  const runName = useMemo(() => {
+    return getChildRunNameFromOutputs(runData?.outputs);
+  }, [runData?.outputs]);
+
+  const canShowLogicAppRun = useMemo(() => {
+    return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
+  }, [nodeType, runName]);
+
+  const showLogicAppRunClick = useCallback(() => {
+    const workflowId = getChildWorkflowIdFromInputs(runData?.inputs);
+    if (workflowId && runName && !!HostService()) {
+      HostService().openMonitorView?.(workflowId, runName);
+    }
+  }, [runData?.inputs, runName]);
 
   return (
     <PanelContainer
       {...commonPanelProps}
-      cardIcon={iconUri}
-      comment={comment}
       noNodeSelected={!selectedNode}
-      isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
-      errorMessage={errorInfo?.message}
-      isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
-      headerMenuItems={headerMenuItems}
-      showCommentBox={showCommentBox}
-      tabs={panelTabs}
-      selectedTab={selectedTab}
-      selectTab={(tabId: string) => {
-        dispatch(selectPanelTab(tabId));
-      }}
-      nodeId={selectedNode}
+      node={selectedNodeData}
+      nodeHeaderItems={getHeaderMenuItems(selectedNode)}
+      pinnedNode={pinnedNodeData}
+      pinnedNodeHeaderItems={getHeaderMenuItems(pinnedNode)}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}
+      canShowLogicAppRun={canShowLogicAppRun}
+      showLogicAppRun={showLogicAppRunClick}
       resubmitOperation={resubmitClick}
+      onUnpinAction={unpinAction}
       toggleCollapse={() => {
         // Only run validation when collapsing the panel
         if (!collapsed) {
@@ -235,10 +278,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       }}
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
-      title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
       onTitleBlur={onTitleBlur}
-      setCurrWidth={setWidth}
+      setOverrideWidth={setOverrideWidth}
     />
   );
 };

@@ -24,7 +24,7 @@ import {
   useWorkflowApp,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
-import { WorkflowUtility } from './Utilities/Workflow';
+import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
@@ -32,6 +32,7 @@ import {
   BaseChatbotService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   StandardConnectionService,
   StandardConnectorService,
   StandardCustomCodeService,
@@ -44,7 +45,7 @@ import {
   isArmResourceId,
   optional,
 } from '@microsoft/logic-apps-shared';
-import type { ContentType, IWorkflowService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -53,12 +54,15 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  Constants,
+  getSKUDefaultHostOptions,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -80,17 +84,18 @@ const DesignerEditor = () => {
     showChatBot,
     language,
     hostOptions,
+    hostingPlan,
     showConnectionsPanel,
     showPerformanceDebug,
     suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
-
+  const isHybridLogicApp = hostingPlan === 'hybrid';
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
-  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName);
+  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
-  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
+  const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
@@ -100,16 +105,7 @@ const DesignerEditor = () => {
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...workflow,
-        definition: runDefinition.properties.workflow.properties.definition,
-      };
-      setWorkflow(standardAppInstance);
-    }
-  };
-  const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
+  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
 
   const connectionsData = useMemo(
     () =>
@@ -121,7 +117,7 @@ const DesignerEditor = () => {
     [originalConnectionsData, parameters, settingsData?.properties]
   );
 
-  const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+  const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
@@ -164,9 +160,10 @@ const DesignerEditor = () => {
       getDesignerServices(
         workflowId,
         equals(workflow?.kind, 'stateful'),
+        isHybridLogicApp,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
-        addConnectionData,
+        addConnectionDataInternal,
         getConnectionConfiguration,
         tenantId,
         objectId,
@@ -187,6 +184,17 @@ const DesignerEditor = () => {
       root.style.overflow = 'hidden';
     }
   }, []);
+
+  useEffect(() => {
+    if (isMonitoringView && runInstanceData) {
+      setWorkflow((previousWorkflow: any) => {
+        return {
+          ...previousWorkflow,
+          definition: runInstanceData.properties.workflow.properties.definition,
+        };
+      });
+    }
+  }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
@@ -313,7 +321,7 @@ const DesignerEditor = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: { interval: 1, frequency: 'Minute' },
+            ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
           },
           showConnectionsPanel,
           showPerformanceDebug,
@@ -331,7 +339,7 @@ const DesignerEditor = () => {
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
           >
-            <div style={{ height: 'inherit', width: 'inherit' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
                 saveWorkflow={saveWorkflowFromDesigner}
@@ -367,6 +375,7 @@ const DesignerEditor = () => {
 const getDesignerServices = (
   workflowId: string,
   isStateful: boolean,
+  isHybrid: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -600,6 +609,12 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    apiVersion: '2017-08-01',
+    httpClient,
+  });
+
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
     ...defaultServiceParams,
@@ -610,6 +625,7 @@ const getDesignerServices = (
     },
     showStatefulOperations: isStateful,
     isDev: false,
+    hybridLogicApp: isHybrid,
     locale,
   });
 
@@ -695,6 +711,7 @@ const getDesignerServices = (
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService: null,
@@ -707,43 +724,6 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
   };
-};
-
-const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, connectionsJson: ConnectionsData): void => {
-  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
-
-  let pathToSetConnectionsData: any = connectionsJson;
-
-  for (const path of pathLocation) {
-    if (!pathToSetConnectionsData[path]) {
-      pathToSetConnectionsData[path] = {};
-    }
-
-    pathToSetConnectionsData = pathToSetConnectionsData[path];
-  }
-
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
-    // TODO: To show this in a notification of info bar on the blade.
-    // const message = 'ConnectionKeyAlreadyExist - Connection key \'{0}\' already exists.'.format(connectionKey);
-    return;
-  }
-
-  pathToSetConnectionsData[connectionKey] = connectionData;
-};
-
-const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettings: Record<string, string>): Record<string, string> => {
-  const settingsToAdd = Object.keys(settings);
-
-  for (const settingKey of settingsToAdd) {
-    if (originalSettings[settingKey]) {
-      // TODO: To show this in a notification of info bar on the blade that key will be overriden.
-    }
-
-    // eslint-disable-next-line no-param-reassign
-    originalSettings[settingKey] = settings[settingKey];
-  }
-
-  return originalSettings;
 };
 
 const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {

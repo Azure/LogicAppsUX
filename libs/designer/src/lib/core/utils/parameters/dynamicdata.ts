@@ -277,9 +277,11 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required || schemaHasRequiredParameters,
-    useAliasedIndexing: true,
+    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
     excludeAdvanced: false,
     excludeInternal: false,
+    includeParentObject: true,
+    isInputSchema: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
@@ -290,13 +292,14 @@ export async function getDynamicInputsFromSchema(
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
+  // TODO: This code should be removed once keys are correctly stamped for aliasing inputs since in normal parsing this does not happen.
   // We are recieving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
   //     body.$.content.appId
   for (const inputParameter of dynamicInputs) {
-    if (isOpenApiParameter(inputParameter) && inputParameter?.in) {
-      const { key: _key, in: _in } = inputParameter;
+    const { key: _key, in: _in } = inputParameter;
+    if (isOpenApiParameter(inputParameter) && _in && _key !== `${_in}.$`) {
       // _key = body.$.body/content.body/content/appId
       const path = replaceSubsegmentSeparator(_key.split('.').pop() ?? '');
       // path = body.content.appId
@@ -313,7 +316,7 @@ export async function getDynamicInputsFromSchema(
 
   if (!operationDefinition) {
     loadParameterValuesFromDefault(map(dynamicInputs, 'key'));
-    return dynamicInputs;
+    return removeParentObjectInputsIfNotNeeded(dynamicInputs);
   }
 
   if (!schemaProperties.length) {
@@ -542,7 +545,7 @@ async function getManagedIdentityRequestProperties(
   return managedIdentityRequestProperties;
 }
 
-function getManifestBasedInputParameters(
+export function getManifestBasedInputParameters(
   dynamicInputs: InputParameter[],
   dynamicParameter: InputParameter,
   allInputKeys: string[],
@@ -569,9 +572,11 @@ function getManifestBasedInputParameters(
   let formDataInputKeyPrefix = '';
   let formDataLocation = '';
   // Load known parameters directly by key.
+  const suppressCasting = !manifest.properties?.autoCast;
 
   for (const inputParameter of dynamicInputs) {
     const clonedInputParameter = copy({ copyNonEnumerableProps: false }, {}, inputParameter);
+    clonedInputParameter.suppressCasting = suppressCasting;
     if (inputParameter.key === keyPrefix) {
       // Load the entire input if the key is the entire input.
       clonedInputParameter.value = stepInputs;
@@ -601,6 +606,8 @@ function getManifestBasedInputParameters(
     }
   }
 
+  result = removeParentObjectInputsIfNotNeeded(result);
+
   if (
     !operationDefinition.metadata?.noUnknownParametersWithManifest &&
     stepInputs !== undefined &&
@@ -623,6 +630,26 @@ function getManifestBasedInputParameters(
   }
 
   return result;
+}
+
+function removeParentObjectInputsIfNotNeeded(inputs: InputParameter[]): InputParameter[] {
+  const objectInputKeysWithExpressionValues = inputs
+    .filter((input) => input.type === Constants.SWAGGER.TYPE.OBJECT && isTemplateExpression(input.value))
+    .map((input) => input.key);
+
+  const filteredInputs = inputs.filter((input) => {
+    if (input.type !== Constants.SWAGGER.TYPE.OBJECT) {
+      return !objectInputKeysWithExpressionValues.some((parentInputKey) => input.key.startsWith(`${parentInputKey}.`));
+    }
+
+    return isTemplateExpression(input.value) || !objectHasLeafProperties(inputs, input.key);
+  });
+
+  return filteredInputs;
+}
+
+function objectHasLeafProperties(allInputs: InputParameter[], key: string): boolean {
+  return allInputs.some((input) => input.key.startsWith(`${key}.`));
 }
 
 function loadUnknownManifestBasedParameters(
@@ -705,12 +732,14 @@ function getSwaggerBasedInputParameters(
     propertyNames,
     getObjectPropertyValue(operationDefinition.inputs, propertyNames)
   );
-  const dynamicInputParameters = loadInputValuesFromDefinition(
+  let dynamicInputParameters = loadInputValuesFromDefinition(
     dynamicInputDefinition as Record<string, any>,
     isNested ? [dynamicParameter] : inputs,
     operationPath,
     basePath as string
   );
+
+  dynamicInputParameters = removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
 
   if (isNested) {
     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);

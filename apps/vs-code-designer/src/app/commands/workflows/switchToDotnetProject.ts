@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   connectionsFileName,
+  parametersFileName,
   funcIgnoreFileName,
   funcVersionSetting,
   hostFileName,
@@ -23,6 +24,7 @@ import {
   writeBuildFileToDisk,
   addFileToBuildPath,
   addLibToPublishPath,
+  allowLocalSettingsToPublishDirectory,
 } from '../../utils/codeless/updateBuildFile';
 import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
@@ -180,6 +182,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
+  xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
   xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);
 
   for (const workflowName of projectArtifacts['workflows']) {
@@ -192,6 +195,10 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
 
   for (const connectionFile of projectArtifacts['connections']) {
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, connectionFile);
+  }
+
+  for (const parametersFile of projectArtifacts['parameters']) {
+    xmlBuildFile = addFileToBuildPath(xmlBuildFile, parametersFile);
   }
 
   if (projectArtifacts['lib']) {
@@ -244,6 +251,7 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
   const artifactDict: Record<string, string[]> = {
     workflows: [],
     connections: [],
+    parameters: [],
     artifacts: [],
     lib: [],
   };
@@ -252,6 +260,10 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<s
     if (file === connectionsFileName) {
       artifactDict['connections'].push(connectionsFileName);
       continue;
+    }
+
+    if (file === parametersFileName) {
+      artifactDict['parameters'].push(parametersFileName);
     }
 
     if (file === 'Artifacts') {

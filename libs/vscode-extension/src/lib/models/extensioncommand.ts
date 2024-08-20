@@ -28,6 +28,7 @@ export const ExtensionCommand = {
   save: 'Save',
   showContent: 'ShowContent',
   showAvailableSchemas: 'showAvailableSchemas',
+  showAvailableSchemasV2: 'showAvailableSchemasV2',
   readLocalCustomXsltFileOptions: 'readLocalCustomXsltFileOptions',
   readLocalSchemaFileOptions: 'readLocalSchemaFileOptions',
   resubmitRun: 'ResubmitRun',

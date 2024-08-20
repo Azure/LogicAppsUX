@@ -15,6 +15,7 @@ import {
   isBoolean,
 } from '../../../utils/src';
 import { isNumber } from '../../../parsers';
+import { isHybridLogicApp } from './hybrid';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -93,6 +94,15 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  public static getProxyUrl(uri: string): { uri: string; headerPath: string } {
+    const appName = uri.split('hostruntime')[0].split('/');
+    appName.pop();
+    return {
+      uri: `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      headerPath: uri.split('hostruntime')[1],
+    };
+  }
+
   /**
    * Gets run details.
    * @param {string} runId - Run id.
@@ -101,9 +111,22 @@ export class StandardRunService implements IRunService {
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
+      if (isHybridLogicApp(uri)) {
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`;
+
+        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+        const response = await httpClient.post<Run, undefined>({
+          uri: newUri,
+          headers: {
+            'X-Ms-Logicapps-Proxy-Path': headerPath,
+            'X-Ms-Logicapps-Proxy-Method': 'GET',
+          },
+        });
+        return response;
+      }
       const response = await httpClient.get<Run>({
         uri,
       });

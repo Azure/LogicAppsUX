@@ -12,6 +12,7 @@ import type { AzureOperationsFetchResponse, BaseSearchServiceOptions } from '../
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
+import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -19,19 +20,23 @@ interface StandardSearchServiceOptions extends BaseSearchServiceOptions {
   apiVersion: string;
   baseUrl: string;
   showStatefulOperations?: boolean;
+  hybridLogicApp?: boolean;
 }
 
 export class StandardSearchService extends BaseSearchService {
   constructor(public override readonly options: StandardSearchServiceOptions) {
     super(options);
 
-    const { baseUrl, apiVersion } = options;
+    const { baseUrl, apiVersion, hybridLogicApp } = options;
 
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     }
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
+    }
+    if (hybridLogicApp) {
+      this._isHybridLogicApp = true;
     }
   }
 
@@ -55,7 +60,22 @@ export class StandardSearchService extends BaseSearchService {
       workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
     };
     const headers = locale ? { 'Accept-Language': locale } : undefined;
-    const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters, headers });
+
+    let response = null;
+    if (isHybridLogicApp(uri)) {
+      response = await httpClient.post<AzureOperationsFetchResponse, null>({
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        headers: {
+          'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operations/?workflowKind=${
+            showStatefulOperations ? 'Stateful' : 'Stateless'
+          }`,
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+      });
+    } else {
+      response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters, headers });
+    }
+
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
@@ -63,7 +83,7 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
-    if (this._isDev) {
+    if (this._isDev || this._isHybridLogicApp) {
       return Promise.resolve([]);
     }
 
@@ -71,9 +91,6 @@ export class StandardSearchService extends BaseSearchService {
       const {
         apiHubServiceDetails: { apiVersion, subscriptionId, location },
       } = this.options;
-      if (this._isDev) {
-        return Promise.resolve([]);
-      }
 
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
@@ -97,7 +114,7 @@ export class StandardSearchService extends BaseSearchService {
   }
 
   public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<{ nextlink?: string; value: Connector[] }> {
-    if (this._isDev) {
+    if (this._isDev || this._isHybridLogicApp) {
       return Promise.resolve({ value: [] });
     }
 
@@ -134,7 +151,20 @@ export class StandardSearchService extends BaseSearchService {
       'api-version': apiVersion,
     };
     const headers = locale ? { 'Accept-Language': locale } : undefined;
-    const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters, headers });
+
+    let response = null;
+    if (isHybridLogicApp(uri)) {
+      response = await httpClient.post<{ value: Connector[] }, null>({
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        headers: {
+          'x-ms-logicapps-proxy-path': '/runtime/webhooks/workflow/api/management/operationGroups/',
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+      });
+    } else {
+      response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters, headers });
+    }
+
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiConnectors = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 

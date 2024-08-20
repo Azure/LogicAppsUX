@@ -1,9 +1,5 @@
-// import type { FilteredDataTypesDict } from '../components/tree/SchemaTreeSearchbar';
-// import { arrayType } from '../components/tree/SchemaTreeSearchbar';
-// import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-//import { getLoopTargetNodeWithJson } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
 import type {
@@ -15,6 +11,10 @@ import type {
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { addReactFlowPrefix } from './ReactFlow.Util';
+
+export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
+  addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
 
 export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -86,6 +86,25 @@ export const parsePropertiesIntoNodeProperties = (propertiesString: string): Sch
   return [];
 };
 
+//
+export const getChildParentSchemaMapping = (schema: SchemaExtended): Record<string, string[]> => {
+  const result: Record<string, string[]> = {};
+
+  const addParentToChild = (root: SchemaNodeExtended, parentSetSoFar: string[]) => {
+    result[root.key] = parentSetSoFar;
+    for (const child of root.children) {
+      addParentToChild(child, [...parentSetSoFar, root.key]);
+      [];
+    }
+  };
+
+  if (schema.schemaTreeRoot) {
+    addParentToChild(schema.schemaTreeRoot, []);
+  }
+
+  return result;
+};
+
 export const flattenSchemaIntoDictionary = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
   const idPrefix = schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;
@@ -109,6 +128,15 @@ export const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExt
   const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
 
   return result.concat(childArray);
+};
+
+export const flattenSchemaNodeMap = (schemaNode: SchemaNodeExtended): Record<string, SchemaNodeExtended> => {
+  const flattenedSchema = flattenSchemaNode(schemaNode);
+  const result: Record<string, SchemaNodeExtended> = {};
+  for (const node of flattenedSchema) {
+    result[node.key] = node;
+  }
+  return result;
 };
 
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
@@ -181,58 +209,8 @@ const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): 
   return result;
 };
 
-// Search key will be the node's key
-// Returns nodes that include the search key in their node.key (while maintaining the tree/schema's structure)
-// export const searchSchemaTreeFromRoot = (
-//   schemaTreeRoot: ITreeNode<SchemaNodeExtended>,
-//   flattenedSchema: SchemaNodeDictionary,
-//   nodeKeySearchTerm: string,
-//   filteredDataTypes: FilteredDataTypesDict
-// ): ITreeNode<SchemaNodeExtended> => {
-//   const fuseSchemaTreeSearchOptions = {
-//     includeScore: true,
-//     minMatchCharLength: 2,
-//     includeMatches: true,
-//     threshold: 0.4,
-//     keys: ['qName'],
-//   };
-
-//   // Fuzzy search against flattened schema tree to build a dictionary of matches
-//   const fuse = new Fuse(Object.values(flattenedSchema), fuseSchemaTreeSearchOptions);
-//   const matchedSchemaNodesDict: { [key: string]: true } = {};
-
-//   fuse.search(nodeKeySearchTerm).forEach((result) => {
-//     matchedSchemaNodesDict[result.item.key] = true;
-//   });
-
-//   // Recurse through schema tree, adding children that match the criteria
-//   const searchChildren = (result: ITreeNode<SchemaNodeExtended>[], node: ITreeNode<SchemaNodeExtended>) => {
-//     // NOTE: Type-cast (safely) node for second condition so Typescript sees all properties
-//     if (
-//       (nodeKeySearchTerm.length >= fuseSchemaTreeSearchOptions.minMatchCharLength ? matchedSchemaNodesDict[node.key] : true) &&
-//       (filteredDataTypes[(node as SchemaNodeExtended).type] ||
-//         ((node as SchemaNodeExtended).nodeProperties.includes(SchemaNodeProperty.Repeating) && filteredDataTypes[arrayType]))
-//     ) {
-//       result.push({ ...node });
-//     } else if (node.children && node.children.length > 0) {
-//       const childNodes = node.children.reduce(searchChildren, []);
-
-//       if (childNodes.length) {
-//         result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<SchemaNodeExtended>);
-//       }
-//     }
-
-//     return result;
-//   };
-
-//   return {
-//     ...schemaTreeRoot,
-//     isExpanded: true,
-//     children: schemaTreeRoot.children ? schemaTreeRoot.children.reduce<ITreeNode<SchemaNodeExtended>[]>(searchChildren, []) : [],
-//   };
-// };
-
-export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
+export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended =>
+  Object.keys(node ?? {}).includes('pathToRoot');
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
   nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;
@@ -269,4 +247,68 @@ const nodeCount = (schemaNode: SchemaNodeExtended): number => {
 export const removePrefixFromNodeID = (nodeID: string): string => {
   const splitID = nodeID.split('-');
   return splitID[1];
+};
+
+/* This is to update the temporary connections when a tree item is expanded/collapsed
+  Source and target are used interchangeably here. as the logic is same for both sides
+  Source becomes the side where node is collapsed/expanded and Target becomes the other side
+*/
+export const getUpdatedStateConnections = (
+  key: string,
+  targetOpenKeys: Record<string, boolean>,
+  itemExpanded: boolean,
+  sourceParentChildEdgeMapping: string[],
+  targetChildParentMapping: Record<string, string[]>,
+  sourceStateConnections: Record<string, Record<string, boolean>>,
+  targetStateConnections: Record<string, Record<string, boolean>>
+) => {
+  if (itemExpanded) {
+    const connectedTargetNodes = sourceStateConnections[key] ?? {};
+    for (const targetNode of Object.keys(connectedTargetNodes)) {
+      if (targetStateConnections[targetNode]) {
+        delete targetStateConnections[targetNode][key];
+      }
+    }
+    delete sourceStateConnections[key];
+  } else {
+    // Get all the nodes to which children are connected
+    for (const child of sourceParentChildEdgeMapping) {
+      // Get parents of the child connected to
+      const parents = targetChildParentMapping[child] ?? [];
+
+      // Fetch the first parent which is collapsed
+      let i = 0;
+      while (i < parents.length) {
+        if (!targetOpenKeys[parents[i]]) {
+          break;
+        }
+        ++i;
+      }
+
+      // Get the node to which temporary node needs to be connected to
+      let connectToChild = child;
+      if (i < parents.length) {
+        connectToChild = parents[i];
+      }
+
+      // Update Source-Target edge mapping
+      if (!sourceStateConnections[key]) {
+        sourceStateConnections[key] = {};
+      }
+      if (!Object.prototype.hasOwnProperty.call(sourceStateConnections[key], connectToChild)) {
+        sourceStateConnections[key][connectToChild] = true;
+      }
+
+      // Update Target-Source edge mapping
+      if (!targetStateConnections[connectToChild]) {
+        targetStateConnections[connectToChild] = {};
+      }
+
+      if (!Object.prototype.hasOwnProperty.call(targetStateConnections[connectToChild], key)) {
+        targetStateConnections[connectToChild][key] = true;
+      }
+    }
+  }
+
+  return [sourceStateConnections, targetStateConnections];
 };

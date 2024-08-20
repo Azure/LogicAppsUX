@@ -5,7 +5,9 @@ import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserial
 import { getConnection } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
+import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
@@ -53,6 +55,25 @@ export interface UpdateConnectionPayload {
   authentication?: ApiHubAuthentication;
   connectionRuntimeUrl?: string;
 }
+
+export const updateTemplateConnection = createAsyncThunk(
+  'updateTemplateConnection',
+  async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
+    const { nodeId, connector, connection, connectionProperties, authentication } = payload;
+    dispatch(
+      changeTemplateConnectionMapping({
+        nodeId,
+        connectorId: connector.id,
+        connectionId: connection.id,
+        authentication: authentication ?? getApiHubAuthenticationIfRequired(),
+        connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
+        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as TemplateRootState).template.workflowDefinition)
+          ? connection.properties.connectionRuntimeUrl
+          : undefined,
+      })
+    );
+  }
+);
 
 export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',

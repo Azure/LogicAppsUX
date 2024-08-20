@@ -103,14 +103,13 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const parameters = await this.node.getParametersData();
     const credentials: ServiceClientCredentials = this.node.credentials;
     const accessToken: string = await getAuthorizationToken(credentials);
 
     return {
       panelId: this.panelName,
       connectionsData: await this.node.getConnectionsData(),
-      parametersData: parameters,
+      parametersData: await this.node.getParametersData(),
       localSettings: await this.node.getAppSettings(),
       artifacts: await this.node.getArtifacts(),
       workflowDetails: await this.node.getChildWorkflows(this.context),

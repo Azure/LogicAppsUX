@@ -5,7 +5,7 @@ import { Icon, useTheme } from '@fluentui/react';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { ControlButton, Controls } from 'reactflow';
+import { ControlButton, Controls } from '@xyflow/react';
 
 const CustomControls = () => {
   const intl = useIntl();
@@ -33,14 +33,14 @@ const CustomControls = () => {
   };
 
   const minimapAria = intl.formatMessage({
-    defaultMessage: 'Toggle Minimap',
-    id: '4j2MEv',
+    defaultMessage: 'Toggle minimap',
+    id: 'yOyeBT',
     description: 'Turn the minimap on or off',
   });
 
   const searchAria = intl.formatMessage({
-    defaultMessage: 'Search Workflow Actions',
-    id: 'TNH/nK',
+    defaultMessage: 'Search workflow actions',
+    id: 'yqF/Ew',
     description: 'Aria label for a button that opens a search panel to search the actions in the users workflow',
   });
 

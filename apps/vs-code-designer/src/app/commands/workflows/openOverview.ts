@@ -2,7 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { getRequestTriggerName, getTriggerName, HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -46,6 +47,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let localSettings: Record<string, string> = {};
   let credentials: ServiceClientCredentials;
   let isWorkflowRuntimeRunning: boolean;
+  let triggerName: string;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
 
@@ -57,12 +59,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
     accessToken = '';
-    const triggerName = getRequestTriggerName(workflowContent.definition);
-    callbackInfo = await getLocalWorkflowCallbackInfo(
-      context,
-      `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`
-    );
-    isLocal = true;
+    triggerName = getTriggerName(workflowContent.definition);
+    callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
 
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
@@ -75,7 +73,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     accessToken = await getAuthorizationToken(credentials);
     baseUrl = getWorkflowManagementBaseURI(workflowNode);
     apiVersion = workflowAppApiVersion;
-    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, getRequestTriggerName(workflowContent.definition));
+    triggerName = getTriggerName(workflowContent.definition);
+    callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
     isLocal = false;
     isWorkflowRuntimeRunning = true;
@@ -102,6 +101,8 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     operationOptions,
     statelessRunMode,
     callbackInfo,
+    triggerName,
+    definition: workflowContent.definition,
   };
 
   const panel: vscode.WebviewPanel = vscode.window.createWebviewPanel(
@@ -178,26 +179,31 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   cacheWebviewPanel(panelGroupKey, panelName, panel);
 }
 
-function getRequestTriggerName(definition: any): string | undefined {
-  const { triggers } = definition;
-  for (const triggerName of Object.keys(triggers)) {
-    if (triggers[triggerName].type.toLowerCase() === 'request') {
-      return triggerName;
+async function getLocalWorkflowCallbackInfo(
+  context: IActionContext,
+  definition: LogicAppsV2.WorkflowDefinition,
+  baseUrl: string,
+  workflowName: string,
+  triggerName: string,
+  apiVersion: string
+): Promise<ICallbackUrlResponse | undefined> {
+  const requestTriggerName = getRequestTriggerName(definition);
+  if (requestTriggerName) {
+    try {
+      const url = `${baseUrl}/workflows/${workflowName}/triggers/${requestTriggerName}/listCallbackUrl?api-version=${apiVersion}`;
+      const response: string = await sendRequest(context, {
+        url,
+        method: HTTP_METHODS.POST,
+      });
+      return JSON.parse(response);
+    } catch (error) {
+      return undefined;
     }
-  }
-
-  return undefined;
-}
-
-async function getLocalWorkflowCallbackInfo(context: IActionContext, url: string): Promise<ICallbackUrlResponse | undefined> {
-  try {
-    const response: string = await sendRequest(context, {
-      url,
-      method: 'POST',
-    });
-    return JSON.parse(response);
-  } catch (error) {
-    return undefined;
+  } else {
+    return {
+      value: `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/run?api-version=${apiVersion}`,
+      method: HTTP_METHODS.POST,
+    };
   }
 }
 

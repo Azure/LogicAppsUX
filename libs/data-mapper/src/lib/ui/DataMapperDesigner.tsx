@@ -19,7 +19,7 @@ import { generateDataMapXslt } from '../core/queries/datamap';
 import { saveDataMap, showNotification } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../mapDefinitions';
-import { generateMapMetadata } from '../mapDefinitions/MapMetadataSerializer';
+import { generateMapMetadataV1 } from '../mapDefinitions/MapMetadataSerializer';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { collectErrorsForMapChecker } from '../utils/MapChecker.Utils';
 import './ReactFlowStyleOverrides.css';
@@ -190,7 +190,7 @@ export const DataMapperDesigner = ({
       );
     }
 
-    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
+    const mapMetadata = JSON.stringify(generateMapMetadataV1(functions, currentConnections));
 
     saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 

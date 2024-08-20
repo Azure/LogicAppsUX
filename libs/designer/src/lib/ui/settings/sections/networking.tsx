@@ -6,6 +6,7 @@ import type { Settings, SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
+import { useLegacyWorkflowParameters } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 export interface NetworkingSectionProps extends SectionProps {
   chunkedTransferMode: boolean;
@@ -29,6 +30,7 @@ export interface NetworkingSectionProps extends SectionProps {
 }
 
 export const Networking = ({
+  nodeId,
   readOnly,
   expanded,
   validationErrors,
@@ -63,11 +65,12 @@ export const Networking = ({
 }: NetworkingSectionProps): JSX.Element => {
   const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
   const maximumSize = uploadChunkMetadata?.maximumSize ?? downloadChunkMetadata?.maximumSize;
+  const useLegacyConsumptionCheck = !!useLegacyWorkflowParameters();
 
   const intl = useIntl();
   const asyncPatternTitle = intl.formatMessage({
-    defaultMessage: 'Asynchronous Pattern',
-    id: 'J/Kz1j',
+    defaultMessage: 'Asynchronous pattern',
+    id: 'YM0e3C',
     description: 'title for async pattern setting',
   });
   const asyncPatternTooltipText = intl.formatMessage({
@@ -76,8 +79,8 @@ export const Networking = ({
     description: 'description of asynchronous pattern setting',
   });
   const asyncResponseTitle = intl.formatMessage({
-    defaultMessage: 'Asynchronous Response',
-    id: 'i/b3Ko',
+    defaultMessage: 'Asynchronous response',
+    id: 'IGpV1W',
     description: 'title for asynchronous response setting',
   });
   const asyncResponseTooltipText = intl.formatMessage({
@@ -87,8 +90,8 @@ export const Networking = ({
     description: 'description of asynchronous response setting',
   });
   const requestOptionsTitle = intl.formatMessage({
-    defaultMessage: 'Request Options - Timeout',
-    id: 'jO5Fet',
+    defaultMessage: 'Request options - Timeout',
+    id: 'fSMyDJ',
     description: 'title for request options setting',
   });
   const requestOptionsPlaceholder = intl.formatMessage({
@@ -147,8 +150,8 @@ export const Networking = ({
     description: 'title for pagination user input',
   });
   const workflowHeadersOnResponseTitle = intl.formatMessage({
-    defaultMessage: 'Suppress Workflow Headers on Response',
-    id: '+v1RlQ',
+    defaultMessage: 'Suppress workflow headers on response',
+    id: '8wlfdo',
     description: 'title for workflow headers on response setting',
   });
   const workflowHeadersOnResponseTooltipText = intl.formatMessage({
@@ -162,8 +165,8 @@ export const Networking = ({
     description: 'title for networking setting section',
   });
   const contentTransferTitle = intl.formatMessage({
-    defaultMessage: 'Content Transfer',
-    id: 'oLtwMw',
+    defaultMessage: 'Content transfer',
+    id: 'XZrMGZ',
     description: 'title for content transfer setting',
   });
   const uploadContentTransferDescription = intl.formatMessage({
@@ -211,8 +214,8 @@ export const Networking = ({
 
   // RETRY POLICY
   const retryPolicyTypeTitle = intl.formatMessage({
-    defaultMessage: 'Retry Policy',
-    id: '4IS4yp',
+    defaultMessage: 'Retry policy',
+    id: '6LJZ7n',
     description: 'title for retry policy setting',
   });
   const retryPolicyTooltip = intl.formatMessage({
@@ -258,8 +261,8 @@ export const Networking = ({
     }
   );
   const retryPolicyMinIntervalTitle = intl.formatMessage({
-    defaultMessage: 'Minimum Interval',
-    id: 'r7vZ5a',
+    defaultMessage: 'Minimum interval',
+    id: 'xMgLd8',
     description: 'title for retry minimum interval setting',
   });
   const retryPolicyMinIntervalPlaceholder = intl.formatMessage(
@@ -273,8 +276,8 @@ export const Networking = ({
     }
   );
   const retryPolicyMaxIntervalTitle = intl.formatMessage({
-    defaultMessage: 'Maximum Interval',
-    id: 'AsqIUa',
+    defaultMessage: 'Maximum interval',
+    id: '2adqQ4',
     description: 'title for retry maximum interval setting',
   });
   const retryPolicyMaxIntervalPlaceholder = intl.formatMessage(
@@ -328,7 +331,7 @@ export const Networking = ({
         onValueChange: (_, newVal) => onRequestOptionsChange(newVal as string),
         ariaLabel: requestOptionsTitle,
       },
-      visible: requestOptions?.isSupported,
+      visible: requestOptions?.isSupported && !useLegacyConsumptionCheck,
     };
   };
 
@@ -453,16 +456,16 @@ export const Networking = ({
       },
       {
         title: intl.formatMessage({
-          defaultMessage: 'Exponential Interval',
-          id: '7zDk9N',
+          defaultMessage: 'Exponential interval',
+          id: 'ohpbkw',
           description: 'title for retry policy exponential interval setting',
         }),
         value: constants.RETRY_POLICY_TYPE.EXPONENTIAL,
       },
       {
         title: intl.formatMessage({
-          defaultMessage: 'Fixed Interval',
-          id: 'Wb/cBR',
+          defaultMessage: 'Fixed interval',
+          id: '1f7LG4',
           description: 'title for retry policy fixed interval setting',
         }),
         value: constants.RETRY_POLICY_TYPE.FIXED,
@@ -556,6 +559,7 @@ export const Networking = ({
 
   const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
+    nodeId,
     title: networking,
     sectionName: SettingSectionName.NETWORKING,
     expanded,

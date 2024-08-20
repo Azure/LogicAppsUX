@@ -6,13 +6,16 @@ export interface Manifest {
   title: string;
   description: string;
   skus: SkuType[];
-  kinds: WorkflowKindType[];
-  tags: Record<string, string>;
+  kinds?: WorkflowKindType[];
+  details: Record<string, string>;
+  detailsDescription?: string;
+  tags?: string[];
   artifacts: Artifact[];
   images: Record<string, string>;
   prerequisites?: string;
   parameters: Parameter[];
   connections: Record<string, Connection>;
+  featuredOperations?: { type: string; kind?: string }[];
 }
 
 export interface Artifact {
@@ -34,6 +37,6 @@ export interface ParameterDefinition extends Parameter {
 }
 
 export interface Connection {
-  id: string;
+  connectorId: string;
   kind?: ConnectorRuntimeType;
 }

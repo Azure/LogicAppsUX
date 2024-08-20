@@ -61,8 +61,8 @@ export const validateNodeSettings = (
 
   const retryCountInvalidText = intl.formatMessage(
     {
-      defaultMessage: 'Retry Policy count is invalid (Must be from {min} to {max})',
-      id: 'Z9PWl/',
+      defaultMessage: 'Retry policy count is invalid (must be from {min} to {max})',
+      id: '/csbOB',
       description: 'error message for invalid retry count',
     },
     {
@@ -71,20 +71,20 @@ export const validateNodeSettings = (
     }
   );
   const retryIntervalInvalidText = intl.formatMessage({
-    defaultMessage: 'Retry Policy Interval is invalid, must match ISO 8601 duration format',
-    id: 'DEKsll',
+    defaultMessage: 'Retry policy interval is invalid, must match ISO 8601 duration format',
+    id: '+R90eK',
     description: 'error message for invalid retry interval',
   });
 
   const retryMinIntervalInvalidText = intl.formatMessage({
-    defaultMessage: 'Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format',
-    id: 'X4SuNU',
+    defaultMessage: 'Retry policy minimum interval is invalid, must match ISO 8601 duration format',
+    id: 'Bkc/+3',
     description: 'error message for invalid minimum retry interval',
   });
 
   const retryMaxIntervalInvalidText = intl.formatMessage({
-    defaultMessage: 'Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format',
-    id: 'F6+icQ',
+    defaultMessage: 'Retry policy maximum interval is invalid, must match ISO 8601 duration format',
+    id: 'aJg1gl',
     description: 'error message for maximum invalid retry interval',
   });
 

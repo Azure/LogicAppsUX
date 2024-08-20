@@ -129,18 +129,14 @@ export const DesignerApp = () => {
   });
 
   useEffect(() => {
-    if (isMonitoringView) {
-      if (isNullOrUndefined(runData)) {
-        setRunInstance(null);
-        setStandardApp(undefined);
-      } else {
-        const standardAppInstance = {
-          ...standardApp,
+    if (isMonitoringView && !isNullOrUndefined(runData)) {
+      setRunInstance(runData);
+      setStandardApp((previousApp: any) => {
+        return {
+          ...previousApp,
           definition: runData.properties.workflow.properties.definition,
-        } as StandardApp;
-        setRunInstance(runData);
-        setStandardApp(standardAppInstance);
-      }
+        };
+      });
     } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
       const updateTestDefinition = async () => {
         if (!isNullOrUndefined(runData)) {
@@ -158,7 +154,7 @@ export const DesignerApp = () => {
       };
       updateTestDefinition();
     }
-  }, [runData, standardApp, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
+  }, [runData, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
 
   useEffect(() => {
     if ((isMonitoringView || isUnitTest) && !isEmptyString(runId)) {

@@ -3,10 +3,9 @@ import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
-import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
-import { clearPanel } from '../core/state/panel/panelSlice';
+import { clearPanel } from '../core/state/panelV2/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import Controls from './Controls';
@@ -27,16 +26,19 @@ import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
-import type { BackgroundProps, NodeChange } from 'reactflow';
+import { Background, ReactFlow, ReactFlowProvider, BezierEdge } from '@xyflow/react';
+import type { BackgroundProps, EdgeTypes, NodeChange } from '@xyflow/react';
 import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
+import { CanvasFinder } from './CanvasFinder';
+import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
+import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -64,70 +66,7 @@ const edgeTypes = {
   HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
   ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
-};
-export interface CanvasFinderProps {
-  panelLocation?: PanelLocation;
-}
-export const CanvasFinder = (props: CanvasFinderProps) => {
-  const { panelLocation } = props;
-  const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
-  const isEmpty = useIsGraphEmpty();
-  const { setCenter, getZoom } = useReactFlow();
-  const height = useStore((state) => state.height);
-
-  const isPanelCollapsed = useIsPanelCollapsed();
-  const [firstLoad, setFirstLoad] = useState(true);
-
-  // If first load is an empty workflow, set canvas to center
-  useEffect(() => {
-    if (isEmpty && firstLoad) {
-      setCenter(DEFAULT_NODE_SIZE.width / 2, DEFAULT_NODE_SIZE.height, { zoom: 1 });
-      setFirstLoad(false);
-    }
-  }, [setCenter, height, isEmpty, firstLoad]);
-
-  const nodeData = useNodes().find((x) => x.id === focusNode);
-  const dispatch = useDispatch<AppDispatch>();
-  const handleTransform = useCallback(() => {
-    if (!focusNode) {
-      return;
-    }
-    if ((!nodeData?.position?.x && !nodeData?.position?.y) || !nodeData?.width || !nodeData?.height) {
-      return;
-    }
-
-    let xRawPos = nodeData?.positionAbsolute?.x ?? 0;
-    const yRawPos = nodeData?.positionAbsolute?.y ?? 0;
-
-    // If the panel is open, reduce X space
-    if (!isPanelCollapsed) {
-      // Move center to the right if Panel is located to the left; otherwise move center to the left.
-      const directionMultiplier = panelLocation && panelLocation === PanelLocation.Left ? -1 : 1;
-      xRawPos += (directionMultiplier * 630) / 2;
-    }
-
-    const xTarget = xRawPos + (nodeData?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
-    const yTarget = yRawPos + (nodeData?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
-
-    if (firstLoad) {
-      const firstNodeYPos = 150;
-      setCenter(xTarget, height / 2 - firstNodeYPos, { zoom: 1 });
-      setFirstLoad(false);
-    } else {
-      setCenter(xTarget, yTarget, {
-        zoom: getZoom(),
-        duration: 500,
-      });
-    }
-    dispatch(clearFocusNode());
-  }, [dispatch, firstLoad, focusNode, getZoom, nodeData, setCenter, height, isPanelCollapsed, panelLocation]);
-
-  useEffect(() => {
-    handleTransform();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodeData, focusNode]);
-  return null;
-};
+} as EdgeTypes;
 
 export const SearchPreloader = () => {
   usePreloadOperationsQuery();
@@ -136,7 +75,7 @@ export const SearchPreloader = () => {
 };
 
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps, panelLocation, customPanelLocations } = props;
+  const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
@@ -149,12 +88,14 @@ export const Designer = (props: DesignerProps) => {
     [dispatch]
   );
 
+  const designerContainerRef = useRef<HTMLDivElement>(null);
+
   const emptyWorkflowPlaceholderNodes = [
     {
       id: 'newWorkflowTrigger',
       position: { x: 0, y: 0 },
       data: { label: 'newWorkflowTrigger' },
-      parentNode: undefined,
+      parentId: undefined,
       type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
       style: DEFAULT_NODE_SIZE,
     },
@@ -237,10 +178,37 @@ export const Designer = (props: DesignerProps) => {
   // This delayes the query until the workflowKind is available
   useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
 
+  // Our "onlyRenderVisibleElements" prop makes offscreen nodes inaccessible to tab navigation.
+  // In order to maintain accessibility, we are disabling this prop for tab navigation users
+  // We are inferring tab nav users if they press the tab key 5 times within the first 10 seconds
+  // This is not exact but should cover most cases
+  const [userInferredTabNavigation, setUserInferredTabNavigation] = useState(false);
+  useEffect(() => {
+    if (!isInitialized) {
+      return;
+    }
+    const tabCountTimeout = 10;
+    const tabCountThreshold = 4;
+    let tabCount = 0;
+    const tabListener = (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        tabCount++;
+        if (tabCount > tabCountThreshold) {
+          document.removeEventListener('keydown', tabListener);
+          setUserInferredTabNavigation(true);
+        }
+      }
+    };
+    document.addEventListener('keydown', tabListener);
+    setTimeout(() => {
+      document.removeEventListener('keydown', tabListener);
+    }, tabCountTimeout * 1000);
+  }, [isInitialized]);
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" style={copilotPadding}>
+      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef} style={copilotPadding}>
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -259,14 +227,23 @@ export const Designer = (props: DesignerProps) => {
             onMove={(_e, viewport) => setZoom(viewport.zoom)}
             minZoom={0.05}
             onPaneClick={() => dispatch(clearPanel())}
+            disableKeyboardA11y={true}
+            onlyRenderVisibleElements={!userInferredTabNavigation}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
             }}
           >
-            <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
+            <PanelRoot
+              panelContainerRef={designerContainerRef}
+              panelLocation={panelLocation}
+              customPanelLocations={customPanelLocations}
+              isResizeable={true}
+            />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
+            <DesignerContextualMenu />
+            <EdgeContextualMenu />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />

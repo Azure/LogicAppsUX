@@ -6,6 +6,7 @@ import {
   InitConnectionService,
   InitConnectorService,
   InitGatewayService,
+  InitTenantService,
   InitOperationManifestService,
   InitSearchService,
   InitOAuthService,
@@ -19,11 +20,13 @@ import {
   InitConnectionParameterEditorService,
   InitChatbotService,
   InitCustomCodeService,
+  InitCopilotService,
+  InitUiInteractionsService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: DesignerOptionsState = {
+export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isUnitTest: false,
@@ -50,6 +53,7 @@ export const initializeServices = createAsyncThunk(
     connectorService,
     oAuthService,
     gatewayService,
+    tenantService,
     loggerService,
     functionService,
     appServiceService,
@@ -61,6 +65,8 @@ export const initializeServices = createAsyncThunk(
     connectionParameterEditorService,
     chatbotService,
     customCodeService,
+    copilotService,
+    uiInteractionsService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -82,6 +88,9 @@ export const initializeServices = createAsyncThunk(
     if (gatewayService) {
       InitGatewayService(gatewayService);
     }
+    if (tenantService) {
+      InitTenantService(tenantService);
+    }
     if (apimService) {
       InitApiManagementService(apimService);
     }
@@ -93,6 +102,9 @@ export const initializeServices = createAsyncThunk(
     }
     if (chatbotService) {
       InitChatbotService(chatbotService);
+    }
+    if (copilotService) {
+      InitCopilotService(copilotService);
     }
     if (customCodeService) {
       InitCustomCodeService(customCodeService);
@@ -106,6 +118,10 @@ export const initializeServices = createAsyncThunk(
       InitRunService(runService);
     }
 
+    if (uiInteractionsService) {
+      InitUiInteractionsService(uiInteractionsService);
+    }
+
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
 
@@ -115,7 +131,7 @@ export const initializeServices = createAsyncThunk(
 
 export const designerOptionsSlice = createSlice({
   name: 'designerOptions',
-  initialState,
+  initialState: initialDesignerOptionsState,
   reducers: {
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;

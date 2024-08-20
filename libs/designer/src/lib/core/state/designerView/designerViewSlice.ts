@@ -1,25 +1,34 @@
 import { resetWorkflowState } from '../global';
-import type { DesignerViewState } from './designerViewInterfaces';
+import type { NodeContextMenuObject, EdgeContextMenuObject, DesignerViewState } from './designerViewInterfaces';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: DesignerViewState = {
   showMinimap: false,
   clampPan: true,
-  showDeleteModal: false,
+  showDeleteModalNodeId: undefined,
+  nodeContextMenuData: undefined,
+  edgeContextMenuData: undefined,
 };
 
 export const designerViewSlice = createSlice({
   name: 'designerView',
   initialState,
   reducers: {
-    toggleMinimap: (state: DesignerViewState) => {
+    toggleMinimap: (state) => {
       state.showMinimap = !state.showMinimap;
     },
-    toggleClampPan: (state: DesignerViewState) => {
+    toggleClampPan: (state) => {
       state.clampPan = !state.clampPan;
     },
-    setShowDeleteModal: (state: DesignerViewState, action) => {
-      state.showDeleteModal = action.payload;
+    setShowDeleteModalNodeId: (state, action: PayloadAction<string | undefined>) => {
+      state.showDeleteModalNodeId = action.payload;
+    },
+    setNodeContextMenuData: (state, action: PayloadAction<NodeContextMenuObject>) => {
+      state.nodeContextMenuData = action.payload;
+    },
+    setEdgeContextMenuData: (state, action: PayloadAction<EdgeContextMenuObject>) => {
+      state.edgeContextMenuData = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -27,6 +36,7 @@ export const designerViewSlice = createSlice({
   },
 });
 
-export const { toggleMinimap, toggleClampPan, setShowDeleteModal } = designerViewSlice.actions;
+export const { toggleMinimap, toggleClampPan, setShowDeleteModalNodeId, setNodeContextMenuData, setEdgeContextMenuData } =
+  designerViewSlice.actions;
 
 export default designerViewSlice.reducer;

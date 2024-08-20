@@ -34,9 +34,8 @@ import axios from 'axios';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
-import { window } from 'vscode';
 
-export async function generateDeploymentScripts(context: IActionContext, projectRoot: vscode.Uri): Promise<void> {
+export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
   try {
     ext.outputChannel.show();
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
@@ -45,12 +44,9 @@ export async function generateDeploymentScripts(context: IActionContext, project
     showPreviewWarning(extensionCommand.generateDeploymentScripts);
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    const projectRoot = vscode.Uri.file(projectPath);
     const connectionsJson = await getConnectionsJson(projectPath);
-    if (isEmptyString(connectionsJson)) {
-      return;
-    }
-
-    const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+    const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
 
     if (!isParameterized) {
@@ -58,7 +54,7 @@ export async function generateDeploymentScripts(context: IActionContext, project
         'parameterizeInDeploymentScripts',
         'Allow parameterization for connections? Declining cancels generation for deployment scripts.'
       );
-      const result = await window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
+      const result = await vscode.window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
       if (result === DialogResponses.yes) {
         await parameterizeConnections(context);
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
@@ -218,7 +214,7 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
 async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory: string): Promise<void> {
   try {
     if (!zipContent) {
-      window.showErrorMessage(localize('invalidApiResponseContent', 'Invalid API response content.'));
+      vscode.window.showErrorMessage(localize('invalidApiResponseContent', 'Invalid API response content.'));
       ext.outputChannel.appendLog(localize('invalidApiResponseExiting', 'Invalid API response received. Exiting...'));
       return;
     }

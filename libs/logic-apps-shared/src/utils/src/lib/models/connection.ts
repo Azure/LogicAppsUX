@@ -30,6 +30,15 @@ interface Api {
   type: string;
 }
 
+export interface ConnectionParameterValues {
+  authType?: string;
+  gateway?: {
+    id: string;
+    name: string;
+    type: string;
+  };
+}
+
 export interface ConnectionParameterSetValues {
   name: string;
   values: Record<string, ValueObject>;
@@ -39,13 +48,21 @@ export interface ValueObject {
   value: any;
 }
 
+export interface ConnectionAuthenticatedUser {
+  name?: string;
+  objectId?: string;
+  tenantId?: string;
+}
+
 export interface ConnectionProperties {
+  authenticatedUser?: ConnectionAuthenticatedUser;
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParametersSet?: ConnectionParameterSet;
   createdBy?: Principal;
   createdTime: string;
   displayName: string;
   overallStatus: string;
+  parameterValues?: ConnectionParameterValues;
   parameterValueType?: string;
   statuses: ConnectionStatus[];
   testLinks?: TestConnectionObject[];

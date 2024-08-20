@@ -58,6 +58,10 @@ export default {
     PREMIUM: 'PREMIUM',
     STANDARD: 'STANDARD',
   },
+  SKU: {
+    STANDARD: 'standard',
+    CONSUMPTION: 'consumption',
+  },
   ACTION_PALETTE_KEY: 'actionpalettekey',
   ARM_RESOURCE: {
     FUNCTION: {
@@ -841,6 +845,7 @@ export default {
       CONCURRENCY: 'concurrency',
       REPETITIONS: 'repetitions',
       RUNS: 'runs',
+      MAXIMUM_WAITING_RUNS: 'maximumWaitingRuns',
       STATIC_RESULT: 'staticResult',
       SECURE_DATA: 'secureData',
       UPLOAD_CHUNK_SIZE: 'uploadChunkSizeInMB',
@@ -853,6 +858,10 @@ export default {
     SPLITON: {
       AUTOLOAD: '@autoload()',
     },
+  },
+  MAXIMUM_WAITING_RUNS: {
+    CONSUMPTION: { min: 10, max: 200 },
+    DEFAULT: { min: 10, max: 100 },
   },
   SWAGGER,
   SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'SystemAssigned_Managed_Identity',

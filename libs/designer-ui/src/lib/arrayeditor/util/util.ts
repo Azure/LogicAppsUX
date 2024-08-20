@@ -1,3 +1,4 @@
+import type { ComboboxItem } from '../../combobox';
 import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
@@ -5,6 +6,7 @@ import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { guid } from '@microsoft/logic-apps-shared';
+import type { DropdownItem } from '../../dropdown';
 
 export interface ItemSchemaItemProps {
   key: string;
@@ -83,6 +85,7 @@ export const convertComplexItemsToArray = (
                 arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
               }
             });
+            console.log(arrayVal);
             returnItem[keyName] = arrayVal;
           }
         } else {
@@ -91,7 +94,7 @@ export const convertComplexItemsToArray = (
             (typeof convertedItem === 'string' && convertedItem.length > 0) ||
             (typeof convertedItem === 'object' && Object.keys(convertedItem).length > 0)
           ) {
-            returnItem[keyName] = convertedItem;
+            returnItem[keyName] = castParameterValueToPrimitiveType(convertedItem, value?.type);
           }
         }
       }
@@ -125,6 +128,21 @@ export const convertComplexItemsToArray = (
     }
   }
   return returnItem;
+};
+
+const castParameterValueToPrimitiveType = (value: any, parameterType?: string): any => {
+  if (parameterType === constants.SWAGGER.TYPE.BOOLEAN) {
+    const lowerValue = value.toLowerCase();
+    if (lowerValue === 'true' || lowerValue === 'false') {
+      return lowerValue === 'true';
+    }
+  } else if (parameterType === constants.SWAGGER.TYPE.INTEGER) {
+    const intValue = Number.parseInt(value, 10);
+    if (!Number.isNaN(intValue)) {
+      return intValue;
+    }
+  }
+  return value;
 };
 
 export const initializeSimpleArrayItems = (
@@ -268,7 +286,7 @@ const convertObjectToComplexArrayItemArray = (
         key: itemSchemaProperty.key,
         title: handleTitle(itemSchema.key, itemSchemaProperty.title),
         description: itemSchemaProperty.description ?? '',
-        value: convertStringToSegments(value, nodeMap, { tokensEnabled: true }),
+        value: convertStringToSegments(String(value), nodeMap, { tokensEnabled: true }),
       });
     }
   });
@@ -296,4 +314,25 @@ const capitalizeElements = (stringArray: string[]): string[] => {
     });
     return capitalizedWords.join(' ');
   });
+};
+
+export const getComoboxEnumOptions = (options?: ComboboxItem[], schemaItems?: string[]) => {
+  return (
+    options ??
+    schemaItems?.map((val: string): ComboboxItem => {
+      const stringValue = String(val);
+      return {
+        displayName: stringValue,
+        key: stringValue,
+        value: stringValue,
+      };
+    })
+  );
+};
+
+export const getBooleanDropdownOptions = (): DropdownItem[] => {
+  return [
+    { key: 'true', displayName: 'true', value: true },
+    { key: 'false', displayName: 'false', value: false },
+  ];
 };

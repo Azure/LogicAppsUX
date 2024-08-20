@@ -15,7 +15,7 @@ import {
 } from '../utils/DataMap.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
-import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
+import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 
@@ -25,13 +25,20 @@ interface LoopMetadata {
   sequence?: ParseFunc;
   indexFn?: string;
 }
+
+interface ConditionalMetadata {
+  needsConnection: boolean;
+  key: string;
+  children: string[];
+  needsObjectConnection: boolean;
+}
 export class MapDefinitionDeserializer {
   private readonly _mapDefinition: MapDefinitionEntry;
   private readonly _sourceSchema: SchemaExtended;
   private readonly _targetSchema: SchemaExtended;
   private readonly _functions: FunctionData[];
   private _loop: LoopMetadata[];
-  private _conditional: string;
+  private _conditional: ConditionalMetadata;
 
   private readonly _sourceSchemaFlattened: SchemaNodeDictionary;
   private readonly _targetSchemaFlattened: SchemaNodeDictionary;
@@ -48,7 +55,12 @@ export class MapDefinitionDeserializer {
     this._sourceSchema = sourceSchema;
     this._targetSchema = targetSchema;
     this._functions = functions;
-    this._conditional = '';
+    this._conditional = {
+      key: '',
+      needsConnection: false,
+      children: [],
+      needsObjectConnection: false,
+    };
     this._loop = [];
 
     this._sourceSchemaFlattened = flattenSchemaIntoDictionary(this._sourceSchema, SchemaType.Source);
@@ -64,7 +76,8 @@ export class MapDefinitionDeserializer {
     const rootNodeKey = parsedYamlKeys.filter((key) => reservedMapDefinitionKeysArray.indexOf(key) < 0)[0];
 
     if (rootNodeKey) {
-      this.createConnectionsForLMLObject(this._mapDefinition[rootNodeKey], `/${rootNodeKey}`, undefined, connections);
+      const rootNodeFormatted = rootNodeKey.startsWith('/') ? rootNodeKey : `/${rootNodeKey}`;
+      this.createConnectionsForLMLObject(this._mapDefinition[rootNodeKey], `${rootNodeFormatted}`, undefined, connections);
     }
 
     //this._cleanupExtraneousConnections(connections);
@@ -74,8 +87,8 @@ export class MapDefinitionDeserializer {
 
   private removePropertySymbolFromKey = (key: string) => {
     let formattedTargetKey = key;
-    if (key.startsWith('$@')) {
-      formattedTargetKey = key.substring(2);
+    if (key.startsWith('$')) {
+      formattedTargetKey = key.substring(1);
     }
     return formattedTargetKey;
   };
@@ -95,7 +108,7 @@ export class MapDefinitionDeserializer {
     if (parentTargetNode === undefined) {
       targetNode = this._targetSchemaFlattened[`${targetPrefix}${formattedTargetKey}`];
     } else {
-      targetNode = parentTargetNode.children.find((child) => child.name === formattedTargetKey);
+      targetNode = parentTargetNode.children.find((child) => child.qName === formattedTargetKey);
       if (targetNode === undefined) {
         targetNode = getLoopTargetNodeWithJson(
           // eventually this can be simplified because we have the parent
@@ -143,6 +156,7 @@ export class MapDefinitionDeserializer {
     const functionMetadata = funcMetadata || createSchemaNodeOrFunction(tokens).term;
 
     let sourceSchemaNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
+
     if (this._loop.length > 0 && !sourceSchemaNode) {
       sourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
     }
@@ -156,6 +170,10 @@ export class MapDefinitionDeserializer {
       );
     }
 
+    if (sourceSchemaNode && this._conditional) {
+      this._conditional.children.push(sourceSchemaNode.key);
+    }
+
     if (!sourceSchemaNode && functionMetadata.type === 'Function') {
       // get function node
       const func = {
@@ -165,25 +183,28 @@ export class MapDefinitionDeserializer {
       func.key = funcKey;
 
       // function to target
-      applyConnectionValue(connections, {
-        targetNode: targetNode,
-        targetNodeReactFlowKey: this.getTargetKey(targetNode),
-        findInputSlot: true,
-        input: {
-          reactFlowKey: funcKey,
-          node: func,
-        },
-      });
+      if (targetNode !== undefined) {
+        applyConnectionValue(connections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: this.getTargetKey(targetNode),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: funcKey,
+            node: func,
+          },
+        });
 
-      // connect inputs
-      functionMetadata.inputs.forEach((input) => {
-        const srcStr = input.type !== 'Function' ? input.value : input.name;
-        this.handleSingleValueOrFunction(srcStr, input, func, connections);
-      });
+        // connect inputs
+        functionMetadata.inputs.forEach((input) => {
+          const srcStr = input.type !== 'Function' ? input.value : input.name;
+          this.handleSingleValueOrFunction(srcStr, input, func, connections);
+        });
+      }
     } else if (!sourceSchemaNode && functionMetadata.type !== 'Function') {
       // custom value or index
       this.handleSingleValue(key, targetNode, connections);
-    } else {
+    } else if (targetNode) {
+      //danielle temporary to unblock
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
@@ -196,8 +217,8 @@ export class MapDefinitionDeserializer {
     }
   };
 
-  private getTargetKey = (targetNode: SchemaNodeExtended | FunctionData) =>
-    isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key);
+  private getTargetKey = (targetNode?: SchemaNodeExtended | FunctionData) =>
+    targetNode ? (isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key)) : '';
 
   private addLoopConnectionIfNeeded = (connections: ConnectionDictionary, targetNode: SchemaNodeExtended) => {
     if (this._loop.length > 0) {
@@ -239,18 +260,26 @@ export class MapDefinitionDeserializer {
     return this._functions.find((func) => func.key === key);
   };
 
-  private addConditionalConnectionIfNeeded = (connections: ConnectionDictionary, targetNode: SchemaNodeExtended | FunctionData) => {
-    if (this._conditional) {
-      const ifFunction = this._functions.find((func) => func.key === this._conditional) as FunctionData;
+  // connection from the conditional function to the target node
+  private addConnectionFromConditionalToTargetIfNeeded = (
+    connections: ConnectionDictionary,
+    targetNode: SchemaNodeExtended | FunctionData
+  ) => {
+    if (this._conditional.needsConnection) {
+      const ifFunction = connections[this._conditional.key].self.node as FunctionData;
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
         findInputSlot: true,
         input: {
-          reactFlowKey: this._conditional,
+          reactFlowKey: this._conditional.key,
           node: ifFunction,
         },
       });
+      if (isSchemaNodeExtended(targetNode) && targetNode.children.length !== 0) {
+        this._conditional.needsObjectConnection = true;
+        this._conditional.needsConnection = false;
+      }
     }
   };
 
@@ -265,15 +294,17 @@ export class MapDefinitionDeserializer {
       const targetNode = this.getTargetNodeInContextOfParent(currentTarget, parentTargetNode);
 
       this.addLoopConnectionIfNeeded(connections, targetNode as SchemaNodeExtended);
-      this.addConditionalConnectionIfNeeded(connections, targetNode);
+      this.addConnectionFromConditionalToTargetIfNeeded(connections, targetNode);
 
       // if right side is string- process it, if object, process all children
       if (typeof rightSideStringOrObject === 'string') {
         // must connect conditional
-        // danielle this is messsyyyyyy
-        if (this._conditional) {
-          const ifFunction = this.getFunctionForKey(this._conditional) as FunctionData;
+
+        // danielle this is messsyyyyyy- basically connects the right side (source) to the if function instead of the node directly
+        if (this._conditional.needsConnection) {
+          const ifFunction = connections[this._conditional.key].self.node as FunctionData;
           this.handleSingleValueOrFunction(rightSideStringOrObject, undefined, ifFunction, connections);
+          this._conditional.needsConnection = false;
         } else {
           this.handleSingleValueOrFunction(rightSideStringOrObject, undefined, targetNode, connections);
         }
@@ -285,6 +316,29 @@ export class MapDefinitionDeserializer {
     } else {
       this.processLeftSideForOrIf(leftSideKey, parentTargetNode, rightSideStringOrObject, connections);
     }
+  };
+
+  public getLowestCommonParentForConditional = (conditionalChildren: string[]): string => {
+    if (conditionalChildren.length === 1) {
+      return conditionalChildren[0].slice(0, conditionalChildren[0].lastIndexOf('/'));
+    }
+
+    let lowestCommonParent = '';
+    const parents = conditionalChildren;
+    [...parents[0]].forEach((char, index) => {
+      const currentChar = char;
+      parents.forEach((parent) => {
+        if (index >= parent.length && lowestCommonParent === '') {
+          lowestCommonParent = parent;
+        }
+        if (parent[index] !== currentChar && lowestCommonParent === '') {
+          const stripped = parent.substring(0, index);
+          lowestCommonParent = stripped.substring(0, stripped.lastIndexOf('/'));
+        }
+      });
+    });
+
+    return lowestCommonParent;
   };
 
   private processLeftSideForOrIf = (
@@ -305,7 +359,26 @@ export class MapDefinitionDeserializer {
     Object.entries(rightSideStringOrObject).forEach((child) => {
       this.createConnectionsForLMLObject(child[1], child[0], parentTargetNode, connections);
     });
-    this._conditional = '';
+    if (this._conditional.needsObjectConnection) {
+      const lowestCommonParent = this.getLowestCommonParentForConditional(this._conditional.children);
+      if (lowestCommonParent) {
+        applyConnectionValue(connections, {
+          targetNode: this.getFunctionForKey(this._conditional.key) as FunctionData,
+          targetNodeReactFlowKey: this._conditional.key,
+          inputIndex: 1,
+          input: {
+            reactFlowKey: addSourceReactFlowPrefix(lowestCommonParent),
+            node: findNodeForKey(lowestCommonParent, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended,
+          },
+        });
+      }
+    }
+    this._conditional = {
+      key: '',
+      needsConnection: false,
+      children: [],
+      needsObjectConnection: false,
+    };
   };
 
   private handleIfFunction = (functionMetadata: ParseFunc, connections: ConnectionDictionary) => {
@@ -317,11 +390,11 @@ export class MapDefinitionDeserializer {
       this._createdNodes
     ) as FunctionData;
     const funcKey = createReactFlowFunctionKey(func);
-    func.key = funcKey;
 
-    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], func, connections);
+    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], { ...func, key: funcKey }, connections);
     this.getFunctionForKey(funcKey);
-    this._conditional = funcKey;
+    this._conditional.key = funcKey;
+    this._conditional.needsConnection = true;
   };
   private forHasIndex = (forSrc: ParseFunc) => forSrc.inputs.length > 1;
 
@@ -380,7 +453,10 @@ export class MapDefinitionDeserializer {
     if (sourceLoopKey.type === 'SingleValueMetadata') {
       const loopSource = this.getLoopNode(sourceLoopKey.value);
       if (loopSource) {
-        const loopMetadata: LoopMetadata = { key: loopSource.key, needsConnection: true };
+        const loopMetadata: LoopMetadata = {
+          key: loopSource.key,
+          needsConnection: true,
+        };
         this._loop.push(loopMetadata);
         this.createIndexFunctionIfNeeded(forFunc, loopSource, connections, loopMetadata);
       }
@@ -462,7 +538,10 @@ export class MapDefinitionDeserializer {
       const idk = createSchemaNodeOrFunction(directAccessSeparated);
 
       this.handleSingleValueOrFunction('', idk.term, targetNode, connections);
-    } else {
+    } else if (targetNode) {
+      //danielle temporary to unblock
+      this._conditional.children.push(key);
+
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),

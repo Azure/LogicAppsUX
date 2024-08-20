@@ -14,6 +14,7 @@ export interface TrackingSectionProps extends SectionProps {
 }
 
 export const Tracking = ({
+  nodeId,
   readOnly,
   expanded,
   correlation,
@@ -33,13 +34,13 @@ export const Tracking = ({
   });
 
   const clientIdTrackingTitle = intl.formatMessage({
-    defaultMessage: 'Custom Tracking Id',
-    id: 'SmCQys',
+    defaultMessage: 'Custom tracking ID',
+    id: 'M6GI6z',
     description: 'title for client tracking id setting',
   });
   const clientTrackingTootltipText = intl.formatMessage({
-    defaultMessage: 'Set the tracking id for the run. For split-on this tracking id is for the initiating request',
-    id: 'BvCnOv',
+    defaultMessage: 'Set the tracking ID for the run. For split-on this tracking ID is for the initiating request',
+    id: '9uv02q',
     description: 'description for client tracking id setting',
   });
   const trackingTitle = intl.formatMessage({
@@ -65,6 +66,7 @@ export const Tracking = ({
 
   const trackingSectionProps: SettingsSectionProps = {
     id: 'tracking',
+    nodeId,
     title: trackingTitle,
     sectionName: SettingSectionName.TRACKING,
     expanded,

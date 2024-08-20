@@ -1,4 +1,4 @@
-import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../../state/DataMapSlice';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../../state/DataMapSliceV2';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DataMapperFileService } from './services/dataMapperFileService';
@@ -19,28 +19,23 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-// interface SchemaFile {
-//   path: string;
-//   type: SchemaType;
-// }
-
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
-  const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
-  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
-  const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
-  const mapMetadata = useSelector((state: RootState) => state.dataMapDataLoader.dataMapMetadata);
-  const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
-  const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
-  const targetSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.targetSchemaFilename);
-  const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
-  // const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
-  const customXsltPathsList = useSelector((state: RootState) => state.dataMapDataLoader.customXsltPathsList);
-  const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMap.xsltContent);
+  const mapDefinition = useSelector((state: RootState) => state.dataMap.mapDefinition);
+  const mapMetadata = useSelector((state: RootState) => state.dataMap.dataMapMetadata);
+  const sourceSchemaFilename = useSelector((state: RootState) => state.dataMap.sourceSchemaFilename);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.sourceSchema);
+  const targetSchemaFilename = useSelector((state: RootState) => state.dataMap.targetSchemaFilename);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.targetSchema);
+  const schemaFileList = useSelector((state: RootState) => state.dataMap.schemaFileList);
+  const customXsltPathsList = useSelector((state: RootState) => state.dataMap.customXsltPathsList);
+  const fetchedFunctions = useSelector((state: RootState) => state.dataMap.fetchedFunctions);
 
-  const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
+  const runtimePort = useSelector((state: RootState) => state.dataMap.runtimePort);
 
   if (runtimePort) {
     InitDataMapperApiService({
@@ -59,33 +54,6 @@ export const DataMapperAppV2 = () => {
   const dataMapperFileService = useMemo(() => {
     return new DataMapperFileService(sendMsgToVsix);
   }, [sendMsgToVsix]);
-
-  // const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
-  //   sendMsgToVsix({
-  //     command: ExtensionCommand.addSchemaFromFile,
-  //     data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
-  //   });
-  // };
-
-  const readLocalxsltFileOptions = useCallback(() => {
-    sendMsgToVsix({
-      command: ExtensionCommand.readLocalCustomXsltFileOptions,
-    });
-  }, [sendMsgToVsix]);
-
-  const saveXsltCall = (dataMapXslt: string) => {
-    sendMsgToVsix({
-      command: ExtensionCommand.saveDataMapXslt,
-      data: dataMapXslt,
-    });
-  };
-
-  const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
-    sendMsgToVsix({
-      command: ExtensionCommand.saveDraftDataMapDefinition,
-      data: dataMapDefinition,
-    });
-  };
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
     sendMsgToVsix({
@@ -178,30 +146,30 @@ export const DataMapperAppV2 = () => {
   }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
-    <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
-      <DataMapDataProvider
-        dataMapMetadata={mapMetadata}
-        xsltFilename={xsltFilename}
-        xsltContent={xsltContent}
-        mapDefinition={mapDefinition}
-        sourceSchema={sourceSchema}
-        targetSchema={targetSchema}
-        availableSchemas={undefined}
-        customXsltPaths={customXsltPathsList}
-        fetchedFunctions={fetchedFunctions}
-        // Passed in here too so it can be managed in the Redux store so components can track the current theme
-        theme={theme}
-      >
-        <div style={{ height: '100vh', overflow: 'hidden' }}>
-          <DataMapperDesigner
-            fileService={dataMapperFileService}
-            saveXsltCall={saveXsltCall}
-            saveDraftStateCall={saveDraftDataMapDefinition}
-            readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
-            setIsMapStateDirty={setIsMapStateDirty}
-          />
-        </div>
-      </DataMapDataProvider>
-    </DataMapperDesignerProvider>
+    <div
+      style={{
+        height: 'inherit',
+      }}
+    >
+      <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
+        <DataMapDataProvider
+          dataMapMetadata={mapMetadata}
+          xsltFilename={xsltFilename}
+          xsltContent={xsltContent}
+          mapDefinition={mapDefinition}
+          sourceSchema={sourceSchema}
+          targetSchema={targetSchema}
+          availableSchemas={schemaFileList}
+          customXsltPaths={customXsltPathsList}
+          fetchedFunctions={fetchedFunctions}
+          // Passed in here too so it can be managed in the Redux store so components can track the current theme
+          theme={theme}
+        >
+          <div style={{ height: '100vh', overflow: 'hidden' }}>
+            <DataMapperDesigner fileService={dataMapperFileService} setIsMapStateDirty={setIsMapStateDirty} />
+          </div>
+        </DataMapDataProvider>
+      </DataMapperDesignerProvider>
+    </div>
   );
 };

@@ -5,7 +5,7 @@ import type { NodeData, NodeOperation } from '../../state/operation/operationMet
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
-import { pasteNode, pasteScopeNode } from '../../state/workflow/workflowSlice';
+import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
 import { createIdCopy, getRecordEntry, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -18,6 +18,7 @@ import { initializeDynamicDataInNodes, initializeOperationMetadata } from './ope
 import type { NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { updateAllUpstreamNodes } from './initialize';
 import type { NodeTokens } from '../../state/tokens/tokensSlice';
+import { addDynamicTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
 import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
 import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
@@ -37,13 +38,17 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
 
     const nodeData = getNodeOperationData(state.operations, nodeId);
     const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+    const nodeComment = getRecordEntry(state.workflow.operations, nodeId)?.description;
     const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
+    const nodeTokenData = getRecordEntry(state.tokens.outputTokens, nodeId);
 
     const clipboardItem = JSON.stringify({
       nodeId: newNodeId,
       nodeData,
+      nodeTokenData,
       nodeOperationInfo,
       nodeConnectionData,
+      nodeComment,
       isScopeNode: false,
       mslaNode: true,
     });
@@ -105,12 +110,14 @@ interface PasteOperationPayload {
   relationshipIds: RelationshipIds;
   nodeId: string;
   nodeData: NodeData;
+  nodeTokenData: NodeTokens;
   operationInfo: NodeOperation;
   connectionData?: ReferenceKey;
+  comment?: string;
 }
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { nodeId: actionId, relationshipIds, nodeData, operationInfo, connectionData } = payload;
+  const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment } = payload;
   if (!actionId || !relationshipIds || !nodeData) {
     throw new Error('Operation does not exist');
   }
@@ -134,8 +141,30 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
 
   // replace new nodeId if there exists a copy of the copied node
   dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
+
+  const updatedTokens = nodeTokenData.tokens.map((token) => {
+    // Modify the actionName to a unique value
+    return {
+      ...token,
+      outputInfo: {
+        ...token.outputInfo,
+        actionName: nodeId,
+      },
+    };
+  });
+
+  dispatch(
+    addDynamicTokens({
+      nodeId,
+      tokens: updatedTokens,
+    })
+  );
+
   if (connectionData) {
     dispatch(initCopiedConnectionMap({ connectionReferences: { [nodeId]: connectionData } }));
+  }
+  if (comment) {
+    dispatch(setNodeDescription({ nodeId, description: comment }));
   }
 
   dispatch(setIsPanelLoading(false));

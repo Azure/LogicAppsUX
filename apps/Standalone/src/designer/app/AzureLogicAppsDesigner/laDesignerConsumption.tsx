@@ -18,12 +18,13 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   ConsumptionConnectionService,
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
@@ -43,6 +44,7 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  getSKUDefaultHostOptions,
   Constants,
 } from '@microsoft/logic-apps-designer';
 import * as React from 'react';
@@ -223,7 +225,7 @@ const DesignerEditorConsumption = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
+            ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
           },
           showPerformanceDebug,
         }}
@@ -237,7 +239,7 @@ const DesignerEditorConsumption = () => {
             }}
             runInstance={runInstanceData}
           >
-            <div style={{ height: 'inherit', width: 'inherit' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
                 saveWorkflow={saveWorkflowFromDesigner}
@@ -297,6 +299,7 @@ const getDesignerServices = (
     tenantId,
     httpClient,
   });
+
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,
     apiVersion: '2019-12-01',
@@ -304,13 +307,21 @@ const getDesignerServices = (
     includeBasePathInTemplate: true,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl, siteResourceId: workflowId, httpClient, workflowName });
+
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl,
+    siteResourceId: workflowId,
+    httpClient,
+    workflowName,
+  });
 
   const appServiceService = new BaseAppServiceService({
     ...defaultServiceParams,
     apiVersion: '2022-03-01',
     subscriptionId,
   });
+
   const connectorService = new ConsumptionConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
@@ -383,6 +394,7 @@ const getDesignerServices = (
     apiVersion: '2018-07-01-preview',
     workflowReferenceId: workflowId,
   });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -392,12 +404,18 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    ...defaultServiceParams,
+    apiVersion: '2017-08-01',
+  });
+
   const operationManifestService = new ConsumptionOperationManifestService({
     ...defaultServiceParams,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
     location: location || 'location',
   });
+
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
     openApiConnectionMode: false, // This should be turned on for Open Api testing.
@@ -467,13 +485,17 @@ const getDesignerServices = (
     httpClient,
   });
 
-  const hostService = {};
+  const hostService = {
+    fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
+  };
 
   return {
     appServiceService,
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService,
