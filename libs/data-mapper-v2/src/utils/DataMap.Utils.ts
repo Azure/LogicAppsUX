@@ -597,8 +597,8 @@ export const addParentConnectionForRepeatingElementsNested = (
           input: {
             reactFlowKey: prefixedSourceKey,
             node: firstRepeatingSourceNode,
+            isRepeating: true,
           },
-          isRepeating: true,
         });
       }
 

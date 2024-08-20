@@ -5,6 +5,7 @@ import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
 import {
   applyConnectionValue,
+  collectRepeatingSourceSchemaNodesForConnectionChain,
   createConnectionEntryIfNeeded,
   findInputByID,
   inputFromHandleId,
@@ -208,6 +209,70 @@ describe('utils/Connections', () => {
         expect(mockConnections[mockSelfReactFlowKey]).toBeDefined();
         expect(mockConnections[mockSelfReactFlowKey].inputs[0].length).toEqual(0);
         expect(mockConnections[mockSelfReactFlowKey].inputs[1].length).toEqual(1);
+      });
+
+      it('Test that a repeating node is connected', () => {
+        const mockConnections: ConnectionDictionary = {};
+        const mockSourceRepeatingReactFlowKey = 'source-abc';
+        const mockTargetReactFlowKey = 'target-abcd';
+        const mockSourceRepeatingNode: SchemaNodeExtended = {
+          key: mockSourceReactFlowKey,
+          name: 'Source',
+          qName: 'Source',
+          type: NormalizedDataType.Integer,
+          properties: SchemaNodeProperty.None,
+          nodeProperties: [SchemaNodeProperty.None],
+          children: [],
+          pathToRoot: [],
+          arrayItemIndex: undefined,
+          parentKey: undefined,
+        };
+        const mockTargetNode: SchemaNodeExtended = {
+          key: mockTargetReactFlowKey,
+          name: 'Target',
+          qName: 'Target',
+          type: NormalizedDataType.Integer,
+          properties: SchemaNodeProperty.None,
+          nodeProperties: [SchemaNodeProperty.None],
+          children: [],
+          pathToRoot: [],
+          arrayItemIndex: undefined,
+          parentKey: undefined,
+        };
+
+        applyConnectionValue(mockConnections, {
+          targetNode: mockTargetNode,
+          targetNodeReactFlowKey: mockTargetReactFlowKey,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: mockSourceRepeatingReactFlowKey,
+            node: mockSourceRepeatingNode,
+            isRepeating: true,
+          },
+        });
+
+        expect(mockConnections[mockSourceRepeatingReactFlowKey]).toBeDefined();
+        expect(mockConnections[mockSourceRepeatingReactFlowKey].outputs[0].reactFlowKey).toEqual(mockTargetReactFlowKey);
+        expect(mockConnections[mockSourceRepeatingReactFlowKey].outputs[0].isRepeating).toEqual(true);
+
+        expect(mockConnections[mockTargetReactFlowKey]).toBeDefined();
+        expect((mockConnections[mockTargetReactFlowKey].inputs[0][0] as ConnectionUnit).isRepeating).toEqual(true);
+      });
+    });
+
+    describe('collectRepeatingSourceSchemaNodesForConnectionChain', () => {
+      it('Test collecting repeating source schema nodes for connection chain', () => {
+        const connectionDictionary: ConnectionDictionary = fullMapForSimplifiedLoop;
+
+        const targetRepeating = connectionDictionary['target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple'];
+        const sourceRepeating = connectionDictionary['source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple'];
+
+        sourceRepeating.outputs[0].isRepeating = true;
+
+        const sourceSchemaNodes = collectRepeatingSourceSchemaNodesForConnectionChain(targetRepeating, connectionDictionary);
+
+        expect(sourceSchemaNodes.length).toEqual(1);
+        //expect(sourceSchemaNodes[0].key).toEqual('/ns0:Root/DirectTranslation/EmployeeID');
       });
     });
 

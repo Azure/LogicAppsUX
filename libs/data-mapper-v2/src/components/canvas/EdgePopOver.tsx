@@ -11,7 +11,7 @@ import {
 } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { addLoopToConnection, deleteEdge, updateEdgePopOverId } from '../../core/state/DataMapSlice';
+import { addLoopToConnection, deleteEdge, removeLoopFromConnection, updateEdgePopOverId } from '../../core/state/DataMapSlice';
 import type { Bounds } from '../../core';
 import { useStyles } from './styles';
 import { ArrowRepeatAllRegular, DeleteRegular, ArrowRepeatAllOffRegular } from '@fluentui/react-icons';
@@ -90,6 +90,12 @@ const EdgePopOverInner = (props: EdgePopOverProps) => {
     }
   }, [dispatch, edgePopOverId, closePopup]);
 
+  const onRemoveLoop = useCallback(() => {
+    closePopup();
+    if (edgePopOverId) {
+      dispatch(removeLoopFromConnection(edgePopOverId));
+    }
+  }, [dispatch, edgePopOverId, closePopup]);
   if (!edgePopOverId || x === undefined || y === undefined || height === undefined || width === undefined) {
     return null;
   }
@@ -119,7 +125,7 @@ const EdgePopOverInner = (props: EdgePopOverProps) => {
       <PopoverSurface as={'div'}>
         <MenuList>
           {isLoopRemovingAllowed ? (
-            <MenuItem icon={<ArrowRepeatAllOffRegular color={tokens.colorPaletteBlueBorderActive} />}>
+            <MenuItem onClick={onRemoveLoop} icon={<ArrowRepeatAllOffRegular color={tokens.colorPaletteBlueBorderActive} />}>
               {stringResources.REMOVE_LOOP}
             </MenuItem>
           ) : isLoopAddingAllowed ? (

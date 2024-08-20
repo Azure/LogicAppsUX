@@ -10,7 +10,7 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
-import { getSplitIdsFromReactFlowConnectionId } from './ReactFlow.Util';
+import { getSplitIdsFromReactFlowConnectionId, isSourceNode } from './ReactFlow.Util';
 import { UnboundedInput } from '../constants/FunctionConstants';
 
 /**
@@ -64,7 +64,7 @@ export const createConnectionEntryIfNeeded = (
  */
 export const applyConnectionValue = (
   connections: ConnectionDictionary,
-  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot, isRepeating }: SetConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot }: SetConnectionInputAction
 ) => {
   if (!findInputSlot && inputIndex === undefined) {
     console.error('Invalid Connection Input Op: inputIndex was not provided for a non-handle-drawn/deserialized connection');
@@ -159,9 +159,6 @@ export const applyConnectionValue = (
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       if (confirmedInputIndex === UnboundedInput) {
         // Repeating schema node
-        if (typeof input !== 'string') {
-          input.isRepeating = isRepeating;
-        }
         connection.inputs[0].push(input);
       } else {
         // Function unbounded input
@@ -193,7 +190,7 @@ export const applyConnectionValue = (
       const tgtConUnit: ConnectionUnit = {
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
-        isRepeating: isRepeating,
+        isRepeating: input.isRepeating,
       };
 
       createConnectionEntryIfNeeded(connections, input.node, input.reactFlowKey);
@@ -386,6 +383,33 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   }
 
   return [currentFunction.self];
+};
+
+export const collectRepeatingSourceSchemaNodesForConnectionChain = (
+  currentNode: Connection,
+  outputToCheck: string,
+  connections: ConnectionDictionary
+): ConnectionUnit[] => {
+  const connectionUnits: ConnectionUnit[] = flattenInputs(currentNode.inputs).filter(isConnectionUnit);
+
+  let newConnections: ConnectionUnit[] = [];
+  connectionUnits.forEach((input) => {
+    const child = collectRepeatingSourceSchemaNodesForConnectionChain(
+      connections[input.reactFlowKey],
+      currentNode.self.reactFlowKey,
+      connections
+    );
+    newConnections = newConnections.concat(child);
+    console.log(newConnections);
+  });
+  if (
+    isSchemaNodeExtended(currentNode.self.node) &&
+    isSourceNode(currentNode.self.reactFlowKey) &&
+    currentNode.outputs.find((output) => output.reactFlowKey === outputToCheck)?.isRepeating
+  ) {
+    newConnections.push(currentNode.self);
+  }
+  return newConnections;
 };
 
 export const getActiveNodes = (connections: ConnectionDictionary, stateConnections?: Record<string, boolean>, selectedItemKey?: string) => {

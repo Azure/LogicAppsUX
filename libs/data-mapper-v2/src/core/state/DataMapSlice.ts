@@ -157,7 +157,6 @@ export interface SetConnectionInputAction {
   inputIndex?: number;
   input: InputConnection | null; // null is indicator to remove an unbounded input value
   findInputSlot?: boolean;
-  isRepeating?: boolean;
 }
 
 export interface ExpandCollapseAction {
@@ -616,7 +615,16 @@ export const dataMapSlice = createSlice({
       const source = state.curDataMapOperation.dataMapConnections[action.payload.source];
       const target = state.curDataMapOperation.dataMapConnections[action.payload.target];
 
-      addRepeatingToConnection(source, target);
+      addOrRemoveRepeatingToConnection(source, target, true);
+
+      doDataMapOperation(state, { ...state, curDataMapOperation: { ...state.curDataMapOperation } }, 'Add loop to connection');
+    },
+
+    removeLoopFromConnection: (state, action: PayloadAction<EdgePopOverIds>) => {
+      const source = state.curDataMapOperation.dataMapConnections[action.payload.source];
+      const target = state.curDataMapOperation.dataMapConnections[action.payload.target];
+
+      addOrRemoveRepeatingToConnection(source, target, false);
 
       doDataMapOperation(state, { ...state, curDataMapOperation: { ...state.curDataMapOperation } }, 'Add loop to connection');
     },
@@ -696,6 +704,7 @@ export const {
   updateReactFlowNodes,
   updateReactFlowNode,
   addLoopToConnection,
+  removeLoopFromConnection,
   makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
@@ -727,15 +736,15 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, 
   state.isDirty = true;
 };
 
-const addRepeatingToConnection = (source: Connection, target: Connection) => {
+const addOrRemoveRepeatingToConnection = (source: Connection, target: Connection, add: boolean) => {
   const connectionSourceOutput = source.outputs.find((output) => output.reactFlowKey === target.self.reactFlowKey);
   if (connectionSourceOutput) {
-    connectionSourceOutput.isRepeating = true;
+    connectionSourceOutput.isRepeating = add;
   }
 
   const connectionTargetInput = findInputByID(target, source.self.reactFlowKey);
   if (connectionTargetInput) {
-    (connectionTargetInput as ConnectionUnit).isRepeating = true;
+    (connectionTargetInput as ConnectionUnit).isRepeating = add;
   }
 };
 

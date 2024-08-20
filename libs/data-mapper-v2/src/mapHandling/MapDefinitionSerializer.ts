@@ -4,7 +4,13 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection } from '../models/Connection';
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { findLast } from '../utils/Array.Utils';
-import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
+import {
+  collectRepeatingSourceSchemaNodesForConnectionChain,
+  collectTargetNodesForConnectionChain,
+  flattenInputs,
+  isConnectionUnit,
+  isCustomValue,
+} from '../utils/Connection.Utils';
 import {
   collectConditionalValues,
   collectFunctionValue,
@@ -147,7 +153,9 @@ const createSourcePath = (
 
     // Still have objects to traverse down
   }
-  newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
+  newPath.push({
+    key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
+  });
   return '';
 };
 
@@ -178,7 +186,13 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
     // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
     // Probably used for direct index access
-    if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
+    let inputSchemaNodes = [];
+    if (connectionsIntoCurrentTargetPath) {
+      inputSchemaNodes = collectRepeatingSourceSchemaNodesForConnectionChain(connectionsIntoCurrentTargetPath, '', connections);
+      console.log(inputSchemaNodes);
+    }
+
+    if (inputSchemaNodes.length > 0 && connectionsIntoCurrentTargetPath) {
       // Looping schema node
       addLoopingToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
     } else {
@@ -248,8 +262,13 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
         if (isTargetObjectType) {
           // $Value
-          newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
-          newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
+          newPath.push({
+            key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
+          });
+          newPath.push({
+            key: mapNodeParams.value,
+            value: formattedLmlSnippetForSource,
+          });
         } else {
           // Standard property to value
           newPath.push({
