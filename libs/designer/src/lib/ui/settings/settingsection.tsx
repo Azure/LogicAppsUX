@@ -49,6 +49,7 @@ import type {
   SettingDropdownProps,
   ChangeState,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -381,7 +382,7 @@ const Setting = ({
               multiSelect: true,
               options: conditionallyInvisibleSettings.map(
                 (setting): IDropdownOption => ({
-                  key: (setting.settingProp as any).id,
+                  key: (setting.settingProp as any).id ?? guid(),
                   text: (setting.settingProp as any).label ?? '',
                 })
               ),
