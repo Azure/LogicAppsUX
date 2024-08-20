@@ -35,7 +35,7 @@ test.describe(
       await page.getByLabel('Content').click();
       await page.locator('button').filter({ hasText: '' }).click();
       await page.getByRole('button', { name: 'length(collection) Returns' }).click();
-      await page.getByRole('tab', { name: 'Dynamic content Dynamic' }).click();
+      await page.getByText('Dynamic content').click();
       await expect(page.locator('.msla-expression-editor-container')).toBeVisible();
       await page.getByRole('button', { name: 'ArrayVariable', exact: true }).click();
       await expect(page.locator('.msla-expression-editor-container')).toContainText("length(variables('ArrayVariable'))");
