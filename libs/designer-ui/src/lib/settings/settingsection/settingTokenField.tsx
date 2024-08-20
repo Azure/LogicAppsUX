@@ -129,14 +129,7 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={
-            dropdownOptions.length > 0
-              ? dropdownOptions.map((option: any, index: number) => ({
-                  key: index.toString(),
-                  ...option,
-                }))
-              : undefined
-          }
+          options={dropdownOptions.length > 0 ? dropdownOptions : undefined}
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -194,11 +187,7 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions?.map((option: any, index: number) => ({
-            key: index.toString(),
-            ...option,
-            displayName: typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName),
-          }))}
+          options={dropdownOptions}
           useOption={true}
           isLoading={isLoading}
           errorDetails={errorDetails}
