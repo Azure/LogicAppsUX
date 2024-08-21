@@ -31,7 +31,6 @@ type RecursiveTreeProps = {
 const RecursiveTree = (props: RecursiveTreeProps) => {
   const { root, isLeftDirection, flattenedScehmaMap, treePositionX, treePositionY } = props;
   const { key } = root;
-  const nodeVisble = useMemo(() => !!flattenedScehmaMap[key], [flattenedScehmaMap, key]);
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
   const onScreen = useOnScreen(nodeRef);
@@ -146,10 +145,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     }
   }, [nodes, isLeftDirection, x, y, root, nodeId, dispatch]);
 
-  if (!nodeVisble) {
-    return null;
-  }
-
   if (root.children.length === 0) {
     let style = styles.leafNode;
     style = mergeClasses(style, isLeftDirection ? '' : styles.rightTreeItemLayout);
@@ -193,17 +188,19 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
         {root.name}
       </TreeItemLayout>
       <Tree aria-label="sub-tree">
-        {root.children.map((child: SchemaNodeExtended, index: number) => (
-          <span key={`tree-${child.key}-${index}`}>
-            <RecursiveTree
-              root={child}
-              isLeftDirection={isLeftDirection}
-              flattenedScehmaMap={flattenedScehmaMap}
-              treePositionX={treePositionX}
-              treePositionY={treePositionY}
-            />
-          </span>
-        ))}
+        {root.children
+          .filter((child: SchemaNodeExtended) => !!flattenedScehmaMap[child.key])
+          .map((child: SchemaNodeExtended, index: number) => (
+            <span key={`tree-${child.key}-${index}`}>
+              <RecursiveTree
+                root={child}
+                isLeftDirection={isLeftDirection}
+                flattenedScehmaMap={flattenedScehmaMap}
+                treePositionX={treePositionX}
+                treePositionY={treePositionY}
+              />
+            </span>
+          ))}
       </Tree>
     </TreeItem>
   );
