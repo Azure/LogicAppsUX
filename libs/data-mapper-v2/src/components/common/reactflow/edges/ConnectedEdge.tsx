@@ -14,7 +14,7 @@ const ConnectedEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  const strokeColor = useMemo(() => (activeEdge ? colors.active : colors.connected), [activeEdge]);
+  const strokeColor = useMemo(() => (activeEdge ? colors.edgeActive : colors.edgeConnected), [activeEdge]);
 
   return (
     <g id={`${id}_customEdge`}>

@@ -7,8 +7,8 @@ import {
   type TreeItemOpenChangeEvent,
   mergeClasses,
 } from '@fluentui/react-components';
-import { SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { equals, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
@@ -16,7 +16,7 @@ import useOnScreen from './useOnScreen';
 import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setSelectedItem, toggleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
+import { setHoverState, setSelectedItem, toggleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 
@@ -37,7 +37,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const nodes = useNodes();
   const dispatch = useDispatch<AppDispatch>();
   const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-  const [isHover, setIsHover] = useState<boolean>(false);
+  const hoverState = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
   const activeNode = useSelector(
     (state: RootState) =>
       state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[
@@ -64,6 +64,20 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
   }, [key, isLeftDirection, dispatch]);
 
+  const onMouseOver = useCallback(() => {
+    dispatch(
+      setHoverState({
+        id: key,
+        isSourceSchema: isLeftDirection,
+        type: 'node',
+      })
+    );
+  }, [dispatch, isLeftDirection, key]);
+
+  const onMouseLeave = useCallback(() => {
+    dispatch(setHoverState());
+  }, [dispatch]);
+
   const onOpenChange = useCallback(
     (_e: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
       const key = data.value as string;
@@ -81,7 +95,13 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [dispatch, isLeftDirection, onClick]
   );
 
-  const aside = useMemo(() => (isHover || activeNode ? <TypeAnnotation schemaNode={root} /> : <div />), [isHover, activeNode, root]);
+  const aside = useMemo(() => {
+    if (activeNode || (hoverState?.type === 'node' && hoverState?.isSourceSchema === isLeftDirection && equals(hoverState?.id, root.key))) {
+      return <TypeAnnotation schemaNode={root} />;
+    }
+
+    return <span />;
+  }, [activeNode, hoverState, isLeftDirection, root]);
 
   useLayoutEffect(() => {
     return () => {
@@ -152,13 +172,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
 
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
-        <TreeItemLayout
-          onClick={onClick}
-          onMouseOver={() => setIsHover(true)}
-          onMouseLeave={() => setIsHover(false)}
-          className={style}
-          aside={aside}
-        >
+        <TreeItemLayout onClick={onClick} onMouseEnter={onMouseOver} onMouseLeave={onMouseLeave} className={style} aside={aside}>
           {root.name}
         </TreeItemLayout>
       </TreeItem>
@@ -178,13 +192,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       open={isLeftDirection ? sourceOpenKeys[key] : targetOpenKeys[key]}
       onOpenChange={onOpenChange}
     >
-      <TreeItemLayout
-        onClick={onClick}
-        onMouseOver={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
-        aside={aside}
-        className={style}
-      >
+      <TreeItemLayout onClick={onClick} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} aside={aside} className={style}>
         {root.name}
       </TreeItemLayout>
       <Tree aria-label="sub-tree">
