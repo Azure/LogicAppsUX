@@ -24,7 +24,7 @@ import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
-import type { TokenGroup } from '../../tokenpicker/models/token';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
