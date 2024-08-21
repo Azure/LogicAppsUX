@@ -15,10 +15,12 @@ describe('lib/combobox/helpers/isComboboxItemMatch', () => {
     ['MY SPECIAL SHAREPOINT SITE', { displayName: 'My Special SharePoint Site' }, true],
     ['My Special Share\\Point Site', { displayName: 'My Special SharePoint Site' }, true],
     ['My Special Share\\\\\\\\\\\\\\\\\\\\Point Site', { displayName: 'My Special SharePoint Site' }, true],
+    ['[', { displayName: 'My [] Site' }, true],
     ['foo', { displayName: 'My Special SharePoint Site' }, false],
     ['bar', { displayName: 'My Special SharePoint Site' }, false],
     ['sharePPoint', { displayName: 'My Special SharePoint Site' }, false],
     ['mySpecial', { displayName: 'My Special SharePoint Site' }, false],
+    ['[', { displayName: 'My Special SharePoint Site' }, false],
   ])('indicates that "%s" filter matching against %o indicates %s', (searchValue, item, expected) => {
     expect(isComboboxItemMatch(item as ComboboxItem, searchValue)).toBe(expected);
   });
