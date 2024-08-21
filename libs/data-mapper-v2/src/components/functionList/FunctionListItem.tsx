@@ -1,4 +1,3 @@
-import { customTokens } from '../../core';
 import type { FunctionData } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { FunctionIcon } from '../functionIcon/FunctionIcon';
@@ -10,6 +9,7 @@ import { useDispatch } from 'react-redux';
 import { addFunctionNode } from '../../core/state/DataMapSlice';
 import type { XYPosition } from '@xyflow/react';
 import { useCallback } from 'react';
+import { customTokens } from '../../core/ThemeConect';
 
 interface FunctionListItemProps {
   functionData: FunctionData;
