@@ -315,7 +315,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
         onEdgeContextMenu={onEdgeContextMenu}
         onConnect={onEdgeConnect}
         connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
-        elevateEdgesOnSelect={true}
+        elevateEdgesOnSelect={false}
         nodeExtent={
           ref?.current?.getBoundingClientRect()
             ? [

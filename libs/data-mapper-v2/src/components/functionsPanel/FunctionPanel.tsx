@@ -78,6 +78,7 @@ export const FunctionPanel = (_props: PanelProps) => {
         onChange: (value?: string) => {
           setSearchTerm(value ?? '');
         },
+        text: searchTerm,
       }}
       styles={{
         root: styles.root,

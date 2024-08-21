@@ -1,11 +1,15 @@
 import { getStraightPath, type EdgeProps } from '@xyflow/react';
-import { useActiveEdge } from '../../../../core/state/selectors/selectors';
-import { useMemo } from 'react';
+import { useSelectedEdge, useHoverEdge } from '../../../../core/state/selectors/selectors';
+import { useCallback, useMemo } from 'react';
 import { colors } from '../styles';
+import { useDispatch } from 'react-redux';
+import { setHoverState } from '../../../../core/state/DataMapSlice';
 
 const ConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY } = props;
-  const activeEdge = useActiveEdge(id);
+  const dispatch = useDispatch();
+  const isSelected = useSelectedEdge(id);
+  const isHovered = useHoverEdge(id);
 
   const [path] = getStraightPath({
     sourceX,
@@ -14,11 +18,24 @@ const ConnectedEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  const strokeColor = useMemo(() => (activeEdge ? colors.active : colors.connected), [activeEdge]);
+  const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
+
+  const onMouseEnter = useCallback(() => {
+    dispatch(
+      setHoverState({
+        id: id,
+        type: 'edge',
+      })
+    );
+  }, [dispatch, id]);
+
+  const onMouseLeave = useCallback(() => {
+    dispatch(setHoverState());
+  }, [dispatch]);
 
   return (
-    <g id={`${id}_customEdge`}>
-      <path fill="none" stroke={strokeColor} strokeWidth={6} className="animated" d={path} />
+    <g id={`${id}_customEdge`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
     </g>
   );
 };

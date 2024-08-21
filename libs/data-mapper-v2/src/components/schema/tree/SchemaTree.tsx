@@ -47,32 +47,6 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     [treeRef]
   );
 
-  const onScroll = useCallback(
-    (e?: any) => {
-      if (e?.target && source && target) {
-        const scrollLocation = isLeftDirection ? 'source' : 'target';
-        const scrollObjectForCurrentScehma = isLeftDirection ? source : target;
-        const scrollObjectForOtherScehma = isLeftDirection ? target : source;
-
-        if (scrollObjectForCurrentScehma.preventScroll) {
-          setScroll({ ...scrollObjectForCurrentScehma, preventScroll: false }, scrollLocation);
-          return;
-        }
-        scrollObjectForOtherScehma.onScroll(e.target.scrollTop);
-        setScroll(
-          {
-            scrollTop: e.target.scrollTop,
-            scrollHeight: e.target.scrollHeight,
-            onScroll: onScrollFromSibling,
-            preventScroll: true,
-          },
-          scrollLocation
-        );
-      }
-    },
-    [source, target, isLeftDirection, setScroll, onScrollFromSibling]
-  );
-
   useEffect(() => {
     if (treeRef?.current) {
       if ((isLeftDirection && !source) || (!isLeftDirection && !target)) {
@@ -92,7 +66,6 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       ref={treeRef}
       className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
       aria-label={treeAriaLabel}
-      onScroll={onScroll}
     >
       <RecursiveTree
         root={schemaTreeRoot}
