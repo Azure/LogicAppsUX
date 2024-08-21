@@ -19,7 +19,7 @@ describe('lib/combobox/helpers/isComboboxItemMatch', () => {
     ['bar', { displayName: 'My Special SharePoint Site' }, false],
     ['sharePPoint', { displayName: 'My Special SharePoint Site' }, false],
     ['mySpecial', { displayName: 'My Special SharePoint Site' }, false],
-  ])('indicates that "%s" filter matching against %o indicates %b', (searchValue, item, expected) => {
+  ])('indicates that "%s" filter matching against %o indicates %s', (searchValue, item, expected) => {
     expect(isComboboxItemMatch(item as ComboboxItem, searchValue)).toBe(expected);
   });
 });
