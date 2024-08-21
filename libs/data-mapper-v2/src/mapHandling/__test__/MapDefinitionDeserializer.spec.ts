@@ -195,6 +195,45 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
       });
 
+      it('creates a connection between one source, one function and two targets', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              Name: 'concat(/ns0:Root/DirectTranslation/EmployeeName)',
+              ID: 'concat(/ns0:Root/DirectTranslation/EmployeeName)',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(4);
+
+        const concatId = resultEntries[0][0];
+
+        expect(resultEntries[0][0]).toEqual(concatId);
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:Root/DirectTranslation/EmployeeName'
+        );
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual(concatId);
+
+        expect(resultEntries[2][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+
+        expect(resultEntries[3][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
+      });
+
       it('creates a connection between a content enricher function and target', () => {
         simpleMap['ns0:Root'] = {
           ContentEnrich: {
