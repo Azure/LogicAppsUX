@@ -18,13 +18,7 @@ const spacingOverrides: HorizontalSpacingTokens = {
   spacingHorizontalXXXL: '16px',
 };
 
-export const getCustomizedTheme = (isLightTheme: boolean): Theme => ({
-  ...(isLightTheme ? webLightTheme : webDarkTheme),
-  ...spacingOverrides,
-});
-
-const extendedWebLightTheme: ExtendedTheme = {
-  ...webLightTheme,
+const fnColors = {
   colorFnCategoryCollection: '#ae8c00',
   colorFnCategoryDateTime: '#4f6bed',
   colorFnCategoryLogical: '#038387',
@@ -34,4 +28,15 @@ const extendedWebLightTheme: ExtendedTheme = {
   colorFnCategoryConversion: '#814e29',
 };
 
+const extendedWebLightTheme: ExtendedTheme = {
+  ...webLightTheme,
+  ...fnColors,
+};
+
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
+
+export const getCustomizedTheme = (isLightTheme: boolean): ExtendedTheme => ({
+  ...(isLightTheme ? webLightTheme : webDarkTheme),
+  ...spacingOverrides,
+  ...fnColors,
+});
