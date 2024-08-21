@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { DataMapperFileService, getSelectedSchema } from '../../core';
 import { setInitialSchema, toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
-import { closePanel, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { convertSchemaToSchemaExtended, flattenSchemaNodeMap, getFileNameAndPath } from '../../utils/Schema.Utils';
-import { equals, type SchemaNodeExtended, SchemaType, type DataMapSchema } from '@microsoft/logic-apps-shared';
+import { equals, type SchemaNodeExtended, SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -27,7 +25,7 @@ const fuseSchemaSearchOptions: Fuse.IFuseOptions<SchemaNodeExtended> = {
   includeScore: true,
   minMatchCharLength: 2,
   includeMatches: true,
-  threshold: 0.4,
+  threshold: 0.5,
   ignoreLocation: true,
   keys: ['name', 'qName'],
 };
@@ -44,7 +42,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
   const fileService = DataMapperFileService();
   const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, _setErrorMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
@@ -92,7 +90,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
     }
   );
 
-  const { isSuccess, data, error } = fetchSchema;
+  const { isSuccess, data } = fetchSchema;
 
   useEffect(() => {
     if (isSuccess && data && schemaType) {
@@ -135,26 +133,6 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
       }),
     }),
     [intl]
-  );
-
-  const goBackToDefaultConfigPanelView = useCallback(() => {
-    dispatch(openDefaultConfigPanelView());
-    setErrorMessage('');
-  }, [dispatch, setErrorMessage]);
-
-  const closeEntirePanel = useCallback(() => {
-    dispatch(closePanel());
-    setErrorMessage('');
-  }, [dispatch, setErrorMessage]);
-
-  const onSubmitSchema = useCallback(
-    (schema: DataMapSchema) => {
-      if (schemaType) {
-        const extendedSchema = convertSchemaToSchemaExtended(schema);
-        dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
-      }
-    },
-    [dispatch, schemaType]
   );
 
   const onSearchChange = useCallback(
