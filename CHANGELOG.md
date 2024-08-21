@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [4.67.0](https://github.com/Azure/LogicAppsUX/compare/v4.66.0...v4.67.0) (2024-08-21)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Able to deserialize function with multiple outputs, without duplicate function ([#5444](https://github.com/Azure/LogicAppsUX/issues/5444)) ([dab99e0](https://github.com/Azure/LogicAppsUX/commit/dab99e011db986eb91afb451c322975ab182fdf6))
+* **Data Mapper:** Fix Search and Selection/Hover states ([#5451](https://github.com/Azure/LogicAppsUX/issues/5451)) ([cf4d871](https://github.com/Azure/LogicAppsUX/commit/cf4d871932d8fdad51fc208ef32dd057c03e594d))
+* **designer:** Prevent Warning from appearing if there is no Id provided ([#5439](https://github.com/Azure/LogicAppsUX/issues/5439)) ([be257f1](https://github.com/Azure/LogicAppsUX/commit/be257f15b04b87d8ba5c0b4ddb90ab853b45e9a1)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
 ## [4.66.0](https://github.com/Azure/LogicAppsUX/compare/v4.65.0...v4.66.0) (2024-08-20)
 
 
