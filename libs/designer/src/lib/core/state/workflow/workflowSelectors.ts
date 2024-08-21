@@ -183,7 +183,9 @@ export const getParentsUncollapseFromGraphState = (state: WorkflowState, actionI
   if (state.graph) {
     const nodeParents = getWorkflowGraphPath(state.graph, actionId);
     nodeParents.forEach((nodeId) => {
-      collapsedGraphIds[nodeId] = false;
+      if (nodeId !== actionId) {
+        collapsedGraphIds[nodeId] = false;
+      }
     });
   }
   return collapsedGraphIds;
