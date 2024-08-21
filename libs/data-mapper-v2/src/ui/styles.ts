@@ -62,4 +62,7 @@ export const useStaticStyles = makeStaticStyles({
     strokeLinejoin: 'round',
     fillOpacity: '0',
   },
+  '.react-flow__nodes': {
+    zIndex: '200 !important',
+  },
 });
