@@ -7,8 +7,8 @@ import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { AppResource, AppResourceResolver } from '@microsoft/vscode-azext-utils/hostapi';
-import { createContainerClient } from './app/utils/azureClients';
 import type { ContainerApp } from '@azure/arm-appcontainers';
+import { ResourceGraphClient } from '@azure/arm-resourcegraph';
 
 export class LogicAppResolver implements AppResourceResolver {
   public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<LogicAppResourceTree | undefined> {
@@ -27,13 +27,20 @@ export class LogicAppResolver implements AppResourceResolver {
 
   static async getSubscriptionSites(context: IActionContext, subContext: ISubscriptionContext) {
     const client = await createWebSiteClient({ ...context, ...subContext });
-    const clientContainer = await createContainerClient({ ...context, ...subContext });
+    const resourceGraphClient = new ResourceGraphClient(subContext.credentials);
+
     const [listOfSites, listOfContainerSites] = await Promise.all([
       uiUtils.listAllIterator(client.webApps.list()),
-      uiUtils.listAllIterator(clientContainer.containerApps.listBySubscription()),
+      // TODO update to (type =~ 'microsoft.app/containerApps' and kind contains 'workflowapp') when the API is updated
+      resourceGraphClient.resources({
+        query: 'resources | where type =~ "microsoft.app/containerApps"',
+        subscriptions: [subContext.subscriptionId],
+      }),
     ]);
 
-    const listOfHybridSites = listOfContainerSites.filter((site) => site.managedEnvironmentId === null && site.extendedLocation);
+    const listOfHybridSites = listOfContainerSites.data.filter(
+      (site) => site.properties.managedEnvironmentId === null && site.extendedLocation
+    );
     const subscriptionSites = new Map<string, Site>();
     const subscriptionHybridSites = new Map<string, ContainerApp>();
 
