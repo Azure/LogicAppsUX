@@ -37,6 +37,7 @@ export const SchemaPanelBody = ({
   setFileSelectorOptions,
   showScehmaSelection,
   flattenedSchemaMap,
+  errorMessage,
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
@@ -159,6 +160,7 @@ export const SchemaPanelBody = ({
             onSelect: onSelectExistingFile,
             onOpenClose: onOpenClose,
           }}
+          errorMessage={errorMessage}
           cancel={
             schema && flattenedSchemaMap
               ? {

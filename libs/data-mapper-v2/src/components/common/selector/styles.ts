@@ -27,4 +27,7 @@ export const useStyles = makeStyles({
     marginTop: '30px',
     alignSelf: 'left',
   },
+  errorMessage: {
+    marginTop: '10px',
+  },
 });
