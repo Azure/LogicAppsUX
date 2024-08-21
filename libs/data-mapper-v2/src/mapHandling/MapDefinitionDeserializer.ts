@@ -177,8 +177,9 @@ export class MapDefinitionDeserializer {
     if (!sourceSchemaNode && functionMetadata.type === 'Function') {
       let funcKey = '';
       let func: FunctionData;
-      if (this._createdFunctions[key]) {
-        funcKey = this._createdFunctions[key];
+      const metadataString = JSON.stringify(functionMetadata);
+      if (this._createdFunctions[metadataString]) {
+        funcKey = this._createdFunctions[metadataString];
         func = this.getFunctionForKey(funcKey) as FunctionData;
       }
       // get function node
@@ -194,7 +195,7 @@ export class MapDefinitionDeserializer {
         } as FunctionData;
         funcKey = createReactFlowFunctionKey(func);
         func.key = funcKey;
-        this._createdFunctions[key] = funcKey;
+        this._createdFunctions[metadataString] = funcKey;
       }
 
       // function to target
