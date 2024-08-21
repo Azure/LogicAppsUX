@@ -14,6 +14,7 @@ describe('lib/combobox/helpers/isComboboxItemMatch', () => {
     ['SHAREPOINT', { displayName: 'My Special SharePoint Site' }, true],
     ['MY SPECIAL SHAREPOINT SITE', { displayName: 'My Special SharePoint Site' }, true],
     ['My Special Share\\Point Site', { displayName: 'My Special SharePoint Site' }, true],
+    ['My Special Share\\\\\\\\\\\\\\\\\\\\Point Site', { displayName: 'My Special SharePoint Site' }, true],
     ['foo', { displayName: 'My Special SharePoint Site' }, false],
     ['bar', { displayName: 'My Special SharePoint Site' }, false],
     ['sharePPoint', { displayName: 'My Special SharePoint Site' }, false],
