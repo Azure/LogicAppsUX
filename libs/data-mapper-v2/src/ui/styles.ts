@@ -7,7 +7,7 @@ export const useStyles = makeStyles({
     height: '100vh',
     minHeight: 'calc(100vh - 50px)',
     maxHeight: 'calc(100vh - 40px)',
-    ...shorthands.overflow('scroll'),
+    ...shorthands.overflow('hidden'),
     ...shorthands.flex(1, 1, '1px'),
   },
   dataMapperFunctionPanel: {
