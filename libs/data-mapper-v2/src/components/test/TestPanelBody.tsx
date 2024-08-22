@@ -104,7 +104,9 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               language={
                 error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
               }
-              value={error ?? testMapOutput?.outputInstance?.$content ?? ''}
+              value={
+                error ?? testMapOutput?.outputInstance?.$content ?? `${testMapOutput?.statusCode} - ${testMapOutput?.statusText}` ?? ''
+              }
               className={styles.editorStyle}
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
