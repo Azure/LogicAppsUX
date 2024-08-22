@@ -670,7 +670,7 @@ const getDesignerServices = (
     fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
     openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
-    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
+    openMonitorView: (workflowName: string, runName: string) => console.log('openMonitorView:', workflowName, runName),
   };
 
   const functionService = new BaseFunctionService({
