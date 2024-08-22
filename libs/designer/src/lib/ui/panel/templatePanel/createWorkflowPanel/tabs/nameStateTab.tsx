@@ -179,10 +179,10 @@ export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    previousTabId,
+    nextTabId,
     hasError,
   }: {
-    previousTabId: string | undefined;
+    nextTabId: string;
     hasError: boolean;
   }
 ): TemplatePanelTab => ({
@@ -201,26 +201,16 @@ export const nameStateTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+      dispatch(selectPanelTab(nextTabId));
     },
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        }),
-    secondaryButtonOnClick: previousTabId
-      ? () => {
-          dispatch(selectPanelTab(previousTabId));
-        }
-      : () => {
-          dispatch(closePanel());
-          dispatch(clearTemplateDetails());
-        },
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
   },
 });

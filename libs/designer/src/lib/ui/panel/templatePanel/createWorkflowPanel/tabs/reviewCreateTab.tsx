@@ -126,11 +126,13 @@ export const reviewCreateTab = (
     isLoadingCreate,
     isCreated,
     isPrimaryButtonDisabled,
+    previousTabId,
   }: {
     workflowName: string;
     isLoadingCreate: boolean;
     isCreated: boolean;
     isPrimaryButtonDisabled: boolean;
+    previousTabId: string;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
@@ -202,7 +204,7 @@ export const reviewCreateTab = (
           dispatch(clearTemplateDetails());
         }
       : () => {
-          dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
+          dispatch(selectPanelTab(previousTabId));
         },
     secondaryButtonDisabled: isLoadingCreate,
   },
