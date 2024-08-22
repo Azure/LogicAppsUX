@@ -61,7 +61,6 @@ export const DevToolbox = () => {
                   padding: 4,
                   backgroundColor: tokens.colorNeutralBackground4,
                   borderRadius: tokens.borderRadiusMedium,
-                  zIndex: 10,
                   cursor: 'pointer',
                 }}
               >

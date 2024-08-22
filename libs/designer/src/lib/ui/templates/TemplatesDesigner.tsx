@@ -72,16 +72,6 @@ export const TemplatesDesigner = ({
     <>
       <TemplateFilters detailFilters={detailFilters} />
       <br />
-      <div
-          id={'msla-layer-host'}
-          style={{
-            position: 'absolute',
-            inset: '0px',
-            visibility: 'hidden',
-          }}
-      >
-        <TemplatePanel onCreateClick={onCreateClick} />
-      </div>
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div className="msla-templates-list">
           {filteredTemplateNames.map((templateName: string) => (
@@ -97,6 +87,16 @@ export const TemplatesDesigner = ({
           <Text>{intlText.TRY_DIFFERENT}</Text>
         </div>
       )}
+      <div
+          id={'msla-layer-host'}
+          style={{
+            position: 'absolute',
+            inset: '0px',
+            visibility: 'hidden',
+          }}
+      >
+        <TemplatePanel onCreateClick={onCreateClick} />
+      </div>
     </>
   );
 };
