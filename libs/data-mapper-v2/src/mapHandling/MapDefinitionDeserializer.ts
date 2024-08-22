@@ -307,10 +307,19 @@ export class MapDefinitionDeserializer {
   ) => {
     if (this.isSchemaNodeTargetKey(leftSideKey)) {
       const currentTarget = leftSideKey;
-      const targetNode = this.getTargetNodeInContextOfParent(currentTarget, parentTargetNode);
+      let targetNode = this.getTargetNodeInContextOfParent(currentTarget, parentTargetNode);
+
+      // skip <ArrayItem>
+      if (parentTargetNode?.children[0].name === '<ArrayItem>') {
+        parentTargetNode = parentTargetNode.children[0] as SchemaNodeExtended;
+      }
 
       this.addLoopConnectionIfNeeded(connections, targetNode as SchemaNodeExtended);
       this.addConnectionFromConditionalToTargetIfNeeded(connections, targetNode);
+
+      if (parentTargetNode?.name === '<ArrayItem>') {
+        targetNode = parentTargetNode.children.find((child) => child.qName === leftSideKey) as SchemaNodeExtended;
+      }
 
       // if right side is string- process it, if object, process all children
       if (typeof rightSideStringOrObject === 'string') {
@@ -373,6 +382,7 @@ export class MapDefinitionDeserializer {
       this.processForStatement(forOrIfObj.term, connections);
     }
     Object.entries(rightSideStringOrObject).forEach((child) => {
+      // danielle can we just access the child here for json?
       this.createConnectionsForLMLObject(child[1], child[0], parentTargetNode, connections);
     });
     if (this._conditional.needsObjectConnection) {
@@ -602,7 +612,10 @@ const getLoopTargetNode = (targetKeyPath: string[], ind: number, parentNode: Sch
     }
     // need to handle multiple of these
     if (child.name === '<ArrayItem>') {
-      possibleNodes.push(getLoopTargetNode(targetKeyPath, ind, child));
+      if (targetKeyPath[ind] !== '*') {
+        possibleNodes.push(getLoopTargetNode(targetKeyPath, ind + 1, child));
+      }
+      possibleNodes.push(child);
     }
   });
 
