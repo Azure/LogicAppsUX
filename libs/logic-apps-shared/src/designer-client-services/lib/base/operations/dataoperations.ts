@@ -42,6 +42,29 @@ export const parseJsonOperation = {
   },
 };
 
+export const chunktext = {
+  name: 'chunktext',
+  id: 'chunkText',
+  type: 'Chunktext',
+  properties: {
+    api: {
+      id: 'connectionProviders/dataOperationNew',
+      name: 'dataOperationNew',
+      brandColor: '#8c6cff',
+      description: 'Data operations',
+      displayName: 'Data operations',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    },
+    summary: 'Chunk text',
+    description: 'Chunk text to a fixed length.',
+    visibility: 'Important',
+    operationType: 'ChunkText',
+    brandColor: '#8c6cff',
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    annotation: { status: 'Preview' }
+  },
+};
+
 export const queryOperation = {
   name: 'query',
   id: 'query',
