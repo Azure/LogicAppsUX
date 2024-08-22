@@ -51,7 +51,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
     }
-    if (selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE) {
+    if (selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
       if (!existingWorkflowName) {
         dispatch(validateWorkflowName(existingWorkflowNames ?? []));
       }
@@ -92,9 +92,7 @@ export const useCreateWorkflowPanelTabs = ({
   const parametersTabItem = useMemo(
     () => ({
       ...parametersTab(intl, dispatch, {
-        previousTabId: connectionsExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-          : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+        previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
         hasError: hasParametersValidationErrors,
       }),
     }),
@@ -112,7 +110,7 @@ export const useCreateWorkflowPanelTabs = ({
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-            : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+            : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
       }),
     }),
     [

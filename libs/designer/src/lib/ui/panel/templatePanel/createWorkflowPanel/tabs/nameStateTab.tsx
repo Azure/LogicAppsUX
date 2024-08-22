@@ -186,7 +186,7 @@ export const nameStateTab = (
     hasError: boolean;
   }
 ): TemplatePanelTab => ({
-  id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
     defaultMessage: 'Basic',
     id: '8vPuBZ',

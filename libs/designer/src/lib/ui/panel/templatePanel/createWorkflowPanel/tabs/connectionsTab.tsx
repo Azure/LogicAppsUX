@@ -45,7 +45,7 @@ export const connectionsTab = (
       description: 'Button text for moving to the previous tab in the create workflow panel',
     }),
     secondaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC));
     },
   },
 });
