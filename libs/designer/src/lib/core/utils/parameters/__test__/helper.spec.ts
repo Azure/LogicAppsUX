@@ -1986,8 +1986,26 @@ describe('core/utils/parameters/helper', () => {
         };
         const inputParameter: InputParameter = {
           default: true,
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: {
+            options: [
+              {
+                displayName: '',
+                key: '',
+                value: '',
+              },
+              {
+                displayName: 'Yes',
+                key: 'Yes',
+                value: 'true',
+              },
+              {
+                displayName: 'No',
+                key: 'No',
+                value: 'false',
+              },
+            ],
+          },
           enum: [
             { displayName: '', value: '' },
             { displayName: 'Yes', value: true },
@@ -2367,8 +2385,8 @@ describe('core/utils/parameters/helper', () => {
         };
         const inputParameter: InputParameter = {
           dynamicValues: undefined,
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: { options },
           enum: options,
           in: 'body',
           key: 'body.$.linkType',
@@ -2388,10 +2406,7 @@ describe('core/utils/parameters/helper', () => {
           editor: 'combobox',
           editorOptions: { options },
           editorViewModel: undefined,
-          schema: {
-            ...inputSchema,
-            'x-ms-editor': 'combobox',
-          },
+          schema: inputSchema,
         });
       });
 
@@ -2411,8 +2426,8 @@ describe('core/utils/parameters/helper', () => {
         };
         const inputParameter: InputParameter = {
           dynamicValues: undefined,
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: { options },
           key: '', // Not defined in OpenAPI.
           name: '', // Not defined in OpenAPI.
           schema: inputSchema,
@@ -2428,10 +2443,7 @@ describe('core/utils/parameters/helper', () => {
           editor: 'combobox',
           editorOptions: { options },
           editorViewModel: undefined,
-          schema: {
-            ...inputSchema,
-            'x-ms-editor': 'combobox',
-          },
+          schema: inputSchema,
         });
       });
     });
@@ -2525,7 +2537,7 @@ describe('core/utils/parameters/helper', () => {
       [`body('A1')`, 'body.$', 'A1', `body('A1')`],
       [`body('A1')`, 'body.$.body.B1', 'A1', `body('A1')['body']['B1']`],
     ])('correctly gets the token expression for nested body property for "%s"', (method, key, actionName, expected) => {
-      expect(generateExpressionFromKey(method, key, actionName, /* isInsideArray */false, /* required */true)).toBe(expected);
+      expect(generateExpressionFromKey(method, key, actionName, /* isInsideArray */ false, /* required */ true)).toBe(expected);
     });
   });
 
