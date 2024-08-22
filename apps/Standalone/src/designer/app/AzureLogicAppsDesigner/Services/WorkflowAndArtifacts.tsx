@@ -543,7 +543,7 @@ export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workfl
   }
 };
 
-const validateWorkflow = async (
+export const validateWorkflow = async (
   siteResourceId: string,
   workflowName: string,
   workflow: any,

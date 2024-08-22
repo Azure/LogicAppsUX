@@ -23,6 +23,9 @@ export interface BJSWorkflowProviderProps {
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, customCode, appSettings }) => {
+  useEffect(() => {
+    console.log(workflow);
+  },[workflow])
   const dispatch = useDispatch<AppDispatch>();
   useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));

@@ -14,7 +14,6 @@ import {
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllConnectionErrors,
-  serializeWorkflow,
   validateParameter,
   updateParameterValidation,
   openPanel,
@@ -45,6 +44,7 @@ export const DesignerCommandBar = ({
   showConnectionsPanel,
   rightShift,
   enableCopilot,
+  switchViews,
 }: {
   id: string;
   location: string;
@@ -57,6 +57,7 @@ export const DesignerCommandBar = ({
   rightShift?: string;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
+  switchViews: () => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -159,9 +160,8 @@ export const DesignerCommandBar = ({
         key: 'codeview',
         text: 'View Code',
         iconProps: { iconName: 'Code' },
-        onClick: async () => {
-          console.log(await serializeWorkflow(DesignerStore.getState()));
-          alert('Check console for workflow serialization');
+        onClick: () => {
+          switchViews();
         },
       },
       ...(showConnectionsPanel
@@ -213,18 +213,19 @@ export const DesignerCommandBar = ({
       },
     ],
     [
+      saveIsDisabled,
+      isSaving,
+      showConnectionsPanel,
+      haveErrors,
+      isDarkMode,
+      isCopilotReady,
+      saveWorkflowMutate,
       discard,
       dispatch,
-      haveErrors,
       haveWorkflowParameterErrors,
+      switchViews,
       haveConnectionErrors,
-      isDarkMode,
-      isSaving,
-      saveIsDisabled,
-      saveWorkflowMutate,
-      showConnectionsPanel,
       enableCopilot,
-      isCopilotReady,
     ]
   );
 

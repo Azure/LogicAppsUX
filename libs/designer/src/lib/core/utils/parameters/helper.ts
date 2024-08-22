@@ -490,7 +490,7 @@ export function getParameterEditorProps(
         schemaEnumOptions = schemaEnum.map((enumItem) => {
           return {
             ...enumItem,
-            value: enumItem.value?.toString(),
+            value: enumItem.value,
             key: enumItem.displayName,
           };
         });

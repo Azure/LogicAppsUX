@@ -253,6 +253,7 @@ const DesignerEditorConsumption = () => {
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
+                switchViews={() => {console.log('hi')}}
               />
               <Designer />
               {showChatBot ? (

@@ -22,6 +22,7 @@ import {
   useRunInstanceStandard,
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
+  validateWorkflow,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -63,6 +64,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
+import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -98,7 +100,9 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
+  const [workflow, setWorkflow] = useState<Workflow>(data?.properties.files[Artifact.WorkflowFile]);
+  const [designerView, setDesignerView] = useState(true);
+  const [codeValue, setCodeValue] = useState<string | undefined>(undefined);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
@@ -186,7 +190,7 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow: any) => {
+      setWorkflow((previousWorkflow: Workflow) => {
         return {
           ...previousWorkflow,
           definition: runInstanceData.properties.workflow.properties.definition,
@@ -305,6 +309,28 @@ const DesignerEditor = () => {
     return `Bearer ${environment.armToken}` ?? '';
   };
 
+  const handleSwitchView = async () => {
+    if (designerView) {
+      setDesignerView(false);
+    } else {
+      try {
+        const codeToConvert = JSON.parse(codeValue ?? '');
+        await validateWorkflow(siteResourceId, workflowName, codeToConvert);
+        setWorkflow((prevState) => ({
+          ...prevState,
+          definition: codeToConvert.definition,
+          kind: codeToConvert.kind,
+          connectionReferences: codeToConvert.connectionReferences ?? {},
+        }));
+        setDesignerView(true);
+      } catch (error: any) {
+        if (error.status !== 404) {
+          alert(`Error converting code to workflow ${error}`);
+        }
+      }
+    }
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -350,8 +376,13 @@ const DesignerEditor = () => {
                 enableCopilot={async () => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
+                switchViews={handleSwitchView}
               />
-              <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
+              {designerView ? (
+                <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
+              ) : (
+                <CodeViewEditor code={codeValue} setCode={setCodeValue} workflowKind={workflow?.kind} />
+              )}
               {showChatBot ? (
                 <Chatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
