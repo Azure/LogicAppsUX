@@ -52,6 +52,11 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       id: 'wfekJ7',
       description: 'Label text for type filter',
     }),
+    SORT_BY: intl.formatMessage({
+      defaultMessage: 'Sort By',
+      id: 'ZOIvqN',
+      description: 'Label text for sort by filter',
+    }),
   };
 
   const templateDropdownOptions = [
@@ -110,7 +115,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         ))}
       </div>
       <div className="msla-templates-filters-sort">
-        <Text>Sort by</Text>
+        <Text>{intlText.SORT_BY}</Text>
         <Dropdown
           className="msla-templates-filters-sort-dropdown"
           options={templateDropdownOptions}
