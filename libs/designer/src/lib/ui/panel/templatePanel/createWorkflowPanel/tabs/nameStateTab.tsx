@@ -30,8 +30,9 @@ export const NameStatePanel = () => {
   const intlText = useMemo(
     () => ({
       WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
-        id: 'sa/O/N',
+        defaultMessage:
+          'Provide a unique, descriptive name. Use underscores (_) or dashes (-) instead of spaces to keep names clean and searchable. To prevent any issues, avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'xtDCgy',
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
@@ -187,8 +188,8 @@ export const nameStateTab = (
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({
-    defaultMessage: 'Name + state',
-    id: 'BX0M13',
+    defaultMessage: 'Basic',
+    id: '8vPuBZ',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   hasError: hasError,

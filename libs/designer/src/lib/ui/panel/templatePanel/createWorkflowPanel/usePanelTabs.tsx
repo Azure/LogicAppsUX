@@ -128,13 +128,13 @@ export const useCreateWorkflowPanelTabs = ({
 
   const tabs = useMemo(() => {
     const validTabs = [];
+    validTabs.push(nameStateTabItem);
     if (connectionsExist) {
       validTabs.push(connectionsTabItem);
     }
     if (parametersExist) {
       validTabs.push(parametersTabItem);
     }
-    validTabs.push(nameStateTabItem);
     validTabs.push(reviewCreateTabItem);
     return validTabs;
   }, [connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
