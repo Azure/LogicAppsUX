@@ -44,6 +44,11 @@ export const TemplatesDesigner = ({
       id: 'yKNKV/',
       description: 'Accessbility text to indicate to try different search term or remove filters',
     }),
+    MISSING_INFO_ERROR: intl.formatMessage({
+      defaultMessage: 'Missing information for workflow creation',
+      id: 'wBBu4g',
+      description: 'Error message when missing information for workflow creation',
+    }),
   };
 
   const onCreateClick = async () => {
@@ -57,9 +62,9 @@ export const TemplatesDesigner = ({
       connectionsError ||
       Object.values(parametersError)?.filter((error) => error).length > 0
     ) {
-      throw new Error('Missing information for workflow creation');
+      throw new Error(intlText.MISSING_INFO_ERROR);
     }
-    
+
     await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
   };
 
