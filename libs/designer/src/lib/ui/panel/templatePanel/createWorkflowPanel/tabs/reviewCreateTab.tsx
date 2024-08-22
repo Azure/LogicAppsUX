@@ -162,7 +162,6 @@ export const reviewCreateTab = (
     })
   ),
   hasError: false,
-  order: 3,
   content: <ReviewCreatePanel />,
   footerContent: {
     primaryButtonText: isCreated ? (

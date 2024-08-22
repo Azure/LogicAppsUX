@@ -78,7 +78,6 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulC
 
   return (
     <Panel
-      className={'msla-panel-root'}
       styles={{ main: { padding: '0 20px' }, content: { paddingLeft: '0px' } }}
       isLightDismiss
       type={PanelType.medium}

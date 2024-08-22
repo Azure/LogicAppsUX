@@ -33,7 +33,6 @@ export const parametersTab = (
     description: 'An accessibility label that describes the objective of parameters tab',
   }),
   hasError: hasError,
-  order: 1,
   content: <ParametersPanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

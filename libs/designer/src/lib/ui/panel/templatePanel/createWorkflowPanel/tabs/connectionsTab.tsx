@@ -30,7 +30,6 @@ export const connectionsTab = (
     description: 'An accessibility label that describes the objective of connections tab',
   }),
   hasError: hasError,
-  order: 0,
   content: <ConnectionsPanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

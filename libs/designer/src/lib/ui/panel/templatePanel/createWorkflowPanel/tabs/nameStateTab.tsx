@@ -192,7 +192,6 @@ export const nameStateTab = (
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   hasError: hasError,
-  order: 2,
   content: <NameStatePanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
