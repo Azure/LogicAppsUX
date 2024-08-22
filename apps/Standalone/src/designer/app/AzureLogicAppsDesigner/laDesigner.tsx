@@ -45,7 +45,7 @@ import {
   isArmResourceId,
   optional,
 } from '@microsoft/logic-apps-shared';
-import type { ContentType, IWorkflowService } from '@microsoft/logic-apps-shared';
+import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -666,10 +666,11 @@ const getDesignerServices = (
     },
   };
 
-  const hostService = {
+  const hostService: IHostService = {
     fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
     openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
+    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
   };
 
   const functionService = new BaseFunctionService({
