@@ -109,10 +109,11 @@ export async function createEmptyCSharpTestProject(
     const testsDirectoryUri = getTestsDirectory(projectPath);
     const testsDirectory = testsDirectoryUri.fsPath;
 
-    const testProjectName = `${workflowName}.Tests`;
-    const testProjectPath = path.join(testsDirectory, testProjectName);
+    // Get the Logic App name (assuming it's the parent folder of the workflow)
+    const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
 
-    // Create test project directory
+    // Create the new folder structure
+    const testProjectPath = path.join(testsDirectory, logicAppName, workflowName, 'Tests', unitTestName);
     await fs.ensureDir(testProjectPath);
 
     // Define template paths
@@ -124,10 +125,10 @@ export async function createEmptyCSharpTestProject(
     await createCsFile(testProjectPath, unitTestName, workflowName, templateFolderName, csFileName);
 
     // Copy and modify .csproj file
-    await createCsprojFile(testProjectPath, testProjectName, templateFolderName, csprojFileName);
+    await createCsprojFile(testsDirectory, logicAppName, templateFolderName, csprojFileName);
 
     vscode.window.showInformationMessage(
-      localize('info.createCSharpTestProject', 'Created C# test project: {0} in {1}', testProjectName, testsDirectory)
+      localize('info.createCSharpTestProject', 'Created C# test project: {0} in {1}', unitTestName, testProjectPath)
     );
   } catch (error) {
     vscode.window.showErrorMessage(
@@ -167,17 +168,17 @@ export async function createEmptyCSharpTestProject(
   }
 
   /**
-   * Creates a .csproj file in the specified test project path by using a template.
+   * Creates a .csproj file in the specified test directory using a provided template.
    *
-   * @param {string} testProjectPath - The path to the test project directory.
-   * @param {string} testProjectName - The name of the test project.
-   * @param {string} templateFolderName - The folder name where the template is located.
+   * @param {string} testsDirectory - The directory where the .csproj file will be created.
+   * @param {string} logicAppName - The name of the Logic App, used to customize the .csproj file.
+   * @param {string} templateFolderName - The name of the folder containing the .csproj template.
    * @param {string} csprojFileName - The name of the .csproj file template.
    * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
    */
   async function createCsprojFile(
-    testProjectPath: string,
-    testProjectName: string,
+    testsDirectory: string,
+    logicAppName: string,
     templateFolderName: string,
     csprojFileName: string
   ): Promise<void> {
@@ -185,8 +186,8 @@ export async function createEmptyCSharpTestProject(
     //TODO [Sami]: Update template content per SDK contents
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
-    const csprojFilePath = path.join(testProjectPath, `${testProjectName}.csproj`);
-    const csprojFileContent = templateContent.replace(/<%= testProjectName %>/g, testProjectName);
+    const csprojFilePath = path.join(testsDirectory, `${logicAppName}.csproj`);
+    const csprojFileContent = templateContent.replace(/<%= testProjectName %>/g, logicAppName);
     await fs.writeFile(csprojFilePath, csprojFileContent);
   }
 }
