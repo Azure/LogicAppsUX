@@ -72,7 +72,6 @@ import {
   isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
-  ExtensionProperties,
   createEx,
   convertToStringLiteral,
   decodePropertySegment,
@@ -121,7 +120,6 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
-  ComboboxItem,
   DictionaryEditorItemProps,
   DropdownItem,
   FloatingActionMenuOutputViewModel,
@@ -400,7 +398,7 @@ export function getParameterEditorProps(
   _shouldIgnoreDefaultValue: boolean,
   nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel: any;
   if (editor === constants.EDITOR.DICTIONARY) {
@@ -476,38 +474,6 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (
-      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
-      !equals(visibility, Visibility.Internal)
-    ) {
-      editor = constants.EDITOR.COMBOBOX;
-      schema = { ...schema, ...{ 'x-ms-editor': editor } };
-
-      let schemaEnumOptions: ComboboxItem[];
-      if (schema[ExtensionProperties.CustomEnum]) {
-        schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
-      } else if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => {
-          return {
-            ...enumItem,
-            value: enumItem.value?.toString(),
-            key: enumItem.displayName,
-          };
-        });
-      } else {
-        schemaEnumOptions = schema.enum.map(
-          (val: string): ComboboxItem => ({
-            displayName: val,
-            key: val,
-            value: val,
-          })
-        );
-      }
-
-      editorOptions = {
-        ...editorOptions,
-        options: schemaEnumOptions,
-      };
     } else {
       editorOptions = undefined;
     }
