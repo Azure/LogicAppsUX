@@ -49,6 +49,16 @@ export interface DataMapState {
   lastAction: string;
 }
 
+interface HoverState {
+  id: string;
+  type: 'node' | 'edge' | 'function';
+  isSourceSchema?: boolean;
+}
+
+interface ComponentState {
+  hover?: HoverState;
+}
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
@@ -84,6 +94,7 @@ export interface DataMapOperationState {
   edgeLoopMapping: Record<string, boolean>;
   // This is used to store the temporary state of the edge for which popover is visible
   edgePopOverId?: string;
+  state?: ComponentState;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -667,6 +678,13 @@ export const dataMapSlice = createSlice({
         'Edit target schema'
       );
     },
+    setHoverState: (state, action: PayloadAction<HoverState | undefined>) => {
+      const currentState = state.curDataMapOperation.state ?? {};
+      state.curDataMapOperation.state = {
+        ...currentState,
+        hover: action.payload,
+      };
+    },
   },
 });
 
@@ -692,6 +710,7 @@ export const {
   deleteEdge,
   toggleSourceEditState,
   toggleTargetEditState,
+  setHoverState,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
