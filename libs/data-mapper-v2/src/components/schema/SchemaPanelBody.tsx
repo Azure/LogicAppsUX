@@ -6,7 +6,7 @@ import {
   type SchemaNodeExtended,
   type SchemaExtended,
 } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
@@ -37,6 +37,7 @@ export const SchemaPanelBody = ({
   setFileSelectorOptions,
   showScehmaSelection,
   flattenedSchemaMap,
+  errorMessage,
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
@@ -90,6 +91,13 @@ export const SchemaPanelBody = ({
     }),
     [intl]
   );
+
+  // Read current schema file options if method exists
+  useEffect(() => {
+    if (fileService && fileService.readCurrentSchemaOptions && availableSchemaList.length === 0) {
+      fileService.readCurrentSchemaOptions();
+    }
+  }, [fileService, availableSchemaList]);
 
   const onSelectExistingFile = useCallback(
     (item: IFileSysTreeItem) => {
@@ -159,6 +167,7 @@ export const SchemaPanelBody = ({
             onSelect: onSelectExistingFile,
             onOpenClose: onOpenClose,
           }}
+          errorMessage={errorMessage}
           cancel={
             schema && flattenedSchemaMap
               ? {

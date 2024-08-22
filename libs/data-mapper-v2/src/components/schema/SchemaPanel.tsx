@@ -1,11 +1,11 @@
-import { DataMapperFileService, getSelectedSchema } from '../../core';
+import { getSelectedSchema } from '../../core';
 import { setInitialSchema, toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { convertSchemaToSchemaExtended, flattenSchemaNodeMap, getFileNameAndPath } from '../../utils/Schema.Utils';
-import { equals, type SchemaNodeExtended, SchemaType } from '@microsoft/logic-apps-shared';
+import { type DataMapSchema, equals, type SchemaNodeExtended, SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useStyles } from './styles';
 import { Panel } from '../../components/common/panel/Panel';
@@ -39,10 +39,9 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
-  const fileService = DataMapperFileService();
   const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
-  const [errorMessage, _setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
@@ -73,7 +72,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
     [isLeftDirection, sourceInEditState, targetInEditState]
   );
 
-  const fetchSchema = useQuery(
+  const fetchSchema: UseQueryResult<DataMapSchema, { message: string }> = useQuery(
     [selectedSchemaFile],
     async () => {
       if (selectedSchema && selectedSchemaFile) {
@@ -90,7 +89,15 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
     }
   );
 
-  const { isSuccess, data } = fetchSchema;
+  const { isSuccess, data, error } = fetchSchema;
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error.message);
+    } else {
+      setErrorMessage('');
+    }
+  }, [error]);
 
   useEffect(() => {
     if (isSuccess && data && schemaType) {
@@ -200,13 +207,6 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
   useEffect(() => {
     setFilteredFlattenedScehmaMap(flattenedScehmaMap);
   }, [setFilteredFlattenedScehmaMap, flattenedScehmaMap]);
-
-  // Read current schema file options if method exists
-  useEffect(() => {
-    if (fileService && fileService.readCurrentSchemaOptions) {
-      fileService.readCurrentSchemaOptions();
-    }
-  }, [fileService]);
 
   return (
     <Panel

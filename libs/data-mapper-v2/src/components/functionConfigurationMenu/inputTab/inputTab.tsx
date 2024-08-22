@@ -93,6 +93,7 @@ export const InputTabContents = (props: {
           <div>
             <span className={styles.inputDropdownWrapper}>
               <InputDropdown
+                index={index}
                 schemaListType={SchemaType.Source}
                 functionId={props.functionKey}
                 currentNode={props.func}
@@ -206,6 +207,7 @@ const UnlimitedInputs = (props: {
           };
           return (
             <UnboundedDropdownListItem
+              index={index}
               key={input[0]}
               schemaListType={SchemaType.Source}
               removeItem={removeUnboundedInput}
@@ -372,6 +374,7 @@ const validateAndCreateConnectionInput = (
 interface UnboundedInputEntryProps {
   functionKey: string;
   func: FunctionData;
+  index: number;
   inputName: string | undefined;
   inputValue: string | undefined;
   inputType: string | undefined;
@@ -393,6 +396,7 @@ export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
       <div ref={props.draggable ? drag : undefined} className={styles.draggableListItem}>
         <span className={styles.inputDropdown}>
           <InputDropdown
+            index={props.index}
             functionId={props.functionKey}
             currentNode={props.func}
             schemaListType={props.schemaListType}
