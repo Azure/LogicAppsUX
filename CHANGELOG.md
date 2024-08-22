@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.69.0](https://github.com/Azure/LogicAppsUX/compare/v4.68.0...v4.69.0) (2024-08-22)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove parent scrolling (scrolling is enabled individually in schemas) ([#5465](https://github.com/Azure/LogicAppsUX/issues/5465)) ([adc7fc1](https://github.com/Azure/LogicAppsUX/commit/adc7fc194bca49670e2f9ef37906d49253963e8b))
+* **Data Mapper:** Show error for Test in Response body if content is null ([#5468](https://github.com/Azure/LogicAppsUX/issues/5468)) ([17813ea](https://github.com/Azure/LogicAppsUX/commit/17813ea2b54a8662ddde5567b4363a2977831317))
+
 ## [4.68.0](https://github.com/Azure/LogicAppsUX/compare/v4.67.0...v4.68.0) (2024-08-22)
 
 ## [4.67.0](https://github.com/Azure/LogicAppsUX/compare/v4.66.0...v4.67.0) (2024-08-21)
