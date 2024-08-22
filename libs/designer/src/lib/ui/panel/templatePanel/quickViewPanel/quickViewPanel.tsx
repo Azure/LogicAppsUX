@@ -16,14 +16,14 @@ export interface QuickViewTabProps {
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { manifest, templateName, resourceGroup } = useSelector((state: RootState) => ({
+  const { manifest, templateName, workflowAppName } = useSelector((state: RootState) => ({
     manifest: state.template.manifest,
     templateName: state.template.templateName,
-    resourceGroup: state.workflow.resourceGroup,
+    workflowAppName: state.workflow.workflowAppName,
   }));
   const panelTabs = getQuickViewTabs(intl, dispatch, {
     templateId: templateName ?? '',
-    workflowAppName: resourceGroup,
+    workflowAppName,
   });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 

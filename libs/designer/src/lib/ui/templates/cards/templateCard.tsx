@@ -21,10 +21,10 @@ const maxConnectorsToShow = 5;
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templates, subscriptionId, resourceGroup, location } = useSelector((state: RootState) => ({
+  const { templates, subscriptionId, workflowAppName, location } = useSelector((state: RootState) => ({
     templates: state.manifest.availableTemplates,
     subscriptionId: state.workflow.subscriptionId,
-    resourceGroup: state.workflow.resourceGroup,
+    workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
   }));
   const templateManifest = templates?.[templateName];
@@ -34,7 +34,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       level: LogEntryLevel.Trace,
       area: 'Templates.TemplateCard',
       message: 'Template is selected',
-      args: [templateName, resourceGroup],
+      args: [templateName, workflowAppName],
     });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));

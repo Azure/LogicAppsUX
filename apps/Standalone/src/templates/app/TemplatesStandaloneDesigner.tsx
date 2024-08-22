@@ -183,6 +183,7 @@ export const TemplatesStandaloneDesigner = () => {
               subscriptionId: resourceDetails.subscriptionId,
               resourceGroup: resourceDetails.resourceGroup,
               location: canonicalLocation,
+              workflowAppName: workflowAppData.name as string,
             }}
             connectionReferences={connectionReferences}
             services={services}
