@@ -1,4 +1,23 @@
 # Logic Apps Designer
+## [4.69.0](https://github.com/Azure/LogicAppsUX/compare/v4.68.0...v4.69.0) (2024-08-22)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove parent scrolling (scrolling is enabled individually in schemas) ([#5465](https://github.com/Azure/LogicAppsUX/issues/5465)) ([adc7fc1](https://github.com/Azure/LogicAppsUX/commit/adc7fc194bca49670e2f9ef37906d49253963e8b))
+* **Data Mapper:** Show error for Test in Response body if content is null ([#5468](https://github.com/Azure/LogicAppsUX/issues/5468)) ([17813ea](https://github.com/Azure/LogicAppsUX/commit/17813ea2b54a8662ddde5567b4363a2977831317))
+
+## [4.68.0](https://github.com/Azure/LogicAppsUX/compare/v4.67.0...v4.68.0) (2024-08-22)
+
+## [4.67.0](https://github.com/Azure/LogicAppsUX/compare/v4.66.0...v4.67.0) (2024-08-21)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Able to deserialize function with multiple outputs, without duplicate function ([#5444](https://github.com/Azure/LogicAppsUX/issues/5444)) ([dab99e0](https://github.com/Azure/LogicAppsUX/commit/dab99e011db986eb91afb451c322975ab182fdf6))
+* **Data Mapper:** Fix Search and Selection/Hover states ([#5451](https://github.com/Azure/LogicAppsUX/issues/5451)) ([cf4d871](https://github.com/Azure/LogicAppsUX/commit/cf4d871932d8fdad51fc208ef32dd057c03e594d))
+* **designer:** Prevent Warning from appearing if there is no Id provided ([#5439](https://github.com/Azure/LogicAppsUX/issues/5439)) ([be257f1](https://github.com/Azure/LogicAppsUX/commit/be257f15b04b87d8ba5c0b4ddb90ab853b45e9a1)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
 ## [4.66.0](https://github.com/Azure/LogicAppsUX/compare/v4.65.0...v4.66.0) (2024-08-20)
 
 
