@@ -29,11 +29,11 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     kind,
     manifest: selectedManifest,
   } = useSelector((state: RootState) => state.template);
-  const { mapping, selectedTabId, templateName, subscriptionId } = useSelector((state: RootState) => ({
+  const { mapping, selectedTabId, templateName, resourceGroup } = useSelector((state: RootState) => ({
     mapping: state.workflow.connections.mapping,
     selectedTabId: state.panel.selectedTabId,
     templateName: state.template.templateName,
-    subscriptionId: state.workflow.subscriptionId,
+    resourceGroup: state.workflow.resourceGroup,
   }));
 
   const [isCreated, setIsCreated] = useState(false);
@@ -79,7 +79,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
         level: LogEntryLevel.Trace,
         area: 'Templates.usePanelTabs',
         message: 'Template is created',
-        args: [templateName, subscriptionId],
+        args: [templateName, resourceGroup],
       });
       LoggerService().endTrace(logId, { status: Status.Success });
     } catch (e: any) {
@@ -89,7 +89,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
         area: 'Templates.usePanelTabs',
         message: e.message,
         error: e instanceof Error ? e : undefined,
-        args: [templateName, subscriptionId],
+        args: [templateName, resourceGroup],
       });
       LoggerService().endTrace(logId, { status: Status.Failure });
     }

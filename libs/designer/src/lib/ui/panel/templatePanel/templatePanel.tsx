@@ -16,9 +16,9 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
-  const { templateName, subscriptionId } = useSelector((state: RootState) => ({
+  const { templateName, resourceGroup } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
-    subscriptionId: state.workflow.subscriptionId,
+    resourceGroup: state.workflow.resourceGroup,
   }));
   const manifest = useSelector((state: RootState) => state.template?.manifest);
   const templateTitle = manifest?.title ?? '';
@@ -28,7 +28,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     dispatch(clearTemplateDetails());
   }, [dispatch]);
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({
-    onCreateClick: () => onCreateClick(),
+    onCreateClick,
   });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () =>
@@ -36,9 +36,9 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
         ? createWorkflowPanelTabs
         : getQuickViewTabs(intl, dispatch, {
             templateId: templateName ?? 'Unknown',
-            workflowAppName: subscriptionId,
+            workflowAppName: resourceGroup,
           }),
-    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, templateName, subscriptionId]
+    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, templateName, resourceGroup]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
