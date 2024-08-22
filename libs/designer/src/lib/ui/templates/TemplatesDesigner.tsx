@@ -8,6 +8,8 @@ import { EmptySearch } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { TemplateFilters, type TemplateDetailFilterType } from './filters/templateFilters';
+import { useEffect } from 'react';
+import { setLayerHostSelector } from '@fluentui/react';
 
 export const TemplatesDesigner = ({
   detailFilters,
@@ -23,6 +25,7 @@ export const TemplatesDesigner = ({
     onSuccessfulCreation: () => void
   ) => Promise<void>;
 }) => {
+  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
   const {
@@ -69,7 +72,16 @@ export const TemplatesDesigner = ({
     <>
       <TemplateFilters detailFilters={detailFilters} />
       <br />
-      <TemplatePanel onCreateClick={onCreateClick} />
+      <div
+          id={'msla-layer-host'}
+          style={{
+            position: 'absolute',
+            inset: '0px',
+            visibility: 'hidden',
+          }}
+      >
+        <TemplatePanel onCreateClick={onCreateClick} />
+      </div>
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div className="msla-templates-list">
           {filteredTemplateNames.map((templateName: string) => (
