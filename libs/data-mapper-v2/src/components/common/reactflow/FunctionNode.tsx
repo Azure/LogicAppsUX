@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useHoverFunctionNode, useSelectedNode } from '../../../core/state/selectors/selectors';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
 import { customTokens } from '../../../core/ThemeConect';
 
@@ -49,38 +49,36 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
     functionWithConnections?.inputs[0][0] !== undefined;
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
-  const leftHandleStyle = useMemo(() => {
-    let updatedStyle = styles.handleWrapper;
-    if (isLeftConnected) {
-      updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
-    }
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-      if (isLeftConnected) {
-        updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
+  const getHandleStyle = useCallback(
+    (isInput: boolean, isConnected: boolean) => {
+      let updatedStyle = styles.handleWrapper;
+      if (isConnected) {
+        updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
       }
-    }
 
-    if (functionInputsFull && isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.fullNode);
-    }
+      if (isSelected || isHover) {
+        updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
+        if (isConnected) {
+          updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
+        }
+      }
 
-    return updatedStyle;
-  }, [isHover, isSelected, styles, isLeftConnected, functionInputsFull]);
+      if (isInput && isHover) {
+        updatedStyle = mergeClasses(updatedStyle, styles.fullNode);
+      }
 
-  const rightHandleStyle = useMemo(() => {
-    let updatedStyle = styles.handleWrapper;
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-    }
-    if (isRightConnected) {
-      updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
-    }
-
-    return updatedStyle;
-  }, [styles.handleWrapper, styles.selectedHoverHandle, styles.connectedHandle, isSelected, isHover, isRightConnected]);
+      return updatedStyle;
+    },
+    [
+      isHover,
+      isSelected,
+      styles.connectedHandle,
+      styles.connectedSelectedHoverHandle,
+      styles.fullNode,
+      styles.handleWrapper,
+      styles.selectedHoverHandle,
+    ]
+  );
 
   const onMouseEnter = useCallback(() => {
     dispatch(
@@ -115,7 +113,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
           isConnectable={!functionInputsFull}
           onConnect={setActiveNode}
           position={Position.Left}
-          className={leftHandleStyle}
+          className={getHandleStyle(true, isLeftConnected)}
           style={{ left: '-7px' }}
         />
       )}
@@ -147,7 +145,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
-      <Handle type={'source'} position={Position.Right} className={rightHandleStyle} />
+      <Handle type={'source'} position={Position.Right} className={getHandleStyle(false, isRightConnected)} />
     </div>
   );
 };
