@@ -1,4 +1,3 @@
-import { customTokens } from '../../core';
 import type { FunctionData } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { FunctionIcon } from '../functionIcon/FunctionIcon';
@@ -9,6 +8,8 @@ import { useDrag } from 'react-dnd';
 import { useDispatch } from 'react-redux';
 import { addFunctionNode } from '../../core/state/DataMapSlice';
 import type { XYPosition } from '@xyflow/react';
+import { useCallback } from 'react';
+import { customTokens } from '../../core/ThemeConect';
 
 interface FunctionListItemProps {
   functionData: FunctionData;
@@ -20,6 +21,11 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const dispatch = useDispatch();
+
+  const onFunctionNodeClick = useCallback(() => {
+    // Improve this logic to handle intersecting nodes
+    dispatch(addFunctionNode(functionData));
+  }, [dispatch, functionData]);
 
   const [, drag] = useDrag(() => ({
     type: 'function',
@@ -34,7 +40,7 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   }));
 
   return (
-    <TreeItem itemType="leaf">
+    <TreeItem itemType="leaf" onClick={onFunctionNodeClick}>
       <div className={styles.dragWrapper} ref={drag}>
         <TreeItemLayout className={styles.functionTreeItem} aside={<AddRegular className={styles.addIconAside} />}>
           <div key={functionData.key} className={styles.listButton}>

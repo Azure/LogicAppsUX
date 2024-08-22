@@ -14,6 +14,7 @@ import {
 } from '@fluentui/react-icons';
 import { Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -37,11 +38,13 @@ export interface PanelHeaderProps {
   canResubmit?: boolean;
   resubmitOperation?: () => void;
   onUnpinAction?: () => void;
-  commentChange(panelCommentChangeEvent?: string): void;
+  commentChange(newValue?: string): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
+  canShowLogicAppRun?: boolean;
+  showLogicAppRun?: () => void;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -140,6 +143,8 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     onRenderWarningMessage,
     onTitleChange,
     onTitleBlur,
+    canShowLogicAppRun,
+    showLogicAppRun,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -156,6 +161,12 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     defaultMessage: 'Unpin action',
     id: 'iTz1lp',
     description: 'Text indicating a menu button to unpin a pinned action from the side panel',
+  });
+
+  const showLogicAppRunText = intl.formatMessage({
+    defaultMessage: 'Show Logic App run details',
+    id: 'y6aoMi',
+    description: 'Show Logic App run details text',
   });
 
   const isRight = headerLocation === PanelLocation.Right;
@@ -209,27 +220,39 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
               <OverflowButton {...props} />
             </div>
             {onRenderWarningMessage ? onRenderWarningMessage() : null}
-            {comment ? (
-              <PanelHeaderComment
-                comment={comment}
-                isCollapsed={isCollapsed}
-                noNodeSelected={noNodeOnCardLevel}
-                readOnlyMode={readOnlyMode}
-                commentChange={commentChange}
-              />
-            ) : null}
           </>
         ) : null}
       </div>
-      {canResubmit ? (
-        <Button
-          style={{ margin: '0 2rem 0.5rem', alignSelf: 'flex-start' }}
-          icon={<Icon iconName="PlaybackRate1x" />}
-          onClick={() => resubmitOperation?.()}
-        >
-          {resubmitButtonText}
-        </Button>
+      {!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed ? (
+        <PanelHeaderComment
+          comment={comment}
+          isCollapsed={isCollapsed}
+          noNodeSelected={noNodeOnCardLevel}
+          readOnlyMode={readOnlyMode}
+          commentChange={commentChange}
+        />
       ) : null}
+      <div className="msla-panel-header-buttons">
+        {canResubmit ? (
+          <Button
+            className="msla-panel-header-buttons__button"
+            icon={<Icon iconName="PlaybackRate1x" />}
+            onClick={() => resubmitOperation?.()}
+          >
+            {resubmitButtonText}
+          </Button>
+        ) : null}
+        {canShowLogicAppRun ? (
+          <Button
+            iconPosition="after"
+            className="msla-panel-header-buttons__button"
+            icon={<Icon iconName="ChevronRight" />}
+            onClick={() => showLogicAppRun?.()}
+          >
+            {showLogicAppRunText}
+          </Button>
+        ) : null}
+      </div>
     </>
   );
 };

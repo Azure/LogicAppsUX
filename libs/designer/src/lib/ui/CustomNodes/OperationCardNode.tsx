@@ -47,9 +47,8 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -79,7 +78,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
-  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -101,21 +100,26 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
-  };
-
-  const { refetch, isFetching: isRepetitionLoading } = useQuery<any>(
+  const {
+    refetch,
+    isFetching: isRepetitionLoading,
+    data: repetitionData,
+  } = useQuery<any>(
     ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
     getRunRepetition,
     {
       refetchOnWindowFocus: false,
       initialData: null,
       refetchIntervalInBackground: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+      enabled: parentRunIndex !== undefined && isMonitoringView,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionData)) {
+      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionData.properties as any }));
+    }
+  }, [dispatch, id, repetitionData, runInstance?.id]);
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {

@@ -117,6 +117,7 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
+  isStringLiteral,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -1120,7 +1121,7 @@ export function generateExpressionFromKey(
   let rootMethod = method;
   if (overrideMethod && !isInsideArray && isBodySegment(segments[0])) {
     // NOTE: If it is a nested Body property like body.$.Body, we wouldn't want to shift the property out
-    if (actionName || !outputSourceFromBody) {
+    if (!outputSourceFromBody) {
       segments.shift();
     }
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -3535,23 +3536,19 @@ export function parameterValueToString(
         } else if (!isUndefinedOrEmptyString(expressionValue)) {
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
-          expressionValue =
+          const shouldCastToString =
             !remappedParameterInfo.suppressCasting &&
             parameterType === 'string' &&
             segment.token?.type !== 'string' &&
-            !shouldUseLiteralValues(segment.token?.expression)
-              ? `@{${expressionValue}}`
-              : `@${expressionValue}`;
+            segment.token?.expression &&
+            isStringLiteral(segment.token.expression);
+          expressionValue = `@${shouldCastToString ? `{${expressionValue}}` : expressionValue}`;
         }
       }
 
       return expressionValue;
     })
     .join('');
-}
-
-export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
-  return (expression?.type as ExpressionType) !== ExpressionType.StringLiteral;
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {

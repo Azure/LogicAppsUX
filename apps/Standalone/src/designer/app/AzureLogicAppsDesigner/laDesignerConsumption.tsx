@@ -18,7 +18,7 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -239,7 +239,7 @@ const DesignerEditorConsumption = () => {
             }}
             runInstance={runInstanceData}
           >
-            <div style={{ height: 'inherit', width: 'inherit' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
                 saveWorkflow={saveWorkflowFromDesigner}
@@ -306,7 +306,14 @@ const getDesignerServices = (
     includeBasePathInTemplate: true,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl, siteResourceId: workflowId, httpClient, workflowName });
+
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl,
+    siteResourceId: workflowId,
+    httpClient,
+    workflowName,
+  });
 
   const appServiceService = new BaseAppServiceService({
     ...defaultServiceParams,
@@ -477,7 +484,10 @@ const getDesignerServices = (
     httpClient,
   });
 
-  const hostService = {};
+  const hostService = {
+    fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
+  };
 
   return {
     appServiceService,
