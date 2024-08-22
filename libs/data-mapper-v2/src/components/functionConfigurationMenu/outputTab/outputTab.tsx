@@ -109,6 +109,7 @@ export const OutputTabContents = (props: {
             removeItem={() => {
               removeConnection(index, output);
             }}
+            index={index}
           />
         );
         return listItem;
