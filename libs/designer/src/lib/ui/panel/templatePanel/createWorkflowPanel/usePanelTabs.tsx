@@ -45,20 +45,17 @@ export const useCreateWorkflowPanelTabs = ({
   }, [selectedManifest]);
 
   useEffect(() => {
-    if (parametersExist && selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS) {
+    if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS) {
       dispatch(validateConnections(mapping));
-    } else if (
-      selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE ||
-      selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE
-    ) {
+    } else if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
-      if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
-        if (!existingWorkflowName) {
-          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
-        }
-        dispatch(validateKind());
+    }
+    if (selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE) {
+      if (!existingWorkflowName) {
+        dispatch(validateWorkflowName(existingWorkflowNames ?? []));
       }
+      dispatch(validateKind());
     }
   }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
 
