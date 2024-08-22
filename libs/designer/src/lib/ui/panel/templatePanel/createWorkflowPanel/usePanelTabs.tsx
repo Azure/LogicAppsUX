@@ -70,7 +70,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     const logId = LoggerService().startTrace({
       name: 'Create Workflow from Template',
       action: 'createWorkflowFromTemplate',
-      source: 'usePanelTabs.tsx',
+      source: 'CreateTabs',
     });
     try {
       await onCreateClick();

@@ -35,7 +35,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       currentPanelView === 'createWorkflow'
         ? createWorkflowPanelTabs
         : getQuickViewTabs(intl, dispatch, {
-            templateId: templateName ?? '',
+            templateId: templateName ?? 'Unknown',
             workflowAppName: subscriptionId,
           }),
     [currentPanelView, createWorkflowPanelTabs, intl, dispatch, templateName, subscriptionId]

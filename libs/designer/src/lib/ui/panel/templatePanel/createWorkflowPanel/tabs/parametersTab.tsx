@@ -5,6 +5,7 @@ import { DisplayParameters } from '../../../../templates/parameters/displayParam
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 
 export const ParametersPanel: React.FC = () => {
   return <DisplayParameters />;
@@ -13,15 +14,7 @@ export const ParametersPanel: React.FC = () => {
 export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  {
-    isCreating,
-    previousTabId,
-    hasError,
-  }: {
-    isCreating: boolean;
-    previousTabId: string | undefined;
-    hasError: boolean;
-  }
+  { isCreating, previousTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({

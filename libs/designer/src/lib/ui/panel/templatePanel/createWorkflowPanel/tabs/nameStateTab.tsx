@@ -14,6 +14,7 @@ import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
+import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -177,15 +178,7 @@ export const NameStatePanel = () => {
 export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  {
-    isCreating,
-    previousTabId,
-    hasError,
-  }: {
-    isCreating: boolean;
-    previousTabId: string | undefined;
-    hasError: boolean;
-  }
+  { isCreating, previousTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
   title: intl.formatMessage({

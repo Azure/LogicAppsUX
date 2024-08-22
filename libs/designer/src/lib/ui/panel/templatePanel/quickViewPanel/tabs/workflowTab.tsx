@@ -8,6 +8,7 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import type { QuickViewTabProps } from '../quickViewPanel';
 
 export const WorkflowPanel: React.FC = () => {
   const { manifest, images } = useSelector((state: RootState) => state.template);
@@ -24,13 +25,7 @@ export const WorkflowPanel: React.FC = () => {
 export const workflowTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  {
-    templateId,
-    workflowAppName,
-  }: {
-    templateId: string;
-    workflowAppName: string;
-  }
+  { templateId, workflowAppName }: QuickViewTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
