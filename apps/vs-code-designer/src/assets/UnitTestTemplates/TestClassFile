@@ -1,0 +1,77 @@
+//------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//------------------------------------------------------------
+
+using SampleUnitTestProject.Mocks;
+namespace <%= namespace %>
+{
+    using System.Collections.Generic;
+    using System.IO;
+    using Microsoft.Azure.Workflows.Common.Entities;
+    using Microsoft.Azure.Workflows.UnitTesting.Definitions;
+    using Microsoft.Azure.Workflows.UnitTesting.TestHost;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Newtonsoft.Json.Linq;
+
+    [TestClass]
+    public class <%= unitTestName %>
+    {
+        private string WorkflowDefinition;
+        private Dictionary<string, OperationMock> Mocks;
+        private UnitTestEngine UnitTestExecutor;
+
+        public <%= unitTestName %>()
+        {
+            this.UnitTestExecutor = new UnitTestEngine();
+            this.WorkflowDefinition = File.ReadAllText(@"./<%= workflowName %>/workflow.json");
+            var mockData = JObject.Parse(File.ReadAllText(@"<%= workflowName %>Mocks.json"));
+            this.Mocks = mockData.ToObject<Dictionary<string, OperationMock>>();
+        }
+
+        [TestMethod]
+        public void ExecuteWorkflow_WithMockTrigger_ShouldSucceed()
+        {
+            // Arrange – define mocks either from a static source or as a lambda function
+            var triggerMock = new OperationMock("When_a_HTTP_request_is_received", FlowStatus.Succeeded, new JObject()
+            {
+                { "body", new JObject() { { "isReleased", true }, { "isEnabled", false }, { "isFlag", false } } }
+            });
+
+            // Act 
+            var unitTestFlowRun = this.UnitTestExecutor.ExecuteWorkflow(this.WorkflowDefinition, this.Mocks, triggerMock).Result;
+
+            // Assert
+            Assert.IsNotNull(unitTestFlowRun);
+            Assert.AreEqual(FlowStatus.Succeeded, unitTestFlowRun.Properties.Status);
+            Assert.AreEqual("myvalue", unitTestFlowRun.Properties.Actions["Get_Rows_Receipt"].Outputs.Value<string>());
+        }
+
+        [TestMethod]
+        public void ExecuteWorkflow_WithMockAction_ShouldSucceed_Dynamic()
+        {
+            // Arrange – define mocks either from a static source or as a lambda function
+            var triggerMock = this.Mocks["When_a_HTTP_request_is_received"];
+            this.Mocks["Get_Rows_Receipt"] = new OperationMock("Get_Rows_Receipt", FlowStatus.Succeeded, this.MockDynamicActionOutputCallback);
+
+            // Act 
+            var unitTestFlowRun = this.UnitTestExecutor.ExecuteWorkflow(this.WorkflowDefinition, this.Mocks, triggerMock).Result;
+
+            // Assert
+            Assert.IsNotNull(unitTestFlowRun);
+            Assert.AreEqual(FlowStatus.Succeeded, unitTestFlowRun.Properties.Status);
+            Assert.AreEqual("myvalue", unitTestFlowRun.Properties.Actions["Get_Rows_Receipt"].Outputs.Value<string>());
+        }
+
+        #region Mock generator helpers
+        public JToken MockDynamicActionOutputCallback(UnitTestExecutionContext context)
+        {
+            if (context.Trigger.Status == FlowStatus.Succeeded && context.Trigger.Outputs["body"]["isReleased"].ToString() == "true")
+            {
+                this.Mocks["Get_Rows_Receipt"].Outputs["body"]["value"][0]["ProductStatus"] = context.Trigger.Outputs["body"];
+            }
+            this.Mocks["Get_Rows_Receipt"].Outputs["body"]["value"]["trackingid"] = new MyDummyTestService().GetTrackingId();
+            return this.Mocks["Get_Rows_Receipt"].Outputs;
+        }
+        #endregion
+    }
+}
