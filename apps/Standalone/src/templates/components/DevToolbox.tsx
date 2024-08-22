@@ -1,9 +1,9 @@
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, Stack, StackItem } from '@fluentui/react';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
@@ -25,8 +25,6 @@ export const DevToolbox = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { theme } = useSelector((state: RootState) => state.workflowLoader);
-
-  const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
   const isLightMode = theme === ThemeType.Light;
 
   const changeThemeCB = useCallback(
@@ -44,33 +42,6 @@ export const DevToolbox = () => {
       <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
         <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
           <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
-            <Tooltip
-              content="Clippy says hello!"
-              relationship="label"
-              positioning="below-start"
-              withArrow
-              showDelay={100}
-              hideDelay={500}
-              onVisibleChange={(_e, data) => setIsTooltipVisible(data.visible)}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 12,
-                  padding: 4,
-                  backgroundColor: tokens.colorNeutralBackground4,
-                  borderRadius: tokens.borderRadiusMedium,
-                  zIndex: 10,
-                  cursor: 'pointer',
-                }}
-              >
-                <span role="img" aria-label="Clippy!" style={{ fontSize: 20 }}>
-                  📎
-                </span>{' '}
-                Tooltip tester! It&apos;s {isTooltipVisible ? 'visible' : 'hidden'}
-              </div>
-            </Tooltip>
             {armToken ? null : <span style={{ color: 'red', padding: 10 }}> Reload page after loading arm token.</span>}
             <AccordionItem value="1">
               <AccordionHeader>Dev Toolbox</AccordionHeader>

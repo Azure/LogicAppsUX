@@ -119,7 +119,6 @@ export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePane
   }),
   hasError: false,
   content: <SummaryPanel />,
-  order: 1,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',

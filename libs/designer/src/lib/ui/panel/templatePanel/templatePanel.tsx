@@ -48,6 +48,11 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulC
     };
   }, [intl]);
 
+  const layerProps = {
+    hostId: 'msla-layer-host',
+    eventBubblingEnabled: true,
+  };
+
   const onRenderHeaderContent = useCallback(
     () =>
       currentPanelView === 'quickView' ? (
@@ -81,6 +86,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulC
       hasCloseButton={true}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
+      layerProps={layerProps}
       isFooterAtBottom={true}
     >
       {currentPanelView === 'createWorkflow' ? (

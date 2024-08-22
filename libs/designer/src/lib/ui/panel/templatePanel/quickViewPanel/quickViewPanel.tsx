@@ -29,7 +29,6 @@ export const QuickViewPanel = () => {
   return (
     <TemplatesPanelContent
       className="msla-template-quickview-tabs"
-      isSequence={false}
       tabs={panelTabs}
       selectedTab={selectedTabId}
       selectTab={onTabSelected}
