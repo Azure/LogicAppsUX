@@ -13,6 +13,7 @@ import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
+import { isComboboxItemMatch } from './helpers/isComboboxItemMatch';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -153,7 +154,7 @@ export const Combobox = ({
         ? [loadingOption]
         : errorDetails
           ? [errorOption]
-          : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.displayName.toLowerCase()));
+          : options.filter((option) => isComboboxItemMatch(option, searchValue));
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
