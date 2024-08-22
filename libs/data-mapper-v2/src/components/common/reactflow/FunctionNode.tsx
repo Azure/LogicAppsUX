@@ -71,16 +71,27 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
 
   const rightHandleStyle = useMemo(() => {
     let updatedStyle = styles.handleWrapper;
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-    }
     if (isRightConnected) {
       updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
     }
 
+    if (isSelected || isHover) {
+      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
+      if (isRightConnected) {
+        updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
+      }
+    }
+
     return updatedStyle;
-  }, [styles.handleWrapper, styles.selectedHoverHandle, styles.connectedHandle, isSelected, isHover, isRightConnected]);
+  }, [
+    styles.handleWrapper,
+    styles.connectedHandle,
+    styles.selectedHoverHandle,
+    styles.connectedSelectedHoverHandle,
+    isRightConnected,
+    isSelected,
+    isHover,
+  ]);
 
   const onMouseEnter = useCallback(() => {
     dispatch(
