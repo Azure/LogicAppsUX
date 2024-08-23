@@ -10,6 +10,7 @@ export const useStyles = makeStyles({
   },
   header: {
     paddingTop: '15px',
+    width: '100%',
   },
   titleIcon: {
     display: 'inline-block',
@@ -31,6 +32,7 @@ export const useStyles = makeStyles({
     backgroundImage: 'none',
     paddingRight: '5px',
     paddingLeft: '10px',
+    width: '100%',
   },
   footer: {
     backgroundColor: 'transparent',

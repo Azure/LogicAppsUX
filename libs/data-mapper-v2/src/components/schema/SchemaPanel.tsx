@@ -195,6 +195,11 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
     }
   }, [dispatch, isLeftDirection]);
 
+  const setSelectedFileSchemaAndResetState = useCallback((item?: SchemaFile) => {
+    setSelectedSchemaFile(item);
+    setErrorMessage(''); //reset the error message
+  }, []);
+
   // if initial flat-map changes, filtered version needs to be reset
   useEffect(() => {
     setFilteredFlattenedScehmaMap(flattenedScehmaMap);
@@ -233,7 +238,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
         <SchemaPanelBody
           isLeftDirection={isLeftDirection}
           schema={selectedSchema}
-          setSelectedSchemaFile={setSelectedSchemaFile}
+          setSelectedSchemaFile={setSelectedFileSchemaAndResetState}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
           fileSelectorOptions={fileSelectorOptions}
