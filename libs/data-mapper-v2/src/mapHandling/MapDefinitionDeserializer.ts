@@ -382,7 +382,6 @@ export class MapDefinitionDeserializer {
       this.processForStatement(forOrIfObj.term, connections);
     }
     Object.entries(rightSideStringOrObject).forEach((child) => {
-      // danielle can we just access the child here for json?
       this.createConnectionsForLMLObject(child[1], child[0], parentTargetNode, connections);
     });
     if (this._conditional.needsObjectConnection) {
