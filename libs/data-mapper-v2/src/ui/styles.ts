@@ -5,6 +5,7 @@ export const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
     height: '100vh',
+    width: '100vw',
     minHeight: 'calc(100vh - 50px)',
     maxHeight: 'calc(100vh - 40px)',
     ...shorthands.overflow('hidden'),
@@ -64,5 +65,11 @@ export const useStaticStyles = makeStaticStyles({
   },
   '.react-flow__nodes': {
     zIndex: '200 !important',
+  },
+  '.react-flow__pane': {
+    zIndex: '100 !important',
+  },
+  '.react-flow__edges': {
+    zIndex: '120 !important',
   },
 });

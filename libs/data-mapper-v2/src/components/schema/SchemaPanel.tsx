@@ -195,13 +195,10 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
     }
   }, [dispatch, isLeftDirection]);
 
-  const title = useMemo(
-    () =>
-      `${isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION} ${
-        selectedSchemaFile?.name && !scehmaInEditState ? `(${selectedSchemaFile?.name})` : ''
-      }`,
-    [isLeftDirection, scehmaInEditState, selectedSchemaFile?.name, stringResources.DESTINATION, stringResources.SOURCE]
-  );
+  const setSelectedFileSchemaAndResetState = useCallback((item?: SchemaFile) => {
+    setSelectedSchemaFile(item);
+    setErrorMessage(''); //reset the error message
+  }, []);
 
   // if initial flat-map changes, filtered version needs to be reset
   useEffect(() => {
@@ -213,7 +210,8 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
       id={`panel_${schemaType}`}
       isOpen={!!currentPanelView}
       title={{
-        text: title,
+        text: isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION,
+        subTitleText: selectedSchemaFile?.name,
         rightAction: scehmaInEditState ? null : (
           <Button
             appearance="transparent"
@@ -240,7 +238,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
         <SchemaPanelBody
           isLeftDirection={isLeftDirection}
           schema={selectedSchema}
-          setSelectedSchemaFile={setSelectedSchemaFile}
+          setSelectedSchemaFile={setSelectedFileSchemaAndResetState}
           selectedSchemaFile={selectedSchemaFile}
           errorMessage={errorMessage}
           fileSelectorOptions={fileSelectorOptions}

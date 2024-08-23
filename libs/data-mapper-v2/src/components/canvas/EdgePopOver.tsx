@@ -27,6 +27,7 @@ const EdgePopOver = (props: EdgePopOverProps) => {
   const styles = useStyles();
   const intl = useIntl();
   const loopingScenario = useLooping(edgePopOverId);
+  const showLoop = false; // Temporary as we are hiding loop option
 
   const stringResources = useMemo(
     () => ({
@@ -94,11 +95,11 @@ const EdgePopOver = (props: EdgePopOverProps) => {
       </PopoverTrigger>
       <PopoverSurface as={'div'}>
         <MenuList>
-          {loopingScenario.loopPresent ? (
+          {loopingScenario.loopPresent && showLoop ? (
             <MenuItem icon={<ArrowRepeatAllOffRegular color={tokens.colorPaletteBlueBorderActive} />}>
               {stringResources.REMOVE_LOOP}
             </MenuItem>
-          ) : loopingScenario.isLoopable ? (
+          ) : loopingScenario.isLoopable && showLoop ? (
             <MenuItem icon={<ArrowRepeatAllRegular color={tokens.colorPaletteBlueBorderActive} />}>{stringResources.ADD_LOOP}</MenuItem>
           ) : null}
           <MenuItem onClick={onDelete} icon={<DeleteRegular color={tokens.colorPaletteBlueBorderActive} />}>

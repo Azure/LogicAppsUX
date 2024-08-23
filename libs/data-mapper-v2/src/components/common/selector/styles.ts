@@ -24,8 +24,8 @@ export const useStyles = makeStyles({
     marginTop: '20px',
   },
   cancelButton: {
-    marginTop: '30px',
-    alignSelf: 'left',
+    marginTop: '15px',
+    alignSelf: 'center',
   },
   errorMessage: {
     marginTop: '10px',
