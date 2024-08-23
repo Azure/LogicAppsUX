@@ -29,7 +29,6 @@ export const workflowTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePan
   }),
   hasError: false,
   content: <WorkflowPanel />,
-  order: 0,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',
