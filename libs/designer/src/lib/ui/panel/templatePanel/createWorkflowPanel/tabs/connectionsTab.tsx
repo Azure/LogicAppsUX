@@ -5,6 +5,7 @@ import constants from '../../../../../common/constants';
 import { DisplayConnections } from '../../../../templates/connections/displayConnections';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections } = useSelector((state: RootState) => state.template);
@@ -15,7 +16,7 @@ export const ConnectionsPanel: React.FC = () => {
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { nextTabId, hasError }: { nextTabId: string; hasError: boolean }
+  { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -47,5 +48,6 @@ export const connectionsTab = (
     secondaryButtonOnClick: () => {
       dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC));
     },
+    secondaryButtonDisabled: isCreating,
   },
 });

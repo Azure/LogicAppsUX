@@ -1,4 +1,35 @@
 # Logic Apps Designer
+## [4.71.0](https://github.com/Azure/LogicAppsUX/compare/v4.70.0...v4.71.0) (2024-08-23)
+
+
+### Features
+
+* **Templates:** Add Telemetry for creation actions and display error on panel ([#5413](https://github.com/Azure/LogicAppsUX/issues/5413)) ([3423dfe](https://github.com/Azure/LogicAppsUX/commit/3423dfedf2af08b20cb7edc97477aec0daba54b0))
+
+
+### Bug Fixes
+
+* **Designer:** Search and Jump fails to uncollapse and open action in panel ([#5456](https://github.com/Azure/LogicAppsUX/issues/5456)) ([5469307](https://github.com/Azure/LogicAppsUX/commit/5469307cd6965d96883bd7d372dc2585fba9cd36))
+
+## [4.70.0](https://github.com/Azure/LogicAppsUX/compare/v4.69.0...v4.70.0) (2024-08-23)
+
+
+### Features
+
+* **Data Mapper:** Deserialize JSON loops ([#5485](https://github.com/Azure/LogicAppsUX/issues/5485)) ([334e192](https://github.com/Azure/LogicAppsUX/commit/334e19277681f2dd0d2191002721d1d9d8ee302d))
+* **designer:** Add openMonitorView in standard standalone ([#5470](https://github.com/Azure/LogicAppsUX/issues/5470)) ([00a67b7](https://github.com/Azure/LogicAppsUX/commit/00a67b78653f5cd6d9c05ebe3143cbd8be1a4120))
+* **designer:** Parse Text action consumption support ([#5479](https://github.com/Azure/LogicAppsUX/issues/5479)) ([22719f1](https://github.com/Azure/LogicAppsUX/commit/22719f1383910f86186fcde0e339e34a2b33d251))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Private preview bug fixes ([#5471](https://github.com/Azure/LogicAppsUX/issues/5471)) ([c28b82b](https://github.com/Azure/LogicAppsUX/commit/c28b82be6e2e86774c1f727b53b3da96c5ce14fb))
+* **designer-ui:** Prevent designer crashing when invalid regex is entered into combobox ([#5454](https://github.com/Azure/LogicAppsUX/issues/5454)) ([6fcb3bb](https://github.com/Azure/LogicAppsUX/commit/6fcb3bb18c67a4f8acaacf163fec77e9805bf294))
+* **designer:** Cleaning up legacy dynamic values and tree calls to always return an array in case of api call successv ([#5460](https://github.com/Azure/LogicAppsUX/issues/5460)) ([9684b3d](https://github.com/Azure/LogicAppsUX/commit/9684b3d8ef7619e1bf693131ef07bc013749ff2f))
+* **templates:** Adding default selection of kind when not explicitly specified in template ([#5483](https://github.com/Azure/LogicAppsUX/issues/5483)) ([9c4d307](https://github.com/Azure/LogicAppsUX/commit/9c4d30744d1057effaf2fc269aa7dfad7e1150bd))
+* **Templates:** Fluent UI Css Not Working in Templates Panel + Tab Redesign ([#5476](https://github.com/Azure/LogicAppsUX/issues/5476)) ([07807d6](https://github.com/Azure/LogicAppsUX/commit/07807d69d0b04d1858370da42893eb83b26a3dfa))
+* **Templates:** Image not Rendering in Prod + Sort By Text ([#5461](https://github.com/Azure/LogicAppsUX/issues/5461)) ([fe4f814](https://github.com/Azure/LogicAppsUX/commit/fe4f814525058b84faa91c3785abf2de0e95966b))
+
 ## [4.69.0](https://github.com/Azure/LogicAppsUX/compare/v4.68.0...v4.69.0) (2024-08-22)
 
 
