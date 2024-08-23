@@ -40,3 +40,8 @@ export interface Connection {
   connectorId: string;
   kind?: ConnectorRuntimeType;
 }
+
+export interface TemplateContext {
+  templateId: string;
+  workflowAppName: string;
+}
