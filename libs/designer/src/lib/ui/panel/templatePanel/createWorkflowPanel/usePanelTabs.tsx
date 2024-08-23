@@ -67,7 +67,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     const logId = LoggerService().startTrace({
       name: 'Create Workflow from Template',
       action: 'createWorkflowFromTemplate',
-      source: 'CreateTabs',
+      source: 'Templates.createTab',
     });
     try {
       await onCreateClick();
