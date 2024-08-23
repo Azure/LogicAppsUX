@@ -178,6 +178,19 @@ export const useAllGraphParents = (graphId: string): string[] => {
   );
 };
 
+export const getParentsUncollapseFromGraphState = (state: WorkflowState, actionId: string): Record<string, boolean> => {
+  const collapsedGraphIds = state.collapsedGraphIds;
+  if (state.graph) {
+    const nodeParents = getWorkflowGraphPath(state.graph, actionId);
+    nodeParents.forEach((nodeId) => {
+      if (nodeId !== actionId) {
+        collapsedGraphIds[nodeId] = false;
+      }
+    });
+  }
+  return collapsedGraphIds;
+};
+
 export const useNodeGraphId = (nodeId: string): string =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? ''));
 

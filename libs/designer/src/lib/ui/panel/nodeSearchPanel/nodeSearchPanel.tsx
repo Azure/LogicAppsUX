@@ -1,6 +1,6 @@
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { clearPanel } from '../../../core/state/panel/panelSlice';
+import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
 import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { SearchBox, FocusTrapZone } from '@fluentui/react';
@@ -36,7 +36,7 @@ const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRun
         showImage={true}
         onClick={(_: string) => {
           dispatch(setFocusNode(node));
-          dispatch(clearPanel());
+          dispatch(changePanelNode(node));
         }}
         displayRuntimeInfo={displayRuntimeInfo}
       />

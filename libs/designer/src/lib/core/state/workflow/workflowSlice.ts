@@ -23,7 +23,7 @@ import {
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelInterfaces';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
-import { getWorkflowNodeFromGraphState } from './workflowSelectors';
+import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import {
   LogEntryLevel,
@@ -255,6 +255,7 @@ export const workflowSlice = createSlice({
       });
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
       state.focusedCanvasNodeId = action.payload;
     },
     clearFocusNode: (state: WorkflowState) => {
