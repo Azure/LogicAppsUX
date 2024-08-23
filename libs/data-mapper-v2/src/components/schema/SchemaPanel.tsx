@@ -206,7 +206,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
       isOpen={!!currentPanelView}
       title={{
         text: isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION,
-        subTitleText: selectedSchemaFile?.name && scehmaInEditState ? selectedSchemaFile.name : undefined,
+        subTitleText: selectedSchemaFile?.name,
         rightAction: scehmaInEditState ? null : (
           <Button
             appearance="transparent"
