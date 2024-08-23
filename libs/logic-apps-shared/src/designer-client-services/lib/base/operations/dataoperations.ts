@@ -45,7 +45,7 @@ export const parseJsonOperation = {
 export const chunktext = {
   name: 'chunktext',
   id: 'chunktext',
-  type: 'Chunktext',
+  type: 'ChunkText',
   properties: {
     api: {
       id: 'connectionProviders/dataOperationNew',
