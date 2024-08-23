@@ -1487,6 +1487,8 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
 
     describe('convertFromMapDefinition', () => {
+      // danielle need test case where array item is not parent
+
       it('creates a simple connection between one source and target node', () => {
         simpleMap['root'] = {
           String1: '/root/OrderNo',
@@ -1715,7 +1717,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
       });
 
-      it.skip('creates a loop connection for json', () => {
+      it('creates a loop connection for json', () => {
         simpleMap['root'] = {
           ComplexArray1: {
             '$for(/root/Nums/*)': {
@@ -1748,14 +1750,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
-      it.skip('creates a index loop and index is used', () => {
+      it('creates a index loop and index is used', () => {
         simpleMap['root'] = {
           ComplexArray1: {
-            '$for(/root/Nums/*, $a)': [
-              {
-                F1: '$a',
-              },
-            ],
+            '$for(/root/Nums/*, $a)': {
+              F1: '$a',
+            },
           },
         };
 
@@ -1787,14 +1787,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
       });
 
-      it.skip('creates a index loop and index is unused', () => {
+      it('creates a index loop and index is unused', () => {
         simpleMap['root'] = {
           ComplexArray1: {
-            '$for(/root/Nums/*, $a)': [
-              {
-                F1: 'Num',
-              },
-            ],
+            '$for(/root/Nums/*, $a)': {
+              F1: 'Num',
+            },
           },
         };
 
@@ -1829,14 +1827,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
-      it.skip('creates connections for nested functions within a loop', () => {
+      it('creates connections for nested functions within a loop', () => {
         simpleMap['root'] = {
           ComplexArray1: {
-            '$for(/root/Nums/*)': [
-              {
-                F1: 'multiply(count(Num), /root/Num)',
-              },
-            ],
+            '$for(/root/Nums/*)': {
+              F1: 'multiply(count(Num), /root/Num)',
+            },
           },
         };
 
@@ -1886,11 +1882,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['root'] = {
           ComplexArray1: {
             '$for(/root/Nums/*)': {
-              '$if(is-greater-than(10, 20))': [
-                {
-                  F1: 'Num',
-                },
-              ],
+              '$if(is-greater-than(10, 20))': {
+                F1: 'Num',
+              },
             },
           },
         };
@@ -1934,7 +1928,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[5][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
       });
 
-      it.skip('creates a custom value direct access connection', () => {
+      it('creates a custom value direct access connection', () => {
         simpleMap['root'] = {
           String1: '/root/Strings/*[1]/String',
         };
@@ -1968,14 +1962,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(directAccessId);
       });
 
-      it.skip('creates a looping connection w/ index variable and direct access', () => {
+      it('creates a looping connection w/ index variable and direct access', () => {
         simpleMap['root'] = {
           ComplexArray1: {
-            '$for(/root/Nums/*, $a)': [
-              {
-                F1: '/root/Nums/*[$a]/Num',
-              },
-            ],
+            '$for(/root/Nums/*, $a)': {
+              F1: '/root/Nums/*[$a]/Num',
+            },
           },
         };
 
@@ -2022,16 +2014,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it.skip('creates a looping connection w/ index variable and conditional', () => {
         simpleMap['root'] = {
           ForLoop: {
-            '$for(/root/text/*, $a)': [
-              {
-                '$if(is-greater-than($a, 2))': {
-                  prop1: {
-                    TEL_NUMBER: 'itemNumber',
-                    TEL_EXTENS: 'concat("Ext", " ", $a)',
-                  },
+            '$for(/root/text/*, $a)': {
+              '$if(is-greater-than($a, 2))': {
+                prop1: {
+                  TEL_NUMBER: 'itemNumber',
+                  TEL_EXTENS: 'concat("Ext", " ", $a)',
                 },
               },
-            ],
+            },
           },
         };
 
@@ -2245,16 +2235,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a loop connection with dot access', () => {
+      it('creates a loop connection with dot access', () => {
         simpleMap['root'] = {
           ForLoop: {
-            '$for(/root/generalData/address/telephone/*)': [
-              {
-                prop1: {
-                  TEL_NUMBER: '.',
-                },
+            '$for(/root/generalData/address/telephone/*)': {
+              prop1: {
+                TEL_NUMBER: '.',
               },
-            ],
+            },
           },
         };
 
@@ -2293,7 +2281,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
     const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
 
-    it.skip('maps a looping XSD to JSON', () => {
+    it('maps a looping XSD to JSON', () => {
       simpleMap['root'] = {
         ComplexArray1: {
           '$for(/ns0:Root/Looping/Employee)': {
@@ -2345,6 +2333,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     const root = extendedTarget.schemaTreeRoot;
     const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
 
-    expect((matchingTarget as SchemaNodeExtended).name).toEqual('F1');
+    expect((matchingTarget as SchemaNodeExtended).name).toEqual('<ArrayItem>');
   });
 });
