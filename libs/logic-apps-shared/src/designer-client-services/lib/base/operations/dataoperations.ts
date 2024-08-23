@@ -61,7 +61,7 @@ export const chunktext = {
     operationType: 'ChunkText',
     brandColor: '#8c6cff',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
-    annotation: { status: 'Preview' }
+    annotation: { status: 'Preview' },
   },
 };
 

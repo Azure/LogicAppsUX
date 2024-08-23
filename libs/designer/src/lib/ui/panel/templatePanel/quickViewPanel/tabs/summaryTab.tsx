@@ -1,4 +1,4 @@
-import { type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { useIntl, type IntlShape } from 'react-intl';
@@ -110,7 +110,11 @@ export const SummaryPanel: React.FC = () => {
   );
 };
 
-export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const summaryTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  { templateId, workflowAppName }: Template.TemplateContext
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
@@ -126,6 +130,12 @@ export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePane
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'Templates.overviewTab',
+        message: 'Template create button clicked',
+        args: [templateId, workflowAppName],
+      });
       dispatch(openCreateWorkflowPanelView());
     },
     secondaryButtonText: intl.formatMessage({

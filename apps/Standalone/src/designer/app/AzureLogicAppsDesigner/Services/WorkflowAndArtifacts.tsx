@@ -457,7 +457,10 @@ export const saveWorkflowStandard = async (
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   clearDirtyState: () => void,
-  skipValidation?: boolean
+  options?: {
+    skipValidation?: boolean;
+    throwError?: boolean;
+  }
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -478,7 +481,7 @@ export const saveWorkflowStandard = async (
   }
 
   try {
-    if (!skipValidation) {
+    if (!options?.skipValidation) {
       try {
         await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
       } catch (error: any) {
@@ -511,11 +514,17 @@ export const saveWorkflowStandard = async (
 
     if (!isSuccessResponse(response.status)) {
       alert('Failed to save workflow');
+      if (options?.throwError) {
+        throw Error('Failed to save workflow');
+      }
       return;
     }
     clearDirtyState();
   } catch (error) {
     console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
   }
 };
 
