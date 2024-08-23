@@ -27,7 +27,7 @@ export const chunkTextManifest =  {
         encodingModel: {
           title: 'Encoding model',
           type: 'string',
-          description: 'The encoding model to use fro chunking.',
+          description: 'The encoding model to use for chunking.',
           default: 'cl100k_base',
           'x-ms-editor': 'dropdown',
           'x-ms-editor-options': {
@@ -68,7 +68,7 @@ export const chunkTextManifest =  {
         pageOverlapLength: {
           title: 'Page overlap length',
           type: 'integer',
-          description: 'The number of chracters to overlap between pages.',
+          description: 'The number of characters to overlap between pages.',
           minumum: 0,
           default: 0,
         },
