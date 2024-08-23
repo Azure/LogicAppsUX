@@ -2529,7 +2529,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
       if (valueSegments?.length) {
         outputValueMap[keyFromTitle] =
           // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
-          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
+          // We will only interpolate a single token if the parameter config is of type 'string'
+          parameterValueWithoutCasting(
+            {
+              type: config.type,
+              value: valueSegments,
+              ...commonProperties,
+            } as any,
+            /* shouldInterpolateSingleToken */ config.type === 'string'
+          );
       }
     }
   });
@@ -3580,8 +3588,8 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   }
 }
 
-export function parameterValueWithoutCasting(parameter: ParameterInfo): any {
-  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
+export function parameterValueWithoutCasting(parameter: ParameterInfo, shouldInterpolateSingleToken = false): any {
+  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value, false, shouldInterpolateSingleToken);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 
@@ -3683,8 +3691,8 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false): string {
-  const shouldInterpolateTokens = value.length > 1 && value.some(isTokenValueSegment);
+function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+  const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
     .map((expression) => {
