@@ -1,5 +1,5 @@
 import type { OperationManifest } from '../../../../utils/src';
-import { OutputSecureDataMode, SettingScope } from '../../../../utils/src';
+import { SettingScope } from '../../../../utils/src';
 
 export const chunkTextManifest =  {
   properties: {
@@ -97,7 +97,7 @@ export const chunkTextManifest =  {
         },
       },
     },
-    
+
     connector: {
       id: 'connectionProviders/dataOperationNew',
       name: 'dataOperationNew',
@@ -108,11 +108,7 @@ export const chunkTextManifest =  {
     } as any,
 
     settings: {
-      secureData: {
-        options: {
-          outputsMode: OutputSecureDataMode.LinkedToInputs,
-        },
-      },
+      secureData: {},
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
