@@ -135,12 +135,7 @@ export const summaryTab = (
         level: LogEntryLevel.Trace,
         area: 'Templates.overviewTab',
         message: 'Template create button clicked',
-        args: [
-          {
-            templateId,
-            workflowAppName,
-          },
-        ],
+        args: [templateId, workflowAppName],
       });
       dispatch(openCreateWorkflowPanelView());
     },

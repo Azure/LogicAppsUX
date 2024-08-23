@@ -7,17 +7,7 @@ import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
-export const getQuickViewTabs = (
-  intl: IntlShape,
-  dispatch: AppDispatch,
-  {
-    templateId,
-    workflowAppName,
-  }: {
-    templateId: string;
-    workflowAppName: string;
-  }
-) => {
+export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch, { templateId, workflowAppName }: Template.TemplateContext) => {
   return [
     workflowTab(intl, dispatch, {
       templateId,
