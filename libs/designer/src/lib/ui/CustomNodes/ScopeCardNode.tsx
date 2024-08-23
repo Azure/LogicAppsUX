@@ -334,7 +334,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
+          {isMonitoringView &&
+          metadata?.runData?.status &&
+          metadata.runData.status !== 'InProgress' &&
+          normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
           ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
