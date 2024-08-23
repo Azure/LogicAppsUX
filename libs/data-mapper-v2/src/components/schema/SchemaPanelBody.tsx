@@ -16,6 +16,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
 import { toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
+import { Spinner } from '@fluentui/react-components';
 
 export interface SchemaPanelBodyProps {
   isLeftDirection: boolean;
@@ -181,6 +182,8 @@ export const SchemaPanelBody = ({
         <div className={styles.treeWrapper}>
           <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
         </div>
+      ) : (!schema || !flattenedSchemaMap) && !errorMessage && selectedSchemaFile ? (
+        <Spinner size={'small'} />
       ) : null}
     </div>
   );
