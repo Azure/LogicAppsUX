@@ -140,7 +140,7 @@ export const initializeOperationDetailsForSwagger = async (
 };
 
 export const getInputParametersFromSwagger = (
-  nodeId: string,
+  _nodeId: string,
   isTrigger: boolean,
   swagger: SwaggerParser,
   operationInfo: NodeOperation,

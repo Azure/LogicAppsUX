@@ -6,15 +6,16 @@ import {
   type SchemaNodeExtended,
   type SchemaExtended,
 } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
+import { toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
 
 export interface SchemaPanelBodyProps {
   isLeftDirection: boolean;
@@ -36,12 +37,14 @@ export const SchemaPanelBody = ({
   setFileSelectorOptions,
   showScehmaSelection,
   flattenedSchemaMap,
+  errorMessage,
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
+  const dispatch = useDispatch<AppDispatch>();
 
   const stringResources = useMemo(
     () => ({
@@ -80,9 +83,21 @@ export const SchemaPanelBody = ({
         id: '2CXCOt',
         description: 'Placeholder for input to load a schema file',
       }),
+      CANCEL: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: '6PdOcy',
+        description: 'Cancel',
+      }),
     }),
     [intl]
   );
+
+  // Read current schema file options if method exists
+  useEffect(() => {
+    if (fileService && fileService.readCurrentSchemaOptions && availableSchemaList.length === 0) {
+      fileService.readCurrentSchemaOptions();
+    }
+  }, [fileService, availableSchemaList]);
 
   const onSelectExistingFile = useCallback(
     (item: IFileSysTreeItem) => {
@@ -122,6 +137,14 @@ export const SchemaPanelBody = ({
     [isLeftDirection, setSelectedSchemaFile]
   );
 
+  const onCancel = useCallback(() => {
+    if (isLeftDirection) {
+      dispatch(toggleSourceEditState(false));
+    } else {
+      dispatch(toggleTargetEditState(false));
+    }
+  }, [isLeftDirection, dispatch]);
+
   return (
     <div className={styles.bodyWrapper}>
       {showScehmaSelection ? (
@@ -144,14 +167,21 @@ export const SchemaPanelBody = ({
             onSelect: onSelectExistingFile,
             onOpenClose: onOpenClose,
           }}
+          errorMessage={errorMessage}
+          cancel={
+            schema && flattenedSchemaMap
+              ? {
+                  onCancel: onCancel,
+                  cancelButtonText: stringResources.CANCEL,
+                }
+              : undefined
+          }
         />
-      ) : (
+      ) : schema && flattenedSchemaMap ? (
         <div className={styles.treeWrapper}>
-          {schema && flattenedSchemaMap && (
-            <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
-          )}
+          <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

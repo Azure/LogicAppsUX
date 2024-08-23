@@ -21,9 +21,9 @@
 
   .msla-panel-header {
     border-top: 3px solid transparent;
-    display: flex;
     padding-top: 12px;
     padding-bottom: 12px;
+    display: flex;
 
     .msla-panel-card-header {
       flex-grow: 1;
@@ -68,37 +68,45 @@
       }
     }
 
-    .msla-panel-comment-container {
-      margin: 16px 0px -12px;
-      padding: 12px 32px;
-      .msla-card-comment {
-        .ms-TextField-fieldGroup {
-          outline: 0.75px solid @panel-mode-panel-border-color;
-          &:hover,
-          &:focus {
-            outline: 1.25px solid @panel-mode-panel-border-color-dark;
-          }
-        }
-      }
-      .msla-card-comment-focused {
-        .ms-TextField-fieldGroup {
-          outline: 1.25px solid @panel-mode-panel-border-color-dark;
-        }
-      }
-      .msla-comment-icon {
-        float: left;
-        font-size: @card-header-icon-size;
-        height: 20px;
-        width: 20px;
-        padding: 0px 6px;
-        margin-right: 4px;
-        text-align: center;
-      }
-    }
-
     .msla-panel-header-controls {
       height: 32px;
       width: 32px;
+    }
+  }
+
+  .msla-panel-header-buttons {
+    margin: 0 2rem 0.5rem;
+    &__button {
+      align-self:flex-start;
+      margin-right: 10px  ;
+    }    
+  }
+
+  .msla-panel-comment-container {
+    margin: 8px 0px -8px;
+    padding: 12px 32px;
+    .msla-card-comment {
+      .ms-TextField-fieldGroup {
+        outline: 0.75px solid @panel-mode-panel-border-color;
+        &:hover,
+        &:focus {
+          outline: 1.25px solid @panel-mode-panel-border-color-dark;
+        }
+      }
+    }
+    .msla-card-comment-focused {
+      .ms-TextField-fieldGroup {
+        outline: 1.25px solid @panel-mode-panel-border-color-dark;
+      }
+    }
+    .msla-comment-icon {
+      float: left;
+      font-size: @card-header-icon-size;
+      height: 20px;
+      width: 20px;
+      padding: 0px 6px;
+      margin-right: 4px;
+      text-align: center;
     }
   }
 
@@ -129,7 +137,6 @@
   }
 
   .msla-panel-container-nested {
-
     box-sizing: border-box;
     display: flex;
     flex: 1;
@@ -177,28 +184,24 @@
         border-top-color: @pinned-item-color;
       }
 
-      > div {
-        flex: 0;
+      .msla-panel-contents {
+        display: flex;
+        flex: 1 0 50%;
+        flex-direction: column;
+        max-width: 100%;
+        overflow-y: hidden;
 
-        &.msla-panel-contents {
+        > div {
           display: flex;
-          flex: 1 0 50%;
+          flex: 1;
           flex-direction: column;
-          max-width: 100%;
-					overflow-y: hidden;
+          max-height: 100%;
+        }
 
-          > div {
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-						max-height: 100%;
-          }
-
-          .msla-panel-content-container {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-          }
+        .msla-panel-content-container {
+          flex: 1;
+          padding: 15px;
+          overflow-y: auto;
         }
       }
     }

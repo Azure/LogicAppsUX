@@ -14,4 +14,5 @@ export interface Connection {
 export interface ConnectionUnit {
   node: SchemaNodeExtended | FunctionData;
   reactFlowKey: string;
+  isRepeating?: boolean;
 }

@@ -211,7 +211,7 @@ export interface ExternalDocumentationObject {
 }
 
 export interface ItemsObject {
-  type?: string;
+  type?: string | string[];
   format?: string;
   items?: ItemsObject;
   collectionFormat?: string;

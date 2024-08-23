@@ -13,6 +13,7 @@ import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
+import { isComboboxItemMatch } from './helpers/isComboboxItemMatch';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -114,10 +115,20 @@ export const Combobox = ({
 
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
-    if (shouldSort) {
-      options.sort((currentItem, nextItem) => currentItem.displayName?.localeCompare(nextItem.displayName));
+    if (shouldSort && !isLoading) {
+      options.sort((currentItem, nextItem) => {
+        const currentName = currentItem?.displayName;
+        const nextName = nextItem?.displayName;
+        if (typeof currentName === 'number' && typeof nextName === 'number') {
+          return currentName - nextName;
+        }
+        if (typeof currentName === 'string' && typeof nextName === 'string') {
+          return currentName?.localeCompare(nextName);
+        }
+        return String(currentName).localeCompare(String(nextName));
+      });
     }
-  }, [options, shouldSort]);
+  }, [isLoading, options, shouldSort]);
 
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
@@ -138,12 +149,12 @@ export const Combobox = ({
       displayName: errorDetails?.message ?? '',
       type: 'errorrender',
     };
-    if (searchValue) {
+    if (searchValue && typeof searchValue === 'string') {
       const newOptions = isLoading
         ? [loadingOption]
         : errorDetails
           ? [errorOption]
-          : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.displayName.toLowerCase()));
+          : options.filter((option) => isComboboxItemMatch(option, searchValue));
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
@@ -210,15 +221,15 @@ export const Combobox = ({
 
   const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
+      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : String(option.key))]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else if (setSelectedKey && option) {
-      const currSelectedKey = option.key.toString();
+      const currSelectedKey = String(option.key);
       setSelectedKey(currSelectedKey);
       setMode(Mode.Default);
       const selectedValue = getSelectedValue(options, currSelectedKey);
-      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
+      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : String(selectedValue);
       onChange?.({
         value: [createLiteralValueSegment(currSelectedKey ? value : '')],
       });

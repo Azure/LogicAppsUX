@@ -12,6 +12,7 @@ import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import type { WritableDraft } from 'immer/dist/internal';
 import { getSplitIdsFromReactFlowConnectionId } from './ReactFlow.Util';
+import { UnboundedInput } from '../constants/FunctionConstants';
 
 /**
  * Creates a connection entry in the connections dictionary if it doesn't already exist.
@@ -35,7 +36,7 @@ export const createConnectionEntryIfNeeded = (
     };
 
     if (node && isFunctionData(node)) {
-      if (node?.maxNumberOfInputs !== -1) {
+      if (node?.maxNumberOfInputs !== UnboundedInput) {
         for (let index = 0; index < node.maxNumberOfInputs; index++) {
           connections[reactFlowKey].inputs[index] = [];
         }
@@ -64,7 +65,7 @@ export const createConnectionEntryIfNeeded = (
  */
 export const applyConnectionValue = (
   connections: ConnectionDictionary,
-  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot }: SetConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, input, findInputSlot, isRepeating }: SetConnectionInputAction
 ) => {
   if (!findInputSlot && inputIndex === undefined) {
     console.error('Invalid Connection Input Op: inputIndex was not provided for a non-handle-drawn/deserialized connection');
@@ -86,7 +87,7 @@ export const applyConnectionValue = (
 
   if (isSchemaNodeExtended(targetNode) && targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
-  } else if (isFunctionData(targetNode) && targetNode?.maxNumberOfInputs === -1) {
+  } else if (isFunctionData(targetNode) && targetNode?.maxNumberOfInputs === UnboundedInput) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   }
 
@@ -118,7 +119,7 @@ export const applyConnectionValue = (
     // Schema nodes can only ever have 1 input as long as it is not repeating
     if (isSchemaNodeExtended(targetNode)) {
       if (targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
-        confirmedInputIndex = -1;
+        confirmedInputIndex = UnboundedInput;
       }
 
       // If the destination has unlimited inputs, all should go on the first input
@@ -126,7 +127,7 @@ export const applyConnectionValue = (
       // Check if an undefined input field exists first (created through PropPane)
       // - otherwise we can safely just append its value to the end
       const indexOfFirstOpenInput = connection.inputs[0].findIndex((inputCon) => !inputCon);
-      confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : -1;
+      confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : UnboundedInput;
     } else if (isConnectionUnit(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
       confirmedInputIndex = Object.values(connection.inputs).findIndex((inputCon) => inputCon.length < 1);
@@ -157,8 +158,11 @@ export const applyConnectionValue = (
   } else {
     // Set the value (ConnectionUnit or custom value)
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      if (confirmedInputIndex === -1) {
+      if (confirmedInputIndex === UnboundedInput) {
         // Repeating schema node
+        if (typeof input !== 'string') {
+          input.isRepeating = isRepeating;
+        }
         connection.inputs[0].push(input);
       } else {
         // Function unbounded input
@@ -167,13 +171,13 @@ export const applyConnectionValue = (
         connection.inputs[0] = inputCopy;
         connections[targetNodeReactFlowKey] = connection;
       }
-    } else if (confirmedInputIndex !== -1) {
+    } else if (confirmedInputIndex !== UnboundedInput) {
       connection.inputs[confirmedInputIndex][0] = input;
     } else {
       connection.inputs[0].push(input);
 
       const selfNode = connection.self.node;
-      if (isFunctionData(selfNode) && selfNode?.maxNumberOfInputs !== -1 && connection.inputs[0].length > 1) {
+      if (isFunctionData(selfNode) && selfNode?.maxNumberOfInputs !== UnboundedInput && connection.inputs[0].length > 1) {
         LogService.log(LogCategory.ConnectionUtils, 'applyConnectionValue', {
           message: 'Too many inputs applied to connection',
           data: {
@@ -190,6 +194,7 @@ export const applyConnectionValue = (
       const tgtConUnit: ConnectionUnit = {
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
+        isRepeating: isRepeating,
       };
 
       createConnectionEntryIfNeeded(connections, input.node, input.reactFlowKey);
@@ -260,7 +265,7 @@ export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtData
 
 export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {
   // Make sure there's available inputs (unless it's an unbounded input)
-  if (tgtMaxNumInputs !== -1 && targetNodeConnection && flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
+  if (tgtMaxNumInputs !== UnboundedInput && targetNodeConnection && flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
     return false;
   }
 
@@ -316,7 +321,7 @@ export const nodeHasSpecificInputEventually = (
 
   if (
     (exactMatch && currentConnection.self.reactFlowKey === sourceKey) ||
-    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > -1)
+    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > UnboundedInput)
   ) {
     return true;
   }
@@ -341,7 +346,7 @@ export const nodeHasSpecificOutputEventually = (
 
   if (
     (exactMatch && currentConnection.self.reactFlowKey === sourceKey) ||
-    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > -1)
+    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > UnboundedInput)
   ) {
     return true;
   }
@@ -525,7 +530,7 @@ export const bringInParentSourceNodesForRepeating = (
 
 export const generateInputHandleId = (inputName: string, inputNumber: number) => `${inputName}${inputNumber}`;
 export const inputFromHandleId = (inputHandleId: string, functionNode: FunctionData): number | undefined => {
-  if (functionNode?.maxNumberOfInputs > -1) {
+  if (functionNode?.maxNumberOfInputs > UnboundedInput) {
     const input = functionNode.inputs.find((input) => inputHandleId === input.name);
     if (input) {
       return functionNode.inputs.indexOf(input);
