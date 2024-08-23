@@ -13,7 +13,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const divRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
   const { data, id } = props;
-  const { isLeftDirection } = data;
+  const { isLeftDirection: isSourceNode } = data;
   const updateNodeInternals = useUpdateNodeInternals();
   const edges = useEdges();
   const styles = useStyles();
@@ -26,12 +26,12 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const styleForState = useMemo(() => {
     let updatedStyle = mergeClasses(
       styles.handleWrapper,
-      isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper,
+      isSourceNode ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper,
       isConnected ? styles.connectedHandle : ''
     );
 
     // Update styling for loop
-    if (isLoop && isLeftDirection) {
+    if (isLoop && isSourceNode) {
       updatedStyle = mergeClasses(updatedStyle, styles.loopSourceHandle);
     }
 
@@ -51,7 +51,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     styles.loopSourceHandle,
     styles.selectedHoverHandle,
     styles.connectedSelectedHoverHandle,
-    isLeftDirection,
+    isSourceNode,
     isConnected,
     isLoop,
     isSelected,
@@ -68,12 +68,14 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
-        type={isLeftDirection ? 'source' : 'target'}
-        position={isLeftDirection ? Position.Left : Position.Right}
+        type={isSourceNode ? 'source' : 'target'}
+        position={isSourceNode ? Position.Left : Position.Right}
         className={styleForState}
         onMouseDown={setActiveNode}
+        isConnectableEnd={!isSourceNode && !isConnected}
+        isConnectableStart={isSourceNode}
       >
-        {isLoop && isLeftDirection && <ArrowClockwiseFilled className={styles.loopIcon} />}
+        {isLoop && isSourceNode && <ArrowClockwiseFilled className={styles.loopIcon} />}
       </Handle>
     </div>
   );
