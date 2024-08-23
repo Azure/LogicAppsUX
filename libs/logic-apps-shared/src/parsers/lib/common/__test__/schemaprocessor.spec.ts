@@ -21,6 +21,69 @@ describe('SchemaProcessor Tests', () => {
     });
   }
 
+  it('should return correct editor and editor options for static enums', () => {
+    const schema = {
+      type: 'number',
+      enum: [1, 2],
+    };
+
+    const parameters = new SchemaProcessor().getSchemaProperties(schema);
+
+    expect(parameters.length).toBe(1);
+
+    const root = parameters[0];
+    expect(root.key).toBe('$');
+    expect(root.enum).toEqual([
+      { value: 1, displayName: '1' },
+      { value: 2, displayName: '2' },
+    ]);
+    expect(root.editor).toBe('combobox');
+    expect(root.editorOptions).toBeDefined();
+    expect(root.editorOptions?.options).toEqual([
+      { key: '1', displayName: '1', value: 1 },
+      { key: '2', displayName: '2', value: 2 },
+    ]);
+  });
+
+  it('should return correct editor and editor options for dynamic values', () => {
+    const schema = {
+      type: 'number',
+      'x-ms-dynamic-values': {},
+    };
+
+    const parameters = new SchemaProcessor().getSchemaProperties(schema);
+
+    expect(parameters.length).toBe(1);
+
+    const root = parameters[0];
+    expect(root.key).toBe('$');
+    expect(root.editor).toBe('combobox');
+    expect(root.editorOptions).toBeDefined();
+    expect(root.editorOptions?.options).toEqual([]);
+  });
+
+  it('should return correct editor and editor options for when both enum and dynamic values are specfied', () => {
+    const schema = {
+      type: 'number',
+      enum: [1, 2],
+      'x-ms-dynamic-values': {},
+    };
+
+    const parameters = new SchemaProcessor().getSchemaProperties(schema);
+
+    expect(parameters.length).toBe(1);
+
+    const root = parameters[0];
+    expect(root.key).toBe('$');
+    expect(root.enum).toEqual([
+      { value: 1, displayName: '1' },
+      { value: 2, displayName: '2' },
+    ]);
+    expect(root.editor).toBe('combobox');
+    expect(root.editorOptions).toBeDefined();
+    expect(root.editorOptions?.options).toEqual([]);
+  });
+
   it('should expand oneof properties properly.', () => {
     const schema = {
       oneOf: [

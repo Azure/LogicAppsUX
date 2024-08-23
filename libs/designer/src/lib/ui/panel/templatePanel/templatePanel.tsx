@@ -12,10 +12,14 @@ import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 
-export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulCreation: () => void) => Promise<void> }) => {
+export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
+  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
+    templateName: state.template.templateName,
+    workflowAppName: state.workflow.workflowAppName,
+  }));
   const manifest = useSelector((state: RootState) => state.template?.manifest);
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
@@ -24,11 +28,17 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulC
     dispatch(clearTemplateDetails());
   }, [dispatch]);
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({
-    onCreateClick: (onSuccessfulCreation: () => void) => onCreateClick(onSuccessfulCreation),
+    onCreateClick,
   });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
-    () => (currentPanelView === 'createWorkflow' ? createWorkflowPanelTabs : getQuickViewTabs(intl, dispatch)),
-    [currentPanelView, createWorkflowPanelTabs, intl, dispatch]
+    () =>
+      currentPanelView === 'createWorkflow'
+        ? createWorkflowPanelTabs
+        : getQuickViewTabs(intl, dispatch, {
+            templateId: templateName ?? 'Unknown',
+            workflowAppName,
+          }),
+    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, templateName, workflowAppName]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -47,6 +57,11 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulC
       }),
     };
   }, [intl]);
+
+  const layerProps = {
+    hostId: 'msla-layer-host',
+    eventBubblingEnabled: true,
+  };
 
   const onRenderHeaderContent = useCallback(
     () =>
@@ -81,6 +96,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: (onSuccessfulC
       hasCloseButton={true}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
+      layerProps={layerProps}
       isFooterAtBottom={true}
     >
       {currentPanelView === 'createWorkflow' ? (

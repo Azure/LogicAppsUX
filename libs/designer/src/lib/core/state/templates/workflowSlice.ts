@@ -8,6 +8,7 @@ export interface ResourceDetails {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
+  workflowAppName: string;
 }
 
 export interface ConnectionMapping {
@@ -21,6 +22,7 @@ export interface WorkflowState {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
+  workflowAppName: string;
   connections: ConnectionMapping;
 }
 
@@ -29,6 +31,7 @@ const initialState: WorkflowState = {
   subscriptionId: '',
   resourceGroup: '',
   location: '',
+  workflowAppName: '',
   connections: {
     references: {},
     mapping: {},
@@ -46,6 +49,7 @@ export const workflowSlice = createSlice({
       state.subscriptionId = action.payload.subscriptionId;
       state.resourceGroup = action.payload.resourceGroup;
       state.location = action.payload.location;
+      state.workflowAppName = action.payload.workflowAppName;
     },
     clearWorkflowDetails: (state) => {
       state.existingWorkflowName = undefined;
