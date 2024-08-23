@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.71.0](https://github.com/Azure/LogicAppsUX/compare/v4.70.0...v4.71.0) (2024-08-23)
+
+
+### Features
+
+* **Templates:** Add Telemetry for creation actions and display error on panel ([#5413](https://github.com/Azure/LogicAppsUX/issues/5413)) ([3423dfe](https://github.com/Azure/LogicAppsUX/commit/3423dfedf2af08b20cb7edc97477aec0daba54b0))
+
+
+### Bug Fixes
+
+* **Designer:** Search and Jump fails to uncollapse and open action in panel ([#5456](https://github.com/Azure/LogicAppsUX/issues/5456)) ([5469307](https://github.com/Azure/LogicAppsUX/commit/5469307cd6965d96883bd7d372dc2585fba9cd36))
+
 ## [4.70.0](https://github.com/Azure/LogicAppsUX/compare/v4.69.0...v4.70.0) (2024-08-23)
 
 
