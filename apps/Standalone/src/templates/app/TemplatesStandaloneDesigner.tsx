@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, templateStore } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -103,9 +103,13 @@ export const TemplatesStandaloneDesigner = () => {
         );
         sanitizedWorkflowDefinitionString = updatedWorkflowJsonString;
 
+        const templateName = templateStore.getState().template.templateName;
         const workflow = {
           definition: JSON.parse(sanitizedWorkflowDefinitionString),
           kind: workflowKind,
+          metadata: {
+            templates: { name: templateName },
+          },
         };
 
         const getExistingParametersData = async () => {

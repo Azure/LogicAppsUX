@@ -34,7 +34,6 @@ export const workflowTab = (
   }),
   hasError: false,
   content: <WorkflowPanel />,
-  order: 0,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',

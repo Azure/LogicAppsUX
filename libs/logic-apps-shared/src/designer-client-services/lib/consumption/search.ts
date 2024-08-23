@@ -74,6 +74,7 @@ export class ConsumptionSearchService extends BaseSearchService {
     const consumptionBuiltIn: any[] = [
       ClientOperationsData.slidingWindowOperation,
       ClientOperationsData.composeOperation,
+      ClientOperationsData.chunktext,
       OperationsData.inlineCodeOperation,
       OperationsData.flatFileDecodingOperations,
       OperationsData.flatFileEncodingOperations,

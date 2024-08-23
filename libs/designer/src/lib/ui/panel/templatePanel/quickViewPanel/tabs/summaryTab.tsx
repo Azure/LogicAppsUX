@@ -123,7 +123,6 @@ export const summaryTab = (
   }),
   hasError: false,
   content: <SummaryPanel />,
-  order: 1,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',

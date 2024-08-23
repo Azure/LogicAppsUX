@@ -48,20 +48,17 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   }, [selectedManifest]);
 
   useEffect(() => {
-    if (parametersExist && selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS) {
+    if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS) {
       dispatch(validateConnections(mapping));
-    } else if (
-      selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE ||
-      selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE
-    ) {
+    } else if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
-      if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
-        if (!existingWorkflowName) {
-          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
-        }
-        dispatch(validateKind());
+    }
+    if (selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
+      if (!existingWorkflowName) {
+        dispatch(validateWorkflowName(existingWorkflowNames ?? []));
       }
+      dispatch(validateKind());
     }
   }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
 
@@ -95,12 +92,27 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     }
   });
 
+  const nameStateTabItem = useMemo(
+    () => ({
+      ...nameStateTab(intl, dispatch, {
+        nextTabId: connectionsExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+          : parametersExist
+            ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+            : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+        hasError: !!workflowError || !!kindError,
+        isCreating,
+      }),
+    }),
+    [intl, dispatch, workflowError, kindError, connectionsExist, parametersExist]
+  );
+
   const connectionsTabItem = useMemo(
     () => ({
       ...connectionsTab(intl, dispatch, {
-        nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
-        isCreating,
+        nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
         hasError: !!connectionsError,
+        isCreating,
       }),
     }),
     [intl, dispatch, isCreating, connectionsError, parametersExist]
@@ -109,27 +121,12 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const parametersTabItem = useMemo(
     () => ({
       ...parametersTab(intl, dispatch, {
-        previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : undefined,
-        isCreating,
+        previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
         hasError: hasParametersValidationErrors,
+        isCreating,
       }),
     }),
     [intl, dispatch, isCreating, hasParametersValidationErrors, connectionsExist]
-  );
-
-  const nameStateTabItem = useMemo(
-    () => ({
-      ...nameStateTab(intl, dispatch, {
-        previousTabId: parametersExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
-          : connectionsExist
-            ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-            : undefined,
-        isCreating,
-        hasError: !!workflowError || !!kindError,
-      }),
-    }),
-    [intl, dispatch, isCreating, workflowError, kindError, connectionsExist, parametersExist]
   );
 
   const reviewCreateTabItem = useMemo(
@@ -140,6 +137,11 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
         isCreated,
         errorMessage,
         isPrimaryButtonDisabled: !!workflowError || !kind || !!connectionsError || hasParametersValidationErrors,
+        previousTabId: parametersExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+          : connectionsExist
+            ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+            : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
       }),
     }),
     [
@@ -155,18 +157,20 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       errorMessage,
       connectionsError,
       hasParametersValidationErrors,
+      connectionsExist,
+      parametersExist,
     ]
   );
 
   const tabs = useMemo(() => {
     const validTabs = [];
+    validTabs.push(nameStateTabItem);
     if (connectionsExist) {
       validTabs.push(connectionsTabItem);
     }
     if (parametersExist) {
       validTabs.push(parametersTabItem);
     }
-    validTabs.push(nameStateTabItem);
     validTabs.push(reviewCreateTabItem);
     return validTabs;
   }, [connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
