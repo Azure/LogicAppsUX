@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
 
 test.describe(
-  'ContextMenu Tests',
+  'NodeSearchPanel Tests',
   {
     tag: '@mock',
   },
