@@ -23,19 +23,22 @@ export class LogicAppResolver implements AppResourceResolver {
     });
   }
 
+  /**
+   * Determines if the given resource matches the specified logic app criteria.
+   * @param resource - The resource to be checked.
+   * @returns A boolean value indicating whether the resource matches the criteria.
+   */
   public matchesResource(resource: AppResource): boolean {
     return resource.type.toLowerCase() === logicAppFilter.type && resource.kind?.toLowerCase() === logicAppFilter.kind;
   }
 
-  private async getSubscriptionSites(context: IActionContext, subContext: ISubscriptionContext, resource: any): Promise<Map<string, Site>> {
+  private async getSubscriptionSites(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
     const client = await createWebSiteClient({ ...context, ...subContext });
 
     if (this.siteCacheLastUpdated < Date.now() - 1000 * 3) {
       this.siteCacheLastUpdated = Date.now();
       this.listLogicAppsTask = new Promise((resolve, reject) => {
         this.subscriptionSites.clear();
-        console.log('API CALL', resource);
-
         uiUtils
           .listAllIterator(client.webApps.list())
           .then((sites) => {
@@ -43,7 +46,7 @@ export class LogicAppResolver implements AppResourceResolver {
               const workflowId = site.id.toLowerCase();
               this.subscriptionSites.set(workflowId, site);
             }
-            ext.logicAppSitesMap.set(subContext.subscriptionId, this.subscriptionSites);
+            ext.subscriptionLogicAppMap.set(subContext.subscriptionId, this.subscriptionSites);
             resolve();
           })
           .catch((reason) => {
@@ -56,25 +59,29 @@ export class LogicAppResolver implements AppResourceResolver {
   }
 
   private async getAppResourceSite(context: IActionContext, subContext: ISubscriptionContext, resource: AppResource): Promise<Site> {
-    let site: Site;
     const workflowId = resource.id.toLowerCase();
-    const logicAppsSites = ext.logicAppSitesMap.get(subContext.subscriptionId);
+    const logicAppMap = ext.subscriptionLogicAppMap.get(subContext.subscriptionId);
 
-    if (logicAppsSites) {
-      site = logicAppsSites.get(workflowId);
-    } else {
-      const subscriptionSites = await this.getSubscriptionSites(context, subContext, resource);
-      site = subscriptionSites.get(workflowId);
+    if (logicAppMap) {
+      return logicAppMap.get(workflowId);
     }
-    return site;
+    const subscriptionSites = await this.getSubscriptionSites(context, subContext);
+    return subscriptionSites.get(workflowId);
   }
 
+  /**
+   * Retrieves the application resource site by subscription.
+   *
+   * @param context - The action context.
+   * @param subContext - The subscription context.
+   * @returns A promise that resolves to a map of logic app IDs and their corresponding sites.
+   */
   public async getAppResourceSiteBySubscription(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
-    const logicAppsSites = ext.logicAppSitesMap.get(subContext.subscriptionId);
+    const logicAppMap = ext.subscriptionLogicAppMap.get(subContext.subscriptionId);
 
-    if (!logicAppsSites) {
-      return await this.getSubscriptionSites(context, subContext, 'sd');
+    if (logicAppMap) {
+      return logicAppMap;
     }
-    return ext.logicAppSitesMap.get(subContext.subscriptionId);
+    return await this.getSubscriptionSites(context, subContext);
   }
 }
