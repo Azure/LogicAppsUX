@@ -11,7 +11,6 @@ import { ConnectorWithDetails } from '../../../../templates/connections/connecto
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
-import type { QuickViewTabProps } from '../quickViewPanel';
 
 export const SummaryPanel: React.FC = () => {
   const intl = useIntl();
@@ -114,7 +113,7 @@ export const SummaryPanel: React.FC = () => {
 export const summaryTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { templateId, workflowAppName }: QuickViewTabProps
+  { templateId, workflowAppName }: Template.TemplateContext
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({

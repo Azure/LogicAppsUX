@@ -77,7 +77,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       setIsCreated(true);
       LoggerService().log({
         level: LogEntryLevel.Trace,
-        area: 'Templates.usePanelTabs',
+        area: 'Templates.createTab',
         message: 'Template is created',
         args: [templateName, workflowAppName],
       });
@@ -86,7 +86,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       setErrorMessage(e.message);
       LoggerService().log({
         level: LogEntryLevel.Error,
-        area: 'Templates.usePanelTabs',
+        area: 'Templates.createTab',
         message: e.message,
         error: e instanceof Error ? e : undefined,
         args: [templateName, workflowAppName],

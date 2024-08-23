@@ -8,11 +8,6 @@ import { TemplatesPanelContent } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 
-export interface QuickViewTabProps {
-  templateId: string;
-  workflowAppName: string;
-}
-
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
