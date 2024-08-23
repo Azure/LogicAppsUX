@@ -10,7 +10,7 @@ import { ext } from './extensionVariables';
 
 export class LogicAppResolver implements AppResourceResolver {
   private siteCacheLastUpdated = 0;
-  private subscriptionSites: Map<string, Site> = new Map<string, Site>();
+  private subscriptionLogicApps: Map<string, Site> = new Map<string, Site>();
   private listLogicAppsTask: Promise<void> | undefined;
 
   public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<LogicAppResourceTree | undefined> {
@@ -32,21 +32,27 @@ export class LogicAppResolver implements AppResourceResolver {
     return resource.type.toLowerCase() === logicAppFilter.type && resource.kind?.toLowerCase() === logicAppFilter.kind;
   }
 
-  private async getSubscriptionSites(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
+  /**
+   * Retrieves the subscription logic apps for a given subscription.
+   * @param context - The action context.
+   * @param subContext - The subscription context.
+   * @returns A Promise that resolves to a Map of subscription sites.
+   */
+  private async getSubscriptionLogicApps(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
     const client = await createWebSiteClient({ ...context, ...subContext });
 
     if (this.siteCacheLastUpdated < Date.now() - 1000 * 3) {
       this.siteCacheLastUpdated = Date.now();
       this.listLogicAppsTask = new Promise((resolve, reject) => {
-        this.subscriptionSites.clear();
+        this.subscriptionLogicApps.clear();
         uiUtils
           .listAllIterator(client.webApps.list())
           .then((sites) => {
             for (const site of sites) {
               const workflowId = site.id.toLowerCase();
-              this.subscriptionSites.set(workflowId, site);
+              this.subscriptionLogicApps.set(workflowId, site);
             }
-            ext.subscriptionLogicAppMap.set(subContext.subscriptionId, this.subscriptionSites);
+            ext.subscriptionLogicAppMap.set(subContext.subscriptionId, this.subscriptionLogicApps);
             resolve();
           })
           .catch((reason) => {
@@ -55,9 +61,17 @@ export class LogicAppResolver implements AppResourceResolver {
       });
     }
     await this.listLogicAppsTask;
-    return this.subscriptionSites;
+    return this.subscriptionLogicApps;
   }
 
+  /**
+   * Retrieves the Site associated with the given AppResource.
+   *
+   * @param context - The IActionContext object.
+   * @param subContext - The ISubscriptionContext object.
+   * @param resource - The AppResource object.
+   * @returns A Promise that resolves to the Site associated with the AppResource.
+   */
   private async getAppResourceSite(context: IActionContext, subContext: ISubscriptionContext, resource: AppResource): Promise<Site> {
     const workflowId = resource.id.toLowerCase();
     const logicAppMap = ext.subscriptionLogicAppMap.get(subContext.subscriptionId);
@@ -65,7 +79,7 @@ export class LogicAppResolver implements AppResourceResolver {
     if (logicAppMap) {
       return logicAppMap.get(workflowId);
     }
-    const subscriptionSites = await this.getSubscriptionSites(context, subContext);
+    const subscriptionSites = await this.getSubscriptionLogicApps(context, subContext);
     return subscriptionSites.get(workflowId);
   }
 
@@ -82,6 +96,6 @@ export class LogicAppResolver implements AppResourceResolver {
     if (logicAppMap) {
       return logicAppMap;
     }
-    return await this.getSubscriptionSites(context, subContext);
+    return await this.getSubscriptionLogicApps(context, subContext);
   }
 }
