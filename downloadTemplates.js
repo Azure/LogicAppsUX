@@ -3,7 +3,7 @@ import { existsSync, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const releaseBranch = 'release/20240812';
+const releaseBranch = 'release/20240826';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
