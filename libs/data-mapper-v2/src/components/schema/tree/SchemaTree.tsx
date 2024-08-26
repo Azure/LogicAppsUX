@@ -8,7 +8,7 @@ import { DataMapperWrappedContext } from '../../../core';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { getNodeIdForScroll, type NodeScrollDirection } from '../../../utils';
-import { updateCanvasNodePosition } from 'core/state/DataMapSlice';
+import { updateCanvasNodePosition } from '../../../core/state/DataMapSlice';
 
 export type SchemaTreeProps = {
   isLeftDirection?: boolean;
@@ -60,7 +60,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     if (treeRef?.current && canvasWidth > 0 && canvasHeight > 0 && canvasTop !== -1) {
       const left = 0;
       const right = canvasWidth;
-      const top = treeRef.current.getBoundingClientRect().y;
+      const top = 0;
       const bottom = canvasHeight;
       const allIds = Object.keys(nodesForScroll);
       const directions: NodeScrollDirection[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
@@ -75,7 +75,8 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         const direction = directions[i];
         const position = positions[i];
         const id = getNodeIdForScroll(allIds, direction);
-        if (id) {
+        if (id && nodesForScroll[id] && (nodesForScroll[id].position.x !== position.x || nodesForScroll[id].position.y !== position.y)) {
+          console.log('updateCanvasNodePosition', { id, position });
           dispatch(updateCanvasNodePosition({ id, position }));
         }
       }

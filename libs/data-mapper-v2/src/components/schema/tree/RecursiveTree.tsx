@@ -173,7 +173,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
         <TreeItemLayout
-          data-selectableId={key}
+          data-selectableid={key}
           onClick={onClick}
           onMouseEnter={onMouseOver}
           onMouseLeave={onMouseLeave}
@@ -200,7 +200,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       onOpenChange={onOpenChange}
     >
       <TreeItemLayout
-        data-selectableId={key}
+        data-selectableid={key}
         onClick={onClick}
         onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}

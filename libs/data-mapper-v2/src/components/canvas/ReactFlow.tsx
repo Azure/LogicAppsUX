@@ -59,6 +59,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     flattenedTargetSchema,
     dataMapConnections,
     sourceStateConnections,
+    nodesForScroll,
   } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const currentCanvasRect = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
@@ -313,8 +314,13 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   );
 
   const nodes = useMemo(
-    () => [...Object.values(sourceNodesMap), ...Object.values(targetNodesMap), ...functionNodesForDragDrop],
-    [sourceNodesMap, targetNodesMap, functionNodesForDragDrop]
+    () => [
+      ...Object.values(sourceNodesMap),
+      ...Object.values(targetNodesMap),
+      ...functionNodesForDragDrop,
+      ...Object.values(nodesForScroll),
+    ],
+    [sourceNodesMap, targetNodesMap, functionNodesForDragDrop, nodesForScroll]
   );
 
   return (
