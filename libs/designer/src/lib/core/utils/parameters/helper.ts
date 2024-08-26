@@ -2536,7 +2536,7 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
               value: valueSegments,
               ...commonProperties,
             } as any,
-            /* shouldInterpolateSingleToken */ config.type === 'string'
+            /* shouldInterpolateSingleToken */ config.type === constants.SWAGGER.TYPE.STRING
           );
       }
     }
