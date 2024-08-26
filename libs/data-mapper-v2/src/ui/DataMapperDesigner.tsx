@@ -8,7 +8,6 @@ import {
   InitDataMapperFileService,
   type ScrollLocation,
   type ScrollProps,
-  type Bounds,
   type IDataMapperFileService,
 } from '../core';
 import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
@@ -26,7 +25,6 @@ interface DataMapperDesignerProps {
 export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
-  const [canvasBounds, setCanvasBounds] = useState<Bounds>();
   const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
   const [targetScroll, setTargetScroll] = useState<ScrollProps>();
 
@@ -54,12 +52,6 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
     // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
       value={{
-        canvasBounds: {
-          x: canvasBounds?.x,
-          y: canvasBounds?.y,
-          height: canvasBounds?.height,
-          width: canvasBounds?.width,
-        },
         scroll: {
           source: sourceScroll,
           target: targetScroll,
@@ -72,7 +64,7 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
         <DialogView />
         <FunctionPanel />
         <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Source} />
-        <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
+        <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} />
         <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Target} />
         <CodeViewPanel />
         <TestPanel />

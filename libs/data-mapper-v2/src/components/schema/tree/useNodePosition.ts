@@ -1,7 +1,8 @@
-import { useState, useLayoutEffect, useContext } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import type { XYPosition } from '@xyflow/react';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { DataMapperWrappedContext } from '../../../core';
+import { emptyCanvasRect, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../core/state/Store';
 
 type NodePositionProps = {
   key: string;
@@ -17,13 +18,11 @@ type NodePositionProps = {
 const useNodePosition = (props: NodePositionProps) => {
   const { schemaMap, key, isLeftDirection, onScreen, treePositionY, nodePositionY } = props;
   const [position, setPosition] = useState<XYPosition>();
+  const currentCanvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
 
-  const {
-    canvasBounds: { y: canvasY, width: canvasWidth } = {
-      y: undefined,
-      width: undefined,
-    },
-  } = useContext(DataMapperWrappedContext);
+  const { y: canvasY, width: canvasWidth } = currentCanvasRect;
 
   useLayoutEffect(() => {
     // if(isLeftDirection) {
@@ -34,6 +33,8 @@ const useNodePosition = (props: NodePositionProps) => {
       treePositionY === undefined ||
       nodePositionY === undefined ||
       canvasY === undefined ||
+      canvasY === -1 ||
+      canvasWidth === 0 ||
       canvasWidth === undefined ||
       onScreen === undefined
     ) {
