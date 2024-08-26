@@ -11,6 +11,7 @@ import type {
   OnNodeDrag,
   IsValidConnection,
   EdgeChange,
+  XYPosition,
 } from '@xyflow/react';
 import { PanOnScrollMode, ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
@@ -24,6 +25,7 @@ import {
   setSelectedItem,
   updateEdgePopOverId,
   updateCanvasDimensions,
+  updateFunctionNodesPosition,
 } from '../../core/state/DataMapSlice';
 import { FunctionNode } from '../common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
@@ -66,20 +68,6 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     ref,
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
-  const { x: newX, y: newY } = useMemo(
-    () =>
-      ref?.current?.getBoundingClientRect() ?? {
-        x: -1,
-        y: -1,
-        left: -1,
-        right: -1,
-        width: 0,
-        height: 0,
-        top: -1,
-        bottom: -1,
-      },
-    [ref]
-  );
 
   const realEdges: Edge[] = useMemo(() => {
     let edges: Edge[] = [];
@@ -138,27 +126,45 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   useAutoLayout();
 
   useLayoutEffect(() => {
-    if (
-      newWidth !== undefined &&
-      newHeight !== undefined &&
-      (newWidth !== currentWidth || newHeight !== currentHeight || newX !== currentX || newY !== currentY)
-    ) {
-      dispatch(
-        updateCanvasDimensions({
-          x: newX,
-          y: newY,
-          width: newWidth,
-          height: newHeight,
-        })
-      );
-    }
-  }, [newWidth, currentWidth, newHeight, currentHeight, newX, newY, currentX, currentY, dispatch]);
-
-  useEffect(() => {
-    setFunctionNodesForDragDrop(
-      Object.entries(functionNodes).map(([key, functionData]) => getFunctionNode(functionData, key, functionData.position))
+    const functionNodesForDragDrop = Object.entries(functionNodes).map(([key, functionData]) =>
+      getFunctionNode(functionData, key, functionData.position)
     );
-  }, [functionNodes]);
+    setFunctionNodesForDragDrop(functionNodesForDragDrop);
+
+    if (ref?.current && newWidth !== undefined && newHeight !== undefined) {
+      const { x: newX, y: newY, width: newWidth, height: newHeight } = ref.current.getBoundingClientRect();
+      if (newWidth !== currentWidth || newHeight !== currentHeight || newX !== currentX || newY !== currentY) {
+        dispatch(
+          updateCanvasDimensions({
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
+          })
+        );
+
+        //update function node positions
+        if (currentWidth !== 0 && newWidth !== currentWidth) {
+          let xChange = 0;
+          // Sorta % increase in width so we will increase the x position of the function nodes
+          if (newWidth > currentWidth) {
+            xChange = (newWidth - currentWidth) / currentWidth + 1;
+          } else {
+            xChange = 1 - (currentWidth - newWidth) / currentWidth;
+          }
+
+          const updatedPositions: Record<string, XYPosition> = {};
+          for (const node of functionNodesForDragDrop) {
+            updatedPositions[node.id] = {
+              x: node.position.x * xChange,
+              y: node.position.y,
+            };
+          }
+          dispatch(updateFunctionNodesPosition(updatedPositions));
+        }
+      }
+    }
+  }, [functionNodes, newWidth, currentWidth, newHeight, currentHeight, currentX, currentY, dispatch, ref]);
 
   useLayoutEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
