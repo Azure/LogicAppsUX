@@ -16,6 +16,8 @@ import { TestPanel } from '../components/test/TestPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import type { SchemaFile } from '../models/Schema';
 import DialogView from './DialogView';
+import { useDispatch } from 'react-redux';
+import { setSelectedItem } from '../core/state/DataMapSlice';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -27,6 +29,7 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
   const styles = useStyles();
   const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
   const [targetScroll, setTargetScroll] = useState<ScrollProps>();
+  const dispatch = useDispatch();
 
   const setScroll = useCallback(
     (scrollProps: ScrollProps, location: ScrollLocation) => {
@@ -42,6 +45,15 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
   if (fileService) {
     InitDataMapperFileService(fileService);
   }
+
+  const onContainerClick = useCallback(
+    (e?: any) => {
+      if (e?.target?.dataset?.selectableid) {
+        dispatch(setSelectedItem());
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (fileService) {
@@ -60,7 +72,7 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
       }}
     >
       <EditorCommandBar />
-      <div className={styles.root}>
+      <div className={styles.root} onClick={onContainerClick}>
         <DialogView />
         <FunctionPanel />
         <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Source} />
