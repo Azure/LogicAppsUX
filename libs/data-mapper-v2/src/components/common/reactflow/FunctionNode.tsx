@@ -125,16 +125,19 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         <PopoverTrigger>
           <Button
             onClick={() => onClick()}
+            data-selectableid={`source-${id}`}
             disabled={!!disabled}
             className={mergeClasses(styles.functionButton, isSelected || isHover ? styles.selectedHoverFunctionButton : '')}
           >
             <div
+              data-selectableid={`source-${id}`}
               className={styles.iconContainer}
               style={{
                 backgroundColor: customTokens[fnBranding.colorTokenName],
               }}
             >
               <FunctionIcon
+                data-selectableid={`source-${id}`}
                 iconSize={11}
                 functionKey={functionData.key}
                 functionName={functionData.functionName}
@@ -142,7 +145,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
                 color={tokens.colorNeutralForegroundInverted}
               />
             </div>
-            <Caption1 className={styles.functionName} truncate block>
+            <Caption1 data-selectableid={`source-${id}`} className={styles.functionName} truncate block>
               {functionData.displayName}
             </Caption1>
           </Button>
