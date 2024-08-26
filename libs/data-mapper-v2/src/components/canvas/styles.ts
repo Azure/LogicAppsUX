@@ -22,5 +22,4 @@ export const reactFlowStyle: CSSProperties = {
   height: '100%',
   width: '100%',
   backgroundColor: tokens.colorNeutralBackground1,
-  overflow: 'visible',
 };
