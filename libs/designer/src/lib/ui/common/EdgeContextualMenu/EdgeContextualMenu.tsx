@@ -216,7 +216,7 @@ export const EdgeContextualMenu = () => {
             {isUiInteractionsServiceEnabled()
               ? UiInteractionsService()
                   .getAddButtonMenuItems?.({ graphId, parentId, childId })
-                  ?.map((item) => <CustomMenu key={item.text} item={item} />)
+                  ?.map((item) => <CustomMenu key={item.text} item={item} data-automation-id={automationId(`custom-menu-${item.text}`)} />)
               : null}
           </MenuList>
         </PopoverSurface>
