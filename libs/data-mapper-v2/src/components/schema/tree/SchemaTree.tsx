@@ -22,9 +22,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   const intl = useIntl();
   const treeRef = useRef<HTMLDivElement | null>(null);
-  const {
-    scroll: { source, target, setScroll },
-  } = useContext(DataMapperWrappedContext);
+  const { scroll } = useContext(DataMapperWrappedContext);
 
   const treeAriaLabel = intl.formatMessage({
     defaultMessage: 'Schema tree',
@@ -48,9 +46,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   );
 
   useEffect(() => {
-    if (treeRef?.current) {
-      if ((isLeftDirection && !source) || (!isLeftDirection && !target)) {
-        setScroll(
+    if (treeRef?.current && scroll) {
+      if ((isLeftDirection && !scroll.source) || (!isLeftDirection && !scroll.target)) {
+        scroll.setScroll(
           {
             scrollTop: treeRef.current.scrollTop,
             scrollHeight: treeRef.current.scrollHeight,
@@ -60,7 +58,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         );
       }
     }
-  }, [treeRef, isLeftDirection, source, target, onScrollFromSibling, setScroll]);
+  }, [treeRef, isLeftDirection, onScrollFromSibling, scroll]);
   return schemaTreeRoot ? (
     <Tree
       ref={treeRef}
