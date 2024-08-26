@@ -40,6 +40,7 @@ import { getReactFlowNodeId } from '../../utils/Schema.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import LoopEdge from '../common/reactflow/edges/LoopEdge';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
+import CanvasNode from '../common/reactflow/CanvasNode';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
@@ -202,6 +203,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       ({
         schemaNode: SchemaNode,
         functionNode: FunctionNode,
+        canvasNode: CanvasNode,
       }) as NodeTypes,
     []
   );

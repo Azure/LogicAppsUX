@@ -1,10 +1,14 @@
-import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { emptyCanvasRect, type SchemaExtended, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { Tree, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { DataMapperWrappedContext } from '../../../core';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { getNodeIdForScroll, type NodeScrollDirection } from '../../../utils';
+import { updateCanvasNodePosition } from 'core/state/DataMapSlice';
 
 export type SchemaTreeProps = {
   isLeftDirection?: boolean;
@@ -22,7 +26,14 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   const intl = useIntl();
   const treeRef = useRef<HTMLDivElement | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
   const { scroll } = useContext(DataMapperWrappedContext);
+  const {
+    width: canvasWidth,
+    height: canvasHeight,
+    y: canvasTop,
+  } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect);
+  const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const treeAriaLabel = intl.formatMessage({
     defaultMessage: 'Schema tree',
@@ -44,6 +55,32 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     },
     [treeRef]
   );
+
+  useLayoutEffect(() => {
+    if (treeRef?.current && canvasWidth > 0 && canvasHeight > 0 && canvasTop !== -1) {
+      const left = 0;
+      const right = canvasWidth;
+      const top = treeRef.current.getBoundingClientRect().y;
+      const bottom = canvasHeight;
+      const allIds = Object.keys(nodesForScroll);
+      const directions: NodeScrollDirection[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
+      const positions = [
+        { x: left, y: top },
+        { x: right, y: top },
+        { x: left, y: bottom },
+        { x: right, y: bottom },
+      ];
+
+      for (let i = 0; i < directions.length; ++i) {
+        const direction = directions[i];
+        const position = positions[i];
+        const id = getNodeIdForScroll(allIds, direction);
+        if (id) {
+          dispatch(updateCanvasNodePosition({ id, position }));
+        }
+      }
+    }
+  }, [canvasWidth, canvasHeight, canvasTop, treeRef, nodesForScroll, dispatch]);
 
   useEffect(() => {
     if (treeRef?.current && scroll) {

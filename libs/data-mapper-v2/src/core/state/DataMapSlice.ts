@@ -21,6 +21,7 @@ import {
   isSchemaNodeExtended,
   flattenSchemaIntoSortArray,
   getUpdatedStateConnections,
+  getNodesForScroll,
 } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -92,6 +93,9 @@ export interface DataMapOperationState {
   targetOpenKeys: Record<string, boolean>;
   // Mapping used to store which connection is a loop
   edgeLoopMapping: Record<string, boolean>;
+  // Temporary Nodes for when the scrolling is happening and the tree-nodes are not in view
+  // For each corner of the canvas
+  nodesForScroll: Record<string, Node>;
   // This is used to store the temporary state of the edge for which popover is visible
   edgePopOverId?: string;
   state?: ComponentState;
@@ -119,6 +123,7 @@ const emptyPristineState: DataMapOperationState = {
   sourceStateConnections: {},
   targetStateConnections: {},
   edgeLoopMapping: {},
+  nodesForScroll: getNodesForScroll(),
 };
 
 const initialState: DataMapState = {
@@ -694,6 +699,15 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
+    updateCanvasNodePosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
+      const node = state.curDataMapOperation.nodesForScroll[action.payload.id];
+      if (node) {
+        state.curDataMapOperation.nodesForScroll = {
+          ...state.curDataMapOperation.nodesForScroll,
+          [action.payload.id]: { ...node, position: action.payload.position },
+        };
+      }
+    },
   },
 });
 
@@ -721,6 +735,7 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
+  updateCanvasNodePosition,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
