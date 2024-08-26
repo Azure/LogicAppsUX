@@ -255,7 +255,6 @@ export const workflowSlice = createSlice({
       });
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
-      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
       state.focusedCanvasNodeId = action.payload;
     },
     clearFocusNode: (state: WorkflowState) => {
@@ -289,6 +288,12 @@ export const workflowSlice = createSlice({
     },
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
       state.collapsedGraphIds = action.payload;
+    },
+    setCollapsedGraphIdsFromNodeId: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
+    },
+    clearCollapsedGraphIds: (state: WorkflowState) => {
+      state.collapsedGraphIds = {};
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
@@ -548,6 +553,8 @@ export const {
   removeEdgeFromRunAfter,
   clearFocusNode,
   setFocusNode,
+  setCollapsedGraphIdsFromNodeId,
+  clearCollapsedGraphIds,
   replaceId,
   setRunIndex,
   setRepetitionRunData,
