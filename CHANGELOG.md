@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.71.1](https://github.com/Azure/LogicAppsUX/compare/v4.71.0...v4.71.1) (2024-08-26)
+
+
+### Bug Fixes
+
+* **Templates:** Basic Tab Always Show Error On First Enter ([#5506](https://github.com/Azure/LogicAppsUX/issues/5506)) ([36e9eec](https://github.com/Azure/LogicAppsUX/commit/36e9eecb5171cacfab5617c6506e269093e395ce))
+
 ## [4.71.0](https://github.com/Azure/LogicAppsUX/compare/v4.70.0...v4.71.0) (2024-08-23)
 
 
