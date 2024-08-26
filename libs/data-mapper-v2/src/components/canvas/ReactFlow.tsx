@@ -11,6 +11,7 @@ import type {
   OnNodeDrag,
   IsValidConnection,
   EdgeChange,
+  XYPosition,
 } from '@xyflow/react';
 import { PanOnScrollMode, ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
@@ -18,7 +19,14 @@ import SchemaNode from '../common/reactflow/SchemaNode';
 import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
 import ConnectedEdge from '../common/reactflow/edges/ConnectedEdge';
 import type { ConnectionAction } from '../../core/state/DataMapSlice';
-import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem, updateEdgePopOverId } from '../../core/state/DataMapSlice';
+import {
+  updateFunctionPosition,
+  makeConnectionFromMap,
+  setSelectedItem,
+  updateEdgePopOverId,
+  updateCanvasDimensions,
+  updateFunctionNodesPosition,
+} from '../../core/state/DataMapSlice';
 import { FunctionNode } from '../common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
@@ -31,12 +39,12 @@ import EdgePopOver from './EdgePopOver';
 import { getReactFlowNodeId } from '../../utils/Schema.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import LoopEdge from '../common/reactflow/edges/LoopEdge';
+import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
-  updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
 }
 
-export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DMReactFlowProps) => {
+export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
   const ref = useRef<HTMLDivElement>(null);
@@ -51,8 +59,12 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
     dataMapConnections,
     sourceStateConnections,
   } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const currentCanvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
+  const { width: currentWidth, height: currentHeight, x: currentX, y: currentY } = currentCanvasRect;
   const [functionNodesForDragDrop, setFunctionNodesForDragDrop] = useState<Node[]>([]);
-  const { width = undefined, height = undefined } = useResizeObserver<HTMLDivElement>({
+  const { width: newWidth = undefined, height: newHeight = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
@@ -114,22 +126,45 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty, updateCanvasBoundsParent 
   useAutoLayout();
 
   useLayoutEffect(() => {
-    if (ref?.current) {
-      const rect = ref.current.getBoundingClientRect();
-      updateCanvasBoundsParent({
-        x: rect.x,
-        y: rect.y,
-        height: height,
-        width: width,
-      });
-    }
-  }, [ref, updateCanvasBoundsParent, width, height]);
-
-  useEffect(() => {
-    setFunctionNodesForDragDrop(
-      Object.entries(functionNodes).map(([key, functionData]) => getFunctionNode(functionData, key, functionData.position))
+    const functionNodesForDragDrop = Object.entries(functionNodes).map(([key, functionData]) =>
+      getFunctionNode(functionData, key, functionData.position)
     );
-  }, [functionNodes]);
+    setFunctionNodesForDragDrop(functionNodesForDragDrop);
+
+    if (ref?.current && newWidth !== undefined && newHeight !== undefined) {
+      const { x: newX, y: newY, width: newWidth, height: newHeight } = ref.current.getBoundingClientRect();
+      if (newWidth !== currentWidth || newHeight !== currentHeight || newX !== currentX || newY !== currentY) {
+        dispatch(
+          updateCanvasDimensions({
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
+          })
+        );
+
+        //update function node positions
+        if (currentWidth !== 0 && newWidth !== currentWidth) {
+          let xChange = 0;
+          // Sorta % increase in width so we will increase the x position of the function nodes
+          if (newWidth > currentWidth) {
+            xChange = (newWidth - currentWidth) / currentWidth + 1;
+          } else {
+            xChange = 1 - (currentWidth - newWidth) / currentWidth;
+          }
+
+          const updatedPositions: Record<string, XYPosition> = {};
+          for (const node of functionNodesForDragDrop) {
+            updatedPositions[node.id] = {
+              x: node.position.x * xChange,
+              y: node.position.y,
+            };
+          }
+          dispatch(updateFunctionNodesPosition(updatedPositions));
+        }
+      }
+    }
+  }, [functionNodes, newWidth, currentWidth, newHeight, currentHeight, currentX, currentY, dispatch, ref]);
 
   useLayoutEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
