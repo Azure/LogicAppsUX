@@ -212,7 +212,8 @@ async function getLogicAppsPicks(
   context: IActionContext,
   subContext: ISubscriptionContext
 ): Promise<IAzureQuickPickItem<[Site | undefined, boolean]>[]> {
-  const listOfLogicApps = await LogicAppResolver.getAppResourceSiteBySubscription(context, subContext);
+  const logicAppsResolver = new LogicAppResolver();
+  const listOfLogicApps = await logicAppsResolver.getAppResourceSiteBySubscription(context, subContext);
   const picks: { label: string; data: [Site, boolean]; description?: string }[] = Array.from(listOfLogicApps).map(([_id, site]) => {
     return { label: site.name, data: [site, false] };
   });

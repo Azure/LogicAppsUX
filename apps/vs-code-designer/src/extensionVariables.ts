@@ -16,6 +16,8 @@ import { window, type ExtensionContext, type WebviewPanel } from 'vscode';
  */
 
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
+type LogicAppMap = Map<string, Site>;
+type SubscriptionMap = Map<string, LogicAppMap>;
 
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
@@ -34,7 +36,7 @@ export namespace ext {
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
-  export const logicAppSitesMap: Map<string, Map<string, Site>> = new Map();
+  export const subscriptionLogicAppMap: SubscriptionMap = new Map();
 
   // Resource group API
   export let rgApi: AzureHostExtensionApi;
