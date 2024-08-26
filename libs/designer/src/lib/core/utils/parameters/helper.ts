@@ -3441,7 +3441,11 @@ export function getInterpolatedExpression(expression: string, parameterType: str
   if (isUndefinedOrEmptyString(expression)) {
     return expression;
   }
-  if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
+  if (
+    parameterType === constants.SWAGGER.TYPE.STRING &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BINARY &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BYTE
+  ) {
     return `@{${expression}}`;
   }
   return `@${expression}`;
