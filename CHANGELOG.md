@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [4.72.0](https://github.com/Azure/LogicAppsUX/compare/v4.71.0...v4.72.0) (2024-08-26)
+
+
+### Features
+
+* **Data Mapper:** Reset function node positions ([#5499](https://github.com/Azure/LogicAppsUX/issues/5499)) ([0a3fdbf](https://github.com/Azure/LogicAppsUX/commit/0a3fdbfc1035551b4dd8ac68264718e6d3d96939))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Add subtext and loader ([#5493](https://github.com/Azure/LogicAppsUX/issues/5493)) ([bf78ab0](https://github.com/Azure/LogicAppsUX/commit/bf78ab0b833dfcbe5fea46f79e7c04d21561708e))
+* **Data Mapper:** Connect to the source from function node ([#5502](https://github.com/Azure/LogicAppsUX/issues/5502)) ([8f3188c](https://github.com/Azure/LogicAppsUX/commit/8f3188cf2726569749280d44d72573b8d8fe9d88))
+* **Data Mapper:** Unselect if clicked outside ([#5503](https://github.com/Azure/LogicAppsUX/issues/5503)) ([222cbef](https://github.com/Azure/LogicAppsUX/commit/222cbeff973c668e31ecf998daa97a72964ff9d8))
+* **designer:** add data-automation-id for custom menu in EdgeContextualMenu ([#5490](https://github.com/Azure/LogicAppsUX/issues/5490)) ([947eaab](https://github.com/Azure/LogicAppsUX/commit/947eaab94c82fe1dd8d23fd6f48b32ebed00b7f9))
+
 ## [4.71.0](https://github.com/Azure/LogicAppsUX/compare/v4.70.0...v4.71.0) (2024-08-23)
 
 
