@@ -69,12 +69,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       throw new Error('Canvas bounds are not defined, cannot save map metadata.');
     }
 
-    const mapMetadata = JSON.stringify(
-      generateMapMetadata(functions, currentConnections, {
-        width: canvasRect.width,
-        height: canvasRect.height,
-      })
-    );
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections, canvasRect));
 
     DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 
