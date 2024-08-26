@@ -29,11 +29,11 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { emptyCanvasRect, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, XYPosition } from '@xyflow/react';
+import type { Node, Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isSourceNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
@@ -685,6 +685,15 @@ export const dataMapSlice = createSlice({
         hover: action.payload,
       };
     },
+    updateCanvasDimensions: (state, action: PayloadAction<Rect>) => {
+      state.curDataMapOperation.loadedMapMetadata = {
+        ...(state.curDataMapOperation.loadedMapMetadata ?? {
+          canvasRect: emptyCanvasRect,
+          functionNodes: [],
+        }),
+        canvasRect: action.payload,
+      };
+    },
   },
 });
 
@@ -711,6 +720,7 @@ export const {
   toggleSourceEditState,
   toggleTargetEditState,
   setHoverState,
+  updateCanvasDimensions,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

@@ -54,7 +54,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
     }
-    if (selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
+    if (selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
       if (!existingWorkflowName) {
         dispatch(validateWorkflowName(existingWorkflowNames ?? []));
       }
@@ -104,7 +104,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
         isCreating,
       }),
     }),
-    [intl, dispatch, workflowError, kindError, connectionsExist, parametersExist]
+    [intl, dispatch, isCreating, workflowError, kindError, connectionsExist, parametersExist]
   );
 
   const connectionsTabItem = useMemo(
