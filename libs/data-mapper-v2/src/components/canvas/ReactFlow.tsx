@@ -31,7 +31,7 @@ import { FunctionNode } from '../common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
-import { convertWholeDataMapToLayoutTree } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, isTargetNode } from '../../utils/ReactFlow.Util';
 import { createEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
@@ -134,16 +134,18 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     for (const [id, sourceMap] of connectionMapForSource) {
       for (const edgeId of Object.keys(sourceMap)) {
         const splitNodeId = splitEdgeId(edgeId);
-        if (splitNodeId.length === 3) {
+        if (splitNodeId.length >= 2) {
+          const [source, target] = isTargetNode(splitNodeId[0]) ? [splitNodeId[1], splitNodeId[0]] : [splitNodeId[0], splitNodeId[1]];
+
           const edge: Edge = {
             id: edgeId,
-            source: splitNodeId[0],
-            target: splitNodeId[1],
+            source: source,
+            target: target,
             focusable: true,
             deletable: true,
             data: {
               isTemporary: true,
-              source: id,
+              scrollNodeId: id,
             },
           };
           newEdgesMap[edgeId] = edge;
@@ -227,6 +229,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
     if (Object.entries(edgeChanges).length > 0) {
       applyEdgeChanges(Object.values(edgeChanges), edges);
+      console.log(edgeChanges);
     }
   }, [edges, temporaryEdgesMapForCollapsedNodes, temporaryEdgesMapForScrolledNodes]);
 

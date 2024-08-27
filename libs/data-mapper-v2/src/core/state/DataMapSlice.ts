@@ -21,7 +21,6 @@ import {
   isSchemaNodeExtended,
   flattenSchemaIntoSortArray,
   getUpdatedStateConnections,
-  getNodesForScroll,
   type NodeScrollDirection,
   getNodeIdForScroll,
 } from '../../utils/Schema.Utils';
@@ -127,7 +126,7 @@ const emptyPristineState: DataMapOperationState = {
   targetStateConnections: {},
   edgeLoopMapping: {},
   temporaryEdgeMapping: {},
-  nodesForScroll: getNodesForScroll(),
+  nodesForScroll: {},
 };
 
 const initialState: DataMapState = {
@@ -731,14 +730,8 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
-    updateCanvasNodePosition: (state, action: PayloadAction<{ id: string; position: XYPosition }>) => {
-      const node = state.curDataMapOperation.nodesForScroll[action.payload.id];
-      if (node) {
-        state.curDataMapOperation.nodesForScroll = {
-          ...state.curDataMapOperation.nodesForScroll,
-          [action.payload.id]: { ...node, position: action.payload.position },
-        };
-      }
+    updateCanvasNodesForScroll: (state, action: PayloadAction<Record<string, Node>>) => {
+      state.curDataMapOperation.nodesForScroll = action.payload;
     },
   },
 });
@@ -767,7 +760,7 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
-  updateCanvasNodePosition,
+  updateCanvasNodesForScroll,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

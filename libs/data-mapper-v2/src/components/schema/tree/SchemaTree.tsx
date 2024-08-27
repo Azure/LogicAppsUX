@@ -7,8 +7,9 @@ import RecursiveTree from './RecursiveTree';
 import { DataMapperWrappedContext } from '../../../core';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { getNodeIdForScroll, type NodeScrollDirection } from '../../../utils';
-import { updateCanvasNodePosition } from '../../../core/state/DataMapSlice';
+import { getNodeIdForScroll, getNodesForScroll, type NodeScrollDirection } from '../../../utils';
+import { updateCanvasNodesForScroll } from '../../../core/state/DataMapSlice';
+import { applyNodeChanges, type NodeChange, useNodes } from '@xyflow/react';
 
 export type SchemaTreeProps = {
   isLeftDirection?: boolean;
@@ -26,6 +27,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   const intl = useIntl();
   const treeRef = useRef<HTMLDivElement | null>(null);
+  const nodes = useNodes();
   const dispatch = useDispatch<AppDispatch>();
   const { scroll } = useContext(DataMapperWrappedContext);
   const {
@@ -58,11 +60,12 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useLayoutEffect(() => {
     if (treeRef?.current && canvasWidth > 0 && canvasHeight > 0 && canvasTop !== -1) {
+      let updatedNodesForScroll = Object.keys(nodesForScroll).length === 0 ? getNodesForScroll() : { ...nodesForScroll };
       const left = 0;
       const right = canvasWidth;
-      const top = 0;
+      const top = treeRef.current.getBoundingClientRect().top - canvasTop;
       const bottom = canvasHeight;
-      const allIds = Object.keys(nodesForScroll);
+      const allIds = Object.keys(updatedNodesForScroll);
       const directions: NodeScrollDirection[] = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
       const positions = [
         { x: left, y: top },
@@ -70,17 +73,36 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         { x: left, y: bottom },
         { x: right, y: bottom },
       ];
+      const nodeChanges: NodeChange[] = [];
 
       for (let i = 0; i < directions.length; ++i) {
         const direction = directions[i];
         const position = positions[i];
         const id = getNodeIdForScroll(allIds, direction);
-        if (id && nodesForScroll[id] && (nodesForScroll[id].position.x !== position.x || nodesForScroll[id].position.y !== position.y)) {
-          dispatch(updateCanvasNodePosition({ id, position }));
+        if (id) {
+          const currentNode = nodes.find((node) => node.id === id);
+          if (!currentNode) {
+            updatedNodesForScroll = {
+              ...updatedNodesForScroll,
+              [id]: { ...updatedNodesForScroll[id], position },
+            };
+            nodeChanges.push({ type: 'add', item: updatedNodesForScroll[id] });
+          } else if (currentNode.position.x !== position.x || currentNode.position.y !== position.y) {
+            updatedNodesForScroll = {
+              ...updatedNodesForScroll,
+              [id]: { ...updatedNodesForScroll[id], position },
+            };
+            nodeChanges.push({ type: 'position', id, position });
+          }
         }
       }
+
+      if (nodeChanges.length > 0) {
+        applyNodeChanges(nodeChanges, nodes);
+        dispatch(updateCanvasNodesForScroll(updatedNodesForScroll));
+      }
     }
-  }, [canvasWidth, canvasHeight, canvasTop, treeRef, nodesForScroll, dispatch]);
+  }, [canvasWidth, canvasHeight, canvasTop, treeRef, nodesForScroll, dispatch, nodes]);
 
   useEffect(() => {
     if (treeRef?.current && scroll) {

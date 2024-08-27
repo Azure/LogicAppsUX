@@ -322,14 +322,17 @@ export type NodeScrollDirection = 'top-left' | 'top-right' | 'bottom-left' | 'bo
  */
 export const getNodesForScroll = (): Record<string, Node> => {
   const map: Record<string, Node> = {};
-  const ids = [`top-left${guid()}`, `top-right${guid()}`, `bottom-left${guid()}`, `bottom-right${guid()}`];
+  const ids = [`top-left-${guid()}`, `top-right-${guid()}`, `bottom-left-${guid()}`, `bottom-right-${guid()}`];
   for (const id of ids) {
     map[id] = {
       id,
+      hidden: false,
       selectable: false,
       draggable: false,
-      position: { x: -10, y: -10 },
-      data: {},
+      position: { x: 0, y: 0 },
+      data: {
+        isTemporary: true,
+      },
       type: 'canvasNode',
     };
   }

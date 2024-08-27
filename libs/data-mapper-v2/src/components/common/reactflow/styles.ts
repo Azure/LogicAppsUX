@@ -95,4 +95,14 @@ export const useStyles = makeStyles({
     alignItems: 'center',
     marginRight: '3px',
   },
+  temporaryCanvasNodeRoot: {
+    width: '10px',
+    height: '10px',
+    backgroundColor: 'transparent',
+  },
+  temporaryCanvasNodeHandle: {
+    backgroundColor: 'transparent',
+    ...shorthands.border('none'),
+    left: '2px',
+  },
 });
