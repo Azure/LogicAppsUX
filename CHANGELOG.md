@@ -1,4 +1,17 @@
 # Logic Apps Designer
+### [4.57.7](https://github.com/Azure/LogicAppsUX/compare/v4.57.6...v4.57.7) (2024-08-27)
+
+
+### Features
+
+* **vscode:** Update resource resolver cache for performance improvements ([#5517](https://github.com/Azure/LogicAppsUX/issues/5517)) ([aa8afd9](https://github.com/Azure/LogicAppsUX/commit/aa8afd9a6434f0c8a603d3868a207da3ab1c74a2)), closes [#5492](https://github.com/Azure/LogicAppsUX/issues/5492)
+
+
+### Bug Fixes
+
+* **designer:** fix linebreak issues ([#5392](https://github.com/Azure/LogicAppsUX/issues/5392)) ([#5480](https://github.com/Azure/LogicAppsUX/issues/5480)) ([43a8bd7](https://github.com/Azure/LogicAppsUX/commit/43a8bd76557c28ca68808951a10337cc3d50e69f))
+* **Templates:** Localize Sort By filter ([#5462](https://github.com/Azure/LogicAppsUX/issues/5462)) ([28a3720](https://github.com/Azure/LogicAppsUX/commit/28a3720f82087c84d6ce5acd1ed0ab6185438b24))
+
 ### [4.57.6](https://github.com/Azure/LogicAppsUX/compare/v4.57.5...v4.57.6) (2024-08-21)
 
 ### [4.57.5](https://github.com/Azure/LogicAppsUX/compare/v4.57.4...v4.57.5) (2024-08-20)
