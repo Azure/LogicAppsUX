@@ -31,7 +31,7 @@ import { FunctionNode } from '../common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
-import { convertWholeDataMapToLayoutTree, isTargetNode } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { createEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
@@ -136,7 +136,19 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       for (const edgeId of Object.keys(sourceMap)) {
         const splitNodeId = splitEdgeId(edgeId);
         if (splitNodeId.length >= 2) {
-          const [source, target] = isTargetNode(splitNodeId[0]) ? [splitNodeId[1], splitNodeId[0]] : [splitNodeId[0], splitNodeId[1]];
+          /**
+           * if intermediate edge is connected to a target-schema node, then source for the edge should be the intermediate node
+           * if intermediate edge is connected to a source-schema node, then source for the edge should be the source schema node
+           * if intermediate edge is connected to a function node and the scrolled out node is source, i.e. this is on the input side, then source for the edge should be the intermediate node
+           * For all other cases, source-schema/function node should be the source for the edge
+           */
+          const [source, target] = isTargetNode(splitNodeId[0])
+            ? [splitNodeId[1], splitNodeId[0]]
+            : isSourceNode(splitNodeId[0])
+              ? [splitNodeId[0], splitNodeId[1]]
+              : isSourceNode(id)
+                ? [splitNodeId[1], splitNodeId[0]]
+                : [splitNodeId[0], splitNodeId[1]];
 
           const edge: Edge = {
             id: edgeId,
