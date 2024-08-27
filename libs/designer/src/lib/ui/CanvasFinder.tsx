@@ -5,7 +5,7 @@ import { useInternalNode, useNodes, useReactFlow } from '@xyflow/react';
 
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { clearCollapsedGraphIds, clearFocusNode } from '../core/state/workflow/workflowSlice';
+import { clearFocusNode } from '../core/state/workflow/workflowSlice';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import type { RootState, AppDispatch } from '../core';
 
@@ -74,7 +74,6 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
     });
 
     dispatch(clearFocusNode());
-    dispatch(clearCollapsedGraphIds());
   }, [focusNode, isPanelCollapsed, setCenter, getZoom, dispatch, panelLocation]);
 
   useEffect(() => {
