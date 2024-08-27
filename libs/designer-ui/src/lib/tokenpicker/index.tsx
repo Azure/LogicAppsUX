@@ -5,7 +5,7 @@ import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import { ExpressionEditor } from '../expressioneditor';
 import { PanelSize } from '../panel/panelUtil';
-import type { TokenGroup } from './models/token';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import TokenPickerHandler from './plugins/TokenPickerHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerFooter } from './tokenpickerfooter';
@@ -32,7 +32,7 @@ export const TokenPickerMode = {
 } as const;
 export type TokenPickerMode = (typeof TokenPickerMode)[keyof typeof TokenPickerMode];
 
-export type { Token as OutputToken } from './models/token';
+export type { Token as OutputToken } from '@microsoft/logic-apps-shared';
 
 const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
@@ -267,6 +267,7 @@ export function TokenPicker({
         ref={containerRef}
       >
         <Nl2fExpressionAssistant
+          tokenGroup={tokenGroup ?? []}
           isFullScreen={fullScreen}
           expression={expression}
           isFixErrorRequest={expressionEditorError !== ''}

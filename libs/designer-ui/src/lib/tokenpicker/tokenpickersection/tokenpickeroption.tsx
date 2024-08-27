@@ -3,7 +3,7 @@ import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
-import type { Token, TokenGroup } from '../models/token';
+import type { TokenGroup, Token } from '@microsoft/logic-apps-shared';
 import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon, useTheme } from '@fluentui/react';

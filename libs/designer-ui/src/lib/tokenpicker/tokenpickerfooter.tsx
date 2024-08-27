@@ -5,7 +5,6 @@ import type { TokenNodeProps } from '../editor/base/nodes/tokenNode';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../expressioneditor';
-import type { TokenGroup, Token as TokenGroupToken } from './models/token';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { getExpressionOutput, getExpressionTokenTitle } from './util';
@@ -20,7 +19,7 @@ import {
   guid,
   isCopilotServiceEnabled,
 } from '@microsoft/logic-apps-shared';
-import type { Expression } from '@microsoft/logic-apps-shared';
+import type { Expression, TokenGroup, Token as TokenGroupToken } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
