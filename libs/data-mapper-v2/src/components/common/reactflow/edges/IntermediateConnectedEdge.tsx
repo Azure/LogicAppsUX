@@ -1,5 +1,5 @@
 import { getStraightPath, useNodes, type EdgeProps } from '@xyflow/react';
-import { useHoverEdge } from '../../../../core/state/selectors/selectors';
+import { useHoverEdge, useSelectedIntermediateEdge } from '../../../../core/state/selectors/selectors';
 import { useCallback, useMemo } from 'react';
 import { colors } from '../styles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,13 +13,15 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
   const nodes = useNodes();
   const { temporaryEdgeMappingDirection } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
-  const componentId1 = useMemo(() => data && data['componentId'], [data]);
-  const componentId2 = useMemo(() => (splitIds.length >= 2 ? splitIds[0] : undefined), [splitIds]);
-  const componentId3 = useMemo(() => (splitIds.length >= 2 ? splitIds[1] : undefined), [splitIds]);
+  const componentId1 = useMemo(() => ((data && data['componentId']) ?? '') as string, [data]);
+  const componentId2 = useMemo(() => (splitIds.length >= 2 ? splitIds[0] : ''), [splitIds]);
+  const componentId3 = useMemo(() => (splitIds.length >= 2 ? splitIds[1] : ''), [splitIds]);
   const direction = useMemo(
     () => componentId1 && temporaryEdgeMappingDirection[componentId1 as string],
     [componentId1, temporaryEdgeMappingDirection]
   );
+
+  const isSelected = useSelectedIntermediateEdge(componentId1 ?? '', componentId2 ?? '');
 
   // Check if both source and target nodes are visible, i.e. present in the map
   // Or if none of the nodes are present, then the edge shouldn't be visible
@@ -38,7 +40,7 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  const strokeColor = useMemo(() => (isHovered ? colors.edgeActive : colors.edgeConnected), [isHovered]);
+  const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isHovered, isSelected]);
 
   const onMouseEnter = useCallback(() => {
     dispatch(

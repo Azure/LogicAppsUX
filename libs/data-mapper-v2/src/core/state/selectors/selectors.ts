@@ -1,12 +1,20 @@
 import { useSelector } from 'react-redux';
 import type { RootState } from '../Store';
 import { getReactFlowNodeId } from '../../../utils';
+import { createEdgeId } from '../../../utils/Edge.Utils';
 
 export const useSelectedNode = (nodeId: string) =>
   useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[nodeId]);
 
 export const useSelectedEdge = (edgeId: string) =>
   useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[edgeId]);
+
+export const useSelectedIntermediateEdge = (id1: string, id2: string) =>
+  useSelector(
+    (state: RootState) =>
+      state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[createEdgeId(id1, id2)] ??
+      state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[createEdgeId(id2, id1)]
+  );
 
 export const useLooping = (edgeId?: string) => {
   const { edgeLoopMapping } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
