@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.71.2](https://github.com/Azure/LogicAppsUX/compare/v4.71.1...v4.71.2) (2024-08-27)
+
+
+### Bug Fixes
+
+* **designer:** Encode and Decode tokens with html tags ([#5508](https://github.com/Azure/LogicAppsUX/issues/5508)) ([#5518](https://github.com/Azure/LogicAppsUX/issues/5518)) ([23d3163](https://github.com/Azure/LogicAppsUX/commit/23d316300c9f8d89b7a5197be25f09d1a0e9f616))
+* **designer:** Set aside collapsed slice action when search and reduce children for nodes that only have children ([#5516](https://github.com/Azure/LogicAppsUX/issues/5516)) ([97d1a42](https://github.com/Azure/LogicAppsUX/commit/97d1a42a65be0daf7d1ca64875a0c792f1d2e7f6)), closes [#5509](https://github.com/Azure/LogicAppsUX/issues/5509) [#5515](https://github.com/Azure/LogicAppsUX/issues/5515)
+
 ### [4.71.1](https://github.com/Azure/LogicAppsUX/compare/v4.71.0...v4.71.1) (2024-08-26)
 
 
