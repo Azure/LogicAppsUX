@@ -45,10 +45,13 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       ]
   );
 
+  const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
+
   const {
     position: { x, y } = { x: undefined, y: undefined },
   } = useNodePosition({
     key: key,
+    nodeId,
     onScreen: onScreen,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
@@ -57,8 +60,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     treePositionX,
     treePositionY,
   });
-
-  const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
 
   const onClick = useCallback(() => {
     dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
@@ -173,7 +174,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
         <TreeItemLayout
-          data-selectableId={key}
+          data-selectableid={key}
           onClick={onClick}
           onMouseEnter={onMouseOver}
           onMouseLeave={onMouseLeave}
@@ -200,7 +201,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       onOpenChange={onOpenChange}
     >
       <TreeItemLayout
-        data-selectableId={key}
+        data-selectableid={key}
         onClick={onClick}
         onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}
