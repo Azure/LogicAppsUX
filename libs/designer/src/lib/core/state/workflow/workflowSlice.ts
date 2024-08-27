@@ -289,12 +289,6 @@ export const workflowSlice = createSlice({
     setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string>) => {
       state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
     },
-    setCollapsedGraphIdsFromNodeId: (state: WorkflowState, action: PayloadAction<string>) => {
-      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
-    },
-    clearCollapsedGraphIds: (state: WorkflowState) => {
-      state.collapsedGraphIds = {};
-    },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
         delete state.collapsedGraphIds[action.payload];
