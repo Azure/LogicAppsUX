@@ -75,3 +75,4 @@ export {
   getIconUriFromManifest,
 } from './utils/card';
 export { addOperation } from './actions/bjsworkflow/add';
+export { updateNodeConnection } from './actions/bjsworkflow/connections';
