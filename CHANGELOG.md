@@ -1,4 +1,22 @@
 # Logic Apps Designer
+## [4.73.0](https://github.com/Azure/LogicAppsUX/compare/v4.72.0...v4.73.0) (2024-08-27)
+
+
+### Features
+
+* **Data Mapper:** Add delete and selected state for temporary connections  ([#5519](https://github.com/Azure/LogicAppsUX/issues/5519)) ([5b3404f](https://github.com/Azure/LogicAppsUX/commit/5b3404fe0fd78e01397368d632560312136b2eab))
+* **Data Mapper:** Show connections when one node is scrolled out ([#5510](https://github.com/Azure/LogicAppsUX/issues/5510)) ([a8a40bb](https://github.com/Azure/LogicAppsUX/commit/a8a40bb87bca7f1e51445693310935f791033520))
+* **vscode:** Update resource resolver cache for performance improvements ([#5492](https://github.com/Azure/LogicAppsUX/issues/5492)) ([3666d14](https://github.com/Azure/LogicAppsUX/commit/3666d14e96498b19661d490adeac3f79e8b8140b))
+
+
+### Bug Fixes
+
+* **designer:** Add Single Token Interpolation Option For FloatingActionOutputsViewModel ([#5491](https://github.com/Azure/LogicAppsUX/issues/5491)) ([b6c61ce](https://github.com/Azure/LogicAppsUX/commit/b6c61cefb4fbb88a895ba3211773b325b02944ff))
+* **designer:** Encode and Decode tokens with html tags ([#5508](https://github.com/Azure/LogicAppsUX/issues/5508)) ([5dce342](https://github.com/Azure/LogicAppsUX/commit/5dce342473b96ccd40ba1fb8607e2f61b915bb97))
+* **designer:** Reduce children for nodes that only have children ([#5515](https://github.com/Azure/LogicAppsUX/issues/5515)) ([2a28e35](https://github.com/Azure/LogicAppsUX/commit/2a28e353aea28d9b540dc576431dafd4c2a3a53b))
+* **designer:** Set aside collapsed slice action when search and clear them when found ([#5509](https://github.com/Azure/LogicAppsUX/issues/5509)) ([cc24258](https://github.com/Azure/LogicAppsUX/commit/cc24258c36ab987487bfb4e24b0a9d54ce6c1a2a))
+* **Templates:** Basic Tab Always Show Error On First Enter ([#5505](https://github.com/Azure/LogicAppsUX/issues/5505)) ([9fcf495](https://github.com/Azure/LogicAppsUX/commit/9fcf4950d33b28f1c842c63627ce3bf21e7d4435))
+
 ## [4.72.0](https://github.com/Azure/LogicAppsUX/compare/v4.71.0...v4.72.0) (2024-08-26)
 
 
