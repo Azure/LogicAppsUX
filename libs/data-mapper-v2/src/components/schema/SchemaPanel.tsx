@@ -25,7 +25,7 @@ const fuseSchemaSearchOptions: Fuse.IFuseOptions<SchemaNodeExtended> = {
   includeScore: true,
   minMatchCharLength: 2,
   includeMatches: true,
-  threshold: 0.5,
+  threshold: 0.2,
   ignoreLocation: true,
   keys: ['name', 'qName'],
 };
