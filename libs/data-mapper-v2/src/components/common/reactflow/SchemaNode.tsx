@@ -24,11 +24,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const isHover = useHoverNode(id);
 
   const styleForState = useMemo(() => {
-    let updatedStyle = mergeClasses(
-      styles.handleWrapper,
-      isSourceNode ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper,
-      isConnected ? styles.connectedHandle : ''
-    );
+    let updatedStyle = mergeClasses(styles.handleWrapper, isConnected ? styles.connectedHandle : '');
 
     // Update styling for loop
     if (isLoop && isSourceNode) {
@@ -45,8 +41,6 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
     return updatedStyle;
   }, [
     styles.handleWrapper,
-    styles.sourceSchemaHandleWrapper,
-    styles.targetSchemaHandleWrapper,
     styles.connectedHandle,
     styles.loopSourceHandle,
     styles.selectedHoverHandle,
