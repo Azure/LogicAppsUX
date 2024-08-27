@@ -39,12 +39,6 @@ export const useStyles = makeStyles({
     height: '14px',
     ...shorthands.border('1px', 'solid', '#ddd'),
   },
-  sourceSchemaHandleWrapper: {
-    left: '-8px',
-  },
-  targetSchemaHandleWrapper: {
-    left: '-7px',
-  },
   nodeWrapper: {
     width: '14px',
     height: '14px',
