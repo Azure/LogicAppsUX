@@ -286,14 +286,8 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
-      state.collapsedGraphIds = action.payload;
-    },
-    setCollapsedGraphIdsFromNodeId: (state: WorkflowState, action: PayloadAction<string>) => {
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string>) => {
       state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
-    },
-    clearCollapsedGraphIds: (state: WorkflowState) => {
-      state.collapsedGraphIds = {};
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
@@ -543,7 +537,6 @@ export const {
   deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
-  setCollapsedGraphIds,
   toggleCollapsedGraphId,
   addSwitchCase,
   discardAllChanges,
@@ -553,8 +546,7 @@ export const {
   removeEdgeFromRunAfter,
   clearFocusNode,
   setFocusNode,
-  setCollapsedGraphIdsFromNodeId,
-  clearCollapsedGraphIds,
+  setCollapsedGraphIds,
   replaceId,
   setRunIndex,
   setRepetitionRunData,
