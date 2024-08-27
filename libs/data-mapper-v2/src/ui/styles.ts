@@ -69,6 +69,9 @@ export const useStaticStyles = makeStaticStyles({
   '.react-flow__pane': {
     zIndex: '100 !important',
   },
+  '.react-flow__renderer': {
+    zIndex: '110 !important',
+  },
   '.react-flow__edges': {
     zIndex: '120 !important',
   },

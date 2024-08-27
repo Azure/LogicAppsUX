@@ -21,6 +21,8 @@ import {
   isSchemaNodeExtended,
   flattenSchemaIntoSortArray,
   getUpdatedStateConnections,
+  type NodeScrollDirection,
+  getNodeIdForScroll,
 } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -34,9 +36,9 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Rect, XYPosition } from '@xyflow/react';
-import { createReactFlowFunctionKey, isSourceNode } from '../../utils/ReactFlow.Util';
+import { createReactFlowFunctionKey, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
-import { splitEdgeId } from '../../utils/Edge.Utils';
+import { createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import cloneDeep from 'lodash/cloneDeep';
 
 export interface DataMapState {
@@ -74,6 +76,11 @@ export interface DataMapOperationState {
   xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   loadedMapMetadata?: MapMetadataV2;
+  // Store edge mapping for each edge in the schema to use when the scrolling is happening
+  temporaryEdgeMapping: Record<string, Record<string, boolean>>;
+  // Store edge mapping direction for each edge in the schema to use when the scrolling is happening
+  // And node is hidden
+  temporaryEdgeMappingDirection: Record<string, string>;
   // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
   // This info is not saved in LML which is why it is stored separately in the store
   sourceStateConnections: Record<string, Record<string, boolean>>;
@@ -92,7 +99,9 @@ export interface DataMapOperationState {
   targetOpenKeys: Record<string, boolean>;
   // Mapping used to store which connection is a loop
   edgeLoopMapping: Record<string, boolean>;
-  // This is used to store the temporary state of the edge for which popover is visible
+  // Temporary Nodes for when the scrolling is happening and the tree-nodes are not in view
+  // For each corner of the canvas
+  nodesForScroll: Record<string, Node>;
   edgePopOverId?: string;
   state?: ComponentState;
 }
@@ -119,6 +128,9 @@ const emptyPristineState: DataMapOperationState = {
   sourceStateConnections: {},
   targetStateConnections: {},
   edgeLoopMapping: {},
+  temporaryEdgeMapping: {},
+  nodesForScroll: {},
+  temporaryEdgeMappingDirection: {},
 };
 
 const initialState: DataMapState = {
@@ -335,8 +347,8 @@ export const dataMapSlice = createSlice({
       };
 
       const { reactFlowSource, reactFlowDestination } = action.payload;
-      const isSourceNodeFromSchema = reactFlowSource.startsWith(SchemaType.Source);
-      const isTargetNodeFromSchema = reactFlowDestination.startsWith(SchemaType.Target);
+      const isSourceNodeFromSchema = isSourceNode(reactFlowSource);
+      const isTargetNodeFromSchema = isTargetNode(reactFlowDestination);
       const sourceNode: UnknownNode = isSourceNodeFromSchema
         ? state.curDataMapOperation.flattenedSourceSchema[reactFlowSource]
         : newState.curDataMapOperation.functionNodes[reactFlowSource];
@@ -345,6 +357,7 @@ export const dataMapSlice = createSlice({
         : newState.curDataMapOperation.functionNodes[action.payload.reactFlowDestination];
       const sourceNodeKey = sourceNode.key;
       const targetNodeKey = destinationNode.key;
+      const temporaryNodeIds = Object.keys(state.curDataMapOperation.nodesForScroll);
 
       // Add any repeating parent nodes as well (except for Direct Access's)
       // Get all the source nodes in case we have sources from multiple source chains
@@ -399,6 +412,17 @@ export const dataMapSlice = createSlice({
           newState.curDataMapOperation.sourceParentChildEdgeMapping[parentKey][targetNodeKey] = true;
         }
         state.curDataMapOperation.sourceParentChildEdgeMapping = newState.curDataMapOperation.sourceParentChildEdgeMapping;
+
+        newState.curDataMapOperation.temporaryEdgeMapping = {
+          ...newState.curDataMapOperation.temporaryEdgeMapping,
+          [reactFlowSource]: getUpdatedTemporaryConnections(
+            newState.curDataMapOperation.temporaryEdgeMapping,
+            reactFlowSource,
+            reactFlowDestination,
+            temporaryNodeIds,
+            ['top-left', 'bottom-left']
+          ),
+        };
       }
 
       if (isTargetNodeFromSchema) {
@@ -412,6 +436,17 @@ export const dataMapSlice = createSlice({
           newState.curDataMapOperation.targetParentChildEdgeMapping[parentKey][sourceNodeKey] = true;
         }
         state.curDataMapOperation.targetParentChildEdgeMapping = newState.curDataMapOperation.targetParentChildEdgeMapping;
+
+        newState.curDataMapOperation.temporaryEdgeMapping = {
+          ...newState.curDataMapOperation.temporaryEdgeMapping,
+          [reactFlowDestination]: getUpdatedTemporaryConnections(
+            newState.curDataMapOperation.temporaryEdgeMapping,
+            reactFlowDestination,
+            reactFlowSource,
+            temporaryNodeIds,
+            ['top-right', 'bottom-right']
+          ),
+        };
       } else if ((destinationNode as any)?.maxNumberOfInputs === UnboundedInput) {
         action.payload.specificInput = 0;
       }
@@ -638,10 +673,15 @@ export const dataMapSlice = createSlice({
       const edgeId = action.payload;
       const splitId = splitEdgeId(edgeId);
       if (splitId.length === 2) {
+        const sourceId = splitId[0];
+        const targetId = splitId[1];
+        // Delete the temporary edges also
+
+        // Update connection dictionary
         const updatedConnections = {
           ...state.curDataMapOperation.dataMapConnections,
         };
-        deleteConnectionFromConnections(updatedConnections, splitId[0], splitId[1], undefined);
+        deleteConnectionFromConnections(updatedConnections, sourceId, targetId, undefined);
 
         doDataMapOperation(
           state,
@@ -694,6 +734,23 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
+    updateCanvasNodesForScroll: (state, action: PayloadAction<Record<string, Node>>) => {
+      state.curDataMapOperation.nodesForScroll = action.payload;
+    },
+    updateTemporaryNodeDirection: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        direction: 'top' | 'bottom' | undefined;
+      }>
+    ) => {
+      const { id, direction } = action.payload;
+      if (direction) {
+        state.curDataMapOperation.temporaryEdgeMappingDirection[id] = direction;
+      } else if (state.curDataMapOperation.temporaryEdgeMappingDirection[id]) {
+        delete state.curDataMapOperation.temporaryEdgeMappingDirection[id];
+      }
+    },
   },
 });
 
@@ -721,6 +778,8 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
+  updateCanvasNodesForScroll,
+  updateTemporaryNodeDirection,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -917,4 +976,21 @@ export const assignFunctionNodePositionsFromMetadata = (
     };
   });
   return functions;
+};
+
+export const getUpdatedTemporaryConnections = (
+  currentConnections: Record<string, Record<string, boolean>>,
+  sourceId: string,
+  targetId: string,
+  allTemporaryNodeIds: string[],
+  directions: NodeScrollDirection[]
+) => {
+  const newConnections: Record<string, boolean> = {};
+  for (const direction of directions) {
+    const id = getNodeIdForScroll(allTemporaryNodeIds, direction);
+    if (id) {
+      newConnections[createTemporaryEdgeId(targetId, id)] = true;
+    }
+  }
+  return { ...(currentConnections[sourceId] ?? {}), ...newConnections };
 };

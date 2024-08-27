@@ -2,6 +2,7 @@ import { LogCategory, LogService } from './Logging.Utils';
 import * as PF from 'pathfinding';
 import type { Node as ReactFlowNode, XYPosition } from '@xyflow/react';
 import { Position } from '@xyflow/react';
+import { guid } from '@microsoft/logic-apps-shared';
 
 interface BoundingBox {
   width: number;
@@ -65,6 +66,8 @@ const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRa
 };
 
 export const createEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}`;
+export const createTemporaryEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}__edge__${guid()}`; //When scrolled out
+
 export const splitEdgeId = (edgeId: string) => edgeId.split('__edge__');
 
 const getNextPointFromPosition = (curPoint: XYPosition, position: Position): XYPosition => {

@@ -10,8 +10,9 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { guid, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { addReactFlowPrefix } from './ReactFlow.Util';
+import type { Node } from '@xyflow/react';
 
 export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
   addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
@@ -311,4 +312,33 @@ export const getUpdatedStateConnections = (
   }
 
   return [sourceStateConnections, targetStateConnections];
+};
+
+export type NodeScrollDirection = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+/**
+ *
+ * @returns Need to return 4 nodes, one each for top-left, top-right, bottom-left, bottom-right
+ */
+export const getNodesForScroll = (): Record<string, Node> => {
+  const map: Record<string, Node> = {};
+  const ids = [`top-left-${guid()}`, `top-right-${guid()}`, `bottom-left-${guid()}`, `bottom-right-${guid()}`];
+  for (const id of ids) {
+    map[id] = {
+      id,
+      hidden: false,
+      selectable: false,
+      draggable: false,
+      position: { x: 0, y: 0 },
+      data: {
+        isTemporary: true,
+      },
+      type: 'canvasNode',
+    };
+  }
+  return map;
+};
+
+export const getNodeIdForScroll = (ids: string[], direction: NodeScrollDirection) => {
+  return ids.find((id) => id.startsWith(direction));
 };

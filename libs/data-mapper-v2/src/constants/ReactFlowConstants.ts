@@ -4,6 +4,7 @@ export const ReactFlowNodeType = {
   SchemaNode: 'schemaNode',
   FunctionNode: 'functionNode',
   FunctionPlaceholder: 'functionPlaceholder',
+  CanvasNode: 'canvasNode',
 } as const;
 export type ReactFlowNodeType = (typeof ReactFlowNodeType)[keyof typeof ReactFlowNodeType];
 
