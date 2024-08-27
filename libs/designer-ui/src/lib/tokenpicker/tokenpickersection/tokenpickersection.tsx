@@ -1,7 +1,7 @@
 import { getWindowDimensions, TokenPickerMode } from '..';
 import type { ValueSegment } from '../../editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
-import type { TokenGroup } from '../models/token';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
 import type { GetValueSegmentHandler } from './tokenpickeroption';
