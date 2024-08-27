@@ -67,7 +67,6 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
         className={styleForState}
         onMouseDown={setActiveNode}
         isConnectableEnd={!isConnected}
-        isConnectableStart={isSourceNode}
       >
         {isLoop && isSourceNode && <ArrowClockwiseFilled className={styles.loopIcon} />}
       </Handle>
