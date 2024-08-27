@@ -87,6 +87,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
+          selectable: true,
         };
         return newEdge;
       });
@@ -115,6 +116,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             reconnectable: 'target',
             focusable: true,
             deletable: true,
+            selectable: true,
             data: {
               isTemporary: true,
             },
@@ -155,9 +157,11 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             source: source,
             target: target,
             focusable: true,
-            type: 'intermediateConnectedEdge',
+            selectable: true,
             deletable: true,
+            type: 'intermediateConnectedEdge',
             data: {
+              isIntermediate: true,
               componentId: id,
             },
           };
@@ -275,6 +279,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           reconnectable: 'target',
           focusable: true,
           deletable: true,
+          selectable: true,
         },
         edges
       );
@@ -351,15 +356,36 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       e.preventDefault();
       e.stopPropagation();
 
-      dispatch(updateEdgePopOverId(edge.id));
-      setEdgePopoverBounds({
-        x: e.clientX,
-        y: e.clientY,
-        width: 5,
-        height: 5,
-      });
+      let id = '';
+
+      // Delete clicked on temporary edge
+      if (edge.data?.isIntermediate && edge.data?.componentId) {
+        const splitIds = splitEdgeId(edge.id);
+        if (splitIds.length >= 2) {
+          const directionId1 = edge.data?.componentId as string;
+          const directionId2 = splitIds[0];
+          const directEdge = edges.find(
+            (edge) =>
+              (edge.source === directionId1 && edge.target === directionId2) ||
+              (edge.source === directionId2 && edge.target === directionId1)
+          );
+          id = directEdge?.id ?? '';
+        }
+      } else {
+        id = edge.id;
+      }
+
+      if (id) {
+        dispatch(updateEdgePopOverId(id));
+        setEdgePopoverBounds({
+          x: e.clientX,
+          y: e.clientY,
+          width: 5,
+          height: 5,
+        });
+      }
     },
-    [dispatch, setEdgePopoverBounds]
+    [dispatch, setEdgePopoverBounds, edges]
   );
 
   const nodes = useMemo(

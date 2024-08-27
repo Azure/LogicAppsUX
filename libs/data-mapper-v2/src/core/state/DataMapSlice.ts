@@ -673,9 +673,26 @@ export const dataMapSlice = createSlice({
       const edgeId = action.payload;
       const splitId = splitEdgeId(edgeId);
       if (splitId.length === 2) {
+        const updatedTemporaryEdgeMapping = {
+          ...state.curDataMapOperation.temporaryEdgeMapping,
+        };
         const sourceId = splitId[0];
         const targetId = splitId[1];
         // Delete the temporary edges also
+        if (isSourceNode(sourceId) || isTargetNode(sourceId)) {
+          const updatedMappings = deleteTemporaryConnections(targetId, updatedTemporaryEdgeMapping[sourceId]);
+
+          if (updatedMappings) {
+            updatedTemporaryEdgeMapping[sourceId] = updatedMappings;
+          }
+        }
+
+        if (isSourceNode(targetId) || isTargetNode(targetId)) {
+          const updatedMappings = deleteTemporaryConnections(sourceId, updatedTemporaryEdgeMapping[targetId]);
+          if (updatedMappings) {
+            updatedTemporaryEdgeMapping[targetId] = updatedMappings;
+          }
+        }
 
         // Update connection dictionary
         const updatedConnections = {
@@ -690,6 +707,7 @@ export const dataMapSlice = createSlice({
             curDataMapOperation: {
               ...state.curDataMapOperation,
               dataMapConnections: updatedConnections,
+              temporaryEdgeMapping: updatedTemporaryEdgeMapping,
             },
           },
           'Delete edge by key'
@@ -993,4 +1011,17 @@ export const getUpdatedTemporaryConnections = (
     }
   }
   return { ...(currentConnections[sourceId] ?? {}), ...newConnections };
+};
+
+export const deleteTemporaryConnections = (id: string, currentConnections?: Record<string, boolean>) => {
+  if (currentConnections) {
+    for (const key in Object.keys(currentConnections)) {
+      const splitIds = splitEdgeId(id);
+      if (splitIds.length >= 2 && splitIds[0] === key) {
+        delete currentConnections[key];
+        return currentConnections;
+      }
+    }
+  }
+  return currentConnections;
 };
