@@ -32,7 +32,7 @@ import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
 import { convertWholeDataMapToLayoutTree } from '../../utils/ReactFlow.Util';
-import { createEdgeId } from '../../utils/Edge.Utils';
+import { createEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
 import EdgePopOver from './EdgePopOver';
@@ -60,6 +60,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     dataMapConnections,
     sourceStateConnections,
     nodesForScroll,
+    temporaryEdgeMapping,
   } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const currentCanvasRect = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
@@ -94,7 +95,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes]);
 
   // Edges created when node is expanded/Collapsed
-  const temporaryEdgesMap: Record<string, Edge> = useMemo(() => {
+  const temporaryEdgesMapForCollapsedNodes: Record<string, Edge> = useMemo(() => {
     const newEdgesMap: Record<string, Edge> = {};
     const sourceStateConnectionsEntries = Object.entries(sourceStateConnections);
 
@@ -124,6 +125,34 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
     return newEdgesMap;
   }, [sourceStateConnections]);
+
+  // Edges created when node is expanded/Collapsed
+  const temporaryEdgesMapForScrolledNodes: Record<string, Edge> = useMemo(() => {
+    const newEdgesMap: Record<string, Edge> = {};
+    const connectionMapForSource = Object.entries(temporaryEdgeMapping);
+
+    for (const [id, sourceMap] of connectionMapForSource) {
+      for (const edgeId of Object.keys(sourceMap)) {
+        const splitNodeId = splitEdgeId(edgeId);
+        if (splitNodeId.length === 3) {
+          const edge: Edge = {
+            id: edgeId,
+            source: splitNodeId[0],
+            target: splitNodeId[1],
+            focusable: true,
+            deletable: true,
+            data: {
+              isTemporary: true,
+              source: id,
+            },
+          };
+          newEdgesMap[edgeId] = edge;
+        }
+      }
+    }
+
+    return newEdgesMap;
+  }, [temporaryEdgeMapping]);
 
   useAutoLayout();
 
@@ -170,8 +199,12 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   useLayoutEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
+    const allTemporaryConnections = {
+      ...temporaryEdgesMapForCollapsedNodes,
+      ...temporaryEdgesMapForScrolledNodes,
+    };
 
-    for (const [id, edge] of Object.entries(temporaryEdgesMap)) {
+    for (const [id, edge] of Object.entries(allTemporaryConnections)) {
       edgeChanges[id] = {
         type: 'add',
         item: edge,
@@ -181,7 +214,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     for (const edge of edges) {
       if (edge.data?.isTemporary) {
         const id = edge.id;
-        if (temporaryEdgesMap[id]) {
+        if (allTemporaryConnections[id]) {
           delete edgeChanges[id];
         } else {
           edgeChanges[id] = {
@@ -195,7 +228,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     if (Object.entries(edgeChanges).length > 0) {
       applyEdgeChanges(Object.values(edgeChanges), edges);
     }
-  }, [edges, temporaryEdgesMap]);
+  }, [edges, temporaryEdgesMapForCollapsedNodes, temporaryEdgesMapForScrolledNodes]);
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
@@ -330,7 +363,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         ref={drop}
         className="nopan nodrag"
         nodes={cloneDeep(nodes)}
-        edges={[...realEdges, ...Object.values(temporaryEdgesMap)]}
+        edges={[...realEdges, ...Object.values(temporaryEdgesMapForCollapsedNodes), ...Object.values(temporaryEdgesMapForScrolledNodes)]}
         nodeDragThreshold={1}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}

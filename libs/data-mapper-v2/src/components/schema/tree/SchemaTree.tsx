@@ -76,7 +76,6 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         const position = positions[i];
         const id = getNodeIdForScroll(allIds, direction);
         if (id && nodesForScroll[id] && (nodesForScroll[id].position.x !== position.x || nodesForScroll[id].position.y !== position.y)) {
-          console.log('updateCanvasNodePosition', { id, position });
           dispatch(updateCanvasNodePosition({ id, position }));
         }
       }
