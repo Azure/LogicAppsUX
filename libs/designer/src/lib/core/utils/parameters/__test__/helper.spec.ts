@@ -1014,7 +1014,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual('@{base64(triggerBody())}');
+      expect(expressionString).toEqual('@base64(triggerBody())');
     });
 
     it('should cast file to string/byte correctly.', () => {
@@ -1035,7 +1035,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual('@{base64(triggerBody())}');
+      expect(expressionString).toEqual('@base64(triggerBody())');
     });
 
     it('should cast string/binary to string/datauri correctly.', () => {
@@ -1215,7 +1215,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual(`@{base64('user entered text')}`);
+      expect(expressionString).toEqual(`@base64('user entered text')`);
     });
 
     it('should not modify user entered text if field is binary', () => {
@@ -1299,7 +1299,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual(`@{base64(body('action')['path'])}`);
+      expect(expressionString).toEqual(`@base64(body('action')['path'])`);
     });
 
     it('should be correct for a parameter with mix of text and tokens interpolated to string', () => {
