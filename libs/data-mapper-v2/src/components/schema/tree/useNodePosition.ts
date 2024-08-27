@@ -3,6 +3,7 @@ import type { XYPosition } from '@xyflow/react';
 import { emptyCanvasRect, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { updateTemporaryNodeDirection } from '../../../core/state/DataMapSlice';
 
 type NodePositionProps = {
   key: string;
@@ -54,6 +55,12 @@ const useNodePosition = (props: NodePositionProps) => {
 
     if (x !== undefined && y !== undefined) {
       setPosition({ x, y });
+      dispatch(
+        updateTemporaryNodeDirection({
+          id: nodeId,
+          direction: nodePositionY < treePositionY ? 'top' : nodePositionY > canvasHeight ? 'bottom' : undefined,
+        })
+      );
     } else {
       setPosition(undefined);
     }

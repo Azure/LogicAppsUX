@@ -41,6 +41,7 @@ import { getFunctionNode } from '../../utils/Function.Utils';
 import LoopEdge from '../common/reactflow/edges/LoopEdge';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import CanvasNode from '../common/reactflow/CanvasNode';
+import IntermediateConnectedEdge from '../common/reactflow/edges/IntermediateConnectedEdge';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
@@ -142,10 +143,10 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             source: source,
             target: target,
             focusable: true,
+            type: 'intermediateConnectedEdge',
             deletable: true,
             data: {
-              isTemporary: true,
-              scrollNodeId: id,
+              componentId: id,
             },
           };
           newEdgesMap[edgeId] = edge;
@@ -229,7 +230,6 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
     if (Object.entries(edgeChanges).length > 0) {
       applyEdgeChanges(Object.values(edgeChanges), edges);
-      console.log(edgeChanges);
     }
   }, [edges, temporaryEdgesMapForCollapsedNodes, temporaryEdgesMapForScrolledNodes]);
 
@@ -249,6 +249,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     () => ({
       connectedEdge: ConnectedEdge,
       loopEdge: LoopEdge,
+      intermediateConnectedEdge: IntermediateConnectedEdge,
     }),
     []
   );

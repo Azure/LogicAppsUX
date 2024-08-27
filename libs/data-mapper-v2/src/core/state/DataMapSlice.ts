@@ -78,6 +78,9 @@ export interface DataMapOperationState {
   loadedMapMetadata?: MapMetadataV2;
   // Store edge mapping for each edge in the schema to use when the scrolling is happening
   temporaryEdgeMapping: Record<string, Record<string, boolean>>;
+  // Store edge mapping direction for each edge in the schema to use when the scrolling is happening
+  // And node is hidden
+  temporaryEdgeMappingDirection: Record<string, string>;
   // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
   // This info is not saved in LML which is why it is stored separately in the store
   sourceStateConnections: Record<string, Record<string, boolean>>;
@@ -127,6 +130,7 @@ const emptyPristineState: DataMapOperationState = {
   edgeLoopMapping: {},
   temporaryEdgeMapping: {},
   nodesForScroll: {},
+  temporaryEdgeMappingDirection: {},
 };
 
 const initialState: DataMapState = {
@@ -733,6 +737,20 @@ export const dataMapSlice = createSlice({
     updateCanvasNodesForScroll: (state, action: PayloadAction<Record<string, Node>>) => {
       state.curDataMapOperation.nodesForScroll = action.payload;
     },
+    updateTemporaryNodeDirection: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        direction: 'top' | 'bottom' | undefined;
+      }>
+    ) => {
+      const { id, direction } = action.payload;
+      if (direction) {
+        state.curDataMapOperation.temporaryEdgeMappingDirection[id] = direction;
+      } else if (state.curDataMapOperation.temporaryEdgeMappingDirection[id]) {
+        delete state.curDataMapOperation.temporaryEdgeMappingDirection[id];
+      }
+    },
   },
 });
 
@@ -761,6 +779,7 @@ export const {
   setHoverState,
   updateCanvasDimensions,
   updateCanvasNodesForScroll,
+  updateTemporaryNodeDirection,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
