@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.74.0](https://github.com/Azure/LogicAppsUX/compare/v4.73.0...v4.74.0) (2024-08-27)
+
+
+### Features
+
+* **designer:** Allow Copilot to reference dynamic input/data while creating expression ([#5449](https://github.com/Azure/LogicAppsUX/issues/5449)) ([972d3c9](https://github.com/Azure/LogicAppsUX/commit/972d3c9772464c58e5079f0dec1cb2a138ee375e))
+
+
+### Bug Fixes
+
+* **designer:** Export updateNodeConnection thunk ([#5520](https://github.com/Azure/LogicAppsUX/issues/5520)) ([fea0f56](https://github.com/Azure/LogicAppsUX/commit/fea0f56cf8ef15771e592c7359e73df6230c1b06))
+
 ## [4.73.0](https://github.com/Azure/LogicAppsUX/compare/v4.72.0...v4.73.0) (2024-08-27)
 
 
