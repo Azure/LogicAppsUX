@@ -1,3 +1,4 @@
+import type { Node, XYPosition } from '@xyflow/react';
 import {
   collectionBranding,
   conversionBranding,
@@ -11,7 +12,7 @@ import {
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../mapHandling/MapMetadataSerializer';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
-import type { FunctionData, FunctionDictionary } from '../models/Function';
+import type { FunctionDictionary, FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { isConnectionUnit, isCustomValue } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
@@ -141,10 +142,17 @@ export const isIfAndGuid = (key: string) => {
   return key.startsWith(ifPseudoFunctionKey) && isAGuid(key.substring(ifPseudoFunctionKey.length + 1));
 };
 
-// export const functionsForLocation = (functions: FunctionDictionary, targetKey: string) =>
-//   Object.fromEntries(
-//     Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
-//   );
+export const getFunctionNode = (data: FunctionData, id: string, position?: XYPosition): Node<any> => {
+  return {
+    id: id,
+    type: 'functionNode',
+    data: { functionData: data },
+    position: position ?? { x: 200, y: 200 },
+    draggable: true,
+    selectable: false,
+    measured: { width: 1, height: 1 },
+  };
+};
 
 export const createFunctionDictionary = (
   dataMapConnections: ConnectionDictionary,
@@ -175,7 +183,10 @@ export const assignFunctionNodePositionsFromMetadata = (
     const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
 
     // assign position data to function in store
-    functions[key] = { ...functions[key], position: matchingMetadata?.position };
+    functions[key] = {
+      ...functions[key],
+      position: matchingMetadata?.position,
+    };
   });
   return functions;
 };
@@ -211,7 +222,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
           return input;
         }
 
-        if (isFunctionData(input.node)) {
+        if (input.node && isFunctionData(input.node)) {
           if (input.node.key === indexPseudoFunctionKey) {
             const sourceNode = connections[input.reactFlowKey].inputs[0][0];
             return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
@@ -224,7 +235,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
         }
 
         // Source schema node
-        return input.node.name;
+        return input.node?.name;
       })
       .filter((value) => !!value) as string[];
   }

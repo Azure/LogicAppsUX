@@ -7,7 +7,7 @@ const CommentIcon = bundleIcon(Comment24Filled, Comment24Regular);
 const CommentDeleteIcon = bundleIcon(CommentOff24Filled, CommentOff24Regular);
 
 export interface CommentMenuItemProps {
-  onClick: (e: any) => void;
+  onClick: React.MouseEventHandler<HTMLDivElement>;
   hasComment: boolean;
 }
 

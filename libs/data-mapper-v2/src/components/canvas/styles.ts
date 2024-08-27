@@ -1,4 +1,5 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import type { CSSProperties } from 'react';
 
 export const useStyles = makeStyles({
   contextMenu: {
@@ -8,10 +9,17 @@ export const useStyles = makeStyles({
     width: '2px',
     height: '2px',
   },
-  root: {
-    paddingTop: '0px',
-    paddingLeft: '0px',
-    paddingRight: '0px',
-    paddingBottom: '0px',
+  wrapper: {
+    height: '100%',
+    display: 'flex',
+    wdith: '100%',
+    ...shorthands.flex(1, 1, '1px'),
+    backgroundColor: tokens.colorNeutralBackground1,
   },
 });
+
+export const reactFlowStyle: CSSProperties = {
+  height: '100%',
+  width: '100%',
+  backgroundColor: tokens.colorNeutralBackground1,
+};

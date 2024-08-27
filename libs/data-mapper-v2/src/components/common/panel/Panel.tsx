@@ -10,6 +10,7 @@ import {
   DrawerFooter,
   type InputOnChangeData,
   mergeClasses,
+  Caption2,
 } from '@fluentui/react-components';
 import { SearchBox } from '@fluentui/react-search';
 import type { FluentIcon } from '@fluentui/react-icons';
@@ -22,6 +23,7 @@ type PanelProps = {
     icon?: FluentIcon;
     size?: 500 | 100 | 200 | 300 | 400 | 600 | 700 | 800 | 900 | 1000;
     rightAction?: Slot<'div'>;
+    subTitleText?: string;
   };
   search?: {
     placeholder?: string;
@@ -38,6 +40,7 @@ type PanelProps = {
     titleIcon?: string;
     body?: string;
     footer?: string;
+    subTitle?: string;
   };
 };
 
@@ -54,6 +57,9 @@ export const Panel = (props: PanelProps) => {
             <Text size={title?.size ?? 500} className={styles?.title}>
               {title?.text}
             </Text>
+            {title?.subTitleText ? (
+              <Caption2 className={mergeClasses(defaultStyles.subTitle, styles?.subTitle ?? '')}>{title.subTitleText}</Caption2>
+            ) : null}
           </DrawerHeaderTitle>
           {search ? (
             <SearchBox

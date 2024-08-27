@@ -11,7 +11,7 @@ import {
   isConnectionUnit,
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
-import { getParentId } from '../../utils/DataMap.Utils';
+import { addParentConnectionForRepeatingElementsNested, getParentId, isIdForFunctionNode } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
@@ -29,11 +29,11 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { emptyCanvasRect, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, XYPosition } from '@xyflow/react';
+import type { Node, Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isSourceNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
@@ -49,12 +49,21 @@ export interface DataMapState {
   lastAction: string;
 }
 
+interface HoverState {
+  id: string;
+  type: 'node' | 'edge' | 'function';
+  isSourceSchema?: boolean;
+}
+
+interface ComponentState {
+  hover?: HoverState;
+}
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
-  sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
   targetSchemaOrdering: string[];
@@ -85,6 +94,7 @@ export interface DataMapOperationState {
   edgeLoopMapping: Record<string, boolean>;
   // This is used to store the temporary state of the edge for which popover is visible
   edgePopOverId?: string;
+  state?: ComponentState;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -92,7 +102,6 @@ const emptyPristineState: DataMapOperationState = {
   dataMapLML: '',
   functionNodes: {},
   flattenedSourceSchema: {},
-  sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
   targetSchemaOrdering: [],
   xsltFilename: '',
@@ -152,6 +161,7 @@ export interface SetConnectionInputAction {
   inputIndex?: number;
   input: InputConnection | null; // null is indicator to remove an unbounded input value
   findInputSlot?: boolean;
+  isRepeating?: boolean;
 }
 
 export interface ExpandCollapseAction {
@@ -190,7 +200,6 @@ export const dataMapSlice = createSlice({
 
       if (action.payload.schemaType === SchemaType.Source) {
         const flattenedSourceSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
-        const sourceSchemaSortArray = flattenedSourceSchema.map((node) => node.key);
 
         currentState.sourceSchema = action.payload.schema;
         currentState.sourceChildParentMapping = getChildParentSchemaMapping(action.payload.schema);
@@ -202,10 +211,8 @@ export const dataMapSlice = createSlice({
             return acc;
           }, {});
         currentState.flattenedSourceSchema = flattenedSchema;
-        currentState.sourceSchemaOrdering = sourceSchemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
-        state.pristineDataMap.sourceSchemaOrdering = sourceSchemaSortArray;
 
         // NOTE: Reset ReactFlow nodes to filter out source nodes
         currentState.sourceNodesMap = {};
@@ -242,7 +249,6 @@ export const dataMapSlice = createSlice({
       const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
       const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
-      const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
 
@@ -257,7 +263,6 @@ export const dataMapSlice = createSlice({
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
-        sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
@@ -340,6 +345,48 @@ export const dataMapSlice = createSlice({
         : newState.curDataMapOperation.functionNodes[action.payload.reactFlowDestination];
       const sourceNodeKey = sourceNode.key;
       const targetNodeKey = destinationNode.key;
+
+      // Add any repeating parent nodes as well (except for Direct Access's)
+      // Get all the source nodes in case we have sources from multiple source chains
+      const originalSourceNodeId = action.payload.reactFlowSource;
+      let schemaSources: SchemaNodeExtended[];
+
+      if (!(isIdForFunctionNode(originalSourceNodeId) && originalSourceNodeId === directAccessPseudoFunctionKey)) {
+        if (isIdForFunctionNode(originalSourceNodeId)) {
+          const sourceNodes = getConnectedSourceSchemaNodes(
+            [newState.curDataMapOperation.dataMapConnections[action.payload.reactFlowSource]],
+            newState.curDataMapOperation.dataMapConnections
+          );
+          schemaSources = sourceNodes;
+        } else {
+          schemaSources = [state.curDataMapOperation.flattenedSourceSchema[originalSourceNodeId]];
+        }
+
+        // We'll only have one output node in this case
+        const originalTargetNodeId = action.payload.reactFlowDestination;
+        let actualTarget: SchemaNodeExtended[];
+        if (isIdForFunctionNode(originalTargetNodeId)) {
+          const targetNodes = getConnectedTargetSchemaNodes(
+            [newState.curDataMapOperation.dataMapConnections[action.payload.reactFlowDestination]],
+            newState.curDataMapOperation.dataMapConnections
+          );
+          actualTarget = targetNodes;
+        } else {
+          actualTarget = [state.curDataMapOperation.flattenedTargetSchema[originalTargetNodeId]];
+        }
+
+        schemaSources.forEach((sourceNode) => {
+          if (actualTarget.length > 0) {
+            addParentConnectionForRepeatingElementsNested(
+              sourceNode,
+              actualTarget[0],
+              newState.curDataMapOperation.flattenedSourceSchema,
+              newState.curDataMapOperation.flattenedTargetSchema,
+              newState.curDataMapOperation.dataMapConnections
+            );
+          }
+        });
+      }
 
       if (isSourceNodeFromSchema) {
         // Get all the parents of the source node
@@ -612,7 +659,6 @@ export const dataMapSlice = createSlice({
       }
     },
     toggleSourceEditState: (state, action: PayloadAction<boolean>) => {
-      console.log(action.payload);
       doDataMapOperation(
         state,
         {
@@ -631,6 +677,22 @@ export const dataMapSlice = createSlice({
         },
         'Edit target schema'
       );
+    },
+    setHoverState: (state, action: PayloadAction<HoverState | undefined>) => {
+      const currentState = state.curDataMapOperation.state ?? {};
+      state.curDataMapOperation.state = {
+        ...currentState,
+        hover: action.payload,
+      };
+    },
+    updateCanvasDimensions: (state, action: PayloadAction<Rect>) => {
+      state.curDataMapOperation.loadedMapMetadata = {
+        ...(state.curDataMapOperation.loadedMapMetadata ?? {
+          canvasRect: emptyCanvasRect,
+          functionNodes: [],
+        }),
+        canvasRect: action.payload,
+      };
     },
   },
 });
@@ -657,6 +719,8 @@ export const {
   deleteEdge,
   toggleSourceEditState,
   toggleTargetEditState,
+  setHoverState,
+  updateCanvasDimensions,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -683,7 +747,7 @@ const addConnection = (
   applyConnectionValue(newConnections, {
     targetNode: destinationNode,
     targetNodeReactFlowKey: nodes.reactFlowDestination,
-    findInputSlot: nodes.specificInput === undefined, // 0 should be counted as truthy
+    findInputSlot: true,
     inputIndex: nodes.specificInput,
     input: {
       reactFlowKey: nodes.reactFlowSource,
@@ -731,7 +795,7 @@ export const deleteConnectionFromConnections = (
 
   const outputNode = connections[outputKey].self.node;
   const outputNodeInputs = connections[outputKey].inputs;
-  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === -1) {
+  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     Object.values(outputNodeInputs).forEach((input, inputIndex) =>
       input.forEach((inputValue, inputValueIndex) => {
         if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {

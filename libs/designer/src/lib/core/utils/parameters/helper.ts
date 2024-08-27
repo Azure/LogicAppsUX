@@ -72,7 +72,6 @@ import {
   isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
-  ExtensionProperties,
   createEx,
   convertToStringLiteral,
   decodePropertySegment,
@@ -117,10 +116,10 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
+  isStringLiteral,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
-  ComboboxItem,
   DictionaryEditorItemProps,
   DropdownItem,
   FloatingActionMenuOutputViewModel,
@@ -399,7 +398,7 @@ export function getParameterEditorProps(
   _shouldIgnoreDefaultValue: boolean,
   nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel: any;
   if (editor === constants.EDITOR.DICTIONARY) {
@@ -475,38 +474,6 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (
-      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
-      !equals(visibility, Visibility.Internal)
-    ) {
-      editor = constants.EDITOR.COMBOBOX;
-      schema = { ...schema, ...{ 'x-ms-editor': editor } };
-
-      let schemaEnumOptions: ComboboxItem[];
-      if (schema[ExtensionProperties.CustomEnum]) {
-        schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
-      } else if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => {
-          return {
-            ...enumItem,
-            value: enumItem.value?.toString(),
-            key: enumItem.displayName,
-          };
-        });
-      } else {
-        schemaEnumOptions = schema.enum.map(
-          (val: string): ComboboxItem => ({
-            displayName: val,
-            key: val,
-            value: val,
-          })
-        );
-      }
-
-      editorOptions = {
-        ...editorOptions,
-        options: schemaEnumOptions,
-      };
     } else {
       editorOptions = undefined;
     }
@@ -1120,7 +1087,7 @@ export function generateExpressionFromKey(
   let rootMethod = method;
   if (overrideMethod && !isInsideArray && isBodySegment(segments[0])) {
     // NOTE: If it is a nested Body property like body.$.Body, we wouldn't want to shift the property out
-    if (actionName || !outputSourceFromBody) {
+    if (!outputSourceFromBody) {
       segments.shift();
     }
     rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
@@ -2562,7 +2529,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
       if (valueSegments?.length) {
         outputValueMap[keyFromTitle] =
           // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
-          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
+          // We will only interpolate a single token if the parameter config is of type 'string'
+          parameterValueWithoutCasting(
+            {
+              type: config.type,
+              value: valueSegments,
+              ...commonProperties,
+            } as any,
+            /* shouldInterpolateSingleToken */ config.type === constants.SWAGGER.TYPE.STRING
+          );
       }
     }
   });
@@ -3539,23 +3514,19 @@ export function parameterValueToString(
         } else if (!isUndefinedOrEmptyString(expressionValue)) {
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
-          expressionValue =
+          const shouldCastToString =
             !remappedParameterInfo.suppressCasting &&
             parameterType === 'string' &&
             segment.token?.type !== 'string' &&
-            !shouldUseLiteralValues(segment.token?.expression)
-              ? `@{${expressionValue}}`
-              : `@${expressionValue}`;
+            segment.token?.expression &&
+            isStringLiteral(segment.token.expression);
+          expressionValue = `@${shouldCastToString ? `{${expressionValue}}` : expressionValue}`;
         }
       }
 
       return expressionValue;
     })
     .join('');
-}
-
-export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
-  return (expression?.type as ExpressionType) !== ExpressionType.StringLiteral;
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
@@ -3621,8 +3592,8 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   }
 }
 
-export function parameterValueWithoutCasting(parameter: ParameterInfo): any {
-  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
+export function parameterValueWithoutCasting(parameter: ParameterInfo, shouldInterpolateSingleToken = false): any {
+  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value, false, shouldInterpolateSingleToken);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 
@@ -3724,8 +3695,8 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false): string {
-  const shouldInterpolateTokens = value.length > 1 && value.some(isTokenValueSegment);
+function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+  const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
     .map((expression) => {

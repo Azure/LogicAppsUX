@@ -1,4 +1,4 @@
-import type { AppDispatch, RootState } from '../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect, type MouseEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type {
@@ -11,31 +11,40 @@ import type {
   OnNodeDrag,
   IsValidConnection,
   EdgeChange,
+  XYPosition,
 } from '@xyflow/react';
-import { ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
-import { reactFlowStyle, useStaticStyles, useStyles } from './styles';
-import SchemaNode from '../components/common/reactflow/SchemaNode';
-import ConnectionLine from '../components/common/reactflow/ConnectionLine';
-import ConnectedEdge from '../components/common/reactflow/ConnectedEdge';
-import type { ConnectionAction } from '../core/state/DataMapSlice';
-import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem, updateEdgePopOverId } from '../core/state/DataMapSlice';
-import { FunctionNode } from '../components/common/reactflow/FunctionNode';
+import { PanOnScrollMode, ReactFlow, addEdge, applyEdgeChanges, useEdges, useReactFlow } from '@xyflow/react';
+import { reactFlowStyle, useStyles } from './styles';
+import SchemaNode from '../common/reactflow/SchemaNode';
+import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
+import ConnectedEdge from '../common/reactflow/edges/ConnectedEdge';
+import type { ConnectionAction } from '../../core/state/DataMapSlice';
+import {
+  updateFunctionPosition,
+  makeConnectionFromMap,
+  setSelectedItem,
+  updateEdgePopOverId,
+  updateCanvasDimensions,
+  updateFunctionNodesPosition,
+} from '../../core/state/DataMapSlice';
+import { FunctionNode } from '../common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
-import type { Bounds } from '../core';
-import { convertWholeDataMapToLayoutTree } from '../utils/ReactFlow.Util';
-import { createEdgeId } from '../utils/Edge.Utils';
-import useAutoLayout from './hooks/useAutoLayout';
+import type { Bounds } from '../../core';
+import { convertWholeDataMapToLayoutTree } from '../../utils/ReactFlow.Util';
+import { createEdgeId } from '../../utils/Edge.Utils';
+import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
-import EdgePopOver from '../components/canvas/EdgePopOver';
-import { getReactFlowNodeId } from '../utils/Schema.Utils';
+import EdgePopOver from './EdgePopOver';
+import { getReactFlowNodeId } from '../../utils/Schema.Utils';
+import { getFunctionNode } from '../../utils/Function.Utils';
+import LoopEdge from '../common/reactflow/edges/LoopEdge';
+import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
-  updateCanvasBoundsParent: (bounds: Bounds | undefined) => void;
 }
 
-export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DMReactFlowProps) => {
-  useStaticStyles();
+export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
   const ref = useRef<HTMLDivElement>(null);
@@ -50,8 +59,12 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
     dataMapConnections,
     sourceStateConnections,
   } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const currentCanvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
+  const { width: currentWidth, height: currentHeight, x: currentX, y: currentY } = currentCanvasRect;
   const [functionNodesForDragDrop, setFunctionNodesForDragDrop] = useState<Node[]>([]);
-  const { width = undefined, height = undefined } = useResizeObserver<HTMLDivElement>({
+  const { width: newWidth = undefined, height: newHeight = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
@@ -65,8 +78,9 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           id: createEdgeId(edge.sourceId, edge.targetId),
           source: edge.sourceId,
           target: edge.targetId,
-          type: 'connectedEdge',
+          type: edge.isRepeating ? 'loopEdge' : 'connectedEdge',
           reconnectable: 'target',
+          data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
         };
@@ -97,7 +111,6 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
             reconnectable: 'target',
             focusable: true,
             deletable: true,
-            animated: true,
             data: {
               isTemporary: true,
             },
@@ -113,30 +126,45 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   useAutoLayout();
 
   useLayoutEffect(() => {
-    if (ref?.current) {
-      const rect = ref.current.getBoundingClientRect();
-      updateCanvasBoundsParent({
-        x: rect.x,
-        y: rect.y,
-        height: height,
-        width: width,
-      });
-    }
-  }, [ref, updateCanvasBoundsParent, width, height]);
-
-  useEffect(() => {
-    setFunctionNodesForDragDrop(
-      Object.entries(functionNodes).map((node) => ({
-        id: node[0],
-        type: 'functionNode',
-        data: { functionData: node[1] },
-        position: node[1].position || { x: 10, y: 200 },
-        draggable: true,
-        selectable: false,
-        measured: { width: 1, height: 1 },
-      }))
+    const functionNodesForDragDrop = Object.entries(functionNodes).map(([key, functionData]) =>
+      getFunctionNode(functionData, key, functionData.position)
     );
-  }, [functionNodes]);
+    setFunctionNodesForDragDrop(functionNodesForDragDrop);
+
+    if (ref?.current && newWidth !== undefined && newHeight !== undefined) {
+      const { x: newX, y: newY, width: newWidth, height: newHeight } = ref.current.getBoundingClientRect();
+      if (newWidth !== currentWidth || newHeight !== currentHeight || newX !== currentX || newY !== currentY) {
+        dispatch(
+          updateCanvasDimensions({
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
+          })
+        );
+
+        //update function node positions
+        if (currentWidth !== 0 && newWidth !== currentWidth) {
+          let xChange = 0;
+          // Sorta % increase in width so we will increase the x position of the function nodes
+          if (newWidth > currentWidth) {
+            xChange = (newWidth - currentWidth) / currentWidth + 1;
+          } else {
+            xChange = 1 - (currentWidth - newWidth) / currentWidth;
+          }
+
+          const updatedPositions: Record<string, XYPosition> = {};
+          for (const node of functionNodesForDragDrop) {
+            updatedPositions[node.id] = {
+              x: node.position.x * xChange,
+              y: node.position.y,
+            };
+          }
+          dispatch(updateFunctionNodesPosition(updatedPositions));
+        }
+      }
+    }
+  }, [functionNodes, newWidth, currentWidth, newHeight, currentHeight, currentX, currentY, dispatch, ref]);
 
   useLayoutEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
@@ -181,6 +209,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   const edgeTypes = useMemo(
     () => ({
       connectedEdge: ConnectedEdge,
+      loopEdge: LoopEdge,
     }),
     []
   );
@@ -197,6 +226,8 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         },
         edges
       );
+
+      // danielle maybe get the input number from here?
 
       const connectionAction: ConnectionAction = {
         reactFlowSource: connection.source ?? '',
@@ -285,10 +316,11 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
   );
 
   return (
-    <div ref={ref} id="editorView" className={styles.canvasWrapper}>
+    <div ref={ref} id="editorView" className={styles.wrapper}>
       <ReactFlow
         id="dm-react-flow"
         ref={drop}
+        className="nopan nodrag"
         nodes={cloneDeep(nodes)}
         edges={[...realEdges, ...Object.values(temporaryEdgesMap)]}
         nodeDragThreshold={1}
@@ -300,7 +332,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
         edgeTypes={edgeTypes}
         preventScrolling={false}
         minZoom={1}
-        elementsSelectable={false}
+        elementsSelectable={true}
         maxZoom={1}
         autoPanOnConnect={false}
         snapToGrid={true}
@@ -311,6 +343,7 @@ export const DMReactFlow = ({ setIsMapStateDirty, updateCanvasBoundsParent }: DM
           account: 'paid-sponsor',
           hideAttribution: true,
         }}
+        panOnScrollMode={PanOnScrollMode.Vertical}
         onNodeDrag={onFunctionNodeDrag}
         onNodeDragStop={onFunctionNodeDragStop}
         isValidConnection={isValidConnection}

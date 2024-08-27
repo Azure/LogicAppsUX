@@ -7,8 +7,8 @@ import {
   type TreeItemOpenChangeEvent,
   mergeClasses,
 } from '@fluentui/react-components';
-import { SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { equals, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
 import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
@@ -16,7 +16,7 @@ import useOnScreen from './useOnScreen';
 import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setSelectedItem, toggleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
+import { setHoverState, setSelectedItem, toggleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 
@@ -31,14 +31,13 @@ type RecursiveTreeProps = {
 const RecursiveTree = (props: RecursiveTreeProps) => {
   const { root, isLeftDirection, flattenedScehmaMap, treePositionX, treePositionY } = props;
   const { key } = root;
-  const nodeVisble = useMemo(() => !!flattenedScehmaMap[key], [flattenedScehmaMap, key]);
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
   const onScreen = useOnScreen(nodeRef);
   const nodes = useNodes();
   const dispatch = useDispatch<AppDispatch>();
   const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-  const [isHover, setIsHover] = useState<boolean>(false);
+  const hoverState = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
   const activeNode = useSelector(
     (state: RootState) =>
       state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[
@@ -65,6 +64,20 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
   }, [key, isLeftDirection, dispatch]);
 
+  const onMouseOver = useCallback(() => {
+    dispatch(
+      setHoverState({
+        id: key,
+        isSourceSchema: isLeftDirection,
+        type: 'node',
+      })
+    );
+  }, [dispatch, isLeftDirection, key]);
+
+  const onMouseLeave = useCallback(() => {
+    dispatch(setHoverState());
+  }, [dispatch]);
+
   const onOpenChange = useCallback(
     (_e: TreeItemOpenChangeEvent, data: TreeItemOpenChangeData) => {
       const key = data.value as string;
@@ -82,7 +95,13 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     [dispatch, isLeftDirection, onClick]
   );
 
-  const aside = useMemo(() => (isHover || activeNode ? <TypeAnnotation schemaNode={root} /> : <div />), [isHover, activeNode, root]);
+  const aside = useMemo(() => {
+    if (activeNode || (hoverState?.type === 'node' && hoverState?.isSourceSchema === isLeftDirection && equals(hoverState?.id, root.key))) {
+      return <TypeAnnotation schemaNode={root} />;
+    }
+
+    return <span />;
+  }, [activeNode, hoverState, isLeftDirection, root]);
 
   useLayoutEffect(() => {
     return () => {
@@ -146,10 +165,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     }
   }, [nodes, isLeftDirection, x, y, root, nodeId, dispatch]);
 
-  if (!nodeVisble) {
-    return null;
-  }
-
   if (root.children.length === 0) {
     let style = styles.leafNode;
     style = mergeClasses(style, isLeftDirection ? '' : styles.rightTreeItemLayout);
@@ -158,9 +173,10 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
         <TreeItemLayout
+          data-selectableId={key}
           onClick={onClick}
-          onMouseOver={() => setIsHover(true)}
-          onMouseLeave={() => setIsHover(false)}
+          onMouseEnter={onMouseOver}
+          onMouseLeave={onMouseLeave}
           className={style}
           aside={aside}
         >
@@ -184,26 +200,29 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       onOpenChange={onOpenChange}
     >
       <TreeItemLayout
+        data-selectableId={key}
         onClick={onClick}
-        onMouseOver={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
+        onMouseOver={onMouseOver}
+        onMouseLeave={onMouseLeave}
         aside={aside}
         className={style}
       >
         {root.name}
       </TreeItemLayout>
       <Tree aria-label="sub-tree">
-        {root.children.map((child: SchemaNodeExtended, index: number) => (
-          <span key={`tree-${child.key}-${index}`}>
-            <RecursiveTree
-              root={child}
-              isLeftDirection={isLeftDirection}
-              flattenedScehmaMap={flattenedScehmaMap}
-              treePositionX={treePositionX}
-              treePositionY={treePositionY}
-            />
-          </span>
-        ))}
+        {root.children
+          .filter((child: SchemaNodeExtended) => !!flattenedScehmaMap[child.key])
+          .map((child: SchemaNodeExtended, index: number) => (
+            <span key={`tree-${child.key}-${index}`}>
+              <RecursiveTree
+                root={child}
+                isLeftDirection={isLeftDirection}
+                flattenedScehmaMap={flattenedScehmaMap}
+                treePositionX={treePositionX}
+                treePositionY={treePositionY}
+              />
+            </span>
+          ))}
       </Tree>
     </TreeItem>
   );

@@ -18,6 +18,8 @@ import {
   InitLoggerService,
   InitOperationManifestService,
   InitUiInteractionsService,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -248,9 +250,11 @@ export const templateSlice = createSlice({
       if (action.payload) {
         state.workflowDefinition = action.payload.workflowDefinition;
         state.manifest = action.payload.manifest;
+        state.kind = action.payload.kind;
         state.parameterDefinitions = action.payload.parameterDefinitions;
         state.connections = action.payload.connections;
         state.images = action.payload.images;
+        state.errors = action.payload.errors;
       }
     });
 
@@ -290,13 +294,6 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
 
-    const imagesWithPaths: Record<string, string> = {};
-    for (const imageType of Object.keys(templateManifest.images)) {
-      imagesWithPaths[imageType] = (
-        await import(`./../../templates/templateFiles/${templateName}/${templateManifest.images[imageType]}.png`)
-      ).default;
-    }
-
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -309,10 +306,10 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
       workflowName: templateManifest.title,
-      kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : undefined,
+      kind: templateManifest.kinds?.length === 1 ? templateManifest.kinds[0] : 'stateful',
       parameterDefinitions: parametersDefinitions,
       connections: templateManifest.connections,
-      images: imagesWithPaths,
+      images: templateManifest.images,
       errors: {
         workflow: undefined,
         kind: undefined,
@@ -320,8 +317,14 @@ const loadTemplateFromGithub = async (templateName: string, manifest: Template.M
         connections: undefined,
       },
     };
-  } catch (ex) {
-    console.error(ex);
+  } catch (ex: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      message: 'Error loading template',
+      area: 'Templates.GithubLoadTemplate',
+      error: ex,
+      args: [templateName],
+    });
     return undefined;
   }
 };

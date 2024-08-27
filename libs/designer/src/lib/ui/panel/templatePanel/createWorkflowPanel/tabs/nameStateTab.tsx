@@ -14,6 +14,7 @@ import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
+import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,8 +31,9 @@ export const NameStatePanel = () => {
   const intlText = useMemo(
     () => ({
       WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
-        id: 'sa/O/N',
+        defaultMessage:
+          'Provide a unique, descriptive name. Use underscores (_) or dashes (-) instead of spaces to keep names clean and searchable. To prevent any issues, avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'xtDCgy',
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
@@ -177,22 +179,15 @@ export const NameStatePanel = () => {
 export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  {
-    previousTabId,
-    hasError,
-  }: {
-    previousTabId: string | undefined;
-    hasError: boolean;
-  }
+  { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
-  id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
-    defaultMessage: 'Name + state',
-    id: 'BX0M13',
+    defaultMessage: 'Basic',
+    id: '8vPuBZ',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   hasError: hasError,
-  order: 2,
   content: <NameStatePanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
@@ -201,26 +196,17 @@ export const nameStateTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+      dispatch(selectPanelTab(nextTabId));
     },
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        }),
-    secondaryButtonOnClick: previousTabId
-      ? () => {
-          dispatch(selectPanelTab(previousTabId));
-        }
-      : () => {
-          dispatch(closePanel());
-          dispatch(clearTemplateDetails());
-        },
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
+    secondaryButtonDisabled: isCreating,
   },
 });

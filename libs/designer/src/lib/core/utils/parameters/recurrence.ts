@@ -49,7 +49,7 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     expandArrayOutputs: false,
   })
     .getSchemaProperties(schema)
-    .map((item) => toInputParameter(item, true /* suppressCasting */));
+    .map((item) => toInputParameter(item, /* suppressCasting */ true));
 
   const queryClient = getReactQueryClient();
   const recurrenceInterval = queryClient.getQueryData(['recurrenceInterval']);
