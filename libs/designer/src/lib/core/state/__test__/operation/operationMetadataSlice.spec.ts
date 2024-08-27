@@ -52,7 +52,7 @@ describe('operationMetadataSlice', () => {
 
   test('should initialize nodes status to true and nodes data remain the same when there are no nodes', () => {
     const nodes: Array<NodeData | undefined> = [];
-    const updatedState = reducer(initialState, initializeNodes(nodes));
+    const updatedState = reducer(initialState, initializeNodes({ nodes: nodes }));
     expect(updatedState.operationInfo).toEqual(initialState.operationInfo);
     expect(updatedState.inputParameters).toEqual(initialState.inputParameters);
     expect(updatedState.outputParameters).toEqual(initialState.outputParameters);
@@ -61,7 +61,7 @@ describe('operationMetadataSlice', () => {
 
   test('should stay the nodes initialized load status as false when any node is set as undefined', () => {
     const nodes: Array<NodeData | undefined> = [undefined, undefined];
-    const updatedState = reducer(initialState, initializeNodes(nodes));
+    const updatedState = reducer(initialState, initializeNodes({ nodes: nodes }));
     expect(updatedState.loadStatus.nodesInitialized).toEqual(false);
   });
 });

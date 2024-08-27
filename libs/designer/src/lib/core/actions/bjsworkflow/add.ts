@@ -183,7 +183,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes([initData]));
+    dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -237,7 +237,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes([initData]));
+    dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
@@ -300,7 +300,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     nodeDependencies,
     operationMetadata: { iconUri: manifest.properties.iconUri ?? '', brandColor: '' },
   };
-  dispatch(initializeNodes([initData]));
+  dispatch(initializeNodes({ nodes: [initData] }));
 };
 
 export const trySetDefaultConnectionForNode = async (

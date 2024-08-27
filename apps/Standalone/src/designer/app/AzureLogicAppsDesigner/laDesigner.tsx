@@ -57,6 +57,7 @@ import {
   store as DesignerStore,
   Constants,
   getSKUDefaultHostOptions,
+  collapsePanel,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -100,7 +101,7 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>(data?.properties.files[Artifact.WorkflowFile]);
+  const [workflow, setWorkflow] = useState<Workflow>({ ...data?.properties.files[Artifact.WorkflowFile], id: guid() });
   const [designerView, setDesignerView] = useState(true);
   const [codeValue, setCodeValue] = useState<string | undefined>(undefined);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
@@ -321,7 +322,9 @@ const DesignerEditor = () => {
           definition: codeToConvert.definition,
           kind: codeToConvert.kind,
           connectionReferences: codeToConvert.connectionReferences ?? {},
+          id: guid(),
         }));
+        dispatch(collapsePanel());
         setDesignerView(true);
       } catch (error: any) {
         if (error.status !== 404) {
@@ -359,6 +362,7 @@ const DesignerEditor = () => {
               parameters,
               kind: workflow?.kind,
             }}
+            workflowId={workflow?.id}
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
@@ -371,6 +375,7 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                isDesignerView={designerView}
                 showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={async () => {

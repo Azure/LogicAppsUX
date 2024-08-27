@@ -24,6 +24,7 @@ import {
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import LogicAppsIcon from '../../../assets/logicapp.svg';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -40,6 +41,7 @@ const classNames = mergeStyleSets({
 export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
+  isDesignerView,
   isDarkMode,
   showConnectionsPanel,
   rightShift,
@@ -51,8 +53,8 @@ export const DesignerCommandBar = ({
   isReadOnly: boolean;
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
+  isDesignerView?: boolean;
   isDarkMode: boolean;
-  isConsumption?: boolean;
   showConnectionsPanel?: boolean;
   rightShift?: string;
   enableCopilot?: () => void;
@@ -158,8 +160,8 @@ export const DesignerCommandBar = ({
       },
       {
         key: 'codeview',
-        text: 'View Code',
-        iconProps: { iconName: 'Code' },
+        text: isDesignerView ? 'Code View' : 'Designer View',
+        iconProps: isDesignerView ? { iconName: 'Code' } : { imageProps: { src: LogicAppsIcon } },
         onClick: () => {
           switchViews();
         },

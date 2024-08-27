@@ -10,16 +10,19 @@ interface CodeViewProps {
   code?: string;
   setCode: (code?: string) => void;
   workflowKind?: string;
+  isConsumption?: boolean;
 }
 
-const CodeViewEditor = ({ code, setCode, workflowKind }: CodeViewProps) => {
+const CodeViewEditor = ({ code, setCode, workflowKind, isConsumption }: CodeViewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useMount(async () => {
     const serializedWorkflowDefintiion = await serializeBJSWorkflow(DesignerStore.getState(), {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
     }).then((serializedWorkflow) => {
-      return { definition: serializedWorkflow.definition, kind: workflowKind };
+      return isConsumption
+        ? { definition: serializedWorkflow.definition }
+        : { definition: serializedWorkflow.definition, kind: workflowKind };
     });
     setCode(JSON.stringify(serializedWorkflowDefintiion, null, 2));
   });

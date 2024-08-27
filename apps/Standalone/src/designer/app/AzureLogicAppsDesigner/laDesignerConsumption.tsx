@@ -14,6 +14,7 @@ import {
   useCurrentTenantId,
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
+  validateWorkflow,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
@@ -46,9 +47,11 @@ import {
   store as DesignerStore,
   getSKUDefaultHostOptions,
   Constants,
+  collapsePanel,
 } from '@microsoft/logic-apps-designer';
-import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useMemo, useState } from 'react';
+import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -86,15 +89,15 @@ const DesignerEditorConsumption = () => {
   } = useWorkflowAndArtifactsConsumption(workflowId);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const [designerID, setDesignerID] = React.useState(guid());
+  const [designerID, setDesignerID] = useState(guid());
 
   const {
     workflow: baseWorkflow,
     connectionReferences,
     parameters,
-  } = React.useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
-  const [runWorkflow, setRunWorkflow] = React.useState<any>();
+  const [runWorkflow, setRunWorkflow] = useState<any>();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (isMonitoringView) {
@@ -109,21 +112,24 @@ const DesignerEditorConsumption = () => {
 
   const workflow = runWorkflow ?? baseWorkflow;
 
-  const { definition } = workflow;
+  const [definition, setDefinition] = useState(workflow.definition);
+  const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
+  const [designerView, setDesignerView] = useState(true);
+  const [codeValue, setCodeValue] = useState<string | undefined>(undefined);
 
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
-  const services = React.useMemo(
+  const services = useMemo(
     () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
   );
 
-  const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
+  const [parsedDefinition, setParsedDefinition] = useState<any>(undefined);
 
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (!services) {
         return;
@@ -136,7 +142,7 @@ const DesignerEditorConsumption = () => {
   }, [definition, services]);
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
-  React.useEffect(() => {
+  useEffect(() => {
     const root = document.getElementById('root');
     if (root) {
       root.style.padding = '0px';
@@ -210,6 +216,25 @@ const DesignerEditorConsumption = () => {
     return `Bearer ${environment.armToken}` ?? '';
   };
 
+  const handleSwitchView = async () => {
+    if (designerView) {
+      setDesignerView(false);
+    } else {
+      try {
+        const codeToConvert = JSON.parse(codeValue ?? '');
+        await validateWorkflow(workflowId, workflowName, codeToConvert);
+        setDefinition(codeToConvert.definition);
+        setWorkflowDefinitionId(guid());
+        dispatch(collapsePanel());
+        setDesignerView(true);
+      } catch (error: any) {
+        if (error.status !== 404) {
+          alert(`Error converting code to workflow ${error}`);
+        }
+      }
+    }
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -237,6 +262,7 @@ const DesignerEditorConsumption = () => {
               connectionReferences,
               parameters,
             }}
+            workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
           >
             <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
@@ -247,15 +273,15 @@ const DesignerEditorConsumption = () => {
                 location={canonicalLocation}
                 isReadOnly={readOnly}
                 isDarkMode={isDarkMode}
-                isConsumption
+                isDesignerView={designerView}
                 showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
-                switchViews={() => {console.log('hi')}}
+                switchViews={handleSwitchView}
               />
-              <Designer />
+              {designerView ? <Designer /> : <CodeViewEditor code={codeValue} setCode={setCodeValue} isConsumption={true} />}
               {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
