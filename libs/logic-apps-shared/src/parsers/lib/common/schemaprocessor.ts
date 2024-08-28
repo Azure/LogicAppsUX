@@ -320,7 +320,7 @@ export class SchemaProcessor {
       const key = keyPrefix || this.options.keyPrefix || '$';
       const description = schema.description;
       schemaProperties.push({
-        alias: this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined,
+        alias: schema[SwaggerConstants.ExtensionProperties.Alias],
         default: schema.default,
         description: description,
         dynamicValues,
@@ -502,7 +502,7 @@ export class SchemaProcessor {
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);
     const groupName = this._getGroupName(schema);
-    const alias = this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined;
+    const alias = schema[SwaggerConstants.ExtensionProperties.Alias];
 
     // Exclude read-only parameters from input schema, i.e., objects in Swagger body parameters.
     if (isInputSchema && this._isReadOnlyParameter(schema)) {
