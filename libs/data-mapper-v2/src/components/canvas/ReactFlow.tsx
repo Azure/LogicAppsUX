@@ -32,7 +32,7 @@ import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
 import { convertWholeDataMapToLayoutTree, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
-import { createEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
+import { createEdgeId, createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
 import EdgePopOver from './EdgePopOver';
@@ -109,7 +109,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         const targetIds = Object.keys(entry[1]);
         for (const targetId of targetIds) {
           const targetNodeId = getReactFlowNodeId(targetId, false);
-          const id = createEdgeId(sourceNodeId, targetNodeId);
+          const id = createTemporaryEdgeId(sourceNodeId, targetNodeId);
           const edge: Edge = {
             id: id,
             source: sourceNodeId,
@@ -122,7 +122,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             selectable: true,
             zIndex: 150,
             data: {
-              isTemporary: true,
+              isIntermediate: true,
             },
           };
           newEdgesMap[id] = edge;
@@ -367,7 +367,11 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       let id = '';
 
       // Delete clicked on temporary edge
-      if (edge.data?.isIntermediate && edge.data?.componentId) {
+      if (edge.data?.isIntermediate) {
+        // When componentId is not set, it means the edge is a collapsed version
+        if (!edge.data?.componentId) {
+          return;
+        }
         const splitIds = splitEdgeId(edge.id);
         if (splitIds.length >= 2) {
           const directionId1 = edge.data?.componentId as string;
