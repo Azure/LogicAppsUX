@@ -84,6 +84,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           target: edge.targetId,
           type: edge.isRepeating ? 'loopEdge' : 'connectedEdge',
           reconnectable: 'target',
+          zIndex: 150,
+          interactionWidth: 10,
           data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
@@ -115,8 +117,10 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             type: 'connectedEdge',
             reconnectable: 'target',
             focusable: true,
+            interactionWidth: 10,
             deletable: true,
             selectable: true,
+            zIndex: 150,
             data: {
               isTemporary: true,
             },
@@ -157,9 +161,11 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             source: source,
             target: target,
             focusable: true,
-            selectable: true,
             deletable: true,
+            selectable: true,
             type: 'intermediateConnectedEdge',
+            zIndex: 150,
+            interactionWidth: 10,
             data: {
               isIntermediate: true,
               componentId: id,
@@ -280,6 +286,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           focusable: true,
           deletable: true,
           selectable: true,
+          zIndex: 150,
+          interactionWidth: 10,
         },
         edges
       );
@@ -406,7 +414,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         className="nopan nodrag"
         nodes={cloneDeep(nodes)}
         edges={[...realEdges, ...Object.values(temporaryEdgesMapForCollapsedNodes), ...Object.values(temporaryEdgesMapForScrolledNodes)]}
-        nodeDragThreshold={1}
+        nodeDragThreshold={0}
         onlyRenderVisibleElements={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
