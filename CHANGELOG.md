@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.75.0](https://github.com/Azure/LogicAppsUX/compare/v4.74.0...v4.75.0) (2024-08-28)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Add delete logic for temporary edges and fix Delete popover ([#5532](https://github.com/Azure/LogicAppsUX/issues/5532)) ([a6e7379](https://github.com/Azure/LogicAppsUX/commit/a6e73796d36edb17d23d7c3da6c220dd6a091748))
+* **Data Mapper:** Enhance search and fix node positions ([#5524](https://github.com/Azure/LogicAppsUX/issues/5524)) ([70dd76e](https://github.com/Azure/LogicAppsUX/commit/70dd76e69182031a27b3da19a2de61f544b4fc60))
+
 ## [4.74.0](https://github.com/Azure/LogicAppsUX/compare/v4.73.0...v4.74.0) (2024-08-27)
 
 
