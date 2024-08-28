@@ -45,7 +45,7 @@ describe('workflowSelectors', () => {
     operations: {},
     nodesMetadata: {},
     collapsedGraphIds: {
-      'node-1': false,
+      'node-1': true,
     },
     edgeIdsBySource: {},
     idReplacements: {},
@@ -60,25 +60,32 @@ describe('workflowSelectors', () => {
     },
   };
 
-  it('getParentsUncollapseFromGraphState', () => {
-    const collapsedGraphIdsWoParent = getParentsUncollapseFromGraphState(operationInfo, 'node-2');
-    expect(collapsedGraphIdsWoParent).toEqual({
-      'node-1': false,
-      'node-root': false,
-    });
-    const collapsedGraphIdsWithParent = getParentsUncollapseFromGraphState(operationInfo, 'node-3');
-    expect(collapsedGraphIdsWithParent).toEqual({
-      'node-2': false,
-      'node-1': false,
-      'node-root': false,
+  describe('getParentsUncollapseFromGraphState', () => {
+    it('Should return node-1 as true since node-2 is not children from node-1', () => {
+      const collapsedGraphIdsParent = getParentsUncollapseFromGraphState(operationInfo, 'node-2');
+      expect(collapsedGraphIdsParent).toEqual({
+        'node-1': true,
+      });
     });
 
-    const collapsedGraphIdsWithParent2 = getParentsUncollapseFromGraphState(operationInfo, 'node-5');
-    expect(collapsedGraphIdsWithParent2).toEqual({
-      'node-1': false,
-      'node-2': false,
-      'node-4': false,
-      'node-root': false,
+    it('Should return node-2 as false since node-3 is children from node-2', () => {
+      operationInfo.collapsedGraphIds['node-2'] = true;
+      const collapsedGraphIdsParent = getParentsUncollapseFromGraphState(operationInfo, 'node-3');
+      expect(collapsedGraphIdsParent).toEqual({
+        'node-1': true,
+        'node-2': false,
+      });
+    });
+
+    it('Should return node-2 and node-4 as false since node-5 is children from both', () => {
+      operationInfo.collapsedGraphIds['node-2'] = true;
+      operationInfo.collapsedGraphIds['node-4'] = true;
+      const collapsedGraphIdsParent = getParentsUncollapseFromGraphState(operationInfo, 'node-5');
+      expect(collapsedGraphIdsParent).toEqual({
+        'node-1': true,
+        'node-2': false,
+        'node-4': false,
+      });
     });
   });
 });
