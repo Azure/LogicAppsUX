@@ -267,7 +267,7 @@ export function TokenPicker({
         ref={containerRef}
       >
         <Nl2fExpressionAssistant
-          tokenGroup={tokenGroup ?? []}
+          tokenGroup={expressionGroup ?? []}
           isFullScreen={fullScreen}
           expression={expression}
           isFixErrorRequest={expressionEditorError !== ''}
