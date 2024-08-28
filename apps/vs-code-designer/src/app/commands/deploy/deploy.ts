@@ -7,6 +7,7 @@ import {
   logicAppKind,
   deploySubpathSetting,
   connectionsFileName,
+  parametersFileName,
   webhookRedirectHostUri,
   workflowAppAADClientId,
   workflowAppAADClientSecret,
@@ -63,6 +64,30 @@ export async function deploySlot(
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
   await deploy(context, target, functionAppId, new RegExp(LogicAppResourceTree.pickSlotContextValue));
+}
+
+async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<void> {
+  await fse.emptyDir(deployProjectPath);
+  fse.rmdirSync(deployProjectPath);
+}
+
+async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
+  const client = await node.site.createClient(identityWizardContext);
+  const appSettings: StringDictionary | undefined = (await client.listApplicationSettings())?.properties;
+  if (appSettings) {
+    const clientId = appSettings[workflowAppAADClientId];
+    const objectId = appSettings[workflowAppAADObjectId];
+    const tenantId = appSettings[workflowAppAADTenantId];
+    const clientSecret = appSettings[workflowAppAADClientSecret];
+    const aadDetailsExists = !!clientId && !!objectId && !!tenantId && !!clientSecret;
+    identityWizardContext.clientId = clientId;
+    identityWizardContext.clientSecret = clientSecret;
+    identityWizardContext.objectId = objectId;
+    identityWizardContext.tenantId = tenantId;
+    identityWizardContext.useAdvancedIdentity = aadDetailsExists;
+    return aadDetailsExists;
+  }
+  return false;
 }
 
 async function deploy(
@@ -288,11 +313,18 @@ async function getProjectPathToDeploy(
   const parametersJson = await getParametersJson(workspaceFolderPath);
   let connectionsData: ConnectionsData;
   let parametizedConnections: ConnectionsData;
-
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
+
   try {
     parametizedConnections = JSON.parse(connectionsJson);
+
+    if (parametizedConnections.managedApiConnections && Object.keys(parametizedConnections.managedApiConnections).length) {
+      for (const referenceKey of Object.keys(parametizedConnections.managedApiConnections)) {
+        parametersJson[`${referenceKey}-Authentication`].value = { type: 'ManagedServiceIdentity' };
+      }
+    }
+
+    const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
     connectionsData = resolutionService.resolve(parametizedConnections);
   } catch {
     return undefined;
@@ -300,7 +332,8 @@ async function getProjectPathToDeploy(
 
   if (parametizedConnections.managedApiConnections && Object.keys(parametizedConnections.managedApiConnections).length) {
     const deployProjectPath = path.join(path.dirname(workspaceFolderPath), `${path.basename(workspaceFolderPath)}-deploytemp`);
-    const connectionsFilePath = path.join(deployProjectPath, connectionsFileName);
+    const connectionsFilePathDeploy = path.join(deployProjectPath, connectionsFileName);
+    const parametersFilePathDeploy = path.join(deployProjectPath, parametersFileName);
 
     if (await fse.pathExists(deployProjectPath)) {
       await cleanAndRemoveDeployFolder(deployProjectPath);
@@ -332,41 +365,14 @@ async function getProjectPathToDeploy(
           tenant: `@appsetting('${workflowAppAADTenantId}')`,
           secret: `@appsetting('${workflowAppAADClientSecret}')`,
         };
-      } else {
-        managedConnection.authentication = {
-          type: 'ManagedServiceIdentity',
-        };
       }
+
       settingsToExclude.push(`${referenceKey}-connectionKey`);
     }
-
-    await writeFormattedJson(connectionsFilePath, parametizedConnections);
+    await writeFormattedJson(connectionsFilePathDeploy, parametizedConnections);
+    await writeFormattedJson(parametersFilePathDeploy, parametersJson);
 
     return deployProjectPath;
   }
   return undefined;
-}
-
-async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<void> {
-  await fse.emptyDir(deployProjectPath);
-  fse.rmdirSync(deployProjectPath);
-}
-
-async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
-  const client = await node.site.createClient(identityWizardContext);
-  const appSettings: StringDictionary | undefined = (await client.listApplicationSettings())?.properties;
-  if (appSettings) {
-    const clientId = appSettings[workflowAppAADClientId];
-    const objectId = appSettings[workflowAppAADObjectId];
-    const tenantId = appSettings[workflowAppAADTenantId];
-    const clientSecret = appSettings[workflowAppAADClientSecret];
-    const aadDetailsExists = !!clientId && !!objectId && !!tenantId && !!clientSecret;
-    identityWizardContext.clientId = clientId;
-    identityWizardContext.clientSecret = clientSecret;
-    identityWizardContext.objectId = objectId;
-    identityWizardContext.tenantId = tenantId;
-    identityWizardContext.useAdvancedIdentity = aadDetailsExists;
-    return aadDetailsExists;
-  }
-  return false;
 }
