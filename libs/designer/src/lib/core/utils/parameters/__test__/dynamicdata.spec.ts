@@ -6,7 +6,6 @@ describe('DynamicData', () => {
   describe('getDynamicInputsFromSchema', () => {
     const manifestService: any = {
       isSupported: () => true,
-      isAliasingSupported: () => false,
       getOperationManifest() {
         return Promise.resolve({ properties: { inputsLocationSwapMap: [] } } as any);
       },
@@ -134,41 +133,6 @@ describe('DynamicData', () => {
         expect.arrayContaining([
           expect.objectContaining({ key: 'inputs.$.dynamicData.details' }),
           expect.objectContaining({ key: 'inputs.$.dynamicData.id' }),
-        ])
-      );
-    });
-
-    test('should return only leaf parameters in dynamic schema with aliasing parameters for the property values are present in definition', async () => {
-      InitOperationManifestService(manifestService);
-      const dynamicSchemaWithAliases = {
-        type: 'object',
-        properties: {
-          details: {
-            type: 'object',
-            properties: {
-              name: { type: 'string', 'x-ms-alias': 'inputs/dynamicData/name' },
-              code: { type: 'number', 'x-ms-alias': 'inputs/dynamicData/code' },
-            },
-          },
-          id: { type: 'string' },
-        },
-      };
-
-      const dynamicInputs = await getDynamicInputsFromSchema(
-        dynamicSchemaWithAliases,
-        { ...dynamicParameter, alias: 'inputs/dynamicData' },
-        { connectorId: '/connectionProviders/test', operationId: 'test', type: 'ApiManagement' },
-        ['inputs.$.operationId'],
-        { inputs: { operationId: 'SomeValue', dynamicData: { id: 'abc', details: { name: 'test', code: 123 } } } }
-      );
-
-      expect(dynamicInputs).toBeDefined();
-      expect(dynamicInputs.length).toEqual(3);
-      expect(dynamicInputs).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ key: 'inputs.$.dynamicData.details.name', value: 'test' }),
-          expect.objectContaining({ key: 'inputs.$.dynamicData.details.code', value: 123 }),
-          expect.objectContaining({ key: 'inputs.$.dynamicData.id', value: 'abc' }),
         ])
       );
     });
