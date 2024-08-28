@@ -319,13 +319,14 @@ export function TokenPicker({
           style={
             fullScreen
               ? {
-                  height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
+                  maxHeight: windowDimensions.height - 16,
+                  height: windowDimensions.height - 16,
                   width: Math.max(
                     windowDimensions.width - (Number.parseInt(PanelSize.Medium, 10) + 40),
                     Math.min(windowDimensions.width - 16, 400)
                   ),
                 }
-              : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
+              : { maxHeight: Math.min(windowDimensions.height - 16, 550), width: Math.min(windowDimensions.width - 16, 400) }
           }
           ref={containerRef}
         >
