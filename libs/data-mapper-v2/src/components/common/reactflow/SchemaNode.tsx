@@ -33,6 +33,8 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
+        key={`${id}-handle`}
+        id={`${id}-handle`}
         type={isSourceNode ? 'source' : 'target'}
         position={isSourceNode ? Position.Left : Position.Right}
         className={mergeClasses(
