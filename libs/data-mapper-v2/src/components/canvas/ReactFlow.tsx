@@ -414,6 +414,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         preventScrolling={false}
+        edgesFocusable={true}
         minZoom={1}
         elementsSelectable={true}
         maxZoom={1}

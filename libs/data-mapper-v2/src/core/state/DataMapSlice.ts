@@ -599,19 +599,9 @@ export const dataMapSlice = createSlice({
     },
 
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
-      const connections = state.curDataMapOperation.dataMapConnections;
       const key = action.payload;
       state.curDataMapOperation.selectedItemKey = key;
-
-      state.curDataMapOperation.selectedItemConnectedNodes = key
-        ? getActiveNodes(
-            connections,
-            isSourceNode(key)
-              ? cloneDeep(state.curDataMapOperation.sourceStateConnections[key])
-              : cloneDeep(state.curDataMapOperation.targetStateConnections[key]),
-            key
-          )
-        : {};
+      state.curDataMapOperation.selectedItemConnectedNodes = getSelectedNodes(state.curDataMapOperation, key);
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
@@ -711,6 +701,12 @@ export const dataMapSlice = createSlice({
             },
           },
           'Delete edge by key'
+        );
+
+        // Reset selected state
+        state.curDataMapOperation.selectedItemConnectedNodes = getSelectedNodes(
+          state.curDataMapOperation,
+          state.curDataMapOperation.selectedItemKey
         );
       } else {
         //Throw error
@@ -1024,4 +1020,15 @@ export const deleteTemporaryConnections = (id: string, currentConnections?: Reco
     }
   }
   return currentConnections;
+};
+
+export const getSelectedNodes = (state: DataMapOperationState, key?: string) => {
+  if (key) {
+    return getActiveNodes(
+      state.dataMapConnections,
+      isSourceNode(key) ? cloneDeep(state.sourceStateConnections[key]) : cloneDeep(state.targetStateConnections[key]),
+      key
+    );
+  }
+  return {};
 };
