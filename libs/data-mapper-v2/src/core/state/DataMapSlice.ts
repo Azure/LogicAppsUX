@@ -36,7 +36,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Rect, XYPosition } from '@xyflow/react';
-import { createReactFlowFunctionKey, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
+import { createReactFlowFunctionKey, getTreeNodeId, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import cloneDeep from 'lodash/cloneDeep';
@@ -599,19 +599,9 @@ export const dataMapSlice = createSlice({
     },
 
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
-      const connections = state.curDataMapOperation.dataMapConnections;
       const key = action.payload;
       state.curDataMapOperation.selectedItemKey = key;
-
-      state.curDataMapOperation.selectedItemConnectedNodes = key
-        ? getActiveNodes(
-            connections,
-            isSourceNode(key)
-              ? cloneDeep(state.curDataMapOperation.sourceStateConnections[key])
-              : cloneDeep(state.curDataMapOperation.targetStateConnections[key]),
-            key
-          )
-        : {};
+      state.curDataMapOperation.selectedItemConnectedNodes = getSelectedNodes(state.curDataMapOperation, key);
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
@@ -673,26 +663,8 @@ export const dataMapSlice = createSlice({
       const edgeId = action.payload;
       const splitId = splitEdgeId(edgeId);
       if (splitId.length === 2) {
-        const updatedTemporaryEdgeMapping = {
-          ...state.curDataMapOperation.temporaryEdgeMapping,
-        };
         const sourceId = splitId[0];
         const targetId = splitId[1];
-        // Delete the temporary edges also
-        if (isSourceNode(sourceId) || isTargetNode(sourceId)) {
-          const updatedMappings = deleteTemporaryConnections(targetId, updatedTemporaryEdgeMapping[sourceId]);
-
-          if (updatedMappings) {
-            updatedTemporaryEdgeMapping[sourceId] = updatedMappings;
-          }
-        }
-
-        if (isSourceNode(targetId) || isTargetNode(targetId)) {
-          const updatedMappings = deleteTemporaryConnections(sourceId, updatedTemporaryEdgeMapping[targetId]);
-          if (updatedMappings) {
-            updatedTemporaryEdgeMapping[targetId] = updatedMappings;
-          }
-        }
 
         // Update connection dictionary
         const updatedConnections = {
@@ -707,11 +679,22 @@ export const dataMapSlice = createSlice({
             curDataMapOperation: {
               ...state.curDataMapOperation,
               dataMapConnections: updatedConnections,
-              temporaryEdgeMapping: updatedTemporaryEdgeMapping,
             },
           },
           'Delete edge by key'
         );
+
+        // Reset selected state
+        state.curDataMapOperation.selectedItemConnectedNodes = getSelectedNodes(
+          state.curDataMapOperation,
+          state.curDataMapOperation.selectedItemKey
+        );
+
+        // Remove temporary Nodes created for scrolling
+        deleteIntermediateConnectionsCreatedForScrolling([sourceId, targetId], state.curDataMapOperation);
+
+        // Remove temporary Nodes created for collapsing/expanding parents
+        deleteIntermediateConnectionsForCollapsingNodes([sourceId, targetId], state.curDataMapOperation);
       } else {
         //Throw error
       }
@@ -1013,15 +996,75 @@ export const getUpdatedTemporaryConnections = (
   return { ...(currentConnections[sourceId] ?? {}), ...newConnections };
 };
 
-export const deleteTemporaryConnections = (id: string, currentConnections?: Record<string, boolean>) => {
-  if (currentConnections) {
-    for (const key in Object.keys(currentConnections)) {
-      const splitIds = splitEdgeId(id);
-      if (splitIds.length >= 2 && splitIds[0] === key) {
-        delete currentConnections[key];
-        return currentConnections;
+export const deleteIntermediateConnectionsForCollapsingNodes = (ids: string[], state: DataMapOperationState) => {
+  const deleteConnections = (
+    connectedId: string,
+    childrenParentMapping: string[] = [],
+    edgeMapping: Record<string, Record<string, boolean>>
+  ) => {
+    for (const parent of childrenParentMapping) {
+      if (edgeMapping[parent]) {
+        delete edgeMapping[parent][connectedId];
+      }
+    }
+  };
+
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = i + 1; j < ids.length; j++) {
+      const reactflowId1 = ids[i];
+      const reactflowId2 = ids[j];
+
+      const treeNodeId1 = getTreeNodeId(reactflowId1);
+      const treeNodeId2 = getTreeNodeId(reactflowId2);
+      if (isSourceNode(reactflowId1)) {
+        deleteConnections(treeNodeId2, state.sourceChildParentMapping[treeNodeId1], state.sourceParentChildEdgeMapping);
+      } else if (isTargetNode(reactflowId1)) {
+        deleteConnections(treeNodeId2, state.targetChildParentMapping[treeNodeId1], state.targetParentChildEdgeMapping);
+      }
+
+      if (isSourceNode(reactflowId2)) {
+        deleteConnections(treeNodeId1, state.sourceChildParentMapping[treeNodeId2], state.sourceParentChildEdgeMapping);
+      } else if (isTargetNode(reactflowId2)) {
+        deleteConnections(treeNodeId1, state.targetChildParentMapping[treeNodeId2], state.targetParentChildEdgeMapping);
       }
     }
   }
-  return currentConnections;
+};
+
+export const deleteIntermediateConnectionsCreatedForScrolling = (ids: string[], state: DataMapOperationState) => {
+  const deleteConnections = (id: string, connections?: Record<string, boolean>) => {
+    if (connections) {
+      for (const key of Object.keys(connections)) {
+        const splitIds = splitEdgeId(key);
+        if (splitIds.length >= 2 && splitIds[0] === id) {
+          delete connections[key];
+        }
+      }
+    }
+  };
+
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = i + 1; j < ids.length; j++) {
+      const id1 = ids[i];
+      const id2 = ids[j];
+      if (isSourceNode(id1) || isTargetNode(id1)) {
+        deleteConnections(id2, state.temporaryEdgeMapping[id1]);
+      }
+
+      if (isSourceNode(id2) || isTargetNode(id2)) {
+        deleteConnections(id1, state.temporaryEdgeMapping[id2]);
+      }
+    }
+  }
+};
+
+export const getSelectedNodes = (state: DataMapOperationState, key?: string) => {
+  if (key) {
+    return getActiveNodes(
+      state.dataMapConnections,
+      isSourceNode(key) ? cloneDeep(state.sourceStateConnections[key]) : cloneDeep(state.targetStateConnections[key]),
+      key
+    );
+  }
+  return {};
 };
