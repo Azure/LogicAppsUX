@@ -33,6 +33,9 @@ export const useStyles = makeStyles({
   rightTreeItemLayout: {
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
   },
+  rightHandle: {
+    left: '-15px',
+  },
   handleWrapper: {
     backgroundColor: '#fff',
     width: '14px',

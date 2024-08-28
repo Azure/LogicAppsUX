@@ -39,6 +39,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
         position={isSourceNode ? Position.Left : Position.Right}
         className={mergeClasses(
           styles.handleWrapper,
+          isSourceNode ? '' : styles.rightHandle,
           isConnected ? styles.connectedHandle : '',
           isLoop && isSourceNode ? styles.loopSourceHandle : '',
           isSelected || isHover ? styles.selectedHoverHandle : '',

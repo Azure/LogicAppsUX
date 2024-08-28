@@ -105,7 +105,11 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
                 error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
               }
               value={
-                error ?? testMapOutput?.outputInstance?.$content ?? `${testMapOutput?.statusCode} - ${testMapOutput?.statusText}` ?? ''
+                error ??
+                testMapOutput?.outputInstance?.$content ??
+                (testMapOutput?.statusCode && testMapOutput?.statusText
+                  ? `${testMapOutput?.statusCode} - ${testMapOutput?.statusText}`
+                  : '')
               }
               className={styles.editorStyle}
               lineNumbers={'on'}
