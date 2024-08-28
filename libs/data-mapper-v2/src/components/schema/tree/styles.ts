@@ -39,4 +39,9 @@ export const useStyles = makeStyles({
     display: 'inline-flex',
     marginLeft: 'auto',
   },
+  required: {
+    ':after': {
+      content: '"*"',
+    },
+  },
 });

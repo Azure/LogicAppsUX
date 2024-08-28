@@ -167,10 +167,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   }, [nodes, isLeftDirection, x, y, root, nodeId, dispatch]);
 
   if (root.children.length === 0) {
-    let style = styles.leafNode;
-    style = mergeClasses(style, isLeftDirection ? '' : styles.rightTreeItemLayout);
-    style = mergeClasses(style, activeNode ? styles.nodeSelected : '');
-
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
         <TreeItemLayout
@@ -178,18 +174,20 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
           onClick={onClick}
           onMouseEnter={onMouseOver}
           onMouseLeave={onMouseLeave}
-          className={style}
+          className={mergeClasses(
+            styles.leafNode,
+            isLeftDirection ? '' : styles.rightTreeItemLayout,
+            activeNode ? styles.nodeSelected : ''
+          )}
           aside={aside}
         >
-          {root.name}
+          <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
+            {root.name}
+          </div>
         </TreeItemLayout>
       </TreeItem>
     );
   }
-
-  let style = styles.rootNode;
-  style = mergeClasses(style, isLeftDirection ? '' : styles.rightTreeItemLayout);
-  style = mergeClasses(style, activeNode ? styles.nodeSelected : '');
 
   return (
     <TreeItem
@@ -206,9 +204,11 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
         onMouseEnter={onMouseOver}
         onMouseLeave={onMouseLeave}
         aside={aside}
-        className={style}
+        className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout, activeNode ? styles.nodeSelected : '')}
       >
-        {root.name}
+        <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
+          {root.name}
+        </div>
       </TreeItemLayout>
       <Tree aria-label="sub-tree">
         {root.children
