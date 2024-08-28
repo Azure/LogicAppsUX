@@ -320,6 +320,7 @@ export function TokenPicker({
             fullScreen
               ? {
                   maxHeight: windowDimensions.height - 16,
+                  height: windowDimensions.height - 16,
                   width: Math.max(
                     windowDimensions.width - (Number.parseInt(PanelSize.Medium, 10) + 40),
                     Math.min(windowDimensions.width - 16, 400)
