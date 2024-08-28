@@ -23,35 +23,6 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const isSelected = useSelectedNode(id);
   const isHover = useHoverNode(id);
 
-  const styleForState = useMemo(() => {
-    let updatedStyle = mergeClasses(styles.handleWrapper, isConnected ? styles.connectedHandle : '');
-
-    // Update styling for loop
-    if (isLoop && isSourceNode) {
-      updatedStyle = mergeClasses(updatedStyle, styles.loopSourceHandle);
-    }
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-      if (isConnected) {
-        updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
-      }
-    }
-
-    return updatedStyle;
-  }, [
-    styles.handleWrapper,
-    styles.connectedHandle,
-    styles.loopSourceHandle,
-    styles.selectedHoverHandle,
-    styles.connectedSelectedHoverHandle,
-    isSourceNode,
-    isConnected,
-    isLoop,
-    isSelected,
-    isHover,
-  ]);
-
   const setActiveNode = () => {
     dispatch(setSelectedItem(id));
   };
@@ -62,9 +33,18 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
+        key={`${id}-handle`}
+        id={`${id}-handle`}
         type={isSourceNode ? 'source' : 'target'}
         position={isSourceNode ? Position.Left : Position.Right}
-        className={styleForState}
+        className={mergeClasses(
+          styles.handleWrapper,
+          isSourceNode ? '' : styles.rightHandle,
+          isConnected ? styles.connectedHandle : '',
+          isLoop && isSourceNode ? styles.loopSourceHandle : '',
+          isSelected || isHover ? styles.selectedHoverHandle : '',
+          (isSelected || isHover) && isConnected ? styles.connectedSelectedHoverHandle : ''
+        )}
         onMouseDown={setActiveNode}
         isConnectableEnd={!isConnected}
       >
