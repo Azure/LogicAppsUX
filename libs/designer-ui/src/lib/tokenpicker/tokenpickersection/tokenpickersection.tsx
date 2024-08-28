@@ -1,4 +1,4 @@
-import { getWindowDimensions, TokenPickerMode } from '..';
+import { TokenPickerMode } from '..';
 import type { ValueSegment } from '../../editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
@@ -32,9 +32,7 @@ export const TokenPickerSection = ({
   tokenGroup,
   expressionGroup,
   searchQuery,
-  fullScreen,
   noDynamicContent,
-  expressionEditorCurrentHeight,
   ...tokenPickerBaseProps
 }: TokenPickerSectionProps): JSX.Element => {
   const [dynamicTokenLength, setDynamicTokenLength] = useState(new Array<number>(tokenGroup.length));
@@ -49,26 +47,8 @@ export const TokenPickerSection = ({
     }
   }, [dynamicTokenLength, expressionTokenLength, searchQuery, selectedMode]);
 
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
-    <div
-      className="msla-token-picker-sections"
-      style={{
-        maxHeight: fullScreen
-          ? windowDimensions.height - (expressionEditorCurrentHeight + 287)
-          : Math.min(windowDimensions.height - (expressionEditorCurrentHeight + 197), 540),
-      }}
-    >
+    <div className="msla-token-picker-sections">
       {searchQuery && noItems ? <TokenPickerNoMatches /> : null}
       {noDynamicContent && (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN) ? (
         <TokenPickerNoDynamicContent />
