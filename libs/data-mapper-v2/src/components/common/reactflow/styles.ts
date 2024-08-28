@@ -39,12 +39,6 @@ export const useStyles = makeStyles({
     height: '14px',
     ...shorthands.border('1px', 'solid', '#ddd'),
   },
-  sourceSchemaHandleWrapper: {
-    left: '-8px',
-  },
-  targetSchemaHandleWrapper: {
-    left: '-7px',
-  },
   nodeWrapper: {
     width: '14px',
     height: '14px',
@@ -94,5 +88,15 @@ export const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: '3px',
+  },
+  temporaryCanvasNodeRoot: {
+    width: '10px',
+    height: '10px',
+    backgroundColor: 'transparent',
+  },
+  temporaryCanvasNodeHandle: {
+    backgroundColor: 'transparent',
+    ...shorthands.border('none'),
+    left: '2px',
   },
 });
