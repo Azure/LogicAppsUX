@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.76.0](https://github.com/Azure/LogicAppsUX/compare/v4.75.0...v4.76.0) (2024-08-28)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix right handle node ([#5534](https://github.com/Azure/LogicAppsUX/issues/5534)) ([0c93744](https://github.com/Azure/LogicAppsUX/commit/0c937440363e2ca91f1451a28874f9c0acc2e1cc))
+* **designer:** Not creating an interpolated expression for byte-typed parameters ([#5511](https://github.com/Azure/LogicAppsUX/issues/5511)) ([c467f3f](https://github.com/Azure/LogicAppsUX/commit/c467f3f90474d424d96255bc8ca682fcdbbf7a9c))
+
 ## [4.75.0](https://github.com/Azure/LogicAppsUX/compare/v4.74.0...v4.75.0) (2024-08-28)
 
 
