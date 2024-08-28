@@ -66,7 +66,7 @@ const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRa
 };
 
 export const createEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}`;
-export const createTemporaryEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}__edge__${guid()}`; //When scrolled out
+export const createTemporaryEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}__edge__${guid()}`; //When scrolled out or parent collapsed
 
 export const splitEdgeId = (edgeId: string) => edgeId.split('__edge__');
 

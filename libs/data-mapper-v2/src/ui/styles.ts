@@ -63,16 +63,7 @@ export const useStaticStyles = makeStaticStyles({
     strokeLinejoin: 'round',
     fillOpacity: '0',
   },
-  '.react-flow__nodes': {
+  '.react-flow__node': {
     zIndex: '200 !important',
-  },
-  '.react-flow__pane': {
-    zIndex: '100 !important',
-  },
-  '.react-flow__renderer': {
-    zIndex: '110 !important',
-  },
-  '.react-flow__edges': {
-    zIndex: '120 !important',
   },
 });
