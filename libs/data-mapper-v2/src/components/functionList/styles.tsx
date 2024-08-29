@@ -29,8 +29,8 @@ export const useStyles = makeStyles({
     paddingLeft: '10px',
     ':hover': {
       backgroundColor: '#D5E4FF',
-      ...shorthands.borderRadius(tokens.borderRadiusCircular),
-      width: '105%',
+      ...shorthands.borderRadius(tokens.borderRadiusCircular, 0, 0, tokens.borderRadiusCircular),
+      width: '100%',
     },
     ':active': {
       backgroundColor: '#D5E4FF',
