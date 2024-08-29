@@ -38,12 +38,6 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
     description: 'Loading text for spinner',
   });
 
-  const loadingSpinner = (
-    <div style={{ margin: '16px 0' }}>
-      <Spinner size="tiny" label={loadingText} aria-live="assertive" />
-    </div>
-  );
-
   return (
     <div className="msla-op-group-detail-page">
       {isLoadingConnector ? null : (
@@ -67,7 +61,11 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
                 <OperationSearchCard operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
               </li>
             ))}
-        {isLoading ? loadingSpinner : null}
+        {isLoading || isLoadingConnector ? (
+          <div style={{ margin: '16px 0' }}>
+            <Spinner size="tiny" label={loadingText} aria-live="assertive" />
+          </div>
+        ) : null}
       </ul>
     </div>
   );
