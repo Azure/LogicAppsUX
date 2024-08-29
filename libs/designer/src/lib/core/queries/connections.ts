@@ -3,7 +3,7 @@ import { ConnectionService, SwaggerParser, equals } from '@microsoft/logic-apps-
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const connectionKey = 'connections';
 export interface ConnectorWithParsedSwagger {
@@ -69,7 +69,8 @@ export const useAllConnections = (): UseQueryResult<Connection[], unknown> => {
 };
 
 export const useConnectionsForConnector = (connectorId: string, shouldNotRefetch?: boolean) => {
-  return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
+  const queryClient = useQueryClient();
+  return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId, queryClient), {
     enabled: !!connectorId,
     refetchOnMount: !shouldNotRefetch && true,
     cacheTime: 0,
@@ -80,7 +81,7 @@ export const useConnectionsForConnector = (connectorId: string, shouldNotRefetch
 export const getConnectionsForConnector = async (connectorId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], async () => {
-    return await ConnectionService().getConnections(connectorId);
+    return await ConnectionService().getConnections(connectorId, queryClient);
   });
 };
 
