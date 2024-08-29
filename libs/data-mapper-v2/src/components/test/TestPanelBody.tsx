@@ -107,7 +107,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.SAMPLE_TEST_DATA}
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
               value={testMapInput ?? ''}
@@ -115,7 +115,9 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
               height="200px"
+              width="100%"
               wordWrap="on"
+              wrappingIndent="same"
               onContentChanged={onSampleDataChange}
               onEditorLoaded={onSampleDataEditorLoaded}
             />
@@ -128,7 +130,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.RESULT}
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={
                 error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
@@ -144,6 +146,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
               height="200px"
+              width="100%"
               wordWrap="on"
               onContentChanged={onResultContentChange}
               onEditorLoaded={onResultEditorLoaded}

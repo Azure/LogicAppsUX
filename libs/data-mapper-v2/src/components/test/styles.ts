@@ -18,11 +18,13 @@ export const useStyles = makeStyles({
   editorStyle: {
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
-    ...shorthands.padding('10px'),
     backgroundColor: '#fff',
   },
   accordianHeader: {
     fontWeight: 'bolder',
+  },
+  accordianPanel: {
+    width: '90%',
   },
   footer: {
     backgroundColor: 'red',
@@ -42,7 +44,7 @@ export const useStyles = makeStyles({
     position: 'relative',
     width: '70%',
     ...shorthands.padding('10px'),
-    top: '-200px',
+    top: '-210px',
     left: '14%',
     fontStyle: 'italic',
     fontSize: '13px',
