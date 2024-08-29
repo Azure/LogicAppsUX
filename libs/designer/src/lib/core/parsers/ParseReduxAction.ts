@@ -28,7 +28,7 @@ export const initializeGraphState = createAsyncThunk<
   'parser/deserialize',
   async (graphState: { workflowDefinition: Workflow; runInstance: any }, { getState, dispatch }): Promise<InitWorkflowPayload> => {
     const { workflowDefinition, runInstance } = graphState;
-    const { workflow, designerOptions } = getState() as RootState;
+    const { workflow } = getState() as RootState;
     const spec = workflow.workflowSpec;
 
     if (spec === undefined) {
@@ -65,7 +65,6 @@ export const initializeGraphState = createAsyncThunk<
                 parameters ?? {},
                 customCodeWithData,
                 workflow.workflowKind,
-                designerOptions.hostOptions.forceEnableSplitOn ?? false,
                 dispatch
               ),
               getConnectionsApiAndMapping(deserializedWorkflow, dispatch),

@@ -59,6 +59,7 @@ import type {
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
+import { operationSupportsSplitOn } from '../../utils/outputs';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -144,7 +145,7 @@ export const initializeOperationDetails = async (
       isTrigger,
       nodeInputs,
       operationInfo,
-      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
       nodeId
     );
     parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
@@ -153,14 +154,13 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(
       isTrigger,
       operationInfo,
-      nodeOutputs,
       manifest,
       /* swagger */ undefined,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.designerOptions.hostOptions.forceEnableSplitOn
+      state.workflow.workflowKind
     );
 
+    // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;
     if (isTrigger && settings.splitOn?.value?.value) {
@@ -208,12 +208,10 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(
       isTrigger,
       operationInfo,
-      nodeOutputs,
       /* manifest */ undefined,
       parsedSwagger,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.designerOptions.hostOptions.forceEnableSplitOn
+      state.workflow.workflowKind
     );
 
     // We should update the outputs when splitOn is enabled.

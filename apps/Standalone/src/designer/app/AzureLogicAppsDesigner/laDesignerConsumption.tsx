@@ -365,7 +365,7 @@ const getDesignerServices = (
   const connectorService = new ConsumptionConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
-      ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
+      ['/connectionProviders/workflow', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],

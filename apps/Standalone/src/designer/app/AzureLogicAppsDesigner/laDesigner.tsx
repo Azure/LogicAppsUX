@@ -697,6 +697,7 @@ const getDesignerServices = (
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAppIdentity: () => workflowApp.identity as any,
     isExplicitAuthRequiredForManagedIdentity: () => true,
+    isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
       const options = {
         uri: `${workflowIdWithHostRuntime}/runs/${runId}/resubmit?api-version=2018-11-01`,
