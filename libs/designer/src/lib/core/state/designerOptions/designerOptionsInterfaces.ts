@@ -40,7 +40,6 @@ export interface DesignerOptionsState {
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
     recurrenceInterval?: LogicApps.Recurrence;
     maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
-    forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
   };
