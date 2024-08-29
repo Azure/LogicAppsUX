@@ -20,6 +20,7 @@ import {
   useNodesInitialized,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
+  collapsePanel,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -47,6 +48,7 @@ export const DesignerCommandBar = ({
   rightShift,
   enableCopilot,
   switchViews,
+  saveWorkflowFromCode,
 }: {
   id: string;
   location: string;
@@ -60,6 +62,7 @@ export const DesignerCommandBar = ({
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
   switchViews: () => void;
+  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -139,12 +142,12 @@ export const DesignerCommandBar = ({
           );
         },
         onClick: () => {
-          saveWorkflowMutate();
+          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
         },
       },
       {
         key: 'discard',
-        disabled: isSaving,
+        disabled: isSaving || !isDesignerView,
         text: 'Discard',
         iconProps: { iconName: 'Clear' },
         onClick: () => {
@@ -154,6 +157,7 @@ export const DesignerCommandBar = ({
       {
         key: 'parameters',
         text: 'Parameters',
+        disabled: !isDesignerView,
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
@@ -164,6 +168,7 @@ export const DesignerCommandBar = ({
         iconProps: isDesignerView ? { iconName: 'Code' } : { imageProps: { src: LogicAppsIcon } },
         onClick: () => {
           switchViews();
+          dispatch(collapsePanel());
         },
       },
       ...(showConnectionsPanel
@@ -217,11 +222,13 @@ export const DesignerCommandBar = ({
     [
       saveIsDisabled,
       isSaving,
+      isDesignerView,
       showConnectionsPanel,
       haveErrors,
       isDarkMode,
       isCopilotReady,
       saveWorkflowMutate,
+      saveWorkflowFromCode,
       discard,
       dispatch,
       haveWorkflowParameterErrors,

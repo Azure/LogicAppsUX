@@ -14,7 +14,7 @@ import {
   useCurrentTenantId,
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
-  validateWorkflow,
+  validateWorkflowConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
@@ -36,7 +36,7 @@ import {
   startsWith,
   StandardCustomCodeService,
 } from '@microsoft/logic-apps-shared';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -47,10 +47,9 @@ import {
   store as DesignerStore,
   getSKUDefaultHostOptions,
   Constants,
-  collapsePanel,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
@@ -115,7 +114,7 @@ const DesignerEditorConsumption = () => {
   const [definition, setDefinition] = useState(workflow.definition);
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
   const [designerView, setDesignerView] = useState(true);
-  const [codeValue, setCodeValue] = useState<string | undefined>(undefined);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
 
   const discardAllChanges = () => {
     setDesignerID(guid());
@@ -127,19 +126,18 @@ const DesignerEditorConsumption = () => {
     [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
   );
 
-  const [parsedDefinition, setParsedDefinition] = useState<any>(undefined);
-
   useEffect(() => {
     (async () => {
       if (!services) {
         return;
       }
-      if (!(definition as any)?.actions) {
+      if (!(workflow.definition as any)?.actions) {
         return;
       }
-      setParsedDefinition(definition);
+      setDefinition(workflow.definition);
+      setDesignerView(true);
     })();
-  }, [definition, services]);
+  }, [services, workflow.definition]);
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
   useEffect(() => {
@@ -150,7 +148,7 @@ const DesignerEditorConsumption = () => {
     }
   }, []);
 
-  if (!parsedDefinition || isWorkflowAndArtifactsLoading) {
+  if (!definition || isWorkflowAndArtifactsLoading) {
     return <></>;
   }
 
@@ -158,7 +156,11 @@ const DesignerEditorConsumption = () => {
     throw workflowAndArtifactsError;
   }
 
-  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow): Promise<void> => {
+  const saveWorkflowFromDesigner = async (
+    workflowFromDesigner: Workflow,
+    _customCode: CustomCodeFileNameMapping | undefined,
+    clearDirtyState: () => void
+  ): Promise<void> => {
     if (!workflowAndArtifactsData) {
       return;
     }
@@ -189,13 +191,25 @@ const DesignerEditorConsumption = () => {
       }
       workflowToSave.connections = newConnectionsObj;
 
-      const response = await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave);
+      const response = await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState);
       alert('Workflow saved successfully!');
       return response;
     } catch (e: any) {
       console.error(e);
       alert('Error saving workflow, check console for error object');
       return;
+    }
+  };
+
+  const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
+    try {
+      const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+      await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
+      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState);
+    } catch (error: any) {
+      if (error.status !== 404) {
+        alert(`Error converting code to workflow ${error}`);
+      }
     }
   };
 
@@ -221,11 +235,10 @@ const DesignerEditorConsumption = () => {
       setDesignerView(false);
     } else {
       try {
-        const codeToConvert = JSON.parse(codeValue ?? '');
-        await validateWorkflow(workflowId, workflowName, codeToConvert);
+        const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+        await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
         setDefinition(codeToConvert.definition);
         setWorkflowDefinitionId(guid());
-        dispatch(collapsePanel());
         setDesignerView(true);
       } catch (error: any) {
         if (error.status !== 404) {
@@ -258,7 +271,7 @@ const DesignerEditorConsumption = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: parsedDefinition,
+              definition,
               connectionReferences,
               parameters,
             }}
@@ -280,8 +293,9 @@ const DesignerEditorConsumption = () => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
                 switchViews={handleSwitchView}
+                saveWorkflowFromCode={saveWorkflowFromCode}
               />
-              {designerView ? <Designer /> : <CodeViewEditor code={codeValue} setCode={setCodeValue} isConsumption={true} />}
+              {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
               {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
