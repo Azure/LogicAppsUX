@@ -39,8 +39,8 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
         description: 'Result',
       }),
       RESULT_PLACEHOLDER: intl.formatMessage({
-        defaultMessage: 'Paste and Test sample data above to get the latest results',
-        id: '6rM7mz',
+        defaultMessage: 'Test your map to see a result',
+        id: 'UVr0mL',
         description: 'Placeholder result',
       }),
     }),
