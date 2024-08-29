@@ -369,11 +369,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       // Delete clicked on temporary edge
       if (edge.data?.isIntermediate) {
         // When componentId is not set, it means the edge is a collapsed version
-        if (!edge.data?.componentId) {
-          return;
-        }
         const splitIds = splitEdgeId(edge.id);
-        if (splitIds.length >= 2) {
+        if (edge.data?.componentId && splitIds.length >= 2) {
           const directionId1 = edge.data?.componentId as string;
           const directionId2 = splitIds[0];
           const directEdge = edges.find(
@@ -383,9 +380,9 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           );
           id = directEdge?.id ?? '';
         }
-      } else {
-        id = edge.id;
+        return;
       }
+      id = edge.id;
 
       if (id) {
         dispatch(updateEdgePopOverId(id));
