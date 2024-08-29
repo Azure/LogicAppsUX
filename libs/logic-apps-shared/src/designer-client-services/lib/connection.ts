@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import type {
   Connection,
   ConnectionMetadata,
@@ -40,7 +41,7 @@ export interface IConnectionService {
   getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger>;
   getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document>;
   getConnection(connectionId: string): Promise<Connection>;
-  getConnections(connectorId?: string): Promise<Connection[]>;
+  getConnections(connectorId?: string, queryClient?: QueryClient): Promise<Connection[]>;
   createConnection(
     connectionId: string,
     connector: Connector,
