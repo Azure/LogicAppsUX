@@ -162,7 +162,6 @@ export const addForeachToNode = createAsyncThunk(
         customCodeWithData,
         /* isTrigger */ false,
         state.workflow.workflowKind,
-        state.designerOptions.hostOptions.forceEnableSplitOn ?? false,
         dispatch
       )) as NodeDataWithOperationMetadata[];
 

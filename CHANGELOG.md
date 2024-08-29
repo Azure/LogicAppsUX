@@ -1,4 +1,21 @@
 # Logic Apps Designer
+## [4.77.0](https://github.com/Azure/LogicAppsUX/compare/v4.76.0...v4.77.0) (2024-08-29)
+
+
+### Features
+
+* **Data Mapper:** Add required to non-optional fields ([#5545](https://github.com/Azure/LogicAppsUX/issues/5545)) ([c6b9773](https://github.com/Azure/LogicAppsUX/commit/c6b9773c4e2e41e89124454244e608db3ba12466))
+* **Data Mapper:** Add temporary connections for existing map ([#5556](https://github.com/Azure/LogicAppsUX/issues/5556)) ([eb6482f](https://github.com/Azure/LogicAppsUX/commit/eb6482fd23f9a182b140703b1904361e6c32cbd9))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Scroll editor and remove yellow node for full inputs ([#5549](https://github.com/Azure/LogicAppsUX/issues/5549)) ([5771196](https://github.com/Azure/LogicAppsUX/commit/5771196f94d9f8d3ab8e82085230b194010cfaa2))
+* **designer:** Custom connector connections are not loading in designer ([#5548](https://github.com/Azure/LogicAppsUX/issues/5548)) ([8158517](https://github.com/Azure/LogicAppsUX/commit/8158517636c84cdb08c9ff59eecae170c07e7225))
+* **Designer:** Fixed token-picker fullscreen issue ([#5542](https://github.com/Azure/LogicAppsUX/issues/5542)) ([8b82dc1](https://github.com/Azure/LogicAppsUX/commit/8b82dc11b424733f24667116cef4c5b889cbc6d0))
+* **Designer:** Patch the gap in aliasing flag for dynamic outputs ([#5526](https://github.com/Azure/LogicAppsUX/issues/5526)) ([babe1ad](https://github.com/Azure/LogicAppsUX/commit/babe1adeeb141e0dcf880297185586fa5d76de53))
+* **designer:** Setting split on supported and calculations correctly for stateless workflow ([#5555](https://github.com/Azure/LogicAppsUX/issues/5555)) ([b6704d2](https://github.com/Azure/LogicAppsUX/commit/b6704d2e8fa8b4ae6a2e1fc50a6e9e6717103d4d))
+
 ## [4.76.0](https://github.com/Azure/LogicAppsUX/compare/v4.75.0...v4.76.0) (2024-08-28)
 
 
