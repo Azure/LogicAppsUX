@@ -1,5 +1,15 @@
-import type { TokenType } from '../../editor';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2 } from '../../';
+
+export const TokenType = {
+  FX: 'fx',
+  ITEM: 'item',
+  ITERATIONINDEX: 'iterationIndex',
+  OUTPUTS: 'outputs',
+  PARAMETER: 'parameter',
+  VARIABLE: 'variable',
+} as const;
+
+export type TokenType = (typeof TokenType)[keyof typeof TokenType];
 
 export interface Token {
   key: string;

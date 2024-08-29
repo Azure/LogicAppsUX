@@ -17,8 +17,7 @@ export type ScrollProps = {
 export type ScrollLocation = 'source' | 'target' | 'canvas';
 export interface DataMapperDesignerContext {
   readOnly?: boolean;
-  canvasBounds?: Bounds;
-  scroll: {
+  scroll?: {
     source?: ScrollProps;
     target?: ScrollProps;
     canvas?: ScrollProps;

@@ -92,6 +92,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               wordWrap="on"
               wrappingIndent="same"
               onContentChanged={onSampleDataChange}
+              scrollBeyondLastLine={true}
             />
           </AccordionPanel>
         </AccordionItem>
@@ -104,13 +105,20 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               language={
                 error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
               }
-              value={error ?? testMapOutput?.outputInstance?.$content ?? ''}
+              value={
+                error ??
+                testMapOutput?.outputInstance?.$content ??
+                (testMapOutput?.statusCode && testMapOutput?.statusText
+                  ? `${testMapOutput?.statusCode} - ${testMapOutput?.statusText}`
+                  : '')
+              }
               className={styles.editorStyle}
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
               height="200px"
               wordWrap="on"
               wrappingIndent="same"
+              scrollBeyondLastLine={true}
               readOnly
             />
           </AccordionPanel>

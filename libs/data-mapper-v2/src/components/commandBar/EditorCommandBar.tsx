@@ -2,16 +2,17 @@ import { WarningModalState, openDiscardWarningModal } from '../../core/state/Mod
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens } from '@fluentui/react-components';
 import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService, DataMapperWrappedContext, generateDataMapXslt } from '../../core';
+import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
+import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 
 export type EditorCommandBarProps = {};
 
@@ -27,6 +28,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
+  const canvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
 
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
@@ -60,19 +64,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     dispatch(toggleCodeView());
   }, [dispatch]);
 
-  const { canvasBounds } = useContext(DataMapperWrappedContext);
-
   const onSaveClick = useCallback(() => {
-    if (!canvasBounds || !canvasBounds.width || !canvasBounds.height) {
+    if (!canvasRect || !canvasRect.width || !canvasRect.height) {
       throw new Error('Canvas bounds are not defined, cannot save map metadata.');
     }
 
-    const mapMetadata = JSON.stringify(
-      generateMapMetadata(functions, currentConnections, {
-        width: canvasBounds.width,
-        height: canvasBounds.height,
-      })
-    );
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections, canvasRect));
 
     DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 
@@ -98,7 +95,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
         // show notification here
       });
-  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasBounds]);
+  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasRect]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());

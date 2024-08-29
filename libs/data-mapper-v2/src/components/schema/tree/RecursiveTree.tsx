@@ -45,10 +45,13 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       ]
   );
 
+  const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
+
   const {
     position: { x, y } = { x: undefined, y: undefined },
   } = useNodePosition({
     key: key,
+    nodeId,
     onScreen: onScreen,
     schemaMap: flattenedScehmaMap,
     isLeftDirection: isLeftDirection,
@@ -57,8 +60,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     treePositionX,
     treePositionY,
   });
-
-  const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
 
   const onClick = useCallback(() => {
     dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
@@ -166,22 +167,27 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   }, [nodes, isLeftDirection, x, y, root, nodeId, dispatch]);
 
   if (root.children.length === 0) {
-    let style = styles.leafNode;
-    style = mergeClasses(style, isLeftDirection ? '' : styles.rightTreeItemLayout);
-    style = mergeClasses(style, activeNode ? styles.nodeSelected : '');
-
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
-        <TreeItemLayout onClick={onClick} onMouseEnter={onMouseOver} onMouseLeave={onMouseLeave} className={style} aside={aside}>
-          {root.name}
+        <TreeItemLayout
+          data-selectableid={key}
+          onClick={onClick}
+          onMouseEnter={onMouseOver}
+          onMouseLeave={onMouseLeave}
+          className={mergeClasses(
+            styles.leafNode,
+            isLeftDirection ? '' : styles.rightTreeItemLayout,
+            activeNode ? styles.nodeSelected : ''
+          )}
+          aside={aside}
+        >
+          <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
+            {root.name}
+          </div>
         </TreeItemLayout>
       </TreeItem>
     );
   }
-
-  let style = styles.rootNode;
-  style = mergeClasses(style, isLeftDirection ? '' : styles.rightTreeItemLayout);
-  style = mergeClasses(style, activeNode ? styles.nodeSelected : '');
 
   return (
     <TreeItem
@@ -192,8 +198,17 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
       open={isLeftDirection ? sourceOpenKeys[key] : targetOpenKeys[key]}
       onOpenChange={onOpenChange}
     >
-      <TreeItemLayout onClick={onClick} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave} aside={aside} className={style}>
-        {root.name}
+      <TreeItemLayout
+        data-selectableid={key}
+        onClick={onClick}
+        onMouseEnter={onMouseOver}
+        onMouseLeave={onMouseLeave}
+        aside={aside}
+        className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout, activeNode ? styles.nodeSelected : '')}
+      >
+        <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
+          {root.name}
+        </div>
       </TreeItemLayout>
       <Tree aria-label="sub-tree">
         {root.children

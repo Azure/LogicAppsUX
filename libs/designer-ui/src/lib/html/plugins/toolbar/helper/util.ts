@@ -126,8 +126,8 @@ export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Ma
   // Comments at the start of a DOM are lost when parsing HTML strings, so we wrap the HTML string in a <div>.
   const wrappedHtmlEditorString = `<div>${htmlEditorString}</div>`;
 
-  const purifiedHtmlEditorString = DomPurify.sanitize(wrappedHtmlEditorString, { ADD_TAGS: ['#comment'] });
-  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(purifiedHtmlEditorString, nodeMap);
+  const purifiedHtmlEditorString = DomPurify.sanitize(encodeURIComponent(wrappedHtmlEditorString), { ADD_TAGS: ['#comment'] });
+  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(decodeURIComponent(purifiedHtmlEditorString), nodeMap);
 
   const tempElement = document.createElement('div', {});
   tempElement.innerHTML = encodedHtmlEditorString;

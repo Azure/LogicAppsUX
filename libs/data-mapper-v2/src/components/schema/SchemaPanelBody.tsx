@@ -6,7 +6,7 @@ import {
   type SchemaNodeExtended,
   type SchemaExtended,
 } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
@@ -16,6 +16,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
 import { toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
+import { Spinner } from '@fluentui/react-components';
 
 export interface SchemaPanelBodyProps {
   isLeftDirection: boolean;
@@ -37,6 +38,7 @@ export const SchemaPanelBody = ({
   setFileSelectorOptions,
   showScehmaSelection,
   flattenedSchemaMap,
+  errorMessage,
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
@@ -90,6 +92,13 @@ export const SchemaPanelBody = ({
     }),
     [intl]
   );
+
+  // Read current schema file options if method exists
+  useEffect(() => {
+    if (fileService && fileService.readCurrentSchemaOptions && availableSchemaList.length === 0) {
+      fileService.readCurrentSchemaOptions();
+    }
+  }, [fileService, availableSchemaList]);
 
   const onSelectExistingFile = useCallback(
     (item: IFileSysTreeItem) => {
@@ -159,6 +168,7 @@ export const SchemaPanelBody = ({
             onSelect: onSelectExistingFile,
             onOpenClose: onOpenClose,
           }}
+          errorMessage={errorMessage}
           cancel={
             schema && flattenedSchemaMap
               ? {
@@ -172,6 +182,8 @@ export const SchemaPanelBody = ({
         <div className={styles.treeWrapper}>
           <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
         </div>
+      ) : (!schema || !flattenedSchemaMap) && !errorMessage && selectedSchemaFile ? (
+        <Spinner size={'small'} />
       ) : null}
     </div>
   );
