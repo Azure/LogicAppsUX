@@ -8,17 +8,18 @@ import type { Connector } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface OperationGroupDetailsPageProps {
-  connector: Connector;
+  connector?: Connector;
   operationActionsData: OperationActionData[];
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
+  isLoadingConnector: boolean;
   displayRuntimeInfo: boolean;
 }
 
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
-  const { connector, operationActionsData, onOperationClick, isLoading, displayRuntimeInfo } = props;
-  const { id, properties } = connector;
-  const { displayName, description, iconUri, externalDocs, generalInformation } = properties;
+  const { connector, operationActionsData, onOperationClick, isLoading, displayRuntimeInfo, isLoadingConnector } = props;
+  const { id = '', properties } = connector ?? {};
+  const { displayName = '', description, iconUri = '', externalDocs, generalInformation } = properties ?? {};
 
   const intl = useIntl();
 
@@ -37,30 +38,36 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
     description: 'Loading text for spinner',
   });
 
+  const loadingSpinner = (
+    <div style={{ margin: '16px 0' }}>
+      <Spinner size="tiny" label={loadingText} aria-live="assertive" />
+    </div>
+  );
+
   return (
     <div className="msla-op-group-detail-page">
-      <OperationGroupHeader
-        id={id}
-        title={displayName}
-        description={description ?? generalInformation?.description}
-        iconUrl={iconUri}
-        docsUrl={externalDocs?.url}
-      />
+      {isLoadingConnector ? null : (
+        <OperationGroupHeader
+          id={id}
+          title={displayName}
+          description={description ?? generalInformation?.description}
+          iconUrl={iconUri}
+          docsUrl={externalDocs?.url}
+        />
+      )}
       {isHybrid ? <HybridNotice /> : null}
       <ul className="msla-op-group-item-container" aria-description={`Operation list for ${displayName} Connector`}>
         {!isLoading && operationActionsData.length === 0 ? (
           <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>
         ) : null}
-        {operationActionsData?.map((op) => (
-          <li key={op.id}>
-            <OperationSearchCard operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
-          </li>
-        ))}
-        {isLoading ? (
-          <div style={{ margin: '16px 0' }}>
-            <Spinner size="tiny" label={loadingText} aria-live="assertive" />
-          </div>
-        ) : null}
+        {isLoadingConnector
+          ? null
+          : operationActionsData?.map((op) => (
+              <li key={op.id}>
+                <OperationSearchCard operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
+              </li>
+            ))}
+        {isLoading ? loadingSpinner : null}
       </ul>
     </div>
   );

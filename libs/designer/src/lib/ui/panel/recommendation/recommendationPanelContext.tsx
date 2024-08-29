@@ -91,7 +91,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   );
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
-  const { data: allConnectors } = useAllConnectors();
+  const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
   // hide actions type filter if we don't have any operations for the browse view
@@ -226,13 +226,14 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
-          [SELECTION_STATES.DETAILS]: selectedConnector ? (
+          [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
             <OperationGroupDetailView
               connector={selectedConnector}
               groupOperations={allOperationsForGroup}
               filters={filters}
               onOperationClick={onOperationClick}
               isLoading={isLoadingOperations || isLoadingOperationGroup}
+              isLoadingConnector={isLoadingConnectors}
               displayRuntimeInfo={displayRuntimeInfo}
               ignoreActionsFilter={hideActionTypeFilter}
             />

@@ -4,17 +4,19 @@ import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 type OperationGroupDetailViewProps = {
-  connector: Connector;
+  connector?: Connector;
   groupOperations: DiscoveryOpArray;
   filters: Record<string, string>;
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
+  isLoadingConnector: boolean;
   displayRuntimeInfo: boolean;
   ignoreActionsFilter: boolean;
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
-  const { connector, groupOperations, filters, onOperationClick, isLoading, displayRuntimeInfo, ignoreActionsFilter } = props;
+  const { connector, groupOperations, filters, onOperationClick, isLoading, isLoadingConnector, displayRuntimeInfo, ignoreActionsFilter } =
+    props;
 
   const filterItems = useCallback(
     (data: OperationActionData): boolean =>
@@ -35,6 +37,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       operationActionsData={operationGroupActions}
       onOperationClick={onOperationClick}
       isLoading={isLoading}
+      isLoadingConnector={isLoadingConnector}
       displayRuntimeInfo={displayRuntimeInfo}
     />
   );
