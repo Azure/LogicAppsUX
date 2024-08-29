@@ -5,8 +5,22 @@ import { ImpersonationSource } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import type {
+  DependencyInfo,
+  ErrorInfo,
+  NodeInputs,
+  NodeOperation,
+  NodeOutputs,
+  OutputInfo,
+} from '../../state/operation/operationMetadataSlice';
+import {
+  updateNodeSettings,
+  updateNodeParameters,
+  DynamicLoadStatus,
+  updateOutputs,
+  updateErrorDetails,
+  ErrorLevel,
+} from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
@@ -83,6 +97,9 @@ import {
   generateDefaultCustomCodeValue,
   getFileExtensionName,
   replaceWhiteSpaceWithUnderscore,
+  AssertionException,
+  AssertionErrorCode,
+  getIntl,
 } from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -194,12 +211,13 @@ export const getInputParametersFromManifest = (
 };
 
 export const getOutputParametersFromManifest = (
+  nodeId: string,
   manifest: OperationManifest,
   isTrigger: boolean,
   inputs: NodeInputs,
   operationInfo: NodeOperation,
-  splitOnValue?: string,
-  nodeId?: string
+  dispatch: Dispatch,
+  splitOnValue?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
   let originalOutputs: Record<string, OutputInfo> | undefined;
@@ -223,7 +241,24 @@ export const getOutputParametersFromManifest = (
       originalOutputs[output.key] = toOutputInfo(output);
     }
 
-    manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
+    try {
+      manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
+    } catch (error: any) {
+      const errorInfo: ErrorInfo = { level: ErrorLevel.Default, error, message: error.message };
+      if (error instanceof AssertionException && error.code === AssertionErrorCode.INVALID_SPLITON) {
+        errorInfo.level = ErrorLevel.DynamicOutputs;
+        errorInfo.message = getIntl().formatMessage(
+          {
+            defaultMessage: `Failed to evaluate outputs because splitOn {splitOn} cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions`,
+            id: 'haeWoU',
+            description: 'Error message when splitOn cannot be evaluated',
+          },
+          { splitOn: splitOnValue }
+        );
+      }
+
+      dispatch(updateErrorDetails({ id: nodeId, errorInfo }));
+    }
   }
 
   let operationOutputs: Record<string, OutputParameter>;
@@ -312,7 +347,7 @@ export const updateOutputsAndTokens = async (
   let tokens: OutputToken[];
   if (supportsManifest) {
     const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, operationInfo, splitOnValue, nodeId).outputs;
+    nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
     tokens = [
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(

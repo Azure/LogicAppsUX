@@ -141,12 +141,13 @@ export const initializeOperationDetails = async (
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
       manifest,
       isTrigger,
       nodeInputs,
       operationInfo,
-      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
-      nodeId
+      dispatch,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined
     );
     parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
 
@@ -165,12 +166,13 @@ export const initializeOperationDetails = async (
     let updatedOutputs = nodeOutputs;
     if (isTrigger && settings.splitOn?.value?.value) {
       updatedOutputs = getOutputParametersFromManifest(
+        nodeId,
         manifest,
         isTrigger,
         nodeInputs,
         operationInfo,
-        settings.splitOn?.value?.value,
-        nodeId
+        dispatch,
+        settings.splitOn?.value?.value
       ).outputs;
     }
 
@@ -283,12 +285,13 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest
   );
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+    id,
     manifest,
     false,
     nodeInputs,
     { type: '', kind: '', connectorId: '', operationId: '' },
-    /* splitOnValue */ undefined,
-    id
+    dispatch,
+    /* splitOnValue */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {

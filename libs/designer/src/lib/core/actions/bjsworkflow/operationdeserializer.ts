@@ -260,12 +260,13 @@ export const initializeOperationDetailsForManifest = async (
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
       manifest,
       isTrigger,
       nodeInputs,
       nodeOperationInfo,
-      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined,
-      nodeId
+      dispatch,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
