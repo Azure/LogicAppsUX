@@ -6,7 +6,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
-const initialState: PanelState = {
+export const initialState: PanelState = {
   collapsed: true,
   selectedNodes: [],
   relationshipIds: {

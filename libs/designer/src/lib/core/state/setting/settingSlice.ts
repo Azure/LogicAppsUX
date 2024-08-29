@@ -5,7 +5,7 @@ import { SettingSectionName, type SettingsState } from './settingInterface';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-const initialState: SettingsState = {
+export const initialState: SettingsState = {
   validationErrors: {},
   expandedSections: [
     SettingSectionName.DATAHANDLING,

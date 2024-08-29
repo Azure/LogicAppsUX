@@ -55,7 +55,7 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
   dispatch(updateStateHistoryOnRedoClick(compressedRootState));
 });
 
-const getCompressedStateFromRootState = (rootState: RootState) => {
+export const getCompressedStateFromRootState = (rootState: RootState) => {
   const partialRootState: UndoRedoPartialRootState = {
     connections: rootState.connections,
     customCode: rootState.customCode,
@@ -71,5 +71,5 @@ const getCompressedStateFromRootState = (rootState: RootState) => {
   return deflateSync(JSON.stringify(partialRootState)).toString('base64');
 };
 
-const getRootStateFromCompressedState = (compressedState: string) =>
+export const getRootStateFromCompressedState = (compressedState: string) =>
   JSON.parse(inflateSync(Buffer.from(compressedState, 'base64')).toString()) as UndoRedoPartialRootState;

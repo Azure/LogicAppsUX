@@ -3,7 +3,7 @@ import type { DesignerViewState } from './designerViewInterfaces';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState: DesignerViewState = {
+export const initialState: DesignerViewState = {
   showMinimap: false,
   clampPan: true,
   showDeleteModalNodeId: undefined,

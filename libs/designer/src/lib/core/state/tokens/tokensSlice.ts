@@ -23,7 +23,7 @@ export interface TokensState {
   variables: Record<string, VariableDeclaration[]>;
 }
 
-const initialState: TokensState = {
+export const initialState: TokensState = {
   outputTokens: {},
   variables: {},
 };

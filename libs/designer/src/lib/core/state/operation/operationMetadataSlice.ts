@@ -119,7 +119,7 @@ interface OperationMetadataLoadStatus {
   nodesAndDynamicDataInitialized: boolean;
 }
 
-const initialState: OperationMetadataState = {
+export const initialState: OperationMetadataState = {
   operationInfo: {},
   inputParameters: {},
   outputParameters: {},

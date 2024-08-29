@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { resetWorkflowState } from '../global';
 import type { StateHistory } from './undoRedoTypes';
 
-const initialState: StateHistory = {
+export const initialState: StateHistory = {
   past: [],
   future: [],
 };

@@ -71,7 +71,7 @@ const getInitialWorkflowParametersContentState = (): WorkflowParametersPanelCont
   panelMode: 'WorkflowParameters',
 });
 
-const initialState: PanelState = {
+export const initialState: PanelState = {
   connectionContent: getInitialConnectionContentState(),
   currentPanelMode: 'Operation',
   discoveryContent: getInitialDiscoveryContentState(),
