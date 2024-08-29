@@ -226,7 +226,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
-          [SELECTION_STATES.DETAILS]: selectedConnector ? (
+          [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
             <OperationGroupDetailView
               connector={selectedConnector}
               groupOperations={allOperationsForGroup}
