@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.78.0](https://github.com/Azure/LogicAppsUX/compare/v4.77.0...v4.78.0) (2024-08-29)
+
+
+### Features
+
+* **Data Mapper:** Add placeholders for Monaco editor ([#5558](https://github.com/Azure/LogicAppsUX/issues/5558)) ([3a1fba9](https://github.com/Azure/LogicAppsUX/commit/3a1fba947c97ccbfc2da61042afc7382f4ce9a04))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Set canvas boundary and update string ([#5559](https://github.com/Azure/LogicAppsUX/issues/5559)) ([e9314d4](https://github.com/Azure/LogicAppsUX/commit/e9314d46d98b05124de65c79f1d9bc0829fb73b0))
+* **vscode:** Use resolveConnectionsReferences for connections resolution ([#5546](https://github.com/Azure/LogicAppsUX/issues/5546)) ([15b8e4c](https://github.com/Azure/LogicAppsUX/commit/15b8e4c4209f6fd80528c30014d3526d71c8a3cd))
+
 ## [4.77.0](https://github.com/Azure/LogicAppsUX/compare/v4.76.0...v4.77.0) (2024-08-29)
 
 
