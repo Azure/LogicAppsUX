@@ -361,9 +361,7 @@ export async function getFolderItems(
     }
 
     const parameters = { ...definition.extension.parameters, ...pickerParameters };
-    console.log('1', parameters);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    console.log('2', connector, parsedSwagger);
     const inputs = getParameterValuesForLegacyDynamicOperation(
       parsedSwagger,
       operationId,
@@ -372,13 +370,11 @@ export async function getFolderItems(
       idReplacements,
       workflowParameters
     );
-    console.log('3', inputs);
     const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
       connector,
       connectionId,
       connectionReference as ConnectionReference
     );
-    console.log('4', managedIdentityRequestProperties);
 
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }

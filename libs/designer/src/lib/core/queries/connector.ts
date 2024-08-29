@@ -159,6 +159,8 @@ export const getLegacyDynamicTreeItems = async (
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
 
+  console.log('goes here');
+
   const response = await queryClient.fetchQuery(
     [
       'legacydynamictreeitems',
@@ -169,6 +171,8 @@ export const getLegacyDynamicTreeItems = async (
     ],
     () => service.getLegacyDynamicContent(connectionId, connectorId, parameters, managedIdentityProperties)
   );
+
+  console.log('response', response);
 
   const { collectionPath, titlePath, folderPropertyPath, mediaPropertyPath } = pickerInfo;
   const values = collectionPath ? getPropertyValue(response, collectionPath) : response;
