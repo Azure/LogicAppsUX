@@ -13,7 +13,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const divRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
   const { data, id } = props;
-  const { isLeftDirection } = data;
+  const { isLeftDirection: isSourceNode } = data;
   const updateNodeInternals = useUpdateNodeInternals();
   const edges = useEdges();
   const styles = useStyles();
@@ -22,41 +22,6 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const isLoop = useMemo(() => edges.some((edge) => (edge.source === id || edge.target === id) && edge.data?.isRepeating), [edges, id]);
   const isSelected = useSelectedNode(id);
   const isHover = useHoverNode(id);
-
-  const styleForState = useMemo(() => {
-    let updatedStyle = mergeClasses(
-      styles.handleWrapper,
-      isLeftDirection ? styles.sourceSchemaHandleWrapper : styles.targetSchemaHandleWrapper,
-      isConnected ? styles.connectedHandle : ''
-    );
-
-    // Update styling for loop
-    if (isLoop && isLeftDirection) {
-      updatedStyle = mergeClasses(updatedStyle, styles.loopSourceHandle);
-    }
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-      if (isConnected) {
-        updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
-      }
-    }
-
-    return updatedStyle;
-  }, [
-    styles.handleWrapper,
-    styles.sourceSchemaHandleWrapper,
-    styles.targetSchemaHandleWrapper,
-    styles.connectedHandle,
-    styles.loopSourceHandle,
-    styles.selectedHoverHandle,
-    styles.connectedSelectedHoverHandle,
-    isLeftDirection,
-    isConnected,
-    isLoop,
-    isSelected,
-    isHover,
-  ]);
 
   const setActiveNode = () => {
     dispatch(setSelectedItem(id));
@@ -68,12 +33,22 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
-        type={isLeftDirection ? 'source' : 'target'}
-        position={isLeftDirection ? Position.Left : Position.Right}
-        className={styleForState}
+        key={`${id}-handle`}
+        id={`${id}-handle`}
+        type={isSourceNode ? 'source' : 'target'}
+        position={isSourceNode ? Position.Left : Position.Right}
+        className={mergeClasses(
+          styles.handleWrapper,
+          isSourceNode ? '' : styles.rightHandle,
+          isConnected ? styles.connectedHandle : '',
+          isLoop && isSourceNode ? styles.loopSourceHandle : '',
+          isSelected || isHover ? styles.selectedHoverHandle : '',
+          (isSelected || isHover) && isConnected ? styles.connectedSelectedHoverHandle : ''
+        )}
         onMouseDown={setActiveNode}
+        isConnectableEnd={!isConnected}
       >
-        {isLoop && isLeftDirection && <ArrowClockwiseFilled className={styles.loopIcon} />}
+        {isLoop && isSourceNode && <ArrowClockwiseFilled className={styles.loopIcon} />}
       </Handle>
     </div>
   );

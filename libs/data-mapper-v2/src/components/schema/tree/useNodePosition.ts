@@ -1,10 +1,13 @@
-import { useState, useLayoutEffect, useContext } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import type { XYPosition } from '@xyflow/react';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { DataMapperWrappedContext } from '../../../core';
+import { emptyCanvasRect, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { updateTemporaryNodeDirection } from '../../../core/state/DataMapSlice';
 
 type NodePositionProps = {
   key: string;
+  nodeId: string;
   schemaMap: Record<string, SchemaNodeExtended>;
   isLeftDirection: boolean;
   nodePositionX?: number;
@@ -15,25 +18,24 @@ type NodePositionProps = {
 };
 
 const useNodePosition = (props: NodePositionProps) => {
-  const { schemaMap, key, isLeftDirection, onScreen, treePositionY, nodePositionY } = props;
+  const { schemaMap, key, isLeftDirection, onScreen, treePositionY, nodePositionY, nodeId } = props;
   const [position, setPosition] = useState<XYPosition>();
+  const dispatch = useDispatch<AppDispatch>();
+  const currentCanvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
 
-  const {
-    canvasBounds: { y: canvasY, width: canvasWidth } = {
-      y: undefined,
-      width: undefined,
-    },
-  } = useContext(DataMapperWrappedContext);
+  const { y: canvasY, width: canvasWidth, height: canvasHeight } = currentCanvasRect;
 
   useLayoutEffect(() => {
-    // if(isLeftDirection) {
-    //   console.log('Key: ', key, ' ;treeY: ', treePositionY, ' ;nodeY: ', nodePositionY, ' ;canvasY: ', canvasY, ' ;canvas: ', canvasWidth, ' ;Visible: ', onScreen, '; Map: ', schemaMap[key]);
-    // }
-    // Don't look for the node position if tree, node or canvas isn't on the screen yet
     if (
       treePositionY === undefined ||
       nodePositionY === undefined ||
       canvasY === undefined ||
+      canvasY === -1 ||
+      canvasWidth === 0 ||
+      canvasHeight === 0 ||
+      canvasHeight === undefined ||
       canvasWidth === undefined ||
       onScreen === undefined
     ) {
@@ -53,10 +55,29 @@ const useNodePosition = (props: NodePositionProps) => {
 
     if (x !== undefined && y !== undefined) {
       setPosition({ x, y });
+      dispatch(
+        updateTemporaryNodeDirection({
+          id: nodeId,
+          direction: nodePositionY < treePositionY ? 'top' : nodePositionY > canvasHeight ? 'bottom' : undefined,
+        })
+      );
     } else {
       setPosition(undefined);
     }
-  }, [onScreen, schemaMap, setPosition, canvasY, canvasWidth, nodePositionY, isLeftDirection, key, treePositionY]);
+  }, [
+    onScreen,
+    schemaMap,
+    setPosition,
+    canvasY,
+    canvasWidth,
+    canvasHeight,
+    nodePositionY,
+    isLeftDirection,
+    key,
+    treePositionY,
+    nodeId,
+    dispatch,
+  ]);
 
   return { position };
 };

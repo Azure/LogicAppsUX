@@ -5,9 +5,10 @@ export const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
     height: '100vh',
+    width: '100vw',
     minHeight: 'calc(100vh - 50px)',
     maxHeight: 'calc(100vh - 40px)',
-    ...shorthands.overflow('scroll'),
+    ...shorthands.overflow('hidden'),
     ...shorthands.flex(1, 1, '1px'),
   },
   dataMapperFunctionPanel: {
@@ -62,7 +63,7 @@ export const useStaticStyles = makeStaticStyles({
     strokeLinejoin: 'round',
     fillOpacity: '0',
   },
-  '.react-flow__nodes': {
+  '.react-flow__node': {
     zIndex: '200 !important',
   },
 });

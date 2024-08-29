@@ -486,7 +486,9 @@ export const loadDynamicOutputsInNode = async (
             /* idReplacements */ undefined,
             workflowParameters
           );
-          let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
+          let schemaOutputs = outputSchema
+            ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter, operationInfo)
+            : {};
 
           if (settings.splitOn?.value?.enabled) {
             schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);

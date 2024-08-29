@@ -39,9 +39,12 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
-  const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
+  const funcitonHasInputs = useMemo(() => functionData?.maxNumberOfInputs !== 0, [functionData?.maxNumberOfInputs]);
 
-  const functionInputsFull = !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs);
+  const functionInputsFull = useMemo(
+    () => !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs),
+    [functionData?.maxNumberOfInputs, functionWithConnections]
+  );
 
   const isLeftConnected =
     functionWithConnections?.inputs[0] &&
@@ -49,38 +52,37 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
     functionWithConnections?.inputs[0][0] !== undefined;
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
-  const leftHandleStyle = useMemo(() => {
-    let updatedStyle = styles.handleWrapper;
-    if (isLeftConnected) {
-      updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
-    }
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-      if (isLeftConnected) {
-        updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
+  const getHandleStyle = useCallback(
+    (isInput: boolean, isConnected: boolean) => {
+      let updatedStyle = styles.handleWrapper;
+      if (isConnected) {
+        updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
       }
-    }
 
-    if (functionInputsFull && isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.fullNode);
-    }
+      if (isSelected || isHover) {
+        updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
+        if (isConnected) {
+          updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
+        }
+      }
 
-    return updatedStyle;
-  }, [isHover, isSelected, styles, isLeftConnected, functionInputsFull]);
+      if (isInput && isHover && functionInputsFull) {
+        updatedStyle = mergeClasses(updatedStyle, styles.fullNode);
+      }
 
-  const rightHandleStyle = useMemo(() => {
-    let updatedStyle = styles.handleWrapper;
-
-    if (isSelected || isHover) {
-      updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
-    }
-    if (isRightConnected) {
-      updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
-    }
-
-    return updatedStyle;
-  }, [styles.handleWrapper, styles.selectedHoverHandle, styles.connectedHandle, isSelected, isHover, isRightConnected]);
+      return updatedStyle;
+    },
+    [
+      isHover,
+      isSelected,
+      styles.connectedHandle,
+      styles.connectedSelectedHoverHandle,
+      styles.fullNode,
+      styles.handleWrapper,
+      styles.selectedHoverHandle,
+      functionInputsFull,
+    ]
+  );
 
   const onMouseEnter = useCallback(() => {
     dispatch(
@@ -115,7 +117,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
           isConnectable={!functionInputsFull}
           onConnect={setActiveNode}
           position={Position.Left}
-          className={leftHandleStyle}
+          className={getHandleStyle(true, isLeftConnected)}
           style={{ left: '-7px' }}
         />
       )}
@@ -123,16 +125,19 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         <PopoverTrigger>
           <Button
             onClick={() => onClick()}
+            data-selectableid={`source-${id}`}
             disabled={!!disabled}
             className={mergeClasses(styles.functionButton, isSelected || isHover ? styles.selectedHoverFunctionButton : '')}
           >
             <div
+              data-selectableid={`source-${id}`}
               className={styles.iconContainer}
               style={{
                 backgroundColor: customTokens[fnBranding.colorTokenName],
               }}
             >
               <FunctionIcon
+                data-selectableid={`source-${id}`}
                 iconSize={11}
                 functionKey={functionData.key}
                 functionName={functionData.functionName}
@@ -140,14 +145,14 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
                 color={tokens.colorNeutralForegroundInverted}
               />
             </div>
-            <Caption1 className={styles.functionName} truncate block>
+            <Caption1 data-selectableid={`source-${id}`} className={styles.functionName} truncate block>
               {functionData.displayName}
             </Caption1>
           </Button>
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
-      <Handle type={'source'} position={Position.Right} className={rightHandleStyle} />
+      <Handle type={'source'} position={Position.Right} className={getHandleStyle(false, isRightConnected)} isConnectable={true} />
     </div>
   );
 };

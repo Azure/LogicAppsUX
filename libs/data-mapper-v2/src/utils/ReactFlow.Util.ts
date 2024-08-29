@@ -1,4 +1,4 @@
-import { guid, SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import { guid, type SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData, FunctionDictionary } from 'models';
 import type { ConnectionDictionary } from '../models/Connection';
@@ -8,10 +8,12 @@ import { isFunctionData } from './Function.Utils';
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
-export const isSourceNode = (key: string) => key.startsWith(SchemaType.Source);
-export const isTargetNode = (key: string) => key.startsWith(SchemaType.Target);
+export const isSourceNode = (key: string) => key.startsWith(sourcePrefix);
+export const isTargetNode = (key: string) => key.startsWith(targetPrefix);
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
 export const isFunctionNode = (key: string): boolean => !isSourceNode(key) && !isTargetNode(key);
+export const getTreeNodeId = (key: string) =>
+  isSourceNode(key) ? key.substring(sourcePrefix.length) : isTargetNode(key) ? key.substring(targetPrefix.length) : key;
 
 const rootLayoutNodeId = 'root';
 export const LayoutContainer = {
