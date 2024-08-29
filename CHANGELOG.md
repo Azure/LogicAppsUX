@@ -1,4 +1,14 @@
 # Logic Apps Designer
+### [4.71.3](https://github.com/Azure/LogicAppsUX/compare/v4.71.2...v4.71.3) (2024-08-29)
+
+
+### Bug Fixes
+
+* **designer:** Custom connector connections are not loading in designer ([#5548](https://github.com/Azure/LogicAppsUX/issues/5548)) ([#5551](https://github.com/Azure/LogicAppsUX/issues/5551)) ([ac39553](https://github.com/Azure/LogicAppsUX/commit/ac395531909efda4be5b18576ed433fbcbc312a6))
+* **Designer:** Fixed token-picker fullscreen issue ([#5543](https://github.com/Azure/LogicAppsUX/issues/5543)) ([02360b2](https://github.com/Azure/LogicAppsUX/commit/02360b276462bbdff9bbc9e9dbb542e47dd61112)), closes [#5542](https://github.com/Azure/LogicAppsUX/issues/5542)
+* **designer:** Handle operation loading gracefully when splitOn expressions cannot be evaluated ([#5562](https://github.com/Azure/LogicAppsUX/issues/5562)) ([#5563](https://github.com/Azure/LogicAppsUX/issues/5563)) ([a4c8abb](https://github.com/Azure/LogicAppsUX/commit/a4c8abbbb8ff4115bff7c977926d7dccf63b1863))
+* **designer:** Setting split on supported and calculations correctly … ([#5560](https://github.com/Azure/LogicAppsUX/issues/5560)) ([1377343](https://github.com/Azure/LogicAppsUX/commit/1377343a430827fbe7ccdc82e4265190df607dc0)), closes [#5555](https://github.com/Azure/LogicAppsUX/issues/5555)
+
 ### [4.71.2](https://github.com/Azure/LogicAppsUX/compare/v4.71.1...v4.71.2) (2024-08-27)
 
 
