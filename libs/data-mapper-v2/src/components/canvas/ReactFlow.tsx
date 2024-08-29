@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect, type MouseEvent } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState, type MouseEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type {
   Connection,
@@ -181,7 +181,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   useAutoLayout();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const functionNodesForDragDrop = Object.entries(functionNodes).map(([key, functionData]) =>
       getFunctionNode(functionData, key, functionData.position)
     );
@@ -222,7 +222,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     }
   }, [functionNodes, newWidth, currentWidth, newHeight, currentHeight, currentX, currentY, dispatch, ref]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
     const allTemporaryConnections = {
       ...temporaryEdgesMapForCollapsedNodes,
