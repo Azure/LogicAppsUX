@@ -9,12 +9,17 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
-import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
+import {
+  getSplitOnOptions,
+  getUpdatedManifestForSchemaDependency,
+  getUpdatedManifestForSplitOn,
+  operationSupportsSplitOn,
+  toOutputInfo,
+} from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -298,9 +303,7 @@ export const updateOutputsAndTokens = async (
   isTrigger: boolean,
   inputs: NodeInputs,
   settings: Settings,
-  shouldProcessSettings = false,
-  workflowKind?: WorkflowKind,
-  forceEnableSplitOn?: boolean
+  shouldProcessSettings = false
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -336,10 +339,10 @@ export const updateOutputsAndTokens = async (
   dispatch(updateTokens({ id: nodeId, tokens }));
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
-  if (shouldProcessSettings && isTrigger && (workflowKind !== WorkflowKind.STATELESS || forceEnableSplitOn)) {
-    const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
-    if (settings.splitOn?.isSupported !== isSplitOnSupported) {
-      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
+  if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
+    const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
+    if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
+      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } } }));
     }
   }
 };

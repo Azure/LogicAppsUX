@@ -48,6 +48,7 @@ export const textFieldStyles: Partial<ITextFieldStyles> = {
 };
 
 interface StaticResultPropertyProps {
+  title: string;
   isRoot?: boolean;
   required?: boolean;
   schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject;
@@ -71,6 +72,7 @@ function WrappedStaticResultProperty({
   required = false,
   schema,
   properties,
+  title,
   updateParentProperties,
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
@@ -175,7 +177,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? title, required, isRoot)}
             value={inputValue}
             placeholder={textFieldPlaceHolder}
             onChange={(_e, newVal) => {
@@ -193,7 +195,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? title, required, isRoot)}
             value={inputValue}
             placeholder={integerTextFieldPlaceHolder}
             onChange={validateInteger}
@@ -206,15 +208,15 @@ function WrappedStaticResultProperty({
         if (schema.items) {
           return (
             <>
-              <Label text={schema.title ?? ''} isRequiredField={required} />
-              <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
+              <Label text={schema.title ?? title} isRequiredField={required} />
+              <PropertyEditor title={schema.title} schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
         }
         if (schema.additionalProperties) {
           return (
             <>
-              <Label text={schema.title ?? ''} isRequiredField={required} />
+              <Label text={schema.title ?? title} isRequiredField={required} />
               <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
@@ -223,7 +225,7 @@ function WrappedStaticResultProperty({
           <div className="msla-static-result-property-inner">
             <StaticResult
               propertiesSchema={schema.properties}
-              title={schema?.title ?? ''}
+              title={schema?.title ?? title}
               required={schema.required}
               propertyValues={currProperties}
               setPropertyValues={setCurrProperties}
@@ -236,7 +238,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? title, required, isRoot)}
             value={inputValue}
             placeholder={textFieldPlaceHolder}
             onChange={(_e, newVal) => {

@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { useEffect, useMemo, useRef, useCallback, useState, useLayoutEffect, type MouseEvent } from 'react';
+import { useEffect, useMemo, useRef, useCallback, useState, type MouseEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type {
   Connection,
@@ -32,7 +32,7 @@ import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
 import type { Bounds } from '../../core';
 import { convertWholeDataMapToLayoutTree, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
-import { createEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
+import { createEdgeId, createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import cloneDeep from 'lodash/cloneDeep';
 import EdgePopOver from './EdgePopOver';
@@ -84,6 +84,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           target: edge.targetId,
           type: edge.isRepeating ? 'loopEdge' : 'connectedEdge',
           reconnectable: 'target',
+          zIndex: 150,
+          interactionWidth: 10,
           data: { isRepeating: edge.isRepeating },
           focusable: true,
           deletable: true,
@@ -107,7 +109,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         const targetIds = Object.keys(entry[1]);
         for (const targetId of targetIds) {
           const targetNodeId = getReactFlowNodeId(targetId, false);
-          const id = createEdgeId(sourceNodeId, targetNodeId);
+          const id = createTemporaryEdgeId(sourceNodeId, targetNodeId);
           const edge: Edge = {
             id: id,
             source: sourceNodeId,
@@ -115,10 +117,12 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             type: 'connectedEdge',
             reconnectable: 'target',
             focusable: true,
+            interactionWidth: 10,
             deletable: true,
             selectable: true,
+            zIndex: 150,
             data: {
-              isTemporary: true,
+              isIntermediate: true,
             },
           };
           newEdgesMap[id] = edge;
@@ -157,9 +161,11 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             source: source,
             target: target,
             focusable: true,
-            selectable: true,
             deletable: true,
+            selectable: true,
             type: 'intermediateConnectedEdge',
+            zIndex: 150,
+            interactionWidth: 10,
             data: {
               isIntermediate: true,
               componentId: id,
@@ -175,7 +181,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   useAutoLayout();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const functionNodesForDragDrop = Object.entries(functionNodes).map(([key, functionData]) =>
       getFunctionNode(functionData, key, functionData.position)
     );
@@ -216,7 +222,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     }
   }, [functionNodes, newWidth, currentWidth, newHeight, currentHeight, currentX, currentY, dispatch, ref]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
     const allTemporaryConnections = {
       ...temporaryEdgesMapForCollapsedNodes,
@@ -280,6 +286,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           focusable: true,
           deletable: true,
           selectable: true,
+          zIndex: 150,
+          interactionWidth: 10,
         },
         edges
       );
@@ -359,9 +367,10 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       let id = '';
 
       // Delete clicked on temporary edge
-      if (edge.data?.isIntermediate && edge.data?.componentId) {
+      if (edge.data?.isIntermediate) {
+        // When componentId is not set, it means the edge is a collapsed version
         const splitIds = splitEdgeId(edge.id);
-        if (splitIds.length >= 2) {
+        if (edge.data?.componentId && splitIds.length >= 2) {
           const directionId1 = edge.data?.componentId as string;
           const directionId2 = splitIds[0];
           const directEdge = edges.find(
@@ -371,9 +380,9 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           );
           id = directEdge?.id ?? '';
         }
-      } else {
-        id = edge.id;
+        return;
       }
+      id = edge.id;
 
       if (id) {
         dispatch(updateEdgePopOverId(id));
@@ -400,57 +409,52 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   return (
     <div ref={ref} id="editorView" className={styles.wrapper}>
-      <ReactFlow
-        id="dm-react-flow"
-        ref={drop}
-        className="nopan nodrag"
-        nodes={cloneDeep(nodes)}
-        edges={[...realEdges, ...Object.values(temporaryEdgesMapForCollapsedNodes), ...Object.values(temporaryEdgesMapForScrolledNodes)]}
-        nodeDragThreshold={1}
-        onlyRenderVisibleElements={false}
-        zoomOnScroll={false}
-        zoomOnPinch={false}
-        zoomOnDoubleClick={false}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        preventScrolling={false}
-        minZoom={1}
-        elementsSelectable={true}
-        maxZoom={1}
-        autoPanOnConnect={false}
-        snapToGrid={true}
-        panOnScroll={false}
-        panOnDrag={false}
-        style={reactFlowStyle}
-        proOptions={{
-          account: 'paid-sponsor',
-          hideAttribution: true,
-        }}
-        panOnScrollMode={PanOnScrollMode.Vertical}
-        onNodeDrag={onFunctionNodeDrag}
-        onNodeDragStop={onFunctionNodeDragStop}
-        isValidConnection={isValidConnection}
-        onEdgeContextMenu={onEdgeContextMenu}
-        onConnect={onEdgeConnect}
-        connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
-        elevateEdgesOnSelect={true}
-        nodeExtent={
-          ref?.current?.getBoundingClientRect()
-            ? [
-                [0, 0],
-                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
-              ]
-            : undefined
-        }
-        translateExtent={
-          ref?.current?.getBoundingClientRect()
-            ? [
-                [0, 0],
-                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
-              ]
-            : undefined
-        }
-      />
+      {ref?.current?.getBoundingClientRect() ? (
+        <ReactFlow
+          id="dm-react-flow"
+          ref={drop}
+          className="nopan nodrag"
+          nodes={cloneDeep(nodes)}
+          edges={[...realEdges, ...Object.values(temporaryEdgesMapForCollapsedNodes), ...Object.values(temporaryEdgesMapForScrolledNodes)]}
+          nodeDragThreshold={0}
+          onlyRenderVisibleElements={false}
+          zoomOnScroll={false}
+          zoomOnPinch={false}
+          zoomOnDoubleClick={false}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          preventScrolling={false}
+          edgesFocusable={true}
+          minZoom={1}
+          elementsSelectable={true}
+          maxZoom={1}
+          autoPanOnConnect={false}
+          snapToGrid={true}
+          panOnScroll={false}
+          panOnDrag={false}
+          style={reactFlowStyle}
+          proOptions={{
+            account: 'paid-sponsor',
+            hideAttribution: true,
+          }}
+          panOnScrollMode={PanOnScrollMode.Vertical}
+          onNodeDrag={onFunctionNodeDrag}
+          onNodeDragStop={onFunctionNodeDragStop}
+          isValidConnection={isValidConnection}
+          onEdgeContextMenu={onEdgeContextMenu}
+          onConnect={onEdgeConnect}
+          connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
+          elevateEdgesOnSelect={true}
+          nodeExtent={[
+            [0, 0],
+            [ref.current.getBoundingClientRect().width, ref.current.getBoundingClientRect().height],
+          ]}
+          translateExtent={[
+            [0, 0],
+            [ref.current.getBoundingClientRect().width, ref.current.getBoundingClientRect().height],
+          ]}
+        />
+      ) : null}
       {edgePopoverBounds && <EdgePopOver {...edgePopoverBounds} />}
     </div>
   );
