@@ -33,6 +33,7 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
+        data-selectableid={id}
         key={`${id}-handle`}
         id={`${id}-handle`}
         type={isSourceNode ? 'source' : 'target'}
