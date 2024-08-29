@@ -1,7 +1,7 @@
 import { emptyCanvasRect, type SchemaExtended, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { Tree, mergeClasses } from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { useCallback, useContext, useEffect, useLayoutEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { DataMapperWrappedContext } from '../../../core';
@@ -58,7 +58,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     [treeRef]
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (treeRef?.current && canvasWidth > 0 && canvasHeight > 0 && canvasTop !== -1) {
       let updatedNodesForScroll = Object.keys(nodesForScroll).length === 0 ? getNodesForScroll() : { ...nodesForScroll };
       const left = 0;
