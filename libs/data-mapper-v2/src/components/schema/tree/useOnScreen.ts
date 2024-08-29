@@ -1,11 +1,11 @@
-import { type RefObject, useLayoutEffect, useMemo, useState } from 'react';
+import { type RefObject, useEffect, useMemo, useState } from 'react';
 
 const useOnScreen = (ref: RefObject<HTMLElement>) => {
   const [isIntersecting, setIntersecting] = useState<boolean>();
 
   const observer = useMemo(() => new IntersectionObserver(([entry]) => setIntersecting(entry.isIntersecting)), []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (ref.current) {
       observer.observe(ref.current);
     }

@@ -8,7 +8,7 @@ import {
   mergeClasses,
 } from '@fluentui/react-components';
 import { equals, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useStyles } from './styles';
 import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
@@ -104,7 +104,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     return <span />;
   }, [activeNode, hoverState, isLeftDirection, root]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     return () => {
       dispatch(
         updateReactFlowNode({
@@ -116,7 +116,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     };
   }, [isLeftDirection, dispatch, nodeId]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (x !== undefined && y !== undefined) {
       const updatedNode: Node = {
         id: nodeId,

@@ -108,7 +108,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
           style={{ left: '-7px' }}
         />
       )}
-      <Popover>
+      <Popover withArrow={true} trapFocus={true}>
         <PopoverTrigger>
           <Button
             onClick={onClick}
