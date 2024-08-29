@@ -342,27 +342,29 @@ export async function getFolderItems(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<TreeDynamicValue[]> {
   const { definition, filePickerInfo } = dependencyInfo;
-  console.log('start getFolderItems');
 
   if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
-    console.log('isLegacyDynamicValuesTreeExtension');
     const { open, browse } = filePickerInfo;
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
     const pickerParameters: Record<string, any> = {};
     for (const [paramKey, paramValue] of Object.entries(referenceParameters ?? {})) {
+      console.log(paramKey, paramValue);
       if (paramValue?.selectedItemValuePath || paramValue?.['value-property']) {
+        console.log('here');
         pickerParameters[paramKey] = getPropertyValue(
           selectedValue,
           paramValue.selectedItemValuePath ?? paramValue['value-property'] ?? ''
         );
       } else {
+        console.log('here2');
         pickerParameters[paramKey] = referenceParameters?.[paramKey];
       }
     }
 
     const parameters = { ...definition.extension.parameters, ...pickerParameters };
+    console.log(parameters);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const inputs = getParameterValuesForLegacyDynamicOperation(
       parsedSwagger,
@@ -372,11 +374,13 @@ export async function getFolderItems(
       idReplacements,
       workflowParameters
     );
+    console.log(inputs);
     const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
       connector,
       connectionId,
       connectionReference as ConnectionReference
     );
+    console.log(managedIdentityRequestProperties);
 
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }
