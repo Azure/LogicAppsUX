@@ -299,17 +299,21 @@ const ParameterSection = ({
 
   const getPickerCallbacks = (parameter: ParameterInfo) => ({
     getFileSourceName: (): string => {
+      console.log(parameter, 'getFileSourceName');
       return displayNameResult.result;
     },
     getDisplayValueFromSelectedItem: (selectedItem: any): string => {
+      console.log(selectedItem, 'getDisplayValueFromSelectedItem');
       const dependency = dependencies.inputs[parameter.parameterKey];
       return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
     },
     getValueFromSelectedItem: (selectedItem: any): string => {
+      console.log(selectedItem, 'getValueFromSelectedItem');
       const dependency = dependencies.inputs[parameter.parameterKey];
       return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
     },
     onFolderNavigation: (selectedItem: any | undefined): void => {
+      console.log(selectedItem, 'onFolderNavigation');
       loadDynamicTreeItemsForParameter(
         nodeId,
         group.id,

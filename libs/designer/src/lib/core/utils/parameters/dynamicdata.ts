@@ -342,8 +342,10 @@ export async function getFolderItems(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<TreeDynamicValue[]> {
   const { definition, filePickerInfo } = dependencyInfo;
+  console.log('start getFolderItems');
 
   if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
+    console.log('isLegacyDynamicValuesTreeExtension');
     const { open, browse } = filePickerInfo;
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
@@ -379,6 +381,7 @@ export async function getFolderItems(
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }
   if (isDynamicTreeExtension(definition) && filePickerInfo) {
+    console.log('isDynamicTreeExtension');
     const { open, browse } = filePickerInfo;
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
