@@ -91,7 +91,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   );
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
-  const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
+  const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
   // hide actions type filter if we don't have any operations for the browse view
@@ -233,7 +233,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
               filters={filters}
               onOperationClick={onOperationClick}
               isLoading={isLoadingOperations || isLoadingOperationGroup}
-              isLoadingConnector={isLoadingConnectors}
               displayRuntimeInfo={displayRuntimeInfo}
               ignoreActionsFilter={hideActionTypeFilter}
             />

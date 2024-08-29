@@ -4,7 +4,7 @@ import HybridNotice from './HybridNotice';
 import { OperationGroupHeader } from './operationGroupHeader';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { Connector } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface OperationGroupDetailsPageProps {
@@ -12,12 +12,11 @@ export interface OperationGroupDetailsPageProps {
   operationActionsData: OperationActionData[];
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
-  isLoadingConnector: boolean;
   displayRuntimeInfo: boolean;
 }
 
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
-  const { connector, operationActionsData, onOperationClick, isLoading, displayRuntimeInfo, isLoadingConnector } = props;
+  const { connector, operationActionsData, onOperationClick, isLoading, displayRuntimeInfo } = props;
   const { id = '', properties } = connector ?? {};
   const { displayName = '', description, iconUri = '', externalDocs, generalInformation } = properties ?? {};
 
@@ -25,6 +24,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
 
   const { category } = operationActionsData?.[0] ?? {};
   const isHybrid = operationActionsData.findIndex((action) => action.category !== category) !== -1;
+  const isLoadingConnector = isNullOrUndefined(connector);
 
   const noOperationsText = intl.formatMessage({
     defaultMessage: 'No operations found',
