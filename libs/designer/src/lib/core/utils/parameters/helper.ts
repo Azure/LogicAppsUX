@@ -1933,8 +1933,6 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      rootState.workflow.workflowKind,
-      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
