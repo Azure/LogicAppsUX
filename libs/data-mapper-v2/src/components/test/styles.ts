@@ -38,4 +38,20 @@ export const useStyles = makeStyles({
   closeButton: {
     marginLeft: '10px',
   },
+  monacoEditorPlaceHolder: {
+    position: 'relative',
+    width: '70%',
+    ...shorthands.padding('10px'),
+    top: '-200px',
+    left: '14%',
+    fontStyle: 'italic',
+    fontSize: '13px',
+    color: tokens.colorNeutralStroke1Pressed,
+    pointerEvents: 'none',
+    userSelect: 'none',
+    display: 'none',
+    ...shorthands.overflow('hidden'),
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+  },
 });
