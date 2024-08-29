@@ -48,7 +48,7 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
 
   const onContainerClick = useCallback(
     (e?: any) => {
-      if (e?.target?.dataset?.selectableid) {
+      if (!e?.target?.dataset?.selectableid) {
         dispatch(setSelectedItem());
       }
     },

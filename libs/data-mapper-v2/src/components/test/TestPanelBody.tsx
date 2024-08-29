@@ -92,6 +92,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               wordWrap="on"
               wrappingIndent="same"
               onContentChanged={onSampleDataChange}
+              scrollBeyondLastLine={true}
             />
           </AccordionPanel>
         </AccordionItem>
@@ -117,6 +118,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               height="200px"
               wordWrap="on"
               wrappingIndent="same"
+              scrollBeyondLastLine={true}
               readOnly
             />
           </AccordionPanel>
