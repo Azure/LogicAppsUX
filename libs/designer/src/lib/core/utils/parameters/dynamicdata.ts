@@ -350,15 +350,12 @@ export async function getFolderItems(
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
     const pickerParameters: Record<string, any> = {};
     for (const [paramKey, paramValue] of Object.entries(referenceParameters ?? {})) {
-      console.log(paramKey, paramValue);
       if (paramValue?.selectedItemValuePath || paramValue?.['value-property']) {
-        console.log('here');
         pickerParameters[paramKey] = getPropertyValue(
           selectedValue,
           paramValue.selectedItemValuePath ?? paramValue['value-property'] ?? ''
         );
       } else {
-        console.log('here2');
         pickerParameters[paramKey] = referenceParameters?.[paramKey];
       }
     }
@@ -366,6 +363,7 @@ export async function getFolderItems(
     const parameters = { ...definition.extension.parameters, ...pickerParameters };
     console.log(parameters);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    console.log(connector, parsedSwagger);
     const inputs = getParameterValuesForLegacyDynamicOperation(
       parsedSwagger,
       operationId,

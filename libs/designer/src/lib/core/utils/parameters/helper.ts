@@ -2174,7 +2174,6 @@ export async function loadDynamicTreeItemsForParameter(
   idReplacements: Record<string, string> = {},
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
-  console.log('start loadDynamicTreeItemsForParameter');
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
   if (!parameter) {
@@ -2184,7 +2183,6 @@ export async function loadDynamicTreeItemsForParameter(
   const originalEditorOptions = parameter.editorOptions as any;
   const dependencyInfo = dependencies.inputs[parameter.parameterKey];
   if (dependencyInfo) {
-    console.log('dependencyInfo', dependencyInfo);
     if (isDynamicDataReadyToLoad(dependencyInfo)) {
       dispatch(
         updateNodeParameters({
