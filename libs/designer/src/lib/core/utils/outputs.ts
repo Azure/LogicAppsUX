@@ -7,7 +7,6 @@ import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { ErrorLevel, addDynamicOutputs, clearDynamicIO, updateErrorDetails } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
-import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
@@ -41,6 +40,7 @@ import {
   parseErrorMessage,
   safeSetObjectPropertyValue,
   unmap,
+  WorkflowService,
 } from '@microsoft/logic-apps-shared';
 import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
 import type {
@@ -92,6 +92,11 @@ export const toOutputInfo = (output: OutputParameter): OutputInfo => {
     description,
     alias,
   };
+};
+
+export const operationSupportsSplitOn = (isTrigger: boolean): boolean => {
+  const workflowSupportsSplitOn = WorkflowService().isSplitOnSupported !== undefined ? WorkflowService().isSplitOnSupported?.() : true;
+  return isTrigger && !!workflowSupportsSplitOn;
 };
 
 export const removeAliasingKeyRedundancies = (openAPIkey: string): string => {
@@ -454,8 +459,6 @@ export const loadDynamicOutputsInNode = async (
   nodeInputs: NodeInputs,
   settings: Settings,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  workflowKind: WorkflowKind | undefined,
-  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
   dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
@@ -464,17 +467,7 @@ export const loadDynamicOutputsInNode = async (
     const info = outputDependencies[outputKey];
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(
-          nodeId,
-          operationInfo,
-          dispatch,
-          isTrigger,
-          nodeInputs,
-          settings,
-          true /* shouldProcessSettings */,
-          workflowKind,
-          forceEnableSplitOn
-        );
+        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, true /* shouldProcessSettings */);
       } else {
         try {
           const outputSchema = await getDynamicSchema(

@@ -227,7 +227,6 @@ export const pasteScopeOperation = createAsyncThunk(
     const connectionReference = (getState() as RootState).connections.connectionReferences;
     const workflowParameters = state.workflowParameters.definitions;
     const workflowKind = state.workflow.workflowKind;
-    const enforceSplitOn = state.designerOptions.hostOptions.forceEnableSplitOn ?? false;
     const operations = state.workflow.operations;
     const nodeMap: Record<string, string> = {};
     for (const id of Object.keys(operations)) {
@@ -248,7 +247,6 @@ export const pasteScopeOperation = createAsyncThunk(
         workflowParameters,
         {},
         workflowKind,
-        enforceSplitOn,
         dispatch,
         { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
       ),

@@ -65,7 +65,6 @@ export const initializeOperationDetailsForSwagger = async (
   references: ConnectionReferences,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
@@ -99,16 +98,7 @@ export const initializeOperationDetailsForSwagger = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        /* manifest */ undefined,
-        parsedSwagger,
-        operation,
-        workflowKind,
-        forceEnableSplitOn
-      );
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, /* manifest */ undefined, parsedSwagger, operation, workflowKind);
 
       return [
         {

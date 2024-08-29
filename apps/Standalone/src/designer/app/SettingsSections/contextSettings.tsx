@@ -76,11 +76,6 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
       <Checkbox
-        label="Force Enable Split-On"
-        checked={hostOptions.forceEnableSplitOn}
-        onChange={(_, checked) => dispatch(setHostOptions({ forceEnableSplitOn: !!checked }))}
-      />
-      <Checkbox
         label="Suppress default node click"
         checked={suppressDefaultNodeSelect}
         onChange={(_, checked) => dispatch(setSuppressDefaultNodeSelect(!!checked))}
