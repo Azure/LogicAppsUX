@@ -20,15 +20,11 @@ const ConnectedEdge = (props: EdgeProps) => {
 
   const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
 
-  const onClick = useCallback(
-    (e?: any) => {
-      console.log(e);
-      if (source) {
-        dispatch(setSelectedItem(source));
-      }
-    },
-    [dispatch, source]
-  );
+  const onClick = useCallback(() => {
+    if (source) {
+      dispatch(setSelectedItem(source));
+    }
+  }, [dispatch, source]);
 
   return (
     <g id={`${id}_customEdge`} onClick={onClick} data-selectableid={id}>
