@@ -409,58 +409,52 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   return (
     <div ref={ref} id="editorView" className={styles.wrapper}>
-      <ReactFlow
-        id="dm-react-flow"
-        ref={drop}
-        className="nopan nodrag"
-        nodes={cloneDeep(nodes)}
-        edges={[...realEdges, ...Object.values(temporaryEdgesMapForCollapsedNodes), ...Object.values(temporaryEdgesMapForScrolledNodes)]}
-        nodeDragThreshold={0}
-        onlyRenderVisibleElements={false}
-        zoomOnScroll={false}
-        zoomOnPinch={false}
-        zoomOnDoubleClick={false}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        preventScrolling={false}
-        edgesFocusable={true}
-        minZoom={1}
-        elementsSelectable={true}
-        maxZoom={1}
-        autoPanOnConnect={false}
-        snapToGrid={true}
-        panOnScroll={false}
-        panOnDrag={false}
-        style={reactFlowStyle}
-        proOptions={{
-          account: 'paid-sponsor',
-          hideAttribution: true,
-        }}
-        panOnScrollMode={PanOnScrollMode.Vertical}
-        onNodeDrag={onFunctionNodeDrag}
-        onNodeDragStop={onFunctionNodeDragStop}
-        isValidConnection={isValidConnection}
-        onEdgeContextMenu={onEdgeContextMenu}
-        onConnect={onEdgeConnect}
-        connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
-        elevateEdgesOnSelect={true}
-        nodeExtent={
-          ref?.current?.getBoundingClientRect()
-            ? [
-                [0, 0],
-                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
-              ]
-            : undefined
-        }
-        translateExtent={
-          ref?.current?.getBoundingClientRect()
-            ? [
-                [0, 0],
-                [ref.current.getBoundingClientRect()?.right, ref.current.getBoundingClientRect()?.bottom],
-              ]
-            : undefined
-        }
-      />
+      {ref?.current?.getBoundingClientRect() ? (
+        <ReactFlow
+          id="dm-react-flow"
+          ref={drop}
+          className="nopan nodrag"
+          nodes={cloneDeep(nodes)}
+          edges={[...realEdges, ...Object.values(temporaryEdgesMapForCollapsedNodes), ...Object.values(temporaryEdgesMapForScrolledNodes)]}
+          nodeDragThreshold={0}
+          onlyRenderVisibleElements={false}
+          zoomOnScroll={false}
+          zoomOnPinch={false}
+          zoomOnDoubleClick={false}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          preventScrolling={false}
+          edgesFocusable={true}
+          minZoom={1}
+          elementsSelectable={true}
+          maxZoom={1}
+          autoPanOnConnect={false}
+          snapToGrid={true}
+          panOnScroll={false}
+          panOnDrag={false}
+          style={reactFlowStyle}
+          proOptions={{
+            account: 'paid-sponsor',
+            hideAttribution: true,
+          }}
+          panOnScrollMode={PanOnScrollMode.Vertical}
+          onNodeDrag={onFunctionNodeDrag}
+          onNodeDragStop={onFunctionNodeDragStop}
+          isValidConnection={isValidConnection}
+          onEdgeContextMenu={onEdgeContextMenu}
+          onConnect={onEdgeConnect}
+          connectionLineComponent={ConnectionLine as ConnectionLineComponent | undefined}
+          elevateEdgesOnSelect={true}
+          nodeExtent={[
+            [0, 0],
+            [ref.current.getBoundingClientRect().width, ref.current.getBoundingClientRect().height],
+          ]}
+          translateExtent={[
+            [0, 0],
+            [ref.current.getBoundingClientRect().width, ref.current.getBoundingClientRect().height],
+          ]}
+        />
+      ) : null}
       {edgePopoverBounds && <EdgePopOver {...edgePopoverBounds} />}
     </div>
   );
