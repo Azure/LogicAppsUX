@@ -1,17 +1,18 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup, Switch } from '@fluentui/react-components';
-import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens } from '@fluentui/react-components';
+import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService, DataMapperWrappedContext, generateDataMapXslt } from '../../core';
+import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
+import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 
 export type EditorCommandBarProps = {};
 
@@ -19,7 +20,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
@@ -27,6 +28,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
+  const canvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
 
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
@@ -60,19 +64,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     dispatch(toggleCodeView());
   }, [dispatch]);
 
-  const { canvasBounds } = useContext(DataMapperWrappedContext);
-
   const onSaveClick = useCallback(() => {
-    if (!canvasBounds || !canvasBounds.width || !canvasBounds.height) {
+    if (!canvasRect || !canvasRect.width || !canvasRect.height) {
       throw new Error('Canvas bounds are not defined, cannot save map metadata.');
     }
 
-    const mapMetadata = JSON.stringify(
-      generateMapMetadata(functions, currentConnections, {
-        width: canvasBounds.width,
-        height: canvasBounds.height,
-      })
-    );
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections, canvasRect));
 
     DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
 
@@ -98,7 +95,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
         // show notification here
       });
-  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasBounds]);
+  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasRect]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());
@@ -153,37 +150,49 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   );
 
   const toolbarStyles = useStyles();
-  const bothSchemasDefined = useMemo(() => sourceSchema && targetSchema, [sourceSchema, targetSchema]);
+
+  const disabledState = useMemo(
+    () => ({
+      save: !isDirty || sourceInEditState || targetInEditState,
+      undo: undoStack.length === 0,
+      discard: !isDirty,
+      test: sourceInEditState || targetInEditState,
+      codeView: sourceInEditState || targetInEditState,
+    }),
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState]
+  );
 
   return (
     <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
       <ToolbarGroup className={toolbarStyles.toolbarGroup}>
         <ToolbarButton
           aria-label={Resources.SAVE}
-          icon={<Save20Regular />}
-          disabled={!bothSchemasDefined || !isStateDirty}
+          icon={<Save20Regular color={disabledState.save ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.save}
           onClick={onSaveClick}
           className={toolbarStyles.button}
         >
           {Resources.SAVE}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={() => {}}>
-          {Resources.UNDO}
-        </ToolbarButton>
         <ToolbarButton
           aria-label={Resources.DISCARD}
-          icon={<Dismiss20Regular />}
-          disabled={!isStateDirty}
+          icon={<Dismiss20Regular color={disabledState.discard ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.discard}
           onClick={triggerDiscardWarningModal}
         >
           {Resources.DISCARD}
         </ToolbarButton>
-        <ToolbarButton aria-label={Resources.RUN_TEST} icon={<Play20Regular />} disabled={!bothSchemasDefined} onClick={onTestClick}>
+        <ToolbarButton
+          aria-label={Resources.RUN_TEST}
+          icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+          disabled={disabledState.test}
+          onClick={onTestClick}
+        >
           {Resources.RUN_TEST}
         </ToolbarButton>
       </ToolbarGroup>
       <ToolbarGroup>
-        <Switch label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
+        <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
       </ToolbarGroup>
     </Toolbar>
   );

@@ -7,8 +7,10 @@ import {
   Text,
   type Slot,
   DrawerBody,
+  DrawerFooter,
   type InputOnChangeData,
   mergeClasses,
+  Caption2,
 } from '@fluentui/react-components';
 import { SearchBox } from '@fluentui/react-search';
 import type { FluentIcon } from '@fluentui/react-icons';
@@ -21,6 +23,7 @@ type PanelProps = {
     icon?: FluentIcon;
     size?: 500 | 100 | 200 | 300 | 400 | 600 | 700 | 800 | 900 | 1000;
     rightAction?: Slot<'div'>;
+    subTitleText?: string;
   };
   search?: {
     placeholder?: string;
@@ -28,6 +31,7 @@ type PanelProps = {
     onChange: (value?: string) => void;
   };
   body?: React.ReactNode;
+  footer?: React.ReactNode;
   styles?: {
     root?: string;
     header?: string;
@@ -35,12 +39,14 @@ type PanelProps = {
     search?: string;
     titleIcon?: string;
     body?: string;
+    footer?: string;
+    subTitle?: string;
   };
 };
 
 export const Panel = (props: PanelProps) => {
   const defaultStyles = useStyles();
-  const { title, body, isOpen, styles, search } = props;
+  const { title, body, isOpen, styles, search, footer } = props;
 
   return (
     <InlineDrawer className={mergeClasses(defaultStyles.root, styles?.root)} open={isOpen}>
@@ -51,6 +57,9 @@ export const Panel = (props: PanelProps) => {
             <Text size={title?.size ?? 500} className={styles?.title}>
               {title?.text}
             </Text>
+            {title?.subTitleText ? (
+              <Caption2 className={mergeClasses(defaultStyles.subTitle, styles?.subTitle ?? '')}>{title.subTitleText}</Caption2>
+            ) : null}
           </DrawerHeaderTitle>
           {search ? (
             <SearchBox
@@ -66,6 +75,7 @@ export const Panel = (props: PanelProps) => {
         </DrawerHeader>
       ) : null}
       {body ? <DrawerBody className={mergeClasses(defaultStyles.body, styles?.body)}>{body}</DrawerBody> : null}
+      {footer ? <DrawerFooter className={mergeClasses(defaultStyles.footer, styles?.footer)}>{footer}</DrawerFooter> : null}
     </InlineDrawer>
   );
 };

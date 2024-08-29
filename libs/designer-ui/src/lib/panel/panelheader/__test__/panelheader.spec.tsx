@@ -11,6 +11,7 @@ import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, exp
 describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
+  let minimalWithButtons: PanelHeaderProps;
   let shallow: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
@@ -33,7 +34,6 @@ describe('lib/panel/panelHeader/main', () => {
       isOutermostPanel: true,
       headerItems: [],
       headerLocation: PanelLocation.Right,
-      horizontalPadding: '',
       panelScope: PanelScope.CardLevel,
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
@@ -49,6 +49,11 @@ describe('lib/panel/panelHeader/main', () => {
           Delete
         </MenuItem>,
       ],
+    };
+    minimalWithButtons = {
+      ...minimal,
+      canResubmit: true,
+      canShowLogicAppRun: true,
     };
     shallow = ReactShallowRenderer.createRenderer();
     initializeIcons();
@@ -87,12 +92,13 @@ describe('lib/panel/panelHeader/main', () => {
       isOutermostPanel: true,
     };
     shallow.render(<PanelHeader {...props} />);
-    const panelHeader = shallow.getRenderOutput();
+    const panelHeader = shallow.getRenderOutput().props.children[0];
+    const comment = shallow.getRenderOutput().props.children[1];
     expect(panelHeader.props.className).toBe('msla-panel-header');
 
     const [, fragment]: any[] = React.Children.toArray(panelHeader.props.children);
 
-    const [cardHeader, comment]: any[] = React.Children.toArray(fragment.props.children);
+    const [cardHeader]: any[] = React.Children.toArray(fragment.props.children);
 
     expect(cardHeader.props.className).toBe('msla-panel-card-header');
     const [, titleContainer]: any[] = React.Children.toArray(cardHeader.props.children);
@@ -109,5 +115,10 @@ describe('lib/panel/panelHeader/main', () => {
     expect(comment.props.isCollapsed).toBe(props.isCollapsed);
     expect(comment.props.noNodeSelected).toBe(props.noNodeSelected);
     expect(comment.props.readOnlyMode).toBe(props.readOnlyMode);
+  });
+
+  it('should render with panel header buttons', () => {
+    const panelHeader = renderer.create(<PanelHeader {...minimalWithButtons} />).toJSON();
+    expect(panelHeader).toMatchSnapshot();
   });
 });

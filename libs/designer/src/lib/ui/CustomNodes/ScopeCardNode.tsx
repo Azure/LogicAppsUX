@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import {
   useBrandColor,
   useIconUri,
@@ -10,7 +10,7 @@ import {
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, selectPanelTab } from '../../core/state/panel/panelSlice';
+import { changePanelNode } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -28,32 +28,24 @@ import {
   useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
-import type { AppDispatch, RootState } from '../../core/store';
+import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
-import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService, getRecordEntry, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
-import { useDispatch, useSelector } from 'react-redux';
-import { Handle, Position, useOnViewportChange, type NodeProps } from '@xyflow/react';
-import { CopyMenuItem } from '../menuItems';
+import { useDispatch } from 'react-redux';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { Tooltip } from '@fluentui/react-components';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useIsNodePinnedToOperationPanel, useOperationPanelPinnedNodeId } from '../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../core/state/panelV2/panelSlice';
-import { RunAfterMenuItem } from '../menuItems/runAfterMenuItem';
-import { RUN_AFTER_PANEL_TAB } from './constants';
-import { shouldDisplayRunAfter } from './helpers';
-import { PinMenuItem } from '../menuItems/pinMenuItem';
+import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -68,8 +60,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
-  const rootState = useSelector((state: RootState) => state);
-  const pinnedNodeId = useOperationPanelPinnedNodeId();
   const metadata = useNodeMetadata(scopeId);
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
@@ -79,9 +69,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
 
-  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const getRunRepetition = () => {
     if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
@@ -100,14 +89,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
-    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
-  };
-
   const {
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
+    data: repetitionData,
   } = useQuery<any>(
     ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
     getRunRepetition,
@@ -115,10 +101,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetchOnWindowFocus: false,
       initialData: null,
       refetchOnMount: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+      enabled: parentRunIndex !== undefined && isMonitoringView,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionData)) {
+      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionData.properties as LogicAppsV2.WorkflowRunAction }));
+    }
+  }, [dispatch, scopeId, repetitionData]);
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
@@ -166,16 +157,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(scopeId);
 
-  const [showCopyCallout, setShowCopyCallout] = useState(false);
-
-  useOnViewportChange({
-    onStart: useCallback(() => {
-      if (showCopyCallout) {
-        setShowCopyCallout(false);
-      }
-    }, [showCopyCallout]),
-  });
-
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
   }, [dispatch, scopeId]);
@@ -189,45 +170,35 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     dispatch(setShowDeleteModalNodeId(scopeId));
   }, [dispatch, scopeId]);
 
+  const [showCopyCallout, setShowCopyCallout] = useState(false);
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyScopeOperation({ nodeId: id }));
-    setTimeout(() => {
-      setShowCopyCallout(false);
-    }, 3000);
+    setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
 
-  const pinClick = useCallback(() => {
-    dispatch(
-      setPinnedNode({
-        nodeId: scopeId === pinnedNodeId ? '' : scopeId,
-        updatePanelOpenState: true,
-      })
-    );
-  }, [dispatch, pinnedNodeId, scopeId]);
-
-  const resubmitClick = useCallback(() => {
-    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
-  }, [runInstance, id]);
-
-  const runAfterClick = useCallback(() => {
-    dispatch(changePanelNode(scopeId));
-    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
-  }, [dispatch, scopeId]);
-
-  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, scopeId) as LogicAppsV2.OperationDefinition;
-  const runAfter = shouldDisplayRunAfter(operationFromWorkflow, isTrigger);
+  const [copyCalloutTimeout, setCopyCalloutTimeout] = useState<NodeJS.Timeout>();
+  const clearCopyCallout = useCallback(() => {
+    copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
+    setShowCopyCallout(false);
+  }, [copyCalloutTimeout]);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
-  const contextMenuItems: JSX.Element[] = useMemo(
-    () => [
-      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-      <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
-      <PinMenuItem key={'pin'} nodeId={scopeId} onClick={pinClick} />,
-      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-      ...(runAfter ? [<RunAfterMenuItem key={'run after'} onClick={runAfterClick} />] : []),
-    ],
-    [deleteClick, copyClick, pinClick, runData?.canResubmit, resubmitClick, runAfterClick, runAfter, scopeId]
+
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: scopeId,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, scopeId]
   );
 
   const opQuery = useOperationQuery(scopeId);
@@ -332,12 +303,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  const copiedText = intl.formatMessage({
-    defaultMessage: 'Copied!',
-    id: 'NE54Uu',
-    description: 'Copied text',
-  });
-
   return (
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
@@ -360,21 +325,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             title={label}
             readOnly={readOnly}
             onClick={nodeClick}
+            onContextMenu={onContextMenu}
             onDeleteClick={deleteClick}
             selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
-            contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
             setFocus={shouldFocus}
             nodeIndex={nodeIndex}
           />
-          <Tooltip
-            positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
-            withArrow
-            content={copiedText}
-            relationship="description"
-            visible={showCopyCallout}
-          />
+          {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
           ) : null}

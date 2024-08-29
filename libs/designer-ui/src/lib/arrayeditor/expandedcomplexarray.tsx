@@ -1,9 +1,10 @@
-import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps, ValueSegment } from '..';
-import { Combobox, StringEditor } from '..';
+import type { ComboboxItem, ComplexArrayItems, DropdownItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
+import { Combobox, DropdownEditor, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { ItemMenuButton } from './expandedsimplearray';
-import { hideComplexArray, type ItemSchemaItemProps } from './util/util';
+import { getBooleanDropdownOptions, getComoboxEnumOptions, hideComplexArray } from './util/util';
+import type { ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { css, DefaultButton } from '@fluentui/react';
 import { Label } from '../label';
@@ -104,16 +105,10 @@ export const ExpandedComplexArray = ({
           <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
-              const comboboxOptions =
-                options ??
-                schemaItem.enum?.map(
-                  (val: string): ComboboxItem => ({
-                    displayName: val,
-                    key: val,
-                    value: val,
-                  })
-                );
-
+              console.log(complexItem);
+              const comboboxOptions = getComoboxEnumOptions(options, schemaItem.enum);
+              const dropdownOptions: DropdownItem[] | undefined =
+                schemaItem.type === constants.SWAGGER.TYPE.BOOLEAN ? getBooleanDropdownOptions() : undefined;
               return (
                 <div key={schemaItem.key + i}>
                   {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items && !hideComplexArray(schemaItem.items) ? (
@@ -153,8 +148,16 @@ export const ExpandedComplexArray = ({
                             {comboboxOptions ? (
                               <Combobox
                                 {...props}
+                                valueType={schemaItem?.type}
                                 options={comboboxOptions}
                                 placeholder={schemaItem.description}
+                                initialValue={complexItem?.value ?? []}
+                                onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
+                              />
+                            ) : dropdownOptions ? (
+                              <DropdownEditor
+                                {...props}
+                                options={dropdownOptions}
                                 initialValue={complexItem?.value ?? []}
                                 onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
                               />

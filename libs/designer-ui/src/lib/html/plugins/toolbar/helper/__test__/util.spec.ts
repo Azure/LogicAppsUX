@@ -14,7 +14,9 @@ import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, exp
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
     it.each([
-      ['<p>text1<span>\n</span>text2</p>', '<p>text1<span>\n</span>text2</p>'],
+      ['<p class="editor-paragraph"><br></p>', '<p class="editor-paragraph"><br></p>'],
+      ['<p>text1<span>\n</span>text2</p>', '<p>text1<br>text2</p>'],
+      ['<p>line1<span>\n</span>line2<span>\n\n</span>line3<span>\n\n</span>line4</p>', '<p>line1<br>line2<br><br>line3<br><br>line4</p>'],
       ['<p>text</p>', '<p>text</p>'],
       ['<p>text1</p><p><br></p><p>text2</p>', '<p>text1</p><br><p>text2</p>'],
       ['<p>text1<br></p><p><br></p><p>text2</p>', '<p>text1</p><br><br><p>text2</p>'],
@@ -142,12 +144,16 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     const case2 = '<h1>hello</h1>';
     const case3 = `<h3>dfg<span style="background-color: rgb(184, 233, 134);">dfg</span><span style="background-color: rgb(184, 233, 134); font-size: 11px;">dfg</span><a href="https://www.bing.com"><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;">dfgdfg dfgdfg dg zd</span></a><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;"> </span><u>asa</u></h3>`;
     const case4 = '<section>hello</section>';
+    const case5 = `<p style="background-color: rgb(184, 233, 134);">hello</p>`;
+    const case6 = '<p class="editor-paragraph">hello</p>';
 
     it.each<[string, boolean, string]>([
       ['empty string', true, case1],
       ['small string using <h1>', true, case2],
       ['large string using <a>, <u>, <h3>, <span>', true, case3],
       ['small string using <section>', false, case4],
+      ['style attribute inside <p>', false, case5],
+      ['no style attribute inside <p>', true, case6],
     ])('should return "%s" as supported="%s"', (_caseName, expected, inputString) => {
       const nodeMap = new Map<string, ValueSegment>();
       expect(isHtmlStringValueSafeForLexical(inputString, nodeMap)).toBe(expected);

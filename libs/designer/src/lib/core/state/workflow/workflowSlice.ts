@@ -23,7 +23,8 @@ import {
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelInterfaces';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
-import { getWorkflowNodeFromGraphState } from './workflowSelectors';
+import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import {
   LogEntryLevel,
   LoggerService,
@@ -286,8 +287,8 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
-      state.collapsedGraphIds = action.payload;
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
@@ -323,6 +324,22 @@ export const workflowSlice = createSlice({
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
         duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    },
+    setRunDataInputOutputs: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; inputs: BoundParameters; outputs: BoundParameters }>
+    ) => {
+      const { nodeId, inputs, outputs } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        inputs: inputs,
+        outputs: outputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
@@ -522,7 +539,6 @@ export const {
   deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
-  setCollapsedGraphIds,
   toggleCollapsedGraphId,
   addSwitchCase,
   discardAllChanges,
@@ -532,11 +548,13 @@ export const {
   removeEdgeFromRunAfter,
   clearFocusNode,
   setFocusNode,
+  setCollapsedGraphIds,
   replaceId,
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  setRunDataInputOutputs,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

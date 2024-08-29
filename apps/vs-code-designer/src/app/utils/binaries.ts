@@ -63,72 +63,60 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  try {
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
+  const downloadPromise = axios({
+    method: HTTP_METHODS.GET,
+    url: downloadUrl,
+    responseType: 'stream',
+  });
+
+  executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+
+  downloadPromise.then((response) => {
+    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
-    const downloadPromise = axios({
-      method: HTTP_METHODS.GET,
-      url: downloadUrl,
-      responseType: 'stream',
+    const writer = fs.createWriteStream(dependencyFilePath);
+    response.data.pipe(writer);
+
+    writer.on('finish', async () => {
+      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+      fs.chmodSync(dependencyFilePath, 0o777);
+
+      // Extract to targetFolder
+      if (dependencyName === dotnetDependencyName) {
+        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
+        process.platform === Platform.windows
+          ? await executeCommand(
+              ext.outputChannel,
+              undefined,
+              'powershell -ExecutionPolicy Bypass -File',
+              dependencyFilePath,
+              '-InstallDir',
+              targetFolder,
+              '-Channel',
+              `${version}.0`
+            )
+          : await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+      } else {
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+      }
+      // remove the temp folder.
+      fs.rmSync(tempFolderPath, { recursive: true });
+      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
     });
+    writer.on('error', async (error) => {
+      // log the error message the VSCode window and to telemetry.
+      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
+      vscode.window.showErrorMessage(errorMessage);
+      context.telemetry.properties.error = errorMessage;
 
-    executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-
-    downloadPromise.then((response) => {
-      const writer = fs.createWriteStream(dependencyFilePath);
-      response.data.pipe(writer);
-
-      writer.on('finish', async () => {
-        executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
-        fs.chmodSync(dependencyFilePath, 0o777);
-
-        // Extract to targetFolder
-        if (dependencyName === dotnetDependencyName) {
-          const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-          process.platform === Platform.windows
-            ? await executeCommand(
-                ext.outputChannel,
-                undefined,
-                'powershell -ExecutionPolicy Bypass -File',
-                dependencyFilePath,
-                '-InstallDir',
-                targetFolder,
-                '-Channel',
-                `${version}.0`
-              )
-            : await executeCommand(
-                ext.outputChannel,
-                undefined,
-                dependencyFilePath,
-                '-InstallDir',
-                targetFolder,
-                '-Channel',
-                `${version}.0`
-              );
-        } else {
-          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-          vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        }
-      });
-      writer.on('error', async (error) => {
-        throw error;
-      });
+      // remove the target folder.
+      fs.rmSync(targetFolder, { recursive: true });
+      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
     });
-  } catch (error) {
-    // log the error message the VSCode window and to telemetry.
-    const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
-    vscode.window.showErrorMessage(errorMessage);
-    context.telemetry.properties.error = errorMessage;
-
-    // remove the target folder.
-    await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Remove ${targetFolder}`);
-    fs.rmSync(targetFolder, { recursive: true });
-  } finally {
-    fs.rmSync(tempFolderPath, { recursive: true });
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-  }
+  });
 }
 
 export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion: string): Promise<string> {

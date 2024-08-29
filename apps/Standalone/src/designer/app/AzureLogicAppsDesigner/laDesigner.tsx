@@ -45,7 +45,7 @@ import {
   isArmResourceId,
   optional,
 } from '@microsoft/logic-apps-shared';
-import type { ContentType, IWorkflowService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -104,16 +104,7 @@ const DesignerEditor = () => {
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...workflow,
-        definition: runDefinition.properties.workflow.properties.definition,
-      };
-      setWorkflow(standardAppInstance);
-    }
-  };
-  const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
+  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
 
   const connectionsData = useMemo(
     () =>
@@ -192,6 +183,17 @@ const DesignerEditor = () => {
       root.style.overflow = 'hidden';
     }
   }, []);
+
+  useEffect(() => {
+    if (isMonitoringView && runInstanceData) {
+      setWorkflow((previousWorkflow: any) => {
+        return {
+          ...previousWorkflow,
+          definition: runInstanceData.properties.workflow.properties.definition,
+        };
+      });
+    }
+  }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
@@ -335,7 +337,7 @@ const DesignerEditor = () => {
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
           >
-            <div style={{ height: 'inherit', width: 'inherit' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
                 saveWorkflow={saveWorkflowFromDesigner}
@@ -638,6 +640,7 @@ const getDesignerServices = (
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAppIdentity: () => workflowApp.identity as any,
     isExplicitAuthRequiredForManagedIdentity: () => true,
+    isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
       const options = {
         uri: `${workflowIdWithHostRuntime}/runs/${runId}/resubmit?api-version=2018-11-01`,
@@ -664,10 +667,11 @@ const getDesignerServices = (
     },
   };
 
-  const hostService = {
+  const hostService: IHostService = {
     fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
     openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
+    openMonitorView: (workflowName: string, runName: string) => console.log('openMonitorView:', workflowName, runName),
   };
 
   const functionService = new BaseFunctionService({

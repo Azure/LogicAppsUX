@@ -53,6 +53,19 @@ export interface Position {
 export const cleanHtmlString = (html: string): string => {
   let cleanedHtmlString = html;
 
+  // if html string is empty (when editor is empty: <p class="editor-paragraph"><br></p>), no need to clean html
+  const emptyParagraphPattern = /^(\s*<p[^>]*>\s*<br>\s*<\/p>\s*)+$/;
+  if (emptyParagraphPattern.test(cleanedHtmlString)) {
+    return cleanedHtmlString;
+  }
+
+  // Ensure that all newlines are treated as HTML line breaks when it is safe to convert to lexical
+  const nodeMap = new Map<string, ValueSegment>();
+  const isSafeForLexical = isHtmlStringValueSafeForLexical(cleanedHtmlString, nodeMap);
+  if (isSafeForLexical) {
+    cleanedHtmlString = cleanedHtmlString.replace(/\n/g, '<br>');
+  }
+
   // Remove extraneous <span> tags.
   cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
 
@@ -61,7 +74,27 @@ export const cleanHtmlString = (html: string): string => {
   cleanedHtmlString = cleanedHtmlString.replace(/<(p|h[1-4])>((<br>)+)<\/\1>/g, (_match, _tag, brs) => brs);
 
   // Move <br> at the end of <p> outside of the block.
-  cleanedHtmlString = cleanedHtmlString.replace(/((<br>)+)(<\/p>)/g, (_match, brs, _br, tag) => `${tag}${brs}`);
+  cleanedHtmlString = cleanedHtmlString.replace(/<p([^>]*)>(.*?)<\/p>/g, (_match, attributes, content) => {
+    const trimmedContent = content.trim();
+    if (trimmedContent === '<br>') {
+      // If <p> contains only <br>, remove the <p> and just return the <br> to avoid extra linebreaks
+      return '<br>';
+    }
+
+    if (trimmedContent.endsWith('<br>')) {
+      // Remove the <br> from the end
+      const contentWithoutBr = trimmedContent.slice(0, -4).trim();
+      // If the <p> becomes empty, return just the <br>
+      if (contentWithoutBr === '') {
+        return '<br>';
+      }
+      // Move <br> outside the <p>
+      return `<p${attributes}>${contentWithoutBr}</p><br>`;
+    }
+
+    // Return the original <p> content if no <br> handling is needed
+    return `<p${attributes}>${trimmedContent}</p>`;
+  });
 
   return cleanedHtmlString;
 };
@@ -93,8 +126,8 @@ export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Ma
   // Comments at the start of a DOM are lost when parsing HTML strings, so we wrap the HTML string in a <div>.
   const wrappedHtmlEditorString = `<div>${htmlEditorString}</div>`;
 
-  const purifiedHtmlEditorString = DomPurify.sanitize(wrappedHtmlEditorString, { ADD_TAGS: ['#comment'] });
-  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(purifiedHtmlEditorString, nodeMap);
+  const purifiedHtmlEditorString = DomPurify.sanitize(encodeURIComponent(wrappedHtmlEditorString), { ADD_TAGS: ['#comment'] });
+  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(decodeURIComponent(purifiedHtmlEditorString), nodeMap);
 
   const tempElement = document.createElement('div', {});
   tempElement.innerHTML = encodedHtmlEditorString;
@@ -126,6 +159,11 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     if (!isTagNameSupportedByLexical(element.tagName)) {
+      return false;
+    }
+
+    // Styling inside <p> tags is not supported by the lexical editor.
+    if (element.tagName.toLowerCase() === 'p' && element.hasAttribute('style')) {
       return false;
     }
 

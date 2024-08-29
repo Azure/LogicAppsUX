@@ -1,28 +1,4 @@
-// import type { CardProps } from '../components/nodeCard/NodeCard';
-// import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
-// import type { FunctionCardProps } from '../components/nodeCard/functionCard/FunctionCard';
-// import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
-// import {
-//   childTargetNodeCardIndent,
-//   schemaNodeCardDefaultWidth,
-//   schemaNodeCardHeight,
-//   schemaNodeCardWidthDifference,
-// } from '../constants/NodeConstants';
-// import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-// import type { ConnectionDictionary, ConnectionUnit } from '../models/Connection';
-// import type { FunctionData, FunctionDictionary } from '../models/Function';
-// import { functionsForLocation, getFunctionBrandingForCategory } from './Function.Utils';
-// import type { LayoutNode, RootLayoutNode } from './Layout.Utils';
-// import { applyCustomLayout, convertDataMapNodesToLayoutTree, convertWholeDataMapToLayoutTree } from './Layout.Utils';
-// import { LogCategory, LogService } from './Logging.Utils';
-// import { isLeafNode } from './Schema.Utils';
-// import { guid, SchemaType } from '@microsoft/logic-apps-shared';
-// import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-// import { useEffect, useState } from 'react';
-// import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
-// import { Position } from 'reactflow';
-
-import { guid, SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import { guid, type SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData, FunctionDictionary } from 'models';
 import type { ConnectionDictionary } from '../models/Connection';
@@ -32,9 +8,12 @@ import { isFunctionData } from './Function.Utils';
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
-
+export const isSourceNode = (key: string) => key.startsWith(sourcePrefix);
+export const isTargetNode = (key: string) => key.startsWith(targetPrefix);
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
-export const isFunctionNode = (key: string): boolean => !key.startsWith(SchemaType.Source) && !key.startsWith(SchemaType.Target);
+export const isFunctionNode = (key: string): boolean => !isSourceNode(key) && !isTargetNode(key);
+export const getTreeNodeId = (key: string) =>
+  isSourceNode(key) ? key.substring(sourcePrefix.length) : isTargetNode(key) ? key.substring(targetPrefix.length) : key;
 
 const rootLayoutNodeId = 'root';
 export const LayoutContainer = {
@@ -49,6 +28,7 @@ export interface LayoutEdge {
   sourceId: string;
   targetId: string;
   labels: string[];
+  isRepeating: boolean;
 }
 
 export interface LayoutNode {
@@ -70,6 +50,26 @@ export interface RootLayoutNode {
   width?: number;
   height?: number;
 }
+
+export interface ReactFlowIdParts {
+  sourceId: string;
+  destinationId: string | undefined;
+  portId: string | undefined;
+}
+
+export const reactFlowConnectionIdSeparator = '-to-';
+export const reactFlowConnectionPortSeparator = '-port-';
+
+export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): ReactFlowIdParts => {
+  const sourceDestSplit = reactFlowId.split(reactFlowConnectionIdSeparator);
+  const destPortSplit = sourceDestSplit.length > 1 ? sourceDestSplit[1].split(reactFlowConnectionPortSeparator) : [undefined, undefined];
+
+  return {
+    sourceId: sourceDestSplit[0],
+    destinationId: destPortSplit[0],
+    portId: destPortSplit[1],
+  };
+};
 
 export const convertWholeDataMapToLayoutTree = (
   flattenedSourceSchema: SchemaNodeDictionary,
@@ -96,6 +96,7 @@ export const convertWholeDataMapToLayoutTree = (
             sourceId: inputValue.reactFlowKey,
             targetId,
             labels,
+            isRepeating: inputValue.isRepeating ?? false,
           };
 
           layoutEdges.push(nextEdge);

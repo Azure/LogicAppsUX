@@ -7,19 +7,24 @@ import type { ConnectionMapping } from '../../core/state/templates/workflowSlice
 import { EmptySearch } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { TemplateFilters, type TemplateDetailFilterType } from './filters/templateFilters';
+import { useEffect } from 'react';
+import { setLayerHostSelector } from '@fluentui/react';
 
 export const TemplatesDesigner = ({
+  detailFilters,
   createWorkflowCall,
 }: {
+  detailFilters: TemplateDetailFilterType;
   createWorkflowCall: (
     workflowName: string,
     workflowKind: string,
     workflow: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
-    parametersData: Record<string, Template.ParameterDefinition>,
-    onSuccessfulCreation: () => void
+    parametersData: Record<string, Template.ParameterDefinition>
   ) => Promise<void>;
 }) => {
+  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
   const {
@@ -42,9 +47,14 @@ export const TemplatesDesigner = ({
       id: 'yKNKV/',
       description: 'Accessbility text to indicate to try different search term or remove filters',
     }),
+    MISSING_INFO_ERROR: intl.formatMessage({
+      defaultMessage: 'Missing information for workflow creation',
+      id: 'wBBu4g',
+      description: 'Error message when missing information for workflow creation',
+    }),
   };
 
-  const onCreateClick = async (onSuccessfulCreation: () => void) => {
+  const onCreateClick = async () => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (
       !workflowNameToUse ||
@@ -55,16 +65,17 @@ export const TemplatesDesigner = ({
       connectionsError ||
       Object.values(parametersError)?.filter((error) => error).length > 0
     ) {
-      // TODO: Show error message
-      console.log('Error checking conditions before calling createWorkflowCall');
-      return;
+      throw new Error(intlText.MISSING_INFO_ERROR);
     }
-    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions, onSuccessfulCreation);
+
+    await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
   };
 
   return (
     <>
-      <TemplatePanel onCreateClick={onCreateClick} />
+      <TemplateFilters detailFilters={detailFilters} />
+      <br />
+
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div className="msla-templates-list">
           {filteredTemplateNames.map((templateName: string) => (
@@ -80,6 +91,17 @@ export const TemplatesDesigner = ({
           <Text>{intlText.TRY_DIFFERENT}</Text>
         </div>
       )}
+
+      <TemplatePanel onCreateClick={onCreateClick} />
+
+      <div
+        id={'msla-layer-host'}
+        style={{
+          position: 'absolute',
+          inset: '0px',
+          visibility: 'hidden',
+        }}
+      />
     </>
   );
 };

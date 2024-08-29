@@ -6,6 +6,7 @@ describe('workflow slice reducers', () => {
       isConsumption: false,
       subscriptionId: '',
       resourceGroup: '',
+      workflowAppName: '',
       location: '',
       connections: {
         references: {},

@@ -1,14 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/card/cardfooter > should render 1`] = `
-<div
-  className="msla-card-v2-footer"
->
-  <div
-    className="msla-badges"
-  />
-</div>
-`;
+exports[`lib/card/cardfooter > should render 1`] = `null`;
 
 exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
 <div

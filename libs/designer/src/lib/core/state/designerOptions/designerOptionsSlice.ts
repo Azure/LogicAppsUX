@@ -21,6 +21,7 @@ import {
   InitChatbotService,
   InitCustomCodeService,
   InitCopilotService,
+  InitUiInteractionsService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -66,6 +67,7 @@ export const initializeServices = createAsyncThunk(
     chatbotService,
     customCodeService,
     copilotService,
+    uiInteractionsService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -115,6 +117,10 @@ export const initializeServices = createAsyncThunk(
 
     if (runService) {
       InitRunService(runService);
+    }
+
+    if (uiInteractionsService) {
+      InitUiInteractionsService(uiInteractionsService);
     }
 
     InitEditorService(editorService);

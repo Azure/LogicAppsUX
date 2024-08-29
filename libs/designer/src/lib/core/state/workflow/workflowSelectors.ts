@@ -60,7 +60,8 @@ const reduceCollapsed =
     return nodes.reduce((acc: any, child: WorkflowNode) => {
       const shouldFilter = condition(child);
       if (!shouldFilter) {
-        acc.push({ ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } });
+        const reducedChildren = child.children ? { children: reduceCollapsed(condition)(child.children) } : {};
+        acc.push({ ...child, ...reducedChildren });
         return acc;
       }
 
@@ -122,12 +123,7 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!nodeId || !state.graph) {
-        return [];
-      }
-      return getRecordEntry(state.edgeIdsBySource, nodeId) ?? [];
-    })
+    createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.edgeIdsBySource ?? {}, nodeId ?? '') ?? [])
   );
 };
 
@@ -181,6 +177,19 @@ export const useAllGraphParents = (graphId: string): string[] => {
       return [];
     })
   );
+};
+
+export const getParentsUncollapseFromGraphState = (state: WorkflowState, actionId: string): Record<string, boolean> => {
+  const collapsedGraphIds = state.collapsedGraphIds;
+  if (state.graph) {
+    const nodeParents = getWorkflowGraphPath(state.graph, actionId);
+    nodeParents.forEach((nodeId) => {
+      if (nodeId !== actionId && collapsedGraphIds[nodeId]) {
+        collapsedGraphIds[nodeId] = false;
+      }
+    });
+  }
+  return collapsedGraphIds;
 };
 
 export const useNodeGraphId = (nodeId: string): string =>
@@ -257,13 +266,7 @@ export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
 
 export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
-  useSelector(
-    createSelector(
-      getWorkflowState,
-      (state: WorkflowState) =>
-        getRecordEntry(state.runInstance?.properties.actions, id)?.retryHistory ?? state.runInstance?.properties.trigger?.retryHistory
-    )
-  );
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData?.retryHistory));
 
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));

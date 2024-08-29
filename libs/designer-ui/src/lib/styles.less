@@ -30,6 +30,7 @@
 @import "./card/parameters/parameters.less";
 @import "./connectorsummarycard/connectorsummarycard.less";
 @import "./token/token.less";
+@import "./copyinputcontrol/copyinputcontrol.less";
 @import "./tokenpicker/tokenpicker.less";
 @import "./floatingactionmenu/_floatingactionmenu.less";
 @import "./monitoring/monitoring.less";
@@ -80,10 +81,10 @@
 
 .msla-designer-canvas {
   display: inline-block;
-  min-height: 600px;
+  flex: 1;
   margin: 0 auto;
   min-width: 100%;
-  height: 100%;
+
   @media only screen and (max-width: calc(@card-max-width + 40)) {
     width: 100%;
     min-width: @card-min-width;
@@ -162,6 +163,7 @@
 }
 
 .msla-panel-mode {
+  position: relative;
 
   .msla-drop-zone-viewmanager2 {
     display: flex;

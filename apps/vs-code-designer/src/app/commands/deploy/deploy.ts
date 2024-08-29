@@ -38,13 +38,18 @@ import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
 import type { SiteConfigResource, StringDictionary, Site } from '@azure/arm-appservice';
-import { ResolutionService } from '@microsoft/logic-apps-shared';
 import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import {
+  resolveConnectionsReferences,
+  type ConnectionsData,
+  type FuncVersion,
+  type IIdentityWizardContext,
+  type ProjectLanguage,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
@@ -212,7 +217,8 @@ async function getLogicAppsPicks(
   context: IActionContext,
   subContext: ISubscriptionContext
 ): Promise<IAzureQuickPickItem<[Site | undefined, boolean]>[]> {
-  const listOfLogicApps = await LogicAppResolver.getAppResourceSiteBySubscription(context, subContext);
+  const logicAppsResolver = new LogicAppResolver();
+  const listOfLogicApps = await logicAppsResolver.getAppResourceSiteBySubscription(context, subContext);
   const picks: { label: string; data: [Site, boolean]; description?: string }[] = Array.from(listOfLogicApps).map(([_id, site]) => {
     return { label: site.name, data: [site, false] };
   });
@@ -289,10 +295,9 @@ async function getProjectPathToDeploy(
   let parametizedConnections: ConnectionsData;
 
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
   try {
     parametizedConnections = JSON.parse(connectionsJson);
-    connectionsData = resolutionService.resolve(parametizedConnections);
+    connectionsData = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
   } catch {
     return undefined;
   }

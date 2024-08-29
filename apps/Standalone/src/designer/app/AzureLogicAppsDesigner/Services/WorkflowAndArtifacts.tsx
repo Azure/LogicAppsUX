@@ -181,12 +181,7 @@ const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<W
   return response.data;
 };
 
-export const useRunInstanceStandard = (
-  workflowName: string,
-  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
-  appId?: string,
-  runId?: string
-) => {
+export const useRunInstanceStandard = (workflowName: string, appId?: string, runId?: string) => {
   return useQuery(
     ['getRunInstance', appId, workflowName, runId],
     async () => {
@@ -218,7 +213,6 @@ export const useRunInstanceStandard = (
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      onSuccess: onRunInstanceSuccess,
     }
   );
 };
@@ -463,7 +457,10 @@ export const saveWorkflowStandard = async (
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   clearDirtyState: () => void,
-  skipValidation?: boolean
+  options?: {
+    skipValidation?: boolean;
+    throwError?: boolean;
+  }
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -484,7 +481,7 @@ export const saveWorkflowStandard = async (
   }
 
   try {
-    if (!skipValidation) {
+    if (!options?.skipValidation) {
       try {
         await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
       } catch (error: any) {
@@ -517,11 +514,17 @@ export const saveWorkflowStandard = async (
 
     if (!isSuccessResponse(response.status)) {
       alert('Failed to save workflow');
+      if (options?.throwError) {
+        throw Error('Failed to save workflow');
+      }
       return;
     }
     clearDirtyState();
   } catch (error) {
     console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
   }
 };
 

@@ -9,12 +9,17 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
-import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
+import {
+  getSplitOnOptions,
+  getUpdatedManifestForSchemaDependency,
+  getUpdatedManifestForSplitOn,
+  operationSupportsSplitOn,
+  toOutputInfo,
+} from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -41,7 +46,6 @@ import type {
   IWorkflowService,
   CustomSwaggerServiceDetails,
   InputParameter,
-  OperationInfo,
   OperationManifest,
   OperationManifestProperties,
   OutputParameter,
@@ -103,22 +107,24 @@ export const updateWorkflowParameters = (parameters: Record<string, WorkflowPara
 
 export const getInputParametersFromManifest = (
   _nodeId: string,
+  operationInfo: NodeOperation,
   manifest: OperationManifest,
   presetParameterValues?: Record<string, any>,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
-  const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
+  const manifestParser = new ManifestParser(
+    manifest,
+    OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind)
+  );
+  const primaryInputParameters = manifestParser.getInputParameters(
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */,
     undefined,
     undefined
   );
   const allInputParameters = unmap(
-    new ManifestParser(manifest).getInputParameters(
-      true /* includeParentObject */,
-      Constants.MAX_EXPAND_ARRAY_DEPTH /* expandArrayPropertiesDepth */
-    )
+    manifestParser.getInputParameters(true /* includeParentObject */, Constants.MAX_EXPAND_ARRAY_DEPTH /* expandArrayPropertiesDepth */)
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
@@ -191,8 +197,8 @@ export const getOutputParametersFromManifest = (
   manifest: OperationManifest,
   isTrigger: boolean,
   inputs: NodeInputs,
+  operationInfo: NodeOperation,
   splitOnValue?: string,
-  operationInfo?: OperationInfo,
   nodeId?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
@@ -202,8 +208,9 @@ export const getOutputParametersFromManifest = (
     manifestToParse = getUpdatedManifestForSchemaDependency(manifest, inputs);
   }
 
+  const isAliasingSupported = OperationManifestService().isAliasingSupported(operationInfo?.type, operationInfo?.kind);
   if (isTrigger) {
-    const originalOperationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
+    const originalOperationOutputs = new ManifestParser(manifestToParse, isAliasingSupported).getOutputParameters(
       true /* includeParentObject */,
       Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
       false /* expandOneOf */,
@@ -232,7 +239,7 @@ export const getOutputParametersFromManifest = (
       },
     };
   } else {
-    operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
+    operationOutputs = new ManifestParser(manifestToParse, isAliasingSupported).getOutputParameters(
       true /* includeParentObject */,
       Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
       false /* expandOneOf */,
@@ -296,9 +303,7 @@ export const updateOutputsAndTokens = async (
   isTrigger: boolean,
   inputs: NodeInputs,
   settings: Settings,
-  shouldProcessSettings = false,
-  workflowKind?: WorkflowKind,
-  forceEnableSplitOn?: boolean
+  shouldProcessSettings = false
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -307,7 +312,7 @@ export const updateOutputsAndTokens = async (
   let tokens: OutputToken[];
   if (supportsManifest) {
     const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue, operationInfo, nodeId).outputs;
+    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, operationInfo, splitOnValue, nodeId).outputs;
     tokens = [
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(
@@ -334,10 +339,10 @@ export const updateOutputsAndTokens = async (
   dispatch(updateTokens({ id: nodeId, tokens }));
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
-  if (shouldProcessSettings && isTrigger && (workflowKind !== WorkflowKind.STATELESS || forceEnableSplitOn)) {
-    const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
-    if (settings.splitOn?.isSupported !== isSplitOnSupported) {
-      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
+  if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
+    const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
+    if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
+      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } } }));
     }
   }
 };
