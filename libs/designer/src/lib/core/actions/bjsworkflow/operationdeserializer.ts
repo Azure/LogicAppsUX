@@ -71,6 +71,7 @@ import {
   equals,
   getRecordEntry,
   parseErrorMessage,
+  cleanResourceId,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -191,7 +192,7 @@ export const initializeOperationMetadata = async (
 };
 
 const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {
-  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => references[key].api.id));
+  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => cleanResourceId(references[key].api.id)));
   const connectorPromises: Promise<ConnectorWithParsedSwagger | undefined>[] = [];
 
   for (const connectorId of connectorIds) {
