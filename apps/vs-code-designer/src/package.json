@@ -950,6 +950,16 @@
             "type": "boolean",
             "default": null,
             "description": "Parameterize connections when your project loads."
+          },
+          "azureLogicAppsStandard.designerTheme": {
+            "type": "string",
+            "enum": [
+              "Follow VS Code Theme",
+              "Light",
+              "Dark"
+            ],
+            "default": "Follow VS Code Theme",
+            "description": "Specifies the theme for logic apps designer."
           }
         }
       }
