@@ -302,7 +302,7 @@ const DesignerEditor = () => {
   };
 
   const getAuthToken = async () => {
-    return `Bearer ${environment.armToken}` ?? '';
+    return environment?.armToken ? `Bearer ${environment.armToken}` : '';
   };
 
   return (
