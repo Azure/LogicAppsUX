@@ -54,6 +54,6 @@ export const canStringBeConverted = (s: string): boolean => {
 
 export const createIdCopy = (id: string) => `${id}-copy`;
 
-export const cleanResourceId = (resourceId: string): string => {
-  return resourceId.startsWith('/') ? resourceId : `/${resourceId}`;
+export const cleanResourceId = (resourceId?: string): string => {
+  return resourceId?.startsWith('/') ? resourceId : `/${resourceId}`;
 };
