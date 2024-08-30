@@ -1,12 +1,11 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
-import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
+import { useBrandColor, useRawInputParameters } from '../../../../../core/state/operation/operationSelector';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
-import type { BoundParameters } from '@microsoft/logic-apps-shared';
-import { RunService, isBoolean, isNullOrUndefined, isNumber, isString } from '@microsoft/logic-apps-shared';
+import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
@@ -14,13 +13,14 @@ import { useQuery } from '@tanstack/react-query';
 import { setRunDataInputOutputs } from '../../../../../core/state/workflow/workflowSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../../core';
+import { parseInputs, parseOutputs } from './helpers';
 
 export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = useRunData(selectedNodeId);
   const dispatch = useDispatch<AppDispatch>();
-
+  const rawInputs = useRawInputParameters(selectedNodeId);
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
@@ -43,27 +43,15 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
     refetch();
   }, [runMetaData, refetch]);
 
-  const parseActionLink = (response: Record<string, any>, isInput: boolean): BoundParameters => {
-    if (isNullOrUndefined(response)) {
-      return response;
-    }
-
-    const dictionaryResponse =
-      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
-        ? { [isInput ? 'Inputs2' : 'Outputs']: response }
-        : response;
-
-    return Object.keys(dictionaryResponse).reduce((prev: BoundParameters, current) => {
-      prev[current] = { displayName: current, value: dictionaryResponse[current]?.content ?? dictionaryResponse[current] };
-      return prev;
-    }, {});
-  };
   useEffect(() => {
-    const parseInputs = parseActionLink(inputOutputs.inputs, true);
-    const parseOutputs = parseActionLink(inputOutputs.outputs, false);
-
-    dispatch(setRunDataInputOutputs({ nodeId: selectedNodeId, inputs: parseInputs, outputs: parseOutputs }));
-  }, [dispatch, inputOutputs, selectedNodeId]);
+    dispatch(
+      setRunDataInputOutputs({
+        nodeId: selectedNodeId,
+        inputs: parseInputs(inputOutputs.inputs, rawInputs),
+        outputs: parseOutputs(inputOutputs.outputs),
+      })
+    );
+  }, [dispatch, inputOutputs, selectedNodeId, rawInputs]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <>
