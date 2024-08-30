@@ -18,6 +18,7 @@ export interface DesignerState {
   iaMapArtifacts: ListDynamicValue[];
   oauthRedirectUrl: string;
   hostVersion: string;
+  theme: string;
 }
 
 const initialState: DesignerState = {
@@ -46,6 +47,7 @@ const initialState: DesignerState = {
   iaMapArtifacts: [],
   oauthRedirectUrl: '',
   hostVersion: '',
+  theme: '',
 };
 
 export const designerSlice = createSlice({
@@ -65,6 +67,7 @@ export const designerSlice = createSlice({
         isMonitoringView,
         runId,
         hostVersion,
+        theme,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
@@ -78,6 +81,7 @@ export const designerSlice = createSlice({
       state.runId = runId;
       state.oauthRedirectUrl = oauthRedirectUrl;
       state.hostVersion = hostVersion;
+      state.theme = theme;
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;

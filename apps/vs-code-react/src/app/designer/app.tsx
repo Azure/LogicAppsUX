@@ -11,7 +11,7 @@ import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import { DesignerTheme, ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -34,10 +34,17 @@ export const DesignerApp = () => {
     isMonitoringView,
     runId,
     hostVersion,
+    theme: designerTheme,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
-  const [theme, setTheme] = useState<Theme>(getTheme(document.body));
+  const [theme, setTheme] = useState<Theme>(
+    designerTheme === DesignerTheme.followVSCodeTheme
+      ? getTheme(document.body)
+      : designerTheme === DesignerTheme.dark
+        ? Theme.Dark
+        : Theme.Light
+  );
   const intl = useIntl();
   const queryClient = useQueryClient();
 
