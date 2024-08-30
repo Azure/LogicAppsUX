@@ -179,7 +179,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
-    console.log('executeAzureDynamicApi');
     const { baseUrl, apiVersion: _apiVersion, httpClient, apiHubServiceDetails } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
@@ -188,13 +187,10 @@ export abstract class BaseConnectorService implements IConnectorService {
     const uri = isManagedIdentityTypeConnection
       ? `${dynamicInvokeUrl}/dynamicInvoke`
       : isArmResourceId(connectorId) && apiHubServiceDetails?.baseUrl
-        ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
-        : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
-
-    console.log('uri', uri);
+        ? pathCombine(`${apiHubServiceDetails?.baseUrl}${connectionId}/extensions/proxy`, parameters['path'])
+        : pathCombine(`${baseUrl}${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
     try {
       if (isManagedIdentityTypeConnection) {
-        console.log('isManagedIdentityTypeConnection');
         const request = {
           method,
           path: parameters['path'],

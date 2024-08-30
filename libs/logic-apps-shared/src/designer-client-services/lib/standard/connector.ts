@@ -37,7 +37,6 @@ export class StandardConnectorService extends BaseConnectorService {
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
     const { baseUrl } = this.options;
-    console.log('getLegacyDynamicContent')
     return this._executeAzureDynamicApi(connectionId, connectorId, baseUrl, parameters, managedIdentityProperties);
   }
 

@@ -379,7 +379,6 @@ export async function getFolderItems(
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
   }
   if (isDynamicTreeExtension(definition) && filePickerInfo) {
-    console.log('isDynamicTreeExtension');
     const { open, browse } = filePickerInfo;
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
