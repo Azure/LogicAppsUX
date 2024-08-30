@@ -4,13 +4,14 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
-import { resetNodesLoadStatus, resetWorkflowState } from '../global';
+import { resetNodesLoadStatus, resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface ParameterGroup {
   id: string;
@@ -118,7 +119,7 @@ interface OperationMetadataLoadStatus {
   nodesAndDynamicDataInitialized: boolean;
 }
 
-const initialState: OperationMetadataState = {
+export const initialState: OperationMetadataState = {
   operationInfo: {},
   inputParameters: {},
   outputParameters: {},
@@ -534,6 +535,7 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
   },
 });
 
