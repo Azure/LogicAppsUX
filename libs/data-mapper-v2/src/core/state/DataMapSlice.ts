@@ -45,7 +45,6 @@ import {
 } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
-import cloneDeep from 'lodash/cloneDeep';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -83,16 +82,12 @@ export interface DataMapOperationState {
   inlineFunctionInputOutputKeys: string[];
   loadedMapMetadata?: MapMetadataV2;
   // Store edge mapping for each edge in the schema to use when the scrolling is happening
-  temporaryEdgeMapping: Record<string, Record<string, boolean>>;
+  intermediateEdgeMappingForScrolling: Record<string, Record<string, boolean>>;
   // Store edge mapping for each edge in the schema to use when collapsing/expanding
   intermediateEdgeMappingForCollapsing: Record<string, Record<string, boolean>>;
   // Store edge mapping direction for each edge in the schema to use when the scrolling is happening
   // And node is hidden
-  temporaryEdgeMappingDirection: Record<string, string>;
-  // Save the temporary state of edges to be used for rendering when tree node is expanded/collapsed
-  // This info is not saved in LML which is why it is stored separately in the store
-  sourceStateConnections: Record<string, Record<string, boolean>>;
-  targetStateConnections: Record<string, Record<string, boolean>>;
+  intermediateEdgeMappingDirectionForScrolling: Record<string, string>;
   // Generic reactflow node mapping for each node in the scehma
   sourceNodesMap: Record<string, Node>;
   targetNodesMap: Record<string, Node>;
@@ -123,12 +118,10 @@ const emptyPristineState: DataMapOperationState = {
   targetNodesMap: {},
   sourceOpenKeys: {},
   targetOpenKeys: {},
-  sourceStateConnections: {},
-  targetStateConnections: {},
   edgeLoopMapping: {},
-  temporaryEdgeMapping: {},
+  intermediateEdgeMappingForScrolling: {},
   nodesForScroll: {},
-  temporaryEdgeMappingDirection: {},
+  intermediateEdgeMappingDirectionForScrolling: {},
   intermediateEdgeMappingForCollapsing: {},
 };
 
@@ -275,7 +268,8 @@ export const dataMapSlice = createSlice({
         loadedMapMetadata: metadata,
         nodesForScroll: getNodesForScroll(),
         intermediateEdgeMappingForCollapsing: {},
-        temporaryEdgeMapping: {},
+        intermediateEdgeMappingForScrolling: {},
+        intermediateEdgeMappingDirectionForScrolling: {},
       };
 
       state.curDataMapOperation = newState;
@@ -288,7 +282,7 @@ export const dataMapSlice = createSlice({
       // Todo: Add connections to edge-mapping for already loaded connections
       const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
       let updatedTemporaryEdgeMapping = {
-        ...state.curDataMapOperation.temporaryEdgeMapping,
+        ...state.curDataMapOperation.intermediateEdgeMappingForScrolling,
       };
 
       let updatedIntermediateEdgeMappingForCollapsing = {
@@ -332,7 +326,7 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = {
         ...state.curDataMapOperation,
-        temporaryEdgeMapping: updatedTemporaryEdgeMapping,
+        intermediateEdgeMappingForScrolling: updatedTemporaryEdgeMapping,
         intermediateEdgeMappingForCollapsing: updatedIntermediateEdgeMappingForCollapsing,
       };
     },
@@ -445,10 +439,10 @@ export const dataMapSlice = createSlice({
           reactFlowDestination,
           sourceNode as SchemaNodeExtended
         );
-        newState.curDataMapOperation.temporaryEdgeMapping = {
-          ...newState.curDataMapOperation.temporaryEdgeMapping,
+        newState.curDataMapOperation.intermediateEdgeMappingForScrolling = {
+          ...newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
           [reactFlowSource]: getUpdatedIntermediateConnectionsForScrolling(
-            newState.curDataMapOperation.temporaryEdgeMapping,
+            newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
             reactFlowSource,
             reactFlowDestination,
             temporaryNodeIds,
@@ -465,10 +459,10 @@ export const dataMapSlice = createSlice({
           reactFlowSource,
           destinationNode as SchemaNodeExtended
         );
-        newState.curDataMapOperation.temporaryEdgeMapping = {
-          ...newState.curDataMapOperation.temporaryEdgeMapping,
+        newState.curDataMapOperation.intermediateEdgeMappingForScrolling = {
+          ...newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
           [reactFlowDestination]: getUpdatedIntermediateConnectionsForScrolling(
-            newState.curDataMapOperation.temporaryEdgeMapping,
+            newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
             reactFlowDestination,
             reactFlowSource,
             temporaryNodeIds,
@@ -746,9 +740,9 @@ export const dataMapSlice = createSlice({
     ) => {
       const { id, direction } = action.payload;
       if (direction) {
-        state.curDataMapOperation.temporaryEdgeMappingDirection[id] = direction;
-      } else if (state.curDataMapOperation.temporaryEdgeMappingDirection[id]) {
-        delete state.curDataMapOperation.temporaryEdgeMappingDirection[id];
+        state.curDataMapOperation.intermediateEdgeMappingDirectionForScrolling[id] = direction;
+      } else if (state.curDataMapOperation.intermediateEdgeMappingDirectionForScrolling[id]) {
+        delete state.curDataMapOperation.intermediateEdgeMappingDirectionForScrolling[id];
       }
     },
   },
@@ -1062,11 +1056,11 @@ export const deleteIntermediateConnectionsCreatedForScrolling = (ids: string[], 
       const id1 = ids[i];
       const id2 = ids[j];
       if (isSourceNode(id1) || isTargetNode(id1)) {
-        deleteConnections(id2, state.temporaryEdgeMapping[id1]);
+        deleteConnections(id2, state.intermediateEdgeMappingForScrolling[id1]);
       }
 
       if (isSourceNode(id2) || isTargetNode(id2)) {
-        deleteConnections(id1, state.temporaryEdgeMapping[id2]);
+        deleteConnections(id1, state.intermediateEdgeMappingForScrolling[id2]);
       }
     }
   }
@@ -1074,11 +1068,7 @@ export const deleteIntermediateConnectionsCreatedForScrolling = (ids: string[], 
 
 export const getSelectedNodes = (state: DataMapOperationState, key?: string) => {
   if (key) {
-    return getActiveNodes(
-      state.dataMapConnections,
-      isSourceNode(key) ? cloneDeep(state.sourceStateConnections[key]) : cloneDeep(state.targetStateConnections[key]),
-      key
-    );
+    return getActiveNodes(state.dataMapConnections, isSourceNode(key) ? {} : {}, key);
   }
   return {};
 };

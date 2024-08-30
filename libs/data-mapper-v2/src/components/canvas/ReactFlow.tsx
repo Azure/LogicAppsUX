@@ -108,7 +108,6 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   const onEdgeConnect = useCallback(
     (connection: Connection) => {
-      console.log(connection);
       addEdge(
         {
           ...connection,

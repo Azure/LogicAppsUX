@@ -5,12 +5,15 @@ import { colors } from '../styles';
 import { useSelector } from 'react-redux';
 import { splitEdgeId } from '../../../../utils/Edge.Utils';
 import type { RootState } from '../../../../core/state/Store';
+import { isSourceNode, isTargetNode } from '../../../../utils/ReactFlow.Util';
 
 const IntermediateConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY, data } = props;
   const splitIds = useMemo(() => splitEdgeId(id), [id]);
   const nodes = useNodes();
-  const { temporaryEdgeMappingDirection } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { temporaryEdgeMappingDirection, sourceOpenKeys, targetOpenKeys } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
 
   const componentId1 = useMemo(() => ((data && data['componentId']) ?? '') as string, [data]);
   const componentId2 = useMemo(() => (splitIds.length >= 2 ? splitIds[0] : ''), [splitIds]);
@@ -40,11 +43,30 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
 
   const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isHovered, isSelected]);
 
-  return componentId3 && componentId1 && componentId2 && oneNodeVisible && direction && componentId3.startsWith(direction as string) ? (
-    <g id={`${id}_customEdge`}>
-      <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
-    </g>
-  ) : null;
+  if (!componentId2 || !componentId3) {
+    return null;
+  }
+
+  if (data?.isDueToScroll && componentId1 && oneNodeVisible && direction && componentId3.startsWith(direction as string)) {
+    return (
+      <g id={`${id}_customEdge`}>
+        <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
+      </g>
+    );
+  }
+
+  if (
+    data?.isDueToCollapse &&
+    ((isSourceNode(componentId2) && !sourceOpenKeys[componentId2]) || (isTargetNode(componentId3) && !targetOpenKeys[componentId3]))
+  ) {
+    return (
+      <g id={`${id}_customEdge`}>
+        <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
+      </g>
+    );
+  }
+
+  return null;
 };
 
 export default IntermediateConnectedEdge;

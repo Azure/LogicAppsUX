@@ -19,9 +19,9 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
     flattenedSourceSchema,
     flattenedTargetSchema,
     dataMapConnections,
-    sourceStateConnections,
+    intermediateEdgeMappingForCollapsing,
     nodesForScroll,
-    temporaryEdgeMapping,
+    intermediateEdgeMappingForScrolling,
   } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const directEdges: Edge[] = useMemo(() => {
@@ -52,44 +52,43 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
   // Edges created when node is expanded/Collapsed
   const intermediateEdgesMapForCollapsedNodes: Record<string, Edge> = useMemo(() => {
     const newEdgesMap: Record<string, Edge> = {};
-    const sourceStateConnectionsEntries = Object.entries(sourceStateConnections);
+    const entries = Object.entries(intermediateEdgeMappingForCollapsing);
 
-    if (sourceStateConnectionsEntries.length > 0) {
-      for (const entry of sourceStateConnectionsEntries) {
-        const sourceNodeId = getReactFlowNodeId(entry[0], true);
-        const targetIds = Object.keys(entry[1]);
-        for (const targetId of targetIds) {
-          const targetNodeId = getReactFlowNodeId(targetId, false);
-          const id = createTemporaryEdgeId(sourceNodeId, targetNodeId);
-          const edge: Edge = {
-            id: id,
-            source: sourceNodeId,
-            target: targetNodeId,
-            type: 'connectedEdge',
-            reconnectable: 'target',
-            focusable: true,
-            interactionWidth: 10,
-            deletable: true,
-            selectable: true,
-            zIndex: 150,
-            data: {
-              isIntermediate: true,
-            },
-          };
-          newEdgesMap[id] = edge;
-        }
+    for (const entry of entries) {
+      const sourceNodeId = getReactFlowNodeId(entry[0], true);
+      const targetIds = Object.keys(entry[1]);
+      for (const targetId of targetIds) {
+        const targetNodeId = getReactFlowNodeId(targetId, false);
+        const id = createTemporaryEdgeId(sourceNodeId, targetNodeId);
+        const edge: Edge = {
+          id: id,
+          source: sourceNodeId,
+          target: targetNodeId,
+          type: 'intermediateConnectedEdge',
+          reconnectable: 'target',
+          focusable: true,
+          interactionWidth: 10,
+          deletable: true,
+          selectable: true,
+          zIndex: 150,
+          data: {
+            isIntermediate: true,
+            isDueToCollapse: true,
+          },
+        };
+        newEdgesMap[id] = edge;
       }
     }
 
     return newEdgesMap;
-  }, [sourceStateConnections]);
+  }, [intermediateEdgeMappingForCollapsing]);
 
   // Edges created when node is expanded/Collapsed
   const intermediateEdgesMapForScrolledNodes: Record<string, Edge> = useMemo(() => {
     const newEdgesMap: Record<string, Edge> = {};
-    const connectionMapForSource = Object.entries(temporaryEdgeMapping);
+    const entries = Object.entries(intermediateEdgeMappingForScrolling);
 
-    for (const [id, sourceMap] of connectionMapForSource) {
+    for (const [id, sourceMap] of entries) {
       for (const edgeId of Object.keys(sourceMap)) {
         const splitNodeId = splitEdgeId(edgeId);
         if (splitNodeId.length >= 2) {
@@ -119,6 +118,7 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
             interactionWidth: 10,
             data: {
               isIntermediate: true,
+              isDueToScroll: true,
               componentId: id,
             },
           };
@@ -128,7 +128,7 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
     }
 
     return newEdgesMap;
-  }, [temporaryEdgeMapping]);
+  }, [intermediateEdgeMappingForScrolling]);
 
   useEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
@@ -146,7 +146,7 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
 
     for (const edge of edges) {
       // Only remove the collapsable kinda edges
-      if (edge.data?.isIntermediate && !edge.data?.componentId) {
+      if (edge.data?.isIntermediate) {
         const id = edge.id;
         if (allTemporaryConnections[id]) {
           delete edgeChanges[id];
