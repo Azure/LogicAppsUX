@@ -1,3 +1,5 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { setHardCodedToken } from '../../../environments/environment';
 import type { AppDispatch } from '../../state/store';
 import {
   useAreCustomEditorsEnabled,
@@ -23,8 +25,8 @@ import {
   setSuppressDefaultNodeSelect,
   setStringOverrides,
 } from '../../state/workflowLoadingSlice';
-import { Checkbox } from '@fluentui/react';
-import { useCallback } from 'react';
+import { Checkbox, TextField } from '@fluentui/react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 const ContextSettings = () => {
@@ -48,6 +50,16 @@ const ContextSettings = () => {
       }
     },
     [dispatch]
+  );
+
+  const queryClient = useQueryClient();
+  const [armToken, setArmToken] = useState<string>();
+
+  const updateArmToken = useCallback(
+    async (token: string) => {
+      return queryClient.setQueryData<string>(['armToken'], () => token);
+    },
+    [queryClient]
   );
 
   return (
@@ -101,6 +113,15 @@ const ContextSettings = () => {
           );
         }}
       />
+      <TextField
+        label="ARM TOKEN"
+        value={armToken}
+        onChange={(_, value) => {
+          setArmToken(value);
+          setHardCodedToken(value as string);
+          updateArmToken(value as string);
+        }}
+        />
     </div>
   );
 };

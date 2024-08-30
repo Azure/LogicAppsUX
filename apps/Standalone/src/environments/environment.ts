@@ -1,6 +1,5 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // When building for production, this file is replaced with `environment.prod.ts`.
-
 const getAccessToken = async (fileName: string): Promise<string | undefined> => {
   try {
     const armTokenData = await import(`./jsonImport/${fileName}.json`);
@@ -27,4 +26,8 @@ export const loadToken = async () => {
   const token = await getAccessToken('armToken');
   environment.armToken = token;
   return token ?? null;
+};
+
+export const setHardCodedToken = (token: string) => {
+  environment.armToken = token;
 };
