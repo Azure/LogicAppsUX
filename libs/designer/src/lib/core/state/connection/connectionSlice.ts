@@ -1,10 +1,11 @@
 import { getExistingReferenceKey } from '../../utils/connectors/connections';
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, getUniqueName } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
@@ -86,6 +87,7 @@ export const connectionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialConnectionsState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.connections);
   },
 });
 

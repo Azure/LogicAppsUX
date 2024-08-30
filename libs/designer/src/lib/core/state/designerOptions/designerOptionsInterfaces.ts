@@ -42,6 +42,7 @@ export interface DesignerOptionsState {
     maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
+    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

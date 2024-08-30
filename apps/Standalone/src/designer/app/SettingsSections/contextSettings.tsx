@@ -23,7 +23,7 @@ import {
   setSuppressDefaultNodeSelect,
   setStringOverrides,
 } from '../../state/workflowLoadingSlice';
-import { Checkbox } from '@fluentui/react';
+import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -100,6 +100,10 @@ const ContextSettings = () => {
             )
           );
         }}
+      />
+      <TextField
+        label="Max State History Size"
+        onChange={(_, newValue) => dispatch(setHostOptions({ maxStateHistorySize: Number.parseInt(newValue || '0') }))}
       />
     </div>
   );

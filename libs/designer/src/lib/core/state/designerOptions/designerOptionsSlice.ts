@@ -25,6 +25,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import CONSTANTS from '../../../common/constants';
 
 export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
@@ -40,6 +41,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
     recurrenceInterval: undefined,
+    maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
   },
 };
 

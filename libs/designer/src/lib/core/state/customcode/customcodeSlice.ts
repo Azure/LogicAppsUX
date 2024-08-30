@@ -1,8 +1,9 @@
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { AddCustomCodePayload, CustomCodeState, DeleteCustomCodePayload, RenameCustomCodePayload } from './customcodeInterfaces';
 import { splitFileName } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export const initialState: CustomCodeState = {
   files: {},
@@ -80,6 +81,7 @@ export const customCodeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.customCode);
   },
 });
 

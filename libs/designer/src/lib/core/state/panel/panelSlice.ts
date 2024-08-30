@@ -1,11 +1,12 @@
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { PanelLocation } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
-const initialState: PanelState = {
+export const initialState: PanelState = {
   collapsed: true,
   selectedNodes: [],
   relationshipIds: {
@@ -161,6 +162,7 @@ export const panelSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.panel);
   },
 });
 
