@@ -1,5 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService, SwaggerParser, equals } from '@microsoft/logic-apps-shared';
+import { ConnectionService, SwaggerParser, equals, cleanResourceId } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -85,7 +85,9 @@ export const getConnectionsForConnector = async (connectorId: string) => {
   });
 };
 
-export const getConnection = async (connectionId: string, connectorId: string, fetchResourceIfNeeded = false) => {
+export const getConnection = async (_connectionId: string, _connectorId: string, fetchResourceIfNeeded = false) => {
+  const connectionId = cleanResourceId(_connectionId);
+  const connectorId = cleanResourceId(_connectorId);
   const connections = await getConnectionsForConnector(connectorId);
   const connection = connections?.find((connection) => equals(connection.id, connectionId));
   return (!connection && fetchResourceIfNeeded ? getConnectionFromResource(connectionId) : connection) ?? null;
@@ -97,8 +99,9 @@ export const getUniqueConnectionName = async (connectorId: string, existingKeys:
   return ConnectionService().getUniqueConnectionName(connectorId, [...connectionNames, ...existingKeys], connectorName as string);
 };
 
-export const useConnectionResource = (connectionId: string) => {
-  return useQuery(['connection', connectionId?.toLowerCase()], () => ConnectionService().getConnection(connectionId) ?? null, {
+export const useConnectionResource = (_connectionId: string) => {
+  const connectionId = cleanResourceId(_connectionId)?.toLowerCase();
+  return useQuery(['connection', connectionId], () => ConnectionService().getConnection(connectionId) ?? null, {
     enabled: !!connectionId,
     refetchOnMount: false,
   });

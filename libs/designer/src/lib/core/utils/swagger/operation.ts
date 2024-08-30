@@ -46,6 +46,7 @@ import {
   removeConnectionPrefix,
   startsWith,
   unmap,
+  cleanResourceId,
 } from '@microsoft/logic-apps-shared';
 import type { LAOperation, LogicAppsV2, OperationInfo, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -288,7 +289,8 @@ const getOperationInfo = async (
       if (!reference || !reference.api || !reference.api.id) {
         throw new Error(`Incomplete information for operation '${nodeId}'`);
       }
-      const connectorId = reference.api.id;
+      const connectorId = cleanResourceId(reference.api.id);
+
       const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
       if (!parsedSwagger) {
         throw new Error(`Could not fetch swagger for connector - ${connectorId}`);

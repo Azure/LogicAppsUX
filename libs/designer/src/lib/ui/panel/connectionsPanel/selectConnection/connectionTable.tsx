@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { cleanResourceId, getIdLeaf, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectionTableDetailsButton } from './connectionTableDetailsButton';
@@ -40,7 +40,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const initiallySelectedConnectionId = useRef(currentConnectionId);
 
   const isSelectedConnection = (connection: ConnectionWithFlattenedProperties): boolean => {
-    return connection.id === initiallySelectedConnectionId.current;
+    return cleanResourceId(connection.id) === cleanResourceId(initiallySelectedConnectionId.current);
   };
 
   // We need to flatten the connection to allow the detail list access to nested props
