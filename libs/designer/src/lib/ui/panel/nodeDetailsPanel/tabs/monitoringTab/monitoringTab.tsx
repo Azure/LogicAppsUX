@@ -5,7 +5,8 @@ import { useRunData } from '../../../../../core/state/workflow/workflowSelectors
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
-import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
+import { RunService, isBoolean, isNullOrUndefined, isNumber, isString } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
@@ -42,8 +43,26 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
     refetch();
   }, [runMetaData, refetch]);
 
+  const parseActionLink = (response: Record<string, any>, isInput: boolean): BoundParameters => {
+    if (isNullOrUndefined(response)) {
+      return response;
+    }
+
+    const dictionaryResponse =
+      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
+        ? { [isInput ? 'Inputs2' : 'Outputs']: response }
+        : response;
+
+    return Object.keys(dictionaryResponse).reduce((prev: BoundParameters, current) => {
+      prev[current] = { displayName: current, value: dictionaryResponse[current]?.content ?? dictionaryResponse[current] };
+      return prev;
+    }, {});
+  };
   useEffect(() => {
-    dispatch(setRunDataInputOutputs({ nodeId: selectedNodeId, inputs: inputOutputs.inputs, outputs: inputOutputs.outputs }));
+    const parseInputs = parseActionLink(inputOutputs.inputs, true);
+    const parseOutputs = parseActionLink(inputOutputs.outputs, false);
+
+    dispatch(setRunDataInputOutputs({ nodeId: selectedNodeId, inputs: parseInputs, outputs: parseOutputs }));
   }, [dispatch, inputOutputs, selectedNodeId]);
 
   return isNullOrUndefined(runMetaData) ? null : (
@@ -55,7 +74,6 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         isLoading={isFetching || isLoading}
         isError={isError}
         nodeId={selectedNodeId}
-        values={inputOutputs.inputs}
       />
       <OutputsPanel
         runMetaData={runMetaData}
@@ -63,7 +81,6 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         isLoading={isFetching || isLoading}
         isError={isError}
         nodeId={selectedNodeId}
-        values={inputOutputs.outputs}
       />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
     </>

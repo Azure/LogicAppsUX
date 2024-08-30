@@ -281,6 +281,7 @@ const Setting = ({
   });
 
   const renderSetting = (setting: Settings, i: number) => {
+    console.log('charlie', setting.nodeTitle, setting.settingType, setting.settingProp);
     const { settingType, settingProp, visible = true } = setting;
     const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
     if (!readOnly) {
