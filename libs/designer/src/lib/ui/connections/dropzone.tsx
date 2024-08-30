@@ -115,10 +115,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
         dependencies?: string[];
         graphId?: string;
         isScope?: boolean;
-      }) => {
-        const hello = canDropItem(item, upstreamNodes, upstreamNodesDependencies, upstreamScopes, childId, parentId);
-        return hello;
-      },
+      }) => canDropItem(item, upstreamNodes, upstreamNodesDependencies, upstreamScopes, childId, parentId),
       collect: (monitor) => ({
         isOver: monitor.isOver(),
         canDrop: monitor.isOver() && monitor.canDrop(), // Only calculate canDrop when isOver is true
