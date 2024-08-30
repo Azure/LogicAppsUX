@@ -72,21 +72,18 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
     const newEdgesMap: Record<string, Edge> = {};
     const entries = Object.entries(intermediateEdgeMappingForCollapsing);
     for (const entry of entries) {
-      const sourceId = entry[0];
-      const targetIds = Object.keys(entry[1]);
-      for (const targetId of targetIds) {
-        let id1 = '';
-        let id2 = '';
-        if (isSourceNode(sourceId)) {
-          id1 = sourceId;
-          id2 = targetId;
-        } else {
-          id1 = targetId;
-          id2 = sourceId;
+      const sourceId = entry[0]; // Id for which this collapsed node is created
+      const ids = Object.keys(entry[1]);
+      for (const id of ids) {
+        const splitIds = splitEdgeId(id);
+        if (splitIds.length >= 2) {
+          const [id1, id2] = splitIds;
+          const id = createTemporaryEdgeId(id1, id2);
+          newEdgesMap[id] = createAndGetIntermediateEdge(id, id1, id2, {
+            isDueToCollapse: true,
+            componentId: sourceId,
+          });
         }
-
-        const id = createTemporaryEdgeId(id1, id2);
-        newEdgesMap[id] = createAndGetIntermediateEdge(id, id1, id2, { isDueToCollapse: true });
       }
     }
 

@@ -40,11 +40,12 @@ import {
   addTargetReactFlowPrefix,
   convertWholeDataMapToLayoutTree,
   createReactFlowFunctionKey,
+  getTreeNodeId,
   isSourceNode,
   isTargetNode,
 } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
-import { createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
+import { createEdgeId, createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -328,8 +329,7 @@ export const dataMapSlice = createSlice({
       applyConnectionValue(newState.curDataMapOperation.dataMapConnections, action.payload);
 
       newState.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(
-        newState.curDataMapOperation.dataMapConnections,
-        {},
+        newState.curDataMapOperation,
         state.curDataMapOperation.selectedItemKey
       );
 
@@ -406,8 +406,7 @@ export const dataMapSlice = createSlice({
       addConnection(newState.curDataMapOperation.dataMapConnections, action.payload, destinationNode, sourceNode);
 
       newState.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(
-        newState.curDataMapOperation.dataMapConnections,
-        {},
+        newState.curDataMapOperation,
         state.curDataMapOperation.selectedItemKey
       );
 
@@ -563,7 +562,7 @@ export const dataMapSlice = createSlice({
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
       const key = action.payload;
       state.curDataMapOperation.selectedItemKey = key;
-      state.curDataMapOperation.selectedItemConnectedNodes = getSelectedNodes(state.curDataMapOperation, key);
+      state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
@@ -623,7 +622,7 @@ export const dataMapSlice = createSlice({
         );
 
         // Reset selected state
-        state.curDataMapOperation.selectedItemConnectedNodes = getSelectedNodes(
+        state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(
           state.curDataMapOperation,
           state.curDataMapOperation.selectedItemKey
         );
@@ -942,15 +941,18 @@ export const getUpdatedIntermediateConnectionsForCollapsing = (
 ) => {
   if (node) {
     const allParents = node.pathToRoot;
-    for (const parentKey of allParents) {
-      const id = isSourceNode(sourceId) ? addSourceReactFlowPrefix(parentKey.key) : addTargetReactFlowPrefix(parentKey.key);
+    for (const parent of allParents) {
+      const key = parent.key;
+      const id = isSourceNode(sourceId)
+        ? createEdgeId(addSourceReactFlowPrefix(key), targetId)
+        : createEdgeId(targetId, addTargetReactFlowPrefix(key));
       // Map parents to the target node to store temporary edges
-      if (id !== sourceId) {
+      if (key !== getTreeNodeId(sourceId)) {
         allConnections = {
           ...allConnections,
-          [id]: {
-            ...(allConnections[id] ?? {}),
-            [targetId]: true,
+          [sourceId]: {
+            ...(allConnections[sourceId] ?? {}),
+            [id]: true,
           },
         };
       }
@@ -966,10 +968,11 @@ export const deleteIntermediateConnectionsForCollapsingNodes = (sourceId: string
     if (node) {
       const allParents = node.pathToRoot;
       for (const parentKey of allParents) {
-        const id = isSourceNode(sId) ? addSourceReactFlowPrefix(parentKey.key) : addTargetReactFlowPrefix(parentKey.key);
-
-        if (allConnections[id] && allConnections[id][tId]) {
-          delete allConnections[id][tId];
+        const id = isSourceNode(sId)
+          ? createEdgeId(addSourceReactFlowPrefix(parentKey.key), tId)
+          : createEdgeId(tId, addTargetReactFlowPrefix(parentKey.key));
+        if (allConnections[sId] && allConnections[sId][id]) {
+          delete allConnections[sId][id];
         }
       }
     }
@@ -1011,13 +1014,6 @@ export const deleteIntermediateConnectionsCreatedForScrolling = (ids: string[], 
       }
     }
   }
-};
-
-export const getSelectedNodes = (state: DataMapOperationState, key?: string) => {
-  if (key) {
-    return getActiveNodes(state.dataMapConnections, isSourceNode(key) ? {} : {}, key);
-  }
-  return {};
 };
 
 export const addIntermediateConnections = (sourceId: string, targetId: string, state: DataMapOperationState) => {
