@@ -43,28 +43,34 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
 
   const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isHovered, isSelected]);
 
+  const edgeJSXElement = useMemo(
+    () => (
+      <g id={`${id}_customEdge`}>
+        <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
+      </g>
+    ),
+    [id, path, strokeColor]
+  );
+
+  // Id of Intermediate edge is always in the format <source-id>__edge__<target-id>__edge__<guid>
+  // component2 -> source-id, component3 -> target-id
   if (!componentId2 || !componentId3) {
     return null;
   }
 
+  // For scroll behavior, we need to make sure the dummy node[top/bottom, left/right] for which this edge is created exists,
+  // and make sure we show the correct direction per which direction the node is scrolled into (up or down)
   if (data?.isDueToScroll && componentId1 && oneNodeVisible && direction && componentId3.startsWith(direction as string)) {
-    return (
-      <g id={`${id}_customEdge`}>
-        <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
-      </g>
-    );
+    return edgeJSXElement;
   }
 
+  // For collapse behavior, we need to make sure the parent is collapsed before showing the edge
   if (
     data?.isDueToCollapse &&
     ((isSourceNode(componentId2) && sourceOpenKeys[getTreeNodeId(componentId2)] === false) ||
       (isTargetNode(componentId3) && targetOpenKeys[getTreeNodeId(componentId3)] === false))
   ) {
-    return (
-      <g id={`${id}_customEdge`}>
-        <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
-      </g>
-    );
+    return edgeJSXElement;
   }
 
   return null;
