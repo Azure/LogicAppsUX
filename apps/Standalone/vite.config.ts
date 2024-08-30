@@ -32,7 +32,7 @@ export default defineConfig({
     'process.env': {},
   },
   build: {
-    sourcemap: true,
+    // sourcemap: true,
     minify: false,
     rollupOptions: {
       plugins: [nodePolyfills()],
