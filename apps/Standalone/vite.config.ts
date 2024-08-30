@@ -32,6 +32,7 @@ export default defineConfig({
     'process.env': {},
   },
   build: {
+    minify: false,
     rollupOptions: {
       plugins: [nodePolyfills()],
       //external: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/react-query-devtools'],
