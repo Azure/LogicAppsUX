@@ -25,6 +25,7 @@ export interface IDesignerPanelMetadata {
   accessToken?: string;
   schemaArtifacts: FileDetails[];
   mapArtifacts: Record<string, FileDetails[]>;
+  theme: string;
 }
 
 export interface StandardApp {

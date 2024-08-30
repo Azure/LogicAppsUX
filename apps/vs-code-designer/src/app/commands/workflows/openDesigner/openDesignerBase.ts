@@ -15,8 +15,9 @@ import {
   type FileDetails,
   type Parameter,
 } from '@microsoft/vscode-extension-logic-apps';
-import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
+import { azurePublicBaseUrl, designerTheme, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
+import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 
 export interface IDesignerOptions {
   references?: any;
@@ -46,6 +47,7 @@ export abstract class OpenDesignerBase {
   protected oauthRedirectUrl?: string;
   protected schemaArtifacts?: FileDetails[] | undefined;
   protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
+  protected readonly theme: string;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
@@ -65,6 +67,7 @@ export abstract class OpenDesignerBase {
     this.readOnly = readOnly;
     this.isLocal = isLocal;
     this.isMonitoringView = isMonitoringView;
+    this.theme = getWorkspaceSetting(designerTheme);
   }
 
   protected abstract createPanel(): Promise<void>;

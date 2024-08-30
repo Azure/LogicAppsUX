@@ -205,6 +205,7 @@ export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
+export const designerTheme = 'designerTheme';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';

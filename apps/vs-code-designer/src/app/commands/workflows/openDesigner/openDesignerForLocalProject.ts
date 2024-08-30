@@ -438,6 +438,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts: await getArtifactsInLocalProject(projectPath),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
+      theme: this.theme,
     };
   }
 

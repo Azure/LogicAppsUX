@@ -96,3 +96,10 @@ export const ProjectType = {
   rulesEngine: 'rulesEngine',
 } as const;
 export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
+
+export const DesignerTheme = {
+  followVSCodeTheme: 'Follow VS Code Theme',
+  light: 'Light',
+  dark: 'Dark',
+} as const;
+export type DesignerTheme = (typeof DesignerTheme)[keyof typeof DesignerTheme];
