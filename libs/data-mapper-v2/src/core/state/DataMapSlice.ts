@@ -279,55 +279,25 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap = newState;
       state.lastAction = 'Set initial data map';
 
-      // Todo: Add connections to edge-mapping for already loaded connections
+      // Todo: Add connections to edge-mapping for already loaded connections after the initial map has been created
       const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
-      let updatedTemporaryEdgeMapping = {
-        ...state.curDataMapOperation.intermediateEdgeMappingForScrolling,
+      const newStateOperationsForIntermediateState = {
+        ...state.curDataMapOperation,
+        intermediateEdgeMappingForScrolling: {
+          ...state.curDataMapOperation.intermediateEdgeMappingForScrolling,
+        },
+        intermediateEdgeMappingForCollapsing: {
+          ...state.curDataMapOperation.intermediateEdgeMappingForCollapsing,
+        },
       };
 
-      let updatedIntermediateEdgeMappingForCollapsing = {
-        ...state.curDataMapOperation.intermediateEdgeMappingForCollapsing,
-      };
-      const temporaryNodeIds = Object.keys(state.curDataMapOperation.nodesForScroll);
       for (const edge of layout.edges) {
         const { sourceId, targetId } = edge;
-        if (isSourceNode(sourceId)) {
-          updatedTemporaryEdgeMapping = {
-            ...updatedTemporaryEdgeMapping,
-            [sourceId]: getUpdatedIntermediateConnectionsForScrolling(updatedTemporaryEdgeMapping, sourceId, targetId, temporaryNodeIds, [
-              'top-left',
-              'bottom-left',
-            ]),
-          };
-          updatedIntermediateEdgeMappingForCollapsing = getUpdatedIntermediateConnectionsForCollapsing(
-            updatedIntermediateEdgeMappingForCollapsing,
-            sourceId,
-            targetId,
-            flattenedSourceSchema[sourceId]
-          );
-        }
-
-        if (isTargetNode(targetId)) {
-          updatedTemporaryEdgeMapping = {
-            ...updatedTemporaryEdgeMapping,
-            [targetId]: getUpdatedIntermediateConnectionsForScrolling(updatedTemporaryEdgeMapping, targetId, sourceId, temporaryNodeIds, [
-              'top-right',
-              'bottom-right',
-            ]),
-          };
-          updatedIntermediateEdgeMappingForCollapsing = getUpdatedIntermediateConnectionsForCollapsing(
-            updatedIntermediateEdgeMappingForCollapsing,
-            targetId,
-            sourceId,
-            flattenedTargetSchema[targetId]
-          );
-        }
+        addIntermediateConnections(sourceId, targetId, newStateOperationsForIntermediateState);
       }
 
       state.curDataMapOperation = {
-        ...state.curDataMapOperation,
-        intermediateEdgeMappingForScrolling: updatedTemporaryEdgeMapping,
-        intermediateEdgeMappingForCollapsing: updatedIntermediateEdgeMappingForCollapsing,
+        ...newStateOperationsForIntermediateState,
       };
     },
     createInputSlotForUnboundedInput: (state, action: PayloadAction<string>) => {
@@ -386,7 +356,6 @@ export const dataMapSlice = createSlice({
       const destinationNode: UnknownNode = isTargetNodeFromSchema
         ? state.curDataMapOperation.flattenedTargetSchema[reactFlowDestination]
         : newState.curDataMapOperation.functionNodes[action.payload.reactFlowDestination];
-      const temporaryNodeIds = Object.keys(state.curDataMapOperation.nodesForScroll);
 
       // Add any repeating parent nodes as well (except for Direct Access's)
       // Get all the source nodes in case we have sources from multiple source chains
@@ -430,46 +399,7 @@ export const dataMapSlice = createSlice({
         });
       }
 
-      if (isSourceNodeFromSchema) {
-        // Set intermediate state connections
-
-        state.curDataMapOperation.intermediateEdgeMappingForCollapsing = getUpdatedIntermediateConnectionsForCollapsing(
-          state.curDataMapOperation.intermediateEdgeMappingForCollapsing,
-          reactFlowSource,
-          reactFlowDestination,
-          sourceNode as SchemaNodeExtended
-        );
-        newState.curDataMapOperation.intermediateEdgeMappingForScrolling = {
-          ...newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
-          [reactFlowSource]: getUpdatedIntermediateConnectionsForScrolling(
-            newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
-            reactFlowSource,
-            reactFlowDestination,
-            temporaryNodeIds,
-            ['top-left', 'bottom-left']
-          ),
-        };
-      }
-
-      if (isTargetNodeFromSchema) {
-        // Get all the parents of the target node
-        state.curDataMapOperation.intermediateEdgeMappingForCollapsing = getUpdatedIntermediateConnectionsForCollapsing(
-          state.curDataMapOperation.intermediateEdgeMappingForCollapsing,
-          reactFlowDestination,
-          reactFlowSource,
-          destinationNode as SchemaNodeExtended
-        );
-        newState.curDataMapOperation.intermediateEdgeMappingForScrolling = {
-          ...newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
-          [reactFlowDestination]: getUpdatedIntermediateConnectionsForScrolling(
-            newState.curDataMapOperation.intermediateEdgeMappingForScrolling,
-            reactFlowDestination,
-            reactFlowSource,
-            temporaryNodeIds,
-            ['top-right', 'bottom-right']
-          ),
-        };
-      } else if ((destinationNode as any)?.maxNumberOfInputs === UnboundedInput) {
+      if (!isTargetNodeFromSchema && (destinationNode as any)?.maxNumberOfInputs === UnboundedInput) {
         action.payload.specificInput = 0;
       }
 
@@ -488,6 +418,21 @@ export const dataMapSlice = createSlice({
       handleDirectAccessConnection(sourceNode, action.payload, newState.curDataMapOperation, destinationNode);
 
       doDataMapOperation(state, newState, 'Make connection');
+
+      // Add both collapsable and intermediate connections behind the scenes after the edge has been created
+      const newStateOperationsForIntermediateState = {
+        ...state.curDataMapOperation,
+        intermediateEdgeMappingForScrolling: {
+          ...state.curDataMapOperation.intermediateEdgeMappingForScrolling,
+        },
+        intermediateEdgeMappingForCollapsing: {
+          ...state.curDataMapOperation.intermediateEdgeMappingForCollapsing,
+        },
+      };
+
+      addIntermediateConnections(reactFlowSource, reactFlowDestination, newStateOperationsForIntermediateState);
+
+      state.curDataMapOperation = { ...newStateOperationsForIntermediateState };
     },
     updateDataMapLML: (state, action: PayloadAction<string>) => {
       state.curDataMapOperation.dataMapLML = action.payload;
@@ -1071,4 +1016,36 @@ export const getSelectedNodes = (state: DataMapOperationState, key?: string) => 
     return getActiveNodes(state.dataMapConnections, isSourceNode(key) ? {} : {}, key);
   }
   return {};
+};
+
+export const addIntermediateConnections = (sourceId: string, targetId: string, state: DataMapOperationState) => {
+  const addIntermediateConnectionState = (sId: string, tId: string, directions: NodeScrollDirection[], node?: SchemaNodeExtended) => {
+    if (node) {
+      state.intermediateEdgeMappingForCollapsing = getUpdatedIntermediateConnectionsForCollapsing(
+        state.intermediateEdgeMappingForCollapsing,
+        sId,
+        tId,
+        node as SchemaNodeExtended
+      );
+    }
+
+    state.intermediateEdgeMappingForScrolling = {
+      ...state.intermediateEdgeMappingForScrolling,
+      [sId]: getUpdatedIntermediateConnectionsForScrolling(
+        state.intermediateEdgeMappingForScrolling,
+        sId,
+        tId,
+        Object.keys(state.nodesForScroll),
+        directions
+      ),
+    };
+  };
+
+  if (isSourceNode(sourceId)) {
+    addIntermediateConnectionState(sourceId, targetId, ['top-left', 'bottom-left'], state.flattenedSourceSchema[sourceId]);
+  }
+
+  if (isTargetNode(targetId)) {
+    addIntermediateConnectionState(targetId, sourceId, ['top-right', 'bottom-right'], state.flattenedTargetSchema[targetId]);
+  }
 };
