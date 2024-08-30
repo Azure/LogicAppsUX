@@ -34,7 +34,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       plugins: [nodePolyfills()],
-      external: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/react-query-devtools'],
+      //external: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/react-query-devtools'],
     },
   },
 });
