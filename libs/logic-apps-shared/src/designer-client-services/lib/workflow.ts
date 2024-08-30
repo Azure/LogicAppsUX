@@ -43,6 +43,11 @@ export interface IWorkflowService {
   isExplicitAuthRequiredForManagedIdentity?(): boolean;
 
   /**
+   * Checks if workflow supports split on in triggers.
+   */
+  isSplitOnSupported?(): boolean;
+
+  /**
    * Gets definition schema version from current operation types.
    */
   getDefinitionSchema?(operationInfos: { type: string; kind?: string }[]): string;

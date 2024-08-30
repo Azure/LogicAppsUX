@@ -23,6 +23,7 @@ import {
   getUpdatedStateConnections,
   type NodeScrollDirection,
   getNodeIdForScroll,
+  getNodesForScroll,
 } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -36,7 +37,13 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Node, Rect, XYPosition } from '@xyflow/react';
-import { createReactFlowFunctionKey, getTreeNodeId, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
+import {
+  convertWholeDataMapToLayoutTree,
+  createReactFlowFunctionKey,
+  getTreeNodeId,
+  isSourceNode,
+  isTargetNode,
+} from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
 import cloneDeep from 'lodash/cloneDeep';
@@ -266,8 +273,6 @@ export const dataMapSlice = createSlice({
 
       const functionNodes: FunctionDictionary = createFunctionDictionary(dataMapConnections, flattenedTargetSchema);
 
-      // Todo: Add connections to edge-mapping for already loaded connections
-
       assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes ?? [], functionNodes);
 
       const newState: DataMapOperationState = {
@@ -280,6 +285,7 @@ export const dataMapSlice = createSlice({
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
+        nodesForScroll: getNodesForScroll(),
       };
 
       state.curDataMapOperation = newState;
@@ -288,8 +294,40 @@ export const dataMapSlice = createSlice({
       state.targetInEditState = false;
       state.pristineDataMap = newState;
       state.lastAction = 'Set initial data map';
-    },
 
+      // Todo: Add connections to edge-mapping for already loaded connections
+      const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodes, dataMapConnections);
+      let updatedTemporaryEdgeMapping = {
+        ...state.curDataMapOperation.temporaryEdgeMapping,
+      };
+      const temporaryNodeIds = Object.keys(state.curDataMapOperation.nodesForScroll);
+      for (const edge of layout.edges) {
+        const { sourceId, targetId } = edge;
+        if (isSourceNode(sourceId)) {
+          updatedTemporaryEdgeMapping = {
+            ...updatedTemporaryEdgeMapping,
+            [sourceId]: getUpdatedTemporaryConnections(updatedTemporaryEdgeMapping, sourceId, targetId, temporaryNodeIds, [
+              'top-left',
+              'bottom-left',
+            ]),
+          };
+        }
+
+        if (isTargetNode(targetId)) {
+          updatedTemporaryEdgeMapping = {
+            ...updatedTemporaryEdgeMapping,
+            [targetId]: getUpdatedTemporaryConnections(updatedTemporaryEdgeMapping, targetId, sourceId, temporaryNodeIds, [
+              'top-right',
+              'bottom-right',
+            ]),
+          };
+        }
+      }
+
+      state.curDataMapOperation.temporaryEdgeMapping = {
+        ...updatedTemporaryEdgeMapping,
+      };
+    },
     createInputSlotForUnboundedInput: (state, action: PayloadAction<string>) => {
       const newState: DataMapState = {
         ...state,
@@ -327,7 +365,6 @@ export const dataMapSlice = createSlice({
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
-
     makeConnectionFromMap: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapState = {
         ...state,
@@ -501,7 +538,6 @@ export const dataMapSlice = createSlice({
 
       doDataMapOperation(state, newState, 'Add function node');
     },
-
     saveDataMap: (
       state,
       action: PayloadAction<{
@@ -532,7 +568,6 @@ export const dataMapSlice = createSlice({
       };
       state.curDataMapOperation = newOp;
     },
-
     deleteFunction: (state, action: PayloadAction<string>) => {
       const reactFlowKey = action.payload;
       const currentDataMap = state.curDataMapOperation;
@@ -597,7 +632,6 @@ export const dataMapSlice = createSlice({
 
       state.curDataMapOperation = newState;
     },
-
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
       const key = action.payload;
       state.curDataMapOperation.selectedItemKey = key;

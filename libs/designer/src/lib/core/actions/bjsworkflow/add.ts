@@ -59,6 +59,7 @@ import type {
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
+import { operationSupportsSplitOn } from '../../utils/outputs';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -140,12 +141,13 @@ export const initializeOperationDetails = async (
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
       manifest,
       isTrigger,
       nodeInputs,
       operationInfo,
-      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
-      nodeId
+      dispatch,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined
     );
     parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
 
@@ -153,24 +155,24 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(
       isTrigger,
       operationInfo,
-      nodeOutputs,
       manifest,
       /* swagger */ undefined,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.designerOptions.hostOptions.forceEnableSplitOn
+      state.workflow.workflowKind
     );
 
+    // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;
     if (isTrigger && settings.splitOn?.value?.value) {
       updatedOutputs = getOutputParametersFromManifest(
+        nodeId,
         manifest,
         isTrigger,
         nodeInputs,
         operationInfo,
-        settings.splitOn?.value?.value,
-        nodeId
+        dispatch,
+        settings.splitOn?.value?.value
       ).outputs;
     }
 
@@ -208,12 +210,10 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(
       isTrigger,
       operationInfo,
-      nodeOutputs,
       /* manifest */ undefined,
       parsedSwagger,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.designerOptions.hostOptions.forceEnableSplitOn
+      state.workflow.workflowKind
     );
 
     // We should update the outputs when splitOn is enabled.
@@ -285,12 +285,13 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest
   );
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+    id,
     manifest,
     false,
     nodeInputs,
     { type: '', kind: '', connectorId: '', operationId: '' },
-    /* splitOnValue */ undefined,
-    id
+    dispatch,
+    /* splitOnValue */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {

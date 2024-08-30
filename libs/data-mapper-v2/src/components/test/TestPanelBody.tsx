@@ -8,8 +8,10 @@ import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/des
 import { EditorLanguage, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { updateTestInput } from '../../core/state/PanelSlice';
 
-type TestPanelBodyProps = {};
+const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
+const resultPlaceHolderEditorId = 'result-editor-placeholder';
 
+type TestPanelBodyProps = {};
 export const TestPanelBody = (_props: TestPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
@@ -27,8 +29,8 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
         description: 'Sample test data for testing',
       }),
       SAMPLE_TEST_DATA_PLACEHOLDER: intl.formatMessage({
-        defaultMessage: 'Paste your sample data to test the mapping.',
-        id: '33U26u',
+        defaultMessage: 'Paste your sample data to test the mapping',
+        id: 'S5kFNK',
         description: 'Sample test data placeholder',
       }),
       RESULT: intl.formatMessage({
@@ -37,20 +39,44 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
         description: 'Result',
       }),
       RESULT_PLACEHOLDER: intl.formatMessage({
-        defaultMessage: 'Paste and Test sample data to get the latest results',
-        id: 'iKzxth',
+        defaultMessage: 'Test your map to see a result',
+        id: 'UVr0mL',
         description: 'Placeholder result',
       }),
     }),
     [intl]
   );
 
+  const updatePlaceHolder = useCallback((id: string, value?: string) => {
+    const placeholder = document.getElementById(id);
+    if (placeholder) {
+      placeholder.style.display = value ? 'none' : 'block';
+    }
+  }, []);
+
   const onSampleDataChange = useCallback(
     (e: EditorContentChangedEventArgs) => {
-      dispatch(updateTestInput(e.value ?? ''));
+      const value = e?.value ?? '';
+      dispatch(updateTestInput(value));
+      updatePlaceHolder(sampleDataPlaceHolderEditorId, value);
     },
-    [dispatch]
+    [dispatch, updatePlaceHolder]
   );
+
+  const onSampleDataEditorLoaded = useCallback(() => {
+    updatePlaceHolder(sampleDataPlaceHolderEditorId, testMapInput);
+  }, [testMapInput, updatePlaceHolder]);
+
+  const onResultContentChange = useCallback(
+    (e: EditorContentChangedEventArgs) => {
+      updatePlaceHolder(resultPlaceHolderEditorId, e?.value ?? '');
+    },
+    [updatePlaceHolder]
+  );
+
+  const onResultEditorLoaded = useCallback(() => {
+    updatePlaceHolder(resultPlaceHolderEditorId, testMapInput);
+  }, [testMapInput, updatePlaceHolder]);
 
   const error = useMemo(() => {
     let error: any;
@@ -81,26 +107,30 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.SAMPLE_TEST_DATA}
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
               value={testMapInput ?? ''}
               className={styles.editorStyle}
               lineNumbers={'on'}
-              scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+              scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
               height="200px"
+              width="100%"
               wordWrap="on"
               wrappingIndent="same"
               onContentChanged={onSampleDataChange}
-              scrollBeyondLastLine={true}
+              onEditorLoaded={onSampleDataEditorLoaded}
             />
+            <div id={sampleDataPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+              {stringResources.SAMPLE_TEST_DATA_PLACEHOLDER}
+            </div>
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem value={'result'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.RESULT}
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={
                 error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
@@ -114,13 +144,17 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               }
               className={styles.editorStyle}
               lineNumbers={'on'}
-              scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+              scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
               height="200px"
+              width="100%"
               wordWrap="on"
-              wrappingIndent="same"
-              scrollBeyondLastLine={true}
+              onContentChanged={onResultContentChange}
+              onEditorLoaded={onResultEditorLoaded}
               readOnly
             />
+            <div id={resultPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+              {stringResources.RESULT_PLACEHOLDER}
+            </div>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

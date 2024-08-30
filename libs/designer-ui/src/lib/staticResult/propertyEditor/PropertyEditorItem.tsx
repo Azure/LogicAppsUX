@@ -189,6 +189,7 @@ export const PropertyEditorItem = ({
               <div key={i}>
                 {schema.properties ? (
                   <StaticResultProperty
+                    title={key}
                     key={value.toString()}
                     properties={value}
                     schema={
