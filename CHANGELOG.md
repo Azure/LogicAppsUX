@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.81.0](https://github.com/Azure/LogicAppsUX/compare/v4.80.0...v4.81.0) (2024-08-30)
+
+
+### Features
+
+* **designer:** Initial implementation of undo-redo feature in designer ([#5260](https://github.com/Azure/LogicAppsUX/issues/5260)) ([f838f4d](https://github.com/Azure/LogicAppsUX/commit/f838f4df852ae5e9c468a932d000c0aea435ed83))
+
+
+### Bug Fixes
+
+* **designer-ui:** Force `maxDisplayedItems: 2` to mitigate file picker render loop ([#5576](https://github.com/Azure/LogicAppsUX/issues/5576)) ([79f9fab](https://github.com/Azure/LogicAppsUX/commit/79f9fabda3dfe2c78417b5bc28f817e6bfde2586))
+* **Designer:** Connection objects can now have ids without the starting slash ([#5572](https://github.com/Azure/LogicAppsUX/issues/5572)) ([87e1f00](https://github.com/Azure/LogicAppsUX/commit/87e1f002e551153ce90162fb821df31acbe76558))
+
 ## [4.80.0](https://github.com/Azure/LogicAppsUX/compare/v4.79.0...v4.80.0) (2024-08-30)
 
 
