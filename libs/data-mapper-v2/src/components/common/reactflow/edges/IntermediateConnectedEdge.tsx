@@ -5,13 +5,13 @@ import { colors } from '../styles';
 import { useSelector } from 'react-redux';
 import { splitEdgeId } from '../../../../utils/Edge.Utils';
 import type { RootState } from '../../../../core/state/Store';
-import { isSourceNode, isTargetNode } from '../../../../utils/ReactFlow.Util';
+import { isSourceNode, isTargetNode, getTreeNodeId } from '../../../../utils/ReactFlow.Util';
 
 const IntermediateConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY, data } = props;
   const splitIds = useMemo(() => splitEdgeId(id), [id]);
   const nodes = useNodes();
-  const { temporaryEdgeMappingDirection, sourceOpenKeys, targetOpenKeys } = useSelector(
+  const { intermediateEdgeMappingDirectionForScrolling, sourceOpenKeys, targetOpenKeys } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
 
@@ -19,8 +19,8 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
   const componentId2 = useMemo(() => (splitIds.length >= 2 ? splitIds[0] : ''), [splitIds]);
   const componentId3 = useMemo(() => (splitIds.length >= 2 ? splitIds[1] : ''), [splitIds]);
   const direction = useMemo(
-    () => componentId1 && temporaryEdgeMappingDirection[componentId1 as string],
-    [componentId1, temporaryEdgeMappingDirection]
+    () => (componentId1 ? intermediateEdgeMappingDirectionForScrolling[componentId1 as string] : ''),
+    [componentId1, intermediateEdgeMappingDirectionForScrolling]
   );
 
   const isSelected = useSelectedIntermediateEdge(componentId1 ?? '', componentId2 ?? '');
@@ -57,7 +57,8 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
 
   if (
     data?.isDueToCollapse &&
-    ((isSourceNode(componentId2) && !sourceOpenKeys[componentId2]) || (isTargetNode(componentId3) && !targetOpenKeys[componentId3]))
+    ((isSourceNode(componentId2) && sourceOpenKeys[getTreeNodeId(componentId2)] === false) ||
+      (isTargetNode(componentId3) && targetOpenKeys[getTreeNodeId(componentId3)] === false))
   ) {
     return (
       <g id={`${id}_customEdge`}>

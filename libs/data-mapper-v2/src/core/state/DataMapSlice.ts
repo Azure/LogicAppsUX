@@ -945,13 +945,15 @@ export const getUpdatedIntermediateConnectionsForCollapsing = (
     for (const parentKey of allParents) {
       const id = isSourceNode(sourceId) ? addSourceReactFlowPrefix(parentKey.key) : addTargetReactFlowPrefix(parentKey.key);
       // Map parents to the target node to store temporary edges
-      allConnections = {
-        ...allConnections,
-        [id]: {
-          ...(allConnections[id] ?? {}),
-          [targetId]: true,
-        },
-      };
+      if (id !== sourceId) {
+        allConnections = {
+          ...allConnections,
+          [id]: {
+            ...(allConnections[id] ?? {}),
+            [targetId]: true,
+          },
+        };
+      }
     }
   }
 

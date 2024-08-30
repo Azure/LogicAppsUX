@@ -1,10 +1,9 @@
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, useEdges, type Edge, type Node } from '@xyflow/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { convertWholeDataMapToLayoutTree, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { createEdgeId, createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
-import { getReactFlowNodeId } from '../../utils/Schema.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 
 type ReactFlowStatesProps = {};
@@ -49,39 +48,50 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
     return edges;
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodes]);
 
+  const createAndGetIntermediateEdge = useCallback((id: string, sourceId: string, targetId: string, data?: Record<string, any>): Edge => {
+    return {
+      id: id,
+      source: sourceId,
+      target: targetId,
+      type: 'intermediateConnectedEdge',
+      reconnectable: 'target',
+      focusable: true,
+      interactionWidth: 10,
+      deletable: true,
+      selectable: true,
+      zIndex: 150,
+      data: {
+        isIntermediate: true,
+        ...(data ?? {}),
+      },
+    };
+  }, []);
+
   // Edges created when node is expanded/Collapsed
   const intermediateEdgesMapForCollapsedNodes: Record<string, Edge> = useMemo(() => {
     const newEdgesMap: Record<string, Edge> = {};
     const entries = Object.entries(intermediateEdgeMappingForCollapsing);
-
     for (const entry of entries) {
-      const sourceNodeId = getReactFlowNodeId(entry[0], true);
+      const sourceId = entry[0];
       const targetIds = Object.keys(entry[1]);
       for (const targetId of targetIds) {
-        const targetNodeId = getReactFlowNodeId(targetId, false);
-        const id = createTemporaryEdgeId(sourceNodeId, targetNodeId);
-        const edge: Edge = {
-          id: id,
-          source: sourceNodeId,
-          target: targetNodeId,
-          type: 'intermediateConnectedEdge',
-          reconnectable: 'target',
-          focusable: true,
-          interactionWidth: 10,
-          deletable: true,
-          selectable: true,
-          zIndex: 150,
-          data: {
-            isIntermediate: true,
-            isDueToCollapse: true,
-          },
-        };
-        newEdgesMap[id] = edge;
+        let id1 = '';
+        let id2 = '';
+        if (isSourceNode(sourceId)) {
+          id1 = sourceId;
+          id2 = targetId;
+        } else {
+          id1 = targetId;
+          id2 = sourceId;
+        }
+
+        const id = createTemporaryEdgeId(id1, id2);
+        newEdgesMap[id] = createAndGetIntermediateEdge(id, id1, id2, { isDueToCollapse: true });
       }
     }
 
     return newEdgesMap;
-  }, [intermediateEdgeMappingForCollapsing]);
+  }, [createAndGetIntermediateEdge, intermediateEdgeMappingForCollapsing]);
 
   // Edges created when node is expanded/Collapsed
   const intermediateEdgesMapForScrolledNodes: Record<string, Edge> = useMemo(() => {
@@ -106,29 +116,13 @@ const useReactFlowStates = (_props: ReactFlowStatesProps) => {
                 ? [splitNodeId[1], splitNodeId[0]]
                 : [splitNodeId[0], splitNodeId[1]];
 
-          const edge: Edge = {
-            id: edgeId,
-            source: source,
-            target: target,
-            focusable: true,
-            deletable: true,
-            selectable: true,
-            type: 'intermediateConnectedEdge',
-            zIndex: 150,
-            interactionWidth: 10,
-            data: {
-              isIntermediate: true,
-              isDueToScroll: true,
-              componentId: id,
-            },
-          };
-          newEdgesMap[edgeId] = edge;
+          newEdgesMap[edgeId] = createAndGetIntermediateEdge(edgeId, source, target, { isDueToScroll: true, componentId: id });
         }
       }
     }
 
     return newEdgesMap;
-  }, [intermediateEdgeMappingForScrolling]);
+  }, [createAndGetIntermediateEdge, intermediateEdgeMappingForScrolling]);
 
   useEffect(() => {
     const edgeChanges: Record<string, EdgeChange> = {};
