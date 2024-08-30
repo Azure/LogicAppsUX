@@ -46,9 +46,6 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
 
   const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
 
-  const { sourceChildParentMapping, targetChildParentMapping } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
@@ -166,17 +163,15 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
         );
 
         for (const node of filteredNodes) {
-          let currentParents = [];
-          if (isLeftDirection) {
-            currentParents = sourceChildParentMapping[node.key] ?? [];
-          } else {
-            currentParents = targetChildParentMapping[node.key] ?? [];
-          }
+          const currentParents = node.pathToRoot;
 
-          for (const parentKey of currentParents) {
-            const parent = flattenedScehmaMap[parentKey];
-            if (parent) {
-              filteredFlattenedScehmaMap[parentKey] = parent;
+          for (const parent of currentParents) {
+            const key = parent.key;
+            if (key !== node.key) {
+              const parentNode = flattenedScehmaMap[key];
+              if (parentNode) {
+                filteredFlattenedScehmaMap[key] = parentNode;
+              }
             }
           }
         }
@@ -184,7 +179,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
         setFilteredFlattenedScehmaMap(filteredFlattenedScehmaMap);
       }
     },
-    [setSearchTerm, flattenedScehmaMap, setFilteredFlattenedScehmaMap, isLeftDirection, sourceChildParentMapping, targetChildParentMapping]
+    [setSearchTerm, flattenedScehmaMap, setFilteredFlattenedScehmaMap]
   );
 
   const onEditClick = useCallback(() => {
