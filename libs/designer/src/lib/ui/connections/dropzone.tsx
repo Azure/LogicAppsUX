@@ -121,9 +121,11 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
             return false;
           }
         }
+
+        const sanitizedItemId = removeIdTag(item.id);
+
         if (item.isScope) {
-          const scopeNodeId = removeIdTag(item.id);
-          if (upstreamScopes.has(scopeNodeId)) {
+          if (upstreamScopes.has(sanitizedItemId)) {
             return false;
           }
         }
@@ -138,7 +140,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
         }
         // TODO: Support preventing moving a node below downstream output
         // TODO: Support calculating dependencies when dragging of scopes
-        return item.id !== childId && item.id !== parentId;
+        return sanitizedItemId !== childId && sanitizedItemId !== parentId;
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
