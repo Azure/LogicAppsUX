@@ -56,7 +56,7 @@ export const useStyles = makeStyles({
     paddingRight: '20px',
   },
   selectedHoverFunctionButton: {
-    ...shorthands.border('3px', 'solid', colors.edgeActive),
+    ...shorthands.border('2px', 'solid', colors.handleActive),
   },
   loopSourceHandle: {
     height: '22px',

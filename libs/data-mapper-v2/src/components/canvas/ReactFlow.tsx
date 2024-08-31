@@ -196,8 +196,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
       let id = '';
 
-      // Delete clicked on temporary edge
-      if (edge.data?.isIntermediate) {
+      // Delete clicked on intermediate edge created while scrolling
+      if (edge.data?.isIntermediate && edge.data?.isDueToScroll) {
         // When componentId is not set, it means the edge is a collapsed version
         const splitIds = splitEdgeId(edge.id);
         if (edge.data?.componentId && splitIds.length >= 2) {
@@ -210,9 +210,12 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           );
           id = directEdge?.id ?? '';
         }
-        return;
+        if (!id) {
+          return;
+        }
+      } else {
+        id = edge.id;
       }
-      id = edge.id;
 
       if (id) {
         dispatch(updateEdgePopOverId(id));
