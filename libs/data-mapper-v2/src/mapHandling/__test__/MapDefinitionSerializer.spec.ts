@@ -16,6 +16,7 @@ import {
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
+  overlappingLoopsSchema,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
@@ -593,6 +594,59 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(dayEntries.length).toEqual(1);
         expect(dayEntries[0][0]).toEqual('Pressure');
         expect(dayEntries[0][1]).toEqual('./@Pressure');
+      });
+
+      it('Generates body with overlapping loops', () => {
+        const mockOverlappingSourceSchema: Schema = overlappingLoopsSchema;
+        const extendedOverlappingSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockOverlappingSourceSchema);
+
+        const mockOverlappingTargetSchema: Schema = overlappingLoopsSchema;
+        const extendedOverlappingTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockOverlappingTargetSchema);
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // source nodes
+        const outerSrcLoop = extendedOverlappingSourceSchema.schemaTreeRoot.children[0].children[0];
+        const innerSrcLoop1 = outerSrcLoop.children.find((child) => child.name === 'innerLoop1') as SchemaNodeExtended;
+        const innerSrcLoop1Name = innerSrcLoop1.children[0] as SchemaNodeExtended;
+        const innerSrcLoop2 = outerSrcLoop.children.find((child) => child.name === 'innerLoop2') as SchemaNodeExtended;
+        const innerSrcLoop2Name = innerSrcLoop2.children[0] as SchemaNodeExtended;
+
+        // target nodes
+        const outerTgtLoop = extendedOverlappingTargetSchema.schemaTreeRoot.children[0].children[0];
+        const innerTgtLoop1 = outerTgtLoop.children.find((child) => child.name === 'innerLoop1') as SchemaNodeExtended;
+        const innerTgtLoop1Name = innerTgtLoop1.children[0] as SchemaNodeExtended;
+        const innerTgtLoop1TargetName = innerTgtLoop1.children[1] as SchemaNodeExtended;
+
+        // parent looping connections
+        applyConnectionValue(connections, {
+          targetNode: outerTgtLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(outerTgtLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(outerSrcLoop.key, SchemaType.Source),
+            node: outerSrcLoop,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: innerTgtLoop1,
+          targetNodeReactFlowKey: addReactFlowPrefix(innerTgtLoop1.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(innerSrcLoop1.key, SchemaType.Source),
+            node: innerSrcLoop1,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: innerTgtLoop1,
+          targetNodeReactFlowKey: addReactFlowPrefix(innerTgtLoop1.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(innerSrcLoop1.key, SchemaType.Source),
+            node: innerSrcLoop1,
+          },
+        });
       });
 
       it('Generates body with many to many nested loops', () => {
