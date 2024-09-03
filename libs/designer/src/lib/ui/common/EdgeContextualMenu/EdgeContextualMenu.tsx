@@ -16,7 +16,7 @@ import { useOnViewportChange } from '@xyflow/react';
 
 import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
-import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
+import { expandDiscoveryPanel } from '../../../core/state/panelV2/panelSlice';
 import { pasteScopeOperation, pasteOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';

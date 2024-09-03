@@ -5,7 +5,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
 import { deinitializeNodes, deinitializeOperationInfo, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
-import { clearPanel } from '../../state/panel/panelSlice';
+import { clearPanel } from '../../state/panelV2/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';

@@ -1,4 +1,4 @@
-import { openPanel } from '../../../core/state/panel/panelSlice';
+import { openPanel } from '../../../core/state/panelV2/panelSlice';
 import { WorkflowParametersErrorCard } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
