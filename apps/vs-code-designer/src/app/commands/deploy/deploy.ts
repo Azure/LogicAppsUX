@@ -16,6 +16,7 @@ import {
   kubernetesKind,
   showDeployConfirmationSetting,
   logicAppFilter,
+  parameterizeConnectionsInProjectLoadSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -26,7 +27,7 @@ import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/c
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
+import { getWorkspaceSetting, getGlobalSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
@@ -311,26 +312,62 @@ async function getProjectPathToDeploy(
   const workspaceFolderPath = workspaceFolder.uri.fsPath;
   const connectionsJson = await getConnectionsJson(workspaceFolderPath);
   const parametersJson = await getParametersJson(workspaceFolderPath);
+  let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
-  let parametizedConnections: ConnectionsData;
   const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
+  let parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+
+  function updateAuthenticationParameters(authValue: any): void {
+    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+        parametersJson[`${referenceKey}-Authentication`].value = authValue;
+      }
+    }
+  }
+
+  function updateAuthenticationInConnections(authValue: any): void {
+    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+        connectionsData.managedApiConnections[referenceKey].authentication = authValue;
+      }
+    }
+  }
 
   try {
-    parametizedConnections = JSON.parse(connectionsJson);
+    connectionsData = JSON.parse(connectionsJson);
+    const authValue = { type: 'ManagedServiceIdentity' };
+    const advancedIdentityAuthValue = {
+      type: 'ActiveDirectoryOAuth',
+      audience: 'https://management.core.windows.net/',
+      credentialType: 'Secret',
+      clientId: `@appsetting('${workflowAppAADClientId}')`,
+      tenant: `@appsetting('${workflowAppAADTenantId}')`,
+      secret: `@appsetting('${workflowAppAADClientSecret}')`,
+    };
 
-    if (parametizedConnections.managedApiConnections && Object.keys(parametizedConnections.managedApiConnections).length) {
-      for (const referenceKey of Object.keys(parametizedConnections.managedApiConnections)) {
-        parametersJson[`${referenceKey}-Authentication`].value = { type: 'ManagedServiceIdentity' };
-      }
+    if (parameterizeConnectionsSetting === null) {
+      await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
+      parameterizeConnectionsSetting = true;
+      identityWizardContext?.useAdvancedIdentity
+        ? updateAuthenticationParameters(advancedIdentityAuthValue)
+        : updateAuthenticationParameters(authValue);
+    } else if (parameterizeConnectionsSetting) {
+      identityWizardContext?.useAdvancedIdentity
+        ? updateAuthenticationParameters(advancedIdentityAuthValue)
+        : updateAuthenticationParameters(authValue);
+    } else {
+      identityWizardContext?.useAdvancedIdentity
+        ? updateAuthenticationInConnections(advancedIdentityAuthValue)
+        : updateAuthenticationInConnections(authValue);
     }
 
     const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
-    connectionsData = resolutionService.resolve(parametizedConnections);
+    resolvedConnections = resolutionService.resolve(connectionsData);
   } catch {
     return undefined;
   }
 
-  if (parametizedConnections.managedApiConnections && Object.keys(parametizedConnections.managedApiConnections).length) {
+  if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
     const deployProjectPath = path.join(path.dirname(workspaceFolderPath), `${path.basename(workspaceFolderPath)}-deploytemp`);
     const connectionsFilePathDeploy = path.join(deployProjectPath, connectionsFileName);
     const parametersFilePathDeploy = path.join(deployProjectPath, parametersFileName);
@@ -343,9 +380,9 @@ async function getProjectPathToDeploy(
 
     await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true });
 
-    for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
+    for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
       try {
-        const connection = connectionsData.managedApiConnections[referenceKey].connection;
+        const connection = resolvedConnections.managedApiConnections[referenceKey].connection;
         await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node.site);
 
         if (node.site.isSlot) {
@@ -356,20 +393,10 @@ async function getProjectPathToDeploy(
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
       }
 
-      if (identityWizardContext?.useAdvancedIdentity) {
-        managedConnection.authentication = {
-          type: 'ActiveDirectoryOAuth',
-          audience: 'https://management.core.windows.net/',
-          credentialType: 'Secret',
-          clientId: `@appsetting('${workflowAppAADClientId}')`,
-          tenant: `@appsetting('${workflowAppAADTenantId}')`,
-          secret: `@appsetting('${workflowAppAADClientSecret}')`,
-        };
-      }
-
       settingsToExclude.push(`${referenceKey}-connectionKey`);
     }
-    await writeFormattedJson(connectionsFilePathDeploy, parametizedConnections);
+
+    await writeFormattedJson(connectionsFilePathDeploy, connectionsData);
     await writeFormattedJson(parametersFilePathDeploy, parametersJson);
 
     return deployProjectPath;
