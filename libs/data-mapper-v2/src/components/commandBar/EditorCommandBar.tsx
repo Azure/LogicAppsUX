@@ -112,7 +112,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
           message: error.message,
         });
-        console.log('Failed to generate XSLT');
         dispatchToast(
           <Toast>
             <ToastTitle>{failedXsltMessage}</ToastTitle>
