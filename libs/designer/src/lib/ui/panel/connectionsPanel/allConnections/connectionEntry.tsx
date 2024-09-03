@@ -1,5 +1,5 @@
 import { useConnectionById } from '../../../../core/queries/connections';
-import { openPanel } from '../../../../core/state/panelV2/panelSlice';
+import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
 import { css } from '@fluentui/react';
 import { Button, Spinner, Text, Tooltip } from '@fluentui/react-components';

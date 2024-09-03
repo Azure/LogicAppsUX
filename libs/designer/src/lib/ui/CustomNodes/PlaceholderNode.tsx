@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { AppDispatch } from '../../core';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
-import { expandDiscoveryPanel } from '../../core/state/panelV2/panelSlice';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';

@@ -7,8 +7,8 @@ import {
   useDiscoveryPanelIsParallelBranch,
   useDiscoveryPanelRelationshipIds,
   useDiscoveryPanelSelectedOperationGroupId,
-} from '../../../core/state/panelV2/panelSelectors';
-import { selectOperationGroupId, selectOperationId } from '../../../core/state/panelV2/panelSlice';
+} from '../../../core/state/panel/panelSelectors';
+import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
 import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';

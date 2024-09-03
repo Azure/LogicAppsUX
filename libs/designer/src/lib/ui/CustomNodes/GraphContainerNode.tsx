@@ -1,5 +1,5 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';

@@ -1,6 +1,6 @@
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { changePanelNode } from '../../../core/state/panelV2/panelSlice';
+import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
 import { setCollapsedGraphIds, setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { SearchBox, FocusTrapZone } from '@fluentui/react';

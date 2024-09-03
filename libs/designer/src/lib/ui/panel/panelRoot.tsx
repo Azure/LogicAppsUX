@@ -1,4 +1,4 @@
-import { PANEL_MODE } from '../../core/state/panelV2/panelTypes';
+import { PANEL_MODE } from '../../core/state/panel/panelTypes';
 import type { AppDispatch } from '../../core';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 import {
@@ -6,8 +6,8 @@ import {
   useFocusReturnElementId,
   useIsPanelCollapsed,
   useIsPanelLoading,
-} from '../../core/state/panelV2/panelSelectors';
-import { clearPanel } from '../../core/state/panelV2/panelSlice';
+} from '../../core/state/panel/panelSelectors';
+import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';

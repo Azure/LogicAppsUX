@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
-import { useErrorsPanelSelectedTabId } from '../../../core/state/panelV2/panelSelectors';
-import { selectErrorsPanelTab } from '../../../core/state/panelV2/panelSlice';
+import { useErrorsPanelSelectedTabId } from '../../../core/state/panel/panelSelectors';
+import { selectErrorsPanelTab } from '../../../core/state/panel/panelSlice';
 import { ErrorsTab } from './tabs/errorsTab';
 import { useTotalNumErrors } from './tabs/errorsTab.hooks';
 import { WarningsTab } from './tabs/warningsTab';

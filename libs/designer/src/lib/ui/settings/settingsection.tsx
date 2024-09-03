@@ -1,7 +1,7 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
-import { useOperationPanelSelectedNodeId } from '../../core/state/panelV2/panelSelectors';
+import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';

@@ -1,5 +1,5 @@
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
-import { selectOperationGroupId } from '../../../core/state/panelV2/panelSlice';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService, cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';

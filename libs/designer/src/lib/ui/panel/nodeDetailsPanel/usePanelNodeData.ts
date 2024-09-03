@@ -2,12 +2,12 @@ import type { AppDispatch } from '../../../core';
 import { useNodeDisplayName, useNodeMetadata } from '../../../core';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
-import { setPinnedPanelActiveTab,setSelectedPanelActiveTab } from '../../../core/state/panelV2/panelSlice';
+import { setPinnedPanelActiveTab,setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import {
   useIsNodePinnedToOperationPanel,
   useOperationPanelPinnedNodeActiveTabId,
   useOperationPanelSelectedNodeActiveTabId,
-} from '../../../core/state/panelV2/panelSelectors';
+} from '../../../core/state/panel/panelSelectors';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from './usePanelTabs';

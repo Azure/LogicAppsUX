@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import CONSTANTS from '../../common/constants';
-import type { RelationshipIds } from '../state/panelV2/panelTypes';
+import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';

@@ -26,7 +26,7 @@ export type UndoRedoPartialRootState = Pick<
   | 'customCode'
   | 'operations'
   | 'panel'
-  | 'panelV2'
+  | 'panel'
   | 'settings'
   | 'staticResults'
   | 'tokens'

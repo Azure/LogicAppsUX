@@ -3,7 +3,7 @@ import type { AppDispatch } from '../../../../../core';
 import { StaticResultOption } from '../../../../../core/actions/bjsworkflow/staticresults';
 import { updateStaticResults } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useParameterStaticResult } from '../../../../../core/state/operation/operationSelector';
-import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../../../core/state/panelV2/panelSlice';
+import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../../core/state/staticresultschema/staitcresultsSelector';
 import { updateStaticResultProperties } from '../../../../../core/state/staticresultschema/staticresultsSlice';

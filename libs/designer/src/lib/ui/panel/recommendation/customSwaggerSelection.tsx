@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useDiscoveryPanelRelationshipIds, useDiscoveryPanelIsParallelBranch, useDiscoveryPanelIsAddingTrigger } from '../../../core/state/panelV2/panelSelectors';
+import { useDiscoveryPanelRelationshipIds, useDiscoveryPanelIsParallelBranch, useDiscoveryPanelIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
 import { TextField } from '@fluentui/react';
 import { Text, Button } from '@fluentui/react-components';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';

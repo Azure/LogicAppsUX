@@ -19,8 +19,8 @@ import {
   useTokenDependencies,
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panelV2/panelSlice';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
   useConnectorName,

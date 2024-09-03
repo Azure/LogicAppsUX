@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { RelationshipIds } from '../state/panelV2/panelTypes';
+import type { RelationshipIds } from '../state/panel/panelTypes';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';

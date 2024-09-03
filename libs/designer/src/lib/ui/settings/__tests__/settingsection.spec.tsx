@@ -3,7 +3,7 @@ import type { SettingsSectionProps } from '../settingsection';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, beforeEach, afterEach, it, expect, vi } from 'vitest';
 
-import * as PanelSelectors from '../../../core/state/panelV2/panelSelectors';
+import * as PanelSelectors from '../../../core/state/panel/panelSelectors';
 
 describe('ui/settings/settingsection', () => {
   let minimal: SettingsSectionProps;

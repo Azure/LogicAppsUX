@@ -1,5 +1,5 @@
 import type { AppDispatch } from '../../../core';
-import { selectOperationGroupId } from '../../../core/state/panelV2/panelSlice';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import {
   SearchService,
   type ISearchService,

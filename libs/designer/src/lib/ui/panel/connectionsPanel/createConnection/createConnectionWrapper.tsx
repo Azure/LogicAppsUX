@@ -17,8 +17,8 @@ import {
   useGateways,
   useSubscriptions,
 } from '../../../../core/state/connection/connectionSelector';
-import { useConnectionPanelSelectedNodeIds, useOperationPanelSelectedNodeId,usePreviousPanelMode } from '../../../../core/state/panelV2/panelSelectors';
-import { openPanel, setIsCreatingConnection } from '../../../../core/state/panelV2/panelSlice';
+import { useConnectionPanelSelectedNodeIds, useOperationPanelSelectedNodeId,usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
+import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
   getAssistedConnectionProps,

@@ -42,7 +42,7 @@ export {
   clearPanel,
   openPanel,
   collapsePanel,
-} from './state/panelV2/panelSlice';
+} from './state/panel/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export {
@@ -50,7 +50,7 @@ export {
   useDiscoveryPanelSelectedNodeIds,
   useOperationPanelPinnedNodeId,
   useOperationPanelSelectedNodeId,
-} from './state/panelV2/panelSelectors';
+} from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { TemplatesDataProvider } from './templates/TemplatesDataProvider';

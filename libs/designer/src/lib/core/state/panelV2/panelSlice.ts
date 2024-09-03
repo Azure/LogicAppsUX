@@ -1,7 +1,7 @@
 import { PanelLocation } from '@microsoft/designer-ui';
 import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type {
   ConnectionPanelContentState,
