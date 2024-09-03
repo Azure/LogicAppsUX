@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.71.4](https://github.com/Azure/LogicAppsUX/compare/v4.71.3...v4.71.4) (2024-09-03)
+
+
+### Bug Fixes
+
+* **designer:** Cherry picking fixes for - Folder picker issue and dynamic call issue with msi connection ([#5581](https://github.com/Azure/LogicAppsUX/issues/5581)) ([f6dfb49](https://github.com/Azure/LogicAppsUX/commit/f6dfb49a7a9399bb3ddf97afbe3fadfd6e10bbe7)), closes [#5576](https://github.com/Azure/LogicAppsUX/issues/5576) [#5580](https://github.com/Azure/LogicAppsUX/issues/5580)
+
 ### [4.71.3](https://github.com/Azure/LogicAppsUX/compare/v4.71.2...v4.71.3) (2024-08-29)
 
 
