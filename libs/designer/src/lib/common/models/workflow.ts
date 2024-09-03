@@ -5,6 +5,7 @@ export interface Workflow {
   connectionReferences: ConnectionReferences;
   parameters?: Record<string, WorkflowParameter>;
   kind?: string;
+  id?: string;
 }
 
 export interface ConnectionReference {

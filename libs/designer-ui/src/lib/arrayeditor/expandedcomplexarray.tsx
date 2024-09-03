@@ -105,7 +105,6 @@ export const ExpandedComplexArray = ({
           <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
-              console.log(complexItem);
               const comboboxOptions = getComoboxEnumOptions(options, schemaItem.enum);
               const dropdownOptions: DropdownItem[] | undefined =
                 schemaItem.type === constants.SWAGGER.TYPE.BOOLEAN ? getBooleanDropdownOptions() : undefined;

@@ -140,7 +140,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
 
   // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
+  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
 
   const updatedTokens = nodeTokenData.tokens.map((token) => {
     // Modify the actionName to a unique value

@@ -198,6 +198,11 @@ export interface UpdateParametersPayload {
   isUserAction?: boolean;
 }
 
+export interface InitializeNodesPayload {
+  nodes: (NodeData | undefined)[];
+  clearExisting?: boolean; // Optional flag to clear the existing nodes
+}
+
 export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
   initialState,
@@ -206,8 +211,19 @@ export const operationMetadataSlice = createSlice({
       const { id, connectorId, operationId, type, kind } = action.payload;
       state.operationInfo[id] = { connectorId, operationId, type, kind };
     },
-    initializeNodes: (state, action: PayloadAction<(NodeData | undefined)[]>) => {
-      for (const nodeData of action.payload) {
+    initializeNodes: (state, action: PayloadAction<InitializeNodesPayload>) => {
+      const { nodes, clearExisting = false } = action.payload;
+      if (clearExisting) {
+        state.inputParameters = {};
+        state.outputParameters = {};
+        state.dependencies = {};
+        state.operationMetadata = {};
+        state.settings = {};
+        state.staticResults = {};
+        state.actionMetadata = {};
+        state.repetitionInfos = {};
+      }
+      for (const nodeData of nodes) {
         if (!nodeData) {
           return;
         }

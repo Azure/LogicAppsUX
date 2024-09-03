@@ -197,7 +197,7 @@ export const addForeachToNode = createAsyncThunk(
         operationMetadata: { iconUri, brandColor },
         repetitionInfo,
       };
-      dispatch(initializeNodes([initData]));
+      dispatch(initializeNodes({ nodes: [initData] }));
       addTokensAndVariables(foreachNodeId, Constants.NODE.TYPE.FOREACH, { ...initData, manifest }, newState, dispatch);
     }
 
