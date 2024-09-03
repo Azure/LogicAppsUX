@@ -18,7 +18,10 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const edges = useEdges();
   const styles = useStyles();
 
-  const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
+  const isConnected = useMemo(
+    () => edges.some((edge) => !edge.data?.isDueToCollapse && (edge.source === id || edge.target === id)),
+    [edges, id]
+  );
   const isLoop = useMemo(() => edges.some((edge) => (edge.source === id || edge.target === id) && edge.data?.isRepeating), [edges, id]);
   const isSelected = useSelectedNode(id);
   const isHover = useHoverNode(id);

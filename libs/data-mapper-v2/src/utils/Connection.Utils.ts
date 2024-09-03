@@ -373,8 +373,9 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   return [currentFunction.self];
 };
 
-export const getActiveNodes = (connections: ConnectionDictionary, stateConnections?: Record<string, boolean>, selectedItemKey?: string) => {
+export const getActiveNodes = (state: DataMapOperationState, selectedItemKey?: string) => {
   const connectedItems: Record<string, string> = {};
+  const connections = state.dataMapConnections;
   if (selectedItemKey) {
     const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
 
@@ -391,12 +392,6 @@ export const getActiveNodes = (connections: ConnectionDictionary, stateConnectio
     selectedItemConnectedNodes.forEach((key) => {
       connectedItems[key] = key;
     });
-
-    if (stateConnections) {
-      Object.keys(stateConnections).forEach((connectedKey) => {
-        connectedItems[selectedItemKey] = connectedKey;
-      });
-    }
 
     connectedItems[selectedItemKey] = selectedItemKey;
   }

@@ -75,7 +75,7 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
   const { startDisplayedItems, overflowItems, endDisplayedItems }: PartitionBreadcrumbItems<FilePickerBreadcrumb> =
     partitionBreadcrumbItems({
       items: currentPathSegments,
-      maxDisplayedItems: 3,
+      maxDisplayedItems: 2,
     });
 
   const overflowItemsLength = overflowItems?.length ?? 0;
