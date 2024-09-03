@@ -27,7 +27,7 @@ import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/c
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting, getGlobalSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { getWorkspaceSetting, getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
@@ -65,30 +65,6 @@ export async function deploySlot(
   functionAppId?: string | Record<string, any>
 ): Promise<void> {
   await deploy(context, target, functionAppId, new RegExp(LogicAppResourceTree.pickSlotContextValue));
-}
-
-async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<void> {
-  await fse.emptyDir(deployProjectPath);
-  fse.rmdirSync(deployProjectPath);
-}
-
-async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
-  const client = await node.site.createClient(identityWizardContext);
-  const appSettings: StringDictionary | undefined = (await client.listApplicationSettings())?.properties;
-  if (appSettings) {
-    const clientId = appSettings[workflowAppAADClientId];
-    const objectId = appSettings[workflowAppAADObjectId];
-    const tenantId = appSettings[workflowAppAADTenantId];
-    const clientSecret = appSettings[workflowAppAADClientSecret];
-    const aadDetailsExists = !!clientId && !!objectId && !!tenantId && !!clientSecret;
-    identityWizardContext.clientId = clientId;
-    identityWizardContext.clientSecret = clientSecret;
-    identityWizardContext.objectId = objectId;
-    identityWizardContext.tenantId = tenantId;
-    identityWizardContext.useAdvancedIdentity = aadDetailsExists;
-    return aadDetailsExists;
-  }
-  return false;
 }
 
 async function deploy(
@@ -203,7 +179,7 @@ async function deploy(
     }
 
     deployProjectPathForWorkflowApp = isWorkflowApp
-      ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext)
+      ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext, actionContext)
       : undefined;
 
     try {
@@ -307,20 +283,22 @@ async function getProjectPathToDeploy(
   workspaceFolder: WorkspaceFolder,
   settingsToExclude: string[],
   originalDeployFsPath: string,
-  identityWizardContext: IIdentityWizardContext
+  identityWizardContext: IIdentityWizardContext,
+  actionContext: IActionContext
 ): Promise<string | undefined> {
   const workspaceFolderPath = workspaceFolder.uri.fsPath;
   const connectionsJson = await getConnectionsJson(workspaceFolderPath);
   const parametersJson = await getParametersJson(workspaceFolderPath);
+  const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
+  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
-  const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  let parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   function updateAuthenticationParameters(authValue: any): void {
     if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
       for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
         parametersJson[`${referenceKey}-Authentication`].value = authValue;
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}-Authentication" parameter to ManagedServiceIdentity`;
       }
     }
   }
@@ -329,6 +307,7 @@ async function getProjectPathToDeploy(
     if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
       for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
         connectionsData.managedApiConnections[referenceKey].authentication = authValue;
+        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ManagedServiceIdentity`;
       }
     }
   }
@@ -345,13 +324,7 @@ async function getProjectPathToDeploy(
       secret: `@appsetting('${workflowAppAADClientSecret}')`,
     };
 
-    if (parameterizeConnectionsSetting === null) {
-      await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
-      parameterizeConnectionsSetting = true;
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationParameters(advancedIdentityAuthValue)
-        : updateAuthenticationParameters(authValue);
-    } else if (parameterizeConnectionsSetting) {
+    if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
       identityWizardContext?.useAdvancedIdentity
         ? updateAuthenticationParameters(advancedIdentityAuthValue)
         : updateAuthenticationParameters(authValue);
@@ -364,6 +337,7 @@ async function getProjectPathToDeploy(
     const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
     resolvedConnections = resolutionService.resolve(connectionsData);
   } catch {
+    actionContext.telemetry.properties.noAuthUpdate = 'No authentication update was made';
     return undefined;
   }
 
@@ -402,4 +376,28 @@ async function getProjectPathToDeploy(
     return deployProjectPath;
   }
   return undefined;
+}
+
+async function cleanAndRemoveDeployFolder(deployProjectPath: string): Promise<void> {
+  await fse.emptyDir(deployProjectPath);
+  fse.rmdirSync(deployProjectPath);
+}
+
+async function checkAADDetailsExistsInAppSettings(node: SlotTreeItem, identityWizardContext: IIdentityWizardContext): Promise<boolean> {
+  const client = await node.site.createClient(identityWizardContext);
+  const appSettings: StringDictionary | undefined = (await client.listApplicationSettings())?.properties;
+  if (appSettings) {
+    const clientId = appSettings[workflowAppAADClientId];
+    const objectId = appSettings[workflowAppAADObjectId];
+    const tenantId = appSettings[workflowAppAADTenantId];
+    const clientSecret = appSettings[workflowAppAADClientSecret];
+    const aadDetailsExists = !!clientId && !!objectId && !!tenantId && !!clientSecret;
+    identityWizardContext.clientId = clientId;
+    identityWizardContext.clientSecret = clientSecret;
+    identityWizardContext.objectId = objectId;
+    identityWizardContext.tenantId = tenantId;
+    identityWizardContext.useAdvancedIdentity = aadDetailsExists;
+    return aadDetailsExists;
+  }
+  return false;
 }
