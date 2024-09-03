@@ -88,10 +88,6 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     dispatch(setRunIndex({ page: prevFailedRepetition, nodeId: scopeId }));
   };
 
-  // if (currentPage > forEachItemsCount + 1) {
-  //   onPagerChange({ value: forEachItemsCount + 1 });
-  // }
-
   const failedIterationProps =
     failedRepetitions.length > 0
       ? {
