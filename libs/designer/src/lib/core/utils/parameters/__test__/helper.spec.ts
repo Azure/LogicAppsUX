@@ -13,11 +13,15 @@ import {
   loadParameterValue,
 } from '../helper';
 import * as Helper from '../helper';
+import * as VariableHelper from '../../variables';
+import * as GraphHelper from '../../graph';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
-import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
+import { DynamicValuesType, ExpressionType, InitConnectorService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import requestManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/request';
+
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {
     it('should parse user typed json containing null, array, numeric, and nested values', () => {
@@ -3367,6 +3371,14 @@ describe('core/utils/parameters/helper', () => {
         },
       },
     };
+    const mockConnectorService: any = {
+      getDynamicSchema: () => Promise.resolve({ type: 'json', properties: { a: { type: 'string' } } }),
+    };
+    const mockManifestService: any = {
+      isSupported: () => true,
+      isAliasingSupported: () => false,
+      getOperationManifest: () => Promise.resolve(requestManifest),
+    };
 
     beforeEach(() => {
       rootState.operations.inputParameters[nodeId].parameterGroups.default.parameters = defaultParameters;
@@ -3401,6 +3413,40 @@ describe('core/utils/parameters/helper', () => {
           dynamicParameterKeys: ['inputs.$.body.dynamicObject', 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2'],
         },
       });
+    });
+
+    test('should load dynamic inputs schema only once when dynamic inputs are empty for dynamic parameter', async () => {
+      const stepDefinition = { inputs: { body: { a: 'b' } } };
+      const getStateMockFn = vi.fn(() => {
+        rootState.operations.inputParameters[nodeId].parameterGroups.default.parameters = [...defaultParameters];
+        rootState.operations.dependencies[nodeId].inputs = { ...defaultDependencies };
+        rootState.workflowParameters.definitions = {};
+        rootState.workflow.operations = { repetitionInfos: {} };
+
+        return rootState;
+      });
+      const dispatchMockFn = vi.fn();
+      InitOperationManifestService(mockManifestService);
+      InitConnectorService(mockConnectorService);
+
+      vi.spyOn(Helper, 'isDynamicDataReadyToLoad').mockReturnValue(true);
+      vi.spyOn(VariableHelper, 'getAllVariables').mockReturnValue([]);
+      vi.spyOn(GraphHelper, 'getTriggerNodeId').mockReturnValue('manual');
+      vi.spyOn(Helper, 'updateTokenMetadataInParameters').mockReturnValue();
+      const spied = vi.spyOn(Helper, 'updateDynamicDataInNode');
+
+      await loadDynamicContentForInputsInNode(
+        nodeId,
+        /* isTrigger */ false,
+        defaultDependencies,
+        rootState.operations.operationInfo[nodeId],
+        undefined,
+        dispatchMockFn,
+        getStateMockFn,
+        stepDefinition
+      );
+
+      expect(dispatchMockFn).toHaveBeenCalledTimes(2);
     });
   });
 });
