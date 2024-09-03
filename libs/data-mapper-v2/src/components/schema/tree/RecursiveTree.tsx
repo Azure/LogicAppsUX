@@ -7,7 +7,7 @@ import {
   type TreeItemOpenChangeEvent,
   mergeClasses,
 } from '@fluentui/react-components';
-import { equals, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { equals, SchemaNodeProperty, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useHandleStyles, useStyles } from './styles';
 import { Handle, useEdges, useUpdateNodeInternals } from '@xyflow/react';
@@ -16,6 +16,7 @@ import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { setHoverState, setSelectedItem, toggleNodeExpandCollapse } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import useSchema from '../useSchema';
+import { ArrowClockwiseFilled } from '@fluentui/react-icons';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -31,6 +32,7 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
   const handleStyles = useHandleStyles();
+  const edges = useEdges();
   const dispatch = useDispatch<AppDispatch>();
   const updateNodeInternals = useUpdateNodeInternals();
   const { openKeys, nodeId, isSourceSchema, panelNodeId, handle } = useSchema({
@@ -38,10 +40,23 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     currentNodeKey: key,
   });
 
-  const hoverState = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
-  const activeNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[nodeId]);
+  const hover = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
 
-  const edges = useEdges();
+  const isHover = useMemo(
+    () => hover?.type === 'node' && hover?.isSourceSchema === isSourceSchema && equals(hover?.id, root.key),
+    [hover?.id, hover?.isSourceSchema, hover?.type, isSourceSchema, root.key]
+  );
+  const isSelected = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[nodeId]);
+  const isRepeating = useMemo(
+    () =>
+      edges.some(
+        (edge) =>
+          (edge.sourceHandle === handle.id || edge.targetHandle === handle.id) &&
+          edge.data?.isRepeating &&
+          root.nodeProperties.includes(SchemaNodeProperty.Repeating)
+      ),
+    [edges, handle.id, root.nodeProperties]
+  );
   const isConnected = useMemo(
     () => edges.some((edge) => (edge.sourceHandle === handle.id || edge.targetHandle === handle.id) && !edge.data?.isIntermediate),
     [edges, handle.id]
@@ -84,25 +99,50 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   );
 
   const aside = useMemo(() => {
-    if (activeNode || (hoverState?.type === 'node' && hoverState?.isSourceSchema === isSourceSchema && equals(hoverState?.id, root.key))) {
+    if (isSelected || isHover) {
       return <TypeAnnotation schemaNode={root} />;
     }
 
     return <span />;
-  }, [activeNode, hoverState, isSourceSchema, root]);
+  }, [isSelected, isHover, root]);
 
   const handleComponent = useMemo(
     () => (
       <Handle
+        data-selectableid={handle.id}
         id={handle.id}
         key={handle.id}
-        className={mergeClasses(handleStyles.wrapper, handle.className, isConnected ? handleStyles.connected : '')}
+        className={mergeClasses(
+          handleStyles.wrapper,
+          handle.className,
+          isRepeating ? handleStyles.repeating : '',
+          isConnected ? handleStyles.connected : '',
+          isSelected || isHover ? handleStyles.selected : '',
+          (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
+        )}
         position={handle.position}
         type={handle.type}
         isConnectable={true}
-      />
+      >
+        {isRepeating && <ArrowClockwiseFilled className={handleStyles.repeatingIcon} />}
+      </Handle>
     ),
-    [handle.className, handle.id, handle.position, handle.type, isConnected, handleStyles.connected, handleStyles.wrapper]
+    [
+      handle.id,
+      handle.className,
+      handle.position,
+      handle.type,
+      handleStyles.wrapper,
+      handleStyles.repeating,
+      handleStyles.connected,
+      handleStyles.selected,
+      handleStyles.connectedAndSelected,
+      handleStyles.repeatingIcon,
+      isRepeating,
+      isConnected,
+      isSelected,
+      isHover,
+    ]
   );
 
   useEffect(() => {
@@ -116,13 +156,11 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
           onClick={onClick}
           onMouseEnter={onMouseOver}
           onMouseLeave={onMouseLeave}
-          className={mergeClasses(styles.leafNode, isSourceSchema ? '' : styles.rightTreeItemLayout, activeNode ? styles.nodeSelected : '')}
+          className={mergeClasses(styles.leafNode, isSourceSchema ? '' : styles.rightTreeItemLayout, isSelected ? styles.nodeSelected : '')}
           aside={aside}
         >
           <div>
-            <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
-              {root.name}
-            </div>
+            <div className={root.nodeProperties.includes(SchemaNodeProperty.Optional) ? '' : styles.required}>{root.name}</div>
             {handleComponent}
           </div>
         </TreeItemLayout>
@@ -138,12 +176,10 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
         onMouseEnter={onMouseOver}
         onMouseLeave={onMouseLeave}
         aside={aside}
-        className={mergeClasses(styles.rootNode, isSourceSchema ? '' : styles.rightTreeItemLayout, activeNode ? styles.nodeSelected : '')}
+        className={mergeClasses(styles.rootNode, isSourceSchema ? '' : styles.rightTreeItemLayout, isSelected ? styles.nodeSelected : '')}
       >
         <div>
-          <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
-            {root.name}
-          </div>
+          <div className={root.nodeProperties.includes(SchemaNodeProperty.Optional) ? '' : styles.required}>{root.name}</div>
           {handleComponent}
         </div>
       </TreeItemLayout>

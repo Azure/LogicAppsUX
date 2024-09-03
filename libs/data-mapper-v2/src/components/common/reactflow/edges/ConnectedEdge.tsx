@@ -1,6 +1,6 @@
 import { getStraightPath, type EdgeProps } from '@xyflow/react';
 import { useSelectedEdge, useHoverEdge } from '../../../../core/state/selectors/selectors';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { colors } from '../styles';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../../../../core/state/DataMapSlice';
@@ -26,9 +26,6 @@ const ConnectedEdge = (props: EdgeProps) => {
     }
   }, [dispatch, source]);
 
-  useEffect(() => {
-    console.log(props);
-  }, [props]);
   return (
     <g id={`${id}_customEdge`} onClick={onClick} data-selectableid={id}>
       <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} data-selectableid={id} />

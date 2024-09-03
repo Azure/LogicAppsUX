@@ -6,6 +6,7 @@ export const useStyles = makeStyles({
     marginTop: '10px',
     fontSize: '18px',
     height: '100%',
+    ...shorthands.overflow('scroll', 'scroll'),
   },
   leftWrapper: {
     marginLeft: '15px',
@@ -61,6 +62,22 @@ export const useHandleStyles = makeStyles({
   hidden: {
     backgroundColor: 'transparent',
     ...shorthands.border('none'),
+  },
+  selected: {
+    ...shorthands.border('2px', 'solid', colors.handleActive),
+  },
+  connectedAndSelected: {
+    backgroundColor: colors.handleActive,
+  },
+  repeating: {
+    height: '16px',
+    width: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  repeatingIcon: {
+    color: 'white',
   },
   left: {
     right: '8px',

@@ -182,7 +182,6 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
 
     if (Object.entries(changes).length > 0) {
       const newEdges = applyEdgeChanges(Object.values(changes), edges);
-      console.log('newEdges', newEdges);
       setEdges(newEdges);
     }
   }, [edges, edgesFromSchema, intermediateEdgesMapForCollapsedNodes, intermediateEdgesMapForScrolledNodes, setEdges]);
