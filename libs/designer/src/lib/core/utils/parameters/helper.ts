@@ -1866,7 +1866,7 @@ function getDependenciesToUpdate(
   return dependenciesToUpdate;
 }
 
-export async function updateDynamicDataInNode(
+export const updateDynamicDataInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
@@ -1875,7 +1875,7 @@ export async function updateDynamicDataInNode(
   dispatch: Dispatch,
   getState: () => RootState,
   operationDefinition?: any
-): Promise<void> {
+): Promise<void> => {
   await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
 
   const { operations, workflowParameters } = getState();
@@ -1910,7 +1910,7 @@ export async function updateDynamicDataInNode(
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
-}
+};
 
 async function loadDynamicData(
   nodeId: string,
@@ -2941,7 +2941,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfo[], rootState: RootState): void {
+export const updateTokenMetadataInParameters = (nodeId: string, parameters: ParameterInfo[], rootState: RootState): void => {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -3002,7 +3002,7 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
       );
     }
   }
-}
+};
 
 export const flattenAndUpdateViewModel = (
   repetitionContext: RepetitionContext,
