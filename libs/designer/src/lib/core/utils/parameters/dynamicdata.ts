@@ -325,7 +325,7 @@ export async function getDynamicInputsFromSchema(
   }
 
   if (!schemaProperties.length) {
-    dynamicInputs = [dynamicParameter];
+    dynamicInputs = [getDynamicInputParameterFromDynamicParameter(dynamicParameter)];
   }
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
@@ -739,7 +739,7 @@ function getSwaggerBasedInputParameters(
   );
   let dynamicInputParameters = loadInputValuesFromDefinition(
     dynamicInputDefinition as Record<string, any>,
-    isNested ? [dynamicParameter] : inputs,
+    isNested ? [getDynamicInputParameterFromDynamicParameter(dynamicParameter)] : inputs,
     operationPath,
     basePath as string
   );
@@ -770,6 +770,20 @@ function getSwaggerBasedInputParameters(
     return result;
   }
   return dynamicInputParameters;
+}
+
+// We should remove any reference to dynamic schema if parameter containing dynamic schema is used directly as an input.
+function getDynamicInputParameterFromDynamicParameter(dynamicParameter: InputParameter): InputParameter {
+  const result = {
+    ...dynamicParameter,
+    isDynamic: true,
+    dynamicParameterReference: dynamicParameter.key,
+    in: dynamicParameter.in,
+    required: (dynamicParameter.schema?.required as any) ?? dynamicParameter.required ?? false,
+  };
+  
+  delete result.dynamicSchema;
+  return result;
 }
 
 function _getKeyPrefixFromParameter(parameterKey: string): string {
