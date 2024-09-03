@@ -776,6 +776,9 @@ importers:
       react-redux:
         specifier: 8.0.2
         version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+      react-virtualized-tree:
+        specifier: ^3.4.1
+        version: 3.4.1(react-dom@18.2.0(react@18.2.0))(react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
       redux-thunk:
         specifier: 2.4.2
         version: 2.4.2(redux@4.2.1)
@@ -6128,6 +6131,9 @@ packages:
   classcat@5.0.4:
     resolution: {integrity: sha512-sbpkOw6z413p+HDGcBENe498WM9woqWHiJxCq7nvmxe9WmrUmqfAcxpIwAiMtM5Q3AhYkzXcNQHqsWq0mND51g==}
 
+  classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
+
   clean-css@5.3.3:
     resolution: {integrity: sha512-D5J+kHaVb/wKSFcyyV75uCn8fiY4sV38XJoe4CUyGQ+mOU/fMVYUdH1hJC+CJQ5uY3EnW27SbJYS4X8BiLrAFg==}
     engines: {node: '>= 10.0'}
@@ -6161,6 +6167,10 @@ packages:
 
   clone-deep@4.0.1:
     resolution: {integrity: sha512-neHB9xuzh/wk0dIHweyAXv2aPGZIVk3pLMe+/RNzINf17fe0OG96QroktYAUm7SM1PBnzTabaLboqqxDyMU+SQ==}
+    engines: {node: '>=6'}
+
+  clsx@1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
 
   clsx@2.1.0:
@@ -8626,6 +8636,9 @@ packages:
   lodash.difference@4.5.0:
     resolution: {integrity: sha1-nMtOUF1Ia5FlE0V3KIWi3yf9AXw=}
 
+  lodash.findindex@4.6.0:
+    resolution: {integrity: sha512-9er6Ccz6sEST3bHFtUrCFWk14nE8cdL/RoW1RRDV1BxqN3qsmsT56L14jhfctAqhVPVcdJw4MRxEaVoAK+JVvw==}
+
   lodash.frompairs@4.0.1:
     resolution: {integrity: sha512-dvqe2I+cO5MzXCMhUnfYFa9MD+/760yx2aTAN1lqEcEkf896TxgrX373igVdqSJj6tQd0jnSLE1UMuKufqqxFw==}
 
@@ -8643,6 +8656,9 @@ packages:
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  lodash.omit@4.5.0:
+    resolution: {integrity: sha512-XeqSp49hNGmlkj2EJlfrQFIzQ6lXdNro9sddtQzcJY8QaoC2GO0DT7xaIokHeyM+mIT0mPMlPvkYzg2xCuHdZg==}
 
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
@@ -8735,6 +8751,9 @@ packages:
 
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
+
+  material-icons@0.1.0:
+    resolution: {integrity: sha512-xDTXrjrt03EiA+LL3nHttQs3DTGft/mV+JHSiVhQyl0Nk8SEwnNqB/fyu6REAz9mYoYCdr4vnhQzkTsGbx0BPg==}
 
   maximatch@0.1.0:
     resolution: {integrity: sha1-hs2NawTJ8wfAWmuUGZBtA2D7E6I=}
@@ -10132,6 +10151,9 @@ packages:
     peerDependencies:
       react: ^16.13.1 || ^17.0.0 || ^18.0.0
 
+  react-lifecycles-compat@3.0.4:
+    resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
+
   react-loadable-ssr-addon-v5-slorber@1.0.1:
     resolution: {integrity: sha512-lq3Lyw1lGku8zUEJPDxsNm1AfYHBrO9Y1+olAYwpUJ2IGFBskM0DMKok97A6LWUpHm+o7IvQBOWu9MLenp9Z+A==}
     engines: {node: '>=10.13.0'}
@@ -10226,6 +10248,19 @@ packages:
     peerDependencies:
       react: ^16.8.0  || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
+
+  react-virtualized-tree@3.4.1:
+    resolution: {integrity: sha512-MolDiG9XgmflPPX9uPzf7iSWLqOHDlCZEiyA4FVYjv2pHfu6zV6/SIEFVyHdurWD80IjUuZ3Er12gq2bQQak2Q==}
+    peerDependencies:
+      react: 16.x
+      react-dom: ^16.2.0
+      react-virtualized: ^9.13.0
+
+  react-virtualized@9.22.5:
+    resolution: {integrity: sha512-YqQMRzlVANBv1L/7r63OHa2b0ZsAaDp1UhVNEdUaXI8A5u6hTpA5NYtUueLH2rFuY/27mTGIBl7ZhqFKzw18YQ==}
+    peerDependencies:
+      react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
+      react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
 
   react@18.2.0:
     resolution: {integrity: sha1-VVvZhZKIMlX6AN4U8RUakXtdd9U=}
@@ -10411,6 +10446,9 @@ packages:
 
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+
+  reselect@3.0.1:
+    resolution: {integrity: sha512-b/6tFZCmRhtBMa4xGqiiRp9jh9Aqi2A687Lo265cN0/QohJQEBPiQ52f4QB6i0eF3yp3hmLL21LSGBcML2dlxA==}
 
   reselect@4.1.8:
     resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
@@ -20042,6 +20080,8 @@ snapshots:
 
   classcat@5.0.4: {}
 
+  classnames@2.5.1: {}
+
   clean-css@5.3.3:
     dependencies:
       source-map: 0.6.1
@@ -20082,6 +20122,8 @@ snapshots:
       is-plain-object: 2.0.4
       kind-of: 6.0.3
       shallow-clone: 3.0.1
+
+  clsx@1.2.1: {}
 
   clsx@2.1.0: {}
 
@@ -22961,6 +23003,8 @@ snapshots:
 
   lodash.difference@4.5.0: {}
 
+  lodash.findindex@4.6.0: {}
+
   lodash.frompairs@4.0.1: {}
 
   lodash.get@4.4.2: {}
@@ -22972,6 +23016,8 @@ snapshots:
   lodash.memoize@4.1.2: {}
 
   lodash.merge@4.6.2: {}
+
+  lodash.omit@4.5.0: {}
 
   lodash.sortby@4.7.0: {}
 
@@ -23058,6 +23104,8 @@ snapshots:
       uc.micro: 1.0.6
 
   markdown-table@3.0.3: {}
+
+  material-icons@0.1.0: {}
 
   maximatch@0.1.0:
     dependencies:
@@ -24879,6 +24927,8 @@ snapshots:
     dependencies:
       react: 18.2.0
 
+  react-lifecycles-compat@3.0.4: {}
+
   react-loadable-ssr-addon-v5-slorber@1.0.1(@docusaurus/react-loadable@5.5.2(react@18.2.0))(webpack@5.91.0(esbuild@0.19.12)):
     dependencies:
       '@babel/runtime': 7.24.4
@@ -25009,6 +25059,32 @@ snapshots:
       throttle-debounce: 3.0.1
       ts-easing: 0.2.0
       tslib: 2.4.0
+
+  react-virtualized-tree@3.4.1(react-dom@18.2.0(react@18.2.0))(react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      classnames: 2.5.1
+      lodash: 4.17.21
+      lodash.debounce: 4.0.8
+      lodash.findindex: 4.6.0
+      lodash.isequal: 4.5.0
+      lodash.omit: 4.5.0
+      material-icons: 0.1.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-lifecycles-compat: 3.0.4
+      react-virtualized: 9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      reselect: 3.0.1
+
+  react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      clsx: 1.2.1
+      dom-helpers: 5.2.1
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-lifecycles-compat: 3.0.4
 
   react@18.2.0:
     dependencies:
@@ -25313,6 +25389,8 @@ snapshots:
   require-like@0.1.2: {}
 
   requires-port@1.0.0: {}
+
+  reselect@3.0.1: {}
 
   reselect@4.1.8: {}
 
