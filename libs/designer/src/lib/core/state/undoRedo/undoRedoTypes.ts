@@ -15,8 +15,8 @@ import {
 } from '../workflow/workflowSlice';
 
 export interface StateHistory {
-  past: string[];
-  future: string[];
+  past: Uint8Array[];
+  future: Uint8Array[];
 }
 
 // Omitted slices: designerView, designerOptions, dev, undoRedo
