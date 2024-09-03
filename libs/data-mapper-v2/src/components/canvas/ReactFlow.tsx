@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
 import { PanOnScrollMode, ReactFlow, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
-import SchemaNode from '../common/reactflow/SchemaNode';
 import SchemaPanelNode from '../common/reactflow/nodes/SchemaPanelNode';
 import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
 import ConnectedEdge from '../common/reactflow/edges/ConnectedEdge';
@@ -28,7 +27,6 @@ interface DMReactFlowProps {
 }
 
 const nodeTypes = {
-  schemaNode: SchemaNode,
   functionNode: FunctionNode,
   canvasNode: CanvasNode,
   schemaPanel: SchemaPanelNode,

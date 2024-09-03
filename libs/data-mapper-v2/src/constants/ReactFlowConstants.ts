@@ -1,10 +1,10 @@
 import { SchemaType } from '@microsoft/logic-apps-shared';
 
 export const ReactFlowNodeType = {
-  SchemaNode: 'schemaNode',
   FunctionNode: 'functionNode',
   FunctionPlaceholder: 'functionPlaceholder',
   CanvasNode: 'canvasNode',
+  SchemaPanel: 'schemaPanel',
 } as const;
 export type ReactFlowNodeType = (typeof ReactFlowNodeType)[keyof typeof ReactFlowNodeType];
 
