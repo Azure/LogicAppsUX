@@ -24,9 +24,10 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     parameters: Record<string, any>,
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, workflowReferenceId } = this.options;
+    const { baseUrl, apiVersion, workflowReferenceId } = this.options;
     return this._executeAzureDynamicApi(
       pathCombine(baseUrl, connectionId),
+      apiVersion,
       parameters,
       managedIdentityProperties ? { workflowReference: { id: workflowReferenceId } } : undefined
     );
