@@ -42,13 +42,15 @@ export {
   clearPanel,
   openPanel,
   collapsePanel,
-} from './state/panel/panelSlice';
+} from './state/panelV2/panelSlice';
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export {
-  useSelectedNodeId,
-  useSelectedNodeIds,
-} from './state/panel/panelSelectors';
+  useConnectionPanelSelectedNodeIds,
+  useDiscoveryPanelSelectedNodeIds,
+  useOperationPanelPinnedNodeId,
+  useOperationPanelSelectedNodeId,
+} from './state/panelV2/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { TemplatesDataProvider } from './templates/TemplatesDataProvider';

@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
+import { useDiscoveryPanelRelationshipIds, useDiscoveryPanelIsParallelBranch, useDiscoveryPanelIsAddingTrigger } from '../../../core/state/panelV2/panelSelectors';
 import { TextField } from '@fluentui/react';
 import { Text, Button } from '@fluentui/react-components';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
@@ -19,9 +19,9 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const intl = useIntl();
 
-  const isTrigger = useIsAddingTrigger();
-  const relationshipIds = useRelationshipIds();
-  const isParallelBranch = useIsParallelBranch();
+  const isTrigger = useDiscoveryPanelIsAddingTrigger();
+  const relationshipIds = useDiscoveryPanelRelationshipIds();
+  const isParallelBranch = useDiscoveryPanelIsParallelBranch();
 
   const [swaggerUrl, setSwaggerUrl] = useState('');
 
