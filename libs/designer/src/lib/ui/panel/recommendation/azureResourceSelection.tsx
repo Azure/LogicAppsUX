@@ -1,7 +1,11 @@
 import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useDiscoveryPanelRelationshipIds, useDiscoveryPanelIsParallelBranch, useDiscoveryPanelIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
+import {
+  useDiscoveryPanelRelationshipIds,
+  useDiscoveryPanelIsParallelBranch,
+  useDiscoveryPanelIsAddingTrigger,
+} from '../../../core/state/panel/panelSelectors';
 import { Button, Text } from '@fluentui/react-components';
 import {
   ApiManagementService,

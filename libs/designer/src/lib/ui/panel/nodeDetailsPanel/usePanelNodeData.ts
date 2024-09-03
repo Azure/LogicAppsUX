@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../core';
 import { useNodeDisplayName, useNodeMetadata } from '../../../core';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
-import { setPinnedPanelActiveTab,setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
+import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import {
   useIsNodePinnedToOperationPanel,
   useOperationPanelPinnedNodeActiveTabId,

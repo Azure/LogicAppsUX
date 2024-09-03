@@ -27,12 +27,12 @@ export const useDiscoveryPanelIsParallelBranch = () =>
 export const useDiscoveryPanelRelationshipIds = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.relationshipIds));
 
-export const useErrorsPanelSelectedTabId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.errorContent.selectedTabId));
+export const useErrorsPanelSelectedTabId = () => useSelector(createSelector(getPanelState, (state) => state.errorContent.selectedTabId));
 
 export const useFocusReturnElementId = () => useSelector(createSelector(getPanelState, (state) => state.focusReturnElementId));
 
-export const useIsCreatingConnection = () => useSelector(createSelector(getPanelState, (state) => state.connectionContent.isCreatingConnection));
+export const useIsCreatingConnection = () =>
+  useSelector(createSelector(getPanelState, (state) => state.connectionContent.isCreatingConnection));
 
 export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state) => state.isCollapsed));
 
