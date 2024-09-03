@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
+import { useOperationInfo } from '../../../../core';
 import {
   getApiHubAuthentication,
   getConnectionMetadata,
@@ -17,8 +17,8 @@ import {
   useGateways,
   useSubscriptions,
 } from '../../../../core/state/connection/connectionSelector';
-import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
-import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { useConnectionPanelSelectedNodeIds, useOperationPanelSelectedNodeId,usePreviousPanelMode } from '../../../../core/state/panelV2/panelSelectors';
+import { openPanel, setIsCreatingConnection } from '../../../../core/state/panelV2/panelSlice';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
   getAssistedConnectionProps,
@@ -52,8 +52,8 @@ import type { ApiHubAuthentication } from 'lib/common/models/workflow';
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const nodeId: string = useSelectedNodeId();
-  const nodeIds = useSelectedNodeIds();
+  const nodeId: string = useOperationPanelSelectedNodeId();
+  const nodeIds = useConnectionPanelSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
@@ -67,7 +67,7 @@ export const CreateConnectionWrapper = () => {
     [connector, operationManifest]
   );
 
-  const referencePanelMode = useReferencePanelMode();
+  const referencePanelMode = usePreviousPanelMode();
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';
     const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;

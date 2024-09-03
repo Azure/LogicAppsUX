@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { AppDispatch } from '../../core';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { expandDiscoveryPanel } from '../../core/state/panelV2/panelSlice';
 import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
@@ -12,7 +12,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const selected = useIsNodeSelected(id);
+  const selected = useIsNodeSelectedInOperationPanel(id);
   const isReadOnly = useReadOnly();
 
   const openAddNodePanel = useCallback(() => {

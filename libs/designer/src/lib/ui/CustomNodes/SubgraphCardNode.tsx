@@ -6,9 +6,8 @@ import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { changePanelNode } from '../../core/state/panelV2/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -39,7 +38,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const dispatch = useDispatch<AppDispatch>();
 
   const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
-  const selected = useIsNodeSelected(subgraphId);
+  const selected = useIsNodeSelectedInOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);

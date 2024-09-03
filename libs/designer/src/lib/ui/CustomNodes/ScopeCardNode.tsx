@@ -9,8 +9,8 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { changePanelNode } from '../../core/state/panelV2/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
@@ -44,7 +44,6 @@ import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -151,7 +150,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   const isPinned = useIsNodePinnedToOperationPanel(scopeId);
-  const selected = useIsNodeSelected(scopeId);
+  const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);

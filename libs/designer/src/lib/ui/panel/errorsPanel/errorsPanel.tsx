@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
-import { useSelectedErrorsPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { selectErrorsPanelTab } from '../../../core/state/panel/panelSlice';
+import { useErrorsPanelSelectedTabId } from '../../../core/state/panelV2/panelSelectors';
+import { selectErrorsPanelTab } from '../../../core/state/panelV2/panelSlice';
 import { ErrorsTab } from './tabs/errorsTab';
 import { useTotalNumErrors } from './tabs/errorsTab.hooks';
 import { WarningsTab } from './tabs/warningsTab';
@@ -61,7 +61,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
 
   const visibleTabs = [errorsTab, warningsTab].filter((tab) => tab.visible);
   const defaultTabId = visibleTabs.find((tab) => tab.count > 0)?.id || visibleTabs[0]?.id;
-  const selectedTabId = useSelectedErrorsPanelTabId() || defaultTabId;
+  const selectedTabId = useErrorsPanelSelectedTabId() || defaultTabId;
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
       const tabId = data.value as string;

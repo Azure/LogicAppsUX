@@ -2,13 +2,12 @@ import type { AppDispatch } from '../../../core';
 import { useNodeDisplayName, useNodeMetadata } from '../../../core';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
-import { selectPanelTab } from '../../../core/state/panel/panelSlice';
+import { setPinnedPanelActiveTab,setSelectedPanelActiveTab } from '../../../core/state/panelV2/panelSlice';
 import {
   useIsNodePinnedToOperationPanel,
-  usePinnedNodeActiveTabId,
-  useSelectedNodeActiveTabId,
-} from '../../..//core/state/panelV2/panelSelectors';
-import { setPinnedPanelActiveTab } from '../../../core/state/panelV2/panelSlice';
+  useOperationPanelPinnedNodeActiveTabId,
+  useOperationPanelSelectedNodeActiveTabId,
+} from '../../../core/state/panelV2/panelSelectors';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { usePanelTabs } from './usePanelTabs';
@@ -31,15 +30,15 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
 
   const opQuery = useOperationQuery(nonNullNodeId);
 
-  const selectedNodeActiveTab = useSelectedNodeActiveTabId();
-  const pinnedNodeActiveTab = usePinnedNodeActiveTabId();
+  const selectedNodeActiveTab = useOperationPanelSelectedNodeActiveTabId();
+  const pinnedNodeActiveTab = useOperationPanelPinnedNodeActiveTabId();
 
   if (!nodeId) {
     return undefined;
   }
 
   const selectedTab = isPinnedNode ? pinnedNodeActiveTab : selectedNodeActiveTab;
-  const selectTab = isPinnedNode ? setPinnedPanelActiveTab : selectPanelTab;
+  const selectTab = isPinnedNode ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
   const subgraphType = nodeMetadata?.subgraphType;
 
   return {

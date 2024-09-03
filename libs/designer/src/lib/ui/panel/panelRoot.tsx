@@ -1,13 +1,13 @@
-import { PANEL_MODE } from '../../core/state/panel/panelInterfaces';
+import { PANEL_MODE } from '../../core/state/panelV2/panelTypes';
 import type { AppDispatch } from '../../core';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useCurrentPanelMode,
-  useIsLoadingPanel,
-  useIsPanelCollapsed,
   useFocusReturnElementId,
-} from '../../core/state/panel/panelSelectors';
-import { clearPanel } from '../../core/state/panel/panelSlice';
+  useIsPanelCollapsed,
+  useIsPanelLoading,
+} from '../../core/state/panelV2/panelSelectors';
+import { clearPanel } from '../../core/state/panelV2/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
@@ -113,7 +113,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const nonBlockingPanels = useMemo(() => ['Connection'], []);
 
-  const isLoadingPanel = useIsLoadingPanel();
+  const isLoadingPanel = useIsPanelLoading();
 
   const LoadingComponent = () => (
     <div className="msla-loading-container">

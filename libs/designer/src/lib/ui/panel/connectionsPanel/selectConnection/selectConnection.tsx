@@ -3,8 +3,8 @@ import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/conne
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useReferencePanelMode, useSelectedNodeIds } from '../../../../core/state/panel/panelSelectors';
-import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panelV2/panelSelectors';
+import { openPanel, setIsCreatingConnection } from '../../../../core/state/panelV2/panelSlice';
 import { ActionList } from '../actionList/actionList';
 import { ConnectionTable } from './connectionTable';
 import { MessageBar, MessageBarType } from '@fluentui/react';
@@ -18,10 +18,10 @@ export const SelectConnection = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const selectedNodeIds = useSelectedNodeIds();
+  const selectedNodeIds = useConnectionPanelSelectedNodeIds();
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
-  const referencePanelMode = useReferencePanelMode();
+  const referencePanelMode = usePreviousPanelMode();
 
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';

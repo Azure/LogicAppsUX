@@ -1,9 +1,9 @@
 import { XLargeText } from '@microsoft/designer-ui';
-import { useSelectedNodeId } from '../../../core';
+import { useOperationPanelSelectedNodeId } from '../../../core';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
-import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
+import { useIsCreatingConnection } from '../../../core/state/panelV2/panelSelectors';
+import { setIsCreatingConnection } from '../../../core/state/panelV2/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
 import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
 import { SelectConnection } from './selectConnection/selectConnection';
@@ -18,7 +18,7 @@ const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const ConnectionPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
-  const selectedNodeId = useSelectedNodeId();
+  const selectedNodeId = useOperationPanelSelectedNodeId();
   const connector = useConnectorByNodeId(selectedNodeId);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);

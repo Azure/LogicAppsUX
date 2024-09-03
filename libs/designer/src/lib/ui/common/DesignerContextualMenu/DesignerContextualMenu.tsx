@@ -17,9 +17,8 @@ import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
 import { useOperationPanelPinnedNodeId } from '../../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
+import { changePanelNode, setSelectedPanelActiveTab, setPinnedNode, setSelectedNodeId } from '../../../core/state/panelV2/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
 import { useNodeDisplayName, useNodeMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
@@ -65,7 +64,7 @@ export const DesignerContextualMenu = () => {
 
   const runAfterClick = useCallback(() => {
     handleNodeSelection();
-    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
+    dispatch(setSelectedPanelActiveTab(RUN_AFTER_PANEL_TAB));
   }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {

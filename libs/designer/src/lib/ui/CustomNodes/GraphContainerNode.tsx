@@ -1,5 +1,5 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
@@ -11,7 +11,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
 
-  const selected = useIsNodeSelected(id);
+  const selected = useIsNodeSelectedInOperationPanel(id);
   const actionMetadata = useActionMetadata(id);
   const nodeMetadata = useNodeMetadata(id);
   const isLeaf = useIsLeafNode(id);
