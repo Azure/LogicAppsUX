@@ -3,7 +3,7 @@ import { makeStyles, shorthands } from '@fluentui/react-components';
 export const useStyles = makeStyles({
   root: {
     width: '300px',
-    height: '100%',
+    height: '100vh',
   },
   rootWithSchemaSelection: {
     backgroundColor: '#fff',

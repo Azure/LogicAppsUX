@@ -226,7 +226,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
             }
       }
       styles={{
-        root: mergeClasses(styles.root, scehmaInEditState ? styles.rootWithSchemaSelection : styles.rootWithSchemaTree),
+        root: mergeClasses(styles.root, 'nodrag nopan', scehmaInEditState ? styles.rootWithSchemaSelection : styles.rootWithSchemaTree),
         body: styles.body,
       }}
       body={

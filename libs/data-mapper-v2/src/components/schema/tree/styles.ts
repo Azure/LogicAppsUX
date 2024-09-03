@@ -5,7 +5,6 @@ export const useStyles = makeStyles({
     marginTop: '10px',
     fontSize: '18px',
     height: '100%',
-    ...shorthands.overflow('scroll', 'scroll'),
   },
   leftWrapper: {
     marginLeft: '15px',
@@ -43,5 +42,23 @@ export const useStyles = makeStyles({
     ':after': {
       content: '"*"',
     },
+  },
+  schemaHandle: {
+    zIndex: 999,
+    backgroundColor: '#fff',
+    width: '14px',
+    height: '14px',
+    ...shorthands.border('1px', 'solid', '#ddd'),
+    top: '16px',
+  },
+  leftSchemaHandle: {
+    right: '8px',
+  },
+  rightSchemaHandle: {
+    left: '8px',
+  },
+  temporaryHandle: {
+    backgroundColor: 'transparent',
+    ...shorthands.border('none'),
   },
 });

@@ -10,15 +10,14 @@ import {
 import { equals, SchemaType, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useStyles } from './styles';
-import useNodePosition from './useNodePosition';
 import { getReactFlowNodeId } from '../../../utils/Schema.Utils';
-import useOnScreen from './useOnScreen';
-import { applyNodeChanges, useNodes, type Node } from '@xyflow/react';
+import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setHoverState, setSelectedItem, toggleNodeExpandCollapse, updateReactFlowNode } from '../../../core/state/DataMapSlice';
+import { setHoverState, setSelectedItem, toggleNodeExpandCollapse } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
+import { NodeIds } from '../../../constants/ReactFlowConstants';
 
 type RecursiveTreeProps = {
   root: SchemaNodeExtended;
@@ -33,9 +32,8 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   const { key } = root;
   const nodeRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
-  const onScreen = useOnScreen(nodeRef);
-  const nodes = useNodes();
   const dispatch = useDispatch<AppDispatch>();
+  const updateNodeInternals = useUpdateNodeInternals();
   const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const hoverState = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
   const activeNode = useSelector(
@@ -46,20 +44,6 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
   );
 
   const nodeId = useMemo(() => getReactFlowNodeId(key, isLeftDirection), [key, isLeftDirection]);
-
-  const {
-    position: { x, y } = { x: undefined, y: undefined },
-  } = useNodePosition({
-    key: key,
-    nodeId,
-    onScreen: onScreen,
-    schemaMap: flattenedScehmaMap,
-    isLeftDirection: isLeftDirection,
-    nodePositionX: nodeRef?.current?.getBoundingClientRect().x,
-    nodePositionY: nodeRef?.current?.getBoundingClientRect().y,
-    treePositionX,
-    treePositionY,
-  });
 
   const onClick = useCallback(() => {
     dispatch(setSelectedItem(addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target)));
@@ -90,10 +74,11 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
           isExpanded: isExpaned,
         })
       );
+      updateNodeInternals(isLeftDirection ? NodeIds.source : NodeIds.target);
 
       onClick();
     },
-    [dispatch, isLeftDirection, onClick]
+    [dispatch, isLeftDirection, onClick, updateNodeInternals]
   );
 
   const aside = useMemo(() => {
@@ -104,68 +89,33 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
     return <span />;
   }, [activeNode, hoverState, isLeftDirection, root]);
 
-  useEffect(() => {
-    return () => {
-      dispatch(
-        updateReactFlowNode({
-          removeNode: true,
-          isSource: isLeftDirection,
-          id: nodeId,
-        })
-      );
-    };
-  }, [isLeftDirection, dispatch, nodeId]);
+  const handle = useMemo(
+    () =>
+      isLeftDirection ? (
+        <Handle
+          className={mergeClasses(styles.schemaHandle, styles.leftSchemaHandle)}
+          id={nodeId}
+          key={nodeId}
+          position={Position.Right}
+          type={'source'}
+          isConnectable={true}
+        />
+      ) : (
+        <Handle
+          className={mergeClasses(styles.schemaHandle, styles.rightSchemaHandle)}
+          id={nodeId}
+          key={nodeId}
+          position={Position.Left}
+          type={'target'}
+          isConnectable={true}
+        />
+      ),
+    [isLeftDirection, nodeId, styles.leftSchemaHandle, styles.rightSchemaHandle, styles.schemaHandle]
+  );
 
   useEffect(() => {
-    if (x !== undefined && y !== undefined) {
-      const updatedNode: Node = {
-        id: nodeId,
-        selectable: false,
-        draggable: false,
-        data: {
-          ...root,
-          isLeftDirection: isLeftDirection,
-        },
-        type: 'schemaNode',
-        position: { x, y },
-      };
-
-      const currentNode = nodes.find((node) => node.id === nodeId);
-
-      if (currentNode) {
-        if (x < 0 || y < 0) {
-          applyNodeChanges([{ type: 'remove', id: nodeId }], nodes);
-          dispatch(
-            updateReactFlowNode({
-              removeNode: true,
-              id: nodeId,
-              isSource: isLeftDirection,
-              node: updatedNode,
-            })
-          );
-        } else if (x >= 0 && y >= 0 && (x !== currentNode.position.x || y !== currentNode.position.y)) {
-          applyNodeChanges([{ type: 'position', id: nodeId, position: updatedNode.position }], nodes);
-          dispatch(
-            updateReactFlowNode({
-              isSource: isLeftDirection,
-              id: nodeId,
-              node: updatedNode,
-            })
-          );
-        }
-      } else if (x >= 0 && y >= 0) {
-        applyNodeChanges([{ type: 'add', item: updatedNode }], nodes);
-        dispatch(
-          updateReactFlowNode({
-            isSource: isLeftDirection,
-            id: nodeId,
-            node: updatedNode,
-          })
-        );
-      }
-    }
-  }, [nodes, isLeftDirection, x, y, root, nodeId, dispatch]);
-
+    updateNodeInternals(isLeftDirection ? NodeIds.source : NodeIds.target);
+  }, [isLeftDirection, updateNodeInternals]);
   if (root.children.length === 0) {
     return (
       <TreeItem itemType="leaf" id={key} value={key} ref={nodeRef}>
@@ -181,8 +131,11 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
           )}
           aside={aside}
         >
-          <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
-            {root.name}
+          <div>
+            <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
+              {root.name}
+            </div>
+            {handle}
           </div>
         </TreeItemLayout>
       </TreeItem>
@@ -206,8 +159,11 @@ const RecursiveTree = (props: RecursiveTreeProps) => {
         aside={aside}
         className={mergeClasses(styles.rootNode, isLeftDirection ? '' : styles.rightTreeItemLayout, activeNode ? styles.nodeSelected : '')}
       >
-        <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
-          {root.name}
+        <div>
+          <div className={root.nodeProperties.find((prop) => prop.toLocaleLowerCase() === 'optional') ? '' : styles.required}>
+            {root.name}
+          </div>
+          {handle}
         </div>
       </TreeItemLayout>
       <Tree aria-label="sub-tree">

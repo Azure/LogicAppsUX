@@ -16,3 +16,7 @@ export type ReactFlowEdgeType = (typeof ReactFlowEdgeType)[keyof typeof ReactFlo
 export const sourcePrefix = `${SchemaType.Source}-`;
 export const targetPrefix = `${SchemaType.Target}-`;
 export const functionPrefix = 'function-';
+export const NodeIds = {
+  source: `${sourcePrefix}scehma_panel_node`,
+  target: `${targetPrefix}scehma_panel_node`,
+};

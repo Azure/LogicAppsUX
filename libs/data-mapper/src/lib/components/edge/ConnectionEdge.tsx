@@ -69,6 +69,7 @@ const useStyles = makeStyles({
 
 export const ConnectionEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, selected } = props;
+  console.log(props);
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();

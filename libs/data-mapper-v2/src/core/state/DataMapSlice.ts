@@ -21,7 +21,6 @@ import {
   flattenSchemaIntoSortArray,
   type NodeScrollDirection,
   getNodeIdForScroll,
-  getNodesForScroll,
 } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -30,7 +29,7 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { emptyCanvasRect, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { emptyCanvasRect, guid, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
@@ -67,6 +66,15 @@ interface ComponentState {
   hover?: HoverState;
 }
 
+const getIntermedateScrollNodeHandles = (guid: string) => {
+  const record: Record<string, string> = {};
+  record['top-left'] = `top-left-${guid}`;
+  record['bottom-left'] = `bottom-left-${guid}`;
+  record['top-right'] = `top-right-${guid}`;
+  record['bottom-right'] = `bottom-right-${guid}`;
+  return record;
+};
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
@@ -99,7 +107,7 @@ export interface DataMapOperationState {
   edgeLoopMapping: Record<string, boolean>;
   // Temporary Nodes for when the scrolling is happening and the tree-nodes are not in view
   // For each corner of the canvas
-  nodesForScroll: Record<string, Node>;
+  nodesForScroll: Record<string, string>;
   edgePopOverId?: string;
   state?: ComponentState;
 }
@@ -121,9 +129,9 @@ const emptyPristineState: DataMapOperationState = {
   targetOpenKeys: {},
   edgeLoopMapping: {},
   intermediateEdgeMappingForScrolling: {},
-  nodesForScroll: {},
   intermediateEdgeMappingDirectionForScrolling: {},
   intermediateEdgeMappingForCollapsing: {},
+  nodesForScroll: getIntermedateScrollNodeHandles(guid()),
 };
 
 const initialState: DataMapState = {
@@ -267,7 +275,6 @@ export const dataMapSlice = createSlice({
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
-        nodesForScroll: getNodesForScroll(),
         intermediateEdgeMappingForCollapsing: {},
         intermediateEdgeMappingForScrolling: {},
         intermediateEdgeMappingDirectionForScrolling: {},
@@ -672,9 +679,6 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
-    updateCanvasNodesForScroll: (state, action: PayloadAction<Record<string, Node>>) => {
-      state.curDataMapOperation.nodesForScroll = action.payload;
-    },
     updateTemporaryNodeDirection: (
       state,
       action: PayloadAction<{
@@ -716,7 +720,6 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
-  updateCanvasNodesForScroll,
   updateTemporaryNodeDirection,
 } = dataMapSlice.actions;
 
@@ -1033,7 +1036,7 @@ export const addIntermediateConnections = (sourceId: string, targetId: string, s
         state.intermediateEdgeMappingForScrolling,
         sId,
         tId,
-        Object.keys(state.nodesForScroll),
+        Object.values(state.nodesForScroll),
         directions
       ),
     };
