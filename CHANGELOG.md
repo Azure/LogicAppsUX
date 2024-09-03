@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.71.5](https://github.com/Azure/LogicAppsUX/compare/v4.71.4...v4.71.5) (2024-09-03)
+
+
+### Bug Fixes
+
+* **designer:** Fixing hidden edges, connection id slash, loop pager component ([#5590](https://github.com/Azure/LogicAppsUX/issues/5590)) ([dff8498](https://github.com/Azure/LogicAppsUX/commit/dff8498584b07d36d79ab6e6a55d41d2745f89de)), closes [#5575](https://github.com/Azure/LogicAppsUX/issues/5575) [#5572](https://github.com/Azure/LogicAppsUX/issues/5572) [#5586](https://github.com/Azure/LogicAppsUX/issues/5586)
+* **designer:** Fixing the recursive call in dynamic data load ([#5588](https://github.com/Azure/LogicAppsUX/issues/5588)) ([0dcb272](https://github.com/Azure/LogicAppsUX/commit/0dcb272e9550671596cad8945d102ed4e0b16b67)), closes [#5584](https://github.com/Azure/LogicAppsUX/issues/5584)
+
 ### [4.71.4](https://github.com/Azure/LogicAppsUX/compare/v4.71.3...v4.71.4) (2024-09-03)
 
 
