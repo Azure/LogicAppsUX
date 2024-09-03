@@ -31,7 +31,7 @@ const SourceSettings = ({
         <ChoiceGroup
           label="Environment"
           options={[
-            { key: 'azure', text: 'Azure' },
+            { key: 'azure', text: 'Azure', disabled: !armToken },
             { key: 'local', text: 'Local' },
           ]}
           onChange={(_, option) => dispatch(setIsLocalSelected(option?.key === 'local'))}
