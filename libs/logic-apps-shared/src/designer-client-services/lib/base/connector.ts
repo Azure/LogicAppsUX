@@ -167,15 +167,16 @@ export abstract class BaseConnectorService implements IConnectorService {
 
   protected async _executeAzureDynamicApi(
     dynamicInvokeUrl: string,
+    apiVersion: string,
     parameters: Record<string, any>,
     properties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
-    const { apiVersion, httpClient, apiHubServiceDetails } = this.options;
+    const { httpClient } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
 
     const uri = `${dynamicInvokeUrl}/dynamicInvoke`;
-    const queryParameters = { 'api-version': apiHubServiceDetails?.apiVersion ?? apiVersion };
+    const queryParameters = { 'api-version': apiVersion };
     const request = {
       method,
       path: parameters['path'],
