@@ -2,7 +2,7 @@ import connectionsReducer from '../core/state/connection/connectionSlice';
 import designerOptionsReducer from '../core/state/designerOptions/designerOptionsSlice';
 import designerViewReducer from '../core/state/designerView/designerViewSlice';
 import operationMetadataReducer from '../core/state/operation/operationMetadataSlice';
-import panelReducer from '../core/state/panel/panelSlice';
+import panelV2Reducer from '../core/state/panelV2/panelSlice';
 import customCodeReducer from '../core/state/customcode/customcodeSlice';
 import settingsReducer from '../core/state/setting/settingSlice';
 import staticResultsSchemasReducer from '../core/state/staticresultschema/staticresultsSlice';
@@ -32,7 +32,7 @@ export function renderWithRedux(
       reducer: {
         workflow: workflowReducer,
         operations: operationMetadataReducer,
-        panel: panelReducer,
+        panelV2: panelV2Reducer,
         connections: connectionsReducer,
         settings: settingsReducer,
         designerOptions: designerOptionsReducer,

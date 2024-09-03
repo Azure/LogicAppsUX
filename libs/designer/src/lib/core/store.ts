@@ -4,7 +4,6 @@ import designerOptionsReducer from './state/designerOptions/designerOptionsSlice
 import designerViewReducer from './state/designerView/designerViewSlice';
 import devReducer from './state/dev/devSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
-import panelReducer from './state/panel/panelSlice';
 import panelV2Reducer from './state/panelV2/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
@@ -21,7 +20,6 @@ export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
     operations: operationMetadataReducer,
-    panel: panelReducer,
     panelV2: panelV2Reducer,
     connections: connectionsReducer,
     settings: settingsReducer,

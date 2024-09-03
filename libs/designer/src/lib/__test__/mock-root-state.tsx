@@ -4,7 +4,6 @@ import { initialState as initialCustomCodeState } from '../core/state/customcode
 import { initialDesignerOptionsState } from '../core/state/designerOptions/designerOptionsSlice';
 import { initialState as initialDesignerViewState } from '../core/state/designerView/designerViewSlice';
 import { initialState as initialOperationsState } from '../core/state/operation/operationMetadataSlice';
-import { initialState as initialPanelState } from '../core/state/panel/panelSlice';
 import { initialState as initialPanelV2State } from '../core/state/panelV2/panelSlice';
 import { initialState as initialSettingsState } from '../core/state/setting/settingSlice';
 import { initialState as initialStaticResultsState } from '../core/state/staticresultschema/staticresultsSlice';
@@ -19,7 +18,6 @@ export const getMockedInitialRootState = (): RootState => {
     connections: initialConnectionsState,
     customCode: initialCustomCodeState,
     operations: initialOperationsState,
-    panel: initialPanelState,
     panelV2: initialPanelV2State,
     settings: initialSettingsState,
     staticResults: initialStaticResultsState,
@@ -37,7 +35,6 @@ export const getMockedUndoRedoPartialRootState = (): UndoRedoPartialRootState =>
     connections: initialConnectionsState,
     customCode: initialCustomCodeState,
     operations: initialOperationsState,
-    panel: initialPanelState,
     panelV2: initialPanelV2State,
     settings: initialSettingsState,
     staticResults: initialStaticResultsState,
