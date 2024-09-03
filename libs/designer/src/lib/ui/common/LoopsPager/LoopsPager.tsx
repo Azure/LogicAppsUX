@@ -1,12 +1,12 @@
 import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
-import { useActionMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useNodeMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
 import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
@@ -17,12 +17,13 @@ export interface LoopsPagerProps {
 }
 
 export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [failedRepetitions, setFailedRepetitions] = useState<number[]>([]);
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
-  const node = useActionMetadata(scopeId);
-  const normalizedType = node?.type.toLowerCase();
+  const actionMetadata = useActionMetadata(scopeId);
+  const normalizedType = actionMetadata?.type.toLowerCase();
+  const nodeMetadata = useNodeMetadata(scopeId);
+  const currentPage = useMemo(() => nodeMetadata?.runIndex ?? 0, [nodeMetadata]);
 
   const forEachItemsCount = getForeachItemsCount(metadata?.runData);
 
@@ -75,24 +76,17 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
 
   const onPagerChange: PageChangeEventHandler = (page: PageChangeEventArgs) => {
     dispatch(setRunIndex({ page: page.value - 1, nodeId: scopeId }));
-    setCurrentPage(page.value);
   };
 
   const onClickNextFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
     const { nextFailedRepetition } = findPreviousAndNextFailed(page.value - 1);
     dispatch(setRunIndex({ page: nextFailedRepetition, nodeId: scopeId }));
-    setCurrentPage(nextFailedRepetition + 1);
   };
 
   const onClickPreviousFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
     const { prevFailedRepetition } = findPreviousAndNextFailed(page.value - 1);
     dispatch(setRunIndex({ page: prevFailedRepetition, nodeId: scopeId }));
-    setCurrentPage(prevFailedRepetition + 1);
   };
-
-  if (currentPage > forEachItemsCount) {
-    onPagerChange({ value: forEachItemsCount });
-  }
 
   const failedIterationProps =
     failedRepetitions.length > 0
@@ -106,7 +100,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
 
   return isLoading ? null : (
     <Pager
-      current={currentPage}
+      current={currentPage + 1}
       onChange={onPagerChange}
       max={forEachItemsCount}
       maxLength={forEachItemsCount.toString().length + 1}
