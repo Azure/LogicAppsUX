@@ -3,23 +3,6 @@ import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import {
-  changePanelNode as panelV1ChangePanelNode,
-  clearPanel as panelV1ClearPanel,
-  collapsePanel as panelV1CollapsePanel,
-  expandDiscoveryPanel as panelV1ExpandDiscoveryPanel,
-  expandPanel as panelV1ExpandPanel,
-  openPanel as panelV1OpenPanel,
-  selectErrorsPanelTab as panelV1SelectErrorsPanelTab,
-  selectOperationGroupId as panelV1SelectOperationGroupId,
-  selectOperationId as panelV1SelectOperationId,
-  selectPanelTab as panelV1SelectPanelTab,
-  setIsCreatingConnection as panelV1SetIsCreatingConnection,
-  setIsPanelLoading as panelV1SetIsPanelLoading,
-  setSelectedNodeId as panelV1SetSelectedNodeId,
-  setSelectedNodeIds as panelV1SetSelectedNodeIds,
-  updatePanelLocation as panelV1UpdatePanelLocation,
-} from '../panel/panelSlice';
 import type {
   ConnectionPanelContentState,
   DiscoveryPanelContentState,
@@ -281,35 +264,6 @@ export const panelSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.panelV2);
-
-    // The below matchers are used to ensure that dispatches made to v1 panel are consumed by v2 panel as well.
-    // Once v1 panel is deprecated & deleted, these can be safely removed.
-    builder.addMatcher(isAnyOf(panelV1ExpandPanel), (state) => panelSlice.caseReducers.expandPanel(state));
-    builder.addMatcher(isAnyOf(panelV1CollapsePanel), (state) => panelSlice.caseReducers.collapsePanel(state));
-    builder.addMatcher(isAnyOf(panelV1ClearPanel), (state, action) =>
-      panelSlice.caseReducers.clearPanel(state, { ...action, payload: { clearPinnedState: true } })
-    );
-    builder.addMatcher(isAnyOf(panelV1UpdatePanelLocation), (state, action) => panelSlice.caseReducers.updatePanelLocation(state, action));
-    builder.addMatcher(isAnyOf(panelV1SetSelectedNodeId), (state, action) => panelSlice.caseReducers.setSelectedNodeId(state, action));
-    builder.addMatcher(isAnyOf(panelV1SetSelectedNodeIds), (state, action) => panelSlice.caseReducers.setSelectedNodeIds(state, action));
-    builder.addMatcher(isAnyOf(panelV1ChangePanelNode), (state, action) => panelSlice.caseReducers.changePanelNode(state, action));
-    builder.addMatcher(isAnyOf(panelV1ExpandDiscoveryPanel), (state, action) =>
-      panelSlice.caseReducers.expandDiscoveryPanel(state, action)
-    );
-    builder.addMatcher(isAnyOf(panelV1SelectOperationGroupId), (state, action) =>
-      panelSlice.caseReducers.selectOperationGroupId(state, action)
-    );
-    builder.addMatcher(isAnyOf(panelV1SelectOperationId), (state, action) => panelSlice.caseReducers.selectOperationId(state, action));
-    builder.addMatcher(isAnyOf(panelV1OpenPanel), (state, action) => panelSlice.caseReducers.openPanel(state, action));
-    builder.addMatcher(isAnyOf(panelV1SelectPanelTab), (state, action) => panelSlice.caseReducers.setSelectedPanelActiveTab(state, action));
-    builder.addMatcher(isAnyOf(panelV1SetIsPanelLoading), (state, action) => panelSlice.caseReducers.setIsPanelLoading(state, action));
-    builder.addMatcher(isAnyOf(panelV1SetIsCreatingConnection), (state, action) =>
-      panelSlice.caseReducers.setIsCreatingConnection(state, action)
-    );
-    builder.addMatcher(isAnyOf(panelV1SelectErrorsPanelTab), (state, action) =>
-      panelSlice.caseReducers.selectErrorsPanelTab(state, action)
-    );
-    // End v1 panel matchers.
   },
 });
 
