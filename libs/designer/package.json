@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "4.75.0",
+  "version": "4.82.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -20,6 +20,7 @@
     "lodash.frompairs": "4.0.1",
     "lodash.merge": "4.6.2",
     "monaco-editor": "0.44.0",
+    "pako": "2.1.0",
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "1.0.1",
     "react-dnd-html5-backend": "16.0.1",
@@ -38,6 +39,7 @@
     "@formatjs/intl": "^2.10.1",
     "@types/lodash.frompairs": "^4.0.9",
     "@types/lodash.merge": "^4.6.9",
+    "@types/pako": "^2.0.3",
     "@types/to-title-case": "^1.0.2"
   },
   "engines": {

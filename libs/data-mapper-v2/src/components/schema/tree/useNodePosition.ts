@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { XYPosition } from '@xyflow/react';
 import { emptyCanvasRect, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,7 +27,7 @@ const useNodePosition = (props: NodePositionProps) => {
 
   const { y: canvasY, width: canvasWidth, height: canvasHeight } = currentCanvasRect;
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (
       treePositionY === undefined ||
       nodePositionY === undefined ||

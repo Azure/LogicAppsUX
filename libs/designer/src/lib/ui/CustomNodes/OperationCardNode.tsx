@@ -74,7 +74,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runInstance = useRunInstance();
   const runData = useRunData(id);
   const parentRunId = useParentRunId(id);
-  const parenRunData = useRunData(parentRunId ?? '');
+  const parentRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
@@ -84,7 +84,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
   const getRunRepetition = () => {
-    if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
+    if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
       return {
         properties: {
           status: constants.FLOW_STATUS.SKIPPED,
@@ -100,18 +100,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
-  const {
-    refetch,
-    isFetching: isRepetitionLoading,
-    data: repetitionData,
-  } = useQuery<any>(
-    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
+  const { isFetching: isRepetitionLoading, data: repetitionData } = useQuery<any>(
+    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status, parentRunIndex }],
     getRunRepetition,
     {
       refetchOnWindowFocus: false,
-      initialData: null,
-      refetchIntervalInBackground: true,
-      enabled: parentRunIndex !== undefined && isMonitoringView,
+      enabled: isMonitoringView && parentRunIndex !== undefined,
     }
   );
 
@@ -120,12 +114,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionData.properties as any }));
     }
   }, [dispatch, id, repetitionData, runInstance?.id]);
-
-  useEffect(() => {
-    if (parentRunIndex !== undefined && isMonitoringView) {
-      refetch();
-    }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
 
   const dependencies = useTokenDependencies(id);
 

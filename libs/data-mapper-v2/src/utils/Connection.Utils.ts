@@ -133,7 +133,7 @@ export const applyConnectionValue = (
     } else if (isConnectionUnit(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
       confirmedInputIndex = Object.values(connection.inputs).findIndex((inputCon) => inputCon.length < 1);
-    } else if (isCustomValue(input)) {
+    } else if (isCustomValue(input) && targetNode) {
       // Add input to first available that allows custom values
       confirmedInputIndex = Object.values(connection.inputs).findIndex(
         (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
@@ -373,8 +373,9 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   return [currentFunction.self];
 };
 
-export const getActiveNodes = (connections: ConnectionDictionary, stateConnections?: Record<string, boolean>, selectedItemKey?: string) => {
+export const getActiveNodes = (state: DataMapOperationState, selectedItemKey?: string) => {
   const connectedItems: Record<string, string> = {};
+  const connections = state.dataMapConnections;
   if (selectedItemKey) {
     const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
 
@@ -391,12 +392,6 @@ export const getActiveNodes = (connections: ConnectionDictionary, stateConnectio
     selectedItemConnectedNodes.forEach((key) => {
       connectedItems[key] = key;
     });
-
-    if (stateConnections) {
-      Object.keys(stateConnections).forEach((connectedKey) => {
-        connectedItems[selectedItemKey] = connectedKey;
-      });
-    }
 
     connectedItems[selectedItemKey] = selectedItemKey;
   }
