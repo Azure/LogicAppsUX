@@ -1,16 +1,16 @@
 import { emptyCanvasRect, type SchemaExtended, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { Tree, mergeClasses } from '@fluentui/react-components';
-import { useStyles } from './styles';
+import { useHandleStyles, useStyles } from './styles';
 import { useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import RecursiveTree from './RecursiveTree';
 import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react';
-import { NodeIds } from '../../../constants/ReactFlowConstants';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/Store';
+import useSchema from '../useSchema';
 
 export type SchemaTreeProps = {
-  isLeftDirection?: boolean;
+  id: string;
   schema: SchemaExtended;
   flattenedSchemaMap: Record<string, SchemaNodeExtended>;
 };
@@ -18,16 +18,18 @@ export type SchemaTreeProps = {
 export const SchemaTree = (props: SchemaTreeProps) => {
   const styles = useStyles();
   const {
-    isLeftDirection = true,
+    id,
     flattenedSchemaMap,
     schema: { schemaTreeRoot },
   } = props;
 
+  const { panelNodeId, isSourceSchema } = useSchema({ id });
   const { height: currentHeight } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
   const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const intl = useIntl();
+  const handleStyles = useHandleStyles();
   const treeRef = useRef<HTMLDivElement | null>(null);
   const updateNodeInternals = useUpdateNodeInternals();
 
@@ -38,28 +40,28 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   });
 
   const onScroll = useCallback(() => {
-    updateNodeInternals(isLeftDirection ? NodeIds.source : NodeIds.target);
-  }, [isLeftDirection, updateNodeInternals]);
+    updateNodeInternals(panelNodeId);
+  }, [panelNodeId, updateNodeInternals]);
 
   useEffect(() => {
-    updateNodeInternals(isLeftDirection ? NodeIds.source : NodeIds.target);
-  }, [updateNodeInternals, schemaTreeRoot, flattenedSchemaMap, isLeftDirection, currentHeight]);
+    updateNodeInternals(panelNodeId);
+  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals]);
 
   return schemaTreeRoot ? (
     <Tree
       ref={treeRef}
-      className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
+      className={isSourceSchema ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
       aria-label={treeAriaLabel}
       onScroll={onScroll}
     >
-      {isLeftDirection ? (
+      {isSourceSchema ? (
         <>
           {nodesForScroll['top-left'] && (
             <Handle
               id={nodesForScroll['top-left']}
               position={Position.Right}
               type="source"
-              className={styles.temporaryHandle}
+              className={handleStyles.hidden}
               style={{ top: '87px' }}
             />
           )}
@@ -68,7 +70,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
               id={nodesForScroll['bottom-left']}
               position={Position.Right}
               type="source"
-              className={styles.temporaryHandle}
+              className={handleStyles.hidden}
               style={{ top: `${currentHeight}px` }}
             />
           )}
@@ -80,7 +82,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
               id={nodesForScroll['top-right']}
               position={Position.Left}
               type="target"
-              className={styles.temporaryHandle}
+              className={handleStyles.hidden}
               style={{ top: '87px' }}
             />
           )}
@@ -89,7 +91,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
               id={nodesForScroll['bottom-right']}
               position={Position.Left}
               type="target"
-              className={styles.temporaryHandle}
+              className={handleStyles.hidden}
               style={{ top: `${currentHeight}px` }}
             />
           )}
@@ -97,7 +99,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       )}
       <RecursiveTree
         root={schemaTreeRoot}
-        isLeftDirection={isLeftDirection}
+        id={id}
         flattenedScehmaMap={flattenedSchemaMap}
         treePositionX={treeRef?.current?.getBoundingClientRect().x}
         treePositionY={treeRef?.current?.getBoundingClientRect().y}

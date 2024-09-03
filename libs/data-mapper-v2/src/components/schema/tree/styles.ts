@@ -1,4 +1,5 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
+import { colors } from '../..//common/reactflow/styles';
 
 export const useStyles = makeStyles({
   wrapper: {
@@ -43,7 +44,10 @@ export const useStyles = makeStyles({
       content: '"*"',
     },
   },
-  schemaHandle: {
+});
+
+export const useHandleStyles = makeStyles({
+  wrapper: {
     zIndex: 999,
     backgroundColor: '#fff',
     width: '14px',
@@ -51,14 +55,17 @@ export const useStyles = makeStyles({
     ...shorthands.border('1px', 'solid', '#ddd'),
     top: '16px',
   },
-  leftSchemaHandle: {
-    right: '8px',
+  connected: {
+    backgroundColor: colors.handleConnected,
   },
-  rightSchemaHandle: {
-    left: '8px',
-  },
-  temporaryHandle: {
+  hidden: {
     backgroundColor: 'transparent',
     ...shorthands.border('none'),
+  },
+  left: {
+    right: '8px',
+  },
+  right: {
+    left: '8px',
   },
 });

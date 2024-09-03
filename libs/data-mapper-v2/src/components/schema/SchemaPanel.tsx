@@ -1,8 +1,8 @@
 import { getSelectedSchema } from '../../core';
-import { setInitialSchema, toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
+import { setInitialSchema } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { convertSchemaToSchemaExtended, flattenSchemaNodeMap, getFileNameAndPath } from '../../utils/Schema.Utils';
-import { type DataMapSchema, equals, type SchemaNodeExtended, SchemaType } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ import { Button, mergeClasses } from '@fluentui/react-components';
 import type { FileSelectorOption } from '../common/selector/FileSelector';
 import Fuse from 'fuse.js';
 import { EditRegular } from '@fluentui/react-icons';
+import useSchema from './useSchema';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -32,11 +33,12 @@ const fuseSchemaSearchOptions: Fuse.IFuseOptions<SchemaNodeExtended> = {
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
-  schemaType: SchemaType;
+  id: string;
 }
 
-export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
+export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { isSourceSchema, schemaType, toggleEditState } = useSchema({ id });
   const intl = useIntl();
   const styles = useStyles();
   const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
@@ -44,20 +46,15 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
-
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
   const { sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
   const selectedSchema = useSelector((state: RootState) => {
-    if (schemaType === SchemaType.Source) {
+    if (isSourceSchema) {
       return state.dataMap.present.curDataMapOperation.sourceSchema;
     }
-    if (schemaType === SchemaType.Target) {
-      return state.dataMap.present.curDataMapOperation.targetSchema;
-    }
-    return undefined;
+    return state.dataMap.present.curDataMapOperation.targetSchema;
   });
 
   const flattenedScehmaMap = useMemo(() => (selectedSchema ? flattenSchemaNodeMap(selectedSchema.schemaTreeRoot) : {}), [selectedSchema]);
@@ -65,8 +62,8 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
   const [filteredFlattenedScehmaMap, setFilteredFlattenedScehmaMap] = useState(flattenedScehmaMap);
 
   const scehmaInEditState = useMemo(
-    () => (isLeftDirection ? sourceInEditState : targetInEditState),
-    [isLeftDirection, sourceInEditState, targetInEditState]
+    () => (isSourceSchema ? sourceInEditState : targetInEditState),
+    [isSourceSchema, sourceInEditState, targetInEditState]
   );
 
   const fetchSchema: UseQueryResult<DataMapSchema, { message: string }> = useQuery(
@@ -183,12 +180,8 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
   );
 
   const onEditClick = useCallback(() => {
-    if (isLeftDirection) {
-      dispatch(toggleSourceEditState(true));
-    } else {
-      dispatch(toggleTargetEditState(true));
-    }
-  }, [dispatch, isLeftDirection]);
+    toggleEditState(true);
+  }, [toggleEditState]);
 
   const setSelectedFileSchemaAndResetState = useCallback((item?: SchemaFile) => {
     setSelectedSchemaFile(item);
@@ -205,7 +198,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
       id={`panel_${schemaType}`}
       isOpen={!!currentPanelView}
       title={{
-        text: isLeftDirection ? stringResources.SOURCE : stringResources.DESTINATION,
+        text: isSourceSchema ? stringResources.SOURCE : stringResources.DESTINATION,
         subTitleText: selectedSchemaFile?.name,
         rightAction: scehmaInEditState ? null : (
           <Button
@@ -231,7 +224,7 @@ export const SchemaPanel = ({ schemaType }: ConfigPanelProps) => {
       }}
       body={
         <SchemaPanelBody
-          isLeftDirection={isLeftDirection}
+          id={id}
           schema={selectedSchema}
           setSelectedSchemaFile={setSelectedFileSchemaAndResetState}
           selectedSchemaFile={selectedSchemaFile}
