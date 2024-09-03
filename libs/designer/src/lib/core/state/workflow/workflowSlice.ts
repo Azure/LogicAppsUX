@@ -21,7 +21,7 @@ import {
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
-import type { RelationshipIds } from '../panel/panelInterfaces';
+import type { RelationshipIds } from '../panelV2/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
