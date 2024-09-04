@@ -50,7 +50,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         />
       )}
       {isHybrid ? <HybridNotice /> : null}
-      <ul className="msla-op-group-item-container" aria-description={`Operation list for ${displayName} Connector`}>
+      <ul className="msla-op-group-item-container" aria-label={`Operation list for ${displayName} Connector`}>
         {!isLoading && operationActionsData.length === 0 ? (
           <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>
         ) : null}
