@@ -12,6 +12,7 @@ export interface ListDynamicValue {
 export interface TreeDynamicValue {
   value: any;
   displayName: string;
+  fullyQualifiedDisplayName?: string;
   isParent: boolean;
   mediaType?: string;
 }

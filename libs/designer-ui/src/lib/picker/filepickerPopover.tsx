@@ -1,5 +1,6 @@
 import { FilePickerPopoverHeader } from './filepickerPopoverHeader';
 import { FilePickerPopoverItem } from './filepickerPopoverItem';
+import { getTreeItemId } from './helpers';
 import type { FilePickerBreadcrumb } from './types';
 import { MenuList, PopoverSurface, Spinner } from '@fluentui/react-components';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
@@ -60,7 +61,7 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
             file={file}
             handleFolderNavigation={handleFolderNavigation}
             handleItemSelected={handleItemSelected}
-            key={`FilePickerPopover.item.${file.value.Id}`}
+            key={`FilePickerPopover.item.${getTreeItemId(file)}`}
           />
         ))}
       </MenuList>

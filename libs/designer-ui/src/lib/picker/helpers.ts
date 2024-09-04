@@ -1,5 +1,5 @@
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, isEmptyString, isString } from '@microsoft/logic-apps-shared';
 import { PickerItemType } from './types';
 
 export const filterAndSortItems = (
@@ -26,6 +26,16 @@ export const filterAndSortItems = (
     if (!a.isParent && b.isParent) {
       return 1;
     }
-    return a.displayName.localeCompare(b.displayName);
+    return getTreeItemDisplayName(a).localeCompare(getTreeItemDisplayName(b));
   });
+};
+
+export const getTreeItemDisplayName = (item: TreeDynamicValue): string => {
+  const possibleValues = [item.displayName, item.value?.DisplayName, item.fullyQualifiedDisplayName];
+  return possibleValues.find((v) => isString(v) && !isEmptyString(v)) || '';
+};
+
+export const getTreeItemId = (item: TreeDynamicValue): string => {
+  const possibleValues = [item.value?.Id, item.value, item.fullyQualifiedDisplayName];
+  return possibleValues.find((v) => isString(v) && !isEmptyString(v)) || '';
 };
