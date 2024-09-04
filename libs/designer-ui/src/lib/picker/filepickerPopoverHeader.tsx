@@ -94,6 +94,10 @@ const FilePickerPopoverOverflowMenu: React.FC<{ items: FilePickerBreadcrumb[] }>
   const overflowItems = items.slice(OVERFLOW_START_INDEX, OVERFLOW_START_INDEX + overflowCount);
   const overflowItemsLength = overflowItems.length;
 
+  if (overflowItemsLength === 0) {
+    return null;
+  }
+
   const moreTooltipMessage = intl.formatMessage({
     defaultMessage: 'More…',
     id: 'TDfQzn',
