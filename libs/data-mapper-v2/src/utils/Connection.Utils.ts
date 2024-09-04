@@ -10,7 +10,6 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
-import type { WritableDraft } from 'immer/dist/internal';
 import { getSplitIdsFromReactFlowConnectionId } from './ReactFlow.Util';
 import { UnboundedInput } from '../constants/FunctionConstants';
 
@@ -501,28 +500,6 @@ export const getFunctionConnectionUnits = (
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectSourceNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
-};
-
-export const bringInParentSourceNodesForRepeating = (
-  parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
-  _newState: DataMapOperationState
-) => {
-  if (parentTargetNode) {
-    // const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
-    // if (inputsToParentTarget) {
-    //   Object.keys(inputsToParentTarget).forEach((key) => {
-    //     const inputs = inputsToParentTarget[key];
-    //     inputs.forEach((input) => {
-    //       if (input && typeof input !== 'string') {
-    //         const inputSrc = input.node;
-    //         if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
-    //           newState.currentSourceSchemaNodes.push(inputSrc);
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
-  }
 };
 
 export const generateInputHandleId = (inputName: string, inputNumber: number) => `${inputName}${inputNumber}`;

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { deflateSync, inflateSync } from 'zlib';
+import { deflate, inflate } from 'pako';
 import CONSTANTS from '../../../common/constants';
 import { setStateAfterUndoRedo } from '../../state/global';
 import { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../../state/undoRedo/undoRedoSlice';
@@ -68,8 +68,8 @@ export const getCompressedStateFromRootState = (rootState: RootState) => {
     workflow: rootState.workflow,
     workflowParameters: rootState.workflowParameters,
   };
-  return deflateSync(JSON.stringify(partialRootState)).toString('base64');
+  return deflate(JSON.stringify(partialRootState));
 };
 
-export const getRootStateFromCompressedState = (compressedState: string) =>
-  JSON.parse(inflateSync(Buffer.from(compressedState, 'base64')).toString()) as UndoRedoPartialRootState;
+export const getRootStateFromCompressedState = (compressedState: Uint8Array) =>
+  JSON.parse(inflate(compressedState, { to: 'string' })) as UndoRedoPartialRootState;
