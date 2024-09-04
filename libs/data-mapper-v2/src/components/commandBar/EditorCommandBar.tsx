@@ -1,6 +1,17 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens } from '@fluentui/react-components';
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  Switch,
+  tokens,
+  useId,
+  useToastController,
+  Toast,
+  ToastTitle,
+  Toaster,
+} from '@fluentui/react-components';
 import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,12 +36,21 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
+  const toasterId = useId('toaster');
+  const { dispatchToast } = useToastController(toasterId);
+
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
   const canvasRect = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
+
+  const failedXsltMessage = intl.formatMessage({
+    defaultMessage: 'Failed to generate XSLT.',
+    id: 'e9bIKh',
+    description: 'Message on failed generation',
+  });
 
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
@@ -92,10 +112,26 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
           message: error.message,
         });
+        dispatchToast(
+          <Toast>
+            <ToastTitle>{failedXsltMessage}</ToastTitle>
+          </Toast>,
+          { intent: 'error' }
+        );
 
         // show notification here
       });
-  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasRect]);
+  }, [
+    currentConnections,
+    functions,
+    dataMapDefinition,
+    sourceSchema,
+    targetSchema,
+    dispatch,
+    canvasRect,
+    failedXsltMessage,
+    dispatchToast,
+  ]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());
@@ -163,37 +199,40 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   );
 
   return (
-    <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
-      <ToolbarGroup className={toolbarStyles.toolbarGroup}>
-        <ToolbarButton
-          aria-label={Resources.SAVE}
-          icon={<Save20Regular color={disabledState.save ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.save}
-          onClick={onSaveClick}
-          className={toolbarStyles.button}
-        >
-          {Resources.SAVE}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={Resources.DISCARD}
-          icon={<Dismiss20Regular color={disabledState.discard ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.discard}
-          onClick={triggerDiscardWarningModal}
-        >
-          {Resources.DISCARD}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={Resources.RUN_TEST}
-          icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.test}
-          onClick={onTestClick}
-        >
-          {Resources.RUN_TEST}
-        </ToolbarButton>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
-      </ToolbarGroup>
-    </Toolbar>
+    <>
+      <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
+        <ToolbarGroup className={toolbarStyles.toolbarGroup}>
+          <ToolbarButton
+            aria-label={Resources.SAVE}
+            icon={<Save20Regular color={disabledState.save ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            disabled={disabledState.save}
+            onClick={onSaveClick}
+            className={toolbarStyles.button}
+          >
+            {Resources.SAVE}
+          </ToolbarButton>
+          <ToolbarButton
+            aria-label={Resources.DISCARD}
+            icon={<Dismiss20Regular color={disabledState.discard ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            disabled={disabledState.discard}
+            onClick={triggerDiscardWarningModal}
+          >
+            {Resources.DISCARD}
+          </ToolbarButton>
+          <ToolbarButton
+            aria-label={Resources.RUN_TEST}
+            icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            disabled={disabledState.test}
+            onClick={onTestClick}
+          >
+            {Resources.RUN_TEST}
+          </ToolbarButton>
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
+        </ToolbarGroup>
+      </Toolbar>
+      <Toaster toasterId={toasterId} />
+    </>
   );
 };
