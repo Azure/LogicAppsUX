@@ -11,7 +11,7 @@ export const undoRedoSlice = createSlice({
   name: 'undoRedo',
   initialState,
   reducers: {
-    saveStateToHistory: (state, action: PayloadAction<{ compressedState: string; limit: number }>) => {
+    saveStateToHistory: (state, action: PayloadAction<{ compressedState: Uint8Array; limit: number }>) => {
       if (action.payload.limit < 1) {
         return;
       }
@@ -21,11 +21,11 @@ export const undoRedoSlice = createSlice({
       ];
       state.future = [];
     },
-    updateStateHistoryOnUndoClick: (state, action: PayloadAction<string>) => {
+    updateStateHistoryOnUndoClick: (state, action: PayloadAction<Uint8Array>) => {
       state.past = state.past.slice(0, state.past.length - 1);
       state.future = [action.payload, ...state.future];
     },
-    updateStateHistoryOnRedoClick: (state, action: PayloadAction<string>) => {
+    updateStateHistoryOnRedoClick: (state, action: PayloadAction<Uint8Array>) => {
       state.future = state.future.slice(1);
       state.past = [...state.past, action.payload];
     },

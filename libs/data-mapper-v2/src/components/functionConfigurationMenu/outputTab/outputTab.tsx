@@ -13,6 +13,7 @@ import { SchemaType } from '@microsoft/logic-apps-shared';
 import { flattenInputs, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
+import { isSchemaNodeExtended } from '../../../utils';
 
 export const OutputTabContents = (props: {
   func: FunctionData;
@@ -95,12 +96,16 @@ export const OutputTabContents = (props: {
   const table = (
     <List>
       {outputs.concat(additionalOutput).map((output, index) => {
+        let outputValue = undefined;
+        if (output) {
+          outputValue = isSchemaNodeExtended(output?.node) ? output?.node.name : '';
+        }
         const listItem = (
           <UnboundedDropdownListItem
             key={`output-list-item-${index}`}
             schemaListType={SchemaType.Target}
-            inputName={output?.node.key}
-            inputValue={undefined}
+            inputName={outputValue}
+            inputValue={outputValue}
             inputType={undefined}
             validateAndCreateConnection={validateAndCreateConnection}
             functionKey={props.functionId}

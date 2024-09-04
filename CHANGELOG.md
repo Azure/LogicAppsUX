@@ -1,4 +1,29 @@
 # Logic Apps Designer
+## [4.83.0](https://github.com/Azure/LogicAppsUX/compare/v4.82.0...v4.83.0) (2024-09-04)
+
+
+### Bug Fixes
+
+* **Data Mapper:** generate XSLT error message and loop connection improvement ([#5585](https://github.com/Azure/LogicAppsUX/issues/5585)) ([d7b39ef](https://github.com/Azure/LogicAppsUX/commit/d7b39ef9232f177fbe41e0520ed9ed636d6f371c))
+* **designer:** Fixing the recursive call in dynamic data load ([#5584](https://github.com/Azure/LogicAppsUX/issues/5584)) ([927ad49](https://github.com/Azure/LogicAppsUX/commit/927ad498eeec3e2fc589a2a28c42415fd87c5972))
+* **designer:** Update undo/redo compression to use pako instead of zlib library ([#5591](https://github.com/Azure/LogicAppsUX/issues/5591)) ([f698e48](https://github.com/Azure/LogicAppsUX/commit/f698e488e37ade034a5476bfb8d443e16213cdc4))
+* **vscode:** Convert the authentication type from Raw to MSI when deploying Logic App ([#5539](https://github.com/Azure/LogicAppsUX/issues/5539)) ([46fb330](https://github.com/Azure/LogicAppsUX/commit/46fb33089a677e530261abdc2e10164f43558c01))
+
+## [4.82.0](https://github.com/Azure/LogicAppsUX/compare/v4.81.0...v4.82.0) (2024-09-03)
+
+
+### Features
+
+* **designer:** Editable Code View ([#5547](https://github.com/Azure/LogicAppsUX/issues/5547)) ([6db435e](https://github.com/Azure/LogicAppsUX/commit/6db435e6f39a30dc63affc94b2505b767e74c237)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with edges being hidden on start if one end is offscreen ([#5575](https://github.com/Azure/LogicAppsUX/issues/5575)) ([f4742c5](https://github.com/Azure/LogicAppsUX/commit/f4742c52a5eeef77bd374a4a5a89d18b340cceac))
+* **Designer:** Fixed issue with loop pager index resetting, fixed operations reloading in loops ([#5586](https://github.com/Azure/LogicAppsUX/issues/5586)) ([66cf200](https://github.com/Azure/LogicAppsUX/commit/66cf2002c22d94f6dabc2e99d5a32768d8f35797))
+* **designer:** Fixing dynamic uri call for standard la when usi MSI connection ([#5580](https://github.com/Azure/LogicAppsUX/issues/5580)) ([50c30d3](https://github.com/Azure/LogicAppsUX/commit/50c30d36e8df3ceb884c5558548ad9ec32bf1bf9))
+* **Designer:** Scope Nodes can be moved to Invalid locations ([#5574](https://github.com/Azure/LogicAppsUX/issues/5574)) ([dd2ea7b](https://github.com/Azure/LogicAppsUX/commit/dd2ea7b5d1928687525891ed17ad95b22d96c21b))
+
 ## [4.81.0](https://github.com/Azure/LogicAppsUX/compare/v4.80.0...v4.81.0) (2024-08-30)
 
 
