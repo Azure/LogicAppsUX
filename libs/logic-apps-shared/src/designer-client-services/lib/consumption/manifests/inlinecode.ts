@@ -53,7 +53,7 @@ export const inlineCodeManifest = {
       required: ['body'],
       properties: {
         body: {
-          type: 'object',
+          type: 'string',
           title: 'Result',
           description: 'The return value of the JavaScript code execution',
         },

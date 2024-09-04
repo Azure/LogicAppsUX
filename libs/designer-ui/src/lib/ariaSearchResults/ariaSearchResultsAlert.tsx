@@ -19,7 +19,14 @@ export const AriaSearchResultsAlert = ({ resultCount, resultDescription }: AriaS
   const [showAlert, setShowAlert] = useState(false);
   useEffect(() => {
     setShowAlert(true);
-    setTimeout(() => setShowAlert(false), 2000);
+
+    const timeoutId = setTimeout(() => {
+      setShowAlert(false);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [resultCount]);
 
   return showAlert ? (
