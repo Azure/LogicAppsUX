@@ -130,7 +130,6 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    // const decodedTextContent = tokensEnabled ? decodeStringSegmentTokensInDomAndLexicalContext(textContent, nodeMap) : textContent;
     const decodedTextContent = tokensEnabled ? processStringSegmentTokensInDomAndLexicalContext(textContent, nodeMap, false) : textContent;
 
     // we need to pass in the styles and format of the parent node to the children node
