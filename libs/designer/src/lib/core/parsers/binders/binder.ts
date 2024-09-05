@@ -13,6 +13,7 @@ import {
   UriTemplateParser,
 } from '@microsoft/logic-apps-shared';
 import constants from './constants';
+import type { BindFunction, ReduceFunction } from './types';
 
 export abstract class Binder {
   protected bindOutputParameterToTypedOutputs(outputs: any, parameter: OutputParameter): BoundParameter<any> {
@@ -141,9 +142,9 @@ export abstract class Binder {
 
     switch (name) {
       case OutputKeys.Body:
-        return Resources.BODY_PARAMETER;
+        return 'Resources.BODY_PARAMETER';
       case OutputKeys.Outputs:
-        return Resources.OUTPUTS;
+        return 'Resources.OUTPUTS';
       default:
         return name;
     }
@@ -226,22 +227,22 @@ export abstract class Binder {
 
   // tslint:disable-next-line: no-any
   protected makeUntypedInputsParameters(inputs: any): BoundParameters {
-    return this.makeBoundParameter(constants.UNTYPED.INPUTS, Resources.DISPLAY_TEXT_UNTYPED_INPUTS, inputs);
+    return this.makeBoundParameter(constants.UNTYPED.INPUTS, 'Resources.DISPLAY_TEXT_UNTYPED_INPUTS', inputs);
   }
 
-  protected parsePath(path: string): Identifier[] {
-    let identifiers: Identifier[];
-    try {
-      ({ identifiers } = PathParser.parse(path, Delimiters.Argument, /* strict */ false));
-    } catch {
-      // NOTE(joechung): When this code was originally written, ' was not supported in properties. Now we must escape ' to '' so the parser can work correctly.
-      ({ identifiers } = PathParser.parse(`[${convertToStringLiteral(path)}]`, Delimiters.Argument, /* strict */ false));
-    }
+  protected parsePath(_path: string): any[] {
+    const identifiers: any[] = [];
+    // try {
+    //   ({ identifiers } = PathParser.parse(path, Delimiters.Argument, /* strict */ false));
+    // } catch {
+    //   // NOTE(joechung): When this code was originally written, ' was not supported in properties. Now we must escape ' to '' so the parser can work correctly.
+    //   ({ identifiers } = PathParser.parse(`[${convertToStringLiteral(path)}]`, Delimiters.Argument, /* strict */ false));
+    // }
 
     return identifiers;
   }
 
-  protected resolveIdentifier(identifier: Identifier): string {
+  protected resolveIdentifier(identifier: any): string {
     return isString(identifier) ? identifier : String(identifier.value);
   }
 

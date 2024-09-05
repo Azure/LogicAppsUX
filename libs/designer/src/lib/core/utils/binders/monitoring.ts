@@ -80,8 +80,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     undefined /* recurrence */,
     undefined /* placeholderForDynamicInputs */
   );
-
-  console.log('charlie final result', boundInputs);
+  console.log('boundInputs', boundInputs);
 
   return {};
 
