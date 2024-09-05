@@ -1866,7 +1866,7 @@ function getDependenciesToUpdate(
   return dependenciesToUpdate;
 }
 
-export async function updateDynamicDataInNode(
+export const updateDynamicDataInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
@@ -1875,7 +1875,7 @@ export async function updateDynamicDataInNode(
   dispatch: Dispatch,
   getState: () => RootState,
   operationDefinition?: any
-): Promise<void> {
+): Promise<void> => {
   await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
 
   const { operations, workflowParameters } = getState();
@@ -1910,7 +1910,7 @@ export async function updateDynamicDataInNode(
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
-}
+};
 
 async function loadDynamicData(
   nodeId: string,
@@ -1933,8 +1933,6 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      rootState.workflow.workflowKind,
-      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
@@ -2529,7 +2527,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
       if (valueSegments?.length) {
         outputValueMap[keyFromTitle] =
           // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
-          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
+          // We will only interpolate a single token if the parameter config is of type 'string'
+          parameterValueWithoutCasting(
+            {
+              type: config.type,
+              value: valueSegments,
+              ...commonProperties,
+            } as any,
+            /* shouldInterpolateSingleToken */ config.type === constants.SWAGGER.TYPE.STRING
+          );
       }
     }
   });
@@ -2935,7 +2941,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfo[], rootState: RootState): void {
+export const updateTokenMetadataInParameters = (nodeId: string, parameters: ParameterInfo[], rootState: RootState): void => {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -2996,7 +3002,7 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
       );
     }
   }
-}
+};
 
 export const flattenAndUpdateViewModel = (
   repetitionContext: RepetitionContext,
@@ -3408,7 +3414,11 @@ export function getInterpolatedExpression(expression: string, parameterType: str
   if (isUndefinedOrEmptyString(expression)) {
     return expression;
   }
-  if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
+  if (
+    parameterType === constants.SWAGGER.TYPE.STRING &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BINARY &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BYTE
+  ) {
     return `@{${expression}}`;
   }
   return `@${expression}`;
@@ -3580,8 +3590,8 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   }
 }
 
-export function parameterValueWithoutCasting(parameter: ParameterInfo): any {
-  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
+export function parameterValueWithoutCasting(parameter: ParameterInfo, shouldInterpolateSingleToken = false): any {
+  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value, false, shouldInterpolateSingleToken);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 
@@ -3683,8 +3693,8 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false): string {
-  const shouldInterpolateTokens = value.length > 1 && value.some(isTokenValueSegment);
+function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+  const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
     .map((expression) => {

@@ -75,3 +75,6 @@ export {
   getIconUriFromManifest,
 } from './utils/card';
 export { addOperation } from './actions/bjsworkflow/add';
+export { updateNodeConnection } from './actions/bjsworkflow/connections';
+export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
+export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';

@@ -70,12 +70,12 @@ const FilePickerPopoverBreadcrumbs: React.FC<FilePickerPopoverHeaderProps> = (pr
 
   const intl = useIntl();
 
-  const { isOverflowing, overflowCount, ref } = useOverflowMenu<HTMLButtonElement>();
+  const { ref } = useOverflowMenu<HTMLButtonElement>();
 
   const { startDisplayedItems, overflowItems, endDisplayedItems }: PartitionBreadcrumbItems<FilePickerBreadcrumb> =
     partitionBreadcrumbItems({
       items: currentPathSegments,
-      maxDisplayedItems: currentPathSegments.length - (isOverflowing ? overflowCount : 0),
+      maxDisplayedItems: 2,
     });
 
   const overflowItemsLength = overflowItems?.length ?? 0;

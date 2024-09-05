@@ -53,7 +53,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
   const getHandleStyle = useCallback(
-    (isInput: boolean, isConnected: boolean) => {
+    (_isInput: boolean, isConnected: boolean) => {
       let updatedStyle = styles.handleWrapper;
       if (isConnected) {
         updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
@@ -66,22 +66,9 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         }
       }
 
-      if (isInput && isHover && functionInputsFull) {
-        updatedStyle = mergeClasses(updatedStyle, styles.fullNode);
-      }
-
       return updatedStyle;
     },
-    [
-      isHover,
-      isSelected,
-      styles.connectedHandle,
-      styles.connectedSelectedHoverHandle,
-      styles.fullNode,
-      styles.handleWrapper,
-      styles.selectedHoverHandle,
-      functionInputsFull,
-    ]
+    [isHover, isSelected, styles.connectedHandle, styles.connectedSelectedHoverHandle, styles.handleWrapper, styles.selectedHoverHandle]
   );
 
   const onMouseEnter = useCallback(() => {
@@ -121,10 +108,10 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
           style={{ left: '-7px' }}
         />
       )}
-      <Popover>
+      <Popover withArrow={true} trapFocus={true}>
         <PopoverTrigger>
           <Button
-            onClick={() => onClick()}
+            onClick={onClick}
             data-selectableid={`source-${id}`}
             disabled={!!disabled}
             className={mergeClasses(styles.functionButton, isSelected || isHover ? styles.selectedHoverFunctionButton : '')}

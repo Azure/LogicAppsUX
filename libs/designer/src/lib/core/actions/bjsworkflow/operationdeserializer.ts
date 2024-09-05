@@ -71,9 +71,11 @@ import {
   equals,
   getRecordEntry,
   parseErrorMessage,
+  cleanResourceId,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { operationSupportsSplitOn } from '../../utils/outputs';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
@@ -108,7 +110,6 @@ export const initializeOperationMetadata = async (
   workflowParameters: Record<string, WorkflowParameter>,
   customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
-  forceEnableSplitOn: boolean,
   dispatch: Dispatch,
   pasteParams?: PasteScopeAdditionalParams
 ): Promise<void> => {
@@ -130,13 +131,9 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(
-        initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
-      );
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch));
     } else {
-      promises.push(
-        initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
-      );
+      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch));
     }
   }
 
@@ -161,8 +158,8 @@ export const initializeOperationMetadata = async (
   }
 
   dispatch(
-    initializeNodes(
-      allNodeData.map((data) => {
+    initializeNodes({
+      nodes: allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
         return {
           id,
@@ -175,8 +172,9 @@ export const initializeOperationMetadata = async (
           actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
-      })
-    )
+      }),
+      clearExisting: !pasteParams,
+    })
   );
 
   const variables = initializeVariables(operations, allNodeData);
@@ -195,7 +193,7 @@ export const initializeOperationMetadata = async (
 };
 
 const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {
-  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => references[key].api.id));
+  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => cleanResourceId(references[key].api.id)));
   const connectorPromises: Promise<ConnectorWithParsedSwagger | undefined>[] = [];
 
   for (const connectorId of connectorIds) {
@@ -218,7 +216,6 @@ export const initializeOperationDetailsForManifest = async (
   customCode: CustomCodeFileNameMapping,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
@@ -265,25 +262,17 @@ export const initializeOperationDetailsForManifest = async (
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
       manifest,
       isTrigger,
       nodeInputs,
       nodeOperationInfo,
-      isTrigger ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined,
-      nodeId
+      dispatch,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
-    const settings = getOperationSettings(
-      isTrigger,
-      nodeOperationInfo,
-      nodeOutputs,
-      manifest,
-      undefined /* swagger */,
-      operation,
-      workflowKind,
-      forceEnableSplitOn
-    );
+    const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 

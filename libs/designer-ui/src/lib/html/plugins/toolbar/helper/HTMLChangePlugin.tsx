@@ -79,7 +79,7 @@ export const convertEditorState = (
           }
           if (attribute.name === 'id' && !isValuePlaintext) {
             // If we're in the rich HTML editor, encoding occurs at the element level since they are all wrapped in <span>.
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            const idValue = decodeURIComponent(element.getAttribute('id') ?? ''); // e.g., "@{concat('&lt;', '"')}"
             idValues.push(idValue);
             const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
             element.setAttribute('id', encodedIdValue);
