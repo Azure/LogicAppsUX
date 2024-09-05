@@ -20,6 +20,7 @@ import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
 import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
@@ -56,10 +57,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
   );
 
-  const dataMapDefinition = useMemo<string>(() => {
+  const dataMapDefinition = useMemo<MetaMapDefinition>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
+        const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
+        return result;
       } catch (error) {
         let errorMessage = '';
         if (typeof error === 'string') {
@@ -70,10 +72,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
           message: errorMessage,
         });
-        return '';
+        return { isSuccess: false, errorNodes: [] };
       }
     }
-    return '';
+    return { isSuccess: false, errorNodes: [] };
   }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
 
   const onTestClick = useCallback(() => {
@@ -91,36 +93,49 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
     const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections, canvasRect));
 
-    DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
+    if (dataMapDefinition.isSuccess) {
+      DataMapperFileService().saveMapDefinitionCall(dataMapDefinition.definition, mapMetadata);
 
-    dispatch(
-      saveDataMap({
-        sourceSchemaExtended: sourceSchema,
-        targetSchemaExtended: targetSchema,
-      })
-    );
+      dispatch(
+        saveDataMap({
+          sourceSchemaExtended: sourceSchema,
+          targetSchemaExtended: targetSchema,
+        })
+      );
 
-    generateDataMapXslt(dataMapDefinition)
-      .then((xsltStr) => {
-        DataMapperFileService().saveXsltCall(xsltStr);
+      generateDataMapXslt(dataMapDefinition.definition)
+        .then((xsltStr) => {
+          DataMapperFileService().saveXsltCall(xsltStr);
 
-        LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-          message: 'Successfully generated xslt',
+          LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+            message: 'Successfully generated xslt',
+          });
+        })
+        .catch((error: Error) => {
+          LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+            message: error.message,
+          });
+          dispatchToast(
+            <Toast>
+              <ToastTitle>{failedXsltMessage}</ToastTitle>
+            </Toast>,
+            { intent: 'error' }
+          );
+
+          // show notification here
         });
-      })
-      .catch((error: Error) => {
-        LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-          message: error.message,
-        });
-        dispatchToast(
-          <Toast>
-            <ToastTitle>{failedXsltMessage}</ToastTitle>
-          </Toast>,
-          { intent: 'error' }
-        );
+    } else {
+      // const
+      // dataMapDefinition.errorNodes.forEach((errorNode) => {
 
-        // show notification here
-      });
+      // }
+      dispatchToast(
+        <Toast>
+          <ToastTitle>{failedXsltMessage}</ToastTitle>
+        </Toast>,
+        { intent: 'error' }
+      );
+    }
   }, [
     currentConnections,
     functions,
@@ -138,8 +153,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (dataMapDefinition) {
-      dispatch(updateDataMapLML(dataMapDefinition));
+    if (dataMapDefinition && dataMapDefinition.isSuccess) {
+      dispatch(updateDataMapLML(dataMapDefinition.definition));
     }
   }, [dispatch, dataMapDefinition]);
   // Tracks modal (confirmation) state
