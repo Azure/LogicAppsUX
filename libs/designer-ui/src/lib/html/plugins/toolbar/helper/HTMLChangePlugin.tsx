@@ -4,7 +4,7 @@ import { getChildrenNodes } from '../../../../editor/base/utils/helper';
 import {
   decodeStringSegmentTokensInDomContext,
   decodeStringSegmentTokensInLexicalContext,
-  encodeStringSegmentTokensInDomAndLexicalContext,
+  processStringSegmentTokensInDomAndLexicalContext,
   encodeStringSegmentTokensInLexicalContext,
 } from '../../../../editor/base/utils/parsesegments';
 import {
@@ -124,7 +124,7 @@ export const canReplaceSpanWithId = (idValue: string, nodeMap: Map<string, Value
   const processedId = removeAllNewlines(idValue);
   for (const [key, value] of nodeMap) {
     const processedKey = removeAllNewlines(key);
-    const encodedProcessedKey = encodeStringSegmentTokensInDomAndLexicalContext(processedKey, nodeMap);
+    const encodedProcessedKey = processStringSegmentTokensInDomAndLexicalContext(processedKey, nodeMap, true);
     if ((processedId === processedKey || processedId === encodedProcessedKey) && value !== undefined) {
       return true;
     }
