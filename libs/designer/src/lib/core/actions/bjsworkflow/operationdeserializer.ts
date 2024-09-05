@@ -71,6 +71,7 @@ import {
   equals,
   getRecordEntry,
   parseErrorMessage,
+  cleanResourceId,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -157,8 +158,8 @@ export const initializeOperationMetadata = async (
   }
 
   dispatch(
-    initializeNodes(
-      allNodeData.map((data) => {
+    initializeNodes({
+      nodes: allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
         return {
           id,
@@ -171,8 +172,9 @@ export const initializeOperationMetadata = async (
           actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
-      })
-    )
+      }),
+      clearExisting: !pasteParams,
+    })
   );
 
   const variables = initializeVariables(operations, allNodeData);
@@ -191,7 +193,7 @@ export const initializeOperationMetadata = async (
 };
 
 const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {
-  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => references[key].api.id));
+  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => cleanResourceId(references[key].api.id)));
   const connectorPromises: Promise<ConnectorWithParsedSwagger | undefined>[] = [];
 
   for (const connectorId of connectorIds) {

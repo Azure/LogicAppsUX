@@ -22,6 +22,7 @@ import {
   useRunInstanceStandard,
   useWorkflowAndArtifactsStandard,
   useWorkflowApp,
+  validateWorkflowStandard,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -59,10 +60,11 @@ import {
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
+import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -98,7 +100,9 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
+  const [workflow, setWorkflow] = useState<Workflow>({ ...data?.properties.files[Artifact.WorkflowFile], id: guid() });
+  const [designerView, setDesignerView] = useState(true);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
@@ -186,7 +190,7 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
-      setWorkflow((previousWorkflow: any) => {
+      setWorkflow((previousWorkflow: Workflow) => {
         return {
           ...previousWorkflow,
           definition: runInstanceData.properties.workflow.properties.definition,
@@ -197,6 +201,7 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
+    setDesignerView(true);
   }, [data?.properties.files]);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
@@ -287,6 +292,27 @@ const DesignerEditor = () => {
     );
   };
 
+  const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
+    try {
+      const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+      // code view editor cannot add/remove connections, parameters, settings, or customcode
+      saveWorkflowStandard(
+        siteResourceId,
+        workflowName,
+        codeToConvert,
+        /*connections*/ undefined,
+        /*parameters*/ undefined,
+        /*settings*/ undefined,
+        /*customcode*/ undefined,
+        clearDirtyState
+      );
+    } catch (error: any) {
+      if (error.status !== 404) {
+        alert(`Error converting code to workflow ${error}`);
+      }
+    }
+  };
+
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
     const designerState = DesignerStore.getState();
     const serializedWorkflow = await serializeBJSWorkflow(designerState, {
@@ -302,7 +328,30 @@ const DesignerEditor = () => {
   };
 
   const getAuthToken = async () => {
-    return `Bearer ${environment.armToken}` ?? '';
+    return environment?.armToken ? `Bearer ${environment.armToken}` : '';
+  };
+
+  const handleSwitchView = async () => {
+    if (designerView) {
+      setDesignerView(false);
+    } else {
+      try {
+        const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+        await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
+        setWorkflow((prevState) => ({
+          ...prevState,
+          definition: codeToConvert.definition,
+          kind: codeToConvert.kind,
+          connectionReferences: codeToConvert.connectionReferences ?? {},
+          id: guid(),
+        }));
+        setDesignerView(true);
+      } catch (error: any) {
+        if (error.status !== 404) {
+          alert(`Error converting code to workflow ${error}`);
+        }
+      }
+    }
   };
 
   return (
@@ -333,6 +382,7 @@ const DesignerEditor = () => {
               parameters,
               kind: workflow?.kind,
             }}
+            workflowId={workflow?.id}
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
@@ -345,13 +395,20 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                isDesignerView={designerView}
                 showConnectionsPanel={showConnectionsPanel}
                 rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={async () => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
+                switchViews={handleSwitchView}
+                saveWorkflowFromCode={saveWorkflowFromCode}
               />
-              <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
+              {designerView ? (
+                <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
+              ) : (
+                <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />
+              )}
               {showChatBot ? (
                 <Chatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}

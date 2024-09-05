@@ -1,4 +1,51 @@
 # Logic Apps Designer
+## [4.84.0](https://github.com/Azure/LogicAppsUX/compare/v4.83.0...v4.84.0) (2024-09-05)
+
+
+### Bug Fixes
+
+* **designer:** Change Javascript output to return string type ([#5594](https://github.com/Azure/LogicAppsUX/issues/5594)) ([5ec0c62](https://github.com/Azure/LogicAppsUX/commit/5ec0c627df5c3c2f16b02f79ff4c34708b5b20ec)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **Designer:** Connection fetch is now recursive over nextlinks ([#5595](https://github.com/Azure/LogicAppsUX/issues/5595)) ([88d2c5f](https://github.com/Azure/LogicAppsUX/commit/88d2c5f1b4823faa132d49082efee96a31fb5cc8))
+* **designer:** Correctly verify parents arrays are in spliton while adding implicit foreach ([#5596](https://github.com/Azure/LogicAppsUX/issues/5596)) ([c1fe5dc](https://github.com/Azure/LogicAppsUX/commit/c1fe5dc77df3e652ddfda0dfcaec90f64ac6bf0c))
+
+## [4.83.0](https://github.com/Azure/LogicAppsUX/compare/v4.82.0...v4.83.0) (2024-09-04)
+
+
+### Bug Fixes
+
+* **Data Mapper:** generate XSLT error message and loop connection improvement ([#5585](https://github.com/Azure/LogicAppsUX/issues/5585)) ([d7b39ef](https://github.com/Azure/LogicAppsUX/commit/d7b39ef9232f177fbe41e0520ed9ed636d6f371c))
+* **designer:** Fixing the recursive call in dynamic data load ([#5584](https://github.com/Azure/LogicAppsUX/issues/5584)) ([927ad49](https://github.com/Azure/LogicAppsUX/commit/927ad498eeec3e2fc589a2a28c42415fd87c5972))
+* **designer:** Update undo/redo compression to use pako instead of zlib library ([#5591](https://github.com/Azure/LogicAppsUX/issues/5591)) ([f698e48](https://github.com/Azure/LogicAppsUX/commit/f698e488e37ade034a5476bfb8d443e16213cdc4))
+* **vscode:** Convert the authentication type from Raw to MSI when deploying Logic App ([#5539](https://github.com/Azure/LogicAppsUX/issues/5539)) ([46fb330](https://github.com/Azure/LogicAppsUX/commit/46fb33089a677e530261abdc2e10164f43558c01))
+
+## [4.82.0](https://github.com/Azure/LogicAppsUX/compare/v4.81.0...v4.82.0) (2024-09-03)
+
+
+### Features
+
+* **designer:** Editable Code View ([#5547](https://github.com/Azure/LogicAppsUX/issues/5547)) ([6db435e](https://github.com/Azure/LogicAppsUX/commit/6db435e6f39a30dc63affc94b2505b767e74c237)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with edges being hidden on start if one end is offscreen ([#5575](https://github.com/Azure/LogicAppsUX/issues/5575)) ([f4742c5](https://github.com/Azure/LogicAppsUX/commit/f4742c52a5eeef77bd374a4a5a89d18b340cceac))
+* **Designer:** Fixed issue with loop pager index resetting, fixed operations reloading in loops ([#5586](https://github.com/Azure/LogicAppsUX/issues/5586)) ([66cf200](https://github.com/Azure/LogicAppsUX/commit/66cf2002c22d94f6dabc2e99d5a32768d8f35797))
+* **designer:** Fixing dynamic uri call for standard la when usi MSI connection ([#5580](https://github.com/Azure/LogicAppsUX/issues/5580)) ([50c30d3](https://github.com/Azure/LogicAppsUX/commit/50c30d36e8df3ceb884c5558548ad9ec32bf1bf9))
+* **Designer:** Scope Nodes can be moved to Invalid locations ([#5574](https://github.com/Azure/LogicAppsUX/issues/5574)) ([dd2ea7b](https://github.com/Azure/LogicAppsUX/commit/dd2ea7b5d1928687525891ed17ad95b22d96c21b))
+
+## [4.81.0](https://github.com/Azure/LogicAppsUX/compare/v4.80.0...v4.81.0) (2024-08-30)
+
+
+### Features
+
+* **designer:** Initial implementation of undo-redo feature in designer ([#5260](https://github.com/Azure/LogicAppsUX/issues/5260)) ([f838f4d](https://github.com/Azure/LogicAppsUX/commit/f838f4df852ae5e9c468a932d000c0aea435ed83))
+
+
+### Bug Fixes
+
+* **designer-ui:** Force `maxDisplayedItems: 2` to mitigate file picker render loop ([#5576](https://github.com/Azure/LogicAppsUX/issues/5576)) ([79f9fab](https://github.com/Azure/LogicAppsUX/commit/79f9fabda3dfe2c78417b5bc28f817e6bfde2586))
+* **Designer:** Connection objects can now have ids without the starting slash ([#5572](https://github.com/Azure/LogicAppsUX/issues/5572)) ([87e1f00](https://github.com/Azure/LogicAppsUX/commit/87e1f002e551153ce90162fb821df31acbe76558))
+
 ## [4.80.0](https://github.com/Azure/LogicAppsUX/compare/v4.79.0...v4.80.0) (2024-08-30)
 
 

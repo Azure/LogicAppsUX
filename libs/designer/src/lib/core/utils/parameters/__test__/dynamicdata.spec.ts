@@ -1,4 +1,4 @@
-import { getDynamicInputsFromSchema } from '../dynamicdata';
+import { getDynamicInputsFromSchema, getDynamicOutputsFromSchema } from '../dynamicdata';
 import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { expect, describe, test } from 'vitest';
 
@@ -170,6 +170,90 @@ describe('DynamicData', () => {
           expect.objectContaining({ key: 'inputs.$.dynamicData.details.code', value: 123 }),
           expect.objectContaining({ key: 'inputs.$.dynamicData.id', value: 'abc' }),
         ])
+      );
+    });
+  });
+
+  describe('getDynamicOutputsFromSchema', () => {
+    const manifestService: any = {
+      isSupported: () => true,
+      isAliasingSupported: () => false,
+      getOperationManifest() {
+        return Promise.resolve({ properties: { inputsLocationSwapMap: [] } } as any);
+      },
+    };
+    const dynamicSchema = {
+      type: 'object',
+      properties: {
+        body: {
+          type: 'object',
+          properties: {
+            value: {
+              type: 'array',
+              'x-ms-property-name-alias': 'body/value',
+            },
+          },
+          'x-ms-property-name-alias': 'body',
+        },
+      },
+    };
+    const dynamicParameter = {
+      key: 'outputs.$.body',
+      name: 'body',
+      type: 'object',
+      schema: {
+        type: 'object',
+        properties: {
+          value: {
+            type: 'array',
+            'x-ms-property-name-alias': 'body/value',
+          },
+        },
+        'x-ms-property-name-alias': 'body',
+      },
+      alias: 'body',
+    };
+
+    test('should not apply aliases to dynamicOutputs when aliasing is disabled', async () => {
+      InitOperationManifestService(manifestService);
+
+      const dynamicOutputs = await getDynamicOutputsFromSchema(dynamicSchema, dynamicParameter, {
+        connectorId: '/connectionProviders/test',
+        operationId: 'test',
+        type: 'ApiManagement',
+      });
+
+      expect(dynamicOutputs).toBeDefined();
+
+      const objectOutput = dynamicOutputs['body.$.body.body.value'];
+      expect(objectOutput).toBeDefined();
+      expect(objectOutput).toEqual(
+        expect.objectContaining({ key: 'body.$.body.body.value', name: 'body.body.value', title: 'value', alias: undefined, type: 'array' })
+      );
+    });
+
+    test('should apply aliases to dynamicOutputs when aliasing is enabled', async () => {
+      manifestService.isAliasingSupported = () => true;
+      InitOperationManifestService(manifestService);
+
+      const dynamicOutputs = await getDynamicOutputsFromSchema(dynamicSchema, dynamicParameter, {
+        connectorId: '/connectionProviders/testOpenAPI',
+        operationId: 'testOpenAPI',
+        type: 'OpenApiConnection',
+      });
+
+      expect(dynamicOutputs).toBeDefined();
+
+      const objectOutput = dynamicOutputs['body.$.body.body.body/value'];
+      expect(objectOutput).toBeDefined();
+      expect(objectOutput).toEqual(
+        expect.objectContaining({
+          key: 'body.$.body.body.body/value',
+          name: 'body/value',
+          title: 'body/value',
+          alias: 'body/value',
+          type: 'array',
+        })
       );
     });
   });

@@ -1,5 +1,6 @@
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
+import type { Draft } from 'immer';
 import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
@@ -65,6 +66,10 @@ interface HoverState {
 
 interface ComponentState {
   hover?: HoverState;
+}
+
+export interface Draft2 {
+  draft: Draft<DataMapState>;
 }
 
 export interface DataMapOperationState {
