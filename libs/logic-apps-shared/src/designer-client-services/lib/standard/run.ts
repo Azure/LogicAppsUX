@@ -2,7 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
-import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
+import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2, BoundParameters } from '../../../utils/src';
 import {
   ArgumentException,
   isCallbackInfoWithRelativePath,
@@ -11,7 +11,10 @@ import {
   getRecordEntry,
   UnsupportedException,
   isNullOrUndefined,
+  isString,
+  isBoolean,
 } from '../../../utils/src';
+import { isNumber } from '../../../parsers';
 import { isHybridLogicApp } from './hybrid';
 
 export interface RunServiceOptions {
@@ -247,7 +250,7 @@ export class StandardRunService implements IRunService {
     if (this._isDev) {
       inputs = getRecordEntry(inputsResponse, nodeId) ?? {};
       outputs = getRecordEntry(outputsResponse, nodeId) ?? {};
-      return Promise.resolve({ inputs, outputs });
+      return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
     }
 
     try {
@@ -265,7 +268,29 @@ export class StandardRunService implements IRunService {
       }
     }
 
-    return { inputs, outputs };
+    return { inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) };
+  }
+
+  /**
+   * Parse inputs and outputs into dictionary.
+   * @param {Record<string, any>} response - Api call raw response.
+   * @param {boolean} isInput - Boolean to determine if it is an input/output response.
+   * @returns {BoundParameters} List of parametes.
+   */
+  parseActionLink(response: Record<string, any>, isInput: boolean): BoundParameters {
+    if (isNullOrUndefined(response)) {
+      return response;
+    }
+
+    const dictionaryResponse =
+      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
+        ? { [isInput ? 'Inputs' : 'Outputs']: response }
+        : response;
+
+    return Object.keys(dictionaryResponse).reduce((prev: any, current) => {
+      prev[current] = { displayName: current, value: dictionaryResponse[current]?.content ?? dictionaryResponse[current] };
+      return prev;
+    }, {});
   }
 
   /**
