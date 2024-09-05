@@ -140,7 +140,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
 
   // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
+  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
 
   const updatedTokens = nodeTokenData.tokens.map((token) => {
     // Modify the actionName to a unique value
@@ -227,7 +227,6 @@ export const pasteScopeOperation = createAsyncThunk(
     const connectionReference = (getState() as RootState).connections.connectionReferences;
     const workflowParameters = state.workflowParameters.definitions;
     const workflowKind = state.workflow.workflowKind;
-    const enforceSplitOn = state.designerOptions.hostOptions.forceEnableSplitOn ?? false;
     const operations = state.workflow.operations;
     const nodeMap: Record<string, string> = {};
     for (const id of Object.keys(operations)) {
@@ -248,7 +247,6 @@ export const pasteScopeOperation = createAsyncThunk(
         workflowParameters,
         {},
         workflowKind,
-        enforceSplitOn,
         dispatch,
         { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
       ),

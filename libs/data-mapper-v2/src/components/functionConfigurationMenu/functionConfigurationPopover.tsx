@@ -1,7 +1,7 @@
 import { Button, Tab, TabList, PopoverSurface, Subtitle2, Caption1 } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { DeleteRegular } from '@fluentui/react-icons';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { RootState } from '../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
@@ -9,6 +9,7 @@ import { deleteFunction } from '../../core/state/DataMapSlice';
 import { useIntl } from 'react-intl';
 import { InputTabContents } from './inputTab/inputTab';
 import { OutputTabContents } from './outputTab/outputTab';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -17,11 +18,12 @@ export interface FunctionConfigurationPopoverProps {
 type TabTypes = 'input' | 'output' | 'details';
 
 export const FunctionConfigurationPopover = (props: FunctionConfigurationPopoverProps) => {
+  const { functionId } = props;
   const dispatch = useDispatch();
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = useState<TabTypes>('input');
   const func = useSelector((state: RootState) => {
-    return state.dataMap.present.curDataMapOperation.functionNodes[props.functionId];
+    return state.dataMap.present.curDataMapOperation.functionNodes[functionId];
   });
   const intl = useIntl();
 
@@ -59,13 +61,20 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
     }
   };
 
+  const onModalClick = useCallback((e: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, []);
+
   const onDeleteClick = () => {
     dispatch(deleteFunction(props.functionId));
   };
 
   return (
     func && (
-      <PopoverSurface className={styles.surface}>
+      <PopoverSurface className={styles.surface} data-selectableid={`${functionId}_${guid()}`} onClick={onModalClick}>
         <div className={styles.headerRow}>
           <Subtitle2>{func.displayName}</Subtitle2>
           <Button
