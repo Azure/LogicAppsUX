@@ -13,7 +13,7 @@ export interface TreeDynamicValue {
   value: unknown;
   displayName: string;
   fullyQualifiedDisplayName?: string;
-  id?: string;
+  id: string;
   isParent: boolean;
   mediaType?: string;
 }

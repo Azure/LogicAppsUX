@@ -18,6 +18,9 @@ import {
   isNullOrUndefined,
   LoggerService,
   LogEntryLevel,
+  isObject,
+  isString,
+  guid,
 } from '@microsoft/logic-apps-shared';
 
 export const getLegacyDynamicValues = async (
@@ -215,11 +218,11 @@ export const getLegacyDynamicTreeItems = async (
     collectionData = typeof possibleCollectionData === Types.Object ? getFirstArrayProperty(possibleCollectionData) : [];
   }
 
-  return collectionData.map((value: any) => {
+  return collectionData.map((value: any): TreeDynamicValue => {
     return {
       value,
       displayName: (getPropertyValue(value, titlePath as string) ?? '').toString(),
-      id: value.Id,
+      id: getDynamicTreeValueIdFromCollectionDataValue(value),
       isParent: !!getPropertyValue(value, folderPropertyPath as string),
       mediaType: mediaPropertyPath ? getPropertyValue(value, mediaPropertyPath) : undefined,
     };
@@ -267,4 +270,13 @@ const getFirstArrayProperty = (value: any): any[] => {
   }
 
   return [];
+};
+
+const getDynamicTreeValueIdFromCollectionDataValue = (value: any): string => {
+  const valueId = value && isObject(value) && 'Id' in value && value.Id;
+  if (isString(valueId) && valueId.length > 0) {
+    return valueId;
+  }
+
+  return guid();
 };
