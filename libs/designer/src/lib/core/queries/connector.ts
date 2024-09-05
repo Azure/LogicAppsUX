@@ -219,6 +219,7 @@ export const getLegacyDynamicTreeItems = async (
     return {
       value,
       displayName: (getPropertyValue(value, titlePath as string) ?? '').toString(),
+      id: value.Id,
       isParent: !!getPropertyValue(value, folderPropertyPath as string),
       mediaType: mediaPropertyPath ? getPropertyValue(value, mediaPropertyPath) : undefined,
     };
