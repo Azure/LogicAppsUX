@@ -137,6 +137,7 @@ export class BaseAppServiceService implements IAppServiceService {
         }
 
         schemaProperties[pathProperty].properties[name] = {
+          'x-ms-url-encoding': 'single',
           ...parameter,
           'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: 'inputs.operationDetails.uri' },
         };
