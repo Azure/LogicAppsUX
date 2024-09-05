@@ -203,6 +203,7 @@ export const batchTriggerManifest = {
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       type: 'object',

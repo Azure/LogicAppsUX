@@ -120,9 +120,10 @@ export const apiManagementActionManifest = {
       },
       required: ['api', 'operationId', 'operationDetails'],
     },
-
     inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     isInputsOptional: false,
+    autoCast: true,
+
     outputs: {
       'x-ms-dynamic-properties': {
         dynamicState: {

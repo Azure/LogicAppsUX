@@ -109,6 +109,7 @@ export const selectSwaggerFunctionManifest = {
     inputsLocationSwapMap: [{ source: ['operationDetails'], target: [] }],
     inputsLocation: ['inputs'],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       type: 'object',

@@ -166,6 +166,7 @@ export class BaseFunctionService implements IFunctionService {
         }
 
         schemaProperties[pathProperty].properties[name] = {
+          'x-ms-url-encoding': 'single',
           ...parameter,
           'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: 'operationDetails.uri' },
         };

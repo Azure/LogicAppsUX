@@ -121,6 +121,7 @@ export const httpManifest = {
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       type: 'object',
@@ -288,6 +289,7 @@ export const httpWithSwaggerManifest = {
     inputsLocationSwapMap: [{ source: ['inputs', 'operationDetails'], target: ['inputs'] }],
     inputsLocation: [],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       type: 'object',
@@ -405,6 +407,7 @@ export const httpWebhookManifest = {
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       type: 'object',

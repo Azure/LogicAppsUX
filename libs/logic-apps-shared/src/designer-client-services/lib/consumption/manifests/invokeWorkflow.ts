@@ -67,6 +67,7 @@ export const invokeWorkflowManifest = {
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       type: 'object',
