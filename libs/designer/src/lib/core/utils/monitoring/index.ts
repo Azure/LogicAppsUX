@@ -1,19 +1,5 @@
-// {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
-//     <div key={sectionName}>
-//       <ParameterSection
-//         key={selectedNodeId}
-//         nodeId={selectedNodeId}
-//         group={inputs.parameterGroups[sectionName]}
-//         readOnly={readOnly}
-//         tokenGroup={tokenGroup}
-//         expressionGroup={expressionGroup}
-//       />
-//     </div>
-//   ))}
-
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import { getIntl, isBoolean, isNullOrUndefined, isNumber, isString } from '@microsoft/logic-apps-shared';
-import type { NodeInputs } from 'lib/core';
 
 export const parseOutputs = (outputs: Record<string, any>): BoundParameters => {
   if (isNullOrUndefined(outputs)) {
@@ -35,8 +21,7 @@ export const parseOutputs = (outputs: Record<string, any>): BoundParameters => {
   }, {});
 };
 
-export const parseInputs = (inputs: Record<string, any>, rawInputs: NodeInputs | undefined): BoundParameters => {
-  console.log('charlie', rawInputs);
+export const parseInputs = (inputs: Record<string, any>): BoundParameters => {
   if (isNullOrUndefined(inputs)) {
     return inputs;
   }

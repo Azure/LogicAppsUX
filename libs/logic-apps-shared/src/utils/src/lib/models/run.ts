@@ -54,7 +54,7 @@ export interface SecureData {
 
 export type BoundParameters = Record<string, BoundParameter<any>>;
 
-interface BoundParameter<T> {
+export interface BoundParameter<T> {
   displayName: string;
   dynamicValue?: T;
   format?: string;

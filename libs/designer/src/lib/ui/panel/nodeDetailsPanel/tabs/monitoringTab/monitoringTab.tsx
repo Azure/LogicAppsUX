@@ -1,6 +1,6 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
-import { useBrandColor, useRawInputParameters } from '../../../../../core/state/operation/operationSelector';
+import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
@@ -10,17 +10,15 @@ import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { setRunDataInputOutputs } from '../../../../../core/state/workflow/workflowSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../../core';
-import { parseInputs, parseOutputs } from './helpers';
+import { initializeInputsOutputsBinding } from '../../../../../core/utils/binders/monitoring';
 
 export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = useRunData(selectedNodeId);
   const dispatch = useDispatch<AppDispatch>();
-  const rawInputs = useRawInputParameters(selectedNodeId);
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
@@ -44,14 +42,8 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   }, [runMetaData, refetch]);
 
   useEffect(() => {
-    dispatch(
-      setRunDataInputOutputs({
-        nodeId: selectedNodeId,
-        inputs: parseInputs(inputOutputs.inputs, rawInputs),
-        outputs: parseOutputs(inputOutputs.outputs),
-      })
-    );
-  }, [dispatch, inputOutputs, selectedNodeId, rawInputs]);
+    dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
+  }, [dispatch, inputOutputs, selectedNodeId]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <>
