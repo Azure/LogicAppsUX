@@ -308,13 +308,14 @@ const getArrayDetailsForNestedForeach = (
       return checkArrayInRepetition(actionName, repetitionValue, parentArrayKey, data?.expression, data?.output, areOutputsManifestBased);
     });
 
-    shouldAdd = !isSplitOn && !alreadyInLoop;
+    const shouldAddLoopForCurrentParent = !isSplitOn && !alreadyInLoop;
 
-    if (data?.expression) {
+    if (shouldAddLoopForCurrentParent && data?.expression) {
       arrayDetails.push({ parentArrayKey, parentArrayValue: data.expression });
     }
 
-    parentArrayKey = getParentArrayKey(parentArrayKey);
+    shouldAdd = shouldAdd || shouldAddLoopForCurrentParent;
+    parentArrayKey = data?.token.arrayDetails ? getParentArrayKey(parentArrayKey) : undefined;
     parentArray = data?.token.arrayDetails?.parentArrayName;
   }
 
@@ -333,8 +334,8 @@ const getParentArrayExpression = (
     return undefined;
   }
 
+  const { repetitionReferences } = repetitionContext;
   const sanitizedParentArrayKey = sanitizeKey(parentArrayKey);
-
   const parentArrayOutput = nodeOutputs.outputs[parentArrayKey];
   const parentArrayKeyOfParentArray = getParentArrayKey(parentArrayKey);
 
@@ -343,7 +344,6 @@ const getParentArrayExpression = (
     key: parentArrayKey,
     name: parentArrayName,
     tokenType: TokenType.OUTPUTS,
-    arrayDetails: parentArrayKeyOfParentArray ? { parentArrayKey: parentArrayKeyOfParentArray } : undefined,
     title: parentArrayName as string,
   };
 
@@ -352,12 +352,17 @@ const getParentArrayExpression = (
     parentArrayTokenInfo.name = parentArrayOutput.name;
     parentArrayTokenInfo.title = parentArrayOutput.title;
     parentArrayTokenInfo.source = parentArrayOutput.source;
-    if (parentArrayOutput.parentArray) {
-      parentArrayTokenInfo.arrayDetails = { ...parentArrayTokenInfo.arrayDetails, parentArrayName: parentArrayOutput.parentArray };
+    if (parentArrayOutput.isInsideArray) {
+      parentArrayTokenInfo.arrayDetails = {
+        parentArrayKey: parentArrayKeyOfParentArray ? parentArrayKeyOfParentArray : undefined,
+        parentArrayName: parentArrayOutput.parentArray ? parentArrayOutput.parentArray : undefined,
+      };
     }
+  } else {
+    parentArrayTokenInfo.arrayDetails = parentArrayKeyOfParentArray ? { parentArrayKey: parentArrayKeyOfParentArray } : undefined;
   }
 
-  for (const repetitionReference of repetitionContext.repetitionReferences) {
+  for (const repetitionReference of repetitionReferences) {
     if (
       equals(sanitizedParentArrayKey, repetitionReference.repetitionPath) &&
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
@@ -632,7 +637,7 @@ const isExpressionEqualToNodeSplitOn = (test: string | any[], splitOn: string | 
     return false;
   }
 
-  if (equals(test, splitOn)) {
+  if (equals(sanitizeOperatorsInExpression(test), sanitizeOperatorsInExpression(splitOn))) {
     return true;
   }
 
@@ -824,4 +829,8 @@ const normalizeKeyPath = (path: string | undefined): string | undefined => {
     : path === 'outputs.$.body'
       ? 'body.$'
       : path;
+};
+
+const sanitizeOperatorsInExpression = (expression: string): string => {
+  return expression.replaceAll('?[', '[');
 };

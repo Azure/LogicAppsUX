@@ -173,7 +173,7 @@ export const initializeOperationMetadata = async (
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
       }),
-      clearExisting: !pasteParams ?? true,
+      clearExisting: !pasteParams,
     })
   );
 
