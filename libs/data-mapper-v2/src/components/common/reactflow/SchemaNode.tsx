@@ -18,7 +18,10 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   const edges = useEdges();
   const styles = useStyles();
 
-  const isConnected = useMemo(() => edges.some((edge) => edge.source === id || edge.target === id), [edges, id]);
+  const isConnected = useMemo(
+    () => edges.some((edge) => !edge.data?.isDueToCollapse && (edge.source === id || edge.target === id)),
+    [edges, id]
+  );
   const isLoop = useMemo(() => edges.some((edge) => (edge.source === id || edge.target === id) && edge.data?.isRepeating), [edges, id]);
   const isSelected = useSelectedNode(id);
   const isHover = useHoverNode(id);
@@ -33,12 +36,14 @@ const SchemaNode = (props: NodeProps<Node<StringIndexed<SchemaNodeReactFlowDataP
   return (
     <div className={mergeClasses('nodrag nopan', styles.nodeWrapper)} ref={divRef}>
       <Handle
+        data-selectableid={id}
         key={`${id}-handle`}
         id={`${id}-handle`}
         type={isSourceNode ? 'source' : 'target'}
         position={isSourceNode ? Position.Left : Position.Right}
         className={mergeClasses(
           styles.handleWrapper,
+          isSourceNode ? '' : styles.rightHandle,
           isConnected ? styles.connectedHandle : '',
           isLoop && isSourceNode ? styles.loopSourceHandle : '',
           isSelected || isHover ? styles.selectedHoverHandle : '',

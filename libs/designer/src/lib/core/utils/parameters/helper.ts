@@ -1866,7 +1866,7 @@ function getDependenciesToUpdate(
   return dependenciesToUpdate;
 }
 
-export async function updateDynamicDataInNode(
+export const updateDynamicDataInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
@@ -1875,7 +1875,7 @@ export async function updateDynamicDataInNode(
   dispatch: Dispatch,
   getState: () => RootState,
   operationDefinition?: any
-): Promise<void> {
+): Promise<void> => {
   await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
 
   const { operations, workflowParameters } = getState();
@@ -1910,7 +1910,7 @@ export async function updateDynamicDataInNode(
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
-}
+};
 
 async function loadDynamicData(
   nodeId: string,
@@ -1933,8 +1933,6 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      rootState.workflow.workflowKind,
-      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
@@ -2943,7 +2941,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfo[], rootState: RootState): void {
+export const updateTokenMetadataInParameters = (nodeId: string, parameters: ParameterInfo[], rootState: RootState): void => {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -3004,7 +3002,7 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
       );
     }
   }
-}
+};
 
 export const flattenAndUpdateViewModel = (
   repetitionContext: RepetitionContext,
@@ -3416,7 +3414,11 @@ export function getInterpolatedExpression(expression: string, parameterType: str
   if (isUndefinedOrEmptyString(expression)) {
     return expression;
   }
-  if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
+  if (
+    parameterType === constants.SWAGGER.TYPE.STRING &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BINARY &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BYTE
+  ) {
     return `@{${expression}}`;
   }
   return `@${expression}`;
@@ -3458,11 +3460,11 @@ export function parameterValueToString(
   }
 
   const parameter = { ...remappedParameterInfo };
-  const isPathParameter = parameter.info.in === ParameterLocations.Path;
+  const requiresUrlEncoding = parameter.info.in === ParameterLocations.Path || parameter.info.encode !== undefined;
   const value = parameter.value.filter((segment) => segment.value !== '');
 
   if (!value || !value.length) {
-    if (isPathParameter && isDefinitionValue) {
+    if (requiresUrlEncoding && isDefinitionValue) {
       if (parameter.required) {
         return encodePathValueWithFunction("''", parameter.info.encode);
       }
@@ -3476,7 +3478,7 @@ export function parameterValueToString(
   const parameterSuppressesCasting = !!remappedParameterInfo.suppressCasting;
 
   const shouldCast = requiresCast(parameterType, parameterFormat, value, parameterSuppressesCasting);
-  if (!isPathParameter && shouldCast) {
+  if (!requiresUrlEncoding && shouldCast) {
     return castParameterValueToString(value, parameterFormat, parameterType);
   }
 
@@ -3488,8 +3490,8 @@ export function parameterValueToString(
     ? value
     : castTokenSegmentsInValue(value, parameterType, parameterFormat);
 
-  // Note: Path parameter values are always enclosed inside encodeComponent function if specified.
-  if (isPathParameter && isDefinitionValue) {
+  // Note: Path parameter values or parameters which requires url encoding are always enclosed inside encodeComponent function if specified.
+  if (requiresUrlEncoding && isDefinitionValue) {
     const segmentValues = segmentsAfterCasting.map((segment) => {
       if (!isTokenValueSegment(segment)) {
         return convertToStringLiteral(segment.value);

@@ -46,6 +46,7 @@ import {
   removeConnectionPrefix,
   startsWith,
   unmap,
+  cleanResourceId,
 } from '@microsoft/logic-apps-shared';
 import type { LAOperation, LogicAppsV2, OperationInfo, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -65,7 +66,6 @@ export const initializeOperationDetailsForSwagger = async (
   references: ConnectionReferences,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
@@ -99,16 +99,7 @@ export const initializeOperationDetailsForSwagger = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      const settings = getOperationSettings(
-        isTrigger,
-        nodeOperationInfo,
-        nodeOutputs,
-        /* manifest */ undefined,
-        parsedSwagger,
-        operation,
-        workflowKind,
-        forceEnableSplitOn
-      );
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, /* manifest */ undefined, parsedSwagger, operation, workflowKind);
 
       return [
         {
@@ -298,7 +289,8 @@ const getOperationInfo = async (
       if (!reference || !reference.api || !reference.api.id) {
         throw new Error(`Incomplete information for operation '${nodeId}'`);
       }
-      const connectorId = reference.api.id;
+      const connectorId = cleanResourceId(reference.api.id);
+
       const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
       if (!parsedSwagger) {
         throw new Error(`Could not fetch swagger for connector - ${connectorId}`);

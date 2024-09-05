@@ -1,8 +1,12 @@
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { describe, expect, it } from 'vitest';
+import { getMockedUndoRedoPartialRootState } from '../../../__test__/mock-root-state';
 import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
+import { setStateAfterUndoRedo } from '../global';
+import { WorkflowState } from '../workflow/workflowInterfaces';
 import reducer, { addNode } from '../workflow/workflowSlice';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
     const mockAddNode: AddNodePayload = {
@@ -34,5 +38,30 @@ describe('workflow slice reducers', () => {
         isRoot: true,
       },
     });
+  });
+
+  it('should set workflow state on undo redo', async () => {
+    const undoRedoPartialRootState = getMockedUndoRedoPartialRootState();
+    const workflowState: WorkflowState = {
+      ...undoRedoPartialRootState.workflow,
+      operations: {
+        mockOperation: {
+          type: 'built-in',
+        },
+      },
+      graph: {
+        id: 'root',
+        type: 'GRAPH_NODE',
+      },
+    };
+    const state = reducer(
+      initialState,
+      setStateAfterUndoRedo({
+        ...undoRedoPartialRootState,
+        workflow: workflowState,
+      })
+    );
+
+    expect(state).toEqual(workflowState);
   });
 });

@@ -33,6 +33,9 @@ export const useStyles = makeStyles({
   rightTreeItemLayout: {
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
   },
+  rightHandle: {
+    left: '-15px',
+  },
   handleWrapper: {
     backgroundColor: '#fff',
     width: '14px',
@@ -53,7 +56,7 @@ export const useStyles = makeStyles({
     paddingRight: '20px',
   },
   selectedHoverFunctionButton: {
-    ...shorthands.border('3px', 'solid', colors.edgeActive),
+    ...shorthands.border('2px', 'solid', colors.handleActive),
   },
   loopSourceHandle: {
     height: '22px',
