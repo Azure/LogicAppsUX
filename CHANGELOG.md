@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [4.84.0](https://github.com/Azure/LogicAppsUX/compare/v4.83.0...v4.84.0) (2024-09-05)
+
+
+### Bug Fixes
+
+* **designer:** Change Javascript output to return string type ([#5594](https://github.com/Azure/LogicAppsUX/issues/5594)) ([5ec0c62](https://github.com/Azure/LogicAppsUX/commit/5ec0c627df5c3c2f16b02f79ff4c34708b5b20ec)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **Designer:** Connection fetch is now recursive over nextlinks ([#5595](https://github.com/Azure/LogicAppsUX/issues/5595)) ([88d2c5f](https://github.com/Azure/LogicAppsUX/commit/88d2c5f1b4823faa132d49082efee96a31fb5cc8))
+* **designer:** Correctly verify parents arrays are in spliton while adding implicit foreach ([#5596](https://github.com/Azure/LogicAppsUX/issues/5596)) ([c1fe5dc](https://github.com/Azure/LogicAppsUX/commit/c1fe5dc77df3e652ddfda0dfcaec90f64ac6bf0c))
+
 ## [4.83.0](https://github.com/Azure/LogicAppsUX/compare/v4.82.0...v4.83.0) (2024-09-04)
 
 
