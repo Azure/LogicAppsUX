@@ -7,7 +7,6 @@ import {
   logicAppKind,
   deploySubpathSetting,
   connectionsFileName,
-  parametersFileName,
   webhookRedirectHostUri,
   workflowAppAADClientId,
   workflowAppAADClientSecret,
@@ -16,7 +15,6 @@ import {
   kubernetesKind,
   showDeployConfirmationSetting,
   logicAppFilter,
-  parameterizeConnectionsInProjectLoadSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -27,7 +25,7 @@ import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/c
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { getWorkspaceSetting, getGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
@@ -184,7 +182,7 @@ async function deploy(
     }
 
     deployProjectPathForWorkflowApp = isWorkflowApp
-      ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext, actionContext)
+      ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext)
       : undefined;
 
     try {
@@ -288,68 +286,25 @@ async function getProjectPathToDeploy(
   workspaceFolder: WorkspaceFolder,
   settingsToExclude: string[],
   originalDeployFsPath: string,
-  identityWizardContext: IIdentityWizardContext,
-  actionContext: IActionContext
+  identityWizardContext: IIdentityWizardContext
 ): Promise<string | undefined> {
   const workspaceFolderPath = workspaceFolder.uri.fsPath;
   const connectionsJson = await getConnectionsJson(workspaceFolderPath);
   const parametersJson = await getParametersJson(workspaceFolderPath);
-  const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
-  let resolvedConnections: ConnectionsData;
   let connectionsData: ConnectionsData;
+  let parametizedConnections: ConnectionsData;
 
-  function updateAuthenticationParameters(authValue: any): void {
-    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
-      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
-        parametersJson[`${referenceKey}-Authentication`].value = authValue;
-        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}-Authentication" parameter to ManagedServiceIdentity`;
-      }
-    }
-  }
-
-  function updateAuthenticationInConnections(authValue: any): void {
-    if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
-      for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
-        connectionsData.managedApiConnections[referenceKey].authentication = authValue;
-        actionContext.telemetry.properties.updateAuth = `updated "${referenceKey}" connection authentication to ManagedServiceIdentity`;
-      }
-    }
-  }
-
+  const targetAppSettings = await node.getApplicationSettings(identityWizardContext as IDeployContext);
   try {
-    connectionsData = JSON.parse(connectionsJson);
-    const authValue = { type: 'ManagedServiceIdentity' };
-    const advancedIdentityAuthValue = {
-      type: 'ActiveDirectoryOAuth',
-      audience: 'https://management.core.windows.net/',
-      credentialType: 'Secret',
-      clientId: `@appsetting('${workflowAppAADClientId}')`,
-      tenant: `@appsetting('${workflowAppAADTenantId}')`,
-      secret: `@appsetting('${workflowAppAADClientSecret}')`,
-    };
-
-    if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationParameters(advancedIdentityAuthValue)
-        : updateAuthenticationParameters(authValue);
-    } else {
-      identityWizardContext?.useAdvancedIdentity
-        ? updateAuthenticationInConnections(advancedIdentityAuthValue)
-        : updateAuthenticationInConnections(authValue);
-    }
-
-    const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
-    resolvedConnections = resolutionService.resolve(connectionsData);
+    parametizedConnections = JSON.parse(connectionsJson);
+    connectionsData = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
   } catch {
-    actionContext.telemetry.properties.noAuthUpdate = 'No authentication update was made';
     return undefined;
   }
 
-  if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
+  if (parametizedConnections.managedApiConnections && Object.keys(parametizedConnections.managedApiConnections).length) {
     const deployProjectPath = path.join(path.dirname(workspaceFolderPath), `${path.basename(workspaceFolderPath)}-deploytemp`);
-    const connectionsFilePathDeploy = path.join(deployProjectPath, connectionsFileName);
-    const parametersFilePathDeploy = path.join(deployProjectPath, parametersFileName);
+    const connectionsFilePath = path.join(deployProjectPath, connectionsFileName);
 
     if (await fse.pathExists(deployProjectPath)) {
       await cleanAndRemoveDeployFolder(deployProjectPath);
@@ -359,9 +314,9 @@ async function getProjectPathToDeploy(
 
     await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true });
 
-    for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+    for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
       try {
-        const connection = resolvedConnections.managedApiConnections[referenceKey].connection;
+        const connection = connectionsData.managedApiConnections[referenceKey].connection;
         await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node.site);
 
         if (node.site.isSlot) {
@@ -372,11 +327,24 @@ async function getProjectPathToDeploy(
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
       }
 
+      if (identityWizardContext?.useAdvancedIdentity) {
+        managedConnection.authentication = {
+          type: 'ActiveDirectoryOAuth',
+          audience: 'https://management.core.windows.net/',
+          credentialType: 'Secret',
+          clientId: `@appsetting('${workflowAppAADClientId}')`,
+          tenant: `@appsetting('${workflowAppAADTenantId}')`,
+          secret: `@appsetting('${workflowAppAADClientSecret}')`,
+        };
+      } else {
+        managedConnection.authentication = {
+          type: 'ManagedServiceIdentity',
+        };
+      }
       settingsToExclude.push(`${referenceKey}-connectionKey`);
     }
 
-    await writeFormattedJson(connectionsFilePathDeploy, connectionsData);
-    await writeFormattedJson(parametersFilePathDeploy, parametersJson);
+    await writeFormattedJson(connectionsFilePath, parametizedConnections);
 
     return deployProjectPath;
   }
