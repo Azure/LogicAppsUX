@@ -292,32 +292,26 @@ export const httpWithSwaggerManifest = {
     autoCast: true,
 
     outputs: {
-      type: 'object',
-      required: [],
-      properties: {
-        body: {
-          title: 'Body',
-          'x-ms-dynamic-properties': {
-            dynamicState: {
-              extension: {
-                operationId: 'getSwaggerOperationSchema',
-              },
-            },
-            parameters: {
-              type: 'object',
-              operationId: {
-                parameterReference: 'inputs.operationId',
-                required: true,
-              },
-              swaggerUrl: {
-                parameterReference: 'metadata.apiDefinitionUrl',
-                required: true,
-              },
-            },
+      'x-ms-dynamic-properties': {
+        dynamicState: {
+          extension: {
+            operationId: 'getSwaggerOperationSchema',
+          },
+        },
+        parameters: {
+          type: 'object',
+          operationId: {
+            parameterReference: 'inputs.operationId',
+            required: true,
+          },
+          swaggerUrl: {
+            parameterReference: 'metadata.apiDefinitionUrl',
+            required: true,
           },
         },
       },
     },
+    includeRootOutputs: true,
     isOutputsOptional: false,
 
     customSwagger: { location: ['metadata', 'apiDefinitionUrl'] },
