@@ -23,3 +23,5 @@ export { default as TerminateInputsBinder } from './inputs/terminate';
 export { default as WaitInputsBinder } from './inputs/wait';
 export { default as XmlValidationInputsBinder } from './inputs/xmlvalidation';
 export { default as XsltInputsBinder } from './inputs/xslt';
+export { default as ManualInputsBinder } from './inputs/manual';
+export { default as FunctionInputsBinder } from './inputs/function';

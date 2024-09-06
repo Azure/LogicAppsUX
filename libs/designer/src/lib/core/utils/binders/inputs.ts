@@ -9,12 +9,14 @@ import {
   DecrementVariableInputsBinder,
   DefaultInputsBinder,
   FlatFileInputsBinder,
+  FunctionInputsBinder,
   IfInputsBinder,
   IncrementVariableInputsBinder,
   InitializeVariableInputsBinder,
   IntegrationAccountArtifactLookupInputsBinder,
   JoinInputsBinder,
   LiquidInputsBinder,
+  ManualInputsBinder,
   ParseJsonInputsBinder,
   QueryInputsBinder,
   RecurrenceInputsBinder,
@@ -87,10 +89,10 @@ export default class InputsBinder {
         const binder = new FlatFileInputsBinder();
         return binder.bind(input);
       }
-      // if (equals(type, constants.NODE.TYPE.FUNCTION)) {
-      //     const binder = new FunctionInputsBinder();
-      //     return binder.bind(input);
-      //}
+      if (equals(type, constants.NODE.TYPE.FUNCTION)) {
+        const binder = new FunctionInputsBinder();
+        return binder.bind(input);
+      }
       // if (equals(type, constants.NODE.TYPE.HTTP)) {
       //     const binder = new HttpInputsBinder();
       //     return binder.bind(input, inputParametersByName, operation);
@@ -119,10 +121,10 @@ export default class InputsBinder {
         const binder = new LiquidInputsBinder();
         return binder.bind(input);
       }
-      // if (equals(type, constants.NODE.TYPE.MANUAL) || equals(type, constants.NODE.TYPE.REQUEST)) {
-      //     const binder = new ManualInputsBinder();
-      //     return binder.bind(input, kind);
-      // }
+      if (equals(type, constants.NODE.TYPE.MANUAL) || equals(type, constants.NODE.TYPE.REQUEST)) {
+        const binder = new ManualInputsBinder();
+        return binder.bind(input, kind);
+      }
       if (equals(type, constants.NODE.TYPE.PARSE_JSON)) {
         const binder = new ParseJsonInputsBinder();
         return binder.bind(input);
