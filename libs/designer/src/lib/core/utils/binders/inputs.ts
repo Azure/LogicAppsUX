@@ -34,7 +34,7 @@ import { updateParameterWithValues } from '../parameters/helper';
 
 export default class InputsBinder {
   bind(
-    inputs: any, // tslint:disable-line: no-any
+    inputs: any,
     type: string,
     kind: string | undefined,
     inputParametersByName: Record<string, InputParameter>,
@@ -44,7 +44,7 @@ export default class InputsBinder {
     placeholderForDynamicInputs?: InputParameter,
     _recurrenceParameters?: InputParameter[]
   ): BoundParameters[] {
-    let inputArray: any[]; // tslint:disable-line: no-any
+    let inputArray: any[];
     if (!Array.isArray(inputs)) {
       inputArray = [inputs];
     } else if (inputs.length === 0) {
@@ -54,7 +54,6 @@ export default class InputsBinder {
     }
 
     return inputArray.map((input: any): BoundParameters => {
-      // tslint:disable-line: no-any
       if (
         manifest &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
@@ -267,7 +266,7 @@ class ManifestInputsBinder extends Binder {
       [parameter]
     );
 
-    return parameterValue[0].value;
+    return parameterValue[0]?.value?.value;
   }
 
   private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {

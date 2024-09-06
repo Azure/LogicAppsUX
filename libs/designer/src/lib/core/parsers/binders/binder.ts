@@ -22,7 +22,7 @@ export abstract class Binder {
       return !equals(this.resolveIdentifier(identifier), OutputKeys.Body);
     });
 
-    let value: any; // tslint:disable-line: no-any
+    let value: any;
     if (equals(source, OutputSource.Headers)) {
       value = outputs.headers;
     } else if (equals(source, OutputSource.StatusCode)) {
@@ -54,11 +54,10 @@ export abstract class Binder {
 
   protected buildBoundParameter(
     displayName: string,
-    value: any, // tslint:disable-line: no-any
+    value: any,
     visibility?: string,
     additionalProperties?: Partial<BoundParameter<any>>
   ): BoundParameter<any> {
-    // tslint:disable-line: no-any
     return {
       displayName,
       value,
@@ -86,7 +85,6 @@ export abstract class Binder {
     return title || summary || name;
   }
 
-  // tslint:disable-next-line: no-any
   protected getInputParameterValue(inputs: any, operation: Swagger.Operation, parameter: InputParameter): any {
     const template = removeConnectionPrefix(operation.path);
     const { body, headers, path, queries } = inputs;
@@ -150,7 +148,6 @@ export abstract class Binder {
   }
 
   protected makeBindFunction(operation: Swagger.Operation) {
-    // tslint:disable-next-line: no-any
     return (inputs: any, parameter: InputParameter): BoundParameter<any> | undefined => {
       // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
       // branch which never ran, because the condition expression was false
@@ -170,22 +167,20 @@ export abstract class Binder {
   protected makeBoundParameter(
     key: string,
     displayName: string,
-    value: any, // tslint:disable-line: no-any
+    value: any,
     visibility?: string,
     additionalProperties?: Partial<BoundParameter<any>>
   ): BoundParameters {
-    // tslint:disable-line: no-any
     return this._makeBoundParameters(key, this.buildBoundParameter(displayName, value, visibility, additionalProperties));
   }
 
   protected makeOptionalBoundParameter(
     key: string,
     displayName: string,
-    value: any, // tslint:disable-line: no-any
+    value: any,
     visibility?: string,
     additionalProperties?: Partial<BoundParameter<any>>
   ): BoundParameters | undefined {
-    // tslint:disable-line: no-any
     return value === undefined ? undefined : this.makeBoundParameter(key, displayName, value, visibility, additionalProperties);
   }
 

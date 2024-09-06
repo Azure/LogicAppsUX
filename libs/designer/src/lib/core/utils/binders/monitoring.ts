@@ -43,10 +43,9 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const inputs = await getInputs(state, nodeId, inputsOutputs.inputs);
-      const outputs = parseOutputs(inputsOutputs.outputs);
 
       LoggerService().endTrace(traceId, { status: Status.Success });
-      return { nodeId, inputs: inputs[0], outputs };
+      return { nodeId, inputs: inputs[0], outputs: parseOutputs(inputsOutputs.outputs) };
     } catch (e) {
       LoggerService().endTrace(traceId, { status: Status.Failure });
       return { nodeId, inputs: {}, outputs: {} };
@@ -104,8 +103,6 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     placeholderForDynamicInputs,
     recurrenceParameters as unknown as any
   );
-
-  console.log('charlie', boundInputs);
 
   return boundInputs;
 };

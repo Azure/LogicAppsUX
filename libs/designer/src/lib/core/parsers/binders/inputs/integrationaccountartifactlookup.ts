@@ -1,4 +1,4 @@
-import type { BoundParameters, IntegrationAccountArtifactLookupInputs } from '@microsoft/logic-apps-shared';
+import { getIntl, type BoundParameters, type IntegrationAccountArtifactLookupInputs } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
 import constants from '../constants';
 
