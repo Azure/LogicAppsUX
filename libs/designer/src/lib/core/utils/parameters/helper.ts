@@ -3460,11 +3460,11 @@ export function parameterValueToString(
   }
 
   const parameter = { ...remappedParameterInfo };
-  const isPathParameter = parameter.info.in === ParameterLocations.Path;
+  const requiresUrlEncoding = parameter.info.in === ParameterLocations.Path || parameter.info.encode !== undefined;
   const value = parameter.value.filter((segment) => segment.value !== '');
 
   if (!value || !value.length) {
-    if (isPathParameter && isDefinitionValue) {
+    if (requiresUrlEncoding && isDefinitionValue) {
       if (parameter.required) {
         return encodePathValueWithFunction("''", parameter.info.encode);
       }
@@ -3478,7 +3478,7 @@ export function parameterValueToString(
   const parameterSuppressesCasting = !!remappedParameterInfo.suppressCasting;
 
   const shouldCast = requiresCast(parameterType, parameterFormat, value, parameterSuppressesCasting);
-  if (!isPathParameter && shouldCast) {
+  if (!requiresUrlEncoding && shouldCast) {
     return castParameterValueToString(value, parameterFormat, parameterType);
   }
 
@@ -3490,8 +3490,8 @@ export function parameterValueToString(
     ? value
     : castTokenSegmentsInValue(value, parameterType, parameterFormat);
 
-  // Note: Path parameter values are always enclosed inside encodeComponent function if specified.
-  if (isPathParameter && isDefinitionValue) {
+  // Note: Path parameter values or parameters which requires url encoding are always enclosed inside encodeComponent function if specified.
+  if (requiresUrlEncoding && isDefinitionValue) {
     const segmentValues = segmentsAfterCasting.map((segment) => {
       if (!isTokenValueSegment(segment)) {
         return convertToStringLiteral(segment.value);

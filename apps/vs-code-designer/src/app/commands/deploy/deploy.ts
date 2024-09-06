@@ -339,8 +339,7 @@ async function getProjectPathToDeploy(
         : updateAuthenticationInConnections(authValue);
     }
 
-    const resolutionService = new ResolutionService(parametersJson, targetAppSettings);
-    resolvedConnections = resolutionService.resolve(connectionsData);
+    resolvedConnections = resolveConnectionsReferences(connectionsJson, parametersJson, targetAppSettings);
   } catch {
     actionContext.telemetry.properties.noAuthUpdate = 'No authentication update was made';
     return undefined;
