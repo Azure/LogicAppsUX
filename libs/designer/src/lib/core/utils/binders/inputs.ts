@@ -1,7 +1,33 @@
 import type { BoundParameter, BoundParameters, InputParameter, LogicApps, OperationManifest, Swagger } from '@microsoft/logic-apps-shared';
 import { equals, getObjectPropertyValue, isNullOrUndefined, unmap } from '@microsoft/logic-apps-shared';
 import { Binder } from '../../parsers/binders/binder';
-import { ApiConnectionInputsBinder, DefaultInputsBinder, RecurrenceInputsBinder } from '../../parsers/binders/binders';
+import {
+  ApiConnectionInputsBinder,
+  ApiManagementInputsBinder,
+  AppendToArrayVariableInputsBinder,
+  AppendToStringVariableInputsBinder,
+  DecrementVariableInputsBinder,
+  DefaultInputsBinder,
+  FlatFileInputsBinder,
+  IfInputsBinder,
+  IncrementVariableInputsBinder,
+  InitializeVariableInputsBinder,
+  IntegrationAccountArtifactLookupInputsBinder,
+  JoinInputsBinder,
+  LiquidInputsBinder,
+  ParseJsonInputsBinder,
+  QueryInputsBinder,
+  RecurrenceInputsBinder,
+  ResponseInputsBinder,
+  SelectInputsBinder,
+  SetVariableInputsBinder,
+  SwitchInputsBinder,
+  TableInputsBinder,
+  TerminateInputsBinder,
+  WaitInputsBinder,
+  XmlValidationInputsBinder,
+  XsltInputsBinder,
+} from '../../parsers/binders/binders';
 import constants from '../../../common/constants';
 import BinderConstants from '../../parsers/binders/constants';
 import { updateParameterWithValues } from '../parameters/helper';
@@ -10,7 +36,7 @@ export default class InputsBinder {
   bind(
     inputs: any, // tslint:disable-line: no-any
     type: string,
-    _kind: string | undefined,
+    kind: string | undefined,
     inputParametersByName: Record<string, InputParameter>,
     operation: Swagger.Operation,
     manifest?: OperationManifest,
@@ -41,6 +67,114 @@ export default class InputsBinder {
       if (equals(type, constants.NODE.TYPE.API_CONNECTION) || equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK)) {
         const binder = new ApiConnectionInputsBinder();
         return binder.bind(input, inputParametersByName, operation);
+      }
+      if (equals(type, constants.NODE.TYPE.API_MANAGEMENT)) {
+        const binder = new ApiManagementInputsBinder();
+        return binder.bind(input, inputParametersByName, operation);
+      }
+      if (equals(type, constants.NODE.TYPE.APPEND_TO_ARRAY_VARIABLE)) {
+        const binder = new AppendToArrayVariableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.APPEND_TO_STRING_VARIABLE)) {
+        const binder = new AppendToStringVariableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.DECREMENT_VARIABLE)) {
+        const binder = new DecrementVariableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.FLAT_FILE_DECODING) || equals(type, constants.NODE.TYPE.FLAT_FILE_ENCODING)) {
+        const binder = new FlatFileInputsBinder();
+        return binder.bind(input);
+      }
+      // if (equals(type, constants.NODE.TYPE.FUNCTION)) {
+      //     const binder = new FunctionInputsBinder();
+      //     return binder.bind(input);
+      //}
+      // if (equals(type, constants.NODE.TYPE.HTTP)) {
+      //     const binder = new HttpInputsBinder();
+      //     return binder.bind(input, inputParametersByName, operation);
+      // }
+      if (equals(type, constants.NODE.TYPE.IF)) {
+        const binder = new IfInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.INCREMENT_VARIABLE)) {
+        const binder = new IncrementVariableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+        const binder = new InitializeVariableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP)) {
+        const binder = new IntegrationAccountArtifactLookupInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.JOIN)) {
+        const binder = new JoinInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.LIQUID)) {
+        const binder = new LiquidInputsBinder();
+        return binder.bind(input);
+      }
+      // if (equals(type, constants.NODE.TYPE.MANUAL) || equals(type, constants.NODE.TYPE.REQUEST)) {
+      //     const binder = new ManualInputsBinder();
+      //     return binder.bind(input, kind);
+      // }
+      if (equals(type, constants.NODE.TYPE.PARSE_JSON)) {
+        const binder = new ParseJsonInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.QUERY)) {
+        const binder = new QueryInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.RESPONSE)) {
+        const binder = new ResponseInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.SELECT)) {
+        const binder = new SelectInputsBinder();
+        return binder.bind(input);
+      }
+      // if (equals(type, constants.NODE.TYPE.SEND_TO_BATCH)) {
+      //     const binder = new SendToBatchInputsBinder();
+      //     return binder.bind(input);
+      // }
+      if (equals(type, constants.NODE.TYPE.SET_VARIABLE)) {
+        const binder = new SetVariableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.SWITCH)) {
+        const binder = new SwitchInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.TABLE)) {
+        const binder = new TableInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.TERMINATE)) {
+        const binder = new TerminateInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.WAIT)) {
+        const binder = new WaitInputsBinder();
+        return binder.bind(input);
+      }
+      // if (equals(type, constants.NODE.TYPE.WORKFLOW)) {
+      //     const binder = new WorkflowInputsBinder();
+      //     return binder.bind(input, inputParametersByName);
+      // }
+      if (equals(type, constants.NODE.TYPE.XML_VALIDATION)) {
+        const binder = new XmlValidationInputsBinder();
+        return binder.bind(input);
+      }
+      if (equals(type, constants.NODE.TYPE.XSLT)) {
+        const binder = new XsltInputsBinder();
+        return binder.bind(input);
       }
       if (equals(type, constants.NODE.TYPE.RECURRENCE) && recurrence) {
         const binder = new RecurrenceInputsBinder();

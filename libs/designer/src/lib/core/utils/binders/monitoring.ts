@@ -15,7 +15,7 @@ import type { RootState } from '../../../core';
 import { getOperationManifest } from '../../queries/operation';
 import InputsBinder from './inputs';
 import constants from '../../../common/constants';
-import { parseInputs, parseOutputs } from '../monitoring';
+import { parseOutputs } from '../monitoring';
 import { getRecurrenceParameters } from '../parameters/recurrence';
 import { getConnectorWithSwagger } from '../../queries/connections';
 
@@ -49,13 +49,13 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
       return { nodeId, inputs: inputs[0], outputs };
     } catch (e) {
       LoggerService().endTrace(traceId, { status: Status.Failure });
-      return { nodeId, inputs: parseInputs(inputsOutputs.inputs), outputs: parseOutputs(inputsOutputs.outputs) };
+      return { nodeId, inputs: {}, outputs: {} };
     }
   }
 );
 
 const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Promise<BoundParameters[]> => {
-  const operation = getRecordEntry(rootState.operations.operationInfo, nodeId);
+  let operation: any = getRecordEntry(rootState.operations.operationInfo, nodeId);
 
   if (!operation) {
     return [];
@@ -81,6 +81,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   } else {
     const includeNotificationParameters = !equals(type, constants.NODE.TYPE.API_CONNECTION);
     const { parsedSwagger } = await getConnectorWithSwagger(operation.connectorId);
+    operation = parsedSwagger.getOperationByOperationId(operation.operationId);
     inputParameters = parsedSwagger.getInputParameters(operation.operationId, {
       excludeInternalParameters: false,
       includeNotificationParameters,
@@ -103,6 +104,8 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     placeholderForDynamicInputs,
     recurrenceParameters as unknown as any
   );
+
+  console.log('charlie', boundInputs);
 
   return boundInputs;
 };

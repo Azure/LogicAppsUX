@@ -2,7 +2,6 @@ import type { BoundParameter, BoundParameters, InputParameter, OutputParameter, 
 import {
   DefaultKeyPrefix,
   equals,
-  ExtensionProperties,
   isNullOrUndefined,
   isString,
   OutputKeys,
@@ -89,7 +88,7 @@ export abstract class Binder {
 
   // tslint:disable-next-line: no-any
   protected getInputParameterValue(inputs: any, operation: Swagger.Operation, parameter: InputParameter): any {
-    const template = removeConnectionPrefix(operation[ExtensionProperties.Path]);
+    const template = removeConnectionPrefix(operation.path);
     const { body, headers, path, queries } = inputs;
     const { encode, in: $in, key, name } = parameter;
 
