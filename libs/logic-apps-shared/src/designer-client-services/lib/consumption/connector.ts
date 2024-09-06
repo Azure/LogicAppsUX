@@ -138,6 +138,7 @@ export class ConsumptionConnectorService extends BaseConnectorService {
     return (values || []).map((item: any) => ({
       value: item,
       displayName: item.displayName,
+      id: item.Id,
       isParent: item.isParent ?? equals(item.nodeType, 'parent'),
     }));
   }
