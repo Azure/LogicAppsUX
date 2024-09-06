@@ -60,7 +60,7 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
             file={file}
             handleFolderNavigation={handleFolderNavigation}
             handleItemSelected={handleItemSelected}
-            key={`FilePickerPopover.item.${file.value.Id}`}
+            key={`FilePickerPopover.item.${file.id}`}
           />
         ))}
       </MenuList>
