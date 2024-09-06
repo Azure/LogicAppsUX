@@ -348,7 +348,6 @@ const ParameterSection = ({
     isCodeEditor?: boolean,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    console.log(editorType);
     const parameterType =
       editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
     const supportedTypes: string[] = getPropertyValue(
