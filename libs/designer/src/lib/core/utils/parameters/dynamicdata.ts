@@ -781,7 +781,7 @@ function getDynamicInputParameterFromDynamicParameter(dynamicParameter: InputPar
     in: dynamicParameter.in,
     required: (dynamicParameter.schema?.required as any) ?? dynamicParameter.required ?? false,
   };
-  
+
   delete result.dynamicSchema;
   return result;
 }
