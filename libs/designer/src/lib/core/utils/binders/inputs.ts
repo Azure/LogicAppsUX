@@ -31,7 +31,6 @@ export default class InputsBinder {
       // tslint:disable-line: no-any
       if (
         manifest &&
-        placeholderForDynamicInputs &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION)
@@ -56,9 +55,9 @@ export default class InputsBinder {
 class ManifestInputsBinder extends Binder {
   private _operationManifest: OperationManifest;
   private _location: string[];
-  private _placeholderForDynamicInputs: InputParameter;
+  private _placeholderForDynamicInputs: InputParameter | undefined;
 
-  constructor(manifest: OperationManifest, placeholderForDynamicInputs: InputParameter) {
+  constructor(manifest: OperationManifest, placeholderForDynamicInputs: InputParameter | undefined) {
     super();
     this._operationManifest = manifest;
     this._location = this._operationManifest.properties.inputsLocation ? this._operationManifest.properties.inputsLocation.slice(1) : [];
@@ -118,7 +117,7 @@ class ManifestInputsBinder extends Binder {
   }
 
   private _getValueByParameterKey(inputs: any, parameter: InputParameter): any {
-    if (parameter.isDynamic) {
+    if (parameter.isDynamic && this._placeholderForDynamicInputs) {
       return this._getValueForDynamicParameter(inputs, parameter);
     }
 
@@ -127,18 +126,20 @@ class ManifestInputsBinder extends Binder {
     const isInputs = prefix === 'inputs.$';
     const dataPath = isInputs ? this._location : [];
 
-    return updateParameterWithValues(
+    const parameterValue = updateParameterWithValues(
       prefix,
       !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, dataPath) : inputs,
       /* in */ '',
       [parameter]
-    )[0].value;
+    );
+
+    return parameterValue[0].value;
   }
 
   private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {
     // NOTE(psamband): Dynamic inputs do not have keys and name prefixed, so we get the placeholders' dynamic parameter value
     // to provide as seed value to look up dynamic parameters.
-    const { key, name } = this._placeholderForDynamicInputs;
+    const { key, name } = this._placeholderForDynamicInputs as InputParameter;
     const parameterLocation = key.indexOf('inputs.$.') > -1 ? key.replace('inputs.$.', '').split('.') : this._location;
     const valueForDynamicSchemaParameter =
       !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, parameterLocation) : inputs;

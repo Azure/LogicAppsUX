@@ -1,4 +1,5 @@
 import {
+  type InputParameter,
   equals,
   getRecordEntry,
   LoggerService,
@@ -6,6 +7,7 @@ import {
   OperationManifestService,
   RecurrenceType,
   Status,
+  unmap,
   type BoundParameters,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -66,7 +68,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const inputsToBind = getInputsToBind(operation.type, inputs);
   const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
   const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operation);
-  let inputParameters = {};
+  let inputParameters: Record<string, InputParameter> = {};
 
   if (manifest) {
     const manifestParser = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(type, kind));
@@ -85,6 +87,9 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     }).byId;
   }
 
+  const primaryInputParametersInArray = unmap(inputParameters);
+  const placeholderForDynamicInputs = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema) ?? undefined;
+
   // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
   const boundInputs: BoundParameters[] = inputsBinder.bind(
@@ -95,7 +100,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     operation as any,
     manifest,
     undefined /* recurrence */,
-    undefined /* placeholderForDynamicInputs */,
+    placeholderForDynamicInputs,
     recurrenceParameters as unknown as any
   );
 

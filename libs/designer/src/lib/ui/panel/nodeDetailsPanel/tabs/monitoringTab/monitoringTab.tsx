@@ -42,8 +42,10 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   }, [runMetaData, refetch]);
 
   useEffect(() => {
-    dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
-  }, [dispatch, inputOutputs, selectedNodeId]);
+    if (!isLoading) {
+      dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
+    }
+  }, [dispatch, inputOutputs, selectedNodeId, isLoading]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <>
