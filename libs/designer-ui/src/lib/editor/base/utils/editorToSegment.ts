@@ -2,7 +2,7 @@ import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { createLiteralValueSegment } from './helper';
-import type { SegmentParserOptions } from './parsesegments';
+import { processStringSegmentTokensInDomAndLexicalContext, type SegmentParserOptions } from './parsesegments';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
@@ -101,9 +101,15 @@ export const convertStringToSegments = (
         for (const key of nodeMap.keys()) {
           // keyNoNewline = key, but replace all newlines with no space
           const keyNoNewline = removeNewlinesAndSpaces(key);
+          const encodedKeyNoNewline = removeNewlinesAndSpaces(processStringSegmentTokensInDomAndLexicalContext(key, nodeMap, true));
+          const decodedKeyNoNewlibe = removeNewlinesAndSpaces(processStringSegmentTokensInDomAndLexicalContext(key, nodeMap, false));
           // if the nodemap key and modified HTML segment match,
           // take the corresponding HTML node in the nodemap
-          if (keyNoNewline === modifiedSegmentSoFar) {
+          if (
+            keyNoNewline === modifiedSegmentSoFar ||
+            encodedKeyNoNewline === modifiedSegmentSoFar ||
+            decodedKeyNoNewlibe === modifiedSegmentSoFar
+          ) {
             token = nodeMap.get(key);
             break;
           }
