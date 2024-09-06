@@ -90,7 +90,7 @@ export abstract class Binder {
     const { body, headers, path, queries } = inputs;
     const { encode, in: $in, key, name } = parameter;
 
-    let value: any; // tslint:disable-line: no-any
+    let value: any;
     if (key === `${ParameterLocations.Body}.${DefaultKeyPrefix}`) {
       value = body;
     } else {
@@ -207,7 +207,6 @@ export abstract class Binder {
     }, {});
   }
 
-  // tslint:disable-next-line: no-any
   protected makeReducer<T extends { name: string }>(outputs: any, binder: BindFunction<T>): ReduceFunction<BoundParameters, T> {
     return (previous: BoundParameters, current: T) => {
       const { name } = current;
@@ -219,7 +218,6 @@ export abstract class Binder {
     };
   }
 
-  // tslint:disable-next-line: no-any
   protected makeUntypedInputsParameters(inputs: any): BoundParameters {
     return this.makeBoundParameter(constants.UNTYPED.INPUTS, 'Resources.DISPLAY_TEXT_UNTYPED_INPUTS', inputs);
   }
@@ -240,7 +238,6 @@ export abstract class Binder {
     return isString(identifier) ? identifier : String(identifier.value);
   }
 
-  // tslint:disable-next-line: no-any
   private _makeBoundParameters(key: string, boundParameter: BoundParameter<any>): BoundParameters {
     return {
       [key]: boundParameter,

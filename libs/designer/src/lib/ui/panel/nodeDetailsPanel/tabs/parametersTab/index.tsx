@@ -74,7 +74,6 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  console.log('charlie2', inputs);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,

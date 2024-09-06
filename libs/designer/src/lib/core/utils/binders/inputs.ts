@@ -197,7 +197,6 @@ class ManifestInputsBinder extends Binder {
     this._placeholderForDynamicInputs = placeholderForDynamicInputs;
   }
 
-  // tslint:disable-next-line: no-any
   bind(inputs: any, inputParameters: Record<string, InputParameter>): BoundParameters {
     if (inputs === undefined) {
       return {};
@@ -208,7 +207,6 @@ class ManifestInputsBinder extends Binder {
     return { ...boundInputParameters };
   }
 
-  // tslint:disable-next-line: no-any
   private _bindData = (inputs: any, parameter: InputParameter): BoundParameter<any> | undefined => {
     // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
     // branch which never ran, because the condition expression was false
@@ -232,7 +230,6 @@ class ManifestInputsBinder extends Binder {
     return getObjectPropertyValue(inputs, location);
   }
 
-  // tslint:disable-next-line: no-any
   private _getAdditionalProperties(parameter: InputParameter): Partial<BoundParameter<any>> | undefined {
     if (parameter.editor === constants.EDITOR.DICTIONARY) {
       return {
