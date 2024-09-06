@@ -1,20 +1,22 @@
 import type { BoundParameter, BoundParameters, InputParameter, LogicApps, OperationManifest, Swagger } from '@microsoft/logic-apps-shared';
-import { equals, unmap } from '@microsoft/logic-apps-shared';
+import { equals, getObjectPropertyValue, isNullOrUndefined, unmap } from '@microsoft/logic-apps-shared';
 import { Binder } from '../../parsers/binders/binder';
 import { ApiConnectionInputsBinder, DefaultInputsBinder, RecurrenceInputsBinder } from '../../parsers/binders/binders';
 import constants from '../../../common/constants';
 import BinderConstants from '../../parsers/binders/constants';
+import { updateParameterWithValues } from '../parameters/helper';
 
 export default class InputsBinder {
   bind(
     inputs: any, // tslint:disable-line: no-any
     type: string,
-    _kind: string,
+    _kind: string | undefined,
     inputParametersByName: Record<string, InputParameter>,
     operation: Swagger.Operation,
     manifest?: OperationManifest,
     recurrence?: LogicApps.Recurrence,
-    placeholderForDynamicInputs?: InputParameter
+    placeholderForDynamicInputs?: InputParameter,
+    _recurrenceParameters?: InputParameter[]
   ): BoundParameters[] {
     let inputArray: any[]; // tslint:disable-line: no-any
     if (!Array.isArray(inputs)) {
@@ -29,6 +31,7 @@ export default class InputsBinder {
       // tslint:disable-line: no-any
       if (
         manifest &&
+        placeholderForDynamicInputs &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION)
@@ -40,90 +43,6 @@ export default class InputsBinder {
         const binder = new ApiConnectionInputsBinder();
         return binder.bind(input, inputParametersByName, operation);
       }
-      // }if (equals(type, Constants.NODE.TYPE.API_MANAGEMENT)) {
-      //     const binder = new ApiManagementInputsBinder();
-      //     return binder.bind(input, inputParametersByName, operation);
-      // }
-
-      // if (equals(type, Constants.NODE.TYPE.APPEND_TO_ARRAY_VARIABLE)) {
-      //     const binder = new AppendToArrayVariableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.APPEND_TO_STRING_VARIABLE)) {
-      //     const binder = new AppendToStringVariableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.DECREMENT_VARIABLE)) {
-      //     const binder = new DecrementVariableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.FLAT_FILE_DECODING) || equals(type, Constants.NODE.TYPE.FLAT_FILE_ENCODING)) {
-      //     const binder = new FlatFileInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.FUNCTION)) {
-      //     const binder = new FunctionInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.HTTP)) {
-      //     const binder = new HttpInputsBinder();
-      //     return binder.bind(input, inputParametersByName, operation);
-      // } else if (equals(type, Constants.NODE.TYPE.IF)) {
-      //     const binder = new IfInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.INCREMENT_VARIABLE)) {
-      //     const binder = new IncrementVariableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
-      //     const binder = new InitializeVariableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP)) {
-      //     const binder = new IntegrationAccountArtifactLookupInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.JOIN)) {
-      //     const binder = new JoinInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.LIQUID)) {
-      //     const binder = new LiquidInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.MANUAL) || equals(type, Constants.NODE.TYPE.REQUEST)) {
-      //     const binder = new ManualInputsBinder();
-      //     return binder.bind(input, kind);
-      // } else if (equals(type, Constants.NODE.TYPE.PARSE_JSON)) {
-      //     const binder = new ParseJsonInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.QUERY)) {
-      //     const binder = new QueryInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.RESPONSE)) {
-      //     const binder = new ResponseInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.SELECT)) {
-      //     const binder = new SelectInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.SEND_TO_BATCH)) {
-      //     const binder = new SendToBatchInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.SET_VARIABLE)) {
-      //     const binder = new SetVariableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.SWITCH)) {
-      //     const binder = new SwitchInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.TABLE)) {
-      //     const binder = new TableInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.TERMINATE)) {
-      //     const binder = new TerminateInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.WAIT)) {
-      //     const binder = new WaitInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.WORKFLOW)) {
-      //     const binder = new WorkflowInputsBinder();
-      //     return binder.bind(input, inputParametersByName);
-      // } else if (equals(type, Constants.NODE.TYPE.XML_VALIDATION)) {
-      //     const binder = new XmlValidationInputsBinder();
-      //     return binder.bind(input);
-      // } else if (equals(type, Constants.NODE.TYPE.XSLT)) {
-      //     const binder = new XsltInputsBinder();
-      //     return binder.bind(input);
-      // }
       if (equals(type, constants.NODE.TYPE.RECURRENCE) && recurrence) {
         const binder = new RecurrenceInputsBinder();
         return binder.bind(recurrence);
@@ -137,9 +56,9 @@ export default class InputsBinder {
 class ManifestInputsBinder extends Binder {
   private _operationManifest: OperationManifest;
   private _location: string[];
-  private _placeholderForDynamicInputs: InputParameter | undefined;
+  private _placeholderForDynamicInputs: InputParameter;
 
-  constructor(manifest: OperationManifest, placeholderForDynamicInputs: InputParameter | undefined) {
+  constructor(manifest: OperationManifest, placeholderForDynamicInputs: InputParameter) {
     super();
     this._operationManifest = manifest;
     this._location = this._operationManifest.properties.inputsLocation ? this._operationManifest.properties.inputsLocation.slice(1) : [];
@@ -167,8 +86,7 @@ class ManifestInputsBinder extends Binder {
 
     const displayName = this.getInputParameterDisplayName(parameter);
 
-    const value =
-      '' /* !parameter.alias ? this._getValueByParameterKey(inputs, parameter) : this._getValueByParameterAlias(inputs, parameter);*/;
+    const value = parameter.alias ? this._getValueByParameterAlias(inputs, parameter) : this._getValueByParameterKey(inputs, parameter);
 
     const { dynamicValues, name, visibility } = parameter;
 
@@ -177,11 +95,10 @@ class ManifestInputsBinder extends Binder {
     return dynamicValues ? { ...boundParameter, dynamicValue: name } : boundParameter;
   };
 
-  // tslint:disable-next-line: no-any
-  // private _getValueByParameterAlias(inputs: any, parameter: InputParameter) {
-  //     const location = this._location.concat(parameter.alias);
-  //     return getObjectPropertyValue(inputs, location);
-  // }
+  private _getValueByParameterAlias(inputs: any, parameter: InputParameter) {
+    const location = this._location.concat(parameter.alias ?? '');
+    return getObjectPropertyValue(inputs, location);
+  }
 
   // tslint:disable-next-line: no-any
   private _getAdditionalProperties(parameter: InputParameter): Partial<BoundParameter<any>> | undefined {
@@ -200,38 +117,40 @@ class ManifestInputsBinder extends Binder {
     return undefined;
   }
 
-  // // tslint:disable-next-line: no-any
-  // private _getValueByParameterKey(inputs: any, parameter: InputParameter): any {
-  //     if (parameter.isDynamic && this._placeholderForDynamicInputs) {
-  //         return this._getValueForDynamicParameter(inputs, parameter);
-  //     }
+  private _getValueByParameterKey(inputs: any, parameter: InputParameter): any {
+    if (parameter.isDynamic) {
+      return this._getValueForDynamicParameter(inputs, parameter);
+    }
 
-  //     const { key } = parameter;
-  //     const prefix = key.substring(0, key.indexOf('$') + 1);
-  //     const isInputs = prefix === 'inputs.$';
-  //     const dataPath = isInputs ? this._location : [];
+    const { key } = parameter;
+    const prefix = key.substring(0, key.indexOf('$') + 1);
+    const isInputs = prefix === 'inputs.$';
+    const dataPath = isInputs ? this._location : [];
 
-  //     return updateParameterWithValues(prefix, !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, dataPath) : inputs, /* in */ undefined, [
-  //         parameter,
-  //     ])[0].value;
-  // }
+    return updateParameterWithValues(
+      prefix,
+      !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, dataPath) : inputs,
+      /* in */ '',
+      [parameter]
+    )[0].value;
+  }
 
-  // tslint:disable-next-line: no-any
-  // private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {
-  //     // NOTE(psamband): Dynamic inputs do not have keys and name prefixed, so we get the placeholders' dynamic parameter value
-  //     // to provide as seed value to look up dynamic parameters.
-  //     const { key, name } = this._placeholderForDynamicInputs;
-  //     const parameterLocation = key.indexOf('inputs.$.') > -1 ? key.replace('inputs.$.', '').split('.') : this._location;
-  //     const valueForDynamicSchemaParameter = !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, parameterLocation) : inputs;
+  private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {
+    // NOTE(psamband): Dynamic inputs do not have keys and name prefixed, so we get the placeholders' dynamic parameter value
+    // to provide as seed value to look up dynamic parameters.
+    const { key, name } = this._placeholderForDynamicInputs;
+    const parameterLocation = key.indexOf('inputs.$.') > -1 ? key.replace('inputs.$.', '').split('.') : this._location;
+    const valueForDynamicSchemaParameter =
+      !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, parameterLocation) : inputs;
 
-  //     if (equals(parameter.name, name)) {
-  //         return valueForDynamicSchemaParameter;
-  //     }
+    if (equals(parameter.name, name)) {
+      return valueForDynamicSchemaParameter;
+    }
 
-  //     if (!isNullOrUndefined(valueForDynamicSchemaParameter) && typeof valueForDynamicSchemaParameter === 'object') {
-  //         return getObjectPropertyValue(valueForDynamicSchemaParameter, parameter.name.split('.'));
-  //     }
+    if (!isNullOrUndefined(valueForDynamicSchemaParameter) && typeof valueForDynamicSchemaParameter === 'object') {
+      return getObjectPropertyValue(valueForDynamicSchemaParameter, parameter.name.split('.'));
+    }
 
-  //     return undefined;
-  // }
+    return undefined;
+  }
 }
