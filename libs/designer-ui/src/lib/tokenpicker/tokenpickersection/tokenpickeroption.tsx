@@ -173,7 +173,7 @@ export const TokenPickerOptions = ({
   const sectionHeaderColorCssDark = `rgb(${sectionHeaderColorRgbDark.red}, ${sectionHeaderColorRgbDark.green}, ${sectionHeaderColorRgbDark.blue})`;
 
   const maxRowsShown = selectedMode === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
-  const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
+  const showSeeMoreOrLessButton = !searchQuery && hasAdvanced(section.tokens) && section.tokens.length > maxRowsShown;
 
   return (
     <>
