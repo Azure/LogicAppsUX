@@ -1,6 +1,6 @@
 import type { OutputToken } from '../..';
 import { getReducedTokenList, hasAdvanced } from '../tokenpickerhelpers';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 describe('ui/tokenPicker/tokenPickerSection helpers', () => {
   describe('getReducedTokenList', () => {
     it('should return a list of tokens with the advanced tokens filtered out', () => {
@@ -66,6 +66,25 @@ describe('ui/tokenPicker/tokenPickerSection helpers', () => {
         { isAdvanced: false, value: 'Value 1' },
         { isAdvanced: true, value: 'Value 2' },
         { isAdvanced: false, value: 'Value 3' },
+        { isAdvanced: true, value: 'Value 4' },
+      ]);
+    });
+
+    it('should return all tokens with the "max rows shown" field respected', () => {
+      const tokens: OutputToken[] = [
+        { isAdvanced: true, value: 'Value 1' } as OutputToken,
+        { isAdvanced: true, value: 'Value 2' } as OutputToken,
+        { isAdvanced: true, value: 'Value 3' } as OutputToken,
+        { isAdvanced: true, value: 'Value 4' } as OutputToken,
+      ];
+      const options = { hasSearchQuery: false, maxRowsShown: 6, showAllOptions: false };
+
+      const result = getReducedTokenList(tokens, options);
+
+      expect(result).toEqual([
+        { isAdvanced: true, value: 'Value 1' },
+        { isAdvanced: true, value: 'Value 2' },
+        { isAdvanced: true, value: 'Value 3' },
         { isAdvanced: true, value: 'Value 4' },
       ]);
     });
