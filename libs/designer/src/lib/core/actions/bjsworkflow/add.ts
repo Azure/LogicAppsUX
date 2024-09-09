@@ -47,8 +47,12 @@ import {
   getIconUriFromConnector,
   getRecordEntry,
   isNumber,
+  UserPreferenceService,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import type {
+  Connection,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
@@ -185,7 +189,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes([initData]));
+    dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -237,7 +241,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes([initData]));
+    dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
@@ -301,7 +305,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     nodeDependencies,
     operationMetadata: { iconUri: manifest.properties.iconUri ?? '', brandColor: '' },
   };
-  dispatch(initializeNodes([initData]));
+  dispatch(initializeNodes({ nodes: [initData] }));
 };
 
 export const trySetDefaultConnectionForNode = async (
@@ -313,8 +317,9 @@ export const trySetDefaultConnectionForNode = async (
   const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
   if (connections.length > 0) {
-    await ConnectionService().setupConnectionIfNeeded(connections[0]);
-    dispatch(updateNodeConnection({ nodeId, connection: connections[0], connector }));
+    const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
+    await ConnectionService().setupConnectionIfNeeded(connection);
+    dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap(nodeId));
     dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
@@ -433,4 +438,24 @@ export const getNonDuplicateId = (existingActionNames: Record<string, string>, a
     count++;
   }
   return nodeId;
+};
+
+export const tryGetMostRecentlyUsedConnectionId = async (
+  connectorId: string,
+  allConnections: Connection[]
+): Promise<Connection | undefined> => {
+  let connectionId: string | undefined;
+  // NOTE: If no connection is available from local storage, first connection will be selected by default.
+  try {
+    connectionId = await UserPreferenceService()?.getMostRecentlyUsedConnectionId(connectorId);
+  } catch (error: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      message: `Failed to get most recently used connection id for the specified connector ${connectorId}.`,
+      area: 'OperationAddition',
+      error,
+    });
+  }
+
+  return connectionId ? allConnections.find((c) => equals(c.id, connectionId)) : undefined;
 };

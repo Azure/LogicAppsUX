@@ -158,8 +158,8 @@ export const initializeOperationMetadata = async (
   }
 
   dispatch(
-    initializeNodes(
-      allNodeData.map((data) => {
+    initializeNodes({
+      nodes: allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
         return {
           id,
@@ -172,8 +172,9 @@ export const initializeOperationMetadata = async (
           actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
-      })
-    )
+      }),
+      clearExisting: !pasteParams,
+    })
   );
 
   const variables = initializeVariables(operations, allNodeData);

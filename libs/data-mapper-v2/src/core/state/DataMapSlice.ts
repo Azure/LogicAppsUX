@@ -1,5 +1,6 @@
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import { directAccessPseudoFunctionKey, type FunctionData, type FunctionDictionary } from '../../models/Function';
+import type { Draft } from 'immer';
 import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
@@ -74,6 +75,9 @@ const getIntermedateScrollNodeHandles = (guid: string) => {
   record['bottom-right'] = `bottom-right-${guid}`;
   return record;
 };
+export interface Draft2 {
+  draft: Draft<DataMapState>;
+}
 
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;

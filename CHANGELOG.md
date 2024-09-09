@@ -1,4 +1,58 @@
 # Logic Apps Designer
+## [4.85.0](https://github.com/Azure/LogicAppsUX/compare/v4.84.0...v4.85.0) (2024-09-09)
+
+
+### Features
+
+* **designer:** Adding support for recently used connection for a connector ([#5612](https://github.com/Azure/LogicAppsUX/issues/5612)) ([18047c3](https://github.com/Azure/LogicAppsUX/commit/18047c37b664281f0810abaf42f03c5681659339))
+
+
+### Bug Fixes
+
+* **designer-ui:** OK label is too far to the right in expression assistant ([#5616](https://github.com/Azure/LogicAppsUX/issues/5616)) ([05feb27](https://github.com/Azure/LogicAppsUX/commit/05feb27366e64ef20400611e52c0d112340bd9f8))
+* **designer-ui:** Optimize file picker partitioning and fix overflow ([#5592](https://github.com/Azure/LogicAppsUX/issues/5592)) ([a024816](https://github.com/Azure/LogicAppsUX/commit/a02481619e89617ec632e5b338f07cb11ee09e02))
+* **designer:** Add safety check for if parameterType is not within valid token types ([#5610](https://github.com/Azure/LogicAppsUX/issues/5610)) ([2937ed0](https://github.com/Azure/LogicAppsUX/commit/2937ed07a18c15c3c36670b1905359d07fdd5208)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Adding support for html dom and lexical characters  ([#5613](https://github.com/Azure/LogicAppsUX/issues/5613)) ([d2b16bc](https://github.com/Azure/LogicAppsUX/commit/d2b16bcb4e0682c57446b7a92729e690381d0622))
+* **designer:** Correctly setting auto casting for manifests and fixing path parameters encoding ([#5601](https://github.com/Azure/LogicAppsUX/issues/5601)) ([baca6c3](https://github.com/Azure/LogicAppsUX/commit/baca6c36dfa5172677320c02e59ca8f95df1b51b))
+* **designer:** Fix http manifest to include outputs in correct location ([#5603](https://github.com/Azure/LogicAppsUX/issues/5603)) ([a7bd532](https://github.com/Azure/LogicAppsUX/commit/a7bd5328e13689bbbee539430b4a04468c2449a8))
+* **designer:** Fixing the manifest schema for flatfiledecoding ([#5607](https://github.com/Azure/LogicAppsUX/issues/5607)) ([71fa6a0](https://github.com/Azure/LogicAppsUX/commit/71fa6a0847ac802a528c1d42731f7e82ba1cce0f))
+* **vscode:** Revert convert the authentication type from Raw to MSI when deploying Logic App ([#5539](https://github.com/Azure/LogicAppsUX/issues/5539)) ([#5602](https://github.com/Azure/LogicAppsUX/issues/5602)) ([5d77f71](https://github.com/Azure/LogicAppsUX/commit/5d77f71d67d75488515ae61927a917f1cc73b887))
+* **vscode:** using resolveConnectionsReferences for connection resolution ([#5605](https://github.com/Azure/LogicAppsUX/issues/5605)) ([445f93b](https://github.com/Azure/LogicAppsUX/commit/445f93b240bbf52a577a05a62a2a369642b935a3))
+
+## [4.84.0](https://github.com/Azure/LogicAppsUX/compare/v4.83.0...v4.84.0) (2024-09-05)
+
+
+### Bug Fixes
+
+* **designer:** Change Javascript output to return string type ([#5594](https://github.com/Azure/LogicAppsUX/issues/5594)) ([5ec0c62](https://github.com/Azure/LogicAppsUX/commit/5ec0c627df5c3c2f16b02f79ff4c34708b5b20ec)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **Designer:** Connection fetch is now recursive over nextlinks ([#5595](https://github.com/Azure/LogicAppsUX/issues/5595)) ([88d2c5f](https://github.com/Azure/LogicAppsUX/commit/88d2c5f1b4823faa132d49082efee96a31fb5cc8))
+* **designer:** Correctly verify parents arrays are in spliton while adding implicit foreach ([#5596](https://github.com/Azure/LogicAppsUX/issues/5596)) ([c1fe5dc](https://github.com/Azure/LogicAppsUX/commit/c1fe5dc77df3e652ddfda0dfcaec90f64ac6bf0c))
+
+## [4.83.0](https://github.com/Azure/LogicAppsUX/compare/v4.82.0...v4.83.0) (2024-09-04)
+
+
+### Bug Fixes
+
+* **Data Mapper:** generate XSLT error message and loop connection improvement ([#5585](https://github.com/Azure/LogicAppsUX/issues/5585)) ([d7b39ef](https://github.com/Azure/LogicAppsUX/commit/d7b39ef9232f177fbe41e0520ed9ed636d6f371c))
+* **designer:** Fixing the recursive call in dynamic data load ([#5584](https://github.com/Azure/LogicAppsUX/issues/5584)) ([927ad49](https://github.com/Azure/LogicAppsUX/commit/927ad498eeec3e2fc589a2a28c42415fd87c5972))
+* **designer:** Update undo/redo compression to use pako instead of zlib library ([#5591](https://github.com/Azure/LogicAppsUX/issues/5591)) ([f698e48](https://github.com/Azure/LogicAppsUX/commit/f698e488e37ade034a5476bfb8d443e16213cdc4))
+* **vscode:** Convert the authentication type from Raw to MSI when deploying Logic App ([#5539](https://github.com/Azure/LogicAppsUX/issues/5539)) ([46fb330](https://github.com/Azure/LogicAppsUX/commit/46fb33089a677e530261abdc2e10164f43558c01))
+
+## [4.82.0](https://github.com/Azure/LogicAppsUX/compare/v4.81.0...v4.82.0) (2024-09-03)
+
+
+### Features
+
+* **designer:** Editable Code View ([#5547](https://github.com/Azure/LogicAppsUX/issues/5547)) ([6db435e](https://github.com/Azure/LogicAppsUX/commit/6db435e6f39a30dc63affc94b2505b767e74c237)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with edges being hidden on start if one end is offscreen ([#5575](https://github.com/Azure/LogicAppsUX/issues/5575)) ([f4742c5](https://github.com/Azure/LogicAppsUX/commit/f4742c52a5eeef77bd374a4a5a89d18b340cceac))
+* **Designer:** Fixed issue with loop pager index resetting, fixed operations reloading in loops ([#5586](https://github.com/Azure/LogicAppsUX/issues/5586)) ([66cf200](https://github.com/Azure/LogicAppsUX/commit/66cf2002c22d94f6dabc2e99d5a32768d8f35797))
+* **designer:** Fixing dynamic uri call for standard la when usi MSI connection ([#5580](https://github.com/Azure/LogicAppsUX/issues/5580)) ([50c30d3](https://github.com/Azure/LogicAppsUX/commit/50c30d36e8df3ceb884c5558548ad9ec32bf1bf9))
+* **Designer:** Scope Nodes can be moved to Invalid locations ([#5574](https://github.com/Azure/LogicAppsUX/issues/5574)) ([dd2ea7b](https://github.com/Azure/LogicAppsUX/commit/dd2ea7b5d1928687525891ed17ad95b22d96c21b))
+
 ## [4.81.0](https://github.com/Azure/LogicAppsUX/compare/v4.80.0...v4.81.0) (2024-08-30)
 
 
