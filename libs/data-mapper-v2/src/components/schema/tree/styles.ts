@@ -39,11 +39,56 @@ export const useStyles = makeStyles({
   typeAnnotation: {
     display: 'inline-flex',
     marginLeft: 'auto',
+    marginRight: '15px',
   },
   required: {
     ':after': {
       content: '"*"',
     },
+  },
+  root: {
+    marginLeft: '16px',
+    height: '100%',
+  },
+});
+
+export const useTreeStyles = makeStyles({
+  root: {
+    height: '100%',
+  },
+});
+
+export const useTreeNodeStyles = makeStyles({
+  required: {
+    ':after': {
+      content: '"*"',
+    },
+  },
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: '100%',
+    ...shorthands.overflow('visible'),
+    ':hover': {
+      backgroundColor: '#D5E4FF',
+    },
+  },
+  dataWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  leafNode: {
+    paddingLeft: '8px',
+  },
+  chevronIcon: {
+    cursor: 'pointer',
+  },
+  active: {
+    backgroundColor: '#D5E4FF',
   },
 });
 

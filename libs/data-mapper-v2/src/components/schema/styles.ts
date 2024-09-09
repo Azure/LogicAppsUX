@@ -50,7 +50,6 @@ export const useStyles = makeStyles({
   treeWrapper: {
     display: 'flex',
     width: '100%',
-    justifyContent: 'center',
     flexDirection: 'column',
     height: '100%',
   },

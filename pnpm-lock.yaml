@@ -624,7 +624,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -663,13 +663,13 @@ importers:
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
       reactflow:
         specifier: ^11.11.4
         version: 11.11.4(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@4.2.1)
+        version: 2.4.2(redux@5.0.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -758,6 +758,9 @@ importers:
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
+      react-arborist:
+        specifier: ^3.4.0
+        version: 3.4.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dnd:
         specifier: 16.0.1
         version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
@@ -833,7 +836,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -890,10 +893,10 @@ importers:
         version: 8.0.5(@types/react@18.3.0)(react@18.2.0)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@4.2.1)
+        version: 2.4.2(redux@5.0.1)
       reselect:
         specifier: 4.1.8
         version: 4.1.8
@@ -4479,11 +4482,20 @@ packages:
   '@polka/url@1.0.0-next.25':
     resolution: {integrity: sha512-j7P6Rgr3mmtdkeDGTe0E/aYyWEWVtc5yFXtHCRHs28/jptDEWfaVOc5T7cblqy1XKPPfCxJc/8DwQ5YgLOZOVQ==}
 
+  '@react-dnd/asap@4.0.1':
+    resolution: {integrity: sha512-kLy0PJDDwvwwTXxqTFNAAllPHD73AycE9ypWeln/IguoGBEbvFcPDbCV03G52bEcC5E+YgupBE0VzHGdC8SIXg==}
+
   '@react-dnd/asap@5.0.2':
     resolution: {integrity: sha512-WLyfoHvxhs0V9U+GTsGilGgf2QsPl6ZZ44fnv0/b8T3nQyvzxidxsg/ZltbWssbsRDlYW8UKSQMTGotuTotZ6A==}
 
+  '@react-dnd/invariant@2.0.0':
+    resolution: {integrity: sha512-xL4RCQBCBDJ+GRwKTFhGUW8GXa4yoDfJrPbLblc3U09ciS+9ZJXJ3Qrcs/x2IODOdIE5kQxvMmE2UKyqUictUw==}
+
   '@react-dnd/invariant@4.0.2':
     resolution: {integrity: sha512-xKCTqAK/FFauOM9Ta2pswIyT3D8AQlfrYdOi/toTPEhqCuAs1v5tcJ3Y08Izh1cJ5Jchwy9SeAXmMg6zrKs2iw==}
+
+  '@react-dnd/shallowequal@2.0.0':
+    resolution: {integrity: sha512-Pc/AFTdwZwEKJxFJvlxrSmGe/di+aAOBn60sremrpLo6VI/6cmiUYNNwlI5KNYttg7uypzA3ILPMPgxB2GYZEg==}
 
   '@react-dnd/shallowequal@4.0.2':
     resolution: {integrity: sha512-/RVXdLvJxLg4QKvMoM5WlwNR9ViO9z8B/qPcc+C0Sa/teJY7QG7kJ441DwzOjMYEY7GmU4dj5EcGHIkKZiQZCA==}
@@ -6816,6 +6828,9 @@ packages:
   discontinuous-range@1.0.0:
     resolution: {integrity: sha512-c68LpLbO+7kP/b1Hr1qs8/BJ09F5khZGTxqxZuhzxpmwJKOgRFHJWIb9/KmqnqHhLdO55aOxFH/EGBvUQbL/RQ==}
 
+  dnd-core@14.0.1:
+    resolution: {integrity: sha512-+PVS2VPTgKFPYWo3vAFEA8WPbTf7/xo43TifH9G8S1KqnrQu0o77A3unrF5yOugy4mIz7K5wAVFHUcha7wsz6A==}
+
   dnd-core@16.0.1:
     resolution: {integrity: sha512-HK294sl7tbw6F6IeuK16YSBUoorvHpY8RHO+9yFfaJyCDVb6n7PRcezrOEOa2SBCqiYpemh5Jx20ZcjKdFAVng==}
 
@@ -8842,6 +8857,9 @@ packages:
     resolution: {integrity: sha512-UERzLsxzllchadvbPs5aolHh65ISpKpM+ccLbOJ8/vvpBKmAWf+la7dXFy7Mr0ySHbdHrFv5kGFCUHHe6GFEmw==}
     engines: {node: '>= 4.0.0'}
 
+  memoize-one@5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
+
   meow@8.1.2:
     resolution: {integrity: sha512-r85E3NdZ+mpYk1C6RjPFEMSE+s1iZMuHtsHAqY0DT3jZczl0diWUZ8g6oU7h0M9cD2EL+PzaYghhCLzR0ZNn5Q==}
     engines: {node: '>=10'}
@@ -10036,6 +10054,12 @@ packages:
     resolution: {integrity: sha1-zZJL9SAKB1uDwYjNa54hG3/A0+0=}
     hasBin: true
 
+  react-arborist@3.4.0:
+    resolution: {integrity: sha512-QI46oRGXJr0oaQfqqVobIiIoqPp5Y5gM69D2A2P7uHVif+X75XWnScR5drC7YDKgJ4CXVaDeFwnYKOWRRfncMg==}
+    peerDependencies:
+      react: '>= 16.14'
+      react-dom: '>= 16.14'
+
   react-dev-utils@12.0.1:
     resolution: {integrity: sha512-84Ivxmr17KjUupyqzFode6xKhjwuEJDROWKJy/BthkL7Wn6NJ8h4WE6k/exAv6ImS+0oZLRRW5j/aINMHyeGeQ==}
     engines: {node: '>=14'}
@@ -10052,6 +10076,9 @@ packages:
       react: ^16.8.0 || ^17.0.0
       react-dnd: 14.0.0
 
+  react-dnd-html5-backend@14.1.0:
+    resolution: {integrity: sha512-6ONeqEC3XKVf4eVmMTe0oPds+c5B9Foyj8p/ZKLb7kL2qh9COYxiBHv3szd6gztqi/efkmriywLUVlPotqoJyw==}
+
   react-dnd-html5-backend@16.0.1:
     resolution: {integrity: sha1-h/rvFYRdUSojs8CNKez9NIcWiLY=}
 
@@ -10066,6 +10093,21 @@ packages:
     peerDependencies:
       react: ^16.14.0 || ^17.0.2 || ^18.0.0
       react-dnd: ^16.0.1
+
+  react-dnd@14.0.5:
+    resolution: {integrity: sha512-9i1jSgbyVw0ELlEVt/NkCUkxy1hmhJOkePoCH713u75vzHGyXhPDm28oLfc2NMSBjZRM1Y+wRjHXJT3sPrTy+A==}
+    peerDependencies:
+      '@types/hoist-non-react-statics': '>= 3.3.1'
+      '@types/node': '>= 12'
+      '@types/react': '>= 16'
+      react: '>= 16.14'
+    peerDependenciesMeta:
+      '@types/hoist-non-react-statics':
+        optional: true
+      '@types/node':
+        optional: true
+      '@types/react':
+        optional: true
 
   react-dnd@16.0.1:
     resolution: {integrity: sha1-JEKj7GeJLGDUChVZ7vRUmLom+jc=}
@@ -10262,6 +10304,13 @@ packages:
       react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
       react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
 
+  react-window@1.8.10:
+    resolution: {integrity: sha512-Y0Cx+dnU6NLa5/EvoHukUD0BklJ8qITCtVEPY1C/nL8wwoZ0b5aEw8Ff1dOVHw7fCzMt55XfJDd8S8W8LCaUCg==}
+    engines: {node: '>8.0.0'}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+
   react@18.2.0:
     resolution: {integrity: sha1-VVvZhZKIMlX6AN4U8RUakXtdd9U=}
     engines: {node: '>=0.10.0'}
@@ -10338,6 +10387,9 @@ packages:
 
   redux@4.2.1:
     resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
+
+  redux@5.0.1:
+    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
 
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}
@@ -18128,9 +18180,15 @@ snapshots:
 
   '@polka/url@1.0.0-next.25': {}
 
+  '@react-dnd/asap@4.0.1': {}
+
   '@react-dnd/asap@5.0.2': {}
 
+  '@react-dnd/invariant@2.0.0': {}
+
   '@react-dnd/invariant@4.0.2': {}
+
+  '@react-dnd/shallowequal@2.0.0': {}
 
   '@react-dnd/shallowequal@4.0.2': {}
 
@@ -18229,6 +18287,16 @@ snapshots:
     optionalDependencies:
       react: 18.2.0
       react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+
+  '@reduxjs/toolkit@1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)':
+    dependencies:
+      immer: 9.0.15
+      redux: 4.2.1
+      redux-thunk: 2.4.2(redux@4.2.1)
+      reselect: 4.1.8
+    optionalDependencies:
+      react: 18.2.0
+      react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
 
   '@remix-run/router@1.15.3': {}
 
@@ -20826,6 +20894,12 @@ snapshots:
 
   discontinuous-range@1.0.0: {}
 
+  dnd-core@14.0.1:
+    dependencies:
+      '@react-dnd/asap': 4.0.1
+      '@react-dnd/invariant': 2.0.0
+      redux: 4.2.1
+
   dnd-core@16.0.1:
     dependencies:
       '@react-dnd/asap': 5.0.2
@@ -23355,6 +23429,8 @@ snapshots:
     dependencies:
       fs-monkey: 1.0.5
 
+  memoize-one@5.2.1: {}
+
   meow@8.1.2:
     dependencies:
       '@types/minimist': 1.2.5
@@ -24782,6 +24858,20 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
+  react-arborist@3.4.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-dnd: 14.0.5(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
+      react-dnd-html5-backend: 14.1.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-window: 1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      redux: 5.0.1
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/hoist-non-react-statics'
+      - '@types/node'
+      - '@types/react'
+
   react-dev-utils@12.0.1(eslint@8.56.0)(typescript@5.4.5)(webpack@5.91.0(esbuild@0.19.12)):
     dependencies:
       '@babel/code-frame': 7.24.2
@@ -24822,6 +24912,10 @@ snapshots:
       react: 18.2.0
       react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
 
+  react-dnd-html5-backend@14.1.0:
+    dependencies:
+      dnd-core: 14.0.1
+
   react-dnd-html5-backend@16.0.1:
     dependencies:
       dnd-core: 16.0.1
@@ -24840,6 +24934,19 @@ snapshots:
     dependencies:
       react: 18.2.0
       react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
+
+  react-dnd@14.0.5(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0):
+    dependencies:
+      '@react-dnd/invariant': 2.0.0
+      '@react-dnd/shallowequal': 2.0.0
+      dnd-core: 14.0.1
+      fast-deep-equal: 3.1.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+    optionalDependencies:
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/node': 20.12.7
+      '@types/react': 18.3.0
 
   react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0):
     dependencies:
@@ -24862,7 +24969,7 @@ snapshots:
 
   react-error-boundary@3.1.4(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       react: 18.2.0
 
   react-error-overlay@6.0.11: {}
@@ -24971,6 +25078,21 @@ snapshots:
       '@types/react-dom': 18.3.0
       react-dom: 18.2.0(react@18.2.0)
       redux: 4.2.1
+
+  react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+      react-is: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    optionalDependencies:
+      '@types/react': 18.3.0
+      '@types/react-dom': 18.3.0
+      react-dom: 18.2.0(react@18.2.0)
+      redux: 5.0.1
 
   react-refresh@0.14.0: {}
 
@@ -25086,6 +25208,13 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       react-lifecycles-compat: 3.0.4
 
+  react-window@1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      memoize-one: 5.2.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
   react@18.2.0:
     dependencies:
       loose-envify: 1.4.0
@@ -25195,11 +25324,17 @@ snapshots:
     dependencies:
       redux: 4.2.1
 
+  redux-thunk@2.4.2(redux@5.0.1):
+    dependencies:
+      redux: 5.0.1
+
   redux-undo@1.1.0: {}
 
   redux@4.2.1:
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
+
+  redux@5.0.1: {}
 
   reflect.getprototypeof@1.0.6:
     dependencies:
