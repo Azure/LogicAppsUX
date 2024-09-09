@@ -348,10 +348,11 @@ const ParameterSection = ({
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
-      editorType ??
-      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
-      constants.SWAGGER.TYPE.ANY;
-    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+      editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const supportedTypes: string[] = getPropertyValue(
+      constants.TOKENS,
+      parameterType && parameterType in constants.TOKENS ? parameterType : constants.SWAGGER.TYPE.ANY
+    );
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
