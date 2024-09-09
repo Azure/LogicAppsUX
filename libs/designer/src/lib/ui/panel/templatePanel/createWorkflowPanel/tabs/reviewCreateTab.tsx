@@ -9,7 +9,7 @@ import { closePanel, selectPanelTab } from '../../../../../core/state/templates/
 import { TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
-import { normalizeConnectorId } from '../../../../../core/templates/utils/helper';
+import { normalizeConnectorId } from '../../../../../core/utils/connectors/connections';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();

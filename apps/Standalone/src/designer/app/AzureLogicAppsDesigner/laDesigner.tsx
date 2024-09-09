@@ -370,6 +370,7 @@ const DesignerEditor = () => {
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
+            unsupportedActionsIds: ['managedApis/gmail'],
           },
           showConnectionsPanel,
           showPerformanceDebug,

@@ -1,4 +1,4 @@
-import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
+import { type Template, getIntl } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -6,6 +6,7 @@ import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
+import { normalizeConnectorId } from '../../../core/utils/connectors/connections';
 
 export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch, { templateId, workflowAppName }: Template.TemplateContext) => {
   return [
@@ -46,15 +47,6 @@ export const getUniqueConnectorsFromConnections = (
   }
 
   return result;
-};
-
-export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
-  if (!isArmResourceId(connectorId)) {
-    return connectorId;
-  }
-
-  const result = connectorId.replaceAll('#subscription#', subscriptionId);
-  return result.replaceAll('#location#', location);
 };
 
 const templateSearchOptions = {

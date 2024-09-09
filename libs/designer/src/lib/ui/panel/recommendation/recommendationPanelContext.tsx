@@ -38,7 +38,7 @@ const SELECTION_STATES = {
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
-  const { displayRuntimeInfo } = useHostOptions();
+  const { displayRuntimeInfo, unsupportedActionsIds } = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,7 +51,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
-  const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
+  const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations(unsupportedActionsIds);
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
   const [isLoadingOperationGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
 

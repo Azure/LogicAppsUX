@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeConnectorId } from '../helper';
+import { normalizeConnectorId } from '../connectors/connections';
 
-describe('templates/utils/helper', () => {
+describe('Connection utils', () => {
   describe('normalizeConnectorId', () => {
     const armConnectorId = '/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/sql';
-    const spConnectorId = '/serviceProviders/sql';
     const subscriptionId = '00000000-0000-0000-0000-000000000000';
     const location = 'eastus';
 

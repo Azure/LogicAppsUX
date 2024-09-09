@@ -22,7 +22,7 @@ const pagedOpts = {
 
 /// Operations ///
 
-export const useAllOperations = () => {
+export const useAllOperations = (unsupportedActionsIds?: string[]) => {
   const { data: azureOperations, isLoading: azureLoading, hasNextPage: azureHasNextPage } = useAzureOperationsLazyQuery();
 
   const { data: customOperations, isLoading: customLoading, hasNextPage: customHasNextPage } = useCustomOperationsLazyQuery();
@@ -33,7 +33,7 @@ export const useAllOperations = () => {
     const azure = azureOperations?.pages.flatMap((page) => page.data) ?? [];
     const custom = customOperations?.pages.flatMap((page) => page.data) ?? [];
     const builtin = builtinOperations?.data ?? [];
-    return [...azure, ...custom, ...builtin].filter((op) => op !== undefined);
+    return [...azure, ...custom, ...builtin].filter((op) => op !== undefined && op?.id?.includes('gmail'));
   }, [azureOperations, customOperations, builtinOperations]);
 
   const isLoading = useMemo(
@@ -41,6 +41,7 @@ export const useAllOperations = () => {
     [azureLoading, customLoading, builtinLoading, azureHasNextPage, customHasNextPage]
   );
 
+  console.log('---data ', data, unsupportedActionsIds);
   return useMemo(() => ({ data, isLoading }), [data, isLoading]);
 };
 

@@ -19,6 +19,7 @@ import {
   getRecordEntry,
   getPropertyValue,
   deepCompareObjects,
+  isArmResourceId,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -296,3 +297,12 @@ function containsManagedIdentityParameter(parameterSet: ConnectionParameterSet):
       equals(parameters[parameter].uiDefinition?.constraints?.default, 'managedserviceidentity')
   );
 }
+
+export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
+  if (!isArmResourceId(connectorId)) {
+    return connectorId;
+  }
+
+  const result = connectorId.replaceAll('#subscription#', subscriptionId);
+  return result.replaceAll('#location#', location);
+};
