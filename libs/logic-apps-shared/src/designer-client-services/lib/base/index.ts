@@ -44,3 +44,5 @@ export type { TemplateServiceOptions } from './template';
 // Tenant
 export { BaseTenantService } from './tenant';
 export type { BaseTenantServiceOptions } from './tenant';
+
+export { BaseUserPreferenceService } from './userpreference';
