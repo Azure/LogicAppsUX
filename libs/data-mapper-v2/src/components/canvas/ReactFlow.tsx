@@ -20,7 +20,7 @@ import LoopEdge from '../common/reactflow/edges/LoopEdge';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import IntermediateConnectedEdge from '../common/reactflow/edges/IntermediateConnectedEdge';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
-import useReactFlowStates from './useReactFlowStates';
+import useReactFlowStates from './useReactflowStates';
 
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
