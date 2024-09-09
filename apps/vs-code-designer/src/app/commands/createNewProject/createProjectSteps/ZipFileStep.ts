@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import type { ConnectionReferenceModel, IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionsData, IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 import * as rimraf from 'rimraf';
 
@@ -42,7 +42,6 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
     return this.zipContent === undefined;
   }
 
-
   public async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
     if (!this.wizardContext) {
       console.error('wizardContext is not set in getzipfILes.');
@@ -67,7 +66,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
     return Promise.resolve([]);
   }
 
-  public async getConnectionsJsonContent(context: IFunctionWizardContext): Promise<any> {
+  public async getConnectionsJsonContent(context: IFunctionWizardContext): Promise<ConnectionsData> {
     this.wizardContext = context;
     try {
       if (!this.wizardContext) {
@@ -79,7 +78,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
 
       if (fs.existsSync(connectionsJsonPath)) {
         const connectionsJsonContent = fs.readFileSync(connectionsJsonPath, 'utf8');
-        const connection: ConnectionReferenceModel = JSON.parse(connectionsJsonContent);
+        const connection = JSON.parse(connectionsJsonContent);
 
         return connection; // Return the parsed connections object
       }

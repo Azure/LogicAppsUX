@@ -1,3 +1,4 @@
+export interface ParametersData extends Record<string, Parameter> {}
 export interface Parameter {
   type: string;
   metadata?: any;
