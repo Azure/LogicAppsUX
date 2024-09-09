@@ -23,7 +23,7 @@ import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
 import { extend } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { latestGAVersion, OpenBehavior, resolveConnectionsReferences } from '@microsoft/vscode-extension-logic-apps';
 import { extractConnectionDetails, changeAuthTypeToRaw } from './cloudToLocalHelper';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { writeFormattedJson } from '../../utils/fs';
@@ -169,10 +169,16 @@ export async function cloudToLocalInternal(
   const zipFilePath = ZipFileStep.zipFilePath;
   const zipEntries = getZipEntries(zipFilePath);
   const connectionspath = path.join(wizardContext.workspacePath, 'connections.json');
-  let zipSettings = {};
   const localSettingsEntry = zipEntries.find((entry) => entry.entryName === 'local.settings.json');
   const localSettingsPath = path.join(wizardContext.workspacePath, 'local.settings.json');
   let localSettings: { Values?: any } = {};
+  let zipSettings = {};
+  const parametersEntry = zipEntries.find((entry) => entry.entryName === 'parameters.json');
+  const parametersPath = path.join(wizardContext.workspacePath, 'parameters.json');
+  let localParameters: any = {};
+  let zipParameters: any = {};
+  const zipFileInstance = new ZipFileStep();
+  const connectionsData = await zipFileInstance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
 
   if (localSettingsEntry) {
     const zipSettingsContent = localSettingsEntry.getData().toString('utf8');
@@ -184,18 +190,28 @@ export async function cloudToLocalInternal(
     localSettings = JSON.parse(localSettingsContent);
   }
 
+  if (parametersEntry) {
+    const parametersContent = parametersEntry.getData().toString('utf8');
+    zipParameters = JSON.parse(parametersContent);
+  }
+
+  if (fs.existsSync(parametersPath)) {
+    const localParametersContent = fs.readFileSync(parametersPath, 'utf8');
+    localParameters = JSON.parse(localParametersContent);
+  }
+
   async function fetchConnections() {
     const instance = new ZipFileStep();
     try {
-      const connection = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
-      const connectionDetails = extractConnectionDetails(connection);
+      const connectionsData = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
+      const connectionDetails = extractConnectionDetails(connectionsData);
       return connectionDetails;
     } catch (error) {
       console.error('Failed to fetch connections:', error);
     }
   }
 
-  async function mergeAndWriteConnections() {
+  async function mergeAndWriteSettings(): Promise<Record<string, any>> {
     try {
       const connectionsValues = await fetchConnections();
       const connectionDetail = connectionsValues[0];
@@ -203,26 +219,27 @@ export async function cloudToLocalInternal(
         ...connectionDetail,
         ...localSettings.Values,
       };
-      const finalObject = {
+      const settings = {
         ...localSettings,
         Values: newValues,
       };
-      fs.writeFileSync(localSettingsPath, JSON.stringify(finalObject, null, 2));
+      fs.writeFileSync(localSettingsPath, JSON.stringify(settings, null, 2));
+      return settings;
     } catch (error) {
       console.error('Error writing file:', error);
     }
   }
-  const skipProjectPath = true;
 
+  extend(localParameters, zipParameters);
   extend(localSettings, zipSettings);
-  await mergeAndWriteConnections();
-  const instance = new ZipFileStep();
-  const connection = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
-  fs.writeFileSync(connectionspath, changeAuthTypeToRaw(connection), 'utf-8');
+  const { convertedConnections, convertedParameters } = changeAuthTypeToRaw(connectionsData, localParameters);
+  const mergedSettings = await mergeAndWriteSettings();
+  const resolvedConnections = resolveConnectionsReferences(convertedConnections, convertedParameters, mergedSettings);
+  fs.writeFileSync(connectionspath, resolvedConnections, 'utf-8');
   cleanLocalSettings(localSettingsPath);
-  const connectionsAndSettingsUpdated = await getSettings(context, connection, wizardContext.workspacePath);
+  const connectionsAndSettingsUpdated = await getSettings(context, resolvedConnections, wizardContext.workspacePath);
 
-  await saveConnectionReferences(context, wizardContext.workspacePath, connectionsAndSettingsUpdated, skipProjectPath);
+  await saveConnectionReferences(context, wizardContext.workspacePath, connectionsAndSettingsUpdated, true);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
