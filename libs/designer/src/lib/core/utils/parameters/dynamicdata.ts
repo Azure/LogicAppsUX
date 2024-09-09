@@ -229,11 +229,7 @@ export async function getDynamicSchema(
   }
 }
 
-export function getDynamicOutputsFromSchema(
-  schema: OpenAPIV2.SchemaObject,
-  dynamicParameter: OutputParameter,
-  operationInfo: NodeOperation
-): OutputParameters {
+export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dynamicParameter: OutputParameter): OutputParameters {
   const { key, name, parentArray, required, source } = dynamicParameter;
   const keyPrefix = _getKeyPrefixFromParameter(key);
   const processorOptions: SchemaProcessorOptions = {
@@ -245,7 +241,6 @@ export function getDynamicOutputsFromSchema(
     includeParentObject: true,
     parentProperty: parentArray ? { arrayName: parentArray, isArray: true } : undefined,
     dataKeyPrefix: '$',
-    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
   };
 
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
