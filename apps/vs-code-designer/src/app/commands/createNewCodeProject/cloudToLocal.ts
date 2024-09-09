@@ -232,10 +232,14 @@ export async function cloudToLocalInternal(
 
   extend(localParameters, zipParameters);
   extend(localSettings, zipSettings);
-  const { convertedConnections, convertedParameters } = changeAuthTypeToRaw(connectionsData, localParameters);
+  const [convertedConnections, convertedParameters] = changeAuthTypeToRaw(connectionsData, localParameters);
   const mergedSettings = await mergeAndWriteSettings();
-  const resolvedConnections = resolveConnectionsReferences(convertedConnections, convertedParameters, mergedSettings);
-  fs.writeFileSync(connectionspath, resolvedConnections, 'utf-8');
+  const resolvedConnections = resolveConnectionsReferences(
+    JSON.stringify(convertedConnections),
+    convertedParameters,
+    mergedSettings.Values
+  );
+  fs.writeFileSync(connectionspath, JSON.stringify(resolvedConnections), 'utf-8');
   cleanLocalSettings(localSettingsPath);
   const connectionsAndSettingsUpdated = await getSettings(context, resolvedConnections, wizardContext.workspacePath);
 
