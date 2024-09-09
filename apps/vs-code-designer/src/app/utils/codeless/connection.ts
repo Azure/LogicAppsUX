@@ -198,8 +198,7 @@ export async function getConnectionsAndSettingsToUpdate(
   connectionReferences: any,
   azureTenantId: string,
   workflowBaseManagementUri: string,
-  parametersFromDefinition: any,
-  skipProjectPath = false // Added new parameter with default value
+  parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);

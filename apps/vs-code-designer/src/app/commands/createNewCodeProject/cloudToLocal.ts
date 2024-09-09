@@ -78,15 +78,13 @@ async function getSettings(context: IActionContext, connections: any, workspaceP
       await writeFormattedJson(path.join(workspacePath, parametersFileName), parameters);
     }
   }
-  const skipProjectPath = true;
   const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
     context,
     workspacePath,
     connectionReferences,
     tenantId,
     workflowManagementBaseUrl,
-    parameters,
-    skipProjectPath
+    parameters
   );
   return connectionsAndSettingsToUpdate;
 }
@@ -243,7 +241,7 @@ export async function cloudToLocalInternal(
   cleanLocalSettings(localSettingsPath);
   const connectionsAndSettingsUpdated = await getSettings(context, resolvedConnections, wizardContext.workspacePath);
 
-  await saveConnectionReferences(context, wizardContext.workspacePath, connectionsAndSettingsUpdated, true);
+  await saveConnectionReferences(context, wizardContext.workspacePath, connectionsAndSettingsUpdated);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }

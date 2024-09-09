@@ -69,7 +69,7 @@ export function changeAuthTypeToRaw(connections: ConnectionsData, parameters: Pa
     } catch (error) {
       console.error(error);
     }
-    return [connections, parameters];
+    return { connections, parameters };
     // let data: string | undefined;
     // if (connections) {
     //   const managedApiConnections = connections['managedApiConnections'];
