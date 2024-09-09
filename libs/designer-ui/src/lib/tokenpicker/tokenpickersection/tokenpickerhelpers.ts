@@ -10,14 +10,11 @@ export const getReducedTokenList = (
   let filteredTokens = tokens;
   if (tokens.length > maxRowsShown) {
     filteredTokens = tokens.filter((token) => !token.isAdvanced || showAllOptions || hasSearchQuery);
-    if (!showAllOptions) {
-      filteredTokens = filteredTokens.slice(0, maxRowsShown);
-    }
+  }
+
+  if (!showAllOptions) {
+    filteredTokens = filteredTokens.slice(0, maxRowsShown);
   }
 
   return filteredTokens;
-};
-
-export const hasAdvanced = (tokens: OutputToken[]): boolean => {
-  return tokens.some((token) => token.isAdvanced);
 };
