@@ -5,7 +5,7 @@ import type { ValueSegment } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
-import { guid } from '@microsoft/logic-apps-shared';
+import { ExtensionProperties, guid } from '@microsoft/logic-apps-shared';
 import type { DropdownItem } from '../../dropdown';
 
 export interface ItemSchemaItemProps {
@@ -18,6 +18,7 @@ export interface ItemSchemaItemProps {
   items?: ItemSchemaItemProps[];
   readOnly?: boolean;
   enum?: string[];
+  [property: string]: any;
 }
 
 export const hideComplexArray = (dimensionalSchema: ItemSchemaItemProps[]) => {
@@ -28,41 +29,34 @@ export const hideComplexArray = (dimensionalSchema: ItemSchemaItemProps[]) => {
 };
 
 export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?: any): ItemSchemaItemProps[] => {
-  const flattenedSchema: ItemSchemaItemProps[] = [];
-  if (!itemSchema) {
-    return flattenedSchema;
+  if (!itemSchema || itemSchema[ExtensionProperties.Visibility] === 'internal') {
+    return [];
   }
-  const { type, format, key, title, description, readOnly, properties, required, items, ['x-ms-visibility']: visibility } = itemSchema;
-  if (visibility === 'internal') {
-    return flattenedSchema;
-  }
+
+  const { type, format, key, title, description = '', readOnly, properties, required, items } = itemSchema;
+
   if (type === constants.SWAGGER.TYPE.OBJECT && properties) {
     const requiredElements = required ?? [];
-    Object.entries(properties).forEach(([key, value]) => {
-      if (value && key !== 'key') {
-        getOneDimensionalSchema(value, requiredElements.includes(key)).forEach((item) => {
-          const currItem = item;
-          flattenedSchema.push(currItem);
-        });
-      }
-    });
-  } else {
-    const isArray = type === constants.SWAGGER.TYPE.ARRAY && items;
-    flattenedSchema.push({
+    return Object.entries(properties).flatMap(([key, value]) =>
+      key !== 'key' && value ? getOneDimensionalSchema(value, requiredElements.includes(key)) : []
+    );
+  }
+
+  const isArray = type === constants.SWAGGER.TYPE.ARRAY && items;
+  return [
+    {
       key,
       title: handleTitle(key, title),
       type,
       isRequired: !isArray && isRequired,
-      description: description ?? '',
+      description,
       format,
       enum: itemSchema.enum,
-      items: isArray && items ? getOneDimensionalSchema(items, isRequired) : undefined,
+      items: isArray ? getOneDimensionalSchema(items, isRequired) : undefined,
       readOnly,
-    });
-  }
-  return flattenedSchema;
+    },
+  ];
 };
-
 // Converts Complex Array Items values from ValueSegments Arrays to Strings
 export const convertComplexItemsToArray = (
   itemSchema: ArrayItemSchema,
@@ -88,7 +82,6 @@ export const convertComplexItemsToArray = (
                 arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
               }
             });
-            console.log(arrayVal);
             returnItem[keyName] = arrayVal;
           }
         } else {
