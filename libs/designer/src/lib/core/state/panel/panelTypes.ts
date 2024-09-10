@@ -67,3 +67,12 @@ export type PanelContentState =
   | WorkflowParametersPanelContentState;
 
 export type PanelMode = PanelContentState['panelMode'];
+
+export const PANEL_MODE: Record<PanelMode, PanelMode> = {
+  Operation: 'Operation',
+  Discovery: 'Discovery',
+  WorkflowParameters: 'WorkflowParameters',
+  NodeSearch: 'NodeSearch',
+  Error: 'Error',
+  Connection: 'Connection',
+};
