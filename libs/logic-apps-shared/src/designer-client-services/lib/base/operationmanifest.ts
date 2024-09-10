@@ -245,10 +245,6 @@ export abstract class BaseOperationManifestService implements IOperationManifest
       : supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
-  isAliasingSupported(): boolean {
-    return false;
-  }
-
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;
