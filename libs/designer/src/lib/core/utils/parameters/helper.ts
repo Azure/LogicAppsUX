@@ -3264,6 +3264,10 @@ export function getExpressionTokenTitle(expression: Expression): string {
   }
 }
 
+export function getTypeForTokenFiltering(parameterType: string | undefined): string {
+  return parameterType && parameterType in constants.TOKENS ? parameterType : constants.SWAGGER.TYPE.ANY;
+}
+
 function getOutputByTokenInfo(
   nodeOutputs: OutputInfo[],
   tokenInfo: SegmentToken,
@@ -3275,7 +3279,7 @@ function getOutputByTokenInfo(
     return undefined;
   }
 
-  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, type);
+  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(type));
   const allOutputs = supportedTypes.map((supportedType) => getOutputsByType(nodeOutputs, supportedType));
   const outputs = aggregate(allOutputs);
 
