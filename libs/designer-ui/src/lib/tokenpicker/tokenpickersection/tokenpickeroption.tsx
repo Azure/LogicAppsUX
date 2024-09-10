@@ -4,7 +4,7 @@ import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import type { TokenGroup, Token } from '@microsoft/logic-apps-shared';
-import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
+import { getReducedTokenList } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon, useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -173,7 +173,7 @@ export const TokenPickerOptions = ({
   const sectionHeaderColorCssDark = `rgb(${sectionHeaderColorRgbDark.red}, ${sectionHeaderColorRgbDark.green}, ${sectionHeaderColorRgbDark.blue})`;
 
   const maxRowsShown = selectedMode === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
-  const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
+  const showSeeMoreOrLessButton = !searchQuery && section.tokens.length > maxRowsShown;
 
   return (
     <>
