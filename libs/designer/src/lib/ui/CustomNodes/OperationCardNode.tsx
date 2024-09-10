@@ -19,9 +19,8 @@ import {
   useTokenDependencies,
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import {
   useAllOperations,
   useConnectorName,
@@ -150,7 +149,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [readOnly, metadata, dependencies]
   );
 
-  const selected = useIsNodeSelected(id);
+  const selected = useIsNodeSelectedInOperationPanel(id);
   const isPinned = useIsNodePinnedToOperationPanel(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);

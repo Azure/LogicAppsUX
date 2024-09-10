@@ -3,8 +3,7 @@ import type { AppDispatch } from '../../../../../core';
 import { StaticResultOption } from '../../../../../core/actions/bjsworkflow/staticresults';
 import { updateStaticResults } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useParameterStaticResult } from '../../../../../core/state/operation/operationSelector';
-import { selectPanelTab } from '../../../../../core/state/panel/panelSlice';
-import { setPinnedPanelActiveTab } from '../../../../../core/state/panelV2/panelSlice';
+import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../../core/state/staticresultschema/staitcresultsSelector';
 import { updateStaticResultProperties } from '../../../../../core/state/staticresultschema/staticresultsSlice';
@@ -25,7 +24,7 @@ export const TestingPanel: React.FC<PanelTabProps> = (props) => {
   const staticResultOptions = parameterStaticResult?.staticResultOptions;
   const properties = useStaticResultProperties(name);
 
-  const selectPanelTabFn = isPanelPinned ? setPinnedPanelActiveTab : selectPanelTab;
+  const selectPanelTabFn = isPanelPinned ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
 
   const savePropertiesCallback = useCallback(
     (properties: OpenAPIV2.SchemaObject, updatedStaticResultOptions: StaticResultOption) => {

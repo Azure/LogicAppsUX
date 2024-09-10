@@ -3,7 +3,7 @@ import { GoToMockWorkflow } from './utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 
 test.describe(
-  'Token Picker Tests',
+  'Token Removal Tests',
   {
     tag: '@mock',
   },
