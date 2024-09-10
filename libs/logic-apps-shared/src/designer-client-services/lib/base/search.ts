@@ -255,19 +255,13 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   public removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
-    console.log(
-      'Elaina : ------ ',
-      operations,
-      this._unsupportedConnectorIds,
-      operations.filter((operation) => this._unsupportedConnectorIds.includes(operation?.properties?.api?.id))
-    );
     // return operations;
-    return operations.filter((operation) => this._unsupportedConnectorIds.includes(operation?.properties?.api?.id));
+    return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id));
   }
 
   public removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
     // return connectors;
-    return connectors.filter((connector) => this._unsupportedConnectorIds.includes(connector?.id));
+    return connectors.filter((connector) => !this._unsupportedConnectorIds.includes(connector?.id));
   }
 
   private async getWorkflows($filter: string): Promise<any[]> {
