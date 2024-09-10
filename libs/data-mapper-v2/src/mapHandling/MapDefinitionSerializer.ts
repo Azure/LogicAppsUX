@@ -12,7 +12,6 @@ import {
   extractScopeFromLoop,
   getInputValues,
   getSourceKeyOfLastLoop,
-  invalidFunctions,
 } from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
@@ -46,7 +45,7 @@ export const convertToMapDefinition = (
   targetSchemaSortArray: string[],
   generateHeader = true
 ): MetaMapDefinition => {
-  const invalidFunctionNodes = invalidFunctions(connections);
+  //const invalidFunctionNodes = invalidFunctions(connections);
   if (sourceSchema && targetSchema) {
     const mapDefinition: MapDefinitionEntry = {};
 
@@ -68,7 +67,7 @@ export const convertToMapDefinition = (
     return { isSuccess: true, definition: map };
   }
 
-  return { isSuccess: false, errorNodes: invalidFunctionNodes };
+  return { isSuccess: false, errorNodes: [] };
 };
 
 const yamlReplacer = (key: string, value: any) => {

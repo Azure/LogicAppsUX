@@ -113,22 +113,17 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         })
         .catch((error: Error) => {
           LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-            message: error.message,
+            message: JSON.stringify(error),
           });
+          console.error(`Error·message:${error.message}`);
           dispatchToast(
             <Toast>
-              <ToastTitle>{failedXsltMessage}</ToastTitle>
+              <ToastTitle>{failedXsltMessage + error.message}</ToastTitle>
             </Toast>,
             { intent: 'error' }
           );
-
-          // show notification here
         });
     } else {
-      // const
-      // dataMapDefinition.errorNodes.forEach((errorNode) => {
-
-      // }
       dispatchToast(
         <Toast>
           <ToastTitle>{failedXsltMessage}</ToastTitle>
