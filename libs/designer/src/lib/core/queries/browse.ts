@@ -22,7 +22,7 @@ const pagedOpts = {
 
 /// Operations ///
 
-export const useAllOperations = (unsupportedActionsIds?: string[]) => {
+export const useAllOperations = () => {
   const { data: azureOperations, isLoading: azureLoading, hasNextPage: azureHasNextPage } = useAzureOperationsLazyQuery();
 
   const { data: customOperations, isLoading: customLoading, hasNextPage: customHasNextPage } = useCustomOperationsLazyQuery();
@@ -41,7 +41,6 @@ export const useAllOperations = (unsupportedActionsIds?: string[]) => {
     [azureLoading, customLoading, builtinLoading, azureHasNextPage, customHasNextPage]
   );
 
-  console.log('---data ', data, unsupportedActionsIds);
   return useMemo(() => ({ data, isLoading }), [data, isLoading]);
 };
 

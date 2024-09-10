@@ -8,7 +8,7 @@ import type {
   DiscoveryWorkflowTrigger,
   BuiltInOperation,
 } from '../../../utils/src';
-import { ArgumentException, equals } from '../../../utils/src';
+import { ArgumentException, equals, normalizeConnectorIds } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -30,6 +30,7 @@ export interface BaseSearchServiceOptions {
   httpClient: IHttpClient;
   isDev?: boolean;
   locale?: string;
+  unsupportedConnectorIds?: string[];
 }
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
@@ -37,13 +38,19 @@ const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
   _isHybridLogicApp = false;
+  _unsupportedConnectorIds: string[] = [];
 
   constructor(public readonly options: BaseSearchServiceOptions) {
-    const { apiHubServiceDetails, isDev } = options;
+    const { apiHubServiceDetails, isDev, unsupportedConnectorIds } = options;
     if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
     this._isDev = isDev || false;
+    this._unsupportedConnectorIds = normalizeConnectorIds(
+      unsupportedConnectorIds ?? [],
+      apiHubServiceDetails.subscriptionId,
+      apiHubServiceDetails.location
+    );
   }
 
   public abstract getAllOperations(): Promise<DiscoveryOpArray>;
@@ -237,6 +244,7 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   private moveGeneralInformation(connectors: Connector[]): Connector[] {
+    console.log('connectors', connectors);
     connectors.forEach((connector) => {
       if (connector.properties.generalInformation) {
         // eslint-disable-next-line no-param-reassign

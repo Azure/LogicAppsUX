@@ -1,5 +1,5 @@
 import type { Connector, ConnectorProperty, OperationApi } from '../models';
-import { fallbackConnectorIconUrl } from './connections';
+import { fallbackConnectorIconUrl, isArmResourceId } from './connections';
 
 export const getAllConnectorProperties = (connector: Connector | OperationApi | undefined): Partial<ConnectorProperty & OperationApi> => {
   if (!connector) {
@@ -32,3 +32,16 @@ export const getIconUriFromConnector = (connector: Connector | OperationApi | un
   const iconUrl = connectorData.iconUrl ?? connectorData.iconUri ?? connectorData.generalInformation?.iconUrl;
   return fallbackConnectorIconUrl(iconUrl);
 };
+
+export function normalizeConnectorId(connectorId: string, subscriptionId: string, location: string) {
+  if (!isArmResourceId(connectorId)) {
+    return connectorId;
+  }
+
+  const result = connectorId.replaceAll('#subscription#', subscriptionId);
+  return result.replaceAll('#location#', location);
+}
+
+export function normalizeConnectorIds(connectorIds: string[], subscriptionId: string, location: string) {
+  return connectorIds.map((connectorId) => normalizeConnectorId(connectorId, subscriptionId, location));
+}

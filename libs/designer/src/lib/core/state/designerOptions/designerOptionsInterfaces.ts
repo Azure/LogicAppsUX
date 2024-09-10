@@ -44,7 +44,7 @@ export interface DesignerOptionsState {
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
-    unsupportedActionsIds?: string[]; // list of unsupported actions
+    unsupportedConnectorIds?: string[]; // list of unsupported actions
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

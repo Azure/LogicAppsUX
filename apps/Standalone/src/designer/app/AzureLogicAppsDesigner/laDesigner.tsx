@@ -370,7 +370,7 @@ const DesignerEditor = () => {
           hostOptions: {
             ...hostOptions,
             ...getSKUDefaultHostOptions(Constants.SKU.STANDARD),
-            unsupportedActionsIds: ['managedApis/gmail'],
+            unsupportedConnectorIds: ['managedApis/gmail'],
           },
           showConnectionsPanel,
           showPerformanceDebug,
@@ -683,6 +683,7 @@ const getDesignerServices = (
     isDev: false,
     hybridLogicApp: isHybrid,
     locale,
+    unsupportedConnectorIds: ['/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/gmail'],
   });
 
   const oAuthService = new StandaloneOAuthService({
