@@ -255,12 +255,10 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   public removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
-    // return operations;
     return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id));
   }
 
   public removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
-    // return connectors;
     return connectors.filter((connector) => !this._unsupportedConnectorIds.includes(connector?.id));
   }
 
@@ -333,7 +331,6 @@ export abstract class BaseSearchService implements ISearchService {
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
-    console.log('Elaina operations : ', operations);
     return this.removeUnsupportedOperations(operations);
   }
 }

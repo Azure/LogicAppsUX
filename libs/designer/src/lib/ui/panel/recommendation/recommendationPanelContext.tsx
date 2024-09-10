@@ -61,10 +61,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [activeSearchOperations, setActiveSearchOperations] = useState<DiscoveryOpArray>([]);
 
   // Remove duplicates from allOperations and activeSearchOperations
-  const allOperations: DiscoveryOpArray = useMemo(() => {
-    // console.log('Elaina preloadedOperations ', preloadedOperations, activeSearchOperations);
-    return joinAndDeduplicateById(preloadedOperations, activeSearchOperations);
-  }, [preloadedOperations, activeSearchOperations]);
+  const allOperations: DiscoveryOpArray = useMemo(
+    () => joinAndDeduplicateById(preloadedOperations, activeSearchOperations),
+    [preloadedOperations, activeSearchOperations]
+  );
 
   // Active search
   useDebouncedEffect(
@@ -81,7 +81,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         SearchService().getActiveSearchOperations?.(searchTerm, filters['actionType'], filters['runtime']) ??
         Promise.resolve([] as DiscoveryOpArray);
       // Store results
-      // console.log("---Elaina activeSearchResults ", activeSearchResults)
       activeSearchResults.then((results) => {
         setSearchedTerms([...searchedTerms, searchTerm]);
         setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));

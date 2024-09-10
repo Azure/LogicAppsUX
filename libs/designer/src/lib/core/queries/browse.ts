@@ -143,8 +143,6 @@ const useAzureOperationsLazyQuery = () =>
     ['allOperationsLazy'],
     async ({ pageParam = 0 }: any) => {
       const data = await SearchService().getAzureOperationsByPage(pageParam);
-      console.log('Elaina --useAzureOperationsLazyQuery ---', data);
-
       return { data, pageParam };
     },
     {
