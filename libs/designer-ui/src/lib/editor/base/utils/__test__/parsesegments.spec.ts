@@ -3,6 +3,7 @@ import {
   decodeStringSegmentTokensInLexicalContext,
   encodeStringSegmentTokensInDomContext,
   encodeStringSegmentTokensInLexicalContext,
+  processStringSegmentTokensInDomAndLexicalContext,
 } from '../parsesegments';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -74,6 +75,28 @@ describe('lib/editor/base/utils/parseSegments', () => {
       nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
 
       expect(encodeStringSegmentTokensInLexicalContext(input, nodeMap)).toBe(expected);
+    });
+  });
+
+  describe('processStringSegmentTokensInDomAndLexicalContext - encode', () => {
+    it.each([
+      ['plain text', 'plain text'],
+      [`text @{concat('&', '"', '<', '>')} text`, `text @{concat('%26', '%22', '%3C', '%3E')} text`],
+      [`text @{concat('%26', '%22', '%3C', '%3E')} text`, `text @{concat('%26', '%22', '%3C', '%3E')} text`],
+      [
+        `@{replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')}`,
+        `@{replace(replace(replace('abc','%26lt;','%3C'),'%26gt;','%3E'),'%26quot;','%22')}`,
+      ],
+      [
+        `@{replace(replace(replace('abc','%26lt;','%3C'),'%26gt;','%3E'),'%26quot;','%22')}`,
+        `@{replace(replace(replace('abc','%26lt;','%3C'),'%26gt;','%3E'),'%26quot;','%22')}`,
+      ],
+    ])('should properly encode segments to be Lexical-safe and Dom-safe in: "%s"', (input, expected) => {
+      const nodeMap = new Map<string, ValueSegment>();
+      nodeMap.set(`concat('&', '"', '<', '>')`, {} as unknown as ValueSegment);
+      nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
+
+      expect(processStringSegmentTokensInDomAndLexicalContext(input, nodeMap, true)).toBe(expected);
     });
   });
 });
