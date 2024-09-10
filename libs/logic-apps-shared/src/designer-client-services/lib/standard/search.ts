@@ -79,7 +79,7 @@ export class StandardSearchService extends BaseSearchService {
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
-    return [...filteredApiOperations, ...getClientBuiltInOperations(filterOperation)];
+    return this.removeUnsupportedOperations([...filteredApiOperations, ...getClientBuiltInOperations(filterOperation)]);
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
@@ -99,7 +99,7 @@ export class StandardSearchService extends BaseSearchService {
       };
       // const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
       const { value } = await this.getAzureResourceByPage(uri, queryParameters, page, 100);
-      return value;
+      return this.removeUnsupportedOperations(value);
     } catch (error) {
       return [];
     }
@@ -168,7 +168,7 @@ export class StandardSearchService extends BaseSearchService {
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiConnectors = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
-    return [...filteredApiConnectors, ...getClientBuiltInConnectors(filterConnector)];
+    return this.removeUnsupportedConnectors([...filteredApiConnectors, ...getClientBuiltInConnectors(filterConnector)]);
   }
 }
 

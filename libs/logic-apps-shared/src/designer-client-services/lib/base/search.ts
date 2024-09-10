@@ -135,7 +135,7 @@ export abstract class BaseSearchService implements ISearchService {
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
-    return operations;
+    return this.removeUnsupportedOperations(operations);
   }
 
   async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
@@ -160,7 +160,7 @@ export abstract class BaseSearchService implements ISearchService {
 
     // const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
     const { value } = await this.getAzureResourceByPage(uri, queryParameters, page);
-    return value;
+    return this.removeUnsupportedOperations(value);
   }
 
   abstract getAllConnectors(): Promise<Connector[]>;
@@ -178,7 +178,8 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.batchAzureResourceRequests(uri);
     const responseArray = await this.getAzureResourceRecursive(uri, undefined);
-    return this.moveGeneralInformation(responseArray);
+    const movedGeneralResponseArray = this.moveGeneralInformation(responseArray);
+    return this.removeUnsupportedConnectors(movedGeneralResponseArray);
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
@@ -200,8 +201,8 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
     const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ?? apiVersion }, page);
-
-    return this.moveGeneralInformation(value);
+    const movedGeneralInformationValue = this.moveGeneralInformation(value);
+    return this.removeUnsupportedConnectors(movedGeneralInformationValue);
   }
 
   async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -216,8 +217,7 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
-
-      return response;
+      return this.removeUnsupportedOperations(response);
     } catch (error) {
       return [];
     }
@@ -235,16 +235,14 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
-
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
-      return locationFilteredResponse;
+      return this.removeUnsupportedConnectors(locationFilteredResponse);
     } catch (error) {
       return [];
     }
   }
 
   private moveGeneralInformation(connectors: Connector[]): Connector[] {
-    console.log('connectors', connectors);
     connectors.forEach((connector) => {
       if (connector.properties.generalInformation) {
         // eslint-disable-next-line no-param-reassign
@@ -254,6 +252,22 @@ export abstract class BaseSearchService implements ISearchService {
       }
     });
     return connectors;
+  }
+
+  public removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
+    console.log(
+      'Elaina : ------ ',
+      operations,
+      this._unsupportedConnectorIds,
+      operations.filter((operation) => this._unsupportedConnectorIds.includes(operation?.properties?.api?.id))
+    );
+    // return operations;
+    return operations.filter((operation) => this._unsupportedConnectorIds.includes(operation?.properties?.api?.id));
+  }
+
+  public removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
+    // return connectors;
+    return connectors.filter((connector) => this._unsupportedConnectorIds.includes(connector?.id));
   }
 
   private async getWorkflows($filter: string): Promise<any[]> {
@@ -325,7 +339,8 @@ export abstract class BaseSearchService implements ISearchService {
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
-    return operations;
+    console.log('Elaina operations : ', operations);
+    return this.removeUnsupportedOperations(operations);
   }
 }
 
