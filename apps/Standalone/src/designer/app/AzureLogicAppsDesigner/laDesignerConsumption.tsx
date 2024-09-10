@@ -35,6 +35,7 @@ import {
   guid,
   startsWith,
   StandardCustomCodeService,
+  BaseUserPreferenceService,
 } from '@microsoft/logic-apps-shared';
 import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -547,6 +548,7 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    userPreferenceService: new BaseUserPreferenceService(),
   };
 };
 
