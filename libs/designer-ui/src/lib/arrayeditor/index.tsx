@@ -34,6 +34,7 @@ export interface ArrayItemSchema {
   format?: string;
   enum?: string[];
   readOnly?: boolean;
+  ['x-ms-visibility']: string;
 }
 
 export interface ComplexArrayItem {

@@ -32,7 +32,10 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
   if (!itemSchema) {
     return flattenedSchema;
   }
-  const { type, format, key, title, description, readOnly, properties, required, items } = itemSchema;
+  const { type, format, key, title, description, readOnly, properties, required, items, ['x-ms-visibility']: visibility } = itemSchema;
+  if (visibility === 'internal') {
+    return flattenedSchema;
+  }
   if (type === constants.SWAGGER.TYPE.OBJECT && properties) {
     const requiredElements = required ?? [];
     Object.entries(properties).forEach(([key, value]) => {
