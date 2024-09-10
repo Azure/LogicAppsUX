@@ -78,22 +78,33 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
     updatePlaceHolder(resultPlaceHolderEditorId, testMapInput);
   }, [testMapInput, updatePlaceHolder]);
 
-  const error = useMemo(() => {
-    let error: any;
+  const content = useMemo(() => {
+    let content: any;
 
+    // If there's an error, show the error message
     if (testMapOutputError) {
-      error = testMapOutputError;
+      content = testMapOutputError;
     }
 
-    if (testMapOutput?.statusCode && testMapOutput?.statusCode >= 300) {
-      error = testMapOutput?.outputInstance?.$content;
+    // If there's a response, show the response content
+    if (!content && testMapOutput?.outputInstance?.$content) {
+      content = testMapOutput?.outputInstance?.$content;
     }
 
-    if (error) {
+    // If there's neither of the above, show the status code and status text
+    if (!content && testMapOutput?.statusCode) {
+      content = testMapOutput?.statusCode;
+
+      if (testMapOutput?.statusText) {
+        content = `${content} - ${testMapOutput?.statusText}`;
+      }
+    }
+
+    if (content) {
       try {
-        return JSON.stringify(JSON.parse(error), null, 2);
+        return JSON.stringify(JSON.parse(content), null, 2);
       } catch (_err) {
-        return error;
+        return content;
       }
     }
 
@@ -133,15 +144,9 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
           <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={
-                error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
+                content ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
               }
-              value={
-                error ??
-                testMapOutput?.outputInstance?.$content ??
-                (testMapOutput?.statusCode && testMapOutput?.statusText
-                  ? `${testMapOutput?.statusCode} - ${testMapOutput?.statusText}`
-                  : '')
-              }
+              value={content}
               className={styles.editorStyle}
               lineNumbers={'on'}
               scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
