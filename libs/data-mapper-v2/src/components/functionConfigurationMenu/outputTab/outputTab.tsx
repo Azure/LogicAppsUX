@@ -46,7 +46,7 @@ export const OutputTabContents = (props: {
     return connection.reactFlowKey;
   };
 
-  const removeConnection = (_inputIndex: number, newOutput: InputConnection) => {
+  const removeConnection = (newOutput: InputConnection) => {
     if (newOutput === undefined) {
       return;
     }
@@ -77,9 +77,14 @@ export const OutputTabContents = (props: {
     );
   };
 
-  const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
+  const validateAndCreateConnection = (
+    optionValue: string | undefined,
+    option: InputOptionProps | undefined,
+    oldOutput: InputConnection
+  ) => {
+    removeConnection(oldOutput);
     if (optionValue) {
-      const output = validateAndCreateConnectionOutput(
+      const newOutput = validateAndCreateConnectionOutput(
         optionValue,
         option,
         connectionDictionary,
@@ -87,8 +92,8 @@ export const OutputTabContents = (props: {
         functionNodeDictionary,
         targetSchemaDictionary
       );
-      if (output) {
-        updateConnection(output);
+      if (newOutput) {
+        updateConnection(newOutput);
       }
     }
   };
@@ -107,12 +112,14 @@ export const OutputTabContents = (props: {
             inputName={outputValue}
             inputValue={outputValue}
             inputType={undefined}
-            validateAndCreateConnection={validateAndCreateConnection}
+            validateAndCreateConnection={(optionValue: string | undefined, option: InputOptionProps | undefined) =>
+              validateAndCreateConnection(optionValue, option, output)
+            }
             functionKey={props.functionId}
             func={props.func}
             draggable={false}
             removeItem={() => {
-              removeConnection(index, output);
+              removeConnection(output);
             }}
             index={index}
           />
