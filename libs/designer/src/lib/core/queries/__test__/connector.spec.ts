@@ -97,7 +97,6 @@ describe('ConnectorDynamicQueries', () => {
       const collectionSpecifiedIsObject = { ...extension, 'value-collection': 'object' };
       dynamicValues = await getLegacyDynamicValues(connectionId, connectorId, {}, collectionSpecifiedIsObject, 'object');
       expect(dynamicValues).toBeDefined();
-      console.log(dynamicValues);
       expect(dynamicValues.length).toEqual(0);
       expect(dynamicValues).toEqual([]);
 
