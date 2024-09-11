@@ -11,6 +11,7 @@ import {
   Toast,
   ToastTitle,
   Toaster,
+  ToastBody,
 } from '@fluentui/react-components';
 import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -115,10 +116,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
             message: JSON.stringify(error),
           });
-          console.error(`Error·message:${error.message}`);
           dispatchToast(
             <Toast>
-              <ToastTitle>{failedXsltMessage + error.message}</ToastTitle>
+              <ToastTitle>{failedXsltMessage}</ToastTitle>
+              <ToastBody>{error.message} </ToastBody>
             </Toast>,
             { intent: 'error' }
           );

@@ -147,12 +147,7 @@ export const collectConditionalValues = (currentConnection: Connection, connecti
 };
 
 export const invalidFunctions = (connections: ConnectionDictionary) => {
-  // All functions connections must eventually terminate into the source
   const connectionsArray = Object.entries(connections);
-
-  // const allNodesTerminateIntoSource = connectionsArray
-  //   .filter(([key, _connection]) => key.startsWith(targetPrefix))
-  //   .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
 
   const allRequiredInputsFilledOut = connectionsArray.filter(([_key, connection]) => {
     const selfNode = connection.self.node;
