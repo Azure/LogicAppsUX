@@ -125,7 +125,7 @@ export const SchemaPanelBody = ({
       const schemaFile = files[0] as FileWithVsCodePath;
       if (!schemaFile.path) {
         console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile && isLeftDirection) {
+      } else if (schemaFile) {
         setSelectedSchemaFile({
           name: schemaFile.name,
           path: schemaFile.path,
