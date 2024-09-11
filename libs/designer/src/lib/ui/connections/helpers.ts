@@ -20,10 +20,12 @@ export const canDropItem = (
     }
   }
 
-  const sanitizedItemId = removeIdTag(item.id);
+  const nodeId = removeIdTag(item.id);
+  delete upstreamNodesDependencies[nodeId];
+  upstreamNodes.delete(nodeId);
 
   if (item.isScope) {
-    if (upstreamScopes.has(sanitizedItemId)) {
+    if (upstreamScopes.has(nodeId)) {
       return false;
     }
   }
@@ -38,5 +40,5 @@ export const canDropItem = (
   }
   // TODO: Support preventing moving a node below downstream output
   // TODO: Support calculating dependencies when dragging of scopes
-  return sanitizedItemId !== removeIdTag(childId ?? '') && sanitizedItemId !== removeIdTag(parentId ?? '');
+  return nodeId !== removeIdTag(childId ?? '') && nodeId !== removeIdTag(parentId ?? '');
 };
