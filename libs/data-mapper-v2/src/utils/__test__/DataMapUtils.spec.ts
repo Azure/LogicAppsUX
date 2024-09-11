@@ -19,7 +19,6 @@ import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../S
 import { applyConnectionValue } from '../Connection.Utils';
 
 describe('utils/DataMap', () => {
-
   describe('addParentConnectionForRepeatingElementsNested', () => {
     it('adds parent connection for repeating elements simple', () => {
       const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
