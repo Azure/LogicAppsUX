@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.86.0](https://github.com/Azure/LogicAppsUX/compare/v4.85.0...v4.86.0) (2024-09-11)
+
+
+### Features
+
+* **Data Mapper:** Allow LML generation with missing func params, and surface XSLT error message ([#5633](https://github.com/Azure/LogicAppsUX/issues/5633)) ([f9f28b1](https://github.com/Azure/LogicAppsUX/commit/f9f28b1f49883c6e48cddb3eff9de7cca24dee87))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove output connection when a new one is added from the menu ([#5640](https://github.com/Azure/LogicAppsUX/issues/5640)) ([a73c0fd](https://github.com/Azure/LogicAppsUX/commit/a73c0fda54086ef409a6ae4009f208f8959a8d45))
+* **Data Mapper:** Update test content in Test panel ([#5626](https://github.com/Azure/LogicAppsUX/issues/5626)) ([182c1c3](https://github.com/Azure/LogicAppsUX/commit/182c1c3684300c7d2d7749e99185be508d8b4d44))
+* **designer-ui:** Token picker should display all output tokens when fewer options than max rows shown ([#5618](https://github.com/Azure/LogicAppsUX/issues/5618)) ([c608191](https://github.com/Azure/LogicAppsUX/commit/c6081917dddd2878ddfaaed20bcf89156e474b34))
+* **designer:** Fixing null type of output for tokens filtering ([#5627](https://github.com/Azure/LogicAppsUX/issues/5627)) ([7e8fcb4](https://github.com/Azure/LogicAppsUX/commit/7e8fcb458001a8bfc53a4f93dd161da656d8180d))
+* **designer:** Removing parent object from dynamic inputs when parameter is nested ([#5635](https://github.com/Azure/LogicAppsUX/issues/5635)) ([938b199](https://github.com/Azure/LogicAppsUX/commit/938b199e91b7829fdf600f1d733dd04d0d8c9a8a))
+
 ## [4.85.0](https://github.com/Azure/LogicAppsUX/compare/v4.84.0...v4.85.0) (2024-09-09)
 
 
