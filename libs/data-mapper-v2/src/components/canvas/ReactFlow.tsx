@@ -29,6 +29,7 @@ import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import IntermediateConnectedEdge from '../common/reactflow/edges/IntermediateConnectedEdge';
 import useReactFlowStates from './useReactflowStates';
+import { cloneDeep } from 'lodash';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
@@ -237,7 +238,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
           id="dm-react-flow"
           ref={drop}
           className="nopan nodrag"
-          nodes={nodes}
+          nodes={cloneDeep(nodes)}
           edges={edges}
           nodeDragThreshold={0}
           onlyRenderVisibleElements={false}
