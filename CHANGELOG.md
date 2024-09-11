@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.85.1](https://github.com/Azure/LogicAppsUX/compare/v4.85.0...v4.85.1) (2024-09-11)
+
+
+### Bug Fixes
+
+* **designer:** Fixing null type of output for tokens filtering ([#5627](https://github.com/Azure/LogicAppsUX/issues/5627)) ([#5634](https://github.com/Azure/LogicAppsUX/issues/5634)) ([97c0cc5](https://github.com/Azure/LogicAppsUX/commit/97c0cc510198113fd7966214755eeec915882e78))
+* **designer:** Removing parent object from dynamic inputs when parameter is nested ([#5635](https://github.com/Azure/LogicAppsUX/issues/5635)) ([#5638](https://github.com/Azure/LogicAppsUX/issues/5638)) ([f82c7cc](https://github.com/Azure/LogicAppsUX/commit/f82c7cc140d7f309ef80b7b07c5a39caea5f83c2))
+
 ## [4.85.0](https://github.com/Azure/LogicAppsUX/compare/v4.84.0...v4.85.0) (2024-09-09)
 
 
