@@ -34,7 +34,7 @@ import { emptyCanvasRect, guid, SchemaNodeProperty, SchemaType } from '@microsof
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
-import type { Node, Rect, XYPosition } from '@xyflow/react';
+import type { Rect, XYPosition } from '@xyflow/react';
 import {
   addSourceReactFlowPrefix,
   addTargetReactFlowPrefix,
@@ -98,12 +98,9 @@ export interface DataMapOperationState {
   intermediateEdgeMappingForScrolling: Record<string, Record<string, boolean>>;
   // Store edge mapping for each edge in the schema to use when collapsing/expanding
   intermediateEdgeMappingForCollapsing: Record<string, Record<string, boolean>>;
-  // Store edge mapping direction for each edge in the schema to use when the scrolling is happening
-  // And node is hidden
-  intermediateEdgeMappingDirectionForScrolling: Record<string, string>;
-  // Generic reactflow node mapping for each node in the scehma
-  sourceNodesMap: Record<string, Node>;
-  targetNodesMap: Record<string, Node>;
+  // Visible handles
+  visibleSourceHandles: any[];
+  visibleTargetHandles: any[];
   // Track open nodes in the scehma Tree
   sourceOpenKeys: Record<string, boolean>;
   targetOpenKeys: Record<string, boolean>;
@@ -127,13 +124,12 @@ const emptyPristineState: DataMapOperationState = {
   xsltContent: '',
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: {},
-  sourceNodesMap: {},
-  targetNodesMap: {},
+  visibleSourceHandles: [],
+  visibleTargetHandles: [],
   sourceOpenKeys: {},
   targetOpenKeys: {},
   edgeLoopMapping: {},
   intermediateEdgeMappingForScrolling: {},
-  intermediateEdgeMappingDirectionForScrolling: {},
   intermediateEdgeMappingForCollapsing: {},
   nodesForScroll: getIntermedateScrollNodeHandles(guid()),
 };
@@ -161,9 +157,7 @@ export interface InitialDataMapAction {
 
 export interface ReactFlowNodeAction {
   isSource: boolean;
-  id: string;
-  node?: Node;
-  removeNode?: boolean;
+  handles: any[];
 }
 
 export interface ConnectionAction {
@@ -191,11 +185,6 @@ export interface DeleteConnectionAction {
   connectionKey: string;
   inputKey: string;
 }
-
-type ReactFlowNodesUpdateProps = {
-  isSource: boolean;
-  nodes: Record<string, Node>;
-};
 
 export const dataMapSlice = createSlice({
   name: 'dataMap',
@@ -229,8 +218,7 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
 
-        // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.sourceNodesMap = {};
+        state.pristineDataMap.visibleSourceHandles = [];
         state.sourceInEditState = false;
         state.lastAction = 'Set initial Source schema';
       } else {
@@ -249,8 +237,7 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
 
-        // NOTE: Reset ReactFlow nodes to filter out source nodes
-        currentState.targetNodesMap = {};
+        state.pristineDataMap.visibleTargetHandles = [];
         state.targetInEditState = false;
         state.lastAction = 'Set initial Target schema';
       }
@@ -277,11 +264,12 @@ export const dataMapSlice = createSlice({
         flattenedTargetSchema,
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
+        visibleSourceHandles: [],
+        visibleTargetHandles: [],
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
         intermediateEdgeMappingForCollapsing: {},
         intermediateEdgeMappingForScrolling: {},
-        intermediateEdgeMappingDirectionForScrolling: {},
       };
 
       state.curDataMapOperation = newState;
@@ -534,41 +522,12 @@ export const dataMapSlice = createSlice({
         return;
       }
     },
-    updateReactFlowNode: (state, action: PayloadAction<ReactFlowNodeAction>) => {
-      const newState = { ...state.curDataMapOperation };
-      const sourceNodesMap = { ...newState.sourceNodesMap };
-      const targetNodesMap = { ...newState.targetNodesMap };
+    updateReactFlowNodeHandles: (state, action: PayloadAction<ReactFlowNodeAction>) => {
       if (action.payload.isSource) {
-        if (action.payload.removeNode) {
-          delete sourceNodesMap[action.payload.id];
-        } else if (action.payload.node) {
-          sourceNodesMap[action.payload.id] = action.payload.node;
-        }
-      } else if (action.payload.removeNode) {
-        delete targetNodesMap[action.payload.id];
-      } else if (action.payload.node) {
-        targetNodesMap[action.payload.id] = action.payload.node;
-      }
-
-      state.curDataMapOperation = {
-        ...newState,
-        sourceNodesMap,
-        targetNodesMap,
-      };
-    },
-    updateReactFlowNodes: (state, action: PayloadAction<ReactFlowNodesUpdateProps>) => {
-      const currentState = state.curDataMapOperation;
-      const newState = {
-        ...currentState,
-      };
-
-      if (action.payload.isSource) {
-        newState.sourceNodesMap = action.payload.nodes;
+        state.curDataMapOperation.visibleSourceHandles = action.payload.handles;
       } else {
-        newState.targetNodesMap = action.payload.nodes;
+        state.curDataMapOperation.visibleTargetHandles = action.payload.handles;
       }
-
-      state.curDataMapOperation = newState;
     },
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
       const key = action.payload;
@@ -683,20 +642,6 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
-    updateTemporaryNodeDirection: (
-      state,
-      action: PayloadAction<{
-        id: string;
-        direction: 'top' | 'bottom' | undefined;
-      }>
-    ) => {
-      const { id, direction } = action.payload;
-      if (direction) {
-        state.curDataMapOperation.intermediateEdgeMappingDirectionForScrolling[id] = direction;
-      } else if (state.curDataMapOperation.intermediateEdgeMappingDirectionForScrolling[id]) {
-        delete state.curDataMapOperation.intermediateEdgeMappingDirectionForScrolling[id];
-      }
-    },
   },
 });
 
@@ -706,8 +651,7 @@ export const {
   setInitialSchema,
   setInitialDataMap,
   setSelectedItem,
-  updateReactFlowNodes,
-  updateReactFlowNode,
+  updateReactFlowNodeHandles,
   makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
@@ -724,7 +668,6 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
-  updateTemporaryNodeDirection,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
@@ -953,8 +896,9 @@ export const getUpdatedIntermediateConnectionsForCollapsing = (
       const id = isSourceNode(sourceId)
         ? createEdgeId(addSourceReactFlowPrefix(key), targetId)
         : createEdgeId(targetId, addTargetReactFlowPrefix(key));
+
       // Map parents to the target node to store temporary edges
-      if (key !== getTreeNodeId(sourceId)) {
+      if ((isSourceNode(sourceId) && key !== getTreeNodeId(sourceId)) || (isSourceNode(targetId) && key !== getTreeNodeId(targetId))) {
         allConnections = {
           ...allConnections,
           [sourceId]: {
