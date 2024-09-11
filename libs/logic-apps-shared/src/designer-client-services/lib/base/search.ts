@@ -178,8 +178,8 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.batchAzureResourceRequests(uri);
     const responseArray = await this.getAzureResourceRecursive(uri, undefined);
-    const movedGeneralResponseArray = this.moveGeneralInformation(responseArray);
-    return this.removeUnsupportedConnectors(movedGeneralResponseArray);
+    const supportedResponseArray = this.removeUnsupportedConnectors(responseArray);
+    return this.moveGeneralInformation(supportedResponseArray);
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
@@ -201,8 +201,8 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
     const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ?? apiVersion }, page);
-    const movedGeneralInformationValue = this.moveGeneralInformation(value);
-    return this.removeUnsupportedConnectors(movedGeneralInformationValue);
+    const supportedValue = this.removeUnsupportedConnectors(value);
+    return this.moveGeneralInformation(supportedValue);
   }
 
   async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -216,8 +216,7 @@ export abstract class BaseSearchService implements ISearchService {
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
-      const response = await this.getAzureResourceRecursive(uri, queryParameters);
-      return this.removeUnsupportedOperations(response);
+      return await this.getAzureResourceRecursive(uri, queryParameters);
     } catch (error) {
       return [];
     }
@@ -236,7 +235,7 @@ export abstract class BaseSearchService implements ISearchService {
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
-      return this.removeUnsupportedConnectors(locationFilteredResponse);
+      return locationFilteredResponse;
     } catch (error) {
       return [];
     }
@@ -254,11 +253,11 @@ export abstract class BaseSearchService implements ISearchService {
     return connectors;
   }
 
-  public removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
+  private removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
     return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id));
   }
 
-  public removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
+  private removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
     return connectors.filter((connector) => !this._unsupportedConnectorIds.includes(connector?.id));
   }
 
