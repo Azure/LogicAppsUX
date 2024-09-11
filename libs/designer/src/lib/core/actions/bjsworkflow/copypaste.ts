@@ -3,7 +3,7 @@ import { getTriggerNodeId, setFocusNode, type RootState } from '../..';
 import { initCopiedConnectionMap, initScopeCopiedConnections } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import type { RelationshipIds } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
