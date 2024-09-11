@@ -20,6 +20,7 @@ import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
+  getTypeForTokenFiltering,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
@@ -350,10 +351,7 @@ const ParameterSection = ({
   ): JSX.Element => {
     const parameterType =
       editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
-    const supportedTypes: string[] = getPropertyValue(
-      constants.TOKENS,
-      parameterType && parameterType in constants.TOKENS ? parameterType : constants.SWAGGER.TYPE.ANY
-    );
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(parameterType));
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
