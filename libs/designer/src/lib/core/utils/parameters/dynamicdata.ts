@@ -737,14 +737,12 @@ function getSwaggerBasedInputParameters(
     propertyNames,
     getObjectPropertyValue(operationDefinition.inputs, propertyNames)
   );
-  let dynamicInputParameters = loadInputValuesFromDefinition(
+  const dynamicInputParameters = loadInputValuesFromDefinition(
     dynamicInputDefinition as Record<string, any>,
     isNested ? [getDynamicInputParameterFromDynamicParameter(dynamicParameter)] : inputs,
     operationPath,
     basePath as string
   );
-
-  dynamicInputParameters = removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
 
   if (isNested) {
     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);
@@ -767,9 +765,9 @@ function getSwaggerBasedInputParameters(
       result.push(inputParameter);
     }
 
-    return result;
+    return removeParentObjectInputsIfNotNeeded(result);
   }
-  return dynamicInputParameters;
+  return removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
 }
 
 // We should remove any reference to dynamic schema if parameter containing dynamic schema is used directly as an input.
