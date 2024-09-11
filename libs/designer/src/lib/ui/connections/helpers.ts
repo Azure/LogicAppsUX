@@ -38,7 +38,7 @@ export const canDropItem = (
       return false;
     }
   }
-  // TODO: Support preventing moving a node below downstream output
+
   // TODO: Support calculating dependencies when dragging of scopes
   return nodeId !== removeIdTag(childId ?? '') && nodeId !== removeIdTag(parentId ?? '');
 };
