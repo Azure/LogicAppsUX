@@ -391,7 +391,18 @@ export const dataMapSlice = createSlice({
           actualTarget = [state.curDataMapOperation.flattenedTargetSchema[originalTargetNodeId]];
         }
 
-        schemaSources.forEach((sourceNode) => {
+        const countSlashes = (inputString: string) => {
+          let count = 0;
+          for (const character of inputString) {
+            if (character === '/') {
+              count++;
+            }
+          }
+          return count;
+        };
+
+        const sortedSources = schemaSources.sort((a, b) => (countSlashes(a.key) < countSlashes(b.key) ? 1 : -1)); // to prevent connection out of order
+        sortedSources.forEach((sourceNode) => {
           if (actualTarget.length > 0) {
             addParentConnectionForRepeatingElementsNested(
               sourceNode,
