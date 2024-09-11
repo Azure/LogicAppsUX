@@ -1,6 +1,4 @@
 import type { ParametersData, ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
-import { parameterizeConnectionsInProjectLoadSetting } from '../../../constants';
-import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 
 export function extractConnectionDetails(connections: ConnectionsData): any {
   const SUBSCRIPTION_INDEX = 2;
@@ -34,8 +32,11 @@ export function extractConnectionDetails(connections: ConnectionsData): any {
   }
 }
 
-export function changeAuthTypeToRaw(connections: ConnectionsData, parameters: ParametersData | undefined): any {
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+export async function changeAuthTypeToRaw(
+  connections: ConnectionsData,
+  parameters: ParametersData | undefined,
+  parameterizeConnectionsSetting: any
+): Promise<any> {
   if (connections.managedApiConnections && Object.keys(connections.managedApiConnections).length) {
     try {
       if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
@@ -69,23 +70,6 @@ export function changeAuthTypeToRaw(connections: ConnectionsData, parameters: Pa
     } catch (error) {
       console.error(error);
     }
-    return { connections, parameters };
-    // let data: string | undefined;
-    // if (connections) {
-    //   const managedApiConnections = connections['managedApiConnections'];
-    //   for (const connKey in managedApiConnections) {
-    //     if (Object.prototype.hasOwnProperty.call(managedApiConnections, connKey)) {
-    //       const authType = managedApiConnections[connKey]['authentication']['type'];
-    //       if (authType === 'ManagedServiceIdentity') {
-    //         console.log(`Changing type for ${connKey} from ${authType} to Raw`);
-    //         managedApiConnections[connKey]['authentication']['type'] = 'Raw';
-    //         managedApiConnections[connKey]['authentication']['scheme'] = 'Key';
-    //         managedApiConnections[connKey]['authentication']['parameter'] = `@appsetting('${connKey}-connectionKey')`;
-    //       }
-    //     }
-    //   }
-    //   data = JSON.stringify(connections, null, 2);
-    // }
-    // return data;
+    return [connections, parameters];
   }
 }

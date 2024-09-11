@@ -50,7 +50,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
     try {
       if (ZipFileStep.zipFilePath) {
         this.zipContent = fs.readFileSync(ZipFileStep.zipFilePath);
-        this.targetDirectory = path.join(this.wizardContext.workspacePath, this.wizardContext.logicAppName);
+        this.targetDirectory = path.join(this.wizardContext.workspacePath, this.wizardContext.logicAppName); // path arguments receiving undefined
         await unzipLogicAppArtifacts(this.zipContent, this.targetDirectory);
 
         const zipBaseName = path.basename(ZipFileStep.zipFilePath, path.extname(ZipFileStep.zipFilePath));
