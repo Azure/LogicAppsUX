@@ -24,14 +24,13 @@ import { extend } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
-import { extractConnectionDetails, changeAuthTypeToRaw } from './cloudToLocalHelper';
+import { extractConnectionDetails, changeAuthTypeToRaw, updateConnectionKeys, parameterizeConnections } from './cloudToLocalHelper';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { window } from 'vscode';
 import * as path from 'path';
 import AdmZip = require('adm-zip');
 import * as fs from 'fs';
-import { verifyLocalConnectionKeys } from '../../utils/appSettings/connectionKeys';
-import { parameterizeConnections } from '../parameterizeConnections';
+import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 
 // Constants
 const openFolder = true;
@@ -108,7 +107,8 @@ export async function cloudToLocalInternal(
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
-      new SetLogicAppName(), // skipping this step
+      new SetLogicAppType(), // is it only supporting one type?
+      new SetLogicAppName(),
       new ZipFileStep(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings, true),
       new OpenBehaviorStep(),
@@ -189,26 +189,24 @@ export async function cloudToLocalInternal(
 
   extend(localParameters, zipParameters);
   extend(localSettings, zipSettings);
+
   const [convertedConnections, convertedParameters] = await changeAuthTypeToRaw(
     connectionsData,
     localParameters,
     parameterizeConnectionsSetting
   );
-  fs.writeFileSync(connectionspath, JSON.stringify(convertedConnections), 'utf-8');
-  fs.writeFileSync(parametersPath, JSON.stringify(convertedParameters), 'utf-8');
   const mergedSettings = await mergeSettings();
+
+  fs.writeFileSync(connectionspath, JSON.stringify(convertedConnections, null, 2), 'utf-8');
+  fs.writeFileSync(parametersPath, JSON.stringify(convertedParameters, null, 2), 'utf-8');
   fs.writeFileSync(localSettingsPath, JSON.stringify(mergedSettings, null, 2));
-  // const resolvedConnections = resolveConnectionsReferences(
-  //   JSON.stringify(convertedConnections),
-  //   convertedParameters,
-  //   mergedSettings.Values
-  // );
   cleanLocalSettings(localSettingsPath);
 
   if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
-    await parameterizeConnections(context);
+    await parameterizeConnections(wizardContext as IFunctionWizardContext, mergedSettings);
   }
 
-  verifyLocalConnectionKeys(context);
+  updateConnectionKeys(wizardContext as IFunctionWizardContext);
+
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
