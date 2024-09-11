@@ -388,37 +388,43 @@ const DesignerEditor = () => {
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
-              <DesignerCommandBar
-                id={workflowId}
-                saveWorkflow={saveWorkflowFromDesigner}
-                discard={discardAllChanges}
-                location={canonicalLocation}
-                isReadOnly={isReadOnly}
-                isDarkMode={isDarkMode}
-                isDesignerView={designerView}
-                showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? chatbotPanelWidth : undefined}
-                enableCopilot={async () => {
-                  dispatch(setIsChatBotEnabled(!showChatBot));
-                }}
-                switchViews={handleSwitchView}
-                saveWorkflowFromCode={saveWorkflowFromCode}
-              />
-              {designerView ? (
-                <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
-              ) : (
-                <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />
-              )}
-              {showChatBot ? (
-                <Chatbot
-                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-                  getAuthToken={getAuthToken}
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                />
+            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+              {showChatBot && designerView ? (
+                <div style={{ minWidth: chatbotPanelWidth }}>
+                  <Chatbot
+                    openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                    getAuthToken={getAuthToken}
+                    getUpdatedWorkflow={getUpdatedWorkflow}
+                    openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+                    closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                  />
+                </div>
               ) : null}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'inherit',
+                  width: showChatBot && designerView ? `calc(100% - ${chatbotPanelWidth})` : '100%',
+                }}
+              >
+                <DesignerCommandBar
+                  id={workflowId}
+                  saveWorkflow={saveWorkflowFromDesigner}
+                  discard={discardAllChanges}
+                  location={canonicalLocation}
+                  isReadOnly={isReadOnly}
+                  isDarkMode={isDarkMode}
+                  isDesignerView={designerView}
+                  showConnectionsPanel={showConnectionsPanel}
+                  enableCopilot={async () => {
+                    dispatch(setIsChatBotEnabled(!showChatBot));
+                  }}
+                  switchViews={handleSwitchView}
+                  saveWorkflowFromCode={saveWorkflowFromCode}
+                />
+                {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+              </div>
             </div>
           </BJSWorkflowProvider>
         ) : null}

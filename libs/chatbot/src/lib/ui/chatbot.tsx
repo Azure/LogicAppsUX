@@ -351,6 +351,10 @@ export const Chatbot = ({
       hasCloseButton={false}
       isBlocking={false}
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
+      onDismiss={() => {
+        setCollapsed(true);
+        closeChatBot?.();
+      }}
     >
       <div className={'msla-chatbot-container'}>
         <CopilotPanelHeader
