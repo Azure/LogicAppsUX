@@ -108,6 +108,7 @@ const DesignerEditor = () => {
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
+  const displayChatbotUI = showChatBot && designerView;
 
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
 
@@ -389,7 +390,7 @@ const DesignerEditor = () => {
             appSettings={settingsData?.properties}
           >
             <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
-              {showChatBot && designerView ? (
+              {displayChatbotUI ? (
                 <div style={{ minWidth: chatbotPanelWidth }}>
                   <Chatbot
                     openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
@@ -405,7 +406,7 @@ const DesignerEditor = () => {
                   display: 'flex',
                   flexDirection: 'column',
                   height: 'inherit',
-                  width: showChatBot && designerView ? `calc(100% - ${chatbotPanelWidth})` : '100%',
+                  width: displayChatbotUI ? `calc(100% - ${chatbotPanelWidth})` : '100%',
                 }}
               >
                 <DesignerCommandBar
