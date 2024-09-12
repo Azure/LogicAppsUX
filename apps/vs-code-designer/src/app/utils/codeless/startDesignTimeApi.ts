@@ -46,6 +46,7 @@ import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
+import { findChildProcess } from '../../commands/pickFuncProcess';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -137,6 +138,7 @@ export async function waitForDesignTimeStartUp(url: string, initialTime: number)
     await delay(2000);
   }
   if (await isDesignTimeUp(url)) {
+    ext.designChildFuncProcessId = await findChildProcess(ext.designChildProcess.pid);
     return Promise.resolve();
   }
   return Promise.reject();
@@ -200,15 +202,18 @@ export function stopDesignTimeApi(): void {
 
   if (os.platform() === Platform.windows) {
     cp.exec(`taskkill /pid ${ext.designChildProcess.pid} /t /f`);
+    cp.exec(`taskkill /pid ${ext.designChildFuncProcessId} /t /f`);
   } else {
     ext.designChildProcess.kill();
+    cp.spawn('kill', ['-9'].concat(ext.designChildFuncProcessId));
   }
   ext.designChildProcess = undefined;
+  ext.designChildFuncProcessId = undefined;
 }
 
 export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
+    const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
