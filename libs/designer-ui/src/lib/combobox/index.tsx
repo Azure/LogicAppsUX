@@ -8,7 +8,7 @@ import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles
 import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getIntl } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
@@ -69,6 +69,7 @@ export interface ComboboxProps extends BaseEditorProps {
   errorDetails?: { message: string };
   useOption?: boolean;
   onMenuOpen?: CallbackHandler;
+  isCaseSensitive?: boolean;
   shouldSort?: boolean;
   multiSelect?: boolean;
   serialization?: SerializationOptions;
@@ -88,12 +89,13 @@ export const Combobox = ({
   serialization,
   label,
   shouldSort = true,
+  isCaseSensitive,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const optionKey = getSelectedKey(options, initialValue, isLoading);
-  const optionKeys = getSelectedKeys(options, initialValue, serialization);
+  const optionKey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
+  const optionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
   const [mode, setMode] = useState<Mode>(getMode(optionKey, optionKeys, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
@@ -105,8 +107,8 @@ export const Combobox = ({
   useEffect(() => {
     if ((firstLoad.current || !errorDetails) && !isLoading) {
       firstLoad.current = false;
-      const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
-      const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization);
+      const updatedOptionkey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
+      const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
       setSelectedKey(updatedOptionkey);
       setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
@@ -383,21 +385,26 @@ const getMode = (selectedKey: string, selectedKeys: string[], initialValue: Valu
   return isEmptySegments(initialValue) ? Mode.Default : selectedKey ? Mode.Default : Mode.Custom;
 };
 
-const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean): string => {
+const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean, isCaseSensitive = false): string => {
   if (isLoading) {
     return '';
   }
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return normalizeValue(option.value) === normalizeValue(initialValue[0].value);
+        return equals(normalizeValue(option.value), normalizeValue(initialValue[0].value), !isCaseSensitive);
       })?.key ?? ''
     );
   }
   return '';
 };
 
-const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+const getSelectedKeys = (
+  options: ComboboxItem[],
+  initialValue?: ValueSegment[],
+  serialization?: SerializationOptions,
+  isCaseSensitive = false
+): string[] => {
   const returnVal: string[] = [];
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     const value = initialValue[0].value;
@@ -410,7 +417,7 @@ const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[],
 
     for (const selectedValue of selectedValues) {
       const option = options.find((option) => {
-        return option.value === selectedValue;
+        return equals(option.value, selectedValue, !isCaseSensitive);
       });
 
       if (option) {
