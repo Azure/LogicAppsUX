@@ -417,7 +417,7 @@ const getSelectedKeys = (
 
     for (const selectedValue of selectedValues) {
       const option = options.find((option) => {
-        return equals(option.value, selectedValue, !isCaseSensitive);
+        return equals(normalizeValue(option.value), normalizeValue(selectedValue), !isCaseSensitive);
       });
 
       if (option) {
