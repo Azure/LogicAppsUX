@@ -188,12 +188,17 @@ export async function getConnectionParametersForAzureConnection(
     };
     // biome-ignore lint/style/noUselessElse: needed for future implementation
   } else if (connectionType === ConnectionType.ApiManagement) {
-    // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
     const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);
     const baseUrl = api.host ? (api.schemes?.length ? `${api.schemes.at(-1)}://${api.host}` : `http://${api.host}`) : 'NotFound';
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
-    const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
+    const subscriptionKeyName = (api.securityDefinitions?.apiKeyHeader as any)?.name;
+    let subscriptionKey = 'NotFound';
+
+    if (subscriptionKeyName) {
+      const keys = await ApiManagementService().fetchApiMKeys(apimApiId, subscriptionKeyName);
+      subscriptionKey = keys.primaryKey ?? keys.secondaryKey;
+    }
 
     return {
       ...parameterValues,

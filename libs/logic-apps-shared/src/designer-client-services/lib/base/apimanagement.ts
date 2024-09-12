@@ -1,7 +1,7 @@
 import { getIntl } from '../../../intl/src';
 import { ResponseCodes, SwaggerParser } from '../../../parsers';
 import { ArgumentException, equals, includes, unmap } from '../../../utils/src';
-import type { IApiManagementService } from '../apimanagement';
+import type { ApiMSubscriptionSecrets, IApiManagementService } from '../apimanagement';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
@@ -19,6 +19,7 @@ export interface ApiManagementServiceOptions {
 
 export class BaseApiManagementService implements IApiManagementService {
   private _swaggers: Record<string, SwaggerParser> = {};
+  private _secrets: Record<string, ApiMSubscriptionSecrets> = {};
 
   constructor(public readonly options: ApiManagementServiceOptions) {
     const { apiVersion, baseUrl, subscriptionId, httpClient, queryClient } = options;
@@ -72,6 +73,24 @@ export class BaseApiManagementService implements IApiManagementService {
 
     this._swaggers[normalizedName] = new SwaggerParser(swagger);
     return this._swaggers[normalizedName];
+  }
+
+  public async fetchApiMKeys(apimApiId: string, subscriptionName: string): Promise<ApiMSubscriptionSecrets> {
+    const normalizedName = apimApiId.toLowerCase();
+    if (this._secrets[normalizedName]) {
+      return this._secrets[normalizedName];
+    }
+
+    const secrets = await this.options.queryClient.fetchQuery(['apimKeys', apimApiId?.toLowerCase()], async () => {
+      const { apiVersion, httpClient } = this.options;
+
+      const uri = `${apimApiId}/subscriptions/${subscriptionName}/listSecrets`;
+      const queryParameters = { 'api-version': apiVersion };
+      return await httpClient.post({ uri, queryParameters });
+    });
+
+    this._secrets[normalizedName] = secrets as ApiMSubscriptionSecrets;
+    return this._secrets[normalizedName];
   }
 
   public async getOperations(apimApiId: string): Promise<ListDynamicValue[]> {

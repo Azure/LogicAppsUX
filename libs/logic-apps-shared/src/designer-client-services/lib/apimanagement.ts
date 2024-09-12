@@ -2,10 +2,16 @@ import type { SwaggerParser } from '../../parsers';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 import type { ListDynamicValue } from './connector';
 
+export interface ApiMSubscriptionSecrets {
+  primaryKey: string;
+  secondaryKey: string;
+}
+
 export interface IApiManagementService {
   fetchApiManagementInstances(): Promise<any>;
   fetchApisInApiM(apimInstanceId: string): Promise<any>;
   fetchApiMSwagger(apimApiId: string): Promise<SwaggerParser>;
+  fetchApiMKeys(apimApiId: string, subscriptionName: string): Promise<ApiMSubscriptionSecrets>;
   getOperations(apimApiId: string): Promise<ListDynamicValue[]>;
   getOperationSchema(apimApiId: string, operationId: string, isInput: boolean): Promise<any>;
 }
