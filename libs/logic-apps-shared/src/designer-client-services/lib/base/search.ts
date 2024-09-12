@@ -217,7 +217,7 @@ export abstract class BaseSearchService implements ISearchService {
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
-      return await this.getAzureResourceRecursive(uri, queryParameters);
+      return this.getAzureResourceRecursive(uri, queryParameters);
     } catch (error) {
       return [];
     }

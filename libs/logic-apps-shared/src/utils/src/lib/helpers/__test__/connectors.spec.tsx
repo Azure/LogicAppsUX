@@ -8,7 +8,7 @@ import {
   normalizeConnectorId,
   normalizeConnectorIds,
 } from '../index';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, it, test, expect } from 'vitest';
 describe('utils/src/lib/helpers/connectors', () => {
   describe('getAllConnectorProperties', () => {
     test('works for a Connector', () => {
@@ -239,18 +239,28 @@ describe('utils/src/lib/helpers/connectors', () => {
       expect(normalizeConnectorId('/serviceProviders/sql', subscriptionId, location)).not.toEqual('/serviceProviders/SQL'.toLowerCase());
       expect(normalizeConnectorId('/serviceProviders/sql', subscriptionId, location, true)).toEqual('/serviceProviders/SQL'.toLowerCase());
     });
+  });
+
+  describe('normalizeConnectorIds', () => {
+    const armConnectorId = '/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/sql';
+    const armConnectorId2 = '/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/gmail';
+    const nonArmConnectorId = '';
+    const nonArmConnectorId2 = '/serviceProviders/sql';
+    const connectorIds = [armConnectorId, armConnectorId2, nonArmConnectorId, nonArmConnectorId2];
+    const subscriptionId = '00000000-0000-0000-0000-000000000000';
+    const location = 'eastus';
 
     it('should replace all subscriptionIds and locations correctly in arm connector ids only', async () => {
       const expectedConnectorId = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/sql`;
       const expectedConnectorId2 = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/gmail`;
 
-      expect(normalizeConnectorIds([...armConnectorIds, '', '/serviceProviders/sql'], subscriptionId, location)).not.toEqual([
+      expect(normalizeConnectorIds(connectorIds, subscriptionId, location)).not.toEqual([
         expectedConnectorId,
         expectedConnectorId2,
         '',
         '/serviceProviders/Sql',
       ]);
-      expect(normalizeConnectorIds([...armConnectorIds, '', '/serviceProviders/sql'], subscriptionId, location, true)).toEqual([
+      expect(normalizeConnectorIds(connectorIds, subscriptionId, location, true)).toEqual([
         expectedConnectorId.toLowerCase(),
         expectedConnectorId2.toLowerCase(),
         '',
