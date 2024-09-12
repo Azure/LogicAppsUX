@@ -63,8 +63,8 @@ export async function activate(context: vscode.ExtensionContext) {
       const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
       activateContext.telemetry.properties.errorMessage = errorMessage;
     }
-    promptParameterizeConnections(activateContext);
-    verifyLocalConnectionKeys(activateContext);
+    promptParameterizeConnections(activateContext, true);
+    verifyLocalConnectionKeys(activateContext, true);
     await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();

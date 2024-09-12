@@ -29,7 +29,7 @@ import type { MessageItem } from 'vscode';
  */
 export async function activateAzurite(context: IActionContext): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
+    const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
     if (projectPath) {

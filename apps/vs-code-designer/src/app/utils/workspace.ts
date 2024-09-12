@@ -29,9 +29,14 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
  * Gets workspace folder of project.
  * @param {IActionContext} context - Command context.
  * @param {string} message - The message to display to the user.
+ * @param {string} skipPromptOnMultipleFolders - The boolean to skip prompt to select logic app folder if there are multiple.
  * @returns {Promise<WorkspaceFolder>} Returns either the new project workspace, the already open workspace or the selected workspace.
  */
-export async function getWorkspaceFolder(context: IActionContext, message?: string): Promise<vscode.WorkspaceFolder> {
+export async function getWorkspaceFolder(
+  context: IActionContext,
+  message?: string,
+  skipPromptOnMultipleFolders?: boolean
+): Promise<vscode.WorkspaceFolder> {
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
   let folder: vscode.WorkspaceFolder | undefined;
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
@@ -50,6 +55,8 @@ export async function getWorkspaceFolder(context: IActionContext, message?: stri
     }
 
     if (logicAppsWorkspaces.length === 1) {
+      folder = logicAppsWorkspaces[0];
+    } else if (skipPromptOnMultipleFolders) {
       folder = logicAppsWorkspaces[0];
     } else {
       const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
