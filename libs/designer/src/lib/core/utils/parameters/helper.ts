@@ -504,33 +504,18 @@ const convertStringToInputParameter = (
   convertIfContainsExpression?: boolean
 ): InputParameter => {
   if (typeof value !== 'string') {
-    return {
-      key: guid(),
-      name: value,
-      type: typeof value,
-      hideInUI: false,
-      value: value,
-    };
+    return { key: guid(), name: value, type: typeof value, hideInUI: false, value };
   }
-  const hasExpression = containsExpression(value);
-  let newValue = value;
-  if (trimExpression) {
-    newValue = newValue.trim();
-  }
+
+  let newValue = trimExpression ? value.trim() : value;
   if (removeQuotesFromExpression) {
     newValue = removeQuotes(newValue);
   }
-  if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
+  if (containsExpression(newValue) && convertIfContainsExpression && !newValue.startsWith('@')) {
     newValue = `@${newValue}`;
   }
-  return {
-    key: guid(),
-    name: newValue,
-    type: 'any',
-    hideInUI: false,
-    value: newValue,
-    suppressCasting: true,
-  };
+
+  return { key: guid(), name: newValue, type: 'any', hideInUI: false, value: newValue, suppressCasting: true };
 };
 
 export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any; uncastedValue: undefined } => {
@@ -566,49 +551,43 @@ const toSimpleQueryBuilderViewModel = (
   input: any
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
-  let operand1: ValueSegment;
-  let operand2: ValueSegment;
-  let operationLiteral: ValueSegment;
-  // default value
-  if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] };
-  }
 
-  if (!input.includes('@') || !input.includes(',')) {
-    return advancedModeResult;
+  if (!input || !input.includes('@') || !input.includes(',')) {
+    return input?.length === 0
+      ? { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] }
+      : advancedModeResult;
   }
-
-  let stringValue = input;
 
   try {
+    let stringValue = input;
     let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';
-    let endingLiteral: ValueSegment;
+
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
-      const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-      operator = `not${baseOperator}`;
-      operationLiteral = createLiteralValueSegment(`@not(${baseOperator}(`);
-      endingLiteral = createLiteralValueSegment('))');
-    } else {
-      operationLiteral = createLiteralValueSegment(`@${operator}(`);
-      endingLiteral = createLiteralValueSegment(')');
+      operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
     }
 
-    // if operator is not of the dropdownlist, it cannot be converted into row format
+    const operationLiteral = createLiteralValueSegment(`@${negatory ? `not(${operator}` : operator}(`);
+    const endingLiteral = createLiteralValueSegment(negatory ? '))' : ')');
+
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return advancedModeResult;
     }
+
     const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
-    const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
-    const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
-    operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = createLiteralValueSegment(',');
+    const [operand1String, operand2String] = operandSubstring.splitAt(getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
+
     return {
       isOldFormat: true,
       isRowFormat: true,
-      itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
+      itemValue: [
+        operationLiteral,
+        loadParameterValueFromString(operand1String.trim(), true, true, true)[0],
+        createLiteralValueSegment(','),
+        loadParameterValueFromString(operand2String.trim(), true, true, true)[0],
+        endingLiteral,
+      ],
     };
   } catch {
     return advancedModeResult;
@@ -676,32 +655,32 @@ const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefi
 };
 
 function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptions): (RowItemProps | GroupItemProps)[] {
-  const output: (RowItemProps | GroupItemProps)[] = [];
-  if (selectedOption) {
-    const items = input[selectedOption];
-    items.forEach((item: any) => {
-      const condition = getConditionalSelectedOption(item);
-      if (condition) {
-        output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
-      } else {
-        let not = '';
-        let dropdownVal = '';
-        if (item?.['not']) {
-          not = 'not';
-          dropdownVal = Object.keys(item?.[not])[0];
-        } else {
-          dropdownVal = Object.keys(item)[0];
-        }
-        output.push({
-          type: GroupType.ROW,
-          operator: not + dropdownVal,
-          operand1: loadParameterValueFromString(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true),
-          operand2: loadParameterValueFromString(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true),
-        });
-      }
-    });
+  if (!selectedOption) {
+    return [];
   }
-  return output;
+
+  return input[selectedOption].map((item: any) => {
+    const condition = getConditionalSelectedOption(item);
+
+    if (condition) {
+      return {
+        type: GroupType.GROUP,
+        condition,
+        items: recurseConditionalItems(item, condition),
+      };
+    }
+
+    const isNegated = item?.['not'];
+    const key = Object.keys(isNegated ? item['not'] : item)[0];
+    const value = isNegated ? item['not'][key] : item[key];
+
+    return {
+      type: GroupType.ROW,
+      operator: (isNegated ? 'not' : '') + key,
+      operand1: loadParameterValueFromString(value[0], true, true, true),
+      operand2: loadParameterValueFromString(value[1], true, true, true),
+    };
+  });
 }
 
 // Create Dictionary Editor View Model
@@ -875,7 +854,7 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
     }
   }
 
-  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
+  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */, parameter.type);
 
   valueSegments = compressSegments(valueSegments);
 
@@ -928,13 +907,13 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType: string): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
       rawModeEnabled: true,
     });
-    return convertor.convertToValueSegments(value);
+    return convertor.convertToValueSegments(value, parameterType);
   } catch {
     return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
   }
@@ -3285,6 +3264,10 @@ export function getExpressionTokenTitle(expression: Expression): string {
   }
 }
 
+export function getTypeForTokenFiltering(parameterType: string | undefined): string {
+  return parameterType && parameterType in constants.TOKENS ? parameterType : constants.SWAGGER.TYPE.ANY;
+}
+
 function getOutputByTokenInfo(
   nodeOutputs: OutputInfo[],
   tokenInfo: SegmentToken,
@@ -3296,7 +3279,7 @@ function getOutputByTokenInfo(
     return undefined;
   }
 
-  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, type);
+  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(type));
   const allOutputs = supportedTypes.map((supportedType) => getOutputsByType(nodeOutputs, supportedType));
   const outputs = aggregate(allOutputs);
 

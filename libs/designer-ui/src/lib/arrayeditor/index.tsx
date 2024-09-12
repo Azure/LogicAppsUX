@@ -34,6 +34,7 @@ export interface ArrayItemSchema {
   format?: string;
   enum?: string[];
   readOnly?: boolean;
+  [index: string]: any;
 }
 
 export interface ComplexArrayItem {
