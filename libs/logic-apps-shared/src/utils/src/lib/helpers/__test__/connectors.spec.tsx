@@ -233,15 +233,28 @@ describe('utils/src/lib/helpers/connectors', () => {
       expect(normalizeConnectorId('/dataOperations', '', '')).toEqual('/dataOperations');
     });
 
+    it('check casing', async () => {
+      expect(normalizeConnectorId('Hello', subscriptionId, location)).not.toEqual('hello');
+      expect(normalizeConnectorId('Hello', subscriptionId, location, true)).toEqual('hello');
+      expect(normalizeConnectorId('/serviceProviders/sql', subscriptionId, location)).not.toEqual('/serviceProviders/SQL'.toLowerCase());
+      expect(normalizeConnectorId('/serviceProviders/sql', subscriptionId, location, true)).toEqual('/serviceProviders/SQL'.toLowerCase());
+    });
+
     it('should replace all subscriptionIds and locations correctly in arm connector ids only', async () => {
       const expectedConnectorId = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/sql`;
       const expectedConnectorId2 = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis/gmail`;
 
-      expect(normalizeConnectorIds([...armConnectorIds, '', '/serviceProviders/sql'], subscriptionId, location)).toEqual([
+      expect(normalizeConnectorIds([...armConnectorIds, '', '/serviceProviders/sql'], subscriptionId, location)).not.toEqual([
         expectedConnectorId,
         expectedConnectorId2,
         '',
-        '/serviceProviders/sql',
+        '/serviceProviders/Sql',
+      ]);
+      expect(normalizeConnectorIds([...armConnectorIds, '', '/serviceProviders/sql'], subscriptionId, location, true)).toEqual([
+        expectedConnectorId.toLowerCase(),
+        expectedConnectorId2.toLowerCase(),
+        '',
+        '/serviceProviders/Sql'.toLowerCase(),
       ]);
     });
   });

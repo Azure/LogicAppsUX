@@ -49,7 +49,8 @@ export abstract class BaseSearchService implements ISearchService {
     this._unsupportedConnectorIds = normalizeConnectorIds(
       unsupportedConnectorIds ?? [],
       apiHubServiceDetails.subscriptionId,
-      apiHubServiceDetails.location
+      apiHubServiceDetails.location,
+      true
     );
   }
 
@@ -254,11 +255,11 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   private removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
-    return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id));
+    return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id?.toLowerCase()));
   }
 
   private removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
-    return connectors.filter((connector) => !this._unsupportedConnectorIds.includes(connector?.id));
+    return connectors.filter((connector) => !this._unsupportedConnectorIds.includes(connector?.id?.toLowerCase()));
   }
 
   private async getWorkflows($filter: string): Promise<any[]> {

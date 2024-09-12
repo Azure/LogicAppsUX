@@ -33,15 +33,14 @@ export const getIconUriFromConnector = (connector: Connector | OperationApi | un
   return fallbackConnectorIconUrl(iconUrl);
 };
 
-export function normalizeConnectorId(connectorId: string, subscriptionId: string, location: string) {
-  if (!isArmResourceId(connectorId)) {
-    return connectorId;
-  }
+export function normalizeConnectorId(connectorId: string, subscriptionId: string, location: string, lowercase = false) {
+  const result = isArmResourceId(connectorId)
+    ? connectorId.replaceAll('#subscription#', subscriptionId).replaceAll('#location#', location)
+    : connectorId;
 
-  const result = connectorId.replaceAll('#subscription#', subscriptionId);
-  return result.replaceAll('#location#', location);
+  return lowercase ? result.toLowerCase() : result;
 }
 
-export function normalizeConnectorIds(connectorIds: string[], subscriptionId: string, location: string) {
-  return connectorIds.map((connectorId) => normalizeConnectorId(connectorId, subscriptionId, location));
+export function normalizeConnectorIds(connectorIds: string[], subscriptionId: string, location: string, lowercase = false) {
+  return connectorIds.map((connectorId) => normalizeConnectorId(connectorId, subscriptionId, location, lowercase));
 }
