@@ -689,6 +689,7 @@ const getDesignerServices = (
     isDev: false,
     hybridLogicApp: isHybrid,
     locale,
+    unsupportedConnectorIds: ['/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/gmail'],
   });
 
   const oAuthService = new StandaloneOAuthService({
