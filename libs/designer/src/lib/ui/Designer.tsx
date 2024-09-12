@@ -25,7 +25,6 @@ import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
-import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -45,7 +44,6 @@ export interface DesignerProps {
   panelLocation?: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo?: boolean;
-  rightShift?: string; // How much we shift the canvas to the right (due to copilot)
 }
 
 type NodeTypesObj = {
@@ -156,10 +154,6 @@ export const Designer = (props: DesignerProps) => {
     ],
   };
 
-  const copilotPadding: CSSProperties = {
-    marginLeft: props.rightShift,
-  };
-
   const isInitialized = useNodesInitialized();
   const preloadSearch = useMemo(() => !(isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
 
@@ -208,7 +202,7 @@ export const Designer = (props: DesignerProps) => {
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef} style={copilotPadding}>
+      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -245,7 +239,7 @@ export const Designer = (props: DesignerProps) => {
             <DesignerContextualMenu />
             <EdgeContextualMenu />
           </ReactFlow>
-          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
+          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
