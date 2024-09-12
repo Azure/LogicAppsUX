@@ -38,6 +38,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+
   const toasterId = useId('toaster');
   const { dispatchToast } = useToastController(toasterId);
 
@@ -192,6 +194,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: '/4vB3J',
         description: 'Button for View Code',
       }),
+      DISABLED_TEST: intl.formatMessage({
+        defaultMessage: 'Please save the map before testing',
+        id: 'wTaSTp',
+        description: 'Tooltip for disabled test button',
+      }),
     }),
     [intl]
   );
@@ -203,10 +210,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
       discard: !isDirty,
-      test: sourceInEditState || targetInEditState,
+      test: sourceInEditState || targetInEditState || !xsltFilename,
       codeView: sourceInEditState || targetInEditState,
     }),
-    [isDirty, undoStack.length, sourceInEditState, targetInEditState]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
   );
 
   return (
@@ -234,6 +241,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             aria-label={Resources.RUN_TEST}
             icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
             disabled={disabledState.test}
+            title={disabledState.test ? Resources.DISABLED_TEST : ''}
             onClick={onTestClick}
           >
             {Resources.RUN_TEST}
@@ -243,7 +251,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
         </ToolbarGroup>
       </Toolbar>
-      <Toaster toasterId={toasterId} />
+      <Toaster timeout={10000} toasterId={toasterId} />
     </>
   );
 };
