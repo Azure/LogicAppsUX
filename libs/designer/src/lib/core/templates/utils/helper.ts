@@ -1,4 +1,4 @@
-import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
+import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -46,15 +46,6 @@ export const getUniqueConnectorsFromConnections = (
   }
 
   return result;
-};
-
-export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
-  if (!isArmResourceId(connectorId)) {
-    return connectorId;
-  }
-
-  const result = connectorId.replaceAll('#subscription#', subscriptionId);
-  return result.replaceAll('#location#', location);
 };
 
 const templateSearchOptions = {

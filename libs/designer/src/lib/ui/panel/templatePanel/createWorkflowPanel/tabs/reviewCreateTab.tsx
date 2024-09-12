@@ -6,10 +6,9 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { TemplateService } from '@microsoft/logic-apps-shared';
+import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
-import { normalizeConnectorId } from '../../../../../core/templates/utils/helper';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
