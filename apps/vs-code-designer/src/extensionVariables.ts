@@ -24,6 +24,7 @@ export namespace ext {
   export let context: ExtensionContext;
   export let designTimePort: number;
   export let designChildProcess: cp.ChildProcess | undefined;
+  export let designChildFuncProcessId: string | undefined;
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let logicAppWorkspace: string;
