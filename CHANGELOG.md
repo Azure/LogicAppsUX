@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.88.0](https://github.com/Azure/LogicAppsUX/compare/v4.87.0...v4.88.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **Designer:** Chatbot Panel Overlapping & Disappearing Issues ([#5652](https://github.com/Azure/LogicAppsUX/issues/5652)) ([dad18fa](https://github.com/Azure/LogicAppsUX/commit/dad18faa234b94b0937f14204307562b803ded09))
+
 ## [4.87.0](https://github.com/Azure/LogicAppsUX/compare/v4.86.0...v4.87.0) (2024-09-12)
 
 
