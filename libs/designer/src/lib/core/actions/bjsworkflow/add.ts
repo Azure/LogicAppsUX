@@ -134,12 +134,7 @@ export const initializeOperationDetails = async (
 
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-      nodeId,
-      operationInfo,
-      manifest,
-      presetParameterValues
-    );
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
@@ -149,11 +144,11 @@ export const initializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      operationInfo,
       dispatch,
-      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
+      operationInfo
     );
-    parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
+    parsedManifest = new ManifestParser(manifest);
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(
@@ -174,9 +169,9 @@ export const initializeOperationDetails = async (
         manifest,
         isTrigger,
         nodeInputs,
-        operationInfo,
         dispatch,
-        settings.splitOn?.value?.value
+        settings.splitOn?.value?.value,
+        operationInfo
       ).outputs;
     }
 
@@ -283,19 +278,15 @@ export const initializeOperationDetails = async (
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
-  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-    id,
-    { type: '', kind: '', connectorId: '', operationId: '' },
-    manifest
-  );
+  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest);
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
     id,
     manifest,
     false,
     nodeInputs,
-    { type: '', kind: '', connectorId: '', operationId: '' },
     dispatch,
-    /* splitOnValue */ undefined
+    /* splitOnValue */ undefined,
+    /* operationInfo */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {
