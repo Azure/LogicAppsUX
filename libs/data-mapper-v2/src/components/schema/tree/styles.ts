@@ -45,6 +45,7 @@ export const useTreeNodeStyles = makeStyles({
   container: {
     width: '-webkit-fill-available',
     height: '100%',
+    zIndex: 998,
     ':hover': {
       backgroundColor: '#D5E4FF',
     },
@@ -61,6 +62,7 @@ export const useTreeNodeStyles = makeStyles({
     alignItems: 'center',
     width: '-webkit-fill-available',
     height: '100%',
+    zIndex: 999,
   },
   leafNode: {
     paddingLeft: '8px',

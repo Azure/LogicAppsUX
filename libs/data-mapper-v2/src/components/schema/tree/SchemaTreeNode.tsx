@@ -7,7 +7,7 @@ import { useCallback, useMemo } from 'react';
 import useSchema from '../useSchema';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setSelectedItem } from '../../../core/state/DataMapSlice';
+import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { Handle, useEdges } from '@xyflow/react';
 
@@ -66,7 +66,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
 
   const onClick = useCallback(
     (e?: any) => {
-      console.log('onMouseDown: ', nodeId);
       if (e) {
         e.stopPropagation();
         e.preventDefault();
@@ -75,6 +74,30 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       dispatch(setSelectedItem(nodeId));
     },
     [nodeId, dispatch]
+  );
+
+  const onMouseEnter = useCallback(
+    (_e?: any) => {
+      if (isHover) {
+        return;
+      }
+
+      dispatch(
+        setHoverState({
+          id: key,
+          isSourceSchema: isSourceSchema,
+          type: 'node',
+        })
+      );
+    },
+    [dispatch, isSourceSchema, key, isHover]
+  );
+
+  const onMouseLeave = useCallback(
+    (_e?: any) => {
+      dispatch(setHoverState());
+    },
+    [dispatch]
   );
 
   const onToggle = useCallback(
@@ -127,36 +150,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     ]
   );
 
-  // const onMouseOver = useCallback(
-  //   (e?: any) => {
-  //     if (e) {
-  //       e.stopPropagation();
-  //       e.preventDefault();
-  //     }
-
-  //     dispatch(
-  //       setHoverState({
-  //         id: key,
-  //         isSourceSchema: isSourceSchema,
-  //         type: "node",
-  //       })
-  //     );
-  //   },
-  //   [dispatch, isSourceSchema, key]
-  // );
-
-  // const onMouseLeave = useCallback(
-  //   (e?: any) => {
-  //     if (e) {
-  //       e.stopPropagation();
-  //       e.preventDefault();
-  //     }
-
-  //     dispatch(setHoverState());
-  //   },
-  //   [dispatch]
-  // );
-
   return (
     <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)} ref={dragHandle}>
       {isSourceSchema ? null : handleComponent}
@@ -164,8 +157,10 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         className={mergeClasses(
           styles.container,
           isSourceSchema ? styles.sourceSchemaContainer : styles.targetSchemaContainer,
-          isSelected ? styles.active : ''
+          isSelected || isHover ? styles.active : ''
         )}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <div style={style} className={mergeClasses(styles.wrapper)} onClick={onClick}>
           {isLeaf ? (
