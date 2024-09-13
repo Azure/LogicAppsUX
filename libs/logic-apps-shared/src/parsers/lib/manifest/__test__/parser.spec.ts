@@ -6,20 +6,15 @@ import { createItem, getEmails, onNewEmail } from './data/manifests';
 import { equals } from '../../../../utils/src';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Operation manifest parser tests', () => {
-  const aliasingSupported = true;
-  const aliasingNotSupported = false;
   describe('Input Parameters', () => {
     it('should return empty object when there is no inputs.', () => {
-      const parser = new ManifestParser(
-        {
-          properties: {
-            iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
-            brandColor: '#0072c6',
-            description: 'This operation gets emails from a folder.',
-          },
+      const parser = new ManifestParser({
+        properties: {
+          iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
+          brandColor: '#0072c6',
+          description: 'This operation gets emails from a folder.',
         },
-        aliasingNotSupported
-      );
+      });
 
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
 
@@ -27,18 +22,15 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should return optional inputs when inputs is optional.', () => {
-      const parser = new ManifestParser(
-        {
-          properties: {
-            iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
-            brandColor: '#0072c6',
-            description: 'This operation gets emails from a folder.',
-            isInputsOptional: true,
-            inputs: {},
-          },
+      const parser = new ManifestParser({
+        properties: {
+          iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
+          brandColor: '#0072c6',
+          description: 'This operation gets emails from a folder.',
+          isInputsOptional: true,
+          inputs: {},
         },
-        aliasingNotSupported
-      );
+      });
 
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
 
@@ -47,7 +39,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should parse primitive inputs which are children of objects correctly', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
 
@@ -61,7 +53,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should generate enum for boolean parameters', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
 
@@ -75,7 +67,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should determine when inputs are required', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
 
@@ -85,7 +77,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should determine when inputs are not required', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
 
@@ -95,13 +87,13 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should not mark an input required when any ancestor is not required', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
       const inputParameters = parser.getInputParameters(/* includeParentObject */ false, /* expandArrayPropertiesDepth */ 0);
       expect(getInputByName(inputParameters, 'emailMessage/Object/P1')?.required).toBeFalsy();
     });
 
     it('should parse internal array parameters when selected', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const allInputParameters = parser.getInputParameters(/* includeParentObject */ true, /* expandArrayPropertiesDepth */ 100);
 
@@ -112,7 +104,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should parse internal primitive array parameters when selected', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const allInputParameters = parser.getInputParameters(/* includeParentObject */ true, /* expandArrayPropertiesDepth */ 100);
 
@@ -121,7 +113,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should pass through dynamic values', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const allInputParameters = parser.getInputParameters(/* includeParentObject */ true, /* expandArrayPropertiesDepth */ 100);
 
@@ -149,7 +141,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should pass through dynamic schema', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const allInputParameters = parser.getInputParameters(/* includeParentObject */ true, /* expandArrayPropertiesDepth */ 100);
 
@@ -169,7 +161,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should update dynamic extension parameters to reference aliases', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const allInputParameters = parser.getInputParameters(/* includeParentObject */ true, /* expandArrayPropertiesDepth */ 100);
 
@@ -181,16 +173,13 @@ describe('Operation manifest parser tests', () => {
 
   describe('Output Parameters', () => {
     it('should return empty object when there is no outputs.', () => {
-      const parser = new ManifestParser(
-        {
-          properties: {
-            iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
-            brandColor: '#0072c6',
-            description: 'This operation gets emails from a folder.',
-          },
+      const parser = new ManifestParser({
+        properties: {
+          iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
+          brandColor: '#0072c6',
+          description: 'This operation gets emails from a folder.',
         },
-        aliasingNotSupported
-      );
+      });
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -198,19 +187,16 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should return optional outputs when outputs is optional.', () => {
-      const parser = new ManifestParser(
-        {
-          properties: {
-            iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
-            brandColor: '#0072c6',
-            description: 'This operation gets emails from a folder.',
-            isOutputsOptional: true,
-            outputs: {},
-            includeRootOutputs: true,
-          },
+      const parser = new ManifestParser({
+        properties: {
+          iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
+          brandColor: '#0072c6',
+          description: 'This operation gets emails from a folder.',
+          isOutputsOptional: true,
+          outputs: {},
+          includeRootOutputs: true,
         },
-        aliasingNotSupported
-      );
+      });
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -220,19 +206,16 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should return optional outputs when outputs is optional.', () => {
-      const parser = new ManifestParser(
-        {
-          properties: {
-            iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
-            brandColor: '#0072c6',
-            description: 'This operation gets emails from a folder.',
-            isOutputsOptional: true,
-            outputs: {},
-            includeRootOutputs: true,
-          },
+      const parser = new ManifestParser({
+        properties: {
+          iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
+          brandColor: '#0072c6',
+          description: 'This operation gets emails from a folder.',
+          isOutputsOptional: true,
+          outputs: {},
+          includeRootOutputs: true,
         },
-        aliasingNotSupported
-      );
+      });
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -242,47 +225,44 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should not return alternative outputs if no runtime outputs are provided', () => {
-      const parser = new ManifestParser(
-        {
-          properties: {
-            iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
-            brandColor: '#0072c6',
-            description: 'This operation gets emails from a folder.',
-            isOutputsOptional: true,
-            outputs: {
-              type: 'object',
-              properties: {
-                defaultProp: {
-                  type: 'string',
-                },
+      const parser = new ManifestParser({
+        properties: {
+          iconUri: 'https://connectoricons-prod.azureedge.net/office365/icon_1.0.1008.1183.png',
+          brandColor: '#0072c6',
+          description: 'This operation gets emails from a folder.',
+          isOutputsOptional: true,
+          outputs: {
+            type: 'object',
+            properties: {
+              defaultProp: {
+                type: 'string',
               },
             },
-            includeRootOutputs: true,
-            alternativeOutputs: {
-              keyPath: ['statusCode'],
-              schemas: {
-                200: {
-                  type: 'object',
-                  properties: {
-                    altSuccessProp: {
-                      type: 'string',
-                    },
-                  },
-                },
-              },
-              defaultSchema: {
+          },
+          includeRootOutputs: true,
+          alternativeOutputs: {
+            keyPath: ['statusCode'],
+            schemas: {
+              200: {
                 type: 'object',
                 properties: {
-                  altDefaultProp: {
+                  altSuccessProp: {
                     type: 'string',
                   },
                 },
               },
             },
+            defaultSchema: {
+              type: 'object',
+              properties: {
+                altDefaultProp: {
+                  type: 'string',
+                },
+              },
+            },
           },
         },
-        aliasingNotSupported
-      );
+      });
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ false, /* expandArrayOutputsDepth */ 1);
 
@@ -291,7 +271,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should parse primitive outputs which are children of arrays correctly', () => {
-      const parser = new ManifestParser(getEmails, aliasingSupported);
+      const parser = new ManifestParser(getEmails);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -306,7 +286,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should tell when an output is advanced', () => {
-      const parser = new ManifestParser(getEmails, aliasingSupported);
+      const parser = new ManifestParser(getEmails);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -316,7 +296,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should consider descendents of advanced parameters advanced', () => {
-      const parser = new ManifestParser(getEmails, aliasingSupported);
+      const parser = new ManifestParser(getEmails);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -326,7 +306,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should parse array outputs', () => {
-      const parser = new ManifestParser(getEmails, aliasingSupported);
+      const parser = new ManifestParser(getEmails);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -337,7 +317,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should determine the parent array', () => {
-      const parser = new ManifestParser(onNewEmail, aliasingSupported);
+      const parser = new ManifestParser(onNewEmail);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -352,7 +332,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should pass through dynamic schema', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -372,7 +352,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should update dynamic extension parameters to reference aliases', () => {
-      const parser = new ManifestParser(createItem, aliasingSupported);
+      const parser = new ManifestParser(createItem);
 
       const allOutputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -383,7 +363,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should set title for primitive array children', () => {
-      const parser = new ManifestParser(onNewEmail, aliasingSupported);
+      const parser = new ManifestParser(onNewEmail);
 
       const allOutputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 
@@ -393,7 +373,7 @@ describe('Operation manifest parser tests', () => {
     });
 
     it('should not surface internal outputs', () => {
-      const parser = new ManifestParser(onNewEmail, aliasingSupported);
+      const parser = new ManifestParser(onNewEmail);
 
       const outputParameters = parser.getOutputParameters(/* includeParentObject */ true, /* expandArrayOutputsDepth */ 1);
 

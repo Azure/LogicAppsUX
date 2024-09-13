@@ -60,6 +60,7 @@ import type {
   IWorkflowService,
   CustomSwaggerServiceDetails,
   InputParameter,
+  OperationInfo,
   OperationManifest,
   OperationManifestProperties,
   OutputParameter,
@@ -124,24 +125,22 @@ export const updateWorkflowParameters = (parameters: Record<string, WorkflowPara
 
 export const getInputParametersFromManifest = (
   _nodeId: string,
-  operationInfo: NodeOperation,
   manifest: OperationManifest,
   presetParameterValues?: Record<string, any>,
   customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
-  const manifestParser = new ManifestParser(
-    manifest,
-    OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind)
-  );
-  const primaryInputParameters = manifestParser.getInputParameters(
+  const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */,
     undefined,
     undefined
   );
   const allInputParameters = unmap(
-    manifestParser.getInputParameters(true /* includeParentObject */, Constants.MAX_EXPAND_ARRAY_DEPTH /* expandArrayPropertiesDepth */)
+    new ManifestParser(manifest).getInputParameters(
+      true /* includeParentObject */,
+      Constants.MAX_EXPAND_ARRAY_DEPTH /* expandArrayPropertiesDepth */
+    )
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
@@ -215,9 +214,9 @@ export const getOutputParametersFromManifest = (
   manifest: OperationManifest,
   isTrigger: boolean,
   inputs: NodeInputs,
-  operationInfo: NodeOperation,
   dispatch: Dispatch,
-  splitOnValue?: string
+  splitOnValue?: string,
+  operationInfo?: OperationInfo
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
   let originalOutputs: Record<string, OutputInfo> | undefined;
@@ -226,9 +225,8 @@ export const getOutputParametersFromManifest = (
     manifestToParse = getUpdatedManifestForSchemaDependency(manifest, inputs);
   }
 
-  const isAliasingSupported = OperationManifestService().isAliasingSupported(operationInfo?.type, operationInfo?.kind);
   if (isTrigger) {
-    const originalOperationOutputs = new ManifestParser(manifestToParse, isAliasingSupported).getOutputParameters(
+    const originalOperationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
       true /* includeParentObject */,
       Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
       false /* expandOneOf */,
@@ -274,7 +272,7 @@ export const getOutputParametersFromManifest = (
       },
     };
   } else {
-    operationOutputs = new ManifestParser(manifestToParse, isAliasingSupported).getOutputParameters(
+    operationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
       true /* includeParentObject */,
       Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
       false /* expandOneOf */,
@@ -347,7 +345,7 @@ export const updateOutputsAndTokens = async (
   let tokens: OutputToken[];
   if (supportsManifest) {
     const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
+    nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, dispatch, splitOnValue, operationInfo).outputs;
     tokens = [
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(

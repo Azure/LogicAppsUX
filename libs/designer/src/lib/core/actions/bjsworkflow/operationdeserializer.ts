@@ -233,7 +233,7 @@ export const initializeOperationDetailsForManifest = async (
     dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
     const { connectorId, operationId } = nodeOperationInfo;
-    const parsedManifest = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(operation.type, operation.kind));
+    const parsedManifest = new ManifestParser(manifest);
     const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
     schema.then((schema) => {
       if (schema) {
@@ -244,7 +244,6 @@ export const initializeOperationDetailsForManifest = async (
     const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
       nodeId,
-      nodeOperationInfo,
       manifest,
       /* presetParameterValues */ undefined,
       customSwagger,
@@ -266,9 +265,9 @@ export const initializeOperationDetailsForManifest = async (
       manifest,
       isTrigger,
       nodeInputs,
-      nodeOperationInfo,
       dispatch,
-      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined,
+      operationInfo
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -322,7 +321,6 @@ const processChildGraphAndItsInputs = (
           for (const subNodeKey of Object.keys(subOperation)) {
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
               subNodeKey,
-              { type: '', kind: '', connectorId: '', operationId: '' },
               subManifest,
               /* presetParameterValues */ undefined,
               /* customSwagger */ undefined,
