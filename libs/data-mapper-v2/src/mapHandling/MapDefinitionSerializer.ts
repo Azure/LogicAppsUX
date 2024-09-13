@@ -12,7 +12,6 @@ import {
   extractScopeFromLoop,
   getInputValues,
   getSourceKeyOfLastLoop,
-  isValidToMakeMapDefinition,
 } from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
@@ -27,14 +26,27 @@ interface OutputPathItem {
   arrayIndex?: number;
 }
 
+export type MetaMapDefinition = FailedMapDefinition | SuccessfulMapDefinition;
+
+interface FailedMapDefinition {
+  isSuccess: false;
+  errorNodes: [string, Connection][];
+}
+
+interface SuccessfulMapDefinition {
+  isSuccess: true;
+  definition: string;
+}
+
 export const convertToMapDefinition = (
   connections: ConnectionDictionary,
   sourceSchema: SchemaExtended | undefined,
   targetSchema: SchemaExtended | undefined,
   targetSchemaSortArray: string[],
   generateHeader = true
-): string => {
-  if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
+): MetaMapDefinition => {
+  //const invalidFunctionNodes = invalidFunctions(connections);
+  if (sourceSchema && targetSchema) {
     const mapDefinition: MapDefinitionEntry = {};
 
     if (generateHeader) {
@@ -44,16 +56,18 @@ export const convertToMapDefinition = (
     generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
-    return yaml
+    const map = yaml
       .dump(mapDefinition, {
         replacer: yamlReplacer,
         noRefs: true,
         sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
       })
       .replaceAll(/'"|"'/g, '"');
+
+    return { isSuccess: true, definition: map };
   }
 
-  return '';
+  return { isSuccess: false, errorNodes: [] };
 };
 
 const yamlReplacer = (key: string, value: any) => {

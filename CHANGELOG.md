@@ -1,4 +1,40 @@
 # Logic Apps Designer
+## [4.88.0](https://github.com/Azure/LogicAppsUX/compare/v4.87.0...v4.88.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **Designer:** Chatbot Panel Overlapping & Disappearing Issues ([#5652](https://github.com/Azure/LogicAppsUX/issues/5652)) ([dad18fa](https://github.com/Azure/LogicAppsUX/commit/dad18faa234b94b0937f14204307562b803ded09))
+
+## [4.87.0](https://github.com/Azure/LogicAppsUX/compare/v4.86.0...v4.87.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix function node drag event ([#5646](https://github.com/Azure/LogicAppsUX/issues/5646)) ([775074d](https://github.com/Azure/LogicAppsUX/commit/775074db4f48b6ddc0df84c4e6de73b85428e270))
+* **Data Mapper:** Toast timeout increase, able to select new target schema, disabled test until save ([#5657](https://github.com/Azure/LogicAppsUX/issues/5657)) ([8ece502](https://github.com/Azure/LogicAppsUX/commit/8ece502ee51fa31f9da7fafc62773276174f64b1))
+* **designer:** Deserializing Workflow not properly loading stringified primitives ([#5622](https://github.com/Azure/LogicAppsUX/issues/5622)) ([38a8b06](https://github.com/Azure/LogicAppsUX/commit/38a8b0614d58aa3cd89b0519186c44885e28bda2)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Doing case insensitive match of dropdown items unless specified ([#5653](https://github.com/Azure/LogicAppsUX/issues/5653)) ([1a6604c](https://github.com/Azure/LogicAppsUX/commit/1a6604c2257dbd00b20545f09f8c62b11b8db212))
+* **designer:** Remove Current Node from Blocking nodes ([#5650](https://github.com/Azure/LogicAppsUX/issues/5650)) ([1f1176d](https://github.com/Azure/LogicAppsUX/commit/1f1176d77ff13d57816d631f01d5ad7d0b3d75eb)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **vscode:** Ensure workflow design time starts with multiple logic apps ([#5632](https://github.com/Azure/LogicAppsUX/issues/5632)) ([411f031](https://github.com/Azure/LogicAppsUX/commit/411f03170c8baeb30a714cbddf8c43685461fcc0))
+* **vscode:** Extension cleanup ([#5631](https://github.com/Azure/LogicAppsUX/issues/5631)) ([f4e122e](https://github.com/Azure/LogicAppsUX/commit/f4e122e6fa030768889e29a47379da970e8e623e))
+
+## [4.86.0](https://github.com/Azure/LogicAppsUX/compare/v4.85.0...v4.86.0) (2024-09-11)
+
+
+### Features
+
+* **Data Mapper:** Allow LML generation with missing func params, and surface XSLT error message ([#5633](https://github.com/Azure/LogicAppsUX/issues/5633)) ([f9f28b1](https://github.com/Azure/LogicAppsUX/commit/f9f28b1f49883c6e48cddb3eff9de7cca24dee87))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove output connection when a new one is added from the menu ([#5640](https://github.com/Azure/LogicAppsUX/issues/5640)) ([a73c0fd](https://github.com/Azure/LogicAppsUX/commit/a73c0fda54086ef409a6ae4009f208f8959a8d45))
+* **Data Mapper:** Update test content in Test panel ([#5626](https://github.com/Azure/LogicAppsUX/issues/5626)) ([182c1c3](https://github.com/Azure/LogicAppsUX/commit/182c1c3684300c7d2d7749e99185be508d8b4d44))
+* **designer-ui:** Token picker should display all output tokens when fewer options than max rows shown ([#5618](https://github.com/Azure/LogicAppsUX/issues/5618)) ([c608191](https://github.com/Azure/LogicAppsUX/commit/c6081917dddd2878ddfaaed20bcf89156e474b34))
+* **designer:** Fixing null type of output for tokens filtering ([#5627](https://github.com/Azure/LogicAppsUX/issues/5627)) ([7e8fcb4](https://github.com/Azure/LogicAppsUX/commit/7e8fcb458001a8bfc53a4f93dd161da656d8180d))
+* **designer:** Removing parent object from dynamic inputs when parameter is nested ([#5635](https://github.com/Azure/LogicAppsUX/issues/5635)) ([938b199](https://github.com/Azure/LogicAppsUX/commit/938b199e91b7829fdf600f1d733dd04d0d8c9a8a))
+
 ## [4.85.0](https://github.com/Azure/LogicAppsUX/compare/v4.84.0...v4.85.0) (2024-09-09)
 
 
