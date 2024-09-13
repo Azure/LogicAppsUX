@@ -2,52 +2,18 @@ import { makeStyles, shorthands } from '@fluentui/react-components';
 import { colors } from '../..//common/reactflow/styles';
 
 export const useStyles = makeStyles({
-  wrapper: {
-    marginTop: '10px',
-    fontSize: '18px',
-    height: '100%',
-    ...shorthands.overflow('scroll', 'scroll'),
-  },
-  leftWrapper: {
-    marginLeft: '15px',
-  },
-  rightWrapper: {
-    marginRight: '15px',
-  },
-  rootNode: {
-    fontWeight: '600',
-    ':hover': {
-      backgroundColor: '#D5E4FF',
-    },
-  },
-  circleNonHoveredAndNonConnected: {
-    color: '#fff',
-    stroke: '#ddd',
-  },
-  rightTreeItemLayout: {
-    ...shorthands.borderLeft('23px', 'solid', 'transparent'),
-  },
-  leafNode: {
-    display: 'inline-flex',
-    ':hover': {
-      backgroundColor: '#D5E4FF',
-    },
-  },
-  nodeSelected: {
-    backgroundColor: '#D5E4FF',
-  },
   typeAnnotation: {
     display: 'inline-flex',
     marginLeft: 'auto',
     marginRight: '15px',
   },
-  required: {
-    ':after': {
-      content: '"*"',
-    },
+  sourceSchemaRoot: {
+    marginLeft: '16px',
+  },
+  targetScehmaRoot: {
+    marginRight: '16px',
   },
   root: {
-    marginLeft: '16px',
     height: '100%',
   },
 });
@@ -55,6 +21,8 @@ export const useStyles = makeStyles({
 export const useTreeStyles = makeStyles({
   root: {
     height: '100%',
+    scrollBehavior: 'smooth',
+    scrollbarWidth: 'none',
   },
 });
 
@@ -69,16 +37,29 @@ export const useTreeNodeStyles = makeStyles({
     alignItems: 'center',
     flexDirection: 'row',
     height: '100%',
-    ...shorthands.overflow('visible'),
+    width: '-webkit-fill-available',
+  },
+  targetSchemaRoot: {
+    paddingLeft: '7px',
+  },
+  container: {
+    width: '-webkit-fill-available',
+    height: '100%',
     ':hover': {
       backgroundColor: '#D5E4FF',
     },
   },
-  dataWrapper: {
+  targetSchemaContainer: {
+    paddingLeft: '16px',
+  },
+  sourceSchemaContainer: {
+    marginRight: '7px',
+  },
+  wrapper: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%',
+    width: '-webkit-fill-available',
     height: '100%',
   },
   leafNode: {
@@ -125,9 +106,9 @@ export const useHandleStyles = makeStyles({
     color: 'white',
   },
   left: {
-    right: '8px',
+    right: '1px',
   },
   right: {
-    left: '8px',
+    left: '-0.5px',
   },
 });

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { useStyles } from './styles';
+import { usePanelStyles, useStyles } from './styles';
 import { Panel } from '../../components/common/panel/Panel';
 import { SchemaPanelBody } from './SchemaPanelBody';
 import type { SchemaFile } from '../../models/Schema';
@@ -40,6 +40,7 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { isSourceSchema, schemaType, toggleEditState } = useSchema({ id });
   const intl = useIntl();
+  const panelStyles = usePanelStyles();
   const styles = useStyles();
   const [fileSelectorOptions, setFileSelectorOptions] = useState<FileSelectorOption>('select-existing');
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
@@ -194,47 +195,49 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   }, [setFilteredFlattenedScehmaMap, flattenedScehmaMap]);
 
   return (
-    <Panel
-      id={`panel_${schemaType}`}
-      isOpen={!!currentPanelView}
-      title={{
-        text: isSourceSchema ? stringResources.SOURCE : stringResources.DESTINATION,
-        subTitleText: selectedSchemaFile?.name,
-        rightAction: scehmaInEditState ? null : (
-          <Button
-            appearance="transparent"
-            aria-label={stringResources.EDIT_SCHEMA}
-            icon={<EditRegular fontSize={18} />}
-            onClick={onEditClick}
+    <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetScehmaRoot)}>
+      <Panel
+        id={`panel_${schemaType}`}
+        isOpen={!!currentPanelView}
+        title={{
+          text: isSourceSchema ? stringResources.SOURCE : stringResources.DESTINATION,
+          subTitleText: selectedSchemaFile?.name,
+          rightAction: scehmaInEditState ? null : (
+            <Button
+              appearance="transparent"
+              aria-label={stringResources.EDIT_SCHEMA}
+              icon={<EditRegular fontSize={18} />}
+              onClick={onEditClick}
+            />
+          ),
+        }}
+        search={
+          scehmaInEditState
+            ? undefined
+            : {
+                placeholder: stringResources.SEARCH_PROPERTIES,
+                onChange: onSearchChange,
+                text: searchTerm,
+              }
+        }
+        styles={{
+          root: mergeClasses(panelStyles.root, 'nodrag nopan', scehmaInEditState ? panelStyles.schemaSelection : panelStyles.schemaTree),
+          body: mergeClasses(panelStyles.body, isSourceSchema ? '' : panelStyles.targetSchemaBody),
+        }}
+        body={
+          <SchemaPanelBody
+            id={id}
+            schema={selectedSchema}
+            setSelectedSchemaFile={setSelectedFileSchemaAndResetState}
+            selectedSchemaFile={selectedSchemaFile}
+            errorMessage={errorMessage}
+            fileSelectorOptions={fileSelectorOptions}
+            setFileSelectorOptions={setFileSelectorOptions}
+            showScehmaSelection={scehmaInEditState}
+            flattenedSchemaMap={filteredFlattenedScehmaMap}
           />
-        ),
-      }}
-      search={
-        scehmaInEditState
-          ? undefined
-          : {
-              placeholder: stringResources.SEARCH_PROPERTIES,
-              onChange: onSearchChange,
-              text: searchTerm,
-            }
-      }
-      styles={{
-        root: mergeClasses(styles.root, 'nodrag nopan', scehmaInEditState ? styles.rootWithSchemaSelection : styles.rootWithSchemaTree),
-        body: styles.body,
-      }}
-      body={
-        <SchemaPanelBody
-          id={id}
-          schema={selectedSchema}
-          setSelectedSchemaFile={setSelectedFileSchemaAndResetState}
-          selectedSchemaFile={selectedSchemaFile}
-          errorMessage={errorMessage}
-          fileSelectorOptions={fileSelectorOptions}
-          setFileSelectorOptions={setFileSelectorOptions}
-          showScehmaSelection={scehmaInEditState}
-          flattenedSchemaMap={filteredFlattenedScehmaMap}
-        />
-      }
-    />
+        }
+      />
+    </div>
   );
 };

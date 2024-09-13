@@ -1,7 +1,7 @@
 import { equals, type ITreeFile, type IFileSysTreeItem, type SchemaNodeExtended, type SchemaExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useStyles } from './styles';
+import { usePanelBodyStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector } from 'react-redux';
@@ -35,7 +35,7 @@ export const SchemaPanelBody = ({
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
-  const styles = useStyles();
+  const styles = usePanelBodyStyles();
   const { schemaType, toggleEditState } = useSchema({ id });
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
@@ -136,7 +136,7 @@ export const SchemaPanelBody = ({
   }, [toggleEditState]);
 
   return (
-    <div className={styles.bodyWrapper}>
+    <div className={styles.root}>
       {showScehmaSelection ? (
         <FileSelector
           selectedKey={fileSelectorOptions}
@@ -168,7 +168,7 @@ export const SchemaPanelBody = ({
           }
         />
       ) : schema && flattenedSchemaMap ? (
-        <div className={styles.treeWrapper}>
+        <div className={styles.treeContainer}>
           <SchemaTree id={id} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
         </div>
       ) : (!schema || !flattenedSchemaMap) && !errorMessage && selectedSchemaFile ? (

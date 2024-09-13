@@ -8,6 +8,7 @@ import useSchema from '../useSchema';
 import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
 import SchemaTreeNode from './SchemaTreeNode';
 import { toggleNodeExpandCollapse, updateReactFlowNodeHandles } from '../../../core/state/DataMapSlice';
+import { mergeClasses } from '@fluentui/react-components';
 
 export type SchemaTreeProps = {
   id: string;
@@ -70,7 +71,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys, updateHandles]);
 
   return (
-    <div ref={ref} className={styles.root}>
+    <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
       {ref?.current && (
         <>
           {isSourceSchema ? (

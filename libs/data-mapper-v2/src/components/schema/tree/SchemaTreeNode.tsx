@@ -158,25 +158,33 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   // );
 
   return (
-    <div style={style} className={mergeClasses(styles.root, isSelected ? styles.active : '')} ref={dragHandle}>
+    <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)} ref={dragHandle}>
       {isSourceSchema ? null : handleComponent}
-      <div className={mergeClasses(styles.dataWrapper)} onClick={onClick}>
-        {isLeaf ? (
-          <div />
-        ) : openKeys[key] ? (
-          <ChevronDownRegular className={styles.chevronIcon} fontSize={16} onClick={onToggle} />
-        ) : (
-          <ChevronRightRegular className={styles.chevronIcon} fontSize={16} onClick={onToggle} />
+      <div
+        className={mergeClasses(
+          styles.container,
+          isSourceSchema ? styles.sourceSchemaContainer : styles.targetSchemaContainer,
+          isSelected ? styles.active : ''
         )}
-        <span
-          className={mergeClasses(
-            data.nodeProperties.includes(SchemaNodeProperty.Optional) ? '' : styles.required,
-            isLeaf ? styles.leafNode : ''
+      >
+        <div style={style} className={mergeClasses(styles.wrapper)} onClick={onClick}>
+          {isLeaf ? (
+            <div />
+          ) : openKeys[key] ? (
+            <ChevronDownRegular className={styles.chevronIcon} fontSize={16} onClick={onToggle} />
+          ) : (
+            <ChevronRightRegular className={styles.chevronIcon} fontSize={16} onClick={onToggle} />
           )}
-        >
-          {data.name}
-        </span>
-        {isSelected || isHover ? <TypeAnnotation schemaNode={data} /> : null}
+          <span
+            className={mergeClasses(
+              data.nodeProperties.includes(SchemaNodeProperty.Optional) ? '' : styles.required,
+              isLeaf ? styles.leafNode : ''
+            )}
+          >
+            {data.name}
+          </span>
+          {isSelected || isHover ? <TypeAnnotation schemaNode={data} /> : null}
+        </div>
       </div>
       {isSourceSchema ? handleComponent : null}
     </div>
