@@ -21,7 +21,6 @@ import {
   OperationManifestService,
   AssertionErrorCode,
   AssertionException,
-  ConnectionReferenceKeyFormat,
   ExpressionParser,
   ExtensionProperties,
   OutputKeys,
@@ -117,7 +116,11 @@ export const removeAliasingKeyRedundancies = (openAPIkey: string): string => {
   return pathSegments.join('.');
 };
 
-export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
+export const getUpdatedManifestForSplitOn = (
+  manifest: OperationManifest,
+  splitOn: string | undefined,
+  isAliasPathParsingEnabled: boolean
+): OperationManifest => {
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
     {
@@ -137,9 +140,6 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
       throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
     }
 
-    const isAliasPathParsingEnabled =
-      manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi ||
-      manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.HybridTrigger;
     const parsedValue = ExpressionParser.parseTemplateExpression(splitOn, isAliasPathParsingEnabled);
     const properties: string[] = [];
     let manifestSection = updatedManifest.properties.outputs;
@@ -217,16 +217,27 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
 };
 
 const getUpdatedAliasInItemProperties = (schemaItem: OpenAPIV2.SchemaObject | undefined): OpenAPIV2.SchemaObject | undefined => {
-  const properties = schemaItem?.properties;
+  const newSchemaItem: OpenAPIV2.SchemaObject | undefined = schemaItem
+    ? {
+        ...schemaItem,
+        ...{ [ExtensionProperties.Alias]: 'body' },
+      }
+    : undefined;
 
-  if (properties) {
-    for (const itemName of Object.keys(properties)) {
-      const splitOnItem = properties[itemName];
-      convertSchemaAliasesForSplitOn(splitOnItem);
+  if (newSchemaItem) {
+    const properties = newSchemaItem.properties;
+
+    if (properties) {
+      for (const itemName of Object.keys(properties)) {
+        const splitOnItem = properties[itemName];
+        convertSchemaAliasesForSplitOn(splitOnItem);
+      }
     }
+
+    convertDynamicExtensionsForSchema(newSchemaItem);
   }
 
-  return schemaItem;
+  return newSchemaItem;
 };
 
 const convertSchemaAliasesForSplitOn = (schema: OpenAPIV2.SchemaObject): void => {
@@ -247,6 +258,89 @@ const convertSchemaAliasesForSplitOn = (schema: OpenAPIV2.SchemaObject): void =>
     }
   }
 };
+
+export function convertDynamicExtensionsForSchema(schema: OpenAPIV2.SchemaObject): void {
+  if (!schema) {
+    return;
+  }
+
+  convertDynamicListExtension(schema);
+  convertDynamicTreeExtension(schema);
+  convertDynamicPropertiesExtension(schema);
+
+  convertDynamicExtensionsForSchemaChildren(schema);
+}
+
+function convertDynamicExtensionsForSchemaChildren(schema: OpenAPIV2.SchemaObject): void {
+  if (schema.properties) {
+    for (const childInputId of Object.keys(schema.properties)) {
+      const child = schema.properties[childInputId];
+
+      convertDynamicExtensionsForSchema(child);
+    }
+  }
+
+  if (schema.items) {
+    convertDynamicExtensionsForSchema(schema.items);
+  }
+}
+
+function convertDynamicListExtension(schema: OpenAPIV2.SchemaObject): void {
+  const dynamicListExtension = schema[ExtensionProperties.DynamicList];
+
+  if (!dynamicListExtension) {
+    return;
+  }
+
+  const originalDynamicState = dynamicListExtension.dynamicState;
+
+  if (originalDynamicState) {
+    schema[ExtensionProperties.DynamicList] = {
+      ...dynamicListExtension,
+      dynamicState: { ...originalDynamicState, schemaAlias: schema[ExtensionProperties.Alias] },
+    };
+  }
+}
+
+function convertDynamicTreeExtension(schema: OpenAPIV2.SchemaObject): void {
+  const dynamicTreeExtension = schema[ExtensionProperties.DynamicTree];
+
+  if (!dynamicTreeExtension) {
+    return;
+  }
+
+  const originalDynamicState = dynamicTreeExtension.dynamicState;
+
+  if (originalDynamicState) {
+    schema[ExtensionProperties.DynamicTree] = {
+      ...dynamicTreeExtension,
+      dynamicState: {
+        ...originalDynamicState,
+        schemaAlias: schema[ExtensionProperties.Alias],
+      },
+    };
+  }
+}
+
+function convertDynamicPropertiesExtension(schema: OpenAPIV2.SchemaObject): void {
+  const dynamicPropertiesExtension = schema[ExtensionProperties.DynamicProperties];
+
+  if (!dynamicPropertiesExtension) {
+    return;
+  }
+
+  const originalDynamicState = dynamicPropertiesExtension.dynamicState;
+
+  if (originalDynamicState) {
+    schema[ExtensionProperties.DynamicProperties] = {
+      ...dynamicPropertiesExtension,
+      dynamicState: {
+        ...originalDynamicState,
+        schemaAlias: schema[ExtensionProperties.Alias],
+      },
+    };
+  }
+}
 
 export const isSupportedSplitOnExpression = (expression: Expression): boolean => {
   if (!isFunction(expression)) {

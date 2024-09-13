@@ -242,7 +242,7 @@ export const getOutputParametersFromManifest = (
     }
 
     try {
-      manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
+      manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue, isAliasingSupported);
     } catch (error: any) {
       const errorInfo: ErrorInfo = { level: ErrorLevel.Default, error, message: error.message };
       if (error instanceof AssertionException && error.code === AssertionErrorCode.INVALID_SPLITON) {
