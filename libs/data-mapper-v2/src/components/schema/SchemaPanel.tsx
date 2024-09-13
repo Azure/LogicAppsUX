@@ -195,7 +195,7 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   }, [setFilteredFlattenedScehmaMap, flattenedScehmaMap]);
 
   return (
-    <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetScehmaRoot)}>
+    <div className={mergeClasses(styles.root, 'nodrag nopan nowheel', isSourceSchema ? '' : styles.targetScehmaRoot)}>
       <Panel
         id={`panel_${schemaType}`}
         isOpen={!!currentPanelView}

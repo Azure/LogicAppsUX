@@ -1,13 +1,13 @@
 import { emptyCanvasRect, type SchemaExtended, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useHandleStyles, useStyles, useTreeStyles } from './styles';
 import { useCallback, useEffect, useRef } from 'react';
-import { Handle, Position, useReactFlow, useUpdateNodeInternals } from '@xyflow/react';
+import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import useSchema from '../useSchema';
 import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
 import SchemaTreeNode from './SchemaTreeNode';
-import { toggleNodeExpandCollapse, updateReactFlowNodeHandles } from '../../../core/state/DataMapSlice';
+import { toggleNodeExpandCollapse } from '../../../core/state/DataMapSlice';
 import { mergeClasses } from '@fluentui/react-components';
 import { useDragDropManager } from 'react-dnd';
 
@@ -32,27 +32,15 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   } = props;
 
   const { panelNodeId, openKeys, isSourceSchema } = useSchema({ id });
-  const { getInternalNode } = useReactFlow();
   const { height: currentHeight } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
   const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const updateNodeInternals = useUpdateNodeInternals();
 
-  const updateHandles = useCallback(() => {
-    const node = getInternalNode(panelNodeId);
-    dispatch(
-      updateReactFlowNodeHandles({
-        isSource: isSourceSchema,
-        handles: node?.internals?.handleBounds?.source ?? node?.internals?.handleBounds?.target ?? [],
-      })
-    );
-  }, [dispatch, getInternalNode, isSourceSchema, panelNodeId]);
-
   const onScroll = useCallback(() => {
     updateNodeInternals(panelNodeId);
-    updateHandles();
-  }, [panelNodeId, updateHandles, updateNodeInternals]);
+  }, [panelNodeId, updateNodeInternals]);
 
   const onToggle = useCallback(
     (id: string) => {
@@ -69,8 +57,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
-    updateHandles();
-  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys, updateHandles]);
+  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys]);
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>

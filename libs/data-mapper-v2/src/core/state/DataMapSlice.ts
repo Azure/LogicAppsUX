@@ -98,9 +98,6 @@ export interface DataMapOperationState {
   intermediateEdgeMappingForScrolling: Record<string, Record<string, boolean>>;
   // Store edge mapping for each edge in the schema to use when collapsing/expanding
   intermediateEdgeMappingForCollapsing: Record<string, Record<string, boolean>>;
-  // Visible handles
-  visibleSourceHandles: any[];
-  visibleTargetHandles: any[];
   // Track open nodes in the scehma Tree
   sourceOpenKeys: Record<string, boolean>;
   targetOpenKeys: Record<string, boolean>;
@@ -124,8 +121,6 @@ const emptyPristineState: DataMapOperationState = {
   xsltContent: '',
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: {},
-  visibleSourceHandles: [],
-  visibleTargetHandles: [],
   sourceOpenKeys: {},
   targetOpenKeys: {},
   edgeLoopMapping: {},
@@ -218,7 +213,6 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
 
-        state.pristineDataMap.visibleSourceHandles = [];
         state.sourceInEditState = false;
         state.lastAction = 'Set initial Source schema';
       } else {
@@ -237,7 +231,6 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
 
-        state.pristineDataMap.visibleTargetHandles = [];
         state.targetInEditState = false;
         state.lastAction = 'Set initial Target schema';
       }
@@ -264,8 +257,6 @@ export const dataMapSlice = createSlice({
         flattenedTargetSchema,
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
-        visibleSourceHandles: [],
-        visibleTargetHandles: [],
         dataMapConnections: dataMapConnections ?? {},
         loadedMapMetadata: metadata,
         intermediateEdgeMappingForCollapsing: {},
@@ -522,13 +513,6 @@ export const dataMapSlice = createSlice({
         return;
       }
     },
-    updateReactFlowNodeHandles: (state, action: PayloadAction<ReactFlowNodeAction>) => {
-      if (action.payload.isSource) {
-        state.curDataMapOperation.visibleSourceHandles = action.payload.handles;
-      } else {
-        state.curDataMapOperation.visibleTargetHandles = action.payload.handles;
-      }
-    },
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
       const key = action.payload;
       state.curDataMapOperation.selectedItemKey = key;
@@ -651,7 +635,6 @@ export const {
   setInitialSchema,
   setInitialDataMap,
   setSelectedItem,
-  updateReactFlowNodeHandles,
   makeConnectionFromMap,
   updateDataMapLML,
   saveDataMap,
