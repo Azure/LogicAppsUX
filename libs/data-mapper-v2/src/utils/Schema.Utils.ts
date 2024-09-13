@@ -231,7 +231,8 @@ export const removePrefixFromNodeID = (nodeID: string): string => {
   return splitID[1];
 };
 
-export type NodeScrollDirection = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+export const nodeScrollDirections = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const;
+export type NodeScrollDirectionType = (typeof nodeScrollDirections)[number];
 
 /**
  *
@@ -256,6 +257,6 @@ export const getNodesForScroll = (): Record<string, Node> => {
   return map;
 };
 
-export const getNodeIdForScroll = (ids: string[], direction: NodeScrollDirection) => {
+export const getNodeIdForScroll = (ids: string[], direction: NodeScrollDirectionType) => {
   return ids.find((id) => id.startsWith(direction));
 };

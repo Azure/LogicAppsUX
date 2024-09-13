@@ -24,6 +24,7 @@ const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
 
   const onFunctionNodeClick = useCallback(() => {
     // Improve this logic to handle intersecting nodes
+    functionData.position = { x: 500, y: 300 };
     dispatch(addFunctionNode(functionData));
   }, [dispatch, functionData]);
 
