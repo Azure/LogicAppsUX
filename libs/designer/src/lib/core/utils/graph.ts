@@ -80,12 +80,24 @@ export const getUpstreamNodeIdsForNodeIds = (
   nodesMetadata: NodesMetadata,
   operationMap: Record<string, string>
 ): string[] => {
-  const upstreamNodeIds = new Set<string>();
-  for (const nodeId of nodeIds) {
-    const sourceNodeIds = getUpstreamNodeIds(nodeId, rootGraph, nodesMetadata, operationMap);
-    sourceNodeIds.forEach((id) => upstreamNodeIds.add(id));
+  const sourceNodeIds = [
+    ...new Set(
+      nodeIds.flatMap((nodeId) => {
+        const graph = getGraphNode(nodeId, rootGraph, nodesMetadata) as WorkflowNode;
+        return isWorkflowGraph(graph) ? getAllSourceNodeIds(graph, nodeId, operationMap) : [];
+      })
+    ),
+  ];
+
+  const allParentNodeIds = [...new Set(nodeIds.flatMap((nodeId) => getAllParentsForNode(nodeId, nodesMetadata)))];
+
+  for (const parentNodeId of allParentNodeIds) {
+    const graphContainingNode = getGraphNode(parentNodeId, rootGraph, nodesMetadata);
+    if (graphContainingNode) {
+      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap), parentNodeId);
+    }
   }
-  return Array.from(upstreamNodeIds);
+  return sourceNodeIds;
 };
 
 export const getUpstreamNodeIds = (
