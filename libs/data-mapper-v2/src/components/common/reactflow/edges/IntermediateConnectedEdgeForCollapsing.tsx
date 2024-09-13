@@ -1,6 +1,6 @@
 import type { RootState } from '../../../../core/state/Store';
 import { useSelector } from 'react-redux';
-import { getTreeNodeId, isSourceNode, isTargetNode } from 'utils/ReactFlow.Util';
+import { getTreeNodeId, isSourceNode, isTargetNode } from '../../../../utils/ReactFlow.Util';
 
 type IntermediateConnectedEdgeForCollapsingProps = {
   edgeId: string;
