@@ -12,7 +12,7 @@ import {
   isConnectionUnit,
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
-import { addParentConnectionForRepeatingElementsNested, getParentId, isIdForFunctionNode } from '../../utils/DataMap.Utils';
+import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
 import { LogService } from '../../utils/Logging.Utils';
 import {
@@ -20,7 +20,7 @@ import {
   flattenSchemaNode,
   isSchemaNodeExtended,
   flattenSchemaIntoSortArray,
-  type NodeScrollDirection,
+  type NodeScrollDirectionType,
   getNodeIdForScroll,
 } from '../../utils/Schema.Utils';
 import type {
@@ -41,6 +41,7 @@ import {
   convertWholeDataMapToLayoutTree,
   createReactFlowFunctionKey,
   getTreeNodeId,
+  isFunctionNode,
   isSourceNode,
   isTargetNode,
 } from '../../utils/ReactFlow.Util';
@@ -352,8 +353,8 @@ export const dataMapSlice = createSlice({
       const originalSourceNodeId = action.payload.reactFlowSource;
       let schemaSources: SchemaNodeExtended[];
 
-      if (!(isIdForFunctionNode(originalSourceNodeId) && originalSourceNodeId === directAccessPseudoFunctionKey)) {
-        if (isIdForFunctionNode(originalSourceNodeId)) {
+      if (!(isFunctionNode(originalSourceNodeId) && originalSourceNodeId === directAccessPseudoFunctionKey)) {
+        if (isFunctionNode(originalSourceNodeId)) {
           const sourceNodes = getConnectedSourceSchemaNodes(
             [newState.curDataMapOperation.dataMapConnections[action.payload.reactFlowSource]],
             newState.curDataMapOperation.dataMapConnections
@@ -366,7 +367,7 @@ export const dataMapSlice = createSlice({
         // We'll only have one output node in this case
         const originalTargetNodeId = action.payload.reactFlowDestination;
         let actualTarget: SchemaNodeExtended[];
-        if (isIdForFunctionNode(originalTargetNodeId)) {
+        if (isFunctionNode(originalTargetNodeId)) {
           const targetNodes = getConnectedTargetSchemaNodes(
             [newState.curDataMapOperation.dataMapConnections[action.payload.reactFlowDestination]],
             newState.curDataMapOperation.dataMapConnections
@@ -854,7 +855,7 @@ export const getUpdatedIntermediateConnectionsForScrolling = (
   sourceId: string,
   targetId: string,
   allTemporaryNodeIds: string[],
-  directions: NodeScrollDirection[]
+  directions: NodeScrollDirectionType[]
 ) => {
   const newConnections: Record<string, boolean> = {};
   for (const direction of directions) {
@@ -951,7 +952,7 @@ export const deleteIntermediateConnectionsCreatedForScrolling = (ids: string[], 
 };
 
 export const addIntermediateConnections = (sourceId: string, targetId: string, state: DataMapOperationState) => {
-  const addIntermediateConnectionState = (sId: string, tId: string, directions: NodeScrollDirection[], node?: SchemaNodeExtended) => {
+  const addIntermediateConnectionState = (sId: string, tId: string, directions: NodeScrollDirectionType[], node?: SchemaNodeExtended) => {
     if (node) {
       state.intermediateEdgeMappingForCollapsing = getUpdatedIntermediateConnectionsForCollapsing(
         state.intermediateEdgeMappingForCollapsing,
