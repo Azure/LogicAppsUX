@@ -74,6 +74,20 @@ export const createElkEdge = (source: string, target: string, type?: WorkflowEdg
   },
 });
 
+export const getUpstreamNodeIdsForNodeIds = (
+  nodeIds: string[],
+  rootGraph: WorkflowNode,
+  nodesMetadata: NodesMetadata,
+  operationMap: Record<string, string>
+): string[] => {
+  const upstreamNodeIds = new Set<string>();
+  for (const nodeId of nodeIds) {
+    const sourceNodeIds = getUpstreamNodeIds(nodeId, rootGraph, nodesMetadata, operationMap);
+    sourceNodeIds.forEach((id) => upstreamNodeIds.add(id));
+  }
+  return Array.from(upstreamNodeIds);
+};
+
 export const getUpstreamNodeIds = (
   nodeId: string,
   rootGraph: WorkflowNode,

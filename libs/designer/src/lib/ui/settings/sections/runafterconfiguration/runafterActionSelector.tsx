@@ -1,8 +1,7 @@
-import type { AppDispatch, RootState } from '../../../../core';
+import { useNodeDisplayName, type AppDispatch, type RootState } from '../../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -11,6 +10,8 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Label } from '@microsoft/designer-ui';
+import { getUpstreamNodeIds, getUpstreamNodeIdsForNodeIds } from '../../../../core/utils/graph';
+import type { WorkflowNode } from '../../../../core/parsers/models/workflowNode';
 
 const AddIcon = bundleIcon(Add20Filled, Add20Regular);
 const getSuccessorNodes = (state: RootState, nodeId: string) => {
@@ -30,7 +31,7 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
   return [...new Set(successors)];
 };
 
-const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => {
+const ActionMenuItem = ({ id, readOnly, disabled }: { id: string; readOnly: boolean; disabled: boolean }) => {
   const iconUri = useOperationVisuals(id)?.iconUri;
   const actionName = useNodeDisplayName(id);
   return (
@@ -39,7 +40,10 @@ const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => 
       value={id}
       icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />}
       tabIndex={1}
-      disabled={readOnly}
+      disabled={readOnly || disabled}
+      style={{
+        backgroundColor: disabled ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+      }}
     >
       <Label style={{ overflow: 'hidden' }} text={actionName} />
     </MenuItemCheckbox>
@@ -51,6 +55,20 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const [searchText, setSearchText] = useState<string>('');
   const currentNodeId = useOperationPanelSelectedNodeId();
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
+  const { graph, nodesMetadata, operations } = useSelector((state: RootState) => state.workflow);
+
+  const selectedValues = useSelector((state: RootState) => {
+    return {
+      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
+    };
+  });
+
+  const nodeMap: Record<string, string> = {};
+  for (const key of Object.keys(operations)) {
+    nodeMap[key] = key;
+  }
+
+  const upstreamNodesForSelectedNodes = getUpstreamNodeIdsForNodeIds(selectedValues.actions, graph as WorkflowNode, nodesMetadata, nodeMap);
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
       return [];
@@ -63,7 +81,16 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
           getRecordEntry(state.workflow.nodesMetadata, key)?.graphId
       )
       .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
-      .map(([key, value]) => ({ ...value, id: key }));
+      .map(([key, value]) => {
+        const itsUpstreamNodeIds = getUpstreamNodeIds(key, graph as WorkflowNode, nodesMetadata, nodeMap);
+        return {
+          ...value,
+          id: key,
+          disabled:
+            upstreamNodesForSelectedNodes.includes(key) ||
+            itsUpstreamNodeIds.some((upstreamNodeId) => selectedValues.actions.includes(upstreamNodeId)),
+        };
+      });
   });
   const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
     defaultMessage: 'Filter actions',
@@ -74,12 +101,6 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
     defaultMessage: 'Select actions',
     id: '3a3eHg',
     description: 'Select Actions',
-  });
-
-  const selectedValues = useSelector((state: RootState) => {
-    return {
-      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
-    };
   });
 
   const dispatch = useDispatch<AppDispatch>();
@@ -167,7 +188,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
 
           <div className="msla-run-after-action-menu-list">
             {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
-              return <ActionMenuItem id={obj.id} key={obj.id} readOnly={readOnly} />;
+              return <ActionMenuItem id={obj.id} key={obj.id} readOnly={readOnly} disabled={obj.disabled} />;
             })}
           </div>
         </MenuList>
