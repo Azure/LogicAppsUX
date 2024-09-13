@@ -32,7 +32,7 @@ import {
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useNodeDescription,
-  useNodeDisplayName,
+  // useNodeDisplayName,
   useNodeMetadata,
   useNodesMetadata,
   useRunData,
@@ -155,7 +155,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
   const isLeaf = useIsLeafNode(id);
-  const label = useNodeDisplayName(id);
+  // const label = useNodeDisplayName(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
@@ -299,7 +299,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
-          title={label}
+          // title={label}
+          title={id}
           icon={iconUri}
           draggable={!readOnly && !isTrigger}
           brandColor={brandColor}

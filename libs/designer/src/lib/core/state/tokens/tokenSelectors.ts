@@ -14,3 +14,13 @@ export const useUpstreamNodes = (id?: string) => {
     })
   );
 };
+
+export const useUpstreamNodesForIds = (ids?: string[]) => {
+  return useSelector(
+    createSelector(getTokenState, (state: TokensState) => {
+      // TODO: Support variables
+      return ids?.flatMap((id) => getRecordEntry(state.outputTokens, id)?.upstreamNodeIds ?? []) ?? [];
+      // return getRecordEntry(state.outputTokens, id)?.upstreamNodeIds ?? [];
+    })
+  );
+};

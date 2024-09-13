@@ -2,15 +2,18 @@ import type { AppDispatch, RootState } from '../../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
+// import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, getRecordEntry, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { Label } from '@microsoft/designer-ui';
+// import { useUpstreamNodes, useUpstreamNodesForIds } from '../../../../core/state/tokens/tokenSelectors';
+import { getUpstreamNodeIds } from '../../../../core/utils/graph';
+import type { WorkflowNode } from '../../../../core/parsers/models/workflowNode';
 
 const AddIcon = bundleIcon(Add20Filled, Add20Regular);
 const getSuccessorNodes = (state: RootState, nodeId: string) => {
@@ -32,7 +35,7 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
 
 const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => {
   const iconUri = useOperationVisuals(id)?.iconUri;
-  const actionName = useNodeDisplayName(id);
+  // const actionName = useNodeDisplayName(id);
   return (
     <MenuItemCheckbox
       name="actions"
@@ -40,8 +43,12 @@ const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => 
       icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />}
       tabIndex={1}
       disabled={readOnly}
+      style={{
+        background: readOnly ? 'lightgrey' : 'white',
+      }}
     >
-      <Label style={{ overflow: 'hidden' }} text={actionName} />
+      {/* <Label style={{ overflow: 'hidden' }} text={actionName} /> */}
+      <Label style={{ overflow: 'hidden' }} text={id} />
     </MenuItemCheckbox>
   );
 };
@@ -51,6 +58,27 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const [searchText, setSearchText] = useState<string>('');
   const currentNodeId = useOperationPanelSelectedNodeId();
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
+  // const operations = useSelector((state: RootState) => state.workflow.operations);
+  // console.log("Elaina state.workflow.operations : ", operations)
+  const { graph, nodesMetadata, operations } = useSelector((state: RootState) => state.workflow);
+
+  // const nodesMetadata = useSelector((state: RootState) => state.workflow.nodesMetadata);
+  const selectedValues = useSelector((state: RootState) => {
+    return {
+      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
+    };
+  });
+
+  const nodeMap: Record<string, string> = {};
+  for (const key of Object.keys(operations)) {
+    nodeMap[key] = key;
+  }
+  const parallelNodesWithDuplicate = selectedValues?.actions?.flatMap((action) => {
+    return getUpstreamNodeIds(removeIdTag(action), graph as WorkflowNode, nodesMetadata, nodeMap);
+  });
+  const parallelNodes = [...new Set(parallelNodesWithDuplicate)];
+  console.log('Elaina: parallelNodes remove duplicated', parallelNodes);
+
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
       return [];
@@ -63,7 +91,18 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
           getRecordEntry(state.workflow.nodesMetadata, key)?.graphId
       )
       .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
-      .map(([key, value]) => ({ ...value, id: key }));
+      .map(([key, value]) => {
+        // console.log("Elaina key ", key, value);
+        return {
+          ...value,
+          disabled:
+            parallelNodes.includes(key) ||
+            selectedValues.actions.some((item) =>
+              getUpstreamNodeIds(removeIdTag(key), graph as WorkflowNode, nodesMetadata, nodeMap).includes(item)
+            ),
+          id: key,
+        };
+      });
   });
   const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
     defaultMessage: 'Filter actions',
@@ -76,11 +115,20 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
     description: 'Select Actions',
   });
 
-  const selectedValues = useSelector((state: RootState) => {
-    return {
-      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
-    };
+  const selectedValuesParentNodeId = useSelector((state: RootState) => {
+    const hello = Object.entries(state.workflow.nodesMetadata ?? {})
+      ?.map(([key, value]) => (!value?.actionCount || value?.parentNodeId ? key : undefined))
+      ?.filter((x) => x);
+    console.log('*** Elaina: hello ', state.workflow.operations);
+    return hello;
   });
+
+  const upstreamNodeIds = useSelector((state: RootState) => {
+    console.log('Elaina: state.workflow.nodesMetadata ', selectedValues?.actions, state.workflow.nodesMetadata);
+    return selectedValues?.actions?.map((key) => getRecordEntry(state.workflow.nodesMetadata, key));
+  });
+
+  console.log(selectedValuesParentNodeId, upstreamNodeIds);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -167,7 +215,18 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
 
           <div className="msla-run-after-action-menu-list">
             {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
-              return <ActionMenuItem id={obj.id} key={obj.id} readOnly={readOnly} />;
+              // console.log("Elaina obj.id ", obj.id, selectedValuesGraphIds.includes(getRecordEntry(nodesMetadata, obj.id)?.graphId));
+              return (
+                <ActionMenuItem
+                  id={obj.id}
+                  key={obj.id}
+                  readOnly={
+                    readOnly || obj.disabled
+                    //  ||
+                    //   (!selectedValues?.actions?.includes(obj.id) && selectedValuesParentNodeId.includes(getRecordEntry(nodesMetadata, obj.id)?.graphId))
+                  }
+                />
+              );
             })}
           </div>
         </MenuList>

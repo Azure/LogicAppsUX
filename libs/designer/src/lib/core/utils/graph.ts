@@ -74,6 +74,10 @@ export const createElkEdge = (source: string, target: string, type?: WorkflowEdg
   },
 });
 
+// TODO: we need to make another function or pass in a flag
+// -> we need to include runafter, so that we can use that to determine
+//   if we should disable it or not. if it includes, then check runafters to see if they are the same,
+//  if they are, then disable it (if they are: meaning, if they have overlaps)
 export const getUpstreamNodeIds = (
   nodeId: string,
   rootGraph: WorkflowNode,
@@ -91,6 +95,26 @@ export const getUpstreamNodeIds = (
     }
   }
   return sourceNodeIds;
+};
+
+export const getParallelNodeIds = (
+  nodeId: string,
+  rootGraph: WorkflowNode,
+  nodesMetadata: NodesMetadata,
+  operationMap: Record<string, string>
+): string[] => {
+  const graph = getGraphNode(nodeId, rootGraph, nodesMetadata) as WorkflowNode;
+  const parallelNodeIds = isWorkflowGraph(graph) ? getAllParallelNodeIds(graph, nodeId, operationMap) : [];
+  const allParentNodeIds = getAllParallelForNode(nodeId, nodesMetadata);
+
+  for (const parentNodeId of allParentNodeIds) {
+    const graphContainingNode = getGraphNode(parentNodeId, rootGraph, nodesMetadata);
+    if (graphContainingNode) {
+      parallelNodeIds.push(...getAllParallelNodeIds(graphContainingNode, parentNodeId, operationMap), parentNodeId);
+    }
+  }
+  console.log('***ELAINA: parallelNodeIds ', parallelNodeIds);
+  return parallelNodeIds;
 };
 
 export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
@@ -121,6 +145,10 @@ export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): 
   return (graph?.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
 };
 
+export const getImmediateTargetNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
+  return (graph?.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.target);
+};
+
 export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {
   let newNodeId = nodeId;
   let count = 1;
@@ -134,7 +162,6 @@ export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {
 const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: Record<string, string>): string[] => {
   const visited: string[] = [];
   const visit = [...getImmediateSourceNodeIds(graph, nodeId)];
-
   while (visit.length) {
     const current = visit.shift() as string;
     if (visited.indexOf(current) < 0) {
@@ -146,6 +173,28 @@ const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: 
   return visited;
 };
 
+const getAllTargetNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: Record<string, string>): string[] => {
+  const visited: string[] = [];
+  console.log('___ELIANA: graph ', nodeId, graph);
+  const visit = [...getImmediateTargetNodeIds(graph, nodeId)];
+  while (visit.length) {
+    const current = visit.shift() as string;
+    if (visited.indexOf(current) < 0) {
+      visited.push(current);
+      visited.push(...getAllNodesInsideNode(current, graph, operationMap));
+      visit.push(...getImmediateTargetNodeIds(graph, current));
+    }
+  }
+  return visited;
+};
+
+const getAllParallelNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: Record<string, string>): string[] => {
+  const allSourceNodeIds = getAllSourceNodeIds(graph, nodeId, operationMap);
+  const allTargetNodeIds = getAllTargetNodeIds(graph, nodeId, operationMap);
+
+  return [...allSourceNodeIds, ...allTargetNodeIds].flat();
+};
+
 export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata): string[] => {
   let currentParent = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
   const result: string[] = [];
@@ -154,6 +203,20 @@ export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadat
     result.push(currentParent);
     currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
   }
+
+  return result;
+};
+
+export const getAllParallelForNode = (nodeId: string, nodesMetadata: NodesMetadata): string[] => {
+  let currentParent = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
+  const result: string[] = [];
+  console.log('___ELIANA: currentParent ', currentParent);
+
+  while (currentParent) {
+    result.push(currentParent);
+    currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
+  }
+  console.log('___ELIANA: result ', result);
 
   return result;
 };
