@@ -88,7 +88,9 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
           id: key,
           disabled:
             upstreamNodesForSelectedNodes.includes(key) ||
-            itsUpstreamNodeIds.some((upstreamNodeId) => selectedValues.actions.includes(upstreamNodeId)),
+            itsUpstreamNodeIds.some(
+              (upstreamNodeId) => selectedValues.actions.includes(upstreamNodeId) // && if the same runAfter
+            ),
         };
       });
   });
