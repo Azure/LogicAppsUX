@@ -1,23 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import reducer, { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../undoRedo/undoRedoSlice';
-import { StateHistory } from '../undoRedo/undoRedoTypes';
+import { StateHistory, StateHistoryItem } from '../undoRedo/undoRedoTypes';
 
 describe('undo redo slice reducers', () => {
-  const mockCompressedState1 = new Uint8Array([140, 27]);
-  const mockCompressedState2 = new Uint8Array([120, 59]);
-  const mockCompressedState3 = new Uint8Array([12, 1]);
-  const mockCompressedState4 = new Uint8Array([63, 150]);
-  const mockCompressedState5 = new Uint8Array([32, 47]);
+  const mockCompressedState1 = { compressedState: new Uint8Array([140, 27]) };
+  const mockCompressedState2 = { compressedState: new Uint8Array([120, 59]) };
+  const mockCompressedState3 = { compressedState: new Uint8Array([12, 1]) };
+  const mockCompressedState4 = { compressedState: new Uint8Array([63, 150]) };
+  const mockCompressedState5 = { compressedState: new Uint8Array([32, 47]) };
 
   it('should save state to history based on limit', () => {
     let mockInitialState: StateHistory = {
       past: [],
       future: [],
+      stateHistoryItemIndex: -1,
     };
 
-    const getMockPayload = (mockState: Uint8Array) => {
+    const getMockPayload = (mockState: StateHistoryItem) => {
       return {
-        compressedState: mockState,
+        stateHistoryItem: mockState,
         limit: 2,
       };
     };
@@ -41,6 +42,7 @@ describe('undo redo slice reducers', () => {
     mockInitialState = {
       past: [mockCompressedState2, mockCompressedState3],
       future: [mockCompressedState4],
+      stateHistoryItemIndex: 2,
     };
     state = reducer(mockInitialState, saveStateToHistory(getMockPayload(mockCompressedState5)));
     expect(state.past).toEqual([mockCompressedState3, mockCompressedState5]);
@@ -51,6 +53,7 @@ describe('undo redo slice reducers', () => {
     const mockInitialState = {
       past: [mockCompressedState1, mockCompressedState2],
       future: [mockCompressedState3],
+      stateHistoryItemIndex: 2,
     };
 
     // Current state gets put into future and latest past state gets removed to be used for current state
@@ -63,6 +66,7 @@ describe('undo redo slice reducers', () => {
     const mockInitialState = {
       past: [mockCompressedState1, mockCompressedState2],
       future: [mockCompressedState3],
+      stateHistoryItemIndex: 2,
     };
 
     // Current state gets put into past and first future state gets removed to be used for current state

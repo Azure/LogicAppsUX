@@ -5,13 +5,9 @@ import { getMockedInitialRootState } from '../../../../__test__/mock-root-state'
 import * as globalReducers from '../../../state/global';
 import * as undoRedoSlice from '../../../state/undoRedo/undoRedoSlice';
 import { RootState } from '../../../store';
-import {
-  getCompressedStateFromRootState,
-  getRootStateFromCompressedState,
-  onRedoClick,
-  onUndoClick,
-  storeStateToUndoRedoHistory,
-} from '../undoRedo';
+import { onRedoClick, onUndoClick, storeStateToUndoRedoHistory } from '../undoRedo';
+import { getCompressedStateFromRootState, getRootStateFromCompressedState } from '../../../utils/undoredo';
+import { addNode } from '../../../state/workflow/workflowSlice';
 
 describe('undo redo actions', () => {
   let dispatch: ThunkDispatch<unknown, unknown, AnyAction>;
@@ -30,7 +26,7 @@ describe('undo redo actions', () => {
     const getState = vi.fn().mockReturnValue(mockedInitialRootState);
     const saveStateToHistoryMock = vi.spyOn(undoRedoSlice, 'saveStateToHistory');
 
-    const action = storeStateToUndoRedoHistory();
+    const action = storeStateToUndoRedoHistory({ type: addNode.type });
     await action(dispatch, getState, undefined);
     expect(getState).toHaveBeenCalledOnce();
     expect(saveStateToHistoryMock).toHaveBeenCalledOnce();
@@ -55,8 +51,9 @@ describe('undo redo actions', () => {
     mockedInitialRootState = {
       ...mockedInitialRootState,
       undoRedo: {
-        past: [compressedState],
+        past: [{ compressedState }],
         future: [],
+        stateHistoryItemIndex: -1,
       },
     };
 
@@ -64,7 +61,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith(compressedState);
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedState });
   });
 
   it('should update state history and state on redo click if future states are present', async () => {
@@ -87,7 +84,8 @@ describe('undo redo actions', () => {
       ...mockedInitialRootState,
       undoRedo: {
         past: [],
-        future: [compressedState],
+        future: [{ compressedState }],
+        stateHistoryItemIndex: -1,
       },
     };
 
@@ -95,6 +93,6 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith(compressedState);
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedState });
   });
 });
