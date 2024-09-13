@@ -49,7 +49,6 @@ export const DesignerCommandBar = ({
   isDesignerView,
   isDarkMode,
   showConnectionsPanel,
-  rightShift,
   enableCopilot,
   switchViews,
   saveWorkflowFromCode,
@@ -62,7 +61,6 @@ export const DesignerCommandBar = ({
   isDesignerView?: boolean;
   isDarkMode: boolean;
   showConnectionsPanel?: boolean;
-  rightShift?: string;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
   switchViews: () => void;
@@ -270,8 +268,6 @@ export const DesignerCommandBar = ({
         root: {
           borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
           position: 'relative',
-          // we should modify what we pass back from logic app designer to simplify this logic
-          left: rightShift ?? 0,
           padding: '4px 8px',
         },
       }}

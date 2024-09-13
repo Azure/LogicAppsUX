@@ -13,7 +13,6 @@ export const getCompressedStateFromRootState = (rootState: RootState): Uint8Arra
     customCode: rootState.customCode,
     operations: rootState.operations,
     panel: rootState.panel,
-    panelV2: rootState.panelV2,
     settings: rootState.settings,
     staticResults: rootState.staticResults,
     tokens: rootState.tokens,
@@ -39,7 +38,7 @@ export const getEditedPanelTab = (actionType: string): string | undefined => {
 
 export const getEditedPanelNode = (actionType: string, rootState: RootState): string | undefined => {
   if (undoablePanelActionTypes.includes(actionType)) {
-    return rootState.panel.selectedNodes?.[0]; // rootState.panel.operationContent.selectedNodeId
+    return rootState.panel.operationContent.selectedNodeId;
   }
   return undefined;
 };

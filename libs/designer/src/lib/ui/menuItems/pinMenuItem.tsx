@@ -1,4 +1,4 @@
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
+import { useIsNodePinnedToOperationPanel } from '../../core/state/panel/panelSelectors';
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Pin24Filled, Pin24Regular, PinOff24Filled, PinOff24Regular } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';

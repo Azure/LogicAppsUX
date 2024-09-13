@@ -207,6 +207,7 @@ export const PanelContainer = ({
           className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
+          data-automation-id="msla-panel-header-collapse-nav"
         />
       ) : null}
       {isCollapsed ? null : (

@@ -2,7 +2,7 @@ import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { type AnyAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { default as CONSTANTS } from '../../../common/constants';
 import { setStateAfterUndoRedo } from '../../state/global';
-import { changePanelNode, setSelectedPanelActiveTab } from '../../state/panelV2/panelSlice';
+import { changePanelNode, setSelectedPanelActiveTab } from '../../state/panel/panelSlice';
 import { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../../state/undoRedo/undoRedoSlice';
 import type { RootState } from '../../store';
 import {
