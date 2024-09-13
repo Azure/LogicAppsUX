@@ -11,7 +11,7 @@ export interface IApiManagementService {
   fetchApiManagementInstances(): Promise<any>;
   fetchApisInApiM(apimInstanceId: string): Promise<any>;
   fetchApiMSwagger(apimApiId: string): Promise<SwaggerParser>;
-  fetchApiMKeys(apimApiId: string, subscriptionName: string): Promise<ApiMSubscriptionSecrets>;
+  fetchApiMKeys(apimInstanceId: string, subscriptionName: string): Promise<ApiMSubscriptionSecrets>;
   getOperations(apimApiId: string): Promise<ListDynamicValue[]>;
   getOperationSchema(apimApiId: string, operationId: string, isInput: boolean): Promise<any>;
 }

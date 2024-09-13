@@ -75,16 +75,16 @@ export class BaseApiManagementService implements IApiManagementService {
     return this._swaggers[normalizedName];
   }
 
-  public async fetchApiMKeys(apimApiId: string, subscriptionName: string): Promise<ApiMSubscriptionSecrets> {
-    const normalizedName = apimApiId.toLowerCase();
+  public async fetchApiMKeys(apimInstanceId: string, subscriptionName: string): Promise<ApiMSubscriptionSecrets> {
+    const normalizedName = apimInstanceId.toLowerCase();
     if (this._secrets[normalizedName]) {
       return this._secrets[normalizedName];
     }
 
-    const secrets = await this.options.queryClient.fetchQuery(['apimKeys', apimApiId?.toLowerCase()], async () => {
+    const secrets = await this.options.queryClient.fetchQuery(['apimKeys', apimInstanceId?.toLowerCase()], async () => {
       const { apiVersion, httpClient } = this.options;
 
-      const uri = `${apimApiId}/subscriptions/${subscriptionName}/listSecrets`;
+      const uri = `${apimInstanceId}/subscriptions/${subscriptionName}/listSecrets`;
       const queryParameters = { 'api-version': apiVersion };
       return await httpClient.post({ uri, queryParameters });
     });
