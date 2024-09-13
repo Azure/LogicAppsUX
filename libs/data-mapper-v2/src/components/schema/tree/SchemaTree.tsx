@@ -71,7 +71,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Right}
                   type="source"
                   className={handleStyles.hidden}
-                  style={{ top: '87px' }}
+                  style={{ top: '87px', right: '4px' }}
                 />
               )}
               {currentHeight !== undefined && nodesForScroll['bottom-left'] && (
@@ -80,7 +80,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Right}
                   type="source"
                   className={handleStyles.hidden}
-                  style={{ top: `${currentHeight}px` }}
+                  style={{ top: `${currentHeight}px`, right: '4px' }}
                 />
               )}
             </>
@@ -92,7 +92,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Left}
                   type="target"
                   className={handleStyles.hidden}
-                  style={{ top: '87px' }}
+                  style={{ top: '0px', left: '8px' }}
                 />
               )}
               {currentHeight !== undefined && nodesForScroll['bottom-right'] && (
@@ -101,7 +101,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Left}
                   type="target"
                   className={handleStyles.hidden}
-                  style={{ top: `${currentHeight}px` }}
+                  style={{ top: `${currentHeight}px`, left: '8px' }}
                 />
               )}
             </>

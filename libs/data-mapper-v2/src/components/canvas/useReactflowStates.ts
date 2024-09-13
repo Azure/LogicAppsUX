@@ -23,7 +23,7 @@ const updateEdgeForHandles = (edge: Edge) => {
     newEdge.source = NodeIds.source;
   }
 
-  if (isTargetNode(edge.target) || edge.source.startsWith('top-right-') || edge.source.startsWith('bottom-right-')) {
+  if (isTargetNode(edge.target) || edge.target.startsWith('top-right-') || edge.target.startsWith('bottom-right-')) {
     newEdge.targetHandle = edge.target;
     newEdge.target = NodeIds.target;
   }
@@ -102,6 +102,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
   const intermediateEdgesMapForCollapsedNodes: Record<string, Edge> = useMemo(() => {
     const newEdgesMap: Record<string, Edge> = {};
     const entries = Object.entries(intermediateEdgeMappingForCollapsing);
+
     for (const entry of entries) {
       const sourceId = entry[0]; // Id for which this collapsed node is created
       const ids = Object.keys(entry[1]);
@@ -152,6 +153,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
     return newEdgesMap;
   }, [createAndGetIntermediateEdge, intermediateEdgeMappingForScrolling]);
 
+  // Add/update edges
   useEffect(() => {
     const changes: Record<string, EdgeChange> = {};
     const updatedEdges = {
@@ -186,6 +188,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
     }
   }, [edges, edgesFromSchema, intermediateEdgesMapForCollapsedNodes, intermediateEdgesMapForScrolledNodes, setEdges]);
 
+  // Add/update Function nodes
   useEffect(() => {
     const changes: Record<string, NodeChange> = {};
     for (const [key, functionData] of Object.entries(functionNodesMap)) {

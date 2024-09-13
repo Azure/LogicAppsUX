@@ -11,7 +11,7 @@ export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 export const isSourceNode = (key: string) => key.startsWith(sourcePrefix);
 export const isTargetNode = (key: string) => key.startsWith(targetPrefix);
-export const isIntermediateNode = (key: string) => [...nodeScrollDirections].filter((direction) => key.startsWith(direction)).length > 0;
+export const isIntermediateNode = (key: string) => [...nodeScrollDirections].findIndex((direction) => key.startsWith(direction)) >= 0;
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
 export const isFunctionNode = (key: string): boolean => !isSourceNode(key) && !isTargetNode(key) && !isIntermediateNode(key);
 export const getTreeNodeId = (key: string) =>
