@@ -12,6 +12,7 @@ import {
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panelV2/panelSelectors';
 import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
+import { useStateHistoryItemIndex } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
@@ -130,9 +131,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
     const isValid = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements);
-    dispatch(replaceId({ originalId, newId }));
-
     return { valid: isValid, oldValue: isValid ? newId : originalId };
+  };
+
+  const handleTitleUpdate = (originalId: string, newId: string) => {
+    dispatch(replaceId({ originalId, newId }));
   };
 
   // if is customcode file, on blur title,
@@ -241,8 +244,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     }
   }, [runData?.inputs, runName]);
 
+  // Re-render panel when undo/redo is performed to update panel parameter values, title etc.
+  const stateHistoryItemIndex = useStateHistoryItemIndex();
+
   return (
     <PanelContainer
+      key={stateHistoryItemIndex}
       {...commonPanelProps}
       noNodeSelected={!selectedNode}
       panelScope={PanelScope.CardLevel}
@@ -280,6 +287,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}
       onTitleBlur={onTitleBlur}
+      handleTitleUpdate={handleTitleUpdate}
       setOverrideWidth={setOverrideWidth}
     />
   );
