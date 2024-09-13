@@ -1,21 +1,23 @@
-import { getStraightPath, type EdgeProps } from '@xyflow/react';
+import { getStraightPath, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { useHoverEdge, useSelectedIntermediateEdge } from '../../../../core/state/selectors/selectors';
 import { useMemo } from 'react';
 import { colors } from '../styles';
 import { useSelector } from 'react-redux';
 import { splitEdgeId } from '../../../../utils/Edge.Utils';
 import type { RootState } from '../../../../core/state/Store';
-import { isSourceNode, isTargetNode, getTreeNodeId } from '../../../../utils/ReactFlow.Util';
+import { isSourceNode, isTargetNode, getTreeNodeId, isFunctionNode } from '../../../../utils/ReactFlow.Util';
 import { flattenSchemaIntoSortArray } from '../../../../utils';
+import { NodeIds } from '../../../../constants/ReactFlowConstants';
 
 const IntermediateConnectedEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, targetX, targetY, data } = props;
+  const { getInternalNode } = useReactFlow();
   const { isDueToScroll, isDueToCollapse } = data ?? {
     isDueToCollapse: undefined,
     isDueToScroll: undefined,
   };
   const splitIds = useMemo(() => splitEdgeId(id), [id]);
-  const { sourceOpenKeys, targetOpenKeys, visibleSourceHandles, visibleTargetHandles, sourceSchema, targetSchema } = useSelector(
+  const { sourceOpenKeys, targetOpenKeys, sourceSchema, targetSchema } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
 
@@ -25,17 +27,19 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
 
   // Direction is only needed in case of Scroll
   const direction = useMemo(() => {
+    const sourceHandles = getInternalNode(NodeIds.source)?.internals?.handleBounds?.source ?? [];
+    const targetHandles = getInternalNode(NodeIds.target)?.internals?.handleBounds?.target ?? [];
     if (isDueToScroll && componentId1 && sourceSchema?.schemaTreeRoot && targetSchema?.schemaTreeRoot) {
       let direction = '';
       let sortArray = [];
       let firstElement = '';
       if (isSourceNode(componentId1)) {
         sortArray = flattenSchemaIntoSortArray(sourceSchema?.schemaTreeRoot);
-        firstElement = visibleSourceHandles.length > 2 ? visibleSourceHandles[2]?.id ?? '' : '';
+        firstElement = sourceHandles.length > 2 ? sourceHandles[2]?.id ?? '' : '';
         direction = '-left';
       } else {
         sortArray = flattenSchemaIntoSortArray(targetSchema?.schemaTreeRoot);
-        firstElement = visibleTargetHandles.length > 2 ? visibleTargetHandles[2]?.id ?? '' : '';
+        firstElement = targetHandles.length > 2 ? targetHandles[2]?.id ?? '' : '';
         direction = '-right';
       }
 
@@ -47,15 +51,24 @@ const IntermediateConnectedEdge = (props: EdgeProps) => {
       }
     }
     return '';
-  }, [isDueToScroll, componentId1, sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, visibleSourceHandles, visibleTargetHandles]);
+  }, [getInternalNode, isDueToScroll, componentId1, sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot]);
 
   const isSelected = useSelectedIntermediateEdge(componentId1 ?? '', componentId2 ?? '');
 
   // Check if both source and target nodes are visible, i.e. present in the map
   // Or if none of the nodes are present, then the edge shouldn't be visible
   const oneHandleVisible = useMemo(() => {
-    return [...visibleSourceHandles, ...visibleTargetHandles].filter((n) => n.id === componentId1 || n.id === componentId2).length === 1;
-  }, [visibleSourceHandles, visibleTargetHandles, componentId1, componentId2]);
+    if (isFunctionNode(componentId1) && isFunctionNode(componentId2)) {
+      return false;
+    }
+
+    const sourceHandles = getInternalNode(NodeIds.source)?.internals?.handleBounds?.source ?? [];
+    const targetHandles = getInternalNode(NodeIds.target)?.internals?.handleBounds?.target ?? [];
+
+    // If both are function nodes, then we only show the temporary edge is the target node isn't there
+    const lengthToCheck = isFunctionNode(componentId1) || isFunctionNode(componentId2) ? 0 : 1;
+    return [...sourceHandles, ...targetHandles].filter((n) => n.id === componentId1 || n.id === componentId2).length === lengthToCheck;
+  }, [componentId1, componentId2, getInternalNode]);
 
   const isHovered = useHoverEdge(id);
 

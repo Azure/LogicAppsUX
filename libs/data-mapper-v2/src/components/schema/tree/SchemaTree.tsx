@@ -9,6 +9,7 @@ import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
 import SchemaTreeNode from './SchemaTreeNode';
 import { toggleNodeExpandCollapse, updateReactFlowNodeHandles } from '../../../core/state/DataMapSlice';
 import { mergeClasses } from '@fluentui/react-components';
+import { useDragDropManager } from 'react-dnd';
 
 export type SchemaTreeProps = {
   id: string;
@@ -18,6 +19,7 @@ export type SchemaTreeProps = {
 
 export const SchemaTree = (props: SchemaTreeProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const dndManager = useDragDropManager();
   const treeRef = useRef<TreeApi<SchemaNodeExtended> | null>(null);
   const styles = useStyles();
   const treeStyles = useTreeStyles();
@@ -72,7 +74,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
-      {ref?.current && (
+      {ref?.current ? (
         <>
           {isSourceSchema ? (
             <>
@@ -133,13 +135,14 @@ export const SchemaTree = (props: SchemaTreeProps) => {
             dndRootElement={ref.current}
             className={treeStyles.root}
             onToggle={onToggle}
+            dndManager={dndManager}
           >
             {(treeProps: NodeRendererProps<SchemaNodeExtended>) => (
               <SchemaTreeNode id={id} flattenedSchemaMap={flattenedSchemaMap} schema={props.schema} {...treeProps} />
             )}
           </Tree>
         </>
-      )}
+      ) : null}
     </div>
   );
 };
