@@ -126,6 +126,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       accept: 'function',
       drop: (_item, monitor) => {
         const xyPosition = monitor.getClientOffset();
+        console.log('Here', xyPosition);
         if (xyPosition) {
           if (reactFlowInstance) {
             const position = reactFlowInstance.screenToFlowPosition({
@@ -145,7 +146,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     [reactFlowInstance]
   );
 
-  const onFunctionNodeDragStop: OnNodeDrag = useCallback(
+  const onNodeDrag: OnNodeDrag = useCallback(
     (_event, node, _nodes) => {
       dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
     },
@@ -224,7 +225,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             hideAttribution: true,
           }}
           panOnScrollMode={PanOnScrollMode.Vertical}
-          onNodeDragStop={onFunctionNodeDragStop}
+          onNodeDragStop={onNodeDrag}
+          onNodeDrag={onNodeDrag}
           isValidConnection={isValidConnection}
           onEdgeContextMenu={onEdgeContextMenu}
           onConnect={onEdgeConnect}

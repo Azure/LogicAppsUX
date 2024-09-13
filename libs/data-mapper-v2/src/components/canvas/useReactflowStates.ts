@@ -276,7 +276,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
   // Update position if canvas size changes
   useEffect(() => {
     const changes: Record<string, NodeChange> = {};
-    if (newWidth !== undefined && newHeight !== undefined && (newWidth !== currentWidth || newHeight !== currentHeight)) {
+    if (newWidth !== undefined && newHeight !== undefined) {
       const currentSourceNode = nodes.find((node) => node.id === NodeIds.source);
       const currentTargetNode = nodes.find((node) => node.id === NodeIds.target);
 
@@ -335,7 +335,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
       const newNodes = applyNodeChanges(Object.values(changes), nodes);
       setNodes(newNodes);
     }
-  }, [nodes, newWidth, currentWidth, newHeight, currentHeight, setNodes]);
+  }, [nodes, newWidth, newHeight, setNodes]);
 
   return { nodes, edges };
 };
