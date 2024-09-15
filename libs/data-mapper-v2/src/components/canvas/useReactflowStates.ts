@@ -39,12 +39,10 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
     if (Object.entries(dataMapConnections).length > 0) {
       const layout = convertWholeDataMapToLayoutTree(flattenedSourceSchema, flattenedTargetSchema, functionNodesMap, dataMapConnections);
       layout.edges.forEach((edge) => {
-        const isFunctionNodeSource = isFunctionNode(edge.sourceId);
-        const isFunctionNodeTarget = isFunctionNode(edge.targetId);
         const newEdge: Edge = {
           id: createEdgeId(edge.sourceId, edge.targetId),
-          source: isFunctionNodeSource ? edge.sourceId : NodeIds.source,
-          target: isFunctionNodeTarget ? edge.targetId : NodeIds.target,
+          source: isFunctionNode(edge.sourceId) ? edge.sourceId : NodeIds.source,
+          target: isFunctionNode(edge.targetId) ? edge.targetId : NodeIds.target,
           type: 'connectedEdge',
           reconnectable: 'target',
           zIndex: 150,
