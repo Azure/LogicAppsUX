@@ -7,7 +7,7 @@ import { setSelectedItem } from '../../../../core/state/DataMapSlice';
 import useEdgePath from './useEdgePath';
 
 const ConnectedEdge = (props: EdgeProps) => {
-  const { id, source } = props;
+  const { id, source, data } = props;
   const isSelected = useSelectedEdge(id);
   const dispatch = useDispatch();
   const isHovered = useHoverEdge(id);
@@ -17,9 +17,9 @@ const ConnectedEdge = (props: EdgeProps) => {
 
   const onClick = useCallback(() => {
     if (source) {
-      dispatch(setSelectedItem(source));
+      dispatch(setSelectedItem((data?.sourceHandleId as string) ?? source));
     }
-  }, [dispatch, source]);
+  }, [dispatch, source, data]);
 
   if (sourceX === undefined || sourceY === undefined || targetX === undefined || targetY === undefined) {
     return null;
