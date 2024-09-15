@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, type Edge, type Node, type NodeChange, applyNodeChanges, type XYPosition } from '@xyflow/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { convertWholeDataMapToLayoutTree, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
-import { createEdgeId, createTemporaryEdgeId, splitEdgeId } from '../../utils/Edge.Utils';
+import { useEffect, useMemo, useState } from 'react';
+import { convertWholeDataMapToLayoutTree, isFunctionNode } from '../../utils/ReactFlow.Util';
+import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import { NodeIds } from '../../constants/ReactFlowConstants';
@@ -14,21 +14,6 @@ type ReactFlowStatesProps = {
   newHeight?: number;
   newX?: number;
   newY?: number;
-};
-
-const updateEdgeForHandles = (edge: Edge) => {
-  const newEdge = { ...edge };
-  if (isSourceNode(edge.source) || edge.source.startsWith('top-left-') || edge.source.startsWith('bottom-left-')) {
-    newEdge.sourceHandle = edge.source;
-    newEdge.source = NodeIds.source;
-  }
-
-  if (isTargetNode(edge.target) || edge.target.startsWith('top-right-') || edge.target.startsWith('bottom-right-')) {
-    newEdge.targetHandle = edge.target;
-    newEdge.target = NodeIds.target;
-  }
-
-  return newEdge;
 };
 
 const useReactFlowStates = (props: ReactFlowStatesProps) => {
@@ -42,8 +27,6 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
     flattenedSourceSchema,
     flattenedTargetSchema,
     dataMapConnections,
-    intermediateEdgeMappingForCollapsing,
-    intermediateEdgeMappingForScrolling,
   } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const currentCanvasRect = useSelector(
@@ -58,111 +41,32 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
       layout.edges.forEach((edge) => {
         const newEdge: Edge = {
           id: createEdgeId(edge.sourceId, edge.targetId),
-          source: edge.sourceId,
-          target: edge.targetId,
-          type: edge.isRepeating ? 'loopEdge' : 'connectedEdge',
+          source: isFunctionNode(edge.sourceId) ? edge.sourceId : NodeIds.source,
+          target: isFunctionNode(edge.targetId) ? edge.targetId : NodeIds.target,
+          type: 'connectedEdge',
           reconnectable: 'target',
           zIndex: 150,
           interactionWidth: 10,
-          data: { isRepeating: edge.isRepeating },
+          data: {
+            isRepeating: edge.isRepeating,
+            sourceHandleId: edge.sourceId,
+            targetHandleId: edge.targetId,
+          },
           focusable: true,
           deletable: true,
           selectable: true,
         };
 
-        edges[newEdge.id] = updateEdgeForHandles(newEdge);
+        edges[newEdge.id] = newEdge;
       });
     }
 
     return edges;
   }, [dataMapConnections, flattenedSourceSchema, flattenedTargetSchema, functionNodesMap]);
 
-  const createAndGetIntermediateEdge = useCallback((id: string, sourceId: string, targetId: string, data?: Record<string, any>): Edge => {
-    const newEdge: Edge = {
-      id: id,
-      source: sourceId,
-      target: targetId,
-      type: 'intermediateConnectedEdge',
-      reconnectable: 'target',
-      focusable: true,
-      interactionWidth: 10,
-      deletable: true,
-      selectable: true,
-      zIndex: 150,
-      data: {
-        isIntermediate: true,
-        ...(data ?? {}),
-      },
-    };
-
-    return updateEdgeForHandles(newEdge);
-  }, []);
-
-  // Edges created when node is expanded/Collapsed
-  const intermediateEdgesMapForCollapsedNodes: Record<string, Edge> = useMemo(() => {
-    const newEdgesMap: Record<string, Edge> = {};
-    const entries = Object.entries(intermediateEdgeMappingForCollapsing);
-
-    for (const entry of entries) {
-      const sourceId = entry[0]; // Id for which this collapsed node is created
-      const ids = Object.keys(entry[1]);
-      for (const id of ids) {
-        const splitIds = splitEdgeId(id);
-        if (splitIds.length >= 2) {
-          const [id1, id2] = splitIds;
-          const id = createTemporaryEdgeId(id1, id2);
-          newEdgesMap[id] = createAndGetIntermediateEdge(id, id1, id2, {
-            isDueToCollapse: true,
-            componentId: sourceId,
-          });
-        }
-      }
-    }
-
-    return newEdgesMap;
-  }, [createAndGetIntermediateEdge, intermediateEdgeMappingForCollapsing]);
-
-  // Edges created when node is expanded/Collapsed
-  const intermediateEdgesMapForScrolledNodes: Record<string, Edge> = useMemo(() => {
-    const newEdgesMap: Record<string, Edge> = {};
-    const entries = Object.entries(intermediateEdgeMappingForScrolling);
-
-    for (const [id, sourceMap] of entries) {
-      for (const edgeId of Object.keys(sourceMap)) {
-        const splitNodeId = splitEdgeId(edgeId);
-        if (splitNodeId.length >= 2) {
-          /**
-           * if intermediate edge is connected to a target-schema node, then source for the edge should be the intermediate node
-           * if intermediate edge is connected to a source-schema node, then source for the edge should be the source schema node
-           * if intermediate edge is connected to a function node and the scrolled out node is source, i.e. this is on the input side, then source for the edge should be the intermediate node
-           * For all other cases, source-schema/function node should be the source for the edge
-           */
-          const [source, target] = isTargetNode(splitNodeId[0])
-            ? [splitNodeId[1], splitNodeId[0]]
-            : isSourceNode(splitNodeId[0])
-              ? [splitNodeId[0], splitNodeId[1]]
-              : isSourceNode(id)
-                ? [splitNodeId[1], splitNodeId[0]]
-                : [splitNodeId[0], splitNodeId[1]];
-
-          newEdgesMap[edgeId] = createAndGetIntermediateEdge(edgeId, source, target, { isDueToScroll: true, componentId: id });
-        }
-      }
-    }
-
-    return newEdgesMap;
-  }, [createAndGetIntermediateEdge, intermediateEdgeMappingForScrolling]);
-
-  // Add/update edges
   useEffect(() => {
     const changes: Record<string, EdgeChange> = {};
-    const updatedEdges = {
-      ...intermediateEdgesMapForCollapsedNodes,
-      ...intermediateEdgesMapForScrolledNodes,
-      ...edgesFromSchema,
-    };
-
-    for (const [id, edge] of Object.entries(updatedEdges)) {
+    for (const [id, edge] of Object.entries(edgesFromSchema)) {
       changes[id] = {
         type: 'add',
         item: edge,
@@ -172,7 +76,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
     for (const edge of edges) {
       const id = edge.id;
 
-      if (updatedEdges[id]) {
+      if (edgesFromSchema[id]) {
         delete changes[id];
       } else {
         changes[id] = {
@@ -186,7 +90,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
       const newEdges = applyEdgeChanges(Object.values(changes), edges);
       setEdges(newEdges);
     }
-  }, [edges, edgesFromSchema, intermediateEdgesMapForCollapsedNodes, intermediateEdgesMapForScrolledNodes, setEdges]);
+  }, [edges, edgesFromSchema, setEdges]);
 
   // Add/update Function nodes
   useEffect(() => {

@@ -60,7 +60,10 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [edges, handle.id, data.nodeProperties]
   );
   const isConnected = useMemo(
-    () => edges.some((edge) => (edge.sourceHandle === handle.id || edge.targetHandle === handle.id) && !edge.data?.isIntermediate),
+    () =>
+      edges.some(
+        (edge) => (edge.data?.sourceHandleId === handle.id || edge.data?.targetHandleId === handle.id) && !edge.data?.isIntermediate
+      ),
     [edges, handle.id]
   );
 
