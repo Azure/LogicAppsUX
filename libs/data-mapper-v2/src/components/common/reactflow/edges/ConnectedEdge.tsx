@@ -4,19 +4,14 @@ import { useCallback, useMemo } from 'react';
 import { colors } from '../styles';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../../../../core/state/DataMapSlice';
+import useEdgePath from './useEdgePath';
 
 const ConnectedEdge = (props: EdgeProps) => {
-  const { id, sourceX, sourceY, targetX, targetY, source } = props;
+  const { id, source } = props;
   const isSelected = useSelectedEdge(id);
   const dispatch = useDispatch();
   const isHovered = useHoverEdge(id);
-
-  const [path] = getStraightPath({
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-  });
+  const { sourceX, sourceY, targetX, targetY } = useEdgePath(props);
 
   const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
 
@@ -25,6 +20,17 @@ const ConnectedEdge = (props: EdgeProps) => {
       dispatch(setSelectedItem(source));
     }
   }, [dispatch, source]);
+
+  if (sourceX === undefined || sourceY === undefined || targetX === undefined || targetY === undefined) {
+    return null;
+  }
+
+  const [path] = getStraightPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+  });
 
   return (
     <g id={`${id}_customEdge`} onClick={onClick} data-selectableid={id}>

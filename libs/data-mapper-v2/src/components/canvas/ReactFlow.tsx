@@ -16,9 +16,7 @@ import type { Bounds } from '../../core';
 import { splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import EdgePopOver from './EdgePopOver';
-import LoopEdge from '../common/reactflow/edges/LoopEdge';
 import CanvasNode from '../common/reactflow/CanvasNode';
-import IntermediateConnectedEdge from '../common/reactflow/edges/IntermediateConnectedEdge';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
 interface DMReactFlowProps {
@@ -33,8 +31,6 @@ const nodeTypes = {
 
 const edgeTypes = {
   connectedEdge: ConnectedEdge,
-  loopEdge: LoopEdge,
-  intermediateConnectedEdge: IntermediateConnectedEdge,
 };
 
 export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
@@ -125,7 +121,6 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
       accept: 'function',
       drop: (_item, monitor) => {
         const xyPosition = monitor.getClientOffset();
-        console.log('Here', xyPosition);
         if (xyPosition) {
           if (reactFlowInstance) {
             const position = reactFlowInstance.screenToFlowPosition({
