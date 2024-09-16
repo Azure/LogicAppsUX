@@ -15,11 +15,9 @@ import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
 import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
+import { useNodeDisplayName, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
-import { pasteScopeOperation, pasteOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
-import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
 import { CustomMenu } from './customMenu';
 
 import {
@@ -31,6 +29,7 @@ import {
   ClipboardPasteRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
+import { PasteOperation } from '../OperationsCopyPaste/pasteOperation';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -120,56 +119,6 @@ export const EdgeContextualMenu = () => {
     })();
   }, [open]);
 
-  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
-  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
-  const newParentId = useMemo(() => {
-    if (nodeMetadata?.subgraphType) {
-      return nodeMetadata.parentNodeId;
-    }
-    return parentId;
-  }, [nodeMetadata, parentId]);
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId ?? ''));
-
-  const handlePasteClicked = useCallback(async () => {
-    if (!graphId) {
-      return;
-    }
-    const relationshipIds = { graphId, childId, parentId };
-    const copiedNode = await retrieveClipboardData();
-    if (!copiedNode) {
-      return;
-    }
-    if (copiedNode?.isScopeNode) {
-      dispatch(
-        pasteScopeOperation({
-          relationshipIds,
-          nodeId: copiedNode.nodeId,
-          serializedValue: copiedNode.serializedOperation,
-          allConnectionData: copiedNode.allConnectionData,
-          staticResults: copiedNode.staticResults,
-          upstreamNodeIds: upstreamNodesOfChild,
-        })
-      );
-    } else {
-      dispatch(
-        pasteOperation({
-          relationshipIds,
-          nodeId: copiedNode.nodeId,
-          nodeData: copiedNode.nodeData,
-          nodeTokenData: copiedNode.nodeTokenData,
-          operationInfo: copiedNode.nodeOperationInfo,
-          connectionData: copiedNode.nodeConnectionData,
-          comment: copiedNode.nodeComment,
-        })
-      );
-    }
-    LoggerService().log({
-      area: 'EdgeContextualMenu:handlePasteClicked',
-      level: LogEntryLevel.Verbose,
-      message: 'New node added via paste.',
-    });
-  }, [graphId, childId, parentId, dispatch, upstreamNodesOfChild]);
-
   const parentName = useNodeDisplayName(removeIdTag(parentId ?? ''));
   const childName = useNodeDisplayName(childId);
 
@@ -208,9 +157,11 @@ export const EdgeContextualMenu = () => {
             {isPasteEnabled && (
               <>
                 <MenuDivider />
-                <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
-                  {pasteFromClipboard}
-                </MenuItem>
+                <PasteOperation location="EdgeContextualMenu">
+                  <MenuItem icon={<ClipboardIcon />} data-automation-id={automationId('paste')}>
+                    {pasteFromClipboard}
+                  </MenuItem>
+                </PasteOperation>
               </>
             )}
             {isUiInteractionsServiceEnabled()
