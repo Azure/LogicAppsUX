@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.90.0](https://github.com/Azure/LogicAppsUX/compare/v4.89.0...v4.90.0) (2024-09-16)
+
+
+### Features
+
+* **Data Mapper:** Remove intermediate connections and rather depend on the direct connections to get rid of more re-renders ([#5679](https://github.com/Azure/LogicAppsUX/issues/5679)) ([2f550e4](https://github.com/Azure/LogicAppsUX/commit/2f550e4774ddbbbd1c3dee8ab591687758d8d9f6))
+
+
+### Bug Fixes
+
+* **vscode:** Improve IaC Generation Stability ([#5677](https://github.com/Azure/LogicAppsUX/issues/5677)) ([ea00491](https://github.com/Azure/LogicAppsUX/commit/ea0049102472adf5e76fa78831904a0be143ae53))
+
 ## [4.89.0](https://github.com/Azure/LogicAppsUX/compare/v4.88.0...v4.89.0) (2024-09-13)
 
 
