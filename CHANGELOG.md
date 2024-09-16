@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.91.0](https://github.com/Azure/LogicAppsUX/compare/v4.90.0...v4.91.0) (2024-09-16)
+
+
+### Features
+
+* **designer:** Allow users to delete static results ([#5659](https://github.com/Azure/LogicAppsUX/issues/5659)) ([0c2dcfb](https://github.com/Azure/LogicAppsUX/commit/0c2dcfb2f515aacca317ca29d3a78e9c0c0747a4))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with `suppressDefaultNodeSelectFunctionality` ([#5686](https://github.com/Azure/LogicAppsUX/issues/5686)) ([78d2c33](https://github.com/Azure/LogicAppsUX/commit/78d2c335ef912f4b5d948ec46deabc50a2ec96a1))
+
 ## [4.90.0](https://github.com/Azure/LogicAppsUX/compare/v4.89.0...v4.90.0) (2024-09-16)
 
 
