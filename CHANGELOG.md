@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.93.0](https://github.com/Azure/LogicAppsUX/compare/v4.92.0...v4.93.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** OnHover border color take the fluent ui's default value ([#5692](https://github.com/Azure/LogicAppsUX/issues/5692)) ([1d44848](https://github.com/Azure/LogicAppsUX/commit/1d44848ef1b1ce98dfb5e78030d26624f90ad395))
+* **Data Mapper:** Update position and scroll width ([#5691](https://github.com/Azure/LogicAppsUX/issues/5691)) ([dafa1be](https://github.com/Azure/LogicAppsUX/commit/dafa1be230d9a911858bac3c14799f2e114bb02c))
+
 ## [4.92.0](https://github.com/Azure/LogicAppsUX/compare/v4.91.0...v4.92.0) (2024-09-16)
 
 
