@@ -2,7 +2,7 @@ import { getSelectedSchema } from '../../core';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { convertSchemaToSchemaExtended, flattenSchemaNodeMap, getFileNameAndPath } from '../../utils/Schema.Utils';
-import type { DataMapSchema, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
@@ -13,7 +13,6 @@ import { SchemaPanelBody } from './SchemaPanelBody';
 import type { SchemaFile } from '../../models/Schema';
 import { Button, mergeClasses } from '@fluentui/react-components';
 import type { FileSelectorOption } from '../common/selector/FileSelector';
-import Fuse from 'fuse.js';
 import { EditRegular } from '@fluentui/react-icons';
 import useSchema from './useSchema';
 
@@ -21,16 +20,6 @@ const schemaFileQuerySettings = {
   cacheTime: 0,
   retry: false, // Don't retry as it stops error from making its way through
 };
-
-const fuseSchemaSearchOptions: Fuse.IFuseOptions<SchemaNodeExtended> = {
-  includeScore: true,
-  minMatchCharLength: 2,
-  includeMatches: true,
-  threshold: 0.2,
-  ignoreLocation: true,
-  keys: ['name', 'qName'],
-};
-
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
   id: string;
@@ -140,44 +129,8 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const onSearchChange = useCallback(
     (newSearchTerm?: string) => {
       setSearchTerm(newSearchTerm ?? '');
-      if (flattenedScehmaMap) {
-        if (!newSearchTerm) {
-          setFilteredFlattenedScehmaMap({ ...flattenedScehmaMap });
-          return;
-        }
-
-        const allSchemaNodes = Object.values(flattenedScehmaMap);
-        const fuse = new Fuse(allSchemaNodes, fuseSchemaSearchOptions);
-
-        const filteredNodes = fuse.search(newSearchTerm).map((result) => result.item);
-
-        // Along with the filter results, also add in the root nodes
-        const filteredFlattenedScehmaMap = filteredNodes.reduce(
-          (acc, node) => {
-            acc[node.key] = node;
-            return acc;
-          },
-          {} as Record<string, SchemaNodeExtended>
-        );
-
-        for (const node of filteredNodes) {
-          const currentParents = node.pathToRoot;
-
-          for (const parent of currentParents) {
-            const key = parent.key;
-            if (key !== node.key) {
-              const parentNode = flattenedScehmaMap[key];
-              if (parentNode) {
-                filteredFlattenedScehmaMap[key] = parentNode;
-              }
-            }
-          }
-        }
-
-        setFilteredFlattenedScehmaMap(filteredFlattenedScehmaMap);
-      }
     },
-    [setSearchTerm, flattenedScehmaMap, setFilteredFlattenedScehmaMap]
+    [setSearchTerm]
   );
 
   const onEditClick = useCallback(() => {
@@ -227,6 +180,7 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
         body={
           <SchemaPanelBody
             id={id}
+            searchTerm={searchTerm}
             schema={selectedSchema}
             setSelectedSchemaFile={setSelectedFileSchemaAndResetState}
             selectedSchemaFile={selectedSchemaFile}

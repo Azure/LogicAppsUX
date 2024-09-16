@@ -21,6 +21,7 @@ export interface SchemaPanelBodyProps {
   fileSelectorOptions: FileSelectorOption;
   setFileSelectorOptions: (option: FileSelectorOption) => void;
   showScehmaSelection?: boolean;
+  searchTerm?: string;
 }
 
 export const SchemaPanelBody = ({
@@ -32,6 +33,7 @@ export const SchemaPanelBody = ({
   showScehmaSelection,
   flattenedSchemaMap,
   errorMessage,
+  searchTerm,
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
@@ -169,7 +171,7 @@ export const SchemaPanelBody = ({
         />
       ) : schema && flattenedSchemaMap ? (
         <div className={styles.treeContainer}>
-          <SchemaTree id={id} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
+          <SchemaTree id={id} schema={schema} flattenedSchemaMap={flattenedSchemaMap} searchTerm={searchTerm} />
         </div>
       ) : (!schema || !flattenedSchemaMap) && !errorMessage && selectedSchemaFile ? (
         <Spinner size={'small'} />
