@@ -106,7 +106,7 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
   });
 });
 
-interface PasteOperationPayload {
+export interface PasteOperationPayload {
   relationshipIds: RelationshipIds;
   nodeId: string;
   nodeData: NodeData;

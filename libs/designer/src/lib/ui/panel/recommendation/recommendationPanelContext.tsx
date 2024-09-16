@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../../../core';
+import { useNodeDisplayName, type AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -18,13 +18,15 @@ import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
-import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
+import { Card, OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { retrieveClipboardData } from '../../../core/utils/clipboard';
+import type { PasteOperationPayload } from '../../../core/actions/bjsworkflow/copypaste';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -208,8 +210,34 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Aria label for the close button in the Add Action Panel',
   });
 
+  const [copiedNode, setCopiedNode] = useState<PasteOperationPayload | undefined>(undefined);
+  useEffect(() => {
+    (async () => {
+      const copiedNode = await retrieveClipboardData();
+      setCopiedNode(copiedNode);
+    })();
+  }, []);
+  const displayName = useNodeDisplayName(copiedNode?.nodeId);
+
   return (
     <>
+      {copiedNode && (
+        <>
+          <div className="msla-app-action-header">
+            <XLargeText text={headingText} />
+            <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
+          </div>
+          <Card
+            title={displayName}
+            brandColor={copiedNode?.nodeData?.operationMetadata?.brandColor}
+            drag={undefined}
+            draggable={false}
+            dragPreview={undefined}
+            icon={copiedNode?.nodeData?.operationMetadata?.iconUri}
+            id={copiedNode.nodeId}
+          />
+        </>
+      )}
       <div className="msla-app-action-header">
         <XLargeText text={headingText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
@@ -222,6 +250,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           </Link>
         </div>
       ) : null}
+
       {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,

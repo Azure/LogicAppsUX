@@ -1,0 +1,97 @@
+.msla-connector-summary-card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 2px;
+  border: none;
+  outline: none;
+  box-shadow: 0px 0.3px 4px 0px rgba(0, 0, 0, 0.1), 0px 1.6px 4px 0px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+  align-items: center;
+  padding: 8px;
+  width: 100%;
+  overflow: hidden;
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+  }
+
+  box-sizing: border-box;
+  border: 2px solid #ffffff00;
+  &:focus {
+    outline: 0;
+    border: 2px solid rgba(96, 94, 92, 1);
+  }
+
+  &:active {
+    border: 2px solid rgba(0, 120, 212, 1);
+  }
+}
+
+.msla-connector-summary-display {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.msla-connector-summary-image {
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  object-fit: contain;
+
+  &.large {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.msla-connector-summary-header {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  align-items: center;
+  min-height: 24px;
+
+  .msla-connector-summary-title {
+    font: 13px/20px @semibold-font-family;
+    flex-grow: 1;
+    text-align: left;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.msla-connector-summary-labels {
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+  min-height: 20px;
+}
+
+.msla-connector-summary-header {
+  .msla-connector-summary-display {
+    margin-top: 4px;
+  }
+}
+
+.msla-theme-dark {
+  .msla-connector-summary-card {
+    background: @ms-color-primaryBackground;
+
+    &:focus {
+      outline: 1px solid #fff;
+    }
+
+    &:hover {
+      background: @ms-color-primaryBackgroundHover;
+    }
+  }
+
+  .msla-connector-summary-title {
+    color: @ms-color-black;
+  }
+  
+}

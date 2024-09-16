@@ -24,9 +24,9 @@ export interface CardProps {
   connectionDisplayName?: string;
   connectionRequired?: boolean;
   connectorName?: string;
-  drag: ConnectDragSource;
+  drag: ConnectDragSource | undefined;
   draggable: boolean;
-  dragPreview: ConnectDragPreview;
+  dragPreview: ConnectDragPreview | undefined;
   errorLevel?: MessageBarType;
   errorMessage?: string;
   icon?: string;
@@ -160,9 +160,9 @@ export const Card: React.FC<CardProps> = memo(
     return (
       <div
         ref={(node) => {
-          dragPreview(node);
+          dragPreview?.(node);
           focusRef.current = node;
-          drag(node);
+          drag?.(node);
         }}
         role={'button'}
         id={`msla-node-${id}`}
