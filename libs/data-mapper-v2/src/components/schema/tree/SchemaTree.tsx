@@ -15,6 +15,7 @@ export type SchemaTreeProps = {
   id: string;
   schema: SchemaExtended;
   flattenedSchemaMap: Record<string, SchemaNodeExtended>;
+  searchTerm?: string;
 };
 
 export const SchemaTree = (props: SchemaTreeProps) => {
@@ -29,6 +30,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     id,
     flattenedSchemaMap,
     schema: { schemaTreeRoot },
+    searchTerm,
   } = props;
 
   const { panelNodeId, openKeys, isSourceSchema } = useSchema({ id });
@@ -123,6 +125,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
             className={treeStyles.root}
             onToggle={onToggle}
             dndManager={dndManager}
+            searchTerm={searchTerm}
           >
             {(treeProps: NodeRendererProps<SchemaNodeExtended>) => (
               <SchemaTreeNode id={id} flattenedSchemaMap={flattenedSchemaMap} schema={props.schema} {...treeProps} />
