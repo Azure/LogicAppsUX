@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useStyles } from './styles';
 import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
@@ -6,17 +6,29 @@ import { Button } from '@fluentui/react-components';
 import { FunctionList } from '../functionList/FunctionList';
 import { FunctionsSVG } from '../../images/icons';
 import { Panel } from '../../components/common/panel/Panel';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../core/state/Store';
+import { toggleFunctionPanel } from '../../core/state/PanelSlice';
 
 type PanelProps = {};
 
 export const FunctionPanel = (_props: PanelProps) => {
-  const [isFunctionsPanelExpanded, setExpandFunctionsPanel] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const styles = useStyles();
   const intl = useIntl();
+
+  const dispatch = useDispatch<AppDispatch>();
+  const isFunctionPanelOpen = useSelector((state: RootState) => state.panel.functionPanel.isOpen);
+
+  const openFunctionPanel = useCallback(() => {
+    dispatch(toggleFunctionPanel());
+  }, [dispatch]);
+
+  const onChevronClick = useCallback(() => {
+    setSearchTerm('');
+    dispatch(toggleFunctionPanel());
+  }, [dispatch]);
 
   const stringResources = useMemo(
     () => ({
@@ -44,7 +56,7 @@ export const FunctionPanel = (_props: PanelProps) => {
     [intl]
   );
 
-  return isFunctionsPanelExpanded ? (
+  return isFunctionPanelOpen ? (
     <Panel
       id={'functions-panel'}
       isOpen={true}
@@ -56,10 +68,7 @@ export const FunctionPanel = (_props: PanelProps) => {
             className={styles.collapseChevronButton}
             aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
             icon={<ChevronDoubleLeftRegular fontSize={18} />}
-            onClick={() => {
-              setExpandFunctionsPanel(false);
-              setSearchTerm('');
-            }}
+            onClick={onChevronClick}
           />
         ),
       }}
@@ -69,6 +78,7 @@ export const FunctionPanel = (_props: PanelProps) => {
         onChange: (value?: string) => {
           setSearchTerm(value ?? '');
         },
+        text: searchTerm,
       }}
       styles={{
         root: styles.root,
@@ -76,12 +86,7 @@ export const FunctionPanel = (_props: PanelProps) => {
     />
   ) : (
     <div className={styles.collapsedDataMapperFunctionPanel}>
-      <div
-        className={styles.collapsedDrawerBodyWrapper}
-        onClick={() => {
-          setExpandFunctionsPanel(true);
-        }}
-      >
+      <div className={styles.collapsedDrawerBodyWrapper} onClick={openFunctionPanel}>
         <FunctionsSVG />
         <Button
           className={styles.chevronButton}
@@ -89,9 +94,6 @@ export const FunctionPanel = (_props: PanelProps) => {
           disabled={!sourceSchema || !targetSchema}
           aria-label={stringResources.DRAWER_CHEVRON_EXPANDED}
           icon={<ChevronDoubleRightRegular fontSize={13} className={styles.functionsChevronIcon} />}
-          onClick={() => {
-            setExpandFunctionsPanel(true);
-          }}
         />
       </div>
     </div>

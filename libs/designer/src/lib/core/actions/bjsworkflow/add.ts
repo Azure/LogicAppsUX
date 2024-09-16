@@ -12,7 +12,7 @@ import {
   updateErrorDetails,
   updateNodeSettings,
 } from '../../state/operation/operationMetadataSlice';
-import type { RelationshipIds } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
@@ -47,8 +47,12 @@ import {
   getIconUriFromConnector,
   getRecordEntry,
   isNumber,
+  UserPreferenceService,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import type {
+  Connection,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
@@ -59,6 +63,7 @@ import type {
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
+import { operationSupportsSplitOn } from '../../utils/outputs';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -140,12 +145,13 @@ export const initializeOperationDetails = async (
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      nodeId,
       manifest,
       isTrigger,
       nodeInputs,
       operationInfo,
-      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
-      nodeId
+      dispatch,
+      operationSupportsSplitOn(isTrigger) ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined
     );
     parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
 
@@ -153,24 +159,24 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(
       isTrigger,
       operationInfo,
-      nodeOutputs,
       manifest,
       /* swagger */ undefined,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.designerOptions.hostOptions.forceEnableSplitOn
+      state.workflow.workflowKind
     );
 
+    // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;
     if (isTrigger && settings.splitOn?.value?.value) {
       updatedOutputs = getOutputParametersFromManifest(
+        nodeId,
         manifest,
         isTrigger,
         nodeInputs,
         operationInfo,
-        settings.splitOn?.value?.value,
-        nodeId
+        dispatch,
+        settings.splitOn?.value?.value
       ).outputs;
     }
 
@@ -183,7 +189,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes([initData]));
+    dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -208,12 +214,10 @@ export const initializeOperationDetails = async (
     const settings = getOperationSettings(
       isTrigger,
       operationInfo,
-      nodeOutputs,
       /* manifest */ undefined,
       parsedSwagger,
       /* operation */ undefined,
-      state.workflow.workflowKind,
-      state.designerOptions.hostOptions.forceEnableSplitOn
+      state.workflow.workflowKind
     );
 
     // We should update the outputs when splitOn is enabled.
@@ -237,7 +241,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes([initData]));
+    dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
@@ -285,12 +289,13 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     manifest
   );
   const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+    id,
     manifest,
     false,
     nodeInputs,
     { type: '', kind: '', connectorId: '', operationId: '' },
-    /* splitOnValue */ undefined,
-    id
+    dispatch,
+    /* splitOnValue */ undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = {
@@ -300,7 +305,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     nodeDependencies,
     operationMetadata: { iconUri: manifest.properties.iconUri ?? '', brandColor: '' },
   };
-  dispatch(initializeNodes([initData]));
+  dispatch(initializeNodes({ nodes: [initData] }));
 };
 
 export const trySetDefaultConnectionForNode = async (
@@ -312,8 +317,9 @@ export const trySetDefaultConnectionForNode = async (
   const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter((c) => c.properties.overallStatus !== 'Error');
   if (connections.length > 0) {
-    await ConnectionService().setupConnectionIfNeeded(connections[0]);
-    dispatch(updateNodeConnection({ nodeId, connection: connections[0], connector }));
+    const connection = (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
+    await ConnectionService().setupConnectionIfNeeded(connection);
+    dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap(nodeId));
     dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
@@ -432,4 +438,24 @@ export const getNonDuplicateId = (existingActionNames: Record<string, string>, a
     count++;
   }
   return nodeId;
+};
+
+export const tryGetMostRecentlyUsedConnectionId = async (
+  connectorId: string,
+  allConnections: Connection[]
+): Promise<Connection | undefined> => {
+  let connectionId: string | undefined;
+  // NOTE: If no connection is available from local storage, first connection will be selected by default.
+  try {
+    connectionId = await UserPreferenceService()?.getMostRecentlyUsedConnectionId(connectorId);
+  } catch (error: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      message: `Failed to get most recently used connection id for the specified connector ${connectorId}.`,
+      area: 'OperationAddition',
+      error,
+    });
+  }
+
+  return connectionId ? allConnections.find((c) => equals(c.id, connectionId)) : undefined;
 };

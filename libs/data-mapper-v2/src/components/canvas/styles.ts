@@ -12,7 +12,7 @@ export const useStyles = makeStyles({
   wrapper: {
     height: '100%',
     display: 'flex',
-    wdith: '100%',
+    width: '-webkit-fill-available',
     ...shorthands.flex(1, 1, '1px'),
     backgroundColor: tokens.colorNeutralBackground1,
   },
@@ -22,5 +22,4 @@ export const reactFlowStyle: CSSProperties = {
   height: '100%',
   width: '100%',
   backgroundColor: tokens.colorNeutralBackground1,
-  overflow: 'visible',
 };

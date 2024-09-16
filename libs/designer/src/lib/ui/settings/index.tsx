@@ -403,6 +403,8 @@ function NetworkingSettings({
     downloadChunkSize,
   } = nodeSettings;
 
+  const { hideContentTransferSettings } = useHostOptions();
+
   const onAsyncPatternToggle = (checked: boolean): void => {
     updateSettings({
       disableAsyncPattern: {
@@ -619,6 +621,7 @@ function NetworkingSettings({
         retryPolicy={retryPolicy}
         uploadChunk={uploadChunk}
         downloadChunkSize={downloadChunkSize}
+        hideContentTransferSettings={hideContentTransferSettings}
         onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
         onAsyncPatternToggle={onAsyncPatternToggle}
         onAsyncResponseToggle={onAsyncResponseToggle}

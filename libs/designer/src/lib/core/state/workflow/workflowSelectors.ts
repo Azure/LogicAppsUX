@@ -60,7 +60,8 @@ const reduceCollapsed =
     return nodes.reduce((acc: any, child: WorkflowNode) => {
       const shouldFilter = condition(child);
       if (!shouldFilter) {
-        acc.push({ ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } });
+        const reducedChildren = child.children ? { children: reduceCollapsed(condition)(child.children) } : {};
+        acc.push({ ...child, ...reducedChildren });
         return acc;
       }
 
@@ -176,6 +177,19 @@ export const useAllGraphParents = (graphId: string): string[] => {
       return [];
     })
   );
+};
+
+export const getParentsUncollapseFromGraphState = (state: WorkflowState, actionId: string): Record<string, boolean> => {
+  const collapsedGraphIds = state.collapsedGraphIds;
+  if (state.graph) {
+    const nodeParents = getWorkflowGraphPath(state.graph, actionId);
+    nodeParents.forEach((nodeId) => {
+      if (nodeId !== actionId && collapsedGraphIds[nodeId]) {
+        collapsedGraphIds[nodeId] = false;
+      }
+    });
+  }
+  return collapsedGraphIds;
 };
 
 export const useNodeGraphId = (nodeId: string): string =>

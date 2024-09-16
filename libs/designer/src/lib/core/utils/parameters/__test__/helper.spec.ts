@@ -8,15 +8,20 @@ import {
   toArrayViewModelSchema,
   toHybridConditionViewModel,
   getTokenExpressionMethodFromKey,
+  generateExpressionFromKey,
   loadDynamicContentForInputsInNode,
   loadParameterValue,
 } from '../helper';
 import * as Helper from '../helper';
+import * as VariableHelper from '../../variables';
+import * as GraphHelper from '../../graph';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
-import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
+import { DynamicValuesType, ExpressionType, InitConnectorService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import requestManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/request';
+
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {
     it('should parse user typed json containing null, array, numeric, and nested values', () => {
@@ -1013,7 +1018,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual('@{base64(triggerBody())}');
+      expect(expressionString).toEqual('@base64(triggerBody())');
     });
 
     it('should cast file to string/byte correctly.', () => {
@@ -1034,7 +1039,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual('@{base64(triggerBody())}');
+      expect(expressionString).toEqual('@base64(triggerBody())');
     });
 
     it('should cast string/binary to string/datauri correctly.', () => {
@@ -1214,7 +1219,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual(`@{base64('user entered text')}`);
+      expect(expressionString).toEqual(`@base64('user entered text')`);
     });
 
     it('should not modify user entered text if field is binary', () => {
@@ -1298,7 +1303,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.info.format = 'byte';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-      expect(expressionString).toEqual(`@{base64(body('action')['path'])}`);
+      expect(expressionString).toEqual(`@base64(body('action')['path'])`);
     });
 
     it('should be correct for a parameter with mix of text and tokens interpolated to string', () => {
@@ -1985,8 +1990,26 @@ describe('core/utils/parameters/helper', () => {
         };
         const inputParameter: InputParameter = {
           default: true,
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: {
+            options: [
+              {
+                displayName: '',
+                key: '',
+                value: '',
+              },
+              {
+                displayName: 'Yes',
+                key: 'Yes',
+                value: 'true',
+              },
+              {
+                displayName: 'No',
+                key: 'No',
+                value: 'false',
+              },
+            ],
+          },
           enum: [
             { displayName: '', value: '' },
             { displayName: 'Yes', value: true },
@@ -2366,8 +2389,8 @@ describe('core/utils/parameters/helper', () => {
         };
         const inputParameter: InputParameter = {
           dynamicValues: undefined,
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: { options },
           enum: options,
           in: 'body',
           key: 'body.$.linkType',
@@ -2387,10 +2410,7 @@ describe('core/utils/parameters/helper', () => {
           editor: 'combobox',
           editorOptions: { options },
           editorViewModel: undefined,
-          schema: {
-            ...inputSchema,
-            'x-ms-editor': 'combobox',
-          },
+          schema: inputSchema,
         });
       });
 
@@ -2410,8 +2430,8 @@ describe('core/utils/parameters/helper', () => {
         };
         const inputParameter: InputParameter = {
           dynamicValues: undefined,
-          editor: undefined,
-          editorOptions: undefined,
+          editor: 'combobox',
+          editorOptions: { options },
           key: '', // Not defined in OpenAPI.
           name: '', // Not defined in OpenAPI.
           schema: inputSchema,
@@ -2427,10 +2447,7 @@ describe('core/utils/parameters/helper', () => {
           editor: 'combobox',
           editorOptions: { options },
           editorViewModel: undefined,
-          schema: {
-            ...inputSchema,
-            'x-ms-editor': 'combobox',
-          },
+          schema: inputSchema,
         });
       });
     });
@@ -2513,6 +2530,18 @@ describe('core/utils/parameters/helper', () => {
       ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
     ])('correctly gets the token expression for "%s"', (key, actionName, expected) => {
       expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
+    });
+  });
+
+  describe('generateExpressionFromKey', () => {
+    it.each<[string, string, string | undefined, string]>([
+      // For `body.$` and its first-class properties, use BODY.
+      ['triggerBody()', 'body.$', undefined, `triggerBody()`],
+      ['triggerBody()', 'body.$.Body', undefined, `triggerBody()['Body']`],
+      [`body('A1')`, 'body.$', 'A1', `body('A1')`],
+      [`body('A1')`, 'body.$.body.B1', 'A1', `body('A1')['body']['B1']`],
+    ])('correctly gets the token expression for nested body property for "%s"', (method, key, actionName, expected) => {
+      expect(generateExpressionFromKey(method, key, actionName, /* isInsideArray */ false, /* required */ true)).toBe(expected);
     });
   });
 
@@ -3342,6 +3371,14 @@ describe('core/utils/parameters/helper', () => {
         },
       },
     };
+    const mockConnectorService: any = {
+      getDynamicSchema: () => Promise.resolve({ type: 'json', properties: { a: { type: 'string' } } }),
+    };
+    const mockManifestService: any = {
+      isSupported: () => true,
+      isAliasingSupported: () => false,
+      getOperationManifest: () => Promise.resolve(requestManifest),
+    };
 
     beforeEach(() => {
       rootState.operations.inputParameters[nodeId].parameterGroups.default.parameters = defaultParameters;
@@ -3376,6 +3413,40 @@ describe('core/utils/parameters/helper', () => {
           dynamicParameterKeys: ['inputs.$.body.dynamicObject', 'inputs.$.body.dynamicObject.childworkflow1Type.dynamicObject2'],
         },
       });
+    });
+
+    test('should load dynamic inputs schema only once when dynamic inputs are empty for dynamic parameter', async () => {
+      const stepDefinition = { inputs: { body: { a: 'b' } } };
+      const getStateMockFn = vi.fn(() => {
+        rootState.operations.inputParameters[nodeId].parameterGroups.default.parameters = [...defaultParameters];
+        rootState.operations.dependencies[nodeId].inputs = { ...defaultDependencies };
+        rootState.workflowParameters.definitions = {};
+        rootState.workflow.operations = { repetitionInfos: {} };
+
+        return rootState;
+      });
+      const dispatchMockFn = vi.fn();
+      InitOperationManifestService(mockManifestService);
+      InitConnectorService(mockConnectorService);
+
+      vi.spyOn(Helper, 'isDynamicDataReadyToLoad').mockReturnValue(true);
+      vi.spyOn(VariableHelper, 'getAllVariables').mockReturnValue([]);
+      vi.spyOn(GraphHelper, 'getTriggerNodeId').mockReturnValue('manual');
+      vi.spyOn(Helper, 'updateTokenMetadataInParameters').mockReturnValue();
+      const spied = vi.spyOn(Helper, 'updateDynamicDataInNode');
+
+      await loadDynamicContentForInputsInNode(
+        nodeId,
+        /* isTrigger */ false,
+        defaultDependencies,
+        rootState.operations.operationInfo[nodeId],
+        undefined,
+        dispatchMockFn,
+        getStateMockFn,
+        stepDefinition
+      );
+
+      expect(dispatchMockFn).toHaveBeenCalledTimes(2);
     });
   });
 });

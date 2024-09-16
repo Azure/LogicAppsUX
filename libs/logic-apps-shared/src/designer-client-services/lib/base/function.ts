@@ -1,3 +1,4 @@
+import { getIntl } from '../../../intl/src';
 import { ResponseCodes, SwaggerParser } from '../../../parsers';
 import { ArgumentException, unmap } from '../../../utils/src';
 import { getAzureResourceRecursive } from '../common/azure';
@@ -94,6 +95,7 @@ export class BaseFunctionService implements IFunctionService {
       throw new Error('Operation not found');
     }
 
+    const intl = getIntl();
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
@@ -131,10 +133,16 @@ export class BaseFunctionService implements IFunctionService {
       }
 
       if (response.schema) {
-        schema.properties['body'] = response.schema;
+        schema.properties['body'] = {
+          title: intl.formatMessage({ defaultMessage: 'Body', id: 'VZh+w2', description: 'Title for body outputs' }),
+          ...response.schema,
+        };
       }
       if (response.headers) {
-        schema.properties['headers'] = response.headers;
+        schema.properties['headers'] = {
+          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'voRDKP', description: 'Title for header outputs' }),
+          ...response.headers,
+        };
       }
     }
 
@@ -166,6 +174,7 @@ export class BaseFunctionService implements IFunctionService {
         }
 
         schemaProperties[pathProperty].properties[name] = {
+          'x-ms-url-encoding': 'single',
           ...parameter,
           'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: 'operationDetails.uri' },
         };

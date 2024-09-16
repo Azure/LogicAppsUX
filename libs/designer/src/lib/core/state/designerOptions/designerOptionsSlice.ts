@@ -22,9 +22,11 @@ import {
   InitCustomCodeService,
   InitCopilotService,
   InitUiInteractionsService,
+  InitUserPreferenceService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import CONSTANTS from '../../../common/constants';
 
 export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
@@ -40,6 +42,8 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
     recurrenceInterval: undefined,
+    maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
+    hideContentTransferSettings: false,
   },
 };
 
@@ -66,6 +70,7 @@ export const initializeServices = createAsyncThunk(
     customCodeService,
     copilotService,
     uiInteractionsService,
+    userPreferenceService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -119,6 +124,10 @@ export const initializeServices = createAsyncThunk(
 
     if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
+    }
+
+    if (userPreferenceService) {
+      InitUserPreferenceService(userPreferenceService);
     }
 
     InitEditorService(editorService);

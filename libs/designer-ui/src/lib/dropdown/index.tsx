@@ -1,3 +1,4 @@
+import { equals } from '@microsoft/logic-apps-shared';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
@@ -21,6 +22,7 @@ interface DropdownEditorProps {
   height?: number;
   fontSize?: number;
   label?: string;
+  isCaseSensitive?: boolean;
   dataAutomationId?: string;
   onChange?: ChangeHandler;
   // to be used if we don't want to convert result to valueSegmentArray
@@ -45,10 +47,13 @@ export const DropdownEditor = ({
   fontSize,
   label,
   dataAutomationId,
+  isCaseSensitive,
   onChange,
   customOnChangeHandler,
 }: DropdownEditorProps): JSX.Element => {
-  const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
+  const [selectedKey, setSelectedKey] = useState<string | undefined>(
+    multiSelect ? undefined : getSelectedKey(options, initialValue, isCaseSensitive)
+  );
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
     multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
   );
@@ -131,11 +136,11 @@ const getOptions = (options: DropdownItem[]): IDropdownOption[] => {
   ];
 };
 
-const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[]): string => {
+const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[], isCaseSensitive = false): string => {
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return option.value === initialValue[0].value;
+        return equals(String(option.value), initialValue[0].value, !isCaseSensitive);
       })?.key ?? ''
     );
   }

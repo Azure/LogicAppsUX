@@ -1,4 +1,5 @@
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
+import type { TokenGroup } from '../../utils/src';
 
 export interface Nl2fSuggestedExpression {
   suggestedExpression: string;
@@ -10,7 +11,12 @@ export interface Nl2fExpressionResult {
 }
 
 export interface ICopilotService {
-  getNl2fExpressions: (query: string, originalExpression?: string, signal?: AbortSignal) => Promise<Nl2fExpressionResult>;
+  getNl2fExpressions: (
+    query: string,
+    originalExpression?: string,
+    tokenGroup?: TokenGroup[],
+    signal?: AbortSignal
+  ) => Promise<Nl2fExpressionResult>;
 }
 
 let service: ICopilotService;

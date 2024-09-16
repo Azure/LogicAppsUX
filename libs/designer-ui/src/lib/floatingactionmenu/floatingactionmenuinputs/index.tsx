@@ -84,6 +84,18 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
     onDynamicallyAddedParameterChange(schemaKey, 'title', newValue);
   };
 
+  const onDynamicallyAddedParameterRequiredToggle = (schemaKey: string) => {
+    const { onChange } = props;
+    if (onChange) {
+      const indexOfModelToUpdate = dynamicParameterModels.findIndex((model) => model.schemaKey === schemaKey);
+      const currentRequiredValue = dynamicParameterModels[indexOfModelToUpdate].required;
+      const newRequiredValue = !currentRequiredValue;
+      safeSetObjectPropertyValue(dynamicParameterModels[indexOfModelToUpdate], ['required'], newRequiredValue);
+      const value = serialize(dynamicParameterModels, props.isRequestApiConnectionTrigger);
+      onChange({ value });
+    }
+  };
+
   const onDynamicallyAddedParameterDelete = (schemaKey: string) => {
     const { onChange } = props;
     if (onChange) {
@@ -112,6 +124,7 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
   ).map((model) => ({
     ...model,
     onTitleChange: onDynamicallyAddedParameterTitleChange,
+    onRequiredToggle: onDynamicallyAddedParameterRequiredToggle,
     onDelete: onDynamicallyAddedParameterDelete,
     onRenderValueField,
   }));
@@ -129,7 +142,8 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
       title: properties.title,
       schemaKey,
       properties,
-      required: true, // TODO: add functionality to allow making parameters optional
+      required: true,
+      onRequiredToggle: onDynamicallyAddedParameterRequiredToggle,
       onTitleChange: onDynamicallyAddedParameterTitleChange,
       onDelete: onDynamicallyAddedParameterDelete,
       onRenderValueField,
@@ -165,14 +179,11 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
       onMenuItemSelected={onMenuItemSelected}
     >
       {dynamicParameterModels.map((model) => {
-        const {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          required,
-          properties,
-          ...props
-        } = model;
+        const { required, properties, ...props } = model;
 
-        return properties['x-ms-dynamically-added'] === true ? <DynamicallyAddedParameter {...props} key={props.schemaKey} /> : null;
+        return properties['x-ms-dynamically-added'] === true ? (
+          <DynamicallyAddedParameter {...props} required={required} key={props.schemaKey} />
+        ) : null;
       })}
     </FloatingActionMenuBase>
   );

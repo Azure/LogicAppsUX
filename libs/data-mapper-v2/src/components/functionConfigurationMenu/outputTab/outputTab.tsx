@@ -13,6 +13,7 @@ import { SchemaType } from '@microsoft/logic-apps-shared';
 import { flattenInputs, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
+import { isSchemaNodeExtended } from '../../../utils';
 
 export const OutputTabContents = (props: {
   func: FunctionData;
@@ -45,7 +46,7 @@ export const OutputTabContents = (props: {
     return connection.reactFlowKey;
   };
 
-  const removeConnection = (_inputIndex: number, newOutput: InputConnection) => {
+  const removeConnection = (newOutput: InputConnection) => {
     if (newOutput === undefined) {
       return;
     }
@@ -76,9 +77,14 @@ export const OutputTabContents = (props: {
     );
   };
 
-  const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
+  const validateAndCreateConnection = (
+    optionValue: string | undefined,
+    option: InputOptionProps | undefined,
+    oldOutput: InputConnection
+  ) => {
+    removeConnection(oldOutput);
     if (optionValue) {
-      const output = validateAndCreateConnectionOutput(
+      const newOutput = validateAndCreateConnectionOutput(
         optionValue,
         option,
         connectionDictionary,
@@ -86,8 +92,8 @@ export const OutputTabContents = (props: {
         functionNodeDictionary,
         targetSchemaDictionary
       );
-      if (output) {
-        updateConnection(output);
+      if (newOutput) {
+        updateConnection(newOutput);
       }
     }
   };
@@ -95,20 +101,27 @@ export const OutputTabContents = (props: {
   const table = (
     <List>
       {outputs.concat(additionalOutput).map((output, index) => {
+        let outputValue = undefined;
+        if (output) {
+          outputValue = isSchemaNodeExtended(output?.node) ? output?.node.name : '';
+        }
         const listItem = (
           <UnboundedDropdownListItem
             key={`output-list-item-${index}`}
             schemaListType={SchemaType.Target}
-            inputName={output?.node.key}
-            inputValue={undefined}
+            inputName={outputValue}
+            inputValue={outputValue}
             inputType={undefined}
-            validateAndCreateConnection={validateAndCreateConnection}
+            validateAndCreateConnection={(optionValue: string | undefined, option: InputOptionProps | undefined) =>
+              validateAndCreateConnection(optionValue, option, output)
+            }
             functionKey={props.functionId}
             func={props.func}
             draggable={false}
             removeItem={() => {
-              removeConnection(index, output);
+              removeConnection(output);
             }}
+            index={index}
           />
         );
         return listItem;

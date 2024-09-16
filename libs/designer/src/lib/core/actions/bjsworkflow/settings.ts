@@ -1,7 +1,7 @@
 import Constants from '../../../common/constants';
-import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
-import { getSplitOnOptions } from '../../utils/outputs';
+import { operationSupportsSplitOn } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
 import type {
@@ -114,7 +114,6 @@ export interface Settings {
  * Gets the operation options for the specified node based on the definition of the operation in a reload, or from swagger information.
  * @arg {string} isTrigger - Specifies if this is trigger operation node.
  * @arg {NodeOperation} operationInfo - The operation information about the node.
- * @arg {NodeOutputs} nodeOutputs - All outputs of the node.
  * @arg {OperationManifest} [manifest] - The operation manifest if node type supports.
  * @arg {SwaggerParser} [swagger] - The swagger if the node type supports.
  * @arg {LogicAppsV2.OperationDefinition} [operation] - The JSON from the definition for the given operation.
@@ -123,12 +122,10 @@ export interface Settings {
 export const getOperationSettings = (
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind,
-  forceEnableSplitOn?: boolean
+  workflowKind?: WorkflowKind
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -157,8 +154,8 @@ export const getOperationSettings = (
       value: getDisableAutomaticDecompression(isTrigger, nodeType, manifest, operation),
     },
     splitOn: {
-      isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation, workflowKind, forceEnableSplitOn),
-      value: getSplitOn(manifest, swagger, operationId, operation, workflowKind, forceEnableSplitOn),
+      isSupported: isSplitOnSupported(isTrigger, manifest, swagger, operationId, operation),
+      value: getSplitOn(manifest, swagger, operationId, operation),
     },
     retryPolicy: {
       isSupported: isRetryPolicySupported(isTrigger, operationInfo.type, manifest),
@@ -519,11 +516,9 @@ const getSplitOn = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,
-  definition?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind,
-  forceEnableSplitOn?: boolean
+  definition?: LogicAppsV2.OperationDefinition
 ): SimpleSetting<string> => {
-  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) {
+  if (!operationSupportsSplitOn(/* isTrigger */ true)) {
     return { enabled: false };
   }
   const splitOnValue = getSplitOnValue(manifest, swagger, operationId, definition);
@@ -531,6 +526,18 @@ const getSplitOn = (
     enabled: !!splitOnValue,
     value: splitOnValue,
   };
+};
+
+const isBatchTrigger = (manifest?: OperationManifest, swagger?: SwaggerParser, operationId?: string): boolean => {
+  if (manifest) {
+    return equals(manifest.properties.trigger, Constants.BATCH_TRIGGER);
+  }
+
+  if (swagger && operationId) {
+    return equals(swagger.getOperations()?.[operationId]?.triggerType, Constants.BATCH_TRIGGER);
+  }
+
+  return false;
 };
 
 export const getSplitOnValue = (
@@ -582,19 +589,16 @@ export const getSplitOnValue = (
 
 const isSplitOnSupported = (
   isTrigger: boolean,
-  nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,
-  definition?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind,
-  forceEnableSplitOn?: boolean
+  definition?: LogicAppsV2.OperationDefinition
 ): boolean => {
-  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) {
+  if (!operationSupportsSplitOn(isTrigger)) {
     return false;
   }
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
-  return isTrigger && (getSplitOnOptions(nodeOutputs, !!manifest).length > 0 || existingSplitOn.enabled);
+  return isBatchTrigger(manifest, swagger, operationId) || existingSplitOn.enabled;
 };
 
 const getTimeout = (

@@ -3,7 +3,7 @@ import { PinMenuItem } from '../pinMenuItem';
 import renderer from 'react-test-renderer';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
-import * as PanelSelectors from '../../../core/state/panelV2/panelSelectors';
+import * as PanelSelectors from '../../../core/state/panel/panelSelectors';
 
 describe('lib/ui/menuItems/pinMenuItem', () => {
   it.each([true, false])('should render for actions if pinned=%s', (isPinned) => {

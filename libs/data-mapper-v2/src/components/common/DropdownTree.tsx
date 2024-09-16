@@ -41,7 +41,6 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose, classNa
   const onFileNameSelect = (item: IFileSysTreeItem) => {
     onItemSelect(item);
     setShowDropdownTree(false);
-    console.log(item.name);
   };
 
   const filterDropdownItem = useCallback((item: IFileSysTreeItem, value: string): IFileSysTreeItem | undefined => {

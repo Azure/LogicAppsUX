@@ -1,4 +1,3 @@
-import { customTokens } from '../../../core';
 import type { FunctionData } from '../../../models';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
 import { Button, Caption1, tokens, Popover, PopoverTrigger, mergeClasses } from '@fluentui/react-components';
@@ -10,10 +9,11 @@ import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/fu
 import type { RootState } from '../../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
-import { setSelectedItem } from '../../../core/state/DataMapSlice';
-import { useActiveNode } from '../../../core/state/selectors/selectors';
-import { useMemo, useState } from 'react';
+import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
+import { useHoverFunctionNode, useSelectedNode } from '../../../core/state/selectors/selectors';
+import { useCallback, useMemo } from 'react';
 import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
+import { customTokens } from '../../../core/ThemeConect';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -28,19 +28,23 @@ export interface CardProps {
 }
 
 export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardProps>, 'function'>>) => {
+  const { id } = props;
   const dispatch = useDispatch();
   const { functionData, disabled, dataTestId } = props.data;
-  const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[props.id]);
-  const activeNode = useActiveNode(props.id);
-  const [isHandleHovered, setIsHandleHovered] = useState<boolean>(false);
+  const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[id]);
+  const isSelected = useSelectedNode(id);
+  const isHover = useHoverFunctionNode(id);
 
   const styles = useStyles();
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
-  const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
+  const funcitonHasInputs = useMemo(() => functionData?.maxNumberOfInputs !== 0, [functionData?.maxNumberOfInputs]);
 
-  const functionInputsFull = !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs);
+  const functionInputsFull = useMemo(
+    () => !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs),
+    [functionData?.maxNumberOfInputs, functionWithConnections]
+  );
 
   const isLeftConnected =
     functionWithConnections?.inputs[0] &&
@@ -48,76 +52,79 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
     functionWithConnections?.inputs[0][0] !== undefined;
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
-  const styleForLeftHandle = useMemo(() => {
-    let style = styles.handleWrapper;
-    if (activeNode !== undefined) {
-      style = mergeClasses(style, styles.activeHandle);
-    } else if (isLeftConnected) {
-      style = mergeClasses(style, styles.handleConnected);
-    }
-    if (functionInputsFull && isHandleHovered) {
-      style = mergeClasses(style, styles.fullNode);
-    }
-    return style;
-  }, [activeNode, styles, isLeftConnected, functionInputsFull, isHandleHovered]);
+  const getHandleStyle = useCallback(
+    (_isInput: boolean, isConnected: boolean) => {
+      let updatedStyle = styles.handleWrapper;
+      if (isConnected) {
+        updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
+      }
 
-  const styleForRightHandle = useMemo(() => {
-    let style = styles.handleWrapper;
+      if (isSelected || isHover) {
+        updatedStyle = mergeClasses(updatedStyle, styles.selectedHoverHandle);
+        if (isConnected) {
+          updatedStyle = mergeClasses(updatedStyle, styles.connectedSelectedHoverHandle);
+        }
+      }
 
-    if (activeNode !== undefined) {
-      style = mergeClasses(style, styles.activeHandle);
-    } else if (isRightConnected) {
-      style = mergeClasses(style, styles.handleConnected);
-    }
-    return style;
-  }, [activeNode, styles, isRightConnected]);
+      return updatedStyle;
+    },
+    [isHover, isSelected, styles.connectedHandle, styles.connectedSelectedHoverHandle, styles.handleWrapper, styles.selectedHoverHandle]
+  );
 
-  const leftHandleStyle = styleForLeftHandle;
-  const rightHandleStyle = styleForRightHandle;
+  const onMouseEnter = useCallback(() => {
+    dispatch(
+      setHoverState({
+        id: id,
+        type: 'function',
+      })
+    );
+  }, [dispatch, id]);
 
-  const onClick = () => {
-    dispatch(setSelectedItem(props.id));
-  };
+  const onMouseLeave = useCallback(() => {
+    dispatch(setHoverState());
+  }, [dispatch]);
 
-  const setActiveNode = () => {
-    dispatch(setSelectedItem(props.id));
-  };
+  const onClick = useCallback(() => {
+    dispatch(setSelectedItem(id));
+  }, [dispatch, id]);
+
+  const setActiveNode = useCallback(() => {
+    dispatch(setSelectedItem(id));
+  }, [dispatch, id]);
 
   if (functionWithConnections === undefined) {
     return;
   }
 
   return (
-    <div
-      onContextMenu={contextMenu.handle}
-      data-testid={dataTestId}
-      onMouseEnter={() => setIsHandleHovered(true)}
-      onMouseLeave={() => setIsHandleHovered(false)}
-    >
+    <div onContextMenu={contextMenu.handle} data-testid={dataTestId} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {funcitonHasInputs && (
         <Handle
           type={'target'}
           isConnectable={!functionInputsFull}
           onConnect={setActiveNode}
           position={Position.Left}
-          className={leftHandleStyle}
+          className={getHandleStyle(true, isLeftConnected)}
           style={{ left: '-7px' }}
         />
       )}
-      <Popover>
+      <Popover withArrow={true} trapFocus={true}>
         <PopoverTrigger>
           <Button
-            onClick={() => onClick()}
+            onClick={onClick}
+            data-selectableid={`source-${id}`}
             disabled={!!disabled}
-            className={mergeClasses(styles.functionButton, activeNode ? styles.activeFunctionButton : '')}
+            className={mergeClasses(styles.functionButton, isSelected || isHover ? styles.selectedHoverFunctionButton : '')}
           >
             <div
+              data-selectableid={`source-${id}`}
               className={styles.iconContainer}
               style={{
                 backgroundColor: customTokens[fnBranding.colorTokenName],
               }}
             >
               <FunctionIcon
+                data-selectableid={`source-${id}`}
                 iconSize={11}
                 functionKey={functionData.key}
                 functionName={functionData.functionName}
@@ -125,14 +132,14 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
                 color={tokens.colorNeutralForegroundInverted}
               />
             </div>
-            <Caption1 className={styles.functionName} truncate block>
+            <Caption1 data-selectableid={`source-${id}`} className={styles.functionName} truncate block>
               {functionData.displayName}
             </Caption1>
           </Button>
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
-      <Handle type={'source'} position={Position.Right} className={rightHandleStyle} />
+      <Handle type={'source'} position={Position.Right} className={getHandleStyle(false, isRightConnected)} isConnectable={true} />
     </div>
   );
 };

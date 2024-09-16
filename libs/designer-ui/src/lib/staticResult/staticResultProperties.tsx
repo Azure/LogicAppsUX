@@ -73,6 +73,7 @@ export const StaticResultProperties = ({
         {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
           return showProperty && propertiesSchema[propertyName] ? (
             <StaticResultProperty
+              title={propertyName}
               isRoot={isRoot}
               schema={propertiesSchema[propertyName]}
               key={key}

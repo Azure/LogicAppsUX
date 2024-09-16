@@ -84,10 +84,10 @@ export class ChildWorkflowService {
     }
 
     try {
-      const { apiVersion, baseUrl, httpClient } = this.options;
+      const { baseUrl, httpClient } = this.options;
       const workflowContent = await httpClient.get<any>({
         uri: `${baseUrl}${workflowId}`,
-        queryParameters: { 'api-version': apiVersion },
+        queryParameters: { 'api-version': '2019-05-01' },
       });
       const schema = getTriggerSchema(workflowContent.properties?.definition?.triggers ?? {});
 

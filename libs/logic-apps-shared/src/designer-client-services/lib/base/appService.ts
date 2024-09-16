@@ -59,6 +59,7 @@ export class BaseAppServiceService implements IAppServiceService {
       throw new Error('Operation not found');
     }
 
+    const intl = getIntl();
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
@@ -86,8 +87,12 @@ export class BaseAppServiceService implements IAppServiceService {
       if (supportsAuthenticationParameter) {
         schema.properties['authentication'] = {
           type: 'object',
-          title: 'Authentication',
-          description: 'Enter JSON object of authentication parameter',
+          title: intl.formatMessage({ defaultMessage: 'Authentication', id: 'ewGciu', description: 'Title for authentication parameter' }),
+          description: intl.formatMessage({
+            defaultMessage: 'Enter JSON object of authentication parameter',
+            id: '6c1ffO',
+            description: 'Description for authentication parameter',
+          }),
           'x-ms-visibility': 'advanced',
           'x-ms-editor': 'authentication',
           'x-ms-editor-options': {
@@ -108,10 +113,16 @@ export class BaseAppServiceService implements IAppServiceService {
       }
 
       if (response.schema) {
-        schema.properties['body'] = response.schema;
+        schema.properties['body'] = {
+          title: intl.formatMessage({ defaultMessage: 'Body', id: 'VZh+w2', description: 'Title for body outputs' }),
+          ...response.schema,
+        };
       }
       if (response.headers) {
-        schema.properties['headers'] = response.headers;
+        schema.properties['headers'] = {
+          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'voRDKP', description: 'Title for header outputs' }),
+          ...response.headers,
+        };
       }
     }
 
@@ -137,6 +148,7 @@ export class BaseAppServiceService implements IAppServiceService {
         }
 
         schemaProperties[pathProperty].properties[name] = {
+          'x-ms-url-encoding': 'single',
           ...parameter,
           'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: 'inputs.operationDetails.uri' },
         };

@@ -16,9 +16,9 @@ import {
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
+  overlappingLoopsSchema,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-import { truncate } from 'lodash';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {

@@ -15,11 +15,12 @@ import {
 import type { ExpressionEditorEvent } from '../../lib/expressioneditor';
 import { TokenPickerMode } from '.';
 import useIntl from 'react-intl/src/components/useIntl';
-import type { Nl2fSuggestedExpression } from '@microsoft/logic-apps-shared';
+import type { Nl2fSuggestedExpression, TokenGroup } from '@microsoft/logic-apps-shared';
 import { CopilotService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { ProgressCardWithStopButton } from '../../lib/chatbot';
 
 export interface INl2fExpressionAssistantProps {
+  tokenGroup?: TokenGroup[];
   isFullScreen: boolean;
   expression: ExpressionEditorEvent;
   isFixErrorRequest: boolean;
@@ -30,6 +31,7 @@ export interface INl2fExpressionAssistantProps {
 }
 
 export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
+  tokenGroup,
   isFullScreen,
   expression,
   isFixErrorRequest,
@@ -209,7 +211,7 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
       setIsGeneratingAnswer(true);
 
       try {
-        const response = await CopilotService().getNl2fExpressions(query, expression.value, signal);
+        const response = await CopilotService().getNl2fExpressions(query, expression.value, tokenGroup, signal);
         if (response.errorMessage) {
           setNl2fOutputError(response.errorMessage);
           setSuggestedExpressions(undefined);

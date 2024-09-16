@@ -13,9 +13,9 @@ import {
 } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
-import { ConnectionService, getObjectPropertyValue } from '@microsoft/logic-apps-shared';
+import { ConnectionService, getObjectPropertyValue, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { getConnectorResources, normalizeConnectorId } from '../../../core/templates/utils/helper';
+import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { type IntlShape, useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectorIconWithName } from './connector';

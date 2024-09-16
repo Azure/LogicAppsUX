@@ -245,6 +245,13 @@ async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
   return child ? child.pid.toString() : String(taskInfo.processId);
 }
 
+export async function findChildProcess(processId: number): Promise<string | undefined> {
+  const children: OSAgnosticProcess[] =
+    process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);
+  const child: OSAgnosticProcess | undefined = children.reverse().find((c) => /(dotnet|func)(\.exe|)$/i.test(c.command || ''));
+  return child ? child.pid.toString() : String(processId);
+}
+
 async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
   const processes: ActualUnixPS[] = await new Promise((resolve, reject): void => {
     unixPsTree(pid, (error: Error | null, result: unixPsTree.PS[]) => {

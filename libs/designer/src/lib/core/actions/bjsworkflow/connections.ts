@@ -35,6 +35,7 @@ import {
   equals,
   ConnectionReferenceKeyFormat,
   getRecordEntry,
+  UserPreferenceService,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -81,6 +82,8 @@ export const updateNodeConnection = createAsyncThunk(
     const { nodeId, connector, connection, connectionProperties, authentication } = payload;
 
     dispatch(updateErrorDetails({ id: nodeId, clear: true }));
+
+    UserPreferenceService()?.setMostRecentlyUsedConnectionId(connector.id, connection.id);
     return updateNodeConnectionAndProperties(
       {
         nodeId,

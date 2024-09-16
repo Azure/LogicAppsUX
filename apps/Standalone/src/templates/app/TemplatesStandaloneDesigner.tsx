@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, templateStore } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -65,8 +65,7 @@ export const TemplatesStandaloneDesigner = () => {
     workflowKind: string,
     workflowDefinition: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
-    parametersData: Record<string, Template.ParameterDefinition>,
-    onSuccessfulCreation = () => {}
+    parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
@@ -86,8 +85,8 @@ export const TemplatesStandaloneDesigner = () => {
             value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
           };
           sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
-            `@parameters('${parameter.name}')`,
-            `@parameters('${sanitizedParameterName}')`
+            `parameters('${parameter.name}')`,
+            `parameters('${sanitizedParameterName}')`
           );
         });
 
@@ -104,9 +103,13 @@ export const TemplatesStandaloneDesigner = () => {
         );
         sanitizedWorkflowDefinitionString = updatedWorkflowJsonString;
 
+        const templateName = templateStore.getState().template.templateName;
         const workflow = {
           definition: JSON.parse(sanitizedWorkflowDefinitionString),
           kind: workflowKind,
+          metadata: {
+            templates: { name: templateName },
+          },
         };
 
         const getExistingParametersData = async () => {
@@ -126,32 +129,28 @@ export const TemplatesStandaloneDesigner = () => {
             return error?.response?.status === 404 ? {} : undefined;
           }
         };
-        try {
-          const existingParametersData = await getExistingParametersData();
+        const existingParametersData = await getExistingParametersData();
 
-          if (!existingParametersData) {
-            alert('Error fetching parameters');
-            return;
-          }
-
-          const updatedParametersData: ParametersData = {
-            ...existingParametersData,
-            ...sanitizedParameterData,
-          };
-          await saveWorkflowStandard(
-            appId,
-            workflowNameToUse,
-            workflow,
-            updatedConnectionsData,
-            updatedParametersData,
-            updatedSettingProperties,
-            undefined,
-            onSuccessfulCreation,
-            true
-          );
-        } catch (error) {
-          console.log(error);
+        if (!existingParametersData) {
+          alert('Error fetching parameters');
+          throw new Error('Error fetching parameters');
         }
+
+        const updatedParametersData: ParametersData = {
+          ...existingParametersData,
+          ...sanitizedParameterData,
+        };
+        await saveWorkflowStandard(
+          appId,
+          workflowNameToUse,
+          workflow,
+          updatedConnectionsData,
+          updatedParametersData,
+          updatedSettingProperties,
+          undefined,
+          () => {},
+          { skipValidation: true, throwError: true }
+        );
       }
     } else {
       console.log('Select App Id first!');
@@ -188,6 +187,7 @@ export const TemplatesStandaloneDesigner = () => {
               subscriptionId: resourceDetails.subscriptionId,
               resourceGroup: resourceDetails.resourceGroup,
               location: canonicalLocation,
+              workflowAppName: workflowAppData.name as string,
             }}
             connectionReferences={connectionReferences}
             services={services}

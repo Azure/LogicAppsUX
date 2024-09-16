@@ -33,8 +33,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
-import request = require('request');
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Download and Extracts dependency zip.
@@ -46,6 +45,7 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
  */
 
 export async function downloadAndExtractDependency(
+  context: IActionContext,
   downloadUrl: string,
   targetFolder: string,
   dependencyName: string,
@@ -63,64 +63,60 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  try {
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
+  const downloadPromise = axios({
+    method: HTTP_METHODS.GET,
+    url: downloadUrl,
+    responseType: 'stream',
+  });
+
+  executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+
+  downloadPromise.then((response) => {
+    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
-    // Download the compressed dependency
-    await new Promise<void>((resolve, reject) => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-      // TODO: @mireed: change the download to be async and not block.
-      // TODO: @mireed: the NPM Request library is deprecated, change to use a different library.
-      // Get the Dependency Timout setting value, which is in seconds and convert to msec for the request library.
-      const dependencyTimeoutMsec = getDependencyTimeout() * 1000;
-      const downloadStream = request({ url: downloadUrl, timeout: dependencyTimeoutMsec }).pipe(fs.createWriteStream(dependencyFilePath));
-      downloadStream.on('finish', async () => {
-        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
+    const writer = fs.createWriteStream(dependencyFilePath);
+    response.data.pipe(writer);
 
-        fs.chmodSync(dependencyFilePath, 0o777);
+    writer.on('finish', async () => {
+      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+      fs.chmodSync(dependencyFilePath, 0o777);
 
-        // Extract to targetFolder
-        if (dependencyName === dotnetDependencyName) {
-          const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-          process.platform === Platform.windows
-            ? await executeCommand(
-                ext.outputChannel,
-                undefined,
-                'powershell -ExecutionPolicy Bypass -File',
-                dependencyFilePath,
-                '-InstallDir',
-                targetFolder,
-                '-Channel',
-                `${version}.0`
-              )
-            : await executeCommand(
-                ext.outputChannel,
-                undefined,
-                dependencyFilePath,
-                '-InstallDir',
-                targetFolder,
-                '-Channel',
-                `${version}.0`
-              );
-        } else {
-          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-          vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        }
-        resolve();
-      });
-      downloadStream.on('error', reject);
+      // Extract to targetFolder
+      if (dependencyName === dotnetDependencyName) {
+        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
+        process.platform === Platform.windows
+          ? await executeCommand(
+              ext.outputChannel,
+              undefined,
+              'powershell -ExecutionPolicy Bypass -File',
+              dependencyFilePath,
+              '-InstallDir',
+              targetFolder,
+              '-Channel',
+              `${version}.0`
+            )
+          : await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+      } else {
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+      }
+      // remove the temp folder.
+      fs.rmSync(tempFolderPath, { recursive: true });
+      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
     });
-  } catch (error) {
-    vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip file: ${error.message}`);
-    await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Remove ${targetFolder}`);
-    fs.rmSync(targetFolder, { recursive: true });
-    throw error;
-  } finally {
-    fs.rmSync(tempFolderPath, { recursive: true });
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-  }
+    writer.on('error', async (error) => {
+      // log the error message the VSCode window and to telemetry.
+      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
+      vscode.window.showErrorMessage(errorMessage);
+      context.telemetry.properties.error = errorMessage;
+
+      // remove the target folder.
+      fs.rmSync(targetFolder, { recursive: true });
+      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+    });
+  });
 }
 
 export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion: string): Promise<string> {

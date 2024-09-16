@@ -44,10 +44,11 @@ const cancelButtonStyles: Partial<IButtonStyles> = {
 interface PropertyEditorProps {
   properties: OpenAPIV2.SchemaObject;
   schema?: OpenAPIV2.SchemaObject;
+  title?: string;
   updateProperties: (newProperties: OpenAPIV2.SchemaObject) => void;
 }
 
-export const PropertyEditor = ({ properties, schema, updateProperties }: PropertyEditorProps): JSX.Element => {
+export const PropertyEditor = ({ properties, title, schema, updateProperties }: PropertyEditorProps): JSX.Element => {
   const intl = useIntl();
   const [currProperties, setCurrProperties] = useState<OpenAPIV2.SchemaObject>(properties);
   const [showRenameCallout, setShowRenameCallout] = useState('');
@@ -114,9 +115,7 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
     if (newPropertyNameErrorMessage) {
       return;
     }
-    if (schema?.title) {
-      setCurrProperties({ ...currProperties, [`${schema.title} - ${Object.keys(currProperties).length}`]: {} });
-    }
+    setCurrProperties({ ...currProperties, [`${schema?.title ?? title} - ${Object.keys(currProperties).length}`]: {} });
   };
 
   const updateCurrPropertiesChild = (propertyName: string, newPropertyValue: any) => {
@@ -202,7 +201,9 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
             className="msla-property-editor-add-new-property-button"
             iconProps={addItemButtonIconProps}
             text={addItemButtonLabel}
-            onClick={() => (schema ? addNewPropertyWithSchema() : addNewProperty())}
+            onClick={() => {
+              schema ? addNewPropertyWithSchema() : addNewProperty();
+            }}
           />
         </div>
         {showRenameCallout ? (

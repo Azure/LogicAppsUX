@@ -13,9 +13,9 @@ const ConnectionLineComponent = (props: ConnectionLineComponentProps) => {
 
   return (
     <g id={`${fromNode?.id}_customConnectionLine`}>
-      <circle cx={fromX} cy={fromY} r={8} strokeWidth={2} stroke={colors.active} fill="transparent" />
-      <path fill="none" stroke={colors.active} strokeWidth={6} className="animated" d={path} />
-      <circle cx={toX} cy={toY} r={8} strokeWidth={2} stroke={colors.active} fill="transparent" />
+      <circle cx={fromX} cy={fromY} r={8} strokeWidth={2} stroke={colors.edgeActive} fill="transparent" />
+      <path fill="none" stroke={colors.edgeActive} strokeWidth={6} className="animated" d={path} />
+      <circle cx={toX} cy={toY} r={8} strokeWidth={2} stroke={colors.edgeActive} fill="transparent" />
     </g>
   );
 };

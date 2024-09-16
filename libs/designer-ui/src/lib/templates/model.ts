@@ -8,7 +8,6 @@ export interface TemplatePanelTab {
   title: string;
   description?: string | ReactNode;
   hasError?: boolean;
-  order: number;
   content: React.ReactElement;
   footerContent: TemplatePanelFooterProps;
 }

@@ -11,6 +11,7 @@ import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, exp
 describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
+  let minimalWithButtons: PanelHeaderProps;
   let shallow: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
@@ -48,6 +49,11 @@ describe('lib/panel/panelHeader/main', () => {
           Delete
         </MenuItem>,
       ],
+    };
+    minimalWithButtons = {
+      ...minimal,
+      canResubmit: true,
+      canShowLogicAppRun: true,
     };
     shallow = ReactShallowRenderer.createRenderer();
     initializeIcons();
@@ -109,5 +115,10 @@ describe('lib/panel/panelHeader/main', () => {
     expect(comment.props.isCollapsed).toBe(props.isCollapsed);
     expect(comment.props.noNodeSelected).toBe(props.noNodeSelected);
     expect(comment.props.readOnlyMode).toBe(props.readOnlyMode);
+  });
+
+  it('should render with panel header buttons', () => {
+    const panelHeader = renderer.create(<PanelHeader {...minimalWithButtons} />).toJSON();
+    expect(panelHeader).toMatchSnapshot();
   });
 });

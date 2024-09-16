@@ -4,6 +4,7 @@ import { getChildrenNodes } from '../../../../editor/base/utils/helper';
 import {
   decodeStringSegmentTokensInDomContext,
   decodeStringSegmentTokensInLexicalContext,
+  processStringSegmentTokensInDomAndLexicalContext,
   encodeStringSegmentTokensInLexicalContext,
 } from '../../../../editor/base/utils/parsesegments';
 import {
@@ -78,7 +79,7 @@ export const convertEditorState = (
           }
           if (attribute.name === 'id' && !isValuePlaintext) {
             // If we're in the rich HTML editor, encoding occurs at the element level since they are all wrapped in <span>.
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            const idValue = decodeURIComponent(element.getAttribute('id') ?? ''); // e.g., "@{concat('&lt;', '"')}"
             idValues.push(idValue);
             const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
             element.setAttribute('id', encodedIdValue);
@@ -123,7 +124,12 @@ export const canReplaceSpanWithId = (idValue: string, nodeMap: Map<string, Value
   const processedId = removeAllNewlines(idValue);
   for (const [key, value] of nodeMap) {
     const processedKey = removeAllNewlines(key);
-    if (processedId === processedKey && value !== undefined) {
+    const encodedProcessedKey = processStringSegmentTokensInDomAndLexicalContext(processedKey, nodeMap, true);
+    const decodedProcessedKey = processStringSegmentTokensInDomAndLexicalContext(processedKey, nodeMap, false);
+    if (
+      (processedId === processedKey || processedId === encodedProcessedKey || processedId === decodedProcessedKey) &&
+      value !== undefined
+    ) {
       return true;
     }
   }

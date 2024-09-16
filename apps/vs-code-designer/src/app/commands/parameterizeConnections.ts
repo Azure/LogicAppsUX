@@ -21,11 +21,12 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 /**
  * Prompts the user to parameterize connections at project load.
  * @param {IActionContext} context - The action context.
+ * @param {boolean} skipPromptOnMultipleFolders - Determine whether to skip prompt when there are multiple logic app folders.
  * @returns A promise that resolves when the operation is complete.
  */
-export async function promptParameterizeConnections(context: IActionContext): Promise<void> {
+export async function promptParameterizeConnections(context: IActionContext, skipPromptOnMultipleFolders?: boolean): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
+    const workspaceFolder = await getWorkspaceFolder(context, undefined, skipPromptOnMultipleFolders);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     if (projectPath) {
       const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads.');
@@ -36,13 +37,13 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
         if (result === DialogResponses.yes) {
           await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
           context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
-          parameterizeConnections(context);
+          parameterizeConnections(context, skipPromptOnMultipleFolders);
         } else if (result === DialogResponses.dontWarnAgain) {
           await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, false);
           context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
         }
       } else if (parameterizeConnectionsSetting) {
-        await parameterizeConnections(context);
+        await parameterizeConnections(context, skipPromptOnMultipleFolders);
       }
     }
   }
@@ -51,11 +52,12 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
 /**
  * Parameterizes the connections in the Logic Apps project.
  * @param {IActionContext} context - The action context.
+ * @param {boolean} skipPromptOnMultipleFolders - Determine whether to skip prompt when there are multiple logic app folders.
  * @returns A promise that resolves when the connections have been parameterized.
  */
-export async function parameterizeConnections(context: IActionContext): Promise<void> {
+export async function parameterizeConnections(context: IActionContext, skipPromptOnMultipleFolders?: boolean): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
+    const workspaceFolder = await getWorkspaceFolder(context, undefined, skipPromptOnMultipleFolders);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
     if (projectPath) {

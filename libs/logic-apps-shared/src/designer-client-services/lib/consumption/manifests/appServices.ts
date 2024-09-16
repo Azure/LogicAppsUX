@@ -119,6 +119,7 @@ export const appServiceActionManifest = {
     inputsLocation: [],
     inputsLocationSwapMap: [{ source: ['inputs', 'operationDetails'], target: ['inputs'] }],
     isInputsOptional: false,
+    autoCast: true,
 
     outputs: {
       'x-ms-dynamic-properties': {

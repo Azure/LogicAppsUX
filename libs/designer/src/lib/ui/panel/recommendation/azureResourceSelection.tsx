@@ -1,7 +1,11 @@
 import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
+import {
+  useDiscoveryPanelIsAddingTrigger,
+  useDiscoveryPanelIsParallelBranch,
+  useDiscoveryPanelRelationshipIds,
+} from '../../../core/state/panel/panelSelectors';
 import { Button, Text } from '@fluentui/react-components';
 import {
   ApiManagementService,
@@ -80,9 +84,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
 
   const [getResourcesCallbacks, setGetResourcesCallbacks] = useState<((any?: any) => any)[]>(() => []);
 
-  const isTrigger = useIsAddingTrigger();
-  const relationshipIds = useRelationshipIds();
-  const isParallelBranch = useIsParallelBranch();
+  const isTrigger = useDiscoveryPanelIsAddingTrigger();
+  const relationshipIds = useDiscoveryPanelRelationshipIds();
+  const isParallelBranch = useDiscoveryPanelIsParallelBranch();
 
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {

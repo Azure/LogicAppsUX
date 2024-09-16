@@ -41,6 +41,8 @@ const EdgePopOverInner = (props: EdgePopOverProps) => {
   const schemaSource = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema[edgePopOverId?.source || '']
   );
+  //const loopingScenario = useLooping(edgePopOverId);
+  //const showLoop = false; // Temporary as we are hiding loop option
 
   const stringResources = useMemo(
     () => ({
