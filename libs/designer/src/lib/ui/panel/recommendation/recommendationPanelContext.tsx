@@ -233,7 +233,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             <XLargeText text={pasteActionHeadingText} />
             <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
           </div>
-          <PasteOperation location="RecommendationPanel">
+          <PasteOperation location="RecommendationPanel" isParallelBranch={isParallelBranch}>
             <Card
               title={displayName}
               brandColor={copiedNode?.nodeData?.operationMetadata?.brandColor}

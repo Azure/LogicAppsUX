@@ -8,11 +8,12 @@ import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
 import { useDispatch } from 'react-redux';
 
 interface PasteOperationProps {
-  children: ReactElement;
   location: string;
+  isParallelBranch?: boolean;
+  children: ReactElement;
 }
 
-export const PasteOperation = ({ children: Child, location }: PasteOperationProps) => {
+export const PasteOperation = ({ location, isParallelBranch = false, children: Child }: PasteOperationProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const menuData = useEdgeContextMenuData();
@@ -61,6 +62,7 @@ export const PasteOperation = ({ children: Child, location }: PasteOperationProp
           operationInfo: copiedNode.nodeOperationInfo,
           connectionData: copiedNode.nodeConnectionData,
           comment: copiedNode.nodeComment,
+          isParallelBranch,
         })
       );
     }

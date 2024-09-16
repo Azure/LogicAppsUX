@@ -150,7 +150,7 @@ export const workflowSlice = createSlice({
     },
     pasteNode: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
+      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation; isParallelBranch?: boolean }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) {
@@ -162,6 +162,7 @@ export const workflowSlice = createSlice({
           operation: action.payload.operation as any,
           nodeId: action.payload.nodeId,
           relationshipIds: action.payload.relationshipIds,
+          isParallelBranch: action.payload.isParallelBranch,
         },
         graph,
         state.nodesMetadata,

@@ -114,10 +114,11 @@ export interface PasteOperationPayload {
   operationInfo: NodeOperation;
   connectionData?: ReferenceKey;
   comment?: string;
+  isParallelBranch?: boolean;
 }
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment } = payload;
+  const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment, isParallelBranch } = payload;
   if (!actionId || !relationshipIds || !nodeData) {
     throw new Error('Operation does not exist');
   }
@@ -132,6 +133,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
       nodeId: nodeId,
       relationshipIds: relationshipIds,
       operation: operationInfo,
+      isParallelBranch,
     })
   );
 
