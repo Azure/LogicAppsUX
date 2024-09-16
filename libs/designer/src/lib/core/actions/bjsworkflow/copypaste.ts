@@ -10,7 +10,7 @@ import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } 
 import { createIdCopy, getRecordEntry, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
-import { getNodeOperationData } from '../../state/operation/operationSelector';
+import { getNodeOperationData, getNodeOperationMetadata } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
@@ -70,6 +70,8 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
     scopeNodeId = removeIdTag(scopeNodeId);
     const newNodeId = createIdCopy(scopeNodeId);
 
+    const nodeMetaData = getNodeOperationMetadata(state.operations, scopeNodeId);
+
     const serializedOperation = await serializeOperation(state, scopeNodeId, {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
@@ -92,6 +94,9 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
     });
     const clipboardItem = JSON.stringify({
       nodeId: newNodeId,
+      nodeData: {
+        operationMetadata: nodeMetaData,
+      },
       serializedOperation,
       allConnectionData,
       staticResults,
@@ -179,12 +184,21 @@ interface PasteScopeOperationPayload {
   allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }>;
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
+  isParallelBranch?: boolean;
 }
 
 export const pasteScopeOperation = createAsyncThunk(
   'pasteScopeOperation',
   async (payload: PasteScopeOperationPayload, { dispatch, getState }) => {
-    const { nodeId: actionId, relationshipIds, serializedValue, upstreamNodeIds, allConnectionData, staticResults } = payload;
+    const {
+      nodeId: actionId,
+      relationshipIds,
+      serializedValue,
+      upstreamNodeIds,
+      allConnectionData,
+      staticResults,
+      isParallelBranch,
+    } = payload;
     if (!actionId || !relationshipIds || !serializedValue) {
       throw new Error('Operation does not exist');
     }
@@ -219,6 +233,7 @@ export const pasteScopeOperation = createAsyncThunk(
         operations: actions,
         nodesMetadata: actionNodesMetadata,
         allActions: allActionNames,
+        isParallelBranch,
       })
     );
 

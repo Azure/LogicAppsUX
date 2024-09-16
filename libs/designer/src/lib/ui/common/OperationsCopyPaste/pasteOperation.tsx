@@ -50,6 +50,7 @@ export const PasteOperation = ({ location, isParallelBranch = false, children: C
           allConnectionData: copiedNode.allConnectionData,
           staticResults: copiedNode.staticResults,
           upstreamNodeIds: upstreamNodesOfChild,
+          isParallelBranch,
         })
       );
     } else {
@@ -71,7 +72,7 @@ export const PasteOperation = ({ location, isParallelBranch = false, children: C
       level: LogEntryLevel.Verbose,
       message: 'New node added via paste.',
     });
-  }, [location, graphId, childId, parentId, dispatch, upstreamNodesOfChild]);
+  }, [location, graphId, childId, parentId, dispatch, upstreamNodesOfChild, isParallelBranch]);
 
   return <Child.type {...Child.props} onClick={handlePasteClicked} />;
 };

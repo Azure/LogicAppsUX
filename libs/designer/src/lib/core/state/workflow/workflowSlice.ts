@@ -170,12 +170,12 @@ export const workflowSlice = createSlice({
       );
     },
     pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
-      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions, isParallelBranch } = action.payload;
       const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
-      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state);
+      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state, isParallelBranch);
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
