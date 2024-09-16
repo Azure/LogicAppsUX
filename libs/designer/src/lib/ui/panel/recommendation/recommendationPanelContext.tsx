@@ -1,4 +1,4 @@
-import { useNodeDisplayName, type AppDispatch } from '../../../core';
+import { useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -17,7 +17,7 @@ import { SearchView } from './searchView';
 import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
+import { SearchService, equals, guid, areApiIdsEqual, removeIdTag } from '@microsoft/logic-apps-shared';
 import { Card, OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
@@ -26,7 +26,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
-import type { PasteOperationPayload } from '../../../core/actions/bjsworkflow/copypaste';
+import { pasteOperation, pasteScopeOperation, type PasteOperationPayload } from '../../../core/actions/bjsworkflow/copypaste';
+import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
+import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -200,6 +202,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Text for the Details page navigation heading',
   });
 
+  const pasteActionHeadingText = intl.formatMessage({
+    defaultMessage: 'Paste an action',
+    id: '53OJmV',
+    description: 'Text for the "Paste an action" page header',
+  });
   const headingText = isTrigger
     ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'dBxX0M', description: 'Text for the "Add Trigger" page header' })
     : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
@@ -219,12 +226,67 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   }, []);
   const displayName = useNodeDisplayName(copiedNode?.nodeId);
 
+  const menuData = useEdgeContextMenuData();
+  const graphId = useMemo(() => menuData?.graphId, [menuData]);
+  const parentId = useMemo(() => menuData?.parentId, [menuData]);
+  const childId = useMemo(() => menuData?.childId, [menuData]);
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
+
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    }
+    return parentId;
+  }, [nodeMetadata, parentId]);
+
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId ?? ''));
+
+  const handlePasteClicked = useCallback(async () => {
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = { graphId, childId, parentId };
+    const copiedNode = await retrieveClipboardData();
+    if (!copiedNode) {
+      return;
+    }
+    if (copiedNode?.isScopeNode) {
+      dispatch(
+        pasteScopeOperation({
+          relationshipIds,
+          nodeId: copiedNode.nodeId,
+          serializedValue: copiedNode.serializedOperation,
+          allConnectionData: copiedNode.allConnectionData,
+          staticResults: copiedNode.staticResults,
+          upstreamNodeIds: upstreamNodesOfChild,
+        })
+      );
+    } else {
+      dispatch(
+        pasteOperation({
+          relationshipIds,
+          nodeId: copiedNode.nodeId,
+          nodeData: copiedNode.nodeData,
+          nodeTokenData: copiedNode.nodeTokenData,
+          operationInfo: copiedNode.nodeOperationInfo,
+          connectionData: copiedNode.nodeConnectionData,
+          comment: copiedNode.nodeComment,
+        })
+      );
+    }
+    // LoggerService().log({
+    //   area: 'EdgeContextualMenu:handlePasteClicked',
+    //   level: LogEntryLevel.Verbose,
+    //   message: 'New node added via paste.',
+    // });
+  }, [graphId, childId, parentId, dispatch, upstreamNodesOfChild]);
+
   return (
     <>
       {copiedNode && (
         <>
           <div className="msla-app-action-header">
-            <XLargeText text={headingText} />
+            <XLargeText text={pasteActionHeadingText} />
             <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
           </div>
           <Card
@@ -235,6 +297,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
             dragPreview={undefined}
             icon={copiedNode?.nodeData?.operationMetadata?.iconUri}
             id={copiedNode.nodeId}
+            onClick={handlePasteClicked}
           />
         </>
       )}
