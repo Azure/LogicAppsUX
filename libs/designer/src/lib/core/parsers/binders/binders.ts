@@ -25,3 +25,6 @@ export { default as XmlValidationInputsBinder } from './inputs/xmlvalidation';
 export { default as XsltInputsBinder } from './inputs/xslt';
 export { default as ManualInputsBinder } from './inputs/manual';
 export { default as FunctionInputsBinder } from './inputs/function';
+export { default as SendToBatchInputsBinder } from './inputs/sendtobatch';
+export { default as WorkflowInputsBinder } from './inputs/workflow';
+export { default as HttpInputsBinder } from './inputs/http';

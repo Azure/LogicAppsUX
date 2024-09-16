@@ -10,6 +10,7 @@ import {
   DefaultInputsBinder,
   FlatFileInputsBinder,
   FunctionInputsBinder,
+  HttpInputsBinder,
   IfInputsBinder,
   IncrementVariableInputsBinder,
   InitializeVariableInputsBinder,
@@ -22,11 +23,13 @@ import {
   RecurrenceInputsBinder,
   ResponseInputsBinder,
   SelectInputsBinder,
+  SendToBatchInputsBinder,
   SetVariableInputsBinder,
   SwitchInputsBinder,
   TableInputsBinder,
   TerminateInputsBinder,
   WaitInputsBinder,
+  WorkflowInputsBinder,
   XmlValidationInputsBinder,
   XsltInputsBinder,
 } from '../../parsers/binders/binders';
@@ -93,10 +96,10 @@ export default class InputsBinder {
         const binder = new FunctionInputsBinder();
         return binder.bind(input);
       }
-      // if (equals(type, constants.NODE.TYPE.HTTP)) {
-      //     const binder = new HttpInputsBinder();
-      //     return binder.bind(input, inputParametersByName, operation);
-      // }
+      if (equals(type, constants.NODE.TYPE.HTTP)) {
+        const binder = new HttpInputsBinder();
+        return binder.bind(input, inputParametersByName, operation);
+      }
       if (equals(type, constants.NODE.TYPE.IF)) {
         const binder = new IfInputsBinder();
         return binder.bind(input);
@@ -141,10 +144,10 @@ export default class InputsBinder {
         const binder = new SelectInputsBinder();
         return binder.bind(input);
       }
-      // if (equals(type, constants.NODE.TYPE.SEND_TO_BATCH)) {
-      //     const binder = new SendToBatchInputsBinder();
-      //     return binder.bind(input);
-      // }
+      if (equals(type, constants.NODE.TYPE.SEND_TO_BATCH)) {
+        const binder = new SendToBatchInputsBinder();
+        return binder.bind(input);
+      }
       if (equals(type, constants.NODE.TYPE.SET_VARIABLE)) {
         const binder = new SetVariableInputsBinder();
         return binder.bind(input);
@@ -165,10 +168,10 @@ export default class InputsBinder {
         const binder = new WaitInputsBinder();
         return binder.bind(input);
       }
-      // if (equals(type, constants.NODE.TYPE.WORKFLOW)) {
-      //     const binder = new WorkflowInputsBinder();
-      //     return binder.bind(input, inputParametersByName);
-      // }
+      if (equals(type, constants.NODE.TYPE.WORKFLOW)) {
+        const binder = new WorkflowInputsBinder();
+        return binder.bind(input, inputParametersByName);
+      }
       if (equals(type, constants.NODE.TYPE.XML_VALIDATION)) {
         const binder = new XmlValidationInputsBinder();
         return binder.bind(input);
