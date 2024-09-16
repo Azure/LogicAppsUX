@@ -24,13 +24,14 @@ import { extend } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
-import { extractConnectionDetails, changeAuthTypeToRaw, updateConnectionKeys, parameterizeConnections } from './cloudToLocalHelper';
+import { extractConnectionDetails, changeAuthTypeToRaw, updateConnectionKeys, getConnectionsJsonContent } from './cloudToLocalHelper';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import { window } from 'vscode';
 import * as path from 'path';
 import AdmZip = require('adm-zip');
 import * as fs from 'fs';
 import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
+import { writeFormattedJson } from '../../utils/fs';
 
 // Constants
 const openFolder = true;
@@ -46,9 +47,8 @@ function getZipEntries(zipFilePath: string) {
   return zip.getEntries();
 }
 
-function cleanLocalSettings(localSettingsPath: string) {
-  const localSettingsContent = fs.readFileSync(localSettingsPath, 'utf8');
-  const localSettings = JSON.parse(localSettingsContent);
+async function cleanLocalSettings(localSettingsPath: string) {
+  const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
 
   if (localSettings.Values) {
     Object.keys(localSettings.Values).forEach((key) => {
@@ -65,7 +65,7 @@ function cleanLocalSettings(localSettingsPath: string) {
       }
     });
 
-    fs.writeFileSync(localSettingsPath, JSON.stringify(localSettings, null, 2));
+    await writeFormattedJson(localSettingsPath, localSettings);
   }
 }
 
@@ -133,8 +133,7 @@ export async function cloudToLocalInternal(
   const parametersPath = path.join(wizardContext.workspacePath, 'parameters.json');
   let localParameters: any = {};
   let zipParameters: any = {};
-  const zipFileInstance = new ZipFileStep();
-  const connectionsData = await zipFileInstance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
+  const connectionsData = await getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
   const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   if (localSettingsEntry) {
@@ -157,20 +156,9 @@ export async function cloudToLocalInternal(
     localParameters = JSON.parse(localParametersContent);
   }
 
-  async function fetchConnections() {
-    const instance = new ZipFileStep();
-    try {
-      const connectionsData = await instance.getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
-      const connectionDetails = extractConnectionDetails(connectionsData);
-      return connectionDetails;
-    } catch (error) {
-      console.error('Failed to fetch connections:', error);
-    }
-  }
-
   async function mergeSettings(): Promise<Record<string, any>> {
     try {
-      const connectionsValues = await fetchConnections();
+      const connectionsValues = await extractConnectionDetails(connectionsData);
       const connectionDetail = connectionsValues[0];
       const newValues = {
         ...connectionDetail,
@@ -190,23 +178,22 @@ export async function cloudToLocalInternal(
   extend(localParameters, zipParameters);
   extend(localSettings, zipSettings);
 
-  const [convertedConnections, convertedParameters] = await changeAuthTypeToRaw(
-    connectionsData,
-    localParameters,
-    parameterizeConnectionsSetting
-  );
-  const mergedSettings = await mergeSettings();
+  if (connectionsData.managedApiConnections) {
+    const [convertedConnections, convertedParameters] = await changeAuthTypeToRaw(
+      connectionsData,
+      localParameters,
+      parameterizeConnectionsSetting
+    );
+    const mergedSettings = await mergeSettings();
 
-  fs.writeFileSync(connectionspath, JSON.stringify(convertedConnections, null, 2), 'utf-8');
-  fs.writeFileSync(parametersPath, JSON.stringify(convertedParameters, null, 2), 'utf-8');
-  fs.writeFileSync(localSettingsPath, JSON.stringify(mergedSettings, null, 2));
-  cleanLocalSettings(localSettingsPath);
+    await writeFormattedJson(connectionspath, convertedConnections);
+    await writeFormattedJson(parametersPath, convertedParameters);
+    await writeFormattedJson(localSettingsPath, mergedSettings);
 
-  if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
-    await parameterizeConnections(wizardContext as IFunctionWizardContext, mergedSettings);
+    await updateConnectionKeys(wizardContext as IFunctionWizardContext);
   }
 
-  updateConnectionKeys(wizardContext as IFunctionWizardContext);
+  await cleanLocalSettings(localSettingsPath);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }

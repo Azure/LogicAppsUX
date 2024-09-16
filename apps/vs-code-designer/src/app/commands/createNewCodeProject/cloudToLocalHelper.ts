@@ -6,13 +6,15 @@ import type {
 } from '@microsoft/vscode-extension-logic-apps';
 import { getAzureConnectorDetailsForLocalProject } from '../../utils/codeless/common';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from '../../utils/codeless/connection';
-import { isEmptyString } from '@microsoft/logic-apps-shared/src/utils/src/lib/helpers/functions';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getParametersJson, saveWorkflowParameter } from '../../utils/codeless/parameter';
+import { getParametersJson } from '../../utils/codeless/parameter';
 import { parameterizeConnection } from '../../utils/codeless/parameterizer';
+import * as path from 'path';
+import * as fs from 'fs';
 
-export function extractConnectionDetails(connections: ConnectionsData): any {
+export async function extractConnectionDetails(connections: ConnectionsData): Promise<any> {
   const SUBSCRIPTION_INDEX = 2;
   const MANAGED_API_LOCATION_INDEX = 6;
   const MANAGED_CONNECTION_RESOURCE_GROUP_INDEX = 4;
@@ -42,6 +44,27 @@ export function extractConnectionDetails(connections: ConnectionsData): any {
     }
     return details;
   }
+}
+
+export async function getConnectionsJsonContent(context: IFunctionWizardContext): Promise<ConnectionsData> {
+  try {
+    if (!context) {
+      console.error('wizardContext is not set in getConnections');
+      return null;
+    }
+    const connectionsJsonPath = path.join(context.workspacePath, 'connections.json');
+
+    if (fs.existsSync(connectionsJsonPath)) {
+      const connectionsJsonContent = fs.readFileSync(connectionsJsonPath, 'utf8');
+      const connection = JSON.parse(connectionsJsonContent);
+
+      return connection;
+    }
+    return null;
+  } catch (error) {
+    console.error('Failed to process connections.json', error);
+  }
+  return null;
 }
 
 export async function changeAuthTypeToRaw(
@@ -98,15 +121,14 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
         ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found to verify'));
         return;
       }
-      const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
       const parametersData = getParametersJson(projectPath);
-      const managedApiConnectionReferences = connectionsData.managedApiConnections;
+      const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
 
-      if (connectionsData.managedApiConnections && !(Object.keys(managedApiConnectionReferences).length === 0)) {
+      if (connectionsData.managedApiConnections && !(Object.keys(connectionsData.managedApiConnections).length === 0)) {
         const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
           context,
           projectPath,
-          managedApiConnectionReferences,
+          connectionsData.managedApiConnections,
           azureDetails.tenantId,
           azureDetails.workflowManagementBaseUrl,
           parametersData
@@ -129,6 +151,7 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
 
 export async function parameterizeConnections(context: IFunctionWizardContext, localSettingsJson: Record<string, any>): Promise<void> {
   const projectPath = context.projectPath;
+  const parametersPath = path.join(context.workspacePath, 'parameters.json');
 
   if (projectPath) {
     try {
@@ -152,7 +175,8 @@ export async function parameterizeConnections(context: IFunctionWizardContext, l
           });
         }
       });
-      await saveWorkflowParameter(context, projectPath, parametersJson);
+
+      fs.writeFileSync(parametersPath, JSON.stringify(parametersJson, null, 2), 'utf-8');
       await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
     } catch (error) {
       const errorMessage = localize(
