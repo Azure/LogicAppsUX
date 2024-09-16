@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.92.0](https://github.com/Azure/LogicAppsUX/compare/v4.91.0...v4.92.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Use tree's in-built search ([#5687](https://github.com/Azure/LogicAppsUX/issues/5687)) ([68d501b](https://github.com/Azure/LogicAppsUX/commit/68d501ba154b0cbbfe663f6ae83b7dac7aec0046))
+
 ## [4.91.0](https://github.com/Azure/LogicAppsUX/compare/v4.90.0...v4.91.0) (2024-09-16)
 
 
