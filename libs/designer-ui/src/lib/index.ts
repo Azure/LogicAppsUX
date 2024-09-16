@@ -26,7 +26,6 @@ export * from './html';
 // export * from './configItem';
 export * from './copilotGetStarted/index';
 export * from './copyinputcontrol';
-export * from './copypastecard';
 // export * from './datetimeeditor';
 export * from './dialogs';
 export * from './dictionary';
