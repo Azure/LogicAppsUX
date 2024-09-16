@@ -227,7 +227,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   return (
     <>
-      {copiedNode && (
+      {!isTrigger && copiedNode && (
         <>
           <div className="msla-app-action-header">
             <XLargeText text={pasteActionHeadingText} />
