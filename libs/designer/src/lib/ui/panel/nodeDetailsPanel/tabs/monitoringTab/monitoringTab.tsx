@@ -23,7 +23,7 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
   const getActionInputsOutputs = () => {
-    return RunService().getActionLinks(runMetaData, selectedNodeId, true);
+    return RunService().getActionLinks(runMetaData, selectedNodeId);
   };
 
   const {
