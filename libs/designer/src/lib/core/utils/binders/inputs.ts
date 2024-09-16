@@ -265,7 +265,7 @@ class ManifestInputsBinder extends Binder {
       [parameter]
     );
 
-    return parameterValue[0]?.value?.value;
+    return parameterValue[0]?.value;
   }
 
   private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {
