@@ -256,8 +256,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
-        specifier: 1.6.8
-        version: 1.6.8(debug@4.3.4)
+        specifier: ^1.7.7
+        version: 1.7.7(debug@4.3.4)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -399,8 +399,8 @@ importers:
         specifier: ^0.5.10
         version: 0.5.12
       axios:
-        specifier: 1.6.8
-        version: 1.6.8(debug@4.3.4)
+        specifier: ^1.7.7
+        version: 1.7.7(debug@4.3.4)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -606,10 +606,10 @@ importers:
         version: 9.0.60(@fluentui/react-components@9.42.0(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(scheduler@0.23.0))(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@microsoft/applicationinsights-react-js':
         specifier: 3.4.0
-        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.6.2)
+        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.7.0)
       '@microsoft/applicationinsights-web':
         specifier: 2.8.9
-        version: 2.8.9(tslib@2.6.2)
+        version: 2.8.9(tslib@2.7.0)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
@@ -624,7 +624,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -663,13 +663,13 @@ importers:
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
       reactflow:
         specifier: ^11.11.4
         version: 11.11.4(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@4.2.1)
+        version: 2.4.2(redux@5.0.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -712,10 +712,10 @@ importers:
         version: 9.0.3(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(scheduler@0.23.0)
       '@microsoft/applicationinsights-react-js':
         specifier: 3.4.0
-        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.6.2)
+        version: 3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.7.0)
       '@microsoft/applicationinsights-web':
         specifier: 2.8.9
-        version: 2.8.9(tslib@2.6.2)
+        version: 2.8.9(tslib@2.7.0)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
@@ -758,6 +758,9 @@ importers:
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
+      react-arborist:
+        specifier: ^3.4.0
+        version: 3.4.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dnd:
         specifier: 16.0.1
         version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
@@ -776,6 +779,9 @@ importers:
       react-redux:
         specifier: 8.0.2
         version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+      react-virtualized-tree:
+        specifier: ^3.4.1
+        version: 3.4.1(react-dom@18.2.0(react@18.2.0))(react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
       redux-thunk:
         specifier: 2.4.2
         version: 2.4.2(redux@4.2.1)
@@ -818,7 +824,7 @@ importers:
         version: 8.15.0(@types/react@18.3.0)(react@18.2.0)
       '@microsoft/applicationinsights-core-js':
         specifier: 2.8.9
-        version: 2.8.9(tslib@2.6.2)
+        version: 2.8.9(tslib@2.7.0)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
@@ -830,7 +836,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -890,10 +896,10 @@ importers:
         version: 8.0.5(@types/react@18.3.0)(react@18.2.0)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@4.2.1)
+        version: 2.4.2(redux@5.0.1)
       reselect:
         specifier: 4.1.8
         version: 4.1.8
@@ -1047,8 +1053,8 @@ importers:
         specifier: ^0.0.37
         version: 0.0.37
       axios:
-        specifier: 1.6.8
-        version: 1.6.8(debug@4.3.4)
+        specifier: ^1.7.7
+        version: 1.7.7(debug@4.3.4)
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
@@ -1083,8 +1089,8 @@ importers:
         specifier: ^12.0.2
         version: 12.0.2(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       axios:
-        specifier: 1.6.8
-        version: 1.6.8(debug@4.3.4)
+        specifier: ^1.7.7
+        version: 1.7.7(debug@4.3.4)
       react-intl:
         specifier: 6.3.0
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
@@ -1955,6 +1961,10 @@ packages:
 
   '@babel/runtime@7.24.4':
     resolution: {integrity: sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.25.6':
+    resolution: {integrity: sha512-VBj9MYyDb9tuLq7yzqjgzt6Q+IBQLrGZfdjOekyEirZPHxXWoTSGUTMrpsfi58Up73d13NfYLv8HT9vmznjzhQ==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.24.0':
@@ -4482,11 +4492,20 @@ packages:
   '@polka/url@1.0.0-next.25':
     resolution: {integrity: sha512-j7P6Rgr3mmtdkeDGTe0E/aYyWEWVtc5yFXtHCRHs28/jptDEWfaVOc5T7cblqy1XKPPfCxJc/8DwQ5YgLOZOVQ==}
 
+  '@react-dnd/asap@4.0.1':
+    resolution: {integrity: sha512-kLy0PJDDwvwwTXxqTFNAAllPHD73AycE9ypWeln/IguoGBEbvFcPDbCV03G52bEcC5E+YgupBE0VzHGdC8SIXg==}
+
   '@react-dnd/asap@5.0.2':
     resolution: {integrity: sha512-WLyfoHvxhs0V9U+GTsGilGgf2QsPl6ZZ44fnv0/b8T3nQyvzxidxsg/ZltbWssbsRDlYW8UKSQMTGotuTotZ6A==}
 
+  '@react-dnd/invariant@2.0.0':
+    resolution: {integrity: sha512-xL4RCQBCBDJ+GRwKTFhGUW8GXa4yoDfJrPbLblc3U09ciS+9ZJXJ3Qrcs/x2IODOdIE5kQxvMmE2UKyqUictUw==}
+
   '@react-dnd/invariant@4.0.2':
     resolution: {integrity: sha512-xKCTqAK/FFauOM9Ta2pswIyT3D8AQlfrYdOi/toTPEhqCuAs1v5tcJ3Y08Izh1cJ5Jchwy9SeAXmMg6zrKs2iw==}
+
+  '@react-dnd/shallowequal@2.0.0':
+    resolution: {integrity: sha512-Pc/AFTdwZwEKJxFJvlxrSmGe/di+aAOBn60sremrpLo6VI/6cmiUYNNwlI5KNYttg7uypzA3ILPMPgxB2GYZEg==}
 
   '@react-dnd/shallowequal@4.0.2':
     resolution: {integrity: sha512-/RVXdLvJxLg4QKvMoM5WlwNR9ViO9z8B/qPcc+C0Sa/teJY7QG7kJ441DwzOjMYEY7GmU4dj5EcGHIkKZiQZCA==}
@@ -5833,8 +5852,8 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.6.8:
-    resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
+  axios@1.7.7:
+    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
   azure-devops-node-api@11.2.0:
     resolution: {integrity: sha1-vwTtvvYDExF6BQdBXu1HkKQgrWs=}
@@ -6137,6 +6156,9 @@ packages:
   classcat@5.0.4:
     resolution: {integrity: sha512-sbpkOw6z413p+HDGcBENe498WM9woqWHiJxCq7nvmxe9WmrUmqfAcxpIwAiMtM5Q3AhYkzXcNQHqsWq0mND51g==}
 
+  classnames@2.5.1:
+    resolution: {integrity: sha512-saHYOzhIQs6wy2sVxTM6bUDsQO4F50V9RQ22qBpEdCW+I+/Wmke2HOl6lS6dTpdxVhb88/I6+Hs+438c3lfUow==}
+
   clean-css@5.3.3:
     resolution: {integrity: sha512-D5J+kHaVb/wKSFcyyV75uCn8fiY4sV38XJoe4CUyGQ+mOU/fMVYUdH1hJC+CJQ5uY3EnW27SbJYS4X8BiLrAFg==}
     engines: {node: '>= 10.0'}
@@ -6170,6 +6192,10 @@ packages:
 
   clone-deep@4.0.1:
     resolution: {integrity: sha512-neHB9xuzh/wk0dIHweyAXv2aPGZIVk3pLMe+/RNzINf17fe0OG96QroktYAUm7SM1PBnzTabaLboqqxDyMU+SQ==}
+    engines: {node: '>=6'}
+
+  clsx@1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
     engines: {node: '>=6'}
 
   clsx@2.1.0:
@@ -6815,6 +6841,9 @@ packages:
   discontinuous-range@1.0.0:
     resolution: {integrity: sha512-c68LpLbO+7kP/b1Hr1qs8/BJ09F5khZGTxqxZuhzxpmwJKOgRFHJWIb9/KmqnqHhLdO55aOxFH/EGBvUQbL/RQ==}
 
+  dnd-core@14.0.1:
+    resolution: {integrity: sha512-+PVS2VPTgKFPYWo3vAFEA8WPbTf7/xo43TifH9G8S1KqnrQu0o77A3unrF5yOugy4mIz7K5wAVFHUcha7wsz6A==}
+
   dnd-core@16.0.1:
     resolution: {integrity: sha512-HK294sl7tbw6F6IeuK16YSBUoorvHpY8RHO+9yFfaJyCDVb6n7PRcezrOEOa2SBCqiYpemh5Jx20ZcjKdFAVng==}
 
@@ -7415,8 +7444,8 @@ packages:
   flatted@3.3.1:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
 
-  follow-redirects@1.15.6:
-    resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -8550,8 +8579,8 @@ packages:
   lexical@0.14.5:
     resolution: {integrity: sha512-ouV7Gyr9+3WT3WTrCgRAD3iZnlJWfs2/kBl2x3J2Q3X9uCWJn/zn21fQ8G1EUHlu0dvXPBmdk9hXb/FjTClt6Q==}
 
-  lib0@0.2.93:
-    resolution: {integrity: sha512-M5IKsiFJYulS+8Eal8f+zAqf5ckm1vffW0fFDxfgxJ+uiVopvDdd3PxJmz0GsVi3YNO7QCFSq0nAsiDmNhLj9Q==}
+  lib0@0.2.97:
+    resolution: {integrity: sha512-Q4d1ekgvufi9FiHkkL46AhecfNjznSL9MRNoJRQ76gBHS9OqU2ArfQK0FvBpuxgWeJeNI0LVgAYMIpsGeX4gYg==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -8635,6 +8664,9 @@ packages:
   lodash.difference@4.5.0:
     resolution: {integrity: sha1-nMtOUF1Ia5FlE0V3KIWi3yf9AXw=}
 
+  lodash.findindex@4.6.0:
+    resolution: {integrity: sha512-9er6Ccz6sEST3bHFtUrCFWk14nE8cdL/RoW1RRDV1BxqN3qsmsT56L14jhfctAqhVPVcdJw4MRxEaVoAK+JVvw==}
+
   lodash.frompairs@4.0.1:
     resolution: {integrity: sha512-dvqe2I+cO5MzXCMhUnfYFa9MD+/760yx2aTAN1lqEcEkf896TxgrX373igVdqSJj6tQd0jnSLE1UMuKufqqxFw==}
 
@@ -8652,6 +8684,9 @@ packages:
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  lodash.omit@4.5.0:
+    resolution: {integrity: sha512-XeqSp49hNGmlkj2EJlfrQFIzQ6lXdNro9sddtQzcJY8QaoC2GO0DT7xaIokHeyM+mIT0mPMlPvkYzg2xCuHdZg==}
 
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
@@ -8745,6 +8780,9 @@ packages:
   markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
 
+  material-icons@0.1.0:
+    resolution: {integrity: sha512-xDTXrjrt03EiA+LL3nHttQs3DTGft/mV+JHSiVhQyl0Nk8SEwnNqB/fyu6REAz9mYoYCdr4vnhQzkTsGbx0BPg==}
+
   maximatch@0.1.0:
     resolution: {integrity: sha1-hs2NawTJ8wfAWmuUGZBtA2D7E6I=}
     engines: {node: '>=0.10.0'}
@@ -8831,6 +8869,9 @@ packages:
   memfs@3.5.3:
     resolution: {integrity: sha512-UERzLsxzllchadvbPs5aolHh65ISpKpM+ccLbOJ8/vvpBKmAWf+la7dXFy7Mr0ySHbdHrFv5kGFCUHHe6GFEmw==}
     engines: {node: '>= 4.0.0'}
+
+  memoize-one@5.2.1:
+    resolution: {integrity: sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==}
 
   meow@8.1.2:
     resolution: {integrity: sha512-r85E3NdZ+mpYk1C6RjPFEMSE+s1iZMuHtsHAqY0DT3jZczl0diWUZ8g6oU7h0M9cD2EL+PzaYghhCLzR0ZNn5Q==}
@@ -10029,6 +10070,12 @@ packages:
     resolution: {integrity: sha1-zZJL9SAKB1uDwYjNa54hG3/A0+0=}
     hasBin: true
 
+  react-arborist@3.4.0:
+    resolution: {integrity: sha512-QI46oRGXJr0oaQfqqVobIiIoqPp5Y5gM69D2A2P7uHVif+X75XWnScR5drC7YDKgJ4CXVaDeFwnYKOWRRfncMg==}
+    peerDependencies:
+      react: '>= 16.14'
+      react-dom: '>= 16.14'
+
   react-dev-utils@12.0.1:
     resolution: {integrity: sha512-84Ivxmr17KjUupyqzFode6xKhjwuEJDROWKJy/BthkL7Wn6NJ8h4WE6k/exAv6ImS+0oZLRRW5j/aINMHyeGeQ==}
     engines: {node: '>=14'}
@@ -10045,6 +10092,9 @@ packages:
       react: ^16.8.0 || ^17.0.0
       react-dnd: 14.0.0
 
+  react-dnd-html5-backend@14.1.0:
+    resolution: {integrity: sha512-6ONeqEC3XKVf4eVmMTe0oPds+c5B9Foyj8p/ZKLb7kL2qh9COYxiBHv3szd6gztqi/efkmriywLUVlPotqoJyw==}
+
   react-dnd-html5-backend@16.0.1:
     resolution: {integrity: sha1-h/rvFYRdUSojs8CNKez9NIcWiLY=}
 
@@ -10059,6 +10109,21 @@ packages:
     peerDependencies:
       react: ^16.14.0 || ^17.0.2 || ^18.0.0
       react-dnd: ^16.0.1
+
+  react-dnd@14.0.5:
+    resolution: {integrity: sha512-9i1jSgbyVw0ELlEVt/NkCUkxy1hmhJOkePoCH713u75vzHGyXhPDm28oLfc2NMSBjZRM1Y+wRjHXJT3sPrTy+A==}
+    peerDependencies:
+      '@types/hoist-non-react-statics': '>= 3.3.1'
+      '@types/node': '>= 12'
+      '@types/react': '>= 16'
+      react: '>= 16.14'
+    peerDependenciesMeta:
+      '@types/hoist-non-react-statics':
+        optional: true
+      '@types/node':
+        optional: true
+      '@types/react':
+        optional: true
 
   react-dnd@16.0.1:
     resolution: {integrity: sha1-JEKj7GeJLGDUChVZ7vRUmLom+jc=}
@@ -10138,11 +10203,17 @@ packages:
   react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
+  react-is@18.3.1:
+    resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+
   react-json-view-lite@1.3.0:
     resolution: {integrity: sha512-aN1biKC5v4DQkmQBlZjuMFR09MKZGMPtIg+cut8zEeg2HXd6gl2gRy0n4HMacHf0dznQgo0SVXN7eT8zV3hEuQ==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.13.1 || ^17.0.0 || ^18.0.0
+
+  react-lifecycles-compat@3.0.4:
+    resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
 
   react-loadable-ssr-addon-v5-slorber@1.0.1:
     resolution: {integrity: sha512-lq3Lyw1lGku8zUEJPDxsNm1AfYHBrO9Y1+olAYwpUJ2IGFBskM0DMKok97A6LWUpHm+o7IvQBOWu9MLenp9Z+A==}
@@ -10239,6 +10310,26 @@ packages:
       react: ^16.8.0  || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
 
+  react-virtualized-tree@3.4.1:
+    resolution: {integrity: sha512-MolDiG9XgmflPPX9uPzf7iSWLqOHDlCZEiyA4FVYjv2pHfu6zV6/SIEFVyHdurWD80IjUuZ3Er12gq2bQQak2Q==}
+    peerDependencies:
+      react: 16.x
+      react-dom: ^16.2.0
+      react-virtualized: ^9.13.0
+
+  react-virtualized@9.22.5:
+    resolution: {integrity: sha512-YqQMRzlVANBv1L/7r63OHa2b0ZsAaDp1UhVNEdUaXI8A5u6hTpA5NYtUueLH2rFuY/27mTGIBl7ZhqFKzw18YQ==}
+    peerDependencies:
+      react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
+      react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0
+
+  react-window@1.8.10:
+    resolution: {integrity: sha512-Y0Cx+dnU6NLa5/EvoHukUD0BklJ8qITCtVEPY1C/nL8wwoZ0b5aEw8Ff1dOVHw7fCzMt55XfJDd8S8W8LCaUCg==}
+    engines: {node: '>8.0.0'}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+
   react@18.2.0:
     resolution: {integrity: sha1-VVvZhZKIMlX6AN4U8RUakXtdd9U=}
     engines: {node: '>=0.10.0'}
@@ -10315,6 +10406,9 @@ packages:
 
   redux@4.2.1:
     resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
+
+  redux@5.0.1:
+    resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
 
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}
@@ -10423,6 +10517,9 @@ packages:
 
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
+
+  reselect@3.0.1:
+    resolution: {integrity: sha512-b/6tFZCmRhtBMa4xGqiiRp9jh9Aqi2A687Lo265cN0/QohJQEBPiQ52f4QB6i0eF3yp3hmLL21LSGBcML2dlxA==}
 
   reselect@4.1.8:
     resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
@@ -11267,6 +11364,9 @@ packages:
 
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+
+  tslib@2.7.0:
+    resolution: {integrity: sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==}
 
   tsup@8.0.2:
     resolution: {integrity: sha512-NY8xtQXdH7hDUAZwcQdY/Vzlw9johQsaqf7iwZ6g1DOUlFYQ5/AtVAjTvihhEyeRlGo4dLRVHtrRaL35M1daqQ==}
@@ -13227,6 +13327,10 @@ snapshots:
       regenerator-runtime: 0.14.1
 
   '@babel/runtime@7.24.4':
+    dependencies:
+      regenerator-runtime: 0.14.1
+
+  '@babel/runtime@7.25.6':
     dependencies:
       regenerator-runtime: 0.14.1
 
@@ -15290,13 +15394,13 @@ snapshots:
     dependencies:
       '@griffel/react': 1.5.21(react@18.2.0)
       react: 18.2.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@fluentui/react-icons@2.0.249(react@18.2.0)':
     dependencies:
       '@griffel/react': 1.5.24(react@18.2.0)
       react: 18.2.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@fluentui/react-image@9.1.62(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -17512,7 +17616,7 @@ snapshots:
       '@types/node': 17.0.45
       chalk: 4.1.2
       json-stable-stringify: 1.1.1
-      tslib: 2.4.0
+      tslib: 2.6.2
       typescript: 5.4.5
 
   '@griffel/core@1.15.3':
@@ -17522,7 +17626,7 @@ snapshots:
       csstype: 3.1.3
       rtl-css-js: 1.16.1
       stylis: 4.3.1
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@griffel/core@1.17.1':
     dependencies:
@@ -17531,19 +17635,19 @@ snapshots:
       csstype: 3.1.3
       rtl-css-js: 1.16.1
       stylis: 4.3.1
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@griffel/react@1.5.21(react@18.2.0)':
     dependencies:
       '@griffel/core': 1.15.3
       react: 18.2.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@griffel/react@1.5.24(react@18.2.0)':
     dependencies:
       '@griffel/core': 1.17.1
       react: 18.2.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@griffel/style-types@1.0.4':
     dependencies:
@@ -17833,35 +17937,35 @@ snapshots:
     transitivePeerDependencies:
       - tslib
 
-  '@microsoft/applicationinsights-analytics-js@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-analytics-js@2.8.9(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-channel-js@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-channel-js@2.8.9(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-common@2.8.18(tslib@2.6.2)':
+  '@microsoft/applicationinsights-common@2.8.18(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-core-js': 2.8.18(tslib@2.6.2)
+      '@microsoft/applicationinsights-core-js': 2.8.18(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-common@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-common@2.8.9(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.4.0)':
     dependencies:
@@ -17869,57 +17973,57 @@ snapshots:
       '@microsoft/dynamicproto-js': 1.1.11
       tslib: 2.4.0
 
-  '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.6.2)':
+  '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.7.0)':
     dependencies:
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-core-js@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-core-js@2.8.9(tslib@2.7.0)':
     dependencies:
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-dependencies-js@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-dependencies-js@2.8.9(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-properties-js@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-properties-js@2.8.9(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
-  '@microsoft/applicationinsights-react-js@3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.6.2)':
+  '@microsoft/applicationinsights-react-js@3.4.0(history@5.3.0)(react@18.2.0)(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-common': 2.8.18(tslib@2.6.2)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-common': 2.8.18(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
       history: 5.3.0
       react: 18.2.0
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@microsoft/applicationinsights-shims@2.0.2': {}
 
-  '@microsoft/applicationinsights-web@2.8.9(tslib@2.6.2)':
+  '@microsoft/applicationinsights-web@2.8.9(tslib@2.7.0)':
     dependencies:
-      '@microsoft/applicationinsights-analytics-js': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-channel-js': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-dependencies-js': 2.8.9(tslib@2.6.2)
-      '@microsoft/applicationinsights-properties-js': 2.8.9(tslib@2.6.2)
+      '@microsoft/applicationinsights-analytics-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-channel-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-common': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-core-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-dependencies-js': 2.8.9(tslib@2.7.0)
+      '@microsoft/applicationinsights-properties-js': 2.8.9(tslib@2.7.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@microsoft/dynamicproto-js@1.1.11': {}
 
@@ -18102,9 +18206,15 @@ snapshots:
 
   '@polka/url@1.0.0-next.25': {}
 
+  '@react-dnd/asap@4.0.1': {}
+
   '@react-dnd/asap@5.0.2': {}
 
+  '@react-dnd/invariant@2.0.0': {}
+
   '@react-dnd/invariant@4.0.2': {}
+
+  '@react-dnd/shallowequal@2.0.0': {}
 
   '@react-dnd/shallowequal@4.0.2': {}
 
@@ -18203,6 +18313,16 @@ snapshots:
     optionalDependencies:
       react: 18.2.0
       react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
+
+  '@reduxjs/toolkit@1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)':
+    dependencies:
+      immer: 9.0.15
+      redux: 4.2.1
+      redux-thunk: 2.4.2(redux@4.2.1)
+      reselect: 4.1.8
+    optionalDependencies:
+      react: 18.2.0
+      react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
 
   '@remix-run/router@1.15.3': {}
 
@@ -18496,7 +18616,7 @@ snapshots:
 
   '@swc/helpers@0.5.7':
     dependencies:
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   '@szmarczak/http-timer@5.0.1':
     dependencies:
@@ -19663,9 +19783,9 @@ snapshots:
       '@babel/runtime': 7.24.4
       is-retry-allowed: 2.2.0
 
-  axios@1.6.8(debug@4.3.4):
+  axios@1.7.7(debug@4.3.4):
     dependencies:
-      follow-redirects: 1.15.6(debug@4.3.4)
+      follow-redirects: 1.15.9(debug@4.3.4)
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -19941,7 +20061,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   camelcase-keys@6.2.2:
     dependencies:
@@ -20056,6 +20176,8 @@ snapshots:
 
   classcat@5.0.4: {}
 
+  classnames@2.5.1: {}
+
   clean-css@5.3.3:
     dependencies:
       source-map: 0.6.1
@@ -20096,6 +20218,8 @@ snapshots:
       is-plain-object: 2.0.4
       kind-of: 6.0.3
       shallow-clone: 3.0.1
+
+  clsx@1.2.1: {}
 
   clsx@2.1.0: {}
 
@@ -20798,6 +20922,12 @@ snapshots:
 
   discontinuous-range@1.0.0: {}
 
+  dnd-core@14.0.1:
+    dependencies:
+      '@react-dnd/asap': 4.0.1
+      '@react-dnd/invariant': 2.0.0
+      redux: 4.2.1
+
   dnd-core@16.0.1:
     dependencies:
       '@react-dnd/asap': 5.0.2
@@ -20823,7 +20953,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(esbuild@0.19.12)(eslint@8.56.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)):
     dependencies:
       '@docusaurus/core': 3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(esbuild@0.19.12)(eslint@8.56.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)
-      axios: 1.6.8(debug@4.3.4)
+      axios: 1.7.7(debug@4.3.4)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
@@ -20884,7 +21014,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   dot-prop@5.3.0:
     dependencies:
@@ -21644,7 +21774,7 @@ snapshots:
 
   flatted@3.3.1: {}
 
-  follow-redirects@1.15.6(debug@4.3.4):
+  follow-redirects@1.15.9(debug@4.3.4):
     optionalDependencies:
       debug: 4.3.4
 
@@ -22121,7 +22251,7 @@ snapshots:
 
   history@5.3.0:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
 
   hmac-drbg@1.0.1:
     dependencies:
@@ -22262,7 +22392,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.6(debug@4.3.4)
+      follow-redirects: 1.15.9(debug@4.3.4)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -22862,7 +22992,7 @@ snapshots:
     dependencies:
       copy-anything: 2.0.6
       parse-node-version: 1.0.1
-      tslib: 2.4.0
+      tslib: 2.7.0
     optionalDependencies:
       errno: 0.1.8
       graceful-fs: 4.2.11
@@ -22881,7 +23011,7 @@ snapshots:
 
   lexical@0.14.5: {}
 
-  lib0@0.2.93:
+  lib0@0.2.97:
     dependencies:
       isomorphic.js: 0.2.5
 
@@ -22975,6 +23105,8 @@ snapshots:
 
   lodash.difference@4.5.0: {}
 
+  lodash.findindex@4.6.0: {}
+
   lodash.frompairs@4.0.1: {}
 
   lodash.get@4.4.2: {}
@@ -22986,6 +23118,8 @@ snapshots:
   lodash.memoize@4.1.2: {}
 
   lodash.merge@4.6.2: {}
+
+  lodash.omit@4.5.0: {}
 
   lodash.sortby@4.7.0: {}
 
@@ -23015,7 +23149,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   lowercase-keys@3.0.0: {}
 
@@ -23072,6 +23206,8 @@ snapshots:
       uc.micro: 1.0.6
 
   markdown-table@3.0.3: {}
+
+  material-icons@0.1.0: {}
 
   maximatch@0.1.0:
     dependencies:
@@ -23320,6 +23456,8 @@ snapshots:
   memfs@3.5.3:
     dependencies:
       fs-monkey: 1.0.5
+
+  memoize-one@5.2.1: {}
 
   meow@8.1.2:
     dependencies:
@@ -23908,7 +24046,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   node-abi@3.57.0:
     dependencies:
@@ -24164,7 +24302,7 @@ snapshots:
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   parent-module@1.0.1:
     dependencies:
@@ -24231,7 +24369,7 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.4.0
+      tslib: 2.6.2
 
   path-browserify@1.0.1: {}
 
@@ -24610,7 +24748,7 @@ snapshots:
     dependencies:
       '@jest/schemas': 29.6.3
       ansi-styles: 5.2.0
-      react-is: 18.2.0
+      react-is: 18.3.1
 
   pretty-ms@7.0.1:
     dependencies:
@@ -24750,6 +24888,20 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
+  react-arborist@3.4.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-dnd: 14.0.5(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
+      react-dnd-html5-backend: 14.1.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-window: 1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      redux: 5.0.1
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/hoist-non-react-statics'
+      - '@types/node'
+      - '@types/react'
+
   react-dev-utils@12.0.1(eslint@8.56.0)(typescript@5.4.5)(webpack@5.91.0(esbuild@0.19.12)):
     dependencies:
       '@babel/code-frame': 7.24.2
@@ -24790,6 +24942,10 @@ snapshots:
       react: 18.2.0
       react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
 
+  react-dnd-html5-backend@14.1.0:
+    dependencies:
+      dnd-core: 14.0.1
+
   react-dnd-html5-backend@16.0.1:
     dependencies:
       dnd-core: 16.0.1
@@ -24808,6 +24964,19 @@ snapshots:
     dependencies:
       react: 18.2.0
       react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0)
+
+  react-dnd@14.0.5(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0):
+    dependencies:
+      '@react-dnd/invariant': 2.0.0
+      '@react-dnd/shallowequal': 2.0.0
+      dnd-core: 14.0.1
+      fast-deep-equal: 3.1.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+    optionalDependencies:
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/node': 20.12.7
+      '@types/react': 18.3.0
 
   react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.12.7)(@types/react@18.3.0)(react@18.2.0):
     dependencies:
@@ -24830,7 +24999,7 @@ snapshots:
 
   react-error-boundary@3.1.4(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       react: 18.2.0
 
   react-error-overlay@6.0.11: {}
@@ -24891,9 +25060,13 @@ snapshots:
 
   react-is@18.2.0: {}
 
+  react-is@18.3.1: {}
+
   react-json-view-lite@1.3.0(react@18.2.0):
     dependencies:
       react: 18.2.0
+
+  react-lifecycles-compat@3.0.4: {}
 
   react-loadable-ssr-addon-v5-slorber@1.0.1(@docusaurus/react-loadable@5.5.2(react@18.2.0))(webpack@5.91.0(esbuild@0.19.12)):
     dependencies:
@@ -24937,6 +25110,21 @@ snapshots:
       '@types/react-dom': 18.3.0
       react-dom: 18.2.0(react@18.2.0)
       redux: 4.2.1
+
+  react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      '@types/hoist-non-react-statics': 3.3.5
+      '@types/use-sync-external-store': 0.0.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+      react-is: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    optionalDependencies:
+      '@types/react': 18.3.0
+      '@types/react-dom': 18.3.0
+      react-dom: 18.2.0(react@18.2.0)
+      redux: 5.0.1
 
   react-refresh@0.14.0: {}
 
@@ -25025,6 +25213,39 @@ snapshots:
       throttle-debounce: 3.0.1
       ts-easing: 0.2.0
       tslib: 2.4.0
+
+  react-virtualized-tree@3.4.1(react-dom@18.2.0(react@18.2.0))(react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      classnames: 2.5.1
+      lodash: 4.17.21
+      lodash.debounce: 4.0.8
+      lodash.findindex: 4.6.0
+      lodash.isequal: 4.5.0
+      lodash.omit: 4.5.0
+      material-icons: 0.1.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-lifecycles-compat: 3.0.4
+      react-virtualized: 9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      reselect: 3.0.1
+
+  react-virtualized@9.22.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      clsx: 1.2.1
+      dom-helpers: 5.2.1
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-lifecycles-compat: 3.0.4
+
+  react-window@1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@babel/runtime': 7.24.4
+      memoize-one: 5.2.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   react@18.2.0:
     dependencies:
@@ -25135,11 +25356,17 @@ snapshots:
     dependencies:
       redux: 4.2.1
 
+  redux-thunk@2.4.2(redux@5.0.1):
+    dependencies:
+      redux: 5.0.1
+
   redux-undo@1.1.0: {}
 
   redux@4.2.1:
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
+
+  redux@5.0.1: {}
 
   reflect.getprototypeof@1.0.6:
     dependencies:
@@ -25330,6 +25557,8 @@ snapshots:
 
   requires-port@1.0.0: {}
 
+  reselect@3.0.1: {}
+
   reselect@4.1.8: {}
 
   resize-observer-polyfill@1.5.1: {}
@@ -25459,7 +25688,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   sade@1.8.1:
     dependencies:
@@ -25744,7 +25973,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   sockjs@0.3.24:
     dependencies:
@@ -26071,17 +26300,17 @@ snapshots:
   tabster@6.1.0:
     dependencies:
       keyborg: 2.5.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   tabster@7.1.2:
     dependencies:
       keyborg: 2.6.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   tabster@8.0.1:
     dependencies:
       keyborg: 2.6.0
-      tslib: 2.4.0
+      tslib: 2.7.0
 
   tapable@1.1.3: {}
 
@@ -26284,6 +26513,8 @@ snapshots:
   tslib@2.4.0: {}
 
   tslib@2.6.2: {}
+
+  tslib@2.7.0: {}
 
   tsup@8.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.7)(typescript@5.4.5))(typescript@5.4.5):
     dependencies:
@@ -26712,7 +26943,7 @@ snapshots:
   vite-plugin-mkcert@1.17.5(vite@5.2.10(@types/node@20.12.7)(less@4.2.0)(terser@5.30.2)):
     dependencies:
       '@octokit/rest': 20.0.2
-      axios: 1.6.8(debug@4.3.4)
+      axios: 1.7.7(debug@4.3.4)
       debug: 4.3.4
       picocolors: 1.0.0
       vite: 5.2.10(@types/node@20.12.7)(less@4.2.0)(terser@5.30.2)
@@ -27159,7 +27390,7 @@ snapshots:
 
   yjs@13.6.14:
     dependencies:
-      lib0: 0.2.93
+      lib0: 0.2.97
 
   yn@3.1.1: {}
 

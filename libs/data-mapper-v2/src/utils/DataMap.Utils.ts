@@ -11,13 +11,7 @@ import {
   indexPseudoFunctionKey,
 } from '../models/Function';
 import { findLast } from './Array.Utils';
-import {
-  applyConnectionValue,
-  flattenInputs,
-  isCustomValue,
-  nodeHasSourceNodeEventually,
-  nodeHasSpecificInputEventually,
-} from './Connection.Utils';
+import { applyConnectionValue, flattenInputs, isCustomValue, nodeHasSpecificInputEventually } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -142,40 +136,28 @@ export const collectSequenceValue = (
   return result;
 };
 
-export const isIdForFunctionNode = (id: string): boolean => {
-  return !id.startsWith(SchemaType.Source) && !id.startsWith(SchemaType.Target);
-};
-
 export const collectConditionalValues = (currentConnection: Connection, connections: ConnectionDictionary): [string, string] => {
   const inputValues = getInputValues(currentConnection, connections);
 
   return [inputValues[0], inputValues[1]];
 };
 
-export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
-  // All functions connections must eventually terminate into the source
+export const invalidFunctions = (connections: ConnectionDictionary) => {
   const connectionsArray = Object.entries(connections);
 
-  const allNodesTerminateIntoSource = connectionsArray
-    .filter(([key, _connection]) => key.startsWith(targetPrefix))
-    .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
-
-  const allRequiredInputsFilledOut = connectionsArray.every(([_key, connection]) => {
+  const allRequiredInputsFilledOut = connectionsArray.filter(([_key, connection]) => {
     const selfNode = connection.self.node;
     if (isFunctionData(selfNode)) {
-      return (
-        !connection.outputs.length ||
-        selfNode.inputs.every((nodeInput, index) => {
-          return nodeInput.isOptional || connection.inputs[index].length > 0;
-        })
-      );
+      return selfNode.inputs.find((nodeInput, index) => {
+        return !nodeInput.isOptional && connection.inputs[index].length === 0;
+      });
     }
 
-    return true;
+    return false;
   });
 
   // Is valid to generate the map definition
-  return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
+  return allRequiredInputsFilledOut;
 };
 
 const isQuotedString = (value: string): boolean => {
@@ -568,7 +550,7 @@ export const addParentConnectionForRepeatingElementsNested = (
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
 ): boolean => {
-  if (sourceNode && sourceNode.parentKey) {
+  if (sourceNode?.parentKey && targetNode?.pathToRoot) {
     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
@@ -643,7 +625,7 @@ export const isParentTargetNode = (nodeDict: SchemaNodeDictionary, node: SchemaN
   if (node.parentKey === undefined || node.parentKey === '' || nodeDict[addTargetReactFlowPrefix(node.key)] === undefined) {
     return false;
   }
-  if (node.parentKey === potentialParentNodeId) {
+  if (node.parentKey === potentialParentNodeId || node.key === potentialParentNodeId) {
     return true;
   }
   return isParentTargetNode(nodeDict, nodeDict[addTargetReactFlowPrefix(node.parentKey)], potentialParentNodeId);

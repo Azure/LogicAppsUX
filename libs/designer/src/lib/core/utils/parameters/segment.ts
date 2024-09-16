@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helper';
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
@@ -56,12 +57,12 @@ export class ValueSegmentConvertor {
    * @arg {any} value - The value.
    * @return {ValueSegment[]}
    */
-  public convertToValueSegments(value: any): ValueSegment[] {
+  public convertToValueSegments(value: any, parameterType: string = constants.SWAGGER.TYPE.ANY): ValueSegment[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     }
     if (typeof value === 'string') {
-      return this._convertStringToValueSegments(value);
+      return this._convertStringToValueSegments(value, parameterType);
     }
     return this._convertJsonToValueSegments(JSON.stringify(value, null, 2));
   }
@@ -106,12 +107,14 @@ export class ValueSegmentConvertor {
     return [this._createLiteralValueSegment(section)];
   }
 
-  private _convertStringToValueSegments(value: string): ValueSegment[] {
+  private _convertStringToValueSegments(value: string, parameterType: string): ValueSegment[] {
     if (isTemplateExpression(value)) {
       const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
     }
-    return [this._createLiteralValueSegment(value)];
+    const isSpecialValue = ['true', 'false', 'null'].includes(value) || /^-?\d+$/.test(value);
+    const stringValue = parameterType === constants.SWAGGER.TYPE.ANY && isSpecialValue ? `"${value}"` : value;
+    return [this._createLiteralValueSegment(stringValue)];
   }
 
   private _convertTemplateExpressionToValueSegments(expression: Expression): ValueSegment[] {

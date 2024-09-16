@@ -1,21 +1,14 @@
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { useEffect, useRef, useCallback, useState, type MouseEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection, XYPosition } from '@xyflow/react';
-import { PanOnScrollMode, ReactFlow, addEdge, useEdges, useReactFlow } from '@xyflow/react';
+import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
+import { PanOnScrollMode, ReactFlow, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
-import SchemaNode from '../common/reactflow/SchemaNode';
+import SchemaPanelNode from '../common/reactflow/nodes/SchemaPanelNode';
 import ConnectionLine from '../common/reactflow/edges/ConnectionLine';
 import ConnectedEdge from '../common/reactflow/edges/ConnectedEdge';
 import type { ConnectionAction } from '../../core/state/DataMapSlice';
-import {
-  updateFunctionPosition,
-  makeConnectionFromMap,
-  setSelectedItem,
-  updateEdgePopOverId,
-  updateCanvasDimensions,
-  updateFunctionNodesPosition,
-} from '../../core/state/DataMapSlice';
+import { updateFunctionPosition, makeConnectionFromMap, setSelectedItem, updateEdgePopOverId } from '../../core/state/DataMapSlice';
 import { FunctionNode } from '../common/reactflow/FunctionNode';
 import { useDrop } from 'react-dnd';
 import useResizeObserver from 'use-resize-observer';
@@ -23,26 +16,21 @@ import type { Bounds } from '../../core';
 import { splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import EdgePopOver from './EdgePopOver';
-import { getFunctionNode } from '../../utils/Function.Utils';
-import LoopEdge from '../common/reactflow/edges/LoopEdge';
-import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import CanvasNode from '../common/reactflow/CanvasNode';
-import IntermediateConnectedEdge from '../common/reactflow/edges/IntermediateConnectedEdge';
+import { isFunctionNode } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
 const nodeTypes = {
-  schemaNode: SchemaNode,
   functionNode: FunctionNode,
   canvasNode: CanvasNode,
+  schemaPanel: SchemaPanelNode,
 } as NodeTypes;
 
 const edgeTypes = {
   connectedEdge: ConnectedEdge,
-  loopEdge: LoopEdge,
-  intermediateConnectedEdge: IntermediateConnectedEdge,
 };
 
 export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
@@ -50,95 +38,75 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   const reactFlowInstance = useReactFlow();
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const reactflowEdges = useEdges();
-  const { functionNodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-  const currentCanvasRect = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
-  );
-  const { width: currentWidth, height: currentHeight, x: currentX, y: currentY } = currentCanvasRect;
   const { width: newWidth = undefined, height: newHeight = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
+  });
+  const { nodes, edges } = useReactFlowStates({
+    newWidth,
+    newHeight,
+    newX: ref.current?.getBoundingClientRect().x,
+    newY: ref.current?.getBoundingClientRect().y,
   });
   const [edgePopoverBounds, setEdgePopoverBounds] = useState<Bounds>();
 
   useAutoLayout();
-  const { nodes, edges, setFunctionNodes } = useReactFlowStates({});
-
-  useEffect(() => {
-    const functionNodesForDragDrop = Object.entries(functionNodes).map(([key, functionData]) =>
-      getFunctionNode(functionData, key, functionData.position)
-    );
-
-    if (ref?.current && newWidth !== undefined && newHeight !== undefined) {
-      const { x: newX, y: newY, width: newWidth, height: newHeight } = ref.current.getBoundingClientRect();
-      if (newWidth !== currentWidth || newHeight !== currentHeight || newX !== currentX || newY !== currentY) {
-        dispatch(
-          updateCanvasDimensions({
-            x: newX,
-            y: newY,
-            width: newWidth,
-            height: newHeight,
-          })
-        );
-
-        //update function node positions
-        if (currentWidth !== 0 && newWidth !== currentWidth) {
-          let xChange = 0;
-          // Sorta % increase in width so we will increase the x position of the function nodes
-          if (newWidth > currentWidth) {
-            xChange = (newWidth - currentWidth) / currentWidth + 1;
-          } else {
-            xChange = 1 - (currentWidth - newWidth) / currentWidth;
-          }
-
-          const updatedPositions: Record<string, XYPosition> = {};
-          for (const node of functionNodesForDragDrop) {
-            updatedPositions[node.id] = {
-              x: node.position.x * xChange,
-              y: node.position.y,
-            };
-          }
-          dispatch(updateFunctionNodesPosition(updatedPositions));
-        }
-      }
-    }
-  }, [functionNodes, newWidth, currentWidth, newHeight, currentHeight, currentX, currentY, dispatch, ref]);
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
 
   const onEdgeConnect = useCallback(
     (connection: Connection) => {
-      addEdge(
-        {
-          ...connection,
-          type: 'connectedEdge',
-          reconnectable: 'target',
-          focusable: true,
-          deletable: true,
-          selectable: true,
-          zIndex: 150,
-          interactionWidth: 10,
-        },
-        reactflowEdges
-      );
+      let source = '';
+      let target = '';
 
-      // danielle maybe get the input number from here?
+      if (connection.source && isFunctionNode(connection.source)) {
+        source = connection.source;
+      } else {
+        source = connection.sourceHandle ?? '';
+      }
 
-      const connectionAction: ConnectionAction = {
-        reactFlowSource: connection.source ?? '',
-        reactFlowDestination: connection.target ?? '',
-      };
-      dispatch(makeConnectionFromMap(connectionAction));
-      dispatch(setSelectedItem(connection.target));
+      if (connection.target && isFunctionNode(connection.target)) {
+        target = connection.target;
+      } else {
+        target = connection.targetHandle ?? '';
+      }
+
+      if (source && target) {
+        const connectionAction: ConnectionAction = {
+          reactFlowSource: source,
+          reactFlowDestination: target,
+        };
+
+        dispatch(makeConnectionFromMap(connectionAction));
+        dispatch(setSelectedItem(target));
+      }
     },
-    [reactflowEdges, dispatch]
+    [dispatch]
   );
 
   const isValidConnection: IsValidConnection = useCallback(
     (connection) => {
-      return !reactflowEdges.find((edge) => edge.source === connection.source && edge.target === connection.target);
+      return !edges.find((edge) => {
+        const {
+          source: currentConnectionSource,
+          target: currentConnectionTarget,
+          sourceHandle: currentConnectionSourceHandle,
+          targetHandle: currentConnectionTargetHandle,
+        } = edge;
+        const {
+          source: newConnectionSource,
+          target: newConnectionTarget,
+          sourceHandle: newConnectionSourceHandle,
+          targetHandle: newConnectionTargetHandle,
+        } = connection;
+        return (
+          currentConnectionSource === newConnectionSource &&
+          currentConnectionTarget === newConnectionTarget &&
+          (isFunctionNode(currentConnectionSource) || currentConnectionSourceHandle === newConnectionSourceHandle) &&
+          (isFunctionNode(currentConnectionTarget) || currentConnectionTargetHandle === newConnectionTargetHandle)
+        );
+      });
     },
-    [reactflowEdges]
+    [edges]
   );
 
   // NOTE: Putting this useEffect here for vis next to onSave
@@ -172,17 +140,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     [reactFlowInstance]
   );
 
-  const onFunctionNodeDrag: OnNodeDrag = useCallback(
-    (_event, node, _nodes) => {
-      setFunctionNodes((functionNodesForDragDrop) => [
-        ...functionNodesForDragDrop.filter((nodeFromState) => nodeFromState.id !== node.id),
-        node,
-      ]);
-    },
-    [setFunctionNodes]
-  );
-
-  const onFunctionNodeDragStop: OnNodeDrag = useCallback(
+  const onNodeDrag: OnNodeDrag = useCallback(
     (_event, node, _nodes) => {
       dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
     },
@@ -203,7 +161,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         if (edge.data?.componentId && splitIds.length >= 2) {
           const directionId1 = edge.data?.componentId as string;
           const directionId2 = splitIds[0];
-          const directEdge = reactflowEdges.find(
+          const directEdge = edges.find(
             (edge) =>
               (edge.source === directionId1 && edge.target === directionId2) ||
               (edge.source === directionId2 && edge.target === directionId1)
@@ -227,7 +185,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         });
       }
     },
-    [dispatch, setEdgePopoverBounds, reactflowEdges]
+    [dispatch, setEdgePopoverBounds, edges]
   );
 
   return (
@@ -236,11 +194,11 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
         <ReactFlow
           id="dm-react-flow"
           ref={drop}
-          className="nopan nodrag"
-          nodes={nodes}
           edges={edges}
+          nodes={nodes}
+          className="nopan nodrag"
           nodeDragThreshold={0}
-          onlyRenderVisibleElements={false}
+          onlyRenderVisibleElements={true}
           zoomOnScroll={false}
           zoomOnPinch={false}
           zoomOnDoubleClick={false}
@@ -261,8 +219,8 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             hideAttribution: true,
           }}
           panOnScrollMode={PanOnScrollMode.Vertical}
-          onNodeDrag={onFunctionNodeDrag}
-          onNodeDragStop={onFunctionNodeDragStop}
+          onNodeDragStop={onNodeDrag}
+          onNodeDrag={onNodeDrag}
           isValidConnection={isValidConnection}
           onEdgeContextMenu={onEdgeContextMenu}
           onConnect={onEdgeConnect}

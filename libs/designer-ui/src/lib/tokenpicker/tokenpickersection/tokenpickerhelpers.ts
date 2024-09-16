@@ -6,14 +6,28 @@ export const getReducedTokenList = (
 ): OutputToken[] => {
   const { hasSearchQuery, maxRowsShown, showAllOptions } = options;
 
-  let filteredTokens = tokens.filter((token) => !token.isAdvanced || showAllOptions || hasSearchQuery);
-  if (!showAllOptions) {
-    filteredTokens = filteredTokens.slice(0, maxRowsShown);
+  // If showAllOptions is true, return all tokens
+  if (showAllOptions) {
+    return tokens;
   }
 
-  return filteredTokens;
-};
+  // Only filter if there are more tokens than maxRowsShown
+  let filteredTokens = tokens;
+  if (tokens.length > maxRowsShown) {
+    const nonAdvancedTokens = tokens.filter((token) => !token.isAdvanced);
+    const advancedTokens = tokens.filter((token) => token.isAdvanced);
 
-export const hasAdvanced = (tokens: OutputToken[]): boolean => {
-  return tokens.some((token) => token.isAdvanced);
+    // If hasSearchQuery is true, do not filter out advanced tokens
+    if (hasSearchQuery) {
+      filteredTokens = tokens.slice(0, maxRowsShown);
+    } else {
+      filteredTokens = nonAdvancedTokens.slice(0, maxRowsShown);
+
+      if (filteredTokens.length < maxRowsShown) {
+        filteredTokens = filteredTokens.concat(advancedTokens.slice(0, maxRowsShown - filteredTokens.length));
+      }
+    }
+  }
+
+  return filteredTokens.slice(0, maxRowsShown);
 };

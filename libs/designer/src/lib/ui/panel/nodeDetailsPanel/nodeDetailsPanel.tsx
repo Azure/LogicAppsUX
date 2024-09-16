@@ -5,13 +5,12 @@ import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
-import { expandPanel, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import {
   useIsPanelCollapsed,
   useOperationPanelPinnedNodeId,
   useOperationPanelSelectedNodeId,
-} from '../../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
+} from '../../../core/state/panel/panelSelectors';
+import { expandPanel, setPinnedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
