@@ -15,7 +15,6 @@ import {
   DefaultInputsBinder,
   FlatFileInputsBinder,
   FunctionInputsBinder,
-  HttpInputsBinder,
   IfInputsBinder,
   IntegrationAccountArtifactLookupInputsBinder,
   LiquidInputsBinder,
@@ -23,7 +22,6 @@ import {
   RecurrenceInputsBinder,
   SendToBatchInputsBinder,
   SwitchInputsBinder,
-  WorkflowInputsBinder,
   XmlValidationInputsBinder,
   XsltInputsBinder,
 } from '../../parsers/binders/binders';
@@ -79,10 +77,6 @@ export default class InputsBinder {
         const binder = new FunctionInputsBinder();
         return binder.bind(input);
       }
-      if (equals(type, constants.NODE.TYPE.HTTP)) {
-        const binder = new HttpInputsBinder();
-        return binder.bind(input, inputParametersByName, operation);
-      }
       if (equals(type, constants.NODE.TYPE.IF)) {
         const binder = new IfInputsBinder();
         return binder.bind(input);
@@ -106,10 +100,6 @@ export default class InputsBinder {
       if (equals(type, constants.NODE.TYPE.SWITCH)) {
         const binder = new SwitchInputsBinder();
         return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.WORKFLOW)) {
-        const binder = new WorkflowInputsBinder();
-        return binder.bind(input, inputParametersByName);
       }
       if (equals(type, constants.NODE.TYPE.XML_VALIDATION)) {
         const binder = new XmlValidationInputsBinder();

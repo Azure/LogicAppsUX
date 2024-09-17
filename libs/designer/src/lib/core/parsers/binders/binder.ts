@@ -156,18 +156,6 @@ export abstract class Binder {
     return this.makeBoundParameter(constants.UNTYPED.INPUTS, 'Resources.DISPLAY_TEXT_UNTYPED_INPUTS', inputs);
   }
 
-  protected parsePath(_path: string): any[] {
-    const identifiers: any[] = [];
-    // try {
-    //   ({ identifiers } = PathParser.parse(path, Delimiters.Argument, /* strict */ false));
-    // } catch {
-    //   // NOTE(joechung): When this code was originally written, ' was not supported in properties. Now we must escape ' to '' so the parser can work correctly.
-    //   ({ identifiers } = PathParser.parse(`[${convertToStringLiteral(path)}]`, Delimiters.Argument, /* strict */ false));
-    // }
-
-    return identifiers;
-  }
-
   protected resolveIdentifier(identifier: any): string {
     return isString(identifier) ? identifier : String(identifier.value);
   }
