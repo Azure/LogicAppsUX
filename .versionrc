@@ -23,6 +23,10 @@
             "type": "json"
         },
         {
+            "filename": "libs/data-mapper-v2/package.json",
+            "type": "json"
+        },
+        {
             "filename": "libs/logic-apps-shared/package.json",
             "type": "json"
         },
