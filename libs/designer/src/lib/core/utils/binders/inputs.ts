@@ -1,33 +1,20 @@
-import type { BoundParameter, BoundParameters, InputParameter, LogicApps, OperationManifest, Swagger } from '@microsoft/logic-apps-shared';
+import type { BoundParameter, BoundParameters, InputParameter, LogicApps, OperationManifest, Swagger, SwaggerParser } from '@microsoft/logic-apps-shared';
 import { equals, getObjectPropertyValue, isNullOrUndefined, unmap } from '@microsoft/logic-apps-shared';
 import { Binder } from '../../parsers/binders/binder';
 import {
   ApiConnectionInputsBinder,
   ApiManagementInputsBinder,
-  AppendToArrayVariableInputsBinder,
-  AppendToStringVariableInputsBinder,
-  DecrementVariableInputsBinder,
   DefaultInputsBinder,
   FlatFileInputsBinder,
   FunctionInputsBinder,
   HttpInputsBinder,
   IfInputsBinder,
-  IncrementVariableInputsBinder,
-  InitializeVariableInputsBinder,
   IntegrationAccountArtifactLookupInputsBinder,
-  JoinInputsBinder,
   LiquidInputsBinder,
   ManualInputsBinder,
-  ParseJsonInputsBinder,
-  QueryInputsBinder,
   RecurrenceInputsBinder,
-  ResponseInputsBinder,
-  SelectInputsBinder,
   SendToBatchInputsBinder,
-  SetVariableInputsBinder,
   SwitchInputsBinder,
-  TableInputsBinder,
-  TerminateInputsBinder,
   WaitInputsBinder,
   WorkflowInputsBinder,
   XmlValidationInputsBinder,
@@ -35,20 +22,21 @@ import {
 } from '../../parsers/binders/binders';
 import constants from '../../../common/constants';
 import BinderConstants from '../../parsers/binders/constants';
-import { updateParameterWithValues } from '../parameters/helper';
+import { getInputsValueFromDefinitionForManifest, updateParameterWithValues } from '../parameters/helper';
 
 export default class InputsBinder {
-  bind(
+  async bind(
     inputs: any,
     type: string,
     kind: string | undefined,
     inputParametersByName: Record<string, InputParameter>,
     operation: Swagger.Operation,
     manifest?: OperationManifest,
+    customSwagger?: SwaggerParser,
     recurrence?: LogicApps.Recurrence,
     placeholderForDynamicInputs?: InputParameter,
     _recurrenceParameters?: InputParameter[]
-  ): BoundParameters[] {
+  ): Promise<BoundParameters[]> {
     let inputArray: any[];
     if (!Array.isArray(inputs)) {
       inputArray = [inputs];
@@ -58,7 +46,7 @@ export default class InputsBinder {
       inputArray = [inputs];
     }
 
-    return inputArray.map((input: any): BoundParameters => {
+    const getBoundParameters = async (input: any): Promise<BoundParameters> => {
       if (
         manifest &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
@@ -66,7 +54,7 @@ export default class InputsBinder {
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION)
       ) {
         const binder = new ManifestInputsBinder(manifest, placeholderForDynamicInputs);
-        return binder.bind(input, inputParametersByName);
+        return binder.bind(input, inputParametersByName, customSwagger);
       }
       if (equals(type, constants.NODE.TYPE.API_CONNECTION) || equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK)) {
         const binder = new ApiConnectionInputsBinder();
@@ -75,18 +63,6 @@ export default class InputsBinder {
       if (equals(type, constants.NODE.TYPE.API_MANAGEMENT)) {
         const binder = new ApiManagementInputsBinder();
         return binder.bind(input, inputParametersByName, operation);
-      }
-      if (equals(type, constants.NODE.TYPE.APPEND_TO_ARRAY_VARIABLE)) {
-        const binder = new AppendToArrayVariableInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.APPEND_TO_STRING_VARIABLE)) {
-        const binder = new AppendToStringVariableInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.DECREMENT_VARIABLE)) {
-        const binder = new DecrementVariableInputsBinder();
-        return binder.bind(input);
       }
       if (equals(type, constants.NODE.TYPE.FLAT_FILE_DECODING) || equals(type, constants.NODE.TYPE.FLAT_FILE_ENCODING)) {
         const binder = new FlatFileInputsBinder();
@@ -104,68 +80,24 @@ export default class InputsBinder {
         const binder = new IfInputsBinder();
         return binder.bind(input);
       }
-      if (equals(type, constants.NODE.TYPE.INCREMENT_VARIABLE)) {
-        const binder = new IncrementVariableInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
-        const binder = new InitializeVariableInputsBinder();
-        return binder.bind(input);
-      }
       if (equals(type, constants.NODE.TYPE.INTEGRATION_ACCOUNT_ARTIFACT_LOOKUP)) {
         const binder = new IntegrationAccountArtifactLookupInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.JOIN)) {
-        const binder = new JoinInputsBinder();
         return binder.bind(input);
       }
       if (equals(type, constants.NODE.TYPE.LIQUID)) {
         const binder = new LiquidInputsBinder();
         return binder.bind(input);
       }
-      if (equals(type, constants.NODE.TYPE.MANUAL) || equals(type, constants.NODE.TYPE.REQUEST)) {
+      if (equals(type, constants.NODE.TYPE.REQUEST)) {
         const binder = new ManualInputsBinder();
         return binder.bind(input, kind);
-      }
-      if (equals(type, constants.NODE.TYPE.PARSE_JSON)) {
-        const binder = new ParseJsonInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.QUERY)) {
-        const binder = new QueryInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.RESPONSE)) {
-        const binder = new ResponseInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.SELECT)) {
-        const binder = new SelectInputsBinder();
-        return binder.bind(input);
       }
       if (equals(type, constants.NODE.TYPE.SEND_TO_BATCH)) {
         const binder = new SendToBatchInputsBinder();
         return binder.bind(input);
       }
-      if (equals(type, constants.NODE.TYPE.SET_VARIABLE)) {
-        const binder = new SetVariableInputsBinder();
-        return binder.bind(input);
-      }
       if (equals(type, constants.NODE.TYPE.SWITCH)) {
         const binder = new SwitchInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.TABLE)) {
-        const binder = new TableInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.TERMINATE)) {
-        const binder = new TerminateInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.WAIT)) {
-        const binder = new WaitInputsBinder();
         return binder.bind(input);
       }
       if (equals(type, constants.NODE.TYPE.WORKFLOW)) {
@@ -186,7 +118,9 @@ export default class InputsBinder {
       }
       const binder = new DefaultInputsBinder();
       return binder.bind(input);
-    });
+    };
+
+    return Promise.all(inputArray.map(getBoundParameters));
   }
 }
 
@@ -202,12 +136,21 @@ class ManifestInputsBinder extends Binder {
     this._placeholderForDynamicInputs = placeholderForDynamicInputs;
   }
 
-  bind(inputs: any, inputParameters: Record<string, InputParameter>): BoundParameters {
+  async bind(inputs: any, inputParameters: Record<string, InputParameter>, customSwagger: SwaggerParser | undefined): Promise<BoundParameters> {
     if (inputs === undefined) {
       return {};
     }
 
-    const boundInputParameters = unmap(inputParameters).reduce(this.makeReducer(inputs, this._bindData), {} as BoundParameters);
+    const inputsToBind = { inputs };
+    
+    const operationInputs = getInputsValueFromDefinitionForManifest(
+      this._operationManifest.properties.inputsLocation ?? ['inputs'],
+      this._operationManifest,
+      customSwagger,
+      inputsToBind,
+      unmap(inputParameters)
+    );
+    const boundInputParameters = unmap(inputParameters).reduce(this.makeReducer(operationInputs, this._bindData), {} as BoundParameters);
 
     return { ...boundInputParameters };
   }
@@ -220,19 +163,14 @@ class ManifestInputsBinder extends Binder {
     }
 
     const displayName = this.getInputParameterDisplayName(parameter);
-
     const value = parameter.alias ? this._getValueByParameterAlias(inputs, parameter) : this._getValueByParameterKey(inputs, parameter);
-
     const { dynamicValues, name, visibility } = parameter;
-
     const boundParameter = this.buildBoundParameter(displayName, value, visibility, this._getAdditionalProperties(parameter));
-
     return dynamicValues ? { ...boundParameter, dynamicValue: name } : boundParameter;
   };
 
   private _getValueByParameterAlias(inputs: any, parameter: InputParameter) {
-    const location = this._location.concat(parameter.alias ?? '');
-    return getObjectPropertyValue(inputs, location);
+    return getObjectPropertyValue(inputs, [parameter.alias as string]);
   }
 
   private _getAdditionalProperties(parameter: InputParameter): Partial<BoundParameter<any>> | undefined {
@@ -258,17 +196,17 @@ class ManifestInputsBinder extends Binder {
 
     const { key } = parameter;
     const prefix = key.substring(0, key.indexOf('$') + 1);
-    const isInputs = prefix === 'inputs.$';
-    const dataPath = isInputs ? this._location : [];
 
-    const parameterValue = updateParameterWithValues(
+    const parametersValue = updateParameterWithValues(
       prefix,
-      !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, dataPath) : inputs,
+      inputs,
       /* in */ '',
-      [parameter]
+      [parameter],
+      /* createInvisibleParameter */ false,
+      /* useDefault */ false,
     );
 
-    return parameterValue[0]?.value;
+    return parametersValue.length > 0 ? parametersValue[0]?.value : undefined;
   }
 
   private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {

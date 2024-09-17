@@ -18,6 +18,7 @@ import constants from '../../../common/constants';
 import { parseOutputs } from '../monitoring';
 import { getRecurrenceParameters } from '../parameters/recurrence';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -55,6 +56,7 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
 
 const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Promise<BoundParameters[]> => {
   let operation: any = getRecordEntry(rootState.operations.operationInfo, nodeId);
+  const definition: any = getRecordEntry(rootState.workflow.operations, nodeId);
 
   if (!operation) {
     return [];
@@ -64,6 +66,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const kind = operation.kind;
 
   const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operation) : undefined;
+  const customSwagger = manifest ? await getCustomSwaggerIfNeeded(manifest.properties, definition) : undefined;
   const inputsToBind = getInputsToBind(operation.type, inputs);
   const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
   const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operation);
@@ -92,13 +95,14 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
 
   // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
-  const boundInputs: BoundParameters[] = inputsBinder.bind(
+  const boundInputs: BoundParameters[] =  await inputsBinder.bind(
     inputsToBind,
     type,
     kind,
     inputParameters,
     operation as any,
     manifest,
+    customSwagger,
     undefined /* recurrence */,
     placeholderForDynamicInputs,
     recurrenceParameters as unknown as any
@@ -111,7 +115,7 @@ export function getInputsToBind(type: string, payloadInputs: any): any {
   if (equals(type, constants.NODE.TYPE.QUERY)) {
     if (payloadInputs) {
       return {
-        body: payloadInputs,
+        from: payloadInputs,
       };
     }
     return null;

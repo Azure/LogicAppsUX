@@ -20,6 +20,7 @@ export default {
         },
         format: {
           type: 'string',
+          title: 'Format',
           default: 'HTML',
           required: true,
           'x-ms-visibility': 'hideInUI',
