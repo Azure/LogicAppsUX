@@ -111,6 +111,6 @@ export const useHandleStyles = makeStyles({
     right: '7.5px',
   },
   right: {
-    left: '-7.5px',
+    left: '7.5px',
   },
 });
