@@ -19,6 +19,7 @@ const useSchema = (props: useSchemaProps) => {
   const handleStyles = useHandleStyles();
   const dispatch = useDispatch<AppDispatch>();
   const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const isVSCode = useSelector((state: RootState) => state.app.context === 'vscode');
 
   const isSourceSchema = useMemo(() => isSourceNode(id), [id]);
   const schemaType = useMemo(() => (isSourceNode(id) ? SchemaType.Source : SchemaType.Target), [id]);
@@ -51,7 +52,14 @@ const useSchema = (props: useSchemaProps) => {
       id: nodeId,
       position: isSourceSchema ? Position.Right : Position.Left,
       type: (isSourceSchema ? 'source' : 'target') as HandleType,
-      className: isSourceSchema ? handleStyles.left : handleStyles.right,
+      // Note: For some weird reason, vscode is rendering this differently so handling the case explicitly for now
+      className: isSourceSchema
+        ? isVSCode
+          ? handleStyles.leftInVSCode
+          : handleStyles.left
+        : isVSCode
+          ? handleStyles.rightInVSCode
+          : handleStyles.right,
     },
   };
 };

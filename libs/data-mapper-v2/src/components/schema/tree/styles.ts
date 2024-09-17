@@ -107,10 +107,16 @@ export const useHandleStyles = makeStyles({
   repeatingIcon: {
     color: 'white',
   },
-  left: {
+  leftInVSCode: {
     right: '7.5px',
   },
-  right: {
+  rightInVSCode: {
     left: '-7.5px',
+  },
+  left: {
+    right: '0.5px',
+  },
+  right: {
+    left: '-0.5px',
   },
 });

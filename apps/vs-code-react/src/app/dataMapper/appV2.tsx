@@ -162,6 +162,7 @@ export const DataMapperAppV2 = () => {
           availableSchemas={schemaFileList}
           customXsltPaths={customXsltPathsList}
           fetchedFunctions={fetchedFunctions}
+          isVSCode={true}
           // Passed in here too so it can be managed in the Redux store so components can track the current theme
           theme={theme}
         >

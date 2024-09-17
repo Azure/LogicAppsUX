@@ -2,7 +2,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { changeTheme } from './state/AppSlice';
+import { changeTheme, setContext } from './state/AppSlice';
 import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
@@ -26,6 +26,7 @@ export interface DataMapDataProviderProps {
   fetchedFunctions?: FunctionData[];
   theme?: ThemeType;
   children?: React.ReactNode;
+  isVSCode?: boolean;
 }
 
 const DataProviderInner = ({
@@ -38,6 +39,7 @@ const DataProviderInner = ({
   customXsltPaths,
   mapDefinition,
   dataMapMetadata,
+  isVSCode,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
@@ -48,6 +50,12 @@ const DataProviderInner = ({
   useEffect(() => {
     dispatch(changeTheme(theme));
   }, [dispatch, theme]);
+
+  useEffect(() => {
+    if (isVSCode) {
+      dispatch(setContext('vscode'));
+    }
+  }, [dispatch, isVSCode]);
 
   useEffect(() => {
     dispatch(setXsltFilename(xsltFilename ?? ''));
