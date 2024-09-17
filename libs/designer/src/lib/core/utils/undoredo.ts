@@ -46,7 +46,7 @@ export const getEditedPanelNode = (actionType: string, rootState: RootState): st
 export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLimit: number): boolean => {
   // Skip saving state if state history limit is less than 1
   if (stateHistoryLimit < 1) {
-    return false;
+    return true;
   }
 
   // For parameter update, store state only when the value for parameter has changed.

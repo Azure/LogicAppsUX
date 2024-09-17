@@ -65,8 +65,6 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
   dispatch(
     updateStateHistoryOnUndoClick({
       compressedState: currentCompressedRootState,
-      editedPanelTab: undoRedoState.currentEditedPanelTab,
-      editedPanelNode: undoRedoState.currentEditedPanelNode,
     })
   );
 
@@ -105,8 +103,6 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
   dispatch(
     updateStateHistoryOnRedoClick({
       compressedState: currentCompressedRootState,
-      editedPanelTab: undoRedoState.currentEditedPanelTab,
-      editedPanelNode: undoRedoState.currentEditedPanelNode,
     })
   );
 

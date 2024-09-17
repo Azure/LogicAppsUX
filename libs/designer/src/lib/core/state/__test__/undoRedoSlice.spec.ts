@@ -1,10 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import reducer, { saveStateToHistory, updateStateHistoryOnRedoClick, updateStateHistoryOnUndoClick } from '../undoRedo/undoRedoSlice';
 import { StateHistory, StateHistoryItem } from '../undoRedo/undoRedoTypes';
+import constants from '../../../common/constants';
 
 describe('undo redo slice reducers', () => {
   const mockCompressedState1 = { compressedState: new Uint8Array([140, 27]) };
-  const mockCompressedState2 = { compressedState: new Uint8Array([120, 59]) };
+  const mockCompressedState2 = {
+    compressedState: new Uint8Array([120, 59]),
+    editedPanelTab: constants.PANEL_TAB_NAMES.PARAMETERS,
+    editedPanelNode: 'Initialize_Variable',
+  };
   const mockCompressedState3 = { compressedState: new Uint8Array([12, 1]) };
   const mockCompressedState4 = { compressedState: new Uint8Array([63, 150]) };
   const mockCompressedState5 = { compressedState: new Uint8Array([32, 47]) };
@@ -53,25 +58,47 @@ describe('undo redo slice reducers', () => {
     const mockInitialState = {
       past: [mockCompressedState1, mockCompressedState2],
       future: [mockCompressedState3],
-      stateHistoryItemIndex: 2,
+      stateHistoryItemIndex: -1,
     };
 
     // Current state gets put into future and latest past state gets removed to be used for current state
-    let state = reducer(mockInitialState, updateStateHistoryOnUndoClick(mockCompressedState4));
+    let state = reducer(mockInitialState, updateStateHistoryOnUndoClick({ compressedState: mockCompressedState4.compressedState }));
     expect(state.past).toEqual([mockCompressedState1]);
     expect(state.future).toEqual([mockCompressedState4, mockCompressedState3]);
+    expect(state.stateHistoryItemIndex).toEqual(1);
+    expect(state.currentEditedPanelNode).toEqual('Initialize_Variable');
+    expect(state.currentEditedPanelTab).toEqual(constants.PANEL_TAB_NAMES.PARAMETERS);
+
+    // On second undo click, state2 should be saved in future array with current panel details
+    state = reducer(state, updateStateHistoryOnUndoClick({ compressedState: mockCompressedState2.compressedState }));
+    expect(state.past).toEqual([]);
+    expect(state.future).toEqual([mockCompressedState2, mockCompressedState4, mockCompressedState3]);
+    expect(state.stateHistoryItemIndex).toEqual(0);
+    expect(state.currentEditedPanelNode).toEqual(undefined);
+    expect(state.currentEditedPanelTab).toEqual(undefined);
   });
 
   it('should update state history on redo click', () => {
     const mockInitialState = {
-      past: [mockCompressedState1, mockCompressedState2],
-      future: [mockCompressedState3],
+      past: [mockCompressedState1],
+      future: [mockCompressedState2, mockCompressedState3],
       stateHistoryItemIndex: 2,
     };
 
     // Current state gets put into past and first future state gets removed to be used for current state
-    let state = reducer(mockInitialState, updateStateHistoryOnRedoClick(mockCompressedState4));
-    expect(state.past).toEqual([mockCompressedState1, mockCompressedState2, mockCompressedState4]);
+    let state = reducer(mockInitialState, updateStateHistoryOnRedoClick({ compressedState: mockCompressedState4.compressedState }));
+    expect(state.past).toEqual([mockCompressedState1, mockCompressedState4]);
+    expect(state.future).toEqual([mockCompressedState3]);
+    expect(state.stateHistoryItemIndex).toEqual(2);
+    expect(state.currentEditedPanelNode).toEqual('Initialize_Variable');
+    expect(state.currentEditedPanelTab).toEqual(constants.PANEL_TAB_NAMES.PARAMETERS);
+
+    // On second redo click, state2 should be saved in past array with current panel details
+    state = reducer(state, updateStateHistoryOnRedoClick({ compressedState: mockCompressedState2.compressedState }));
+    expect(state.past).toEqual([mockCompressedState1, mockCompressedState4, mockCompressedState2]);
     expect(state.future).toEqual([]);
+    expect(state.stateHistoryItemIndex).toEqual(3);
+    expect(state.currentEditedPanelNode).toEqual(undefined);
+    expect(state.currentEditedPanelTab).toEqual(undefined);
   });
 });

@@ -22,17 +22,35 @@ export const undoRedoSlice = createSlice({
       state.currentEditedPanelNode = undefined;
     },
     updateStateHistoryOnUndoClick: (state, action: PayloadAction<StateHistoryItem>) => {
+      // Add current edited panel details to state being added to history
+      const newStateItem: StateHistoryItem = {
+        compressedState: action.payload.compressedState,
+        editedPanelTab: state.currentEditedPanelTab,
+        editedPanelNode: state.currentEditedPanelNode,
+      };
+
+      // Update current edited panel details to the one from the state we are undoing to
+      // This ensures we don't lose track of edited panel details on undo/redo click when state is updated
       state.currentEditedPanelTab = state.past[state.past.length - 1].editedPanelTab;
       state.currentEditedPanelNode = state.past[state.past.length - 1].editedPanelNode;
       state.past = state.past.slice(0, state.past.length - 1);
-      state.future = [action.payload, ...state.future];
+      state.future = [newStateItem, ...state.future];
       state.stateHistoryItemIndex = state.past.length;
     },
     updateStateHistoryOnRedoClick: (state, action: PayloadAction<StateHistoryItem>) => {
+      // Add current edited panel details to state being added to history
+      const newStateItem: StateHistoryItem = {
+        compressedState: action.payload.compressedState,
+        editedPanelTab: state.currentEditedPanelTab,
+        editedPanelNode: state.currentEditedPanelNode,
+      };
+
+      // Update current edited panel details to the one from the state we are redoing to
+      // This ensures we don't lose track of edited panel details on undo/redo click when state is updated
       state.currentEditedPanelTab = state.future[0].editedPanelTab;
       state.currentEditedPanelNode = state.future[0].editedPanelNode;
       state.future = state.future.slice(1);
-      state.past = [...state.past, action.payload];
+      state.past = [...state.past, newStateItem];
       state.stateHistoryItemIndex = state.past.length;
     },
   },
