@@ -188,7 +188,7 @@ export const EdgeContextualMenu = () => {
       LoggerService().log({
         area: 'EdgeContextualMenu:handlePasteClicked',
         level: LogEntryLevel.Verbose,
-        message: 'New node added via paste.',
+        message: `New ${isParallelBranch ? 'parallel' : ''} node added via paste.`,
       });
     },
     [graphId, childId, parentId, dispatch, upstreamNodesOfChild]
