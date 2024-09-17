@@ -222,6 +222,7 @@ export const EdgeContextualMenu = () => {
                   icon: <ClipboardIcon />,
                   text: pasteFromClipboard,
                   onClick: () => handlePasteClicked(false),
+                  dataAutomationId: automationId('paste'),
                   subMenuItems: [
                     {
                       text: pasteFromClipboard,
@@ -235,7 +236,6 @@ export const EdgeContextualMenu = () => {
                     },
                   ],
                 }}
-                data-automation-id={automationId('paste')}
               />
             )}
             {isUiInteractionsServiceEnabled()
