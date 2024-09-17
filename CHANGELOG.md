@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.94.0](https://github.com/Azure/LogicAppsUX/compare/v4.93.0...v4.94.0) (2024-09-17)
+
+
+### Features
+
+* **Designer:** Support Paste Parallel Action ([#5689](https://github.com/Azure/LogicAppsUX/issues/5689)) ([a773858](https://github.com/Azure/LogicAppsUX/commit/a77385896ed87b92f7834bd39b013d76bfb378e1))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Improving deserialization of conditionals ([#5700](https://github.com/Azure/LogicAppsUX/issues/5700)) ([db9ad5a](https://github.com/Azure/LogicAppsUX/commit/db9ad5a977791e8d3d53a4e8193513d708e85908))
+
 ## [4.93.0](https://github.com/Azure/LogicAppsUX/compare/v4.92.0...v4.93.0) (2024-09-16)
 
 
