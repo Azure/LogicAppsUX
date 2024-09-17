@@ -17,7 +17,7 @@ export const CustomMenu: React.FC<CustomMenuProps> = ({ item }) => {
       {item.subMenuItems ? (
         <Menu>
           <MenuTrigger>
-            <MenuItem icon={item?.icon} onClick={() => setOpenState(!openState)}>
+            <MenuItem icon={item?.icon} onClick={item?.onClick ? item.onClick : () => setOpenState(!openState)}>
               {item.text}
             </MenuItem>
           </MenuTrigger>

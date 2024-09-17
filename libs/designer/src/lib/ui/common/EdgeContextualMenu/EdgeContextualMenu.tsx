@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Popover, PopoverSurface, MenuList, MenuItem, MenuTrigger, MenuPopover, Menu } from '@fluentui/react-components';
+import { Popover, PopoverSurface, MenuList, MenuItem } from '@fluentui/react-components';
 import {
   LogEntryLevel,
   LoggerService,
@@ -217,37 +217,26 @@ export const EdgeContextualMenu = () => {
               </MenuItem>
             )}
             {isPasteEnabled && (
-              <Menu>
-                <MenuTrigger disableButtonEnhancement>
-                  <MenuItem
-                    id="nested"
-                    icon={<ClipboardIcon />}
-                    data-automation-id={automationId('paste')}
-                    onClick={() => handlePasteClicked(false)}
-                  >
-                    {pasteFromClipboard}
-                  </MenuItem>
-                </MenuTrigger>
-
-                <MenuPopover>
-                  <MenuList>
-                    <MenuItem
-                      id="nested-paste-action"
-                      data-automation-id={automationId('paste-action')}
-                      onClick={() => handlePasteClicked(false)}
-                    >
-                      {pasteFromClipboard}
-                    </MenuItem>
-                    <MenuItem
-                      id="nested-paste-parallel-action"
-                      data-automation-id={automationId('paste-parallel-action')}
-                      onClick={() => handlePasteClicked(true)}
-                    >
-                      {pasteParallelFromClipboard}
-                    </MenuItem>
-                  </MenuList>
-                </MenuPopover>
-              </Menu>
+              <CustomMenu
+                item={{
+                  icon: <ClipboardIcon />,
+                  text: pasteFromClipboard,
+                  onClick: () => handlePasteClicked(false),
+                  subMenuItems: [
+                    {
+                      text: pasteFromClipboard,
+                      ariaLabel: pasteFromClipboard,
+                      onClick: () => handlePasteClicked(false),
+                    },
+                    {
+                      text: pasteParallelFromClipboard,
+                      ariaLabel: pasteParallelFromClipboard,
+                      onClick: () => handlePasteClicked(true),
+                    },
+                  ],
+                }}
+                data-automation-id={automationId('paste')}
+              />
             )}
             {isUiInteractionsServiceEnabled()
               ? UiInteractionsService()
