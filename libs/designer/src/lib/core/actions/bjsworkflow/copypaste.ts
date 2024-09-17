@@ -3,7 +3,7 @@ import { getTriggerNodeId, setFocusNode, type RootState } from '../..';
 import { initCopiedConnectionMap, initScopeCopiedConnections } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import type { RelationshipIds } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
@@ -140,7 +140,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
 
   // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
+  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
 
   const updatedTokens = nodeTokenData.tokens.map((token) => {
     // Modify the actionName to a unique value
@@ -227,7 +227,6 @@ export const pasteScopeOperation = createAsyncThunk(
     const connectionReference = (getState() as RootState).connections.connectionReferences;
     const workflowParameters = state.workflowParameters.definitions;
     const workflowKind = state.workflow.workflowKind;
-    const enforceSplitOn = state.designerOptions.hostOptions.forceEnableSplitOn ?? false;
     const operations = state.workflow.operations;
     const nodeMap: Record<string, string> = {};
     for (const id of Object.keys(operations)) {
@@ -248,7 +247,6 @@ export const pasteScopeOperation = createAsyncThunk(
         workflowParameters,
         {},
         workflowKind,
-        enforceSplitOn,
         dispatch,
         { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
       ),

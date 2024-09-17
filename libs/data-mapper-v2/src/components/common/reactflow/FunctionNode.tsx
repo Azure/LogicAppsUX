@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useHoverFunctionNode, useSelectedNode } from '../../../core/state/selectors/selectors';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
 import { customTokens } from '../../../core/ThemeConect';
 
@@ -39,9 +39,12 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
   const contextMenu = useCardContextMenu();
 
-  const funcitonHasInputs = functionData?.maxNumberOfInputs !== 0;
+  const funcitonHasInputs = useMemo(() => functionData?.maxNumberOfInputs !== 0, [functionData?.maxNumberOfInputs]);
 
-  const functionInputsFull = !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs);
+  const functionInputsFull = useMemo(
+    () => !isFunctionInputSlotAvailable(functionWithConnections, functionData?.maxNumberOfInputs),
+    [functionData?.maxNumberOfInputs, functionWithConnections]
+  );
 
   const isLeftConnected =
     functionWithConnections?.inputs[0] &&
@@ -50,7 +53,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
   const getHandleStyle = useCallback(
-    (isInput: boolean, isConnected: boolean) => {
+    (_isInput: boolean, isConnected: boolean) => {
       let updatedStyle = styles.handleWrapper;
       if (isConnected) {
         updatedStyle = mergeClasses(updatedStyle, styles.connectedHandle);
@@ -63,21 +66,9 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
         }
       }
 
-      if (isInput && isHover) {
-        updatedStyle = mergeClasses(updatedStyle, styles.fullNode);
-      }
-
       return updatedStyle;
     },
-    [
-      isHover,
-      isSelected,
-      styles.connectedHandle,
-      styles.connectedSelectedHoverHandle,
-      styles.fullNode,
-      styles.handleWrapper,
-      styles.selectedHoverHandle,
-    ]
+    [isHover, isSelected, styles.connectedHandle, styles.connectedSelectedHoverHandle, styles.handleWrapper, styles.selectedHoverHandle]
   );
 
   const onMouseEnter = useCallback(() => {
@@ -117,20 +108,23 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
           style={{ left: '-7px' }}
         />
       )}
-      <Popover>
+      <Popover withArrow={true} trapFocus={true}>
         <PopoverTrigger>
           <Button
-            onClick={() => onClick()}
+            onClick={onClick}
+            data-selectableid={`source-${id}`}
             disabled={!!disabled}
             className={mergeClasses(styles.functionButton, isSelected || isHover ? styles.selectedHoverFunctionButton : '')}
           >
             <div
+              data-selectableid={`source-${id}`}
               className={styles.iconContainer}
               style={{
                 backgroundColor: customTokens[fnBranding.colorTokenName],
               }}
             >
               <FunctionIcon
+                data-selectableid={`source-${id}`}
                 iconSize={11}
                 functionKey={functionData.key}
                 functionName={functionData.functionName}
@@ -138,14 +132,14 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
                 color={tokens.colorNeutralForegroundInverted}
               />
             </div>
-            <Caption1 className={styles.functionName} truncate block>
+            <Caption1 data-selectableid={`source-${id}`} className={styles.functionName} truncate block>
               {functionData.displayName}
             </Caption1>
           </Button>
         </PopoverTrigger>
         <FunctionConfigurationPopover functionId={props.id} />
       </Popover>
-      <Handle type={'source'} position={Position.Right} className={getHandleStyle(false, isRightConnected)} />
+      <Handle type={'source'} position={Position.Right} className={getHandleStyle(false, isRightConnected)} isConnectable={true} />
     </div>
   );
 };

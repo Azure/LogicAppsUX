@@ -10,7 +10,7 @@ import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/mo
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { getBuiltInOperationInfo, isBuiltInOperation } from '@microsoft/logic-apps-shared';
+import { getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 interface TemplateCardProps {
   templateName: string;
@@ -21,14 +21,21 @@ const maxConnectorsToShow = 5;
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templates, subscriptionId, location } = useSelector((state: RootState) => ({
+  const { templates, subscriptionId, workflowAppName, location } = useSelector((state: RootState) => ({
     templates: state.manifest.availableTemplates,
     subscriptionId: state.workflow.subscriptionId,
+    workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
   }));
   const templateManifest = templates?.[templateName];
 
   const onSelectTemplate = () => {
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'Templates.TemplateCard',
+      message: 'Template is selected',
+      args: [templateName, workflowAppName],
+    });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
     dispatch(openQuickViewPanelView());

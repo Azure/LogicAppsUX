@@ -1,24 +1,18 @@
-import {
-  equals,
-  type ITreeFile,
-  type IFileSysTreeItem,
-  SchemaType,
-  type SchemaNodeExtended,
-  type SchemaExtended,
-} from '@microsoft/logic-apps-shared';
+import { equals, type ITreeFile, type IFileSysTreeItem, type SchemaNodeExtended, type SchemaExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useStyles } from './styles';
+import { usePanelBodyStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../core/state/Store';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
-import { toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
+import { Spinner } from '@fluentui/react-components';
+import useSchema from './useSchema';
 
 export interface SchemaPanelBodyProps {
-  isLeftDirection: boolean;
+  id: string;
   flattenedSchemaMap?: Record<string, SchemaNodeExtended>;
   schema?: SchemaExtended;
   selectedSchemaFile?: SchemaFile;
@@ -27,10 +21,11 @@ export interface SchemaPanelBodyProps {
   fileSelectorOptions: FileSelectorOption;
   setFileSelectorOptions: (option: FileSelectorOption) => void;
   showScehmaSelection?: boolean;
+  searchTerm?: string;
 }
 
 export const SchemaPanelBody = ({
-  isLeftDirection,
+  id,
   selectedSchemaFile,
   setSelectedSchemaFile,
   fileSelectorOptions,
@@ -38,13 +33,14 @@ export const SchemaPanelBody = ({
   showScehmaSelection,
   flattenedSchemaMap,
   errorMessage,
+  searchTerm,
   schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
-  const styles = useStyles();
+  const styles = usePanelBodyStyles();
+  const { schemaType, toggleEditState } = useSchema({ id });
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
-  const dispatch = useDispatch<AppDispatch>();
 
   const stringResources = useMemo(
     () => ({
@@ -104,10 +100,10 @@ export const SchemaPanelBody = ({
       setSelectedSchemaFile({
         name: item.name ?? '',
         path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
-        type: isLeftDirection ? SchemaType.Source : SchemaType.Target,
+        type: schemaType,
       });
     },
-    [setSelectedSchemaFile, isLeftDirection]
+    [setSelectedSchemaFile, schemaType]
   );
 
   const onOpenClose = useCallback(() => {
@@ -124,29 +120,25 @@ export const SchemaPanelBody = ({
       const schemaFile = files[0] as FileWithVsCodePath;
       if (!schemaFile.path) {
         console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile && isLeftDirection) {
+      } else if (schemaFile) {
         setSelectedSchemaFile({
           name: schemaFile.name,
           path: schemaFile.path,
-          type: isLeftDirection ? SchemaType.Source : SchemaType.Target,
+          type: schemaType,
         });
       } else {
         console.error('Missing schemaType');
       }
     },
-    [isLeftDirection, setSelectedSchemaFile]
+    [schemaType, setSelectedSchemaFile]
   );
 
   const onCancel = useCallback(() => {
-    if (isLeftDirection) {
-      dispatch(toggleSourceEditState(false));
-    } else {
-      dispatch(toggleTargetEditState(false));
-    }
-  }, [isLeftDirection, dispatch]);
+    toggleEditState(false);
+  }, [toggleEditState]);
 
   return (
-    <div className={styles.bodyWrapper}>
+    <div className={styles.root}>
       {showScehmaSelection ? (
         <FileSelector
           selectedKey={fileSelectorOptions}
@@ -178,9 +170,11 @@ export const SchemaPanelBody = ({
           }
         />
       ) : schema && flattenedSchemaMap ? (
-        <div className={styles.treeWrapper}>
-          <SchemaTree isLeftDirection={isLeftDirection} schema={schema} flattenedSchemaMap={flattenedSchemaMap} />
+        <div className={styles.treeContainer}>
+          <SchemaTree id={id} schema={schema} flattenedSchemaMap={flattenedSchemaMap} searchTerm={searchTerm} />
         </div>
+      ) : (!schema || !flattenedSchemaMap) && !errorMessage && selectedSchemaFile ? (
+        <Spinner size={'small'} />
       ) : null}
     </div>
   );

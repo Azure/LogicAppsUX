@@ -66,6 +66,10 @@ export const useOutsideClick = (refs: MutableRefObject<any>[], callback: () => v
 export const useConsoleLog = (value: any) =>
   useEffect(() => console.log('%c UseConsole>', 'color: #3386FF; font-weight: bold;', value), [value]);
 
+export const useNodeSize = (nodeId?: string) => {
+  return (useNodesData(nodeId ?? '')?.data?.['size'] as { width: number; height: number }) ?? { width: 0, height: 0 };
+};
+
 export const useNodeIndex = (nodeId?: string) => {
   return (useNodesData(nodeId ?? '')?.data?.['nodeIndex'] as number) ?? 0;
 };

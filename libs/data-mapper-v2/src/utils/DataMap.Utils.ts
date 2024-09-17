@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
   directAccessPseudoFunction,
@@ -11,13 +11,7 @@ import {
   indexPseudoFunctionKey,
 } from '../models/Function';
 import { findLast } from './Array.Utils';
-import {
-  applyConnectionValue,
-  flattenInputs,
-  isCustomValue,
-  nodeHasSourceNodeEventually,
-  nodeHasSpecificInputEventually,
-} from './Connection.Utils';
+import { applyConnectionValue, flattenInputs, isCustomValue, nodeHasSpecificInputEventually } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -26,7 +20,7 @@ import {
   isFunctionData,
   isIfAndGuid,
 } from './Function.Utils';
-import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
+import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
@@ -142,40 +136,28 @@ export const collectSequenceValue = (
   return result;
 };
 
-export const isIdForFunctionNode = (id: string): boolean => {
-  return !id.startsWith(SchemaType.Source) && !id.startsWith(SchemaType.Target);
-};
-
 export const collectConditionalValues = (currentConnection: Connection, connections: ConnectionDictionary): [string, string] => {
   const inputValues = getInputValues(currentConnection, connections);
 
   return [inputValues[0], inputValues[1]];
 };
 
-export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
-  // All functions connections must eventually terminate into the source
+export const invalidFunctions = (connections: ConnectionDictionary) => {
   const connectionsArray = Object.entries(connections);
 
-  const allNodesTerminateIntoSource = connectionsArray
-    .filter(([key, _connection]) => key.startsWith(targetPrefix))
-    .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
-
-  const allRequiredInputsFilledOut = connectionsArray.every(([_key, connection]) => {
+  const allRequiredInputsFilledOut = connectionsArray.filter(([_key, connection]) => {
     const selfNode = connection.self.node;
     if (isFunctionData(selfNode)) {
-      return (
-        !connection.outputs.length ||
-        selfNode.inputs.every((nodeInput, index) => {
-          return nodeInput.isOptional || connection.inputs[index].length > 0;
-        })
-      );
+      return selfNode.inputs.find((nodeInput, index) => {
+        return !nodeInput.isOptional && connection.inputs[index].length === 0;
+      });
     }
 
-    return true;
+    return false;
   });
 
   // Is valid to generate the map definition
-  return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
+  return allRequiredInputsFilledOut;
 };
 
 const isQuotedString = (value: string): boolean => {
@@ -568,7 +550,7 @@ export const addParentConnectionForRepeatingElementsNested = (
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
 ): boolean => {
-  if (sourceNode && sourceNode.parentKey) {
+  if (sourceNode?.parentKey && targetNode?.pathToRoot) {
     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
@@ -589,7 +571,17 @@ export const addParentConnectionForRepeatingElementsNested = (
         true
       );
 
-      if (!parentsAlreadyConnected) {
+      let parentConn: ConnectionUnit | undefined;
+      if (dataMapConnections[prefixedSourceKey]) {
+        parentConn = dataMapConnections[prefixedSourceKey].outputs.find((output) => {
+          if (output.isRepeating && isParentTargetNode(flattenedTargetSchema, firstRepeatingTargetNode, output.node.key)) {
+            return true;
+          }
+          return false;
+        });
+      }
+
+      if (!parentsAlreadyConnected && !parentConn) {
         applyConnectionValue(dataMapConnections, {
           targetNode: firstRepeatingTargetNode,
           targetNodeReactFlowKey: prefixedTargetKey,
@@ -629,32 +621,14 @@ export const addNodeToCanvasIfDoesNotExist = (newNode: SchemaNodeExtended, curre
   }
 };
 
-export const addAncestorNodesToCanvas = (
-  payloadNode: SchemaNodeExtended,
-  currentSourceSchemaNodes: SchemaNodeExtended[],
-  flattenedSourceSchema: SchemaNodeDictionary
-) => {
-  const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
-    (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
-  );
-
-  if (grandparentNodesOnCanvas.length > 0) {
-    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
-    const highestAncestor = grandparentNodesOnCanvas[0];
-    payloadNode.pathToRoot.forEach((ancestorNode) => {
-      if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
-        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes);
-      }
-    });
-  } else {
-    const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
-    const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
-    const parentNodeToAdd =
-      firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
-    if (parentNodeToAdd) {
-      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes);
-    }
+export const isParentTargetNode = (nodeDict: SchemaNodeDictionary, node: SchemaNodeExtended, potentialParentNodeId: string): boolean => {
+  if (node.parentKey === undefined || node.parentKey === '' || nodeDict[addTargetReactFlowPrefix(node.key)] === undefined) {
+    return false;
   }
+  if (node.parentKey === potentialParentNodeId || node.key === potentialParentNodeId) {
+    return true;
+  }
+  return isParentTargetNode(nodeDict, nodeDict[addTargetReactFlowPrefix(node.parentKey)], potentialParentNodeId);
 };
 
 // TODO JSON deserialization with the array type

@@ -1,6 +1,8 @@
-import type { Dimensions, XYPosition } from '@xyflow/react';
+import type { Rect, XYPosition } from '@xyflow/react';
 
-export type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[] };
+export type MapDefinitionEntry = {
+  [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[];
+};
 
 export interface FunctionPositionMetadata {
   targetKey: string;
@@ -29,9 +31,16 @@ export interface ConnectionAndOrder {
 }
 
 export interface MapMetadataV2 {
-  canvasDimensions: Dimensions;
+  canvasRect: Rect;
   functionNodes: FunctionMetadata[];
 }
+
+export const emptyCanvasRect: Rect = {
+  x: -1,
+  y: -1,
+  width: 0,
+  height: 0,
+};
 
 export interface MapMetadata {
   functionNodes: FunctionMetadata[];

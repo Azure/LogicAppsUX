@@ -10,7 +10,6 @@ import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
-import type { WritableDraft } from 'immer/dist/internal';
 import { getSplitIdsFromReactFlowConnectionId } from './ReactFlow.Util';
 import { UnboundedInput } from '../constants/FunctionConstants';
 
@@ -126,12 +125,14 @@ export const applyConnectionValue = (
     } else if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       // Check if an undefined input field exists first (created through PropPane)
       // - otherwise we can safely just append its value to the end
-      const indexOfFirstOpenInput = connection.inputs[0].findIndex((inputCon) => !inputCon);
-      confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : UnboundedInput;
+      if (connection.inputs && connection.inputs[0]) {
+        const indexOfFirstOpenInput = connection.inputs[0].findIndex((inputCon) => !inputCon);
+        confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : UnboundedInput;
+      }
     } else if (isConnectionUnit(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
       confirmedInputIndex = Object.values(connection.inputs).findIndex((inputCon) => inputCon.length < 1);
-    } else if (isCustomValue(input)) {
+    } else if (isCustomValue(input) && targetNode) {
       // Add input to first available that allows custom values
       confirmedInputIndex = Object.values(connection.inputs).findIndex(
         (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
@@ -371,8 +372,9 @@ export const collectSourceNodesForConnectionChain = (currentFunction: Connection
   return [currentFunction.self];
 };
 
-export const getActiveNodes = (connections: ConnectionDictionary, stateConnections?: Record<string, boolean>, selectedItemKey?: string) => {
+export const getActiveNodes = (state: DataMapOperationState, selectedItemKey?: string) => {
   const connectedItems: Record<string, string> = {};
+  const connections = state.dataMapConnections;
   if (selectedItemKey) {
     const selectedItemKeyParts = getSplitIdsFromReactFlowConnectionId(selectedItemKey);
 
@@ -389,12 +391,6 @@ export const getActiveNodes = (connections: ConnectionDictionary, stateConnectio
     selectedItemConnectedNodes.forEach((key) => {
       connectedItems[key] = key;
     });
-
-    if (stateConnections) {
-      Object.keys(stateConnections).forEach((connectedKey) => {
-        connectedItems[selectedItemKey] = connectedKey;
-      });
-    }
 
     connectedItems[selectedItemKey] = selectedItemKey;
   }
@@ -504,28 +500,6 @@ export const getFunctionConnectionUnits = (
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectSourceNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
-};
-
-export const bringInParentSourceNodesForRepeating = (
-  parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
-  _newState: DataMapOperationState
-) => {
-  if (parentTargetNode) {
-    // const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
-    // if (inputsToParentTarget) {
-    //   Object.keys(inputsToParentTarget).forEach((key) => {
-    //     const inputs = inputsToParentTarget[key];
-    //     inputs.forEach((input) => {
-    //       if (input && typeof input !== 'string') {
-    //         const inputSrc = input.node;
-    //         if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
-    //           newState.currentSourceSchemaNodes.push(inputSrc);
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
-  }
 };
 
 export const generateInputHandleId = (inputName: string, inputNumber: number) => `${inputName}${inputNumber}`;

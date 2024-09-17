@@ -14,6 +14,7 @@ import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
+import { ArmParser } from '../Utilities/ArmParser';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -457,7 +458,10 @@ export const saveWorkflowStandard = async (
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   clearDirtyState: () => void,
-  skipValidation?: boolean
+  options?: {
+    skipValidation?: boolean;
+    throwError?: boolean;
+  }
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -478,9 +482,9 @@ export const saveWorkflowStandard = async (
   }
 
   try {
-    if (!skipValidation) {
+    if (!options?.skipValidation) {
       try {
-        await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
+        await validateWorkflowStandard(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
       } catch (error: any) {
         if (error.status !== 404) {
           return;
@@ -511,15 +515,21 @@ export const saveWorkflowStandard = async (
 
     if (!isSuccessResponse(response.status)) {
       alert('Failed to save workflow');
+      if (options?.throwError) {
+        throw Error('Failed to save workflow');
+      }
       return;
     }
     clearDirtyState();
   } catch (error) {
     console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
   }
 };
 
-export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any): Promise<any> => {
+export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any, clearDirtyState: () => void): Promise<any> => {
   const workflowToSave = await convertDesignerWorkflowToConsumptionWorkflow(workflow);
 
   const outputWorkflow: Workflow = {
@@ -538,19 +548,19 @@ export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workfl
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
+    clearDirtyState();
   } catch (error) {
     console.log(error);
   }
 };
 
-const validateWorkflow = async (
+export const validateWorkflowStandard = async (
   siteResourceId: string,
   workflowName: string,
   workflow: any,
   connectionsData?: ConnectionsData,
   parametersData?: ParametersData,
-  settings?: Record<string, string>,
-  isConsumption = false
+  settings?: Record<string, string>
 ): Promise<any> => {
   const requestPayload = { properties: { ...workflow } };
 
@@ -577,9 +587,7 @@ const validateWorkflow = async (
     );
   } else {
     response = await axios.post(
-      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
-        isConsumption ? consumptionApiVersion : standardApiVersion
-      }`,
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${standardApiVersion}`,
       requestPayload,
       {
         headers: {
@@ -589,6 +597,27 @@ const validateWorkflow = async (
       }
     );
   }
+
+  if (response.status !== 200) {
+    return Promise.reject(response);
+  }
+};
+
+export const validateWorkflowConsumption = async (siteResourceId: string, location: string, workflow: any): Promise<any> => {
+  const { subscriptionId, resourceGroup, topResourceName } = new ArmParser(siteResourceId);
+  const logicApp = {
+    properties: { definition: workflow.definition, parameters: workflow.parameters, connectionReferences: workflow.connectionReferences },
+  };
+  const response = await axios.post(
+    `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
+    logicApp,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    }
+  );
 
   if (response.status !== 200) {
     return Promise.reject(response);

@@ -6,10 +6,9 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { TemplateService } from '@microsoft/logic-apps-shared';
+import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
-import { normalizeConnectorId } from '../../../../../core/templates/utils/helper';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -120,17 +119,19 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  onCreateClick: () => Promise<void>,
+  onCreateClick: () => void,
   {
     workflowName,
-    isLoadingCreate,
+    isCreating,
     isCreated,
+    errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
   }: {
     workflowName: string;
-    isLoadingCreate: boolean;
+    isCreating: boolean;
     isCreated: boolean;
+    errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
     previousTabId: string;
   }
@@ -156,6 +157,8 @@ export const reviewCreateTab = (
         })}
       </Link>
     </MessageBar>
+  ) : errorMessage ? (
+    <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
   ) : (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
@@ -172,7 +175,7 @@ export const reviewCreateTab = (
         id: 'P3OMN/',
         description: 'The button text for navigating to the workflows page after creating the workflow',
       })
-    ) : isLoadingCreate ? (
+    ) : isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />
     ) : (
       intl.formatMessage({
@@ -181,12 +184,8 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated
-      ? () => TemplateService()?.openBladeAfterCreate(workflowName)
-      : isLoadingCreate
-        ? () => {}
-        : onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
+    primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate(workflowName) : onCreateClick,
+    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
     secondaryButtonText: isCreated
       ? intl.formatMessage({
           defaultMessage: 'Close',
@@ -206,6 +205,6 @@ export const reviewCreateTab = (
       : () => {
           dispatch(selectPanelTab(previousTabId));
         },
-    secondaryButtonDisabled: isLoadingCreate,
+    secondaryButtonDisabled: isCreating,
   },
 });

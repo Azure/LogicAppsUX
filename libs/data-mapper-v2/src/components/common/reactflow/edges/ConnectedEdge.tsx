@@ -3,13 +3,27 @@ import { useSelectedEdge, useHoverEdge } from '../../../../core/state/selectors/
 import { useCallback, useMemo } from 'react';
 import { colors } from '../styles';
 import { useDispatch } from 'react-redux';
-import { setHoverState } from '../../../../core/state/DataMapSlice';
+import { setSelectedItem } from '../../../../core/state/DataMapSlice';
+import useEdgePath from './useEdgePath';
 
 const ConnectedEdge = (props: EdgeProps) => {
-  const { id, sourceX, sourceY, targetX, targetY } = props;
-  const dispatch = useDispatch();
+  const { id, source, data } = props;
   const isSelected = useSelectedEdge(id);
+  const dispatch = useDispatch();
   const isHovered = useHoverEdge(id);
+  const { sourceX, sourceY, targetX, targetY } = useEdgePath(props);
+
+  const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
+
+  const onClick = useCallback(() => {
+    if (source) {
+      dispatch(setSelectedItem((data?.sourceHandleId as string) ?? source));
+    }
+  }, [dispatch, source, data]);
+
+  if (sourceX === undefined || sourceY === undefined || targetX === undefined || targetY === undefined) {
+    return null;
+  }
 
   const [path] = getStraightPath({
     sourceX,
@@ -18,24 +32,9 @@ const ConnectedEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
-
-  const onMouseEnter = useCallback(() => {
-    dispatch(
-      setHoverState({
-        id: id,
-        type: 'edge',
-      })
-    );
-  }, [dispatch, id]);
-
-  const onMouseLeave = useCallback(() => {
-    dispatch(setHoverState());
-  }, [dispatch]);
-
   return (
-    <g id={`${id}_customEdge`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} />
+    <g id={`${id}_customEdge`} onClick={onClick} data-selectableid={id}>
+      <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} data-selectableid={id} />
     </g>
   );
 };

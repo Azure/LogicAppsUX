@@ -13,7 +13,7 @@ import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
@@ -21,9 +21,9 @@ import {
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
-import type { RelationshipIds } from '../panel/panelInterfaces';
+import type { RelationshipIds } from '../panel/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
-import { getWorkflowNodeFromGraphState } from './workflowSelectors';
+import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import {
   LogEntryLevel,
@@ -40,6 +40,7 @@ import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/li
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -286,8 +287,8 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
-      state.collapsedGraphIds = action.payload;
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
@@ -496,6 +497,7 @@ export const workflowSlice = createSlice({
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
     });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addMatcher(
       isAnyOf(
         addNode,
@@ -537,7 +539,6 @@ export const {
   deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
-  setCollapsedGraphIds,
   toggleCollapsedGraphId,
   addSwitchCase,
   discardAllChanges,
@@ -547,6 +548,7 @@ export const {
   removeEdgeFromRunAfter,
   clearFocusNode,
   setFocusNode,
+  setCollapsedGraphIds,
   replaceId,
   setRunIndex,
   setRepetitionRunData,
