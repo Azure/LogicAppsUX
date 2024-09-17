@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Popover, PopoverSurface, MenuList, MenuItem, MenuDivider } from '@fluentui/react-components';
+import { Popover, PopoverSurface, MenuList, MenuItem, MenuTrigger, MenuPopover, Menu } from '@fluentui/react-components';
 import {
   LogEntryLevel,
   LoggerService,
@@ -15,7 +15,7 @@ import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
 import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { useNodeDisplayName, type AppDispatch } from '../../../core';
+import { useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
@@ -29,7 +29,8 @@ import {
   ClipboardPasteRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
-import { PasteOperation } from '../OperationsCopyPaste/pasteOperation';
+import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
+import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -44,6 +45,7 @@ export const EdgeContextualMenu = () => {
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
 
   const [open, setOpen] = useState<boolean>(false);
   useEffect(() => setOpen(!!menuData), [menuData]);
@@ -92,6 +94,12 @@ export const EdgeContextualMenu = () => {
     description: 'Text for button to paste an action from clipboard',
   });
 
+  const pasteParallelFromClipboard = intl.formatMessage({
+    defaultMessage: 'Paste a parallel action',
+    id: 'wPjnM9',
+    description: 'Text for button to paste a parallel action from clipboard',
+  });
+
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     if (!graphId) {
@@ -132,7 +140,63 @@ export const EdgeContextualMenu = () => {
     [parentName, childName]
   );
 
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    }
+    return parentId;
+  }, [nodeMetadata, parentId]);
+
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId ?? ''));
+
+  const handlePasteClicked = useCallback(
+    async (isParallelBranch: boolean) => {
+      if (!graphId) {
+        return;
+      }
+      const relationshipIds = { graphId, childId, parentId };
+      const copiedNode = await retrieveClipboardData();
+      if (!copiedNode) {
+        return;
+      }
+      if (copiedNode?.isScopeNode) {
+        dispatch(
+          pasteScopeOperation({
+            relationshipIds,
+            nodeId: copiedNode.nodeId,
+            serializedValue: copiedNode.serializedOperation,
+            allConnectionData: copiedNode.allConnectionData,
+            staticResults: copiedNode.staticResults,
+            upstreamNodeIds: upstreamNodesOfChild,
+            isParallelBranch,
+          })
+        );
+      } else {
+        dispatch(
+          pasteOperation({
+            relationshipIds,
+            nodeId: copiedNode.nodeId,
+            nodeData: copiedNode.nodeData,
+            nodeTokenData: copiedNode.nodeTokenData,
+            operationInfo: copiedNode.nodeOperationInfo,
+            connectionData: copiedNode.nodeConnectionData,
+            comment: copiedNode.nodeComment,
+            isParallelBranch,
+          })
+        );
+      }
+      LoggerService().log({
+        area: 'EdgeContextualMenu:handlePasteClicked',
+        level: LogEntryLevel.Verbose,
+        message: 'New node added via paste.',
+      });
+    },
+    [graphId, childId, parentId, dispatch, upstreamNodesOfChild]
+  );
+
   const ref = useRef<HTMLDivElement>(null);
+  const anotherRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -145,7 +209,7 @@ export const EdgeContextualMenu = () => {
         positioning={{ target: ref.current, position: 'after' }}
       >
         <PopoverSurface style={{ padding: '4px' }}>
-          <MenuList onClick={() => setOpen(false)}>
+          <MenuList onClick={() => setOpen(false)} ref={anotherRef}>
             <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
               {newActionText}
             </MenuItem>
@@ -155,14 +219,37 @@ export const EdgeContextualMenu = () => {
               </MenuItem>
             )}
             {isPasteEnabled && (
-              <>
-                <MenuDivider />
-                <PasteOperation location="EdgeContextualMenu">
-                  <MenuItem icon={<ClipboardIcon />} data-automation-id={automationId('paste')}>
+              <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                  <MenuItem
+                    id="nested"
+                    icon={<ClipboardIcon />}
+                    data-automation-id={automationId('paste')}
+                    onClick={() => handlePasteClicked(false)}
+                  >
                     {pasteFromClipboard}
                   </MenuItem>
-                </PasteOperation>
-              </>
+                </MenuTrigger>
+
+                <MenuPopover>
+                  <MenuList>
+                    <MenuItem
+                      id="nested-paste-action"
+                      data-automation-id={automationId('paste-action')}
+                      onClick={() => handlePasteClicked(false)}
+                    >
+                      {pasteFromClipboard}
+                    </MenuItem>
+                    <MenuItem
+                      id="nested-paste-parallel-action"
+                      data-automation-id={automationId('paste-parallel-action')}
+                      onClick={() => handlePasteClicked(true)}
+                    >
+                      {pasteParallelFromClipboard}
+                    </MenuItem>
+                  </MenuList>
+                </MenuPopover>
+              </Menu>
             )}
             {isUiInteractionsServiceEnabled()
               ? UiInteractionsService()
