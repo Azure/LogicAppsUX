@@ -3,12 +3,15 @@ import { Binder } from '../binder';
 import constants from '../constants';
 
 export default class ApiConnectionInputsBinder extends Binder {
-  bind(inputs: any, inputParameters?: Record<string, InputParameter>, operation?: Swagger.Operation): BoundParameters {
+  async bind(inputs: any, inputParameters?: Record<string, InputParameter>, operation?: Swagger.Operation): Promise<BoundParameters> {
     if (!inputParameters || !operation) {
       return this.makeUntypedInputsParameters(inputs);
     }
-
-    return unmap(inputParameters).reduce(this.makeReducer(inputs, this.makeBindFunction(operation)), {} as BoundParameters);
+    const boundInputParameters = unmap(inputParameters).reduce(
+      this.makeReducer(inputs, this.makeBindFunction(operation)),
+      {} as BoundParameters
+    );
+    return { ...boundInputParameters };
   }
 
   makeUntypedInputsParameters(inputs: any): BoundParameters {

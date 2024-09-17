@@ -1,4 +1,12 @@
-import type { BoundParameter, BoundParameters, InputParameter, LogicApps, OperationManifest, Swagger, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type {
+  BoundParameter,
+  BoundParameters,
+  InputParameter,
+  LogicApps,
+  OperationManifest,
+  Swagger,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
 import { equals, getObjectPropertyValue, isNullOrUndefined, unmap } from '@microsoft/logic-apps-shared';
 import { Binder } from '../../parsers/binders/binder';
 import {
@@ -15,7 +23,6 @@ import {
   RecurrenceInputsBinder,
   SendToBatchInputsBinder,
   SwitchInputsBinder,
-  WaitInputsBinder,
   WorkflowInputsBinder,
   XmlValidationInputsBinder,
   XsltInputsBinder,
@@ -136,13 +143,17 @@ class ManifestInputsBinder extends Binder {
     this._placeholderForDynamicInputs = placeholderForDynamicInputs;
   }
 
-  async bind(inputs: any, inputParameters: Record<string, InputParameter>, customSwagger: SwaggerParser | undefined): Promise<BoundParameters> {
+  async bind(
+    inputs: any,
+    inputParameters: Record<string, InputParameter>,
+    customSwagger: SwaggerParser | undefined
+  ): Promise<BoundParameters> {
     if (inputs === undefined) {
       return {};
     }
 
     const inputsToBind = { inputs };
-    
+
     const operationInputs = getInputsValueFromDefinitionForManifest(
       this._operationManifest.properties.inputsLocation ?? ['inputs'],
       this._operationManifest,
@@ -203,7 +214,7 @@ class ManifestInputsBinder extends Binder {
       /* in */ '',
       [parameter],
       /* createInvisibleParameter */ false,
-      /* useDefault */ false,
+      /* useDefault */ false
     );
 
     return parametersValue.length > 0 ? parametersValue[0]?.value : undefined;

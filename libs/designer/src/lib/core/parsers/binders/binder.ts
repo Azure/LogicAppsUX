@@ -1,11 +1,10 @@
-import type { BoundParameter, BoundParameters, InputParameter, OutputParameter, Swagger } from '@microsoft/logic-apps-shared';
+import type { BoundParameter, BoundParameters, InputParameter, Swagger } from '@microsoft/logic-apps-shared';
 import {
   DefaultKeyPrefix,
   equals,
+  getPropertyValue,
   isNullOrUndefined,
   isString,
-  OutputKeys,
-  OutputSource,
   ParameterLocations,
   removeConnectionPrefix,
   UriTemplateGenerator,
@@ -15,43 +14,6 @@ import constants from './constants';
 import type { BindFunction, ReduceFunction } from './types';
 
 export abstract class Binder {
-  protected bindOutputParameterToTypedOutputs(outputs: any, parameter: OutputParameter): BoundParameter<any> {
-    const { name, source, visibility } = parameter;
-    const displayName = this.getOutputParameterDisplayName(parameter);
-    const identifiers = this.parsePath(name).filter((identifier) => {
-      return !equals(this.resolveIdentifier(identifier), OutputKeys.Body);
-    });
-
-    let value: any;
-    if (equals(source, OutputSource.Headers)) {
-      value = outputs.headers;
-    } else if (equals(source, OutputSource.StatusCode)) {
-      value = outputs.statusCode;
-    } else {
-      value = outputs.body;
-    }
-
-    while (identifiers.length > 0 && !isNullOrUndefined(value)) {
-      const identifier = this.resolveIdentifier(identifiers.shift()!);
-
-      if (equals(identifier, OutputKeys.Body)) {
-        value = value.body;
-      } else if (equals(identifier, OutputKeys.Headers)) {
-        value = value.headers;
-      } else if (equals(identifier, OutputKeys.Name)) {
-        value = value.name;
-      } else if (equals(identifier, OutputKeys.Properties)) {
-        value = value.properties;
-      } else if (Object.prototype.hasOwnProperty.call(value, identifier)) {
-        value = value[identifier];
-      } else {
-        value = undefined;
-      }
-    }
-
-    return this.buildBoundParameter(displayName, value, visibility);
-  }
-
   protected buildBoundParameter(
     displayName: string,
     value: any,
@@ -93,61 +55,33 @@ export abstract class Binder {
     let value: any;
     if (key === `${ParameterLocations.Body}.${DefaultKeyPrefix}`) {
       value = body;
+    } else if (equals($in, ParameterLocations.Body)) {
+      value = getPropertyValue(body, name);
+    } else if (equals($in, ParameterLocations.Header)) {
+      value = getPropertyValue(headers, name);
+    } else if (equals($in, ParameterLocations.Path)) {
+      value = this.makePathObject(path, template);
+      value = getPropertyValue(value, name);
+    } else if (equals($in, ParameterLocations.Query)) {
+      value = getPropertyValue(queries, name);
     } else {
-      const identifiers = this.parsePath(name).filter((identifier) => {
-        return !equals(this.resolveIdentifier(identifier), OutputKeys.Body);
-      });
-
-      if (equals($in, ParameterLocations.Body)) {
-        value = body;
-      } else if (equals($in, ParameterLocations.Header)) {
-        value = headers;
-      } else if (equals($in, ParameterLocations.Path)) {
-        value = this.makePathObject(path, template);
-      } else if (equals($in, ParameterLocations.Query)) {
-        value = queries;
-      } else {
-        value = inputs;
-      }
-
-      while (identifiers.length > 0 && !isNullOrUndefined(value)) {
-        const identifier = this.resolveIdentifier(identifiers.shift()!);
-        value = Object.prototype.hasOwnProperty.call(value, identifier) ? value[identifier] : undefined;
-      }
+      value = inputs;
     }
 
     if (equals($in, ParameterLocations.Path) && !isNullOrUndefined(value)) {
       if (equals(encode, 'triple')) {
-        value = decodeURIComponent(decodeURIComponent(decodeURIComponent(value)));
+        value = `decodeURIComponent(decodeURIComponent(decodeURIComponent(${value})))`;
       } else if (equals(encode, 'double')) {
-        value = decodeURIComponent(decodeURIComponent(value));
+        value = "decodeURIComponent(decodeURIComponent('AccountNameFromSettings'))";
       } else {
-        value = decodeURIComponent(value);
+        value = `decodeURIComponent(${value})`;
       }
     }
 
     return value;
   }
 
-  protected getOutputParameterDisplayName(parameter: OutputParameter): string {
-    const { description, name, summary, title } = parameter;
-    const displayName = title || summary || description;
-
-    if (displayName) {
-      return displayName;
-    }
-
-    switch (name) {
-      case OutputKeys.Body:
-        return 'Resources.BODY_PARAMETER';
-      case OutputKeys.Outputs:
-        return 'Resources.OUTPUTS';
-      default:
-        return name;
-    }
-  }
-
-  protected makeBindFunction(operation: Swagger.Operation) {
+  protected makeBindFunction(operation: Swagger.Operation): BindFunction<InputParameter> {
     return (inputs: any, parameter: InputParameter): BoundParameter<any> | undefined => {
       // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
       // branch which never ran, because the condition expression was false
