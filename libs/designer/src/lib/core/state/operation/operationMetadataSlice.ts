@@ -363,6 +363,17 @@ export const operationMetadataSlice = createSlice({
         args: [action.payload.id],
       });
     },
+    deleteStaticResult: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      delete state.staticResults[id];
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+        args: [action.payload.id],
+      });
+    },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
       const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
@@ -591,6 +602,7 @@ export const {
   clearDynamicIO,
   updateNodeSettings,
   updateStaticResults,
+  deleteStaticResult,
   updateParameterConditionalVisibility,
   updateParameterValidation,
   updateParameterEditorViewModel,

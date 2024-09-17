@@ -187,6 +187,11 @@ export const PanelContainer = ({
 
   const minWidth = pinnedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
 
+  if (suppressDefaultNodeSelectFunctionality) {
+    // Used in cases like BPT where we do not want to show the panel during node selection
+    return null;
+  }
+
   return (
     <OverlayDrawer
       aria-label={panelLabel}

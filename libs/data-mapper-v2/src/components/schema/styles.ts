@@ -32,6 +32,7 @@ export const usePanelStyles = makeStyles({
     paddingRight: '0px',
     paddingLeft: '0px',
     width: '307px',
+    scrollbarWidth: 'none',
   },
   targetSchemaBody: {
     position: 'relative',
