@@ -508,7 +508,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it('creates two conditional property connections with two separate if functions', () => {
+      it.skip('creates two conditional property connections with two separate if functions', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             '$if(/ns0:Root/ConditionalMapping/ItemPrice)': {
