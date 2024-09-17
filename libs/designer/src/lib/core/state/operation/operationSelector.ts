@@ -22,16 +22,12 @@ export const getNodeOperationData = (state: OperationMetadataState, nodeId: stri
     nodeInputs: getRecordEntry(state.inputParameters, nodeId),
     nodeOutputs: getRecordEntry(state.outputParameters, nodeId),
     nodeDependencies: getRecordEntry(state.dependencies, nodeId),
-    operationMetadata: getNodeOperationMetadata(state, nodeId),
+    operationMetadata: getRecordEntry(state.operationMetadata, nodeId),
     settings: getRecordEntry(state.settings, nodeId),
     staticResult: getRecordEntry(state.staticResults, nodeId),
     actionMetadata: getRecordEntry(state.actionMetadata, nodeId),
     repetitionInfo: getRecordEntry(state.repetitionInfos, nodeId),
   };
-};
-
-export const getNodeOperationMetadata = (state: OperationMetadataState, nodeId: string) => {
-  return getRecordEntry(state.operationMetadata, nodeId);
 };
 
 export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {

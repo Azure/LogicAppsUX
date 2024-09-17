@@ -1,4 +1,4 @@
-import { useNodeDisplayName, type AppDispatch } from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -18,16 +18,13 @@ import { Link, Icon } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
-import { Card, OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
+import { OperationSearchHeader, XLargeText } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { retrieveClipboardData } from '../../../core/utils/clipboard';
-import type { PasteOperationPayload } from '../../../core/actions/bjsworkflow/copypaste';
-import { PasteOperation } from '../../../ui/common/OperationsCopyPaste/pasteOperation';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -201,11 +198,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Text for the Details page navigation heading',
   });
 
-  const pasteActionHeadingText = intl.formatMessage({
-    defaultMessage: 'Paste an action',
-    id: '53OJmV',
-    description: 'Text for the "Paste an action" page header',
-  });
   const headingText = isTrigger
     ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'dBxX0M', description: 'Text for the "Add Trigger" page header' })
     : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
@@ -216,36 +208,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     description: 'Aria label for the close button in the Add Action Panel',
   });
 
-  const [copiedNode, setCopiedNode] = useState<PasteOperationPayload | undefined>(undefined);
-  useEffect(() => {
-    (async () => {
-      const copiedNode = await retrieveClipboardData();
-      setCopiedNode(copiedNode);
-    })();
-  }, []);
-  const displayName = useNodeDisplayName(copiedNode?.nodeId);
-
   return (
     <>
-      {!isTrigger && copiedNode && (
-        <>
-          <div className="msla-app-action-header">
-            <XLargeText text={pasteActionHeadingText} />
-            <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
-          </div>
-          <PasteOperation location="RecommendationPanel" isParallelBranch={isParallelBranch}>
-            <Card
-              title={displayName}
-              brandColor={copiedNode?.nodeData?.operationMetadata?.brandColor}
-              drag={undefined}
-              draggable={false}
-              dragPreview={undefined}
-              icon={copiedNode?.nodeData?.operationMetadata?.iconUri}
-              id={copiedNode.nodeId}
-            />
-          </PasteOperation>
-        </>
-      )}
       <div className="msla-app-action-header">
         <XLargeText text={headingText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
@@ -258,7 +222,6 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           </Link>
         </div>
       ) : null}
-
       {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,

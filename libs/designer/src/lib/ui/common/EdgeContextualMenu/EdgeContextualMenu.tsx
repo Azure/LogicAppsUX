@@ -45,7 +45,6 @@ export const EdgeContextualMenu = () => {
   const childId = useMemo(() => menuData?.childId, [menuData]);
   const isLeaf = useMemo(() => menuData?.isLeaf, [menuData]);
   const location = useMemo(() => menuData?.location, [menuData]);
-  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
 
   const [open, setOpen] = useState<boolean>(false);
   useEffect(() => setOpen(!!menuData), [menuData]);
@@ -140,6 +139,7 @@ export const EdgeContextualMenu = () => {
     [parentName, childName]
   );
 
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
   const newParentId = useMemo(() => {
     if (nodeMetadata?.subgraphType) {
@@ -147,7 +147,6 @@ export const EdgeContextualMenu = () => {
     }
     return parentId;
   }, [nodeMetadata, parentId]);
-
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId ?? ''));
 
   const handlePasteClicked = useCallback(
@@ -196,7 +195,6 @@ export const EdgeContextualMenu = () => {
   );
 
   const ref = useRef<HTMLDivElement>(null);
-  const anotherRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
@@ -209,7 +207,7 @@ export const EdgeContextualMenu = () => {
         positioning={{ target: ref.current, position: 'after' }}
       >
         <PopoverSurface style={{ padding: '4px' }}>
-          <MenuList onClick={() => setOpen(false)} ref={anotherRef}>
+          <MenuList onClick={() => setOpen(false)}>
             <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
               {newActionText}
             </MenuItem>

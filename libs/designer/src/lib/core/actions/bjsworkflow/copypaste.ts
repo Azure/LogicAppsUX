@@ -10,7 +10,7 @@ import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } 
 import { createIdCopy, getRecordEntry, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
-import { getNodeOperationData, getNodeOperationMetadata } from '../../state/operation/operationSelector';
+import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
@@ -70,8 +70,6 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
     scopeNodeId = removeIdTag(scopeNodeId);
     const newNodeId = createIdCopy(scopeNodeId);
 
-    const nodeMetaData = getNodeOperationMetadata(state.operations, scopeNodeId);
-
     const serializedOperation = await serializeOperation(state, scopeNodeId, {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
@@ -94,9 +92,6 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
     });
     const clipboardItem = JSON.stringify({
       nodeId: newNodeId,
-      nodeData: {
-        operationMetadata: nodeMetaData,
-      },
       serializedOperation,
       allConnectionData,
       staticResults,
