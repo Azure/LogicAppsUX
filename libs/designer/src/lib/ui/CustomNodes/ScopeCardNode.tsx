@@ -105,14 +105,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   useEffect(() => {
-    if (isMonitoringView && metadata?.runData?.status && metadata.runData.status !== 'InProgress') {
-      setShowLoopPager(true);
-    } else {
-      setShowLoopPager(false);
-    }
-  }, [isMonitoringView, metadata]);
-
-  useEffect(() => {
     if (!isNullOrUndefined(repetitionData)) {
       dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionData.properties as LogicAppsV2.WorkflowRunAction }));
     }
@@ -189,8 +181,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     copyCalloutTimeout && clearTimeout(copyCalloutTimeout);
     setShowCopyCallout(false);
   }, [copyCalloutTimeout]);
-
-  const [showLoopPager, setShowLoopPager] = useState(false);
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
 
@@ -279,6 +269,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const renderLoopsPager = useMemo(() => {
+    if (metadata?.runData?.status && metadata.runData.status !== 'InProgress') {
+      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
+    }
+
+    return null;
+  }, [graphCollapsed, metadata, scopeId]);
+
   const nodeIndex = useNodeIndex(id);
 
   if (!node) {
@@ -343,9 +341,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {normalizedType === constants.NODE.TYPE.FOREACH && showLoopPager ? (
-            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
-          ) : null}
+          {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
