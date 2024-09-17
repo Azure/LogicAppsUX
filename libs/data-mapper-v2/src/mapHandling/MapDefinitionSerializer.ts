@@ -144,7 +144,7 @@ const createSourcePath = (
         value = input.node.key;
       } else if (input.node.key.startsWith(ifPseudoFunctionKey)) {
         const values = collectConditionalValues(connections[input.reactFlowKey], connections);
-        value = values[1]; // danielle maybe this
+        value = values[1];
       } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
         const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
         value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
@@ -291,7 +291,7 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   const ifContents = values[0].replaceAll(valueToTrim, '');
 
   // If entry
-  newPath.push({ key: `${mapNodeParams.if}${Math.random()}(${ifContents})` }); // danielle if we push the same value??? idk
+  newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
 };
 
 const addLoopingToNewPathItems = (

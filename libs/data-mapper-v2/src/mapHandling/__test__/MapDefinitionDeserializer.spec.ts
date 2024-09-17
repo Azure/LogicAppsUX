@@ -368,7 +368,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
-      it.only('creates a simple conditional property connection', () => {
+      it('creates a simple conditional property connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             '$if(/ns0:Root/ConditionalMapping/ItemQuantity)': {
