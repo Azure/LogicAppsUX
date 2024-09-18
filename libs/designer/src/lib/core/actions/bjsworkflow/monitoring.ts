@@ -82,7 +82,6 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const boundInputs: BoundParameters[] = await inputsBinder.bind(
     inputsToBind,
     type,
-    kind,
     inputParameters,
     operation,
     manifest,

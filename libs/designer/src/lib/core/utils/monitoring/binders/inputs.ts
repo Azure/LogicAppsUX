@@ -14,7 +14,6 @@ export default class InputsBinder {
   async bind(
     inputs: any,
     type: string,
-    kind: string | undefined,
     inputParametersByName: Record<string, InputParameter>,
     operation: LAOperation | undefined,
     manifest?: OperationManifest,

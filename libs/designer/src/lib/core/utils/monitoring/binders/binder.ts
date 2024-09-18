@@ -70,11 +70,11 @@ export abstract class Binder {
 
     if (equals($in, ParameterLocations.Path) && !isNullOrUndefined(value)) {
       if (equals(encode, 'triple')) {
-        value = `decodeURIComponent(decodeURIComponent(decodeURIComponent(${value})))`;
+        value = decodeURIComponent(decodeURIComponent(decodeURIComponent(value)));
       } else if (equals(encode, 'double')) {
-        value = "decodeURIComponent(decodeURIComponent('AccountNameFromSettings'))";
+        value = decodeURIComponent(decodeURIComponent(value));
       } else {
-        value = `decodeURIComponent(${value})`;
+        value = decodeURIComponent(value);
       }
     }
 
