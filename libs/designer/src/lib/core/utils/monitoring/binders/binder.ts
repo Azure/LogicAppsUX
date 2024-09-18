@@ -11,7 +11,6 @@ import {
   equals,
   getPropertyValue,
   isNullOrUndefined,
-  isString,
   ParameterLocations,
   removeConnectionPrefix,
   UriTemplateGenerator,
@@ -32,20 +31,6 @@ export abstract class Binder {
       ...(visibility ? { visibility } : null),
       ...additionalProperties,
     };
-  }
-
-  protected disambiguateBoundParameter(
-    boundParameters: BoundParameters | undefined,
-    originalKey: string,
-    newKey: string
-  ): BoundParameters | undefined {
-    if (!boundParameters || !Object.prototype.hasOwnProperty.call(boundParameters, originalKey)) {
-      return boundParameters;
-    }
-
-    boundParameters = { ...boundParameters, [newKey]: boundParameters[originalKey] };
-    delete boundParameters[originalKey];
-    return boundParameters;
   }
 
   protected getInputParameterDisplayName(parameter: InputParameter): string {
@@ -160,10 +145,6 @@ export abstract class Binder {
 
   protected makeUntypedInputsParameters(inputs: any): BoundParameters {
     return this.makeBoundParameter(constants.UNTYPED.INPUTS, 'Resources.DISPLAY_TEXT_UNTYPED_INPUTS', inputs);
-  }
-
-  protected resolveIdentifier(identifier: any): string {
-    return isString(identifier) ? identifier : String(identifier.value);
   }
 
   private _makeBoundParameters(key: string, boundParameter: BoundParameter<any>): BoundParameters {

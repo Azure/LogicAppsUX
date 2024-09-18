@@ -46,7 +46,11 @@ export default class InputsBinder {
         return binder.bind(input, inputParametersByName, customSwagger);
       }
 
-      if (equals(type, constants.NODE.TYPE.API_CONNECTION) || equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK)) {
+      if (
+        equals(type, constants.NODE.TYPE.API_CONNECTION) ||
+        equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ||
+        equals(type, constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
+      ) {
         const binder = new ApiConnectionInputsBinder();
         return binder.bind(input, inputParametersByName, operation);
       }

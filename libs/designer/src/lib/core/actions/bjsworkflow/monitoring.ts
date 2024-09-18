@@ -22,7 +22,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
-  inputsOutputs: any;
+  inputsOutputs: InputsOutputsBinding;
 }
 
 interface InputsOutputsBinding {
@@ -31,6 +31,12 @@ interface InputsOutputsBinding {
   outputs: BoundParameters;
 }
 
+/**
+ * Asynchronous thunk action to initialize inputs and outputs binding.
+ * @param {InitInputsOutputsPayload} payload - The payload containing nodeId and inputsOutputs.
+ * @param {Object} thunkAPI - The thunk API object containing getState method.
+ * @returns {Promise<InputsOutputsBinding>} A promise that resolves to an InputsOutputsBinding object.
+ */
 export const initializeInputsOutputsBinding = createAsyncThunk(
   'initializeInputsOutputsBinding',
   async (payload: InitInputsOutputsPayload, { getState }): Promise<InputsOutputsBinding> => {
