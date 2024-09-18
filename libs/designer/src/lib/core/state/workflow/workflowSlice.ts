@@ -40,7 +40,7 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
-import { initializeInputsOutputsBinding } from '../../utils/binders/monitoring';
+import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
