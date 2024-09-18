@@ -10,14 +10,14 @@ import {
   map,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { RootState } from '../../../core';
+import type { RootState } from '../..';
 import { getOperationManifest } from '../../queries/operation';
-import InputsBinder from './inputs';
+import InputsBinder from '../../utils/monitoring/binders/inputs';
 import constants from '../../../common/constants';
-import { parseOutputs } from '../monitoring';
-import { getRecurrenceParameters } from '../parameters/recurrence';
-import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
-import { ParameterGroupKeys } from '../parameters/helper';
+import { parseOutputs } from '../../utils/monitoring';
+import { getRecurrenceParameters } from '../../utils/parameters/recurrence';
+import { getCustomSwaggerIfNeeded } from './initialize';
+import { ParameterGroupKeys } from '../../utils/parameters/helper';
 
 interface InitInputsOutputsPayload {
   nodeId: string;

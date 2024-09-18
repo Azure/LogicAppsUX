@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../../core';
-import { initializeInputsOutputsBinding } from '../../../../../core/utils/binders/monitoring';
+import { initializeInputsOutputsBinding } from '../../../../../core/actions/bjsworkflow/monitoring';
 
 export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
