@@ -1,4 +1,11 @@
-import type { BoundParameter, BoundParameters, InputParameter, LAOperation } from '@microsoft/logic-apps-shared';
+import type {
+  BindFunction,
+  BoundParameter,
+  BoundParameters,
+  InputParameter,
+  LAOperation,
+  ReduceFunction,
+} from '@microsoft/logic-apps-shared';
 import {
   DefaultKeyPrefix,
   equals,
@@ -11,7 +18,6 @@ import {
   UriTemplateParser,
 } from '@microsoft/logic-apps-shared';
 import constants from './constants';
-import type { BindFunction, ReduceFunction } from './types';
 
 export abstract class Binder {
   protected buildBoundParameter(

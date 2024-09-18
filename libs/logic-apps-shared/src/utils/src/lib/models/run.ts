@@ -63,6 +63,10 @@ export interface BoundParameter<T> {
   visibility?: string;
 }
 
+export type BindFunction<T> = (values: any, parameter: T) => BoundParameter<any> | undefined;
+
+export type ReduceFunction<T, U> = (previous: T, current: U) => T;
+
 export type CallbackInfo = CallbackInfoWithRelativePath | CallbackInfoWithValue;
 
 export interface CallbackInfoWithRelativePath {
