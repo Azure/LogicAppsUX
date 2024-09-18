@@ -2,18 +2,12 @@ import type {
   BoundParameters,
   InputParameter,
   LAOperation,
-  LogicApps,
   OperationManifest,
   ParameterInfo,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
-import {
-  ApiConnectionInputsBinder,
-  DefaultInputsBinder,
-  SendToBatchInputsBinder,
-  ManifestInputsBinder,
-} from './inputs/index';
+import { ApiConnectionInputsBinder, DefaultInputsBinder, SendToBatchInputsBinder, ManifestInputsBinder } from './inputs/index';
 import constants from '../../../../common/constants';
 
 export default class InputsBinder {
@@ -26,9 +20,7 @@ export default class InputsBinder {
     manifest?: OperationManifest,
     customSwagger?: SwaggerParser,
     nodeParameters?: Record<string, ParameterInfo>,
-    operationMetadata?: Record<string, any>,
-    _recurrence?: LogicApps.Recurrence,
-    _recurrenceParameters?: InputParameter[]
+    operationMetadata?: Record<string, any>
   ): Promise<BoundParameters[]> {
     let inputArray: any[];
     if (!Array.isArray(inputs)) {

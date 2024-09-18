@@ -4,7 +4,6 @@ import {
   getRecordEntry,
   LoggerService,
   OperationManifestService,
-  RecurrenceType,
   Status,
   type BoundParameters,
   map,
@@ -16,7 +15,6 @@ import { getOperationManifest } from '../../queries/operation';
 import InputsBinder from '../../utils/monitoring/binders/inputs';
 import constants from '../../../common/constants';
 import { parseOutputs, parseInputs } from '../../utils/monitoring';
-import { getRecurrenceParameters } from '../../utils/parameters/recurrence';
 import { getCustomSwaggerIfNeeded } from './initialize';
 import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
@@ -70,8 +68,6 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operationInfo) : undefined;
   const customSwagger = manifest ? await getCustomSwaggerIfNeeded(manifest.properties, definition) : undefined;
   const inputsToBind = getInputsToBind(operationInfo.type, inputs);
-  const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
-  const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operationInfo);
   const nodeInputs =
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
   const nodeRawInputs =
@@ -92,9 +88,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     manifest,
     customSwagger,
     map(nodeInputs, 'parameterKey'),
-    definition.metadata,
-    undefined /* recurrence */,
-    recurrenceParameters.rawParameters
+    definition.metadata
   );
 
   return boundInputs;
