@@ -6,8 +6,13 @@ import { IntlProvider } from '../../../../../logic-apps-shared/src/intl/src/Intl
 import { getReactQueryClient } from '../../../../../designer/src/lib/core/ReactQueryProvider';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ExpressionEditorEvent } from '../../expressioneditor';
-import { CopilotServiceOptions, ICopilotService, InitCopilotService, Nl2fExpressionResult } from '@microsoft/logic-apps-shared';
-
+import {
+  CopilotServiceOptions,
+  ICopilotService,
+  InitCopilotService,
+  InitLoggerService,
+  Nl2fExpressionResult,
+} from '@microsoft/logic-apps-shared';
 describe('lib/nl2fExpressionAssistant', () => {
   const dataTestIds = {
     panelHeaderBackButton: 'expression-assistant-panel-header-back-button',
@@ -253,6 +258,12 @@ describe('lib/nl2fExpressionAssistant', () => {
         });
       }
     }
+
+    const loggerService: any = {
+      log() {},
+    };
+
+    InitLoggerService([loggerService]);
     InitCopilotService(new TestCopilotService({}));
 
     const { getByTestId } = render(
