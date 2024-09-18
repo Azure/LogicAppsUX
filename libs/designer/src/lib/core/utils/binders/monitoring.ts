@@ -8,6 +8,7 @@ import {
   Status,
   type BoundParameters,
   map,
+  type LogicAppsV2,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../../core';
@@ -18,6 +19,8 @@ import { parseInputs, parseOutputs } from '../monitoring';
 import { getRecurrenceParameters } from '../parameters/recurrence';
 import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 import { ParameterGroupKeys } from '../parameters/helper';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { getConnectorWithSwagger } from '../../queries/connections';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -54,26 +57,29 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
 );
 
 const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Promise<BoundParameters[]> => {
-  const operation: any = getRecordEntry(rootState.operations.operationInfo, nodeId);
-  const definition: any = getRecordEntry(rootState.workflow.operations, nodeId);
+  const operationInfo: NodeOperation | undefined = getRecordEntry(rootState.operations.operationInfo, nodeId);
+  const definition: LogicAppsV2.OperationDefinition | undefined = getRecordEntry(rootState.workflow.operations, nodeId);
 
-  if (!operation) {
+  if (!operationInfo || !definition) {
     return [];
   }
 
-  const type = operation.type;
-  const kind = operation.kind;
+  const type = operationInfo.type;
+  const kind = operationInfo.kind;
 
-  const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operation) : undefined;
+  const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operationInfo) : undefined;
   const customSwagger = manifest ? await getCustomSwaggerIfNeeded(manifest.properties, definition) : undefined;
-  const inputsToBind = getInputsToBind(operation.type, inputs);
+  const inputsToBind = getInputsToBind(operationInfo.type, inputs);
   const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
-  const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operation);
+  const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operationInfo);
   const nodeInputs =
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
   const nodeRawInputs =
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
   const inputParameters: Record<string, InputParameter> = map(nodeRawInputs, 'key');
+  const operation = manifest
+    ? undefined
+    : await (await getConnectorWithSwagger(operationInfo.connectorId)).parsedSwagger.getOperationByOperationId(operationInfo.operationId);
 
   // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
@@ -82,13 +88,13 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     type,
     kind,
     inputParameters,
-    operation as any,
+    operation,
     manifest,
     customSwagger,
     map(nodeInputs, 'parameterKey'),
     definition.metadata,
     undefined /* recurrence */,
-    recurrenceParameters as unknown as any
+    recurrenceParameters.rawParameters
   );
 
   return boundInputs;

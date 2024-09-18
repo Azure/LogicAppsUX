@@ -2,11 +2,11 @@ import type {
   BoundParameter,
   BoundParameters,
   InputParameter,
+  LAOperation,
   ListDynamicValue,
   LogicApps,
   OperationManifest,
   ParameterInfo,
-  Swagger,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
 import { equals, getObjectPropertyValue, isDynamicListExtension, isDynamicTreeExtension, unmap } from '@microsoft/logic-apps-shared';
@@ -35,7 +35,7 @@ export default class InputsBinder {
     type: string,
     kind: string | undefined,
     inputParametersByName: Record<string, InputParameter>,
-    operation: Swagger.Operation,
+    operation?: LAOperation | undefined,
     manifest?: OperationManifest,
     customSwagger?: SwaggerParser,
     nodeParameters?: Record<string, ParameterInfo>,
@@ -129,7 +129,7 @@ class ManifestInputsBinder extends Binder {
   async bind(
     inputs: any,
     inputParameters: Record<string, InputParameter>,
-    customSwagger: SwaggerParser | undefined,
+    customSwagger: SwaggerParser | undefined
   ): Promise<BoundParameters> {
     if (inputs === undefined) {
       return {};
@@ -168,7 +168,6 @@ class ManifestInputsBinder extends Binder {
           ? getDynamicTreeLookupValue(boundParameter, this._metadata)
           : boundParameter.value;
     }
-
 
     return dynamicValues ? { ...boundParameter, dynamicValue: key } : boundParameter;
   };
@@ -216,7 +215,9 @@ const getDynamicListLookupValue = (boundInput: BoundParameter<any>, key: string,
     return boundInput.value;
   }
 
-  const matchedOption = nodeInput.editorOptions.options.find((option: ListDynamicValue) => option.value === boundInput.value) as ListDynamicValue;
+  const matchedOption = nodeInput.editorOptions.options.find(
+    (option: ListDynamicValue) => option.value === boundInput.value
+  ) as ListDynamicValue;
   return matchedOption ? matchedOption.displayName : boundInput.value;
 };
 

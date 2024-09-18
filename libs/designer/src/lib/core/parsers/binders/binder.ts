@@ -1,4 +1,4 @@
-import type { BoundParameter, BoundParameters, InputParameter, Swagger } from '@microsoft/logic-apps-shared';
+import type { BoundParameter, BoundParameters, InputParameter, LAOperation } from '@microsoft/logic-apps-shared';
 import {
   DefaultKeyPrefix,
   equals,
@@ -47,7 +47,7 @@ export abstract class Binder {
     return title || summary || name;
   }
 
-  protected getInputParameterValue(inputs: any, operation: Swagger.Operation, parameter: InputParameter): any {
+  protected getInputParameterValue(inputs: any, operation: LAOperation, parameter: InputParameter): any {
     const template = removeConnectionPrefix(operation.path);
     const { body, headers, path, queries } = inputs;
     const { encode, in: $in, key, name } = parameter;
@@ -81,7 +81,7 @@ export abstract class Binder {
     return value;
   }
 
-  protected makeBindFunction(operation: Swagger.Operation): BindFunction<InputParameter> {
+  protected makeBindFunction(operation: LAOperation): BindFunction<InputParameter> {
     return (inputs: any, parameter: InputParameter): BoundParameter<any> | undefined => {
       // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
       // branch which never ran, because the condition expression was false

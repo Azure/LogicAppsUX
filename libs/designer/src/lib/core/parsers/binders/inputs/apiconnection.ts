@@ -1,9 +1,9 @@
-import { type InputParameter, type Swagger, getIntl, type BoundParameters, unmap } from '@microsoft/logic-apps-shared';
+import { type InputParameter, getIntl, type BoundParameters, unmap, type LAOperation } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
 import constants from '../constants';
 
 export default class ApiConnectionInputsBinder extends Binder {
-  async bind(inputs: any, inputParameters?: Record<string, InputParameter>, operation?: Swagger.Operation): Promise<BoundParameters> {
+  async bind(inputs: any, inputParameters?: Record<string, InputParameter>, operation?: LAOperation): Promise<BoundParameters> {
     if (!inputParameters || !operation) {
       return this.makeUntypedInputsParameters(inputs);
     }
