@@ -9,6 +9,7 @@
     <LogicAppFolder>LogicApp</LogicAppFolder>
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     <SelfContained>false</SelfContained>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
  </PropertyGroup>
 
   <ItemGroup>
