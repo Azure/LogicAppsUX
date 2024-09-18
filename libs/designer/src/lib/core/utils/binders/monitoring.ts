@@ -69,10 +69,9 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const inputsToBind = getInputsToBind(operation.type, inputs);
   const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
   const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operation);
-  const nodeInputs = (getRecordEntry(rootState.operations.inputParameters, nodeId))?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
-  const inputParameters: Record<string, InputParameter> = map(nodeInputs, 'key');
-
-  const placeholderForDynamicInputs = nodeInputs.find((parameter) => parameter.dynamicSchema) ?? undefined;
+  const nodeInputs = (getRecordEntry(rootState.operations.inputParameters, nodeId))?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
+  const nodeRawInputs = (getRecordEntry(rootState.operations.inputParameters, nodeId))?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
+  const inputParameters: Record<string, InputParameter> = map(nodeRawInputs, 'key');
 
   // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
@@ -84,15 +83,16 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     operation as any,
     manifest,
     customSwagger,
+    map(nodeInputs, 'parameterKey'),
+    definition.metadata,
     undefined /* recurrence */,
-    placeholderForDynamicInputs,
-    recurrenceParameters as unknown as any
+    recurrenceParameters as unknown as any,
   );
 
   return boundInputs;
 };
 
-export function getInputsToBind(type: string, payloadInputs: any): any {
+const getInputsToBind = (type: string, payloadInputs: any): any => {
   if (equals(type, constants.NODE.TYPE.QUERY)) {
     if (payloadInputs) {
       return {
@@ -102,4 +102,4 @@ export function getInputsToBind(type: string, payloadInputs: any): any {
     return null;
   }
   return payloadInputs;
-}
+};

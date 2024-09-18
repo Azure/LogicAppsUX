@@ -73,7 +73,7 @@ export class BaseAppServiceService implements IAppServiceService {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI', title: 'Method' },
         uri: {
           type: 'string',
-          title: 'Url',
+          title: 'URI',
           default: swagger.api.basePath ? `${baseUrl}${swagger.api.basePath}${operation.path}` : `${baseUrl}${operation.path}`,
           'x-ms-visibility': 'hideInUI',
           'x-ms-serialization': { property: { type: 'pathtemplate', parameterReference: 'inputs.operationDetails.pathParameters' } },

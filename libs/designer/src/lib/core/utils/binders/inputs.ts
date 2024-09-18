@@ -2,12 +2,14 @@ import type {
   BoundParameter,
   BoundParameters,
   InputParameter,
+  ListDynamicValue,
   LogicApps,
   OperationManifest,
+  ParameterInfo,
   Swagger,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { equals, getObjectPropertyValue, isNullOrUndefined, unmap } from '@microsoft/logic-apps-shared';
+import { equals, getObjectPropertyValue, isDynamicListExtension, isDynamicTreeExtension, unmap } from '@microsoft/logic-apps-shared';
 import { Binder } from '../../parsers/binders/binder';
 import {
   ApiConnectionInputsBinder,
@@ -36,8 +38,9 @@ export default class InputsBinder {
     operation: Swagger.Operation,
     manifest?: OperationManifest,
     customSwagger?: SwaggerParser,
+    nodeParameters?: Record<string, ParameterInfo>,
+    operationMetadata?: Record<string, any>,
     recurrence?: LogicApps.Recurrence,
-    placeholderForDynamicInputs?: InputParameter,
     _recurrenceParameters?: InputParameter[]
   ): Promise<BoundParameters[]> {
     let inputArray: any[];
@@ -56,7 +59,7 @@ export default class InputsBinder {
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION)
       ) {
-        const binder = new ManifestInputsBinder(manifest, placeholderForDynamicInputs);
+        const binder = new ManifestInputsBinder(manifest, nodeParameters ?? {}, operationMetadata);
         return binder.bind(input, inputParametersByName, customSwagger);
       }
       if (equals(type, constants.NODE.TYPE.API_CONNECTION) || equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK)) {
@@ -113,20 +116,20 @@ export default class InputsBinder {
 
 class ManifestInputsBinder extends Binder {
   private _operationManifest: OperationManifest;
-  private _location: string[];
-  private _placeholderForDynamicInputs: InputParameter | undefined;
+  private _nodeParameters: Record<string, ParameterInfo>;
+  private _metadata: Record<string, any> | undefined;
 
-  constructor(manifest: OperationManifest, placeholderForDynamicInputs: InputParameter | undefined) {
+  constructor(manifest: OperationManifest, nodeParameters: Record<string, ParameterInfo>, metadata: Record<string, any> | undefined) {
     super();
     this._operationManifest = manifest;
-    this._location = this._operationManifest.properties.inputsLocation ? this._operationManifest.properties.inputsLocation.slice(1) : [];
-    this._placeholderForDynamicInputs = placeholderForDynamicInputs;
+    this._nodeParameters = nodeParameters;
+    this._metadata = metadata;
   }
 
   async bind(
     inputs: any,
     inputParameters: Record<string, InputParameter>,
-    customSwagger: SwaggerParser | undefined
+    customSwagger: SwaggerParser | undefined,
   ): Promise<BoundParameters> {
     if (inputs === undefined) {
       return {};
@@ -155,9 +158,19 @@ class ManifestInputsBinder extends Binder {
 
     const displayName = this.getInputParameterDisplayName(parameter);
     const value = parameter.alias ? this._getValueByParameterAlias(inputs, parameter) : this._getValueByParameterKey(inputs, parameter);
-    const { dynamicValues, name, visibility } = parameter;
+    const { dynamicValues, key, visibility } = parameter;
     const boundParameter = this.buildBoundParameter(displayName, value, visibility, this._getAdditionalProperties(parameter));
-    return dynamicValues ? { ...boundParameter, dynamicValue: name } : boundParameter;
+
+    if (dynamicValues) {
+      boundParameter.value = isDynamicListExtension(dynamicValues)
+        ? getDynamicListLookupValue(boundParameter, key, this._nodeParameters)
+        : isDynamicTreeExtension(dynamicValues) && this._metadata
+          ? getDynamicTreeLookupValue(boundParameter, this._metadata)
+          : boundParameter.value;
+    }
+
+
+    return dynamicValues ? { ...boundParameter, dynamicValue: key } : boundParameter;
   };
 
   private _getValueByParameterAlias(inputs: any, parameter: InputParameter) {
@@ -181,10 +194,6 @@ class ManifestInputsBinder extends Binder {
   }
 
   private _getValueByParameterKey(inputs: any, parameter: InputParameter): any {
-    if (parameter.isDynamic && this._placeholderForDynamicInputs) {
-      return this._getValueForDynamicParameter(inputs, parameter);
-    }
-
     const { key } = parameter;
     const prefix = key.substring(0, key.indexOf('$') + 1);
 
@@ -199,23 +208,18 @@ class ManifestInputsBinder extends Binder {
 
     return parametersValue.length > 0 ? parametersValue[0]?.value : undefined;
   }
-
-  private _getValueForDynamicParameter(inputs: any, parameter: InputParameter): any {
-    // NOTE(psamband): Dynamic inputs do not have keys and name prefixed, so we get the placeholders' dynamic parameter value
-    // to provide as seed value to look up dynamic parameters.
-    const { key, name } = this._placeholderForDynamicInputs as InputParameter;
-    const parameterLocation = key.indexOf('inputs.$.') > -1 ? key.replace('inputs.$.', '').split('.') : this._location;
-    const valueForDynamicSchemaParameter =
-      !isNullOrUndefined(inputs) && typeof inputs === 'object' ? getObjectPropertyValue(inputs, parameterLocation) : inputs;
-
-    if (equals(parameter.name, name)) {
-      return valueForDynamicSchemaParameter;
-    }
-
-    if (!isNullOrUndefined(valueForDynamicSchemaParameter) && typeof valueForDynamicSchemaParameter === 'object') {
-      return getObjectPropertyValue(valueForDynamicSchemaParameter, parameter.name.split('.'));
-    }
-
-    return undefined;
-  }
 }
+
+const getDynamicListLookupValue = (boundInput: BoundParameter<any>, key: string, nodeParameters: Record<string, ParameterInfo>): any => {
+  const nodeInput = nodeParameters[key];
+  if (!nodeInput || !nodeInput.editorOptions?.options?.length) {
+    return boundInput.value;
+  }
+
+  const matchedOption = nodeInput.editorOptions.options.find((option: ListDynamicValue) => option.value === boundInput.value) as ListDynamicValue;
+  return matchedOption ? matchedOption.displayName : boundInput.value;
+};
+
+const getDynamicTreeLookupValue = (boundInput: BoundParameter<any>, metadata: Record<string, any>): any => {
+  return metadata[boundInput.value] ?? boundInput.value;
+};

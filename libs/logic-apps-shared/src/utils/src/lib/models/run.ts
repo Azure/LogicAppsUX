@@ -56,7 +56,7 @@ export type BoundParameters = Record<string, BoundParameter<any>>;
 
 export interface BoundParameter<T> {
   displayName: string;
-  dynamicValue?: T;
+  dynamicValue?: string;
   format?: string;
   language?: string;
   value: T;
