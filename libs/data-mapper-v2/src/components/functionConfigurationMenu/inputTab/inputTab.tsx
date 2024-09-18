@@ -86,7 +86,7 @@ export const InputTabContents = (props: {
           <div className={styles.boundedInputTopRow}>
             <div className={styles.inputNameDiv}>
               <Caption1 className={styles.inputName}>{input.name}</Caption1>
-              <Caption2>{input.placeHolder}</Caption2>
+              <Caption2>{input.tooltip ?? input.placeHolder ?? ''}</Caption2>
             </div>
             <Caption2 className={styles.allowedTypes}>Allowed types: {input.allowedTypes}</Caption2>
           </div>
