@@ -43,8 +43,8 @@ const ContextSettings = () => {
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun());
-        dispatch(loadWorkflow());
+        dispatch(loadRun(_));
+        dispatch(loadWorkflow(_));
       }
     },
     [dispatch]

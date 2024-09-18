@@ -112,27 +112,20 @@ export const selectSwaggerFunctionManifest = {
     autoCast: true,
 
     outputs: {
-      type: 'object',
-      required: [],
-      properties: {
-        body: {
-          title: 'Body',
-          'x-ms-dynamic-properties': {
-            dynamicState: {
-              extension: {
-                operationId: 'getSwaggerFunctionOperationSchema',
-              },
-            },
-            parameters: {
-              operationId: {
-                parameterReference: 'operationId',
-                required: true,
-              },
-              functionAppId: {
-                parameterReference: 'functionApp.id',
-                required: true,
-              },
-            },
+      'x-ms-dynamic-properties': {
+        dynamicState: {
+          extension: {
+            operationId: 'getSwaggerFunctionOperationSchema',
+          },
+        },
+        parameters: {
+          operationId: {
+            parameterReference: 'operationId',
+            required: true,
+          },
+          functionAppId: {
+            parameterReference: 'functionApp.id',
+            required: true,
           },
         },
       },

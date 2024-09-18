@@ -1,7 +1,7 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
-import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
@@ -150,7 +150,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
-  const selectedNodeId = useSelectedNodeId();
+  const selectedNodeId = useOperationPanelSelectedNodeId();
   const settingNodeId = nodeId ?? selectedNodeId;
 
   const intl = useIntl();

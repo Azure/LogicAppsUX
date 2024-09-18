@@ -93,6 +93,7 @@ export class BaseApiManagementService implements IApiManagementService {
       throw new Error('APIM Operation not found');
     }
 
+    const intl = getIntl();
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
@@ -134,11 +135,16 @@ export class BaseApiManagementService implements IApiManagementService {
       }
 
       if (response.schema) {
-        schema.properties['body'] = response.schema;
+        schema.properties['body'] = {
+          title: intl.formatMessage({ defaultMessage: 'Body', id: 'VZh+w2', description: 'Title for body outputs' }),
+          ...response.schema,
+        };
       }
-
       if (response.headers) {
-        schema.properties['headers'] = response.headers;
+        schema.properties['headers'] = {
+          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'voRDKP', description: 'Title for header outputs' }),
+          ...response.headers,
+        };
       }
     }
 

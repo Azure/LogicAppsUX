@@ -3,7 +3,7 @@ import { getTriggerNodeId, setFocusNode, type RootState } from '../..';
 import { initCopiedConnectionMap, initScopeCopiedConnections } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import type { RelationshipIds } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
@@ -114,10 +114,11 @@ interface PasteOperationPayload {
   operationInfo: NodeOperation;
   connectionData?: ReferenceKey;
   comment?: string;
+  isParallelBranch?: boolean;
 }
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
-  const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment } = payload;
+  const { nodeId: actionId, relationshipIds, nodeData, nodeTokenData, operationInfo, connectionData, comment, isParallelBranch } = payload;
   if (!actionId || !relationshipIds || !nodeData) {
     throw new Error('Operation does not exist');
   }
@@ -132,6 +133,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
       nodeId: nodeId,
       relationshipIds: relationshipIds,
       operation: operationInfo,
+      isParallelBranch,
     })
   );
 
@@ -177,12 +179,21 @@ interface PasteScopeOperationPayload {
   allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }>;
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
+  isParallelBranch?: boolean;
 }
 
 export const pasteScopeOperation = createAsyncThunk(
   'pasteScopeOperation',
   async (payload: PasteScopeOperationPayload, { dispatch, getState }) => {
-    const { nodeId: actionId, relationshipIds, serializedValue, upstreamNodeIds, allConnectionData, staticResults } = payload;
+    const {
+      nodeId: actionId,
+      relationshipIds,
+      serializedValue,
+      upstreamNodeIds,
+      allConnectionData,
+      staticResults,
+      isParallelBranch,
+    } = payload;
     if (!actionId || !relationshipIds || !serializedValue) {
       throw new Error('Operation does not exist');
     }
@@ -217,6 +228,7 @@ export const pasteScopeOperation = createAsyncThunk(
         operations: actions,
         nodesMetadata: actionNodesMetadata,
         allActions: allActionNames,
+        isParallelBranch,
       })
     );
 

@@ -1,4 +1,124 @@
 # Logic Apps Designer
+## [4.94.0](https://github.com/Azure/LogicAppsUX/compare/v4.93.0...v4.94.0) (2024-09-17)
+
+
+### Features
+
+* **Designer:** Support Paste Parallel Action ([#5689](https://github.com/Azure/LogicAppsUX/issues/5689)) ([a773858](https://github.com/Azure/LogicAppsUX/commit/a77385896ed87b92f7834bd39b013d76bfb378e1))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Improving deserialization of conditionals ([#5700](https://github.com/Azure/LogicAppsUX/issues/5700)) ([db9ad5a](https://github.com/Azure/LogicAppsUX/commit/db9ad5a977791e8d3d53a4e8193513d708e85908))
+
+## [4.93.0](https://github.com/Azure/LogicAppsUX/compare/v4.92.0...v4.93.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** OnHover border color take the fluent ui's default value ([#5692](https://github.com/Azure/LogicAppsUX/issues/5692)) ([1d44848](https://github.com/Azure/LogicAppsUX/commit/1d44848ef1b1ce98dfb5e78030d26624f90ad395))
+* **Data Mapper:** Update position and scroll width ([#5691](https://github.com/Azure/LogicAppsUX/issues/5691)) ([dafa1be](https://github.com/Azure/LogicAppsUX/commit/dafa1be230d9a911858bac3c14799f2e114bb02c))
+
+## [4.92.0](https://github.com/Azure/LogicAppsUX/compare/v4.91.0...v4.92.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Use tree's in-built search ([#5687](https://github.com/Azure/LogicAppsUX/issues/5687)) ([68d501b](https://github.com/Azure/LogicAppsUX/commit/68d501ba154b0cbbfe663f6ae83b7dac7aec0046))
+
+## [4.91.0](https://github.com/Azure/LogicAppsUX/compare/v4.90.0...v4.91.0) (2024-09-16)
+
+
+### Features
+
+* **designer:** Allow users to delete static results ([#5659](https://github.com/Azure/LogicAppsUX/issues/5659)) ([0c2dcfb](https://github.com/Azure/LogicAppsUX/commit/0c2dcfb2f515aacca317ca29d3a78e9c0c0747a4))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with `suppressDefaultNodeSelectFunctionality` ([#5686](https://github.com/Azure/LogicAppsUX/issues/5686)) ([78d2c33](https://github.com/Azure/LogicAppsUX/commit/78d2c335ef912f4b5d948ec46deabc50a2ec96a1))
+
+## [4.90.0](https://github.com/Azure/LogicAppsUX/compare/v4.89.0...v4.90.0) (2024-09-16)
+
+
+### Features
+
+* **Data Mapper:** Remove intermediate connections and rather depend on the direct connections to get rid of more re-renders ([#5679](https://github.com/Azure/LogicAppsUX/issues/5679)) ([2f550e4](https://github.com/Azure/LogicAppsUX/commit/2f550e4774ddbbbd1c3dee8ab591687758d8d9f6))
+
+
+### Bug Fixes
+
+* **vscode:** Improve IaC Generation Stability ([#5677](https://github.com/Azure/LogicAppsUX/issues/5677)) ([ea00491](https://github.com/Azure/LogicAppsUX/commit/ea0049102472adf5e76fa78831904a0be143ae53))
+
+## [4.89.0](https://github.com/Azure/LogicAppsUX/compare/v4.88.0...v4.89.0) (2024-09-13)
+
+
+### Features
+
+* **Data Mapper:** Update entire Reactflow structure within Data Mapper reduce re-renders and add in some perf improvments ([#5583](https://github.com/Azure/LogicAppsUX/issues/5583)) ([5b4b2c1](https://github.com/Azure/LogicAppsUX/commit/5b4b2c18ab62141472f71ca6e7454f95c64bb817))
+* **designer:** optionally hide content transfer settings via host option ([#5662](https://github.com/Azure/LogicAppsUX/issues/5662)) ([b28950f](https://github.com/Azure/LogicAppsUX/commit/b28950f15cdbc495cfbc78b7f14abbe892458781))
+
+
+### Bug Fixes
+
+* **Designer:** Hide Unsupported Actions/Connectors for Standard ([#5629](https://github.com/Azure/LogicAppsUX/issues/5629)) ([3e6605b](https://github.com/Azure/LogicAppsUX/commit/3e6605b65714816105633e98dec19ab28df22c05))
+
+## [4.88.0](https://github.com/Azure/LogicAppsUX/compare/v4.87.0...v4.88.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **Designer:** Chatbot Panel Overlapping & Disappearing Issues ([#5652](https://github.com/Azure/LogicAppsUX/issues/5652)) ([dad18fa](https://github.com/Azure/LogicAppsUX/commit/dad18faa234b94b0937f14204307562b803ded09))
+
+## [4.87.0](https://github.com/Azure/LogicAppsUX/compare/v4.86.0...v4.87.0) (2024-09-12)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix function node drag event ([#5646](https://github.com/Azure/LogicAppsUX/issues/5646)) ([775074d](https://github.com/Azure/LogicAppsUX/commit/775074db4f48b6ddc0df84c4e6de73b85428e270))
+* **Data Mapper:** Toast timeout increase, able to select new target schema, disabled test until save ([#5657](https://github.com/Azure/LogicAppsUX/issues/5657)) ([8ece502](https://github.com/Azure/LogicAppsUX/commit/8ece502ee51fa31f9da7fafc62773276174f64b1))
+* **designer:** Deserializing Workflow not properly loading stringified primitives ([#5622](https://github.com/Azure/LogicAppsUX/issues/5622)) ([38a8b06](https://github.com/Azure/LogicAppsUX/commit/38a8b0614d58aa3cd89b0519186c44885e28bda2)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Doing case insensitive match of dropdown items unless specified ([#5653](https://github.com/Azure/LogicAppsUX/issues/5653)) ([1a6604c](https://github.com/Azure/LogicAppsUX/commit/1a6604c2257dbd00b20545f09f8c62b11b8db212))
+* **designer:** Remove Current Node from Blocking nodes ([#5650](https://github.com/Azure/LogicAppsUX/issues/5650)) ([1f1176d](https://github.com/Azure/LogicAppsUX/commit/1f1176d77ff13d57816d631f01d5ad7d0b3d75eb)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **vscode:** Ensure workflow design time starts with multiple logic apps ([#5632](https://github.com/Azure/LogicAppsUX/issues/5632)) ([411f031](https://github.com/Azure/LogicAppsUX/commit/411f03170c8baeb30a714cbddf8c43685461fcc0))
+* **vscode:** Extension cleanup ([#5631](https://github.com/Azure/LogicAppsUX/issues/5631)) ([f4e122e](https://github.com/Azure/LogicAppsUX/commit/f4e122e6fa030768889e29a47379da970e8e623e))
+
+## [4.86.0](https://github.com/Azure/LogicAppsUX/compare/v4.85.0...v4.86.0) (2024-09-11)
+
+
+### Features
+
+* **Data Mapper:** Allow LML generation with missing func params, and surface XSLT error message ([#5633](https://github.com/Azure/LogicAppsUX/issues/5633)) ([f9f28b1](https://github.com/Azure/LogicAppsUX/commit/f9f28b1f49883c6e48cddb3eff9de7cca24dee87))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove output connection when a new one is added from the menu ([#5640](https://github.com/Azure/LogicAppsUX/issues/5640)) ([a73c0fd](https://github.com/Azure/LogicAppsUX/commit/a73c0fda54086ef409a6ae4009f208f8959a8d45))
+* **Data Mapper:** Update test content in Test panel ([#5626](https://github.com/Azure/LogicAppsUX/issues/5626)) ([182c1c3](https://github.com/Azure/LogicAppsUX/commit/182c1c3684300c7d2d7749e99185be508d8b4d44))
+* **designer-ui:** Token picker should display all output tokens when fewer options than max rows shown ([#5618](https://github.com/Azure/LogicAppsUX/issues/5618)) ([c608191](https://github.com/Azure/LogicAppsUX/commit/c6081917dddd2878ddfaaed20bcf89156e474b34))
+* **designer:** Fixing null type of output for tokens filtering ([#5627](https://github.com/Azure/LogicAppsUX/issues/5627)) ([7e8fcb4](https://github.com/Azure/LogicAppsUX/commit/7e8fcb458001a8bfc53a4f93dd161da656d8180d))
+* **designer:** Removing parent object from dynamic inputs when parameter is nested ([#5635](https://github.com/Azure/LogicAppsUX/issues/5635)) ([938b199](https://github.com/Azure/LogicAppsUX/commit/938b199e91b7829fdf600f1d733dd04d0d8c9a8a))
+
+## [4.85.0](https://github.com/Azure/LogicAppsUX/compare/v4.84.0...v4.85.0) (2024-09-09)
+
+
+### Features
+
+* **designer:** Adding support for recently used connection for a connector ([#5612](https://github.com/Azure/LogicAppsUX/issues/5612)) ([18047c3](https://github.com/Azure/LogicAppsUX/commit/18047c37b664281f0810abaf42f03c5681659339))
+
+
+### Bug Fixes
+
+* **designer-ui:** OK label is too far to the right in expression assistant ([#5616](https://github.com/Azure/LogicAppsUX/issues/5616)) ([05feb27](https://github.com/Azure/LogicAppsUX/commit/05feb27366e64ef20400611e52c0d112340bd9f8))
+* **designer-ui:** Optimize file picker partitioning and fix overflow ([#5592](https://github.com/Azure/LogicAppsUX/issues/5592)) ([a024816](https://github.com/Azure/LogicAppsUX/commit/a02481619e89617ec632e5b338f07cb11ee09e02))
+* **designer:** Add safety check for if parameterType is not within valid token types ([#5610](https://github.com/Azure/LogicAppsUX/issues/5610)) ([2937ed0](https://github.com/Azure/LogicAppsUX/commit/2937ed07a18c15c3c36670b1905359d07fdd5208)), closes [#5386](https://github.com/Azure/LogicAppsUX/issues/5386)
+* **designer:** Adding support for html dom and lexical characters  ([#5613](https://github.com/Azure/LogicAppsUX/issues/5613)) ([d2b16bc](https://github.com/Azure/LogicAppsUX/commit/d2b16bcb4e0682c57446b7a92729e690381d0622))
+* **designer:** Correctly setting auto casting for manifests and fixing path parameters encoding ([#5601](https://github.com/Azure/LogicAppsUX/issues/5601)) ([baca6c3](https://github.com/Azure/LogicAppsUX/commit/baca6c36dfa5172677320c02e59ca8f95df1b51b))
+* **designer:** Fix http manifest to include outputs in correct location ([#5603](https://github.com/Azure/LogicAppsUX/issues/5603)) ([a7bd532](https://github.com/Azure/LogicAppsUX/commit/a7bd5328e13689bbbee539430b4a04468c2449a8))
+* **designer:** Fixing the manifest schema for flatfiledecoding ([#5607](https://github.com/Azure/LogicAppsUX/issues/5607)) ([71fa6a0](https://github.com/Azure/LogicAppsUX/commit/71fa6a0847ac802a528c1d42731f7e82ba1cce0f))
+* **vscode:** Revert convert the authentication type from Raw to MSI when deploying Logic App ([#5539](https://github.com/Azure/LogicAppsUX/issues/5539)) ([#5602](https://github.com/Azure/LogicAppsUX/issues/5602)) ([5d77f71](https://github.com/Azure/LogicAppsUX/commit/5d77f71d67d75488515ae61927a917f1cc73b887))
+* **vscode:** using resolveConnectionsReferences for connection resolution ([#5605](https://github.com/Azure/LogicAppsUX/issues/5605)) ([445f93b](https://github.com/Azure/LogicAppsUX/commit/445f93b240bbf52a577a05a62a2a369642b935a3))
+
 ## [4.84.0](https://github.com/Azure/LogicAppsUX/compare/v4.83.0...v4.84.0) (2024-09-05)
 
 

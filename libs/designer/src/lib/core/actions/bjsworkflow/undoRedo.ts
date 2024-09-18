@@ -61,7 +61,6 @@ export const getCompressedStateFromRootState = (rootState: RootState) => {
     customCode: rootState.customCode,
     operations: rootState.operations,
     panel: rootState.panel,
-    panelV2: rootState.panelV2,
     settings: rootState.settings,
     staticResults: rootState.staticResults,
     tokens: rootState.tokens,

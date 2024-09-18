@@ -21,7 +21,7 @@ import {
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
-import type { RelationshipIds } from '../panel/panelInterfaces';
+import type { RelationshipIds } from '../panel/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
@@ -150,7 +150,7 @@ export const workflowSlice = createSlice({
     },
     pasteNode: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
+      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation; isParallelBranch?: boolean }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) {
@@ -162,6 +162,7 @@ export const workflowSlice = createSlice({
           operation: action.payload.operation as any,
           nodeId: action.payload.nodeId,
           relationshipIds: action.payload.relationshipIds,
+          isParallelBranch: action.payload.isParallelBranch,
         },
         graph,
         state.nodesMetadata,
@@ -169,12 +170,12 @@ export const workflowSlice = createSlice({
       );
     },
     pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
-      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions, isParallelBranch } = action.payload;
       const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
-      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state);
+      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state, isParallelBranch);
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
