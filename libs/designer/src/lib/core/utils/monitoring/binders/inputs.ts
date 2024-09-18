@@ -7,7 +7,7 @@ import type {
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
-import { ApiConnectionInputsBinder, DefaultInputsBinder, SendToBatchInputsBinder, ManifestInputsBinder } from './inputs/index';
+import { ApiConnectionInputsBinder, DefaultInputsBinder, ManifestInputsBinder } from './inputs/index';
 import constants from '../../../../common/constants';
 
 export default class InputsBinder {
@@ -49,11 +49,6 @@ export default class InputsBinder {
       if (equals(type, constants.NODE.TYPE.API_CONNECTION) || equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK)) {
         const binder = new ApiConnectionInputsBinder();
         return binder.bind(input, inputParametersByName, operation);
-      }
-
-      if (equals(type, constants.NODE.TYPE.SEND_TO_BATCH)) {
-        const binder = new SendToBatchInputsBinder();
-        return binder.bind(input);
       }
 
       const binder = new DefaultInputsBinder();
