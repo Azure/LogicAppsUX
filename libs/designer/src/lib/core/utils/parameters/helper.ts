@@ -259,7 +259,7 @@ export function addRecurrenceParametersInGroup(
     return;
   }
 
-  const recurrenceParameters = getRecurrenceParameters(recurrence, definition);
+  const { parameters: recurrenceParameters, rawParameters } = getRecurrenceParameters(recurrence, definition);
 
   if (recurrenceParameters.length) {
     const intl = getIntl();
@@ -276,6 +276,7 @@ export function addRecurrenceParametersInGroup(
           description: 'Recurrence parameter group title',
         }),
         parameters: recurrenceParameters,
+        rawInputs: rawParameters,
       };
     }
   }
@@ -2031,6 +2032,7 @@ export const loadDynamicContentForInputsInNode = async (
       }
 
       const updatedParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].parameters];
+      const updatedRawParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].rawInputs];
 
       for (const input of inputParameters) {
         const index = updatedParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
@@ -2038,6 +2040,19 @@ export const loadDynamicContentForInputsInNode = async (
           updatedParameters.splice(index, 1, input);
         } else {
           updatedParameters.push(input);
+        }
+      }
+
+      for (const input of inputsWithSchema) {
+        if (input.dynamicSchema) {
+          continue;
+        }
+
+        const rawInputIndex = updatedRawParameters.findIndex((parameter) => parameter.key === input.key);
+        if (rawInputIndex > -1) {
+          updatedRawParameters.splice(rawInputIndex, 1, input);
+        } else {
+          updatedRawParameters.push(input);
         }
       }
 
@@ -2051,7 +2066,7 @@ export const loadDynamicContentForInputsInNode = async (
 
       const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
 
-      dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, dependencies }));
+      dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, rawInputs: updatedRawParameters, dependencies }));
 
       // Recursively load dynamic content for the newly added dynamic inputs
       return updateDynamicDataInNode(

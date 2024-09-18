@@ -11,10 +11,8 @@ import { equals, getObjectPropertyValue, isNullOrUndefined, unmap } from '@micro
 import { Binder } from '../../parsers/binders/binder';
 import {
   ApiConnectionInputsBinder,
-  ApiManagementInputsBinder,
   DefaultInputsBinder,
   FlatFileInputsBinder,
-  FunctionInputsBinder,
   IfInputsBinder,
   IntegrationAccountArtifactLookupInputsBinder,
   LiquidInputsBinder,
@@ -65,16 +63,8 @@ export default class InputsBinder {
         const binder = new ApiConnectionInputsBinder();
         return binder.bind(input, inputParametersByName, operation);
       }
-      if (equals(type, constants.NODE.TYPE.API_MANAGEMENT)) {
-        const binder = new ApiManagementInputsBinder();
-        return binder.bind(input, inputParametersByName, operation);
-      }
       if (equals(type, constants.NODE.TYPE.FLAT_FILE_DECODING) || equals(type, constants.NODE.TYPE.FLAT_FILE_ENCODING)) {
         const binder = new FlatFileInputsBinder();
-        return binder.bind(input);
-      }
-      if (equals(type, constants.NODE.TYPE.FUNCTION)) {
-        const binder = new FunctionInputsBinder();
         return binder.bind(input);
       }
       if (equals(type, constants.NODE.TYPE.IF)) {

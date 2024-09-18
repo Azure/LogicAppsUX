@@ -99,12 +99,13 @@ export class BaseApiManagementService implements IApiManagementService {
 
     if (isInput) {
       schema.properties = {
-        method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI' },
+        method: { type: 'string', title: 'Method', default: operation.method, 'x-ms-visibility': 'hideInUI' },
         pathTemplate: {
           type: 'object',
           properties: {
             template: {
               type: 'string',
+              title: 'Path Template',
               default: this.options.includeBasePathInTemplate
                 ? swagger.api.basePath
                   ? `${swagger.api.basePath}${operation.path}`

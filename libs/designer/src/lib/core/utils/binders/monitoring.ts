@@ -3,12 +3,11 @@ import {
   equals,
   getRecordEntry,
   LoggerService,
-  ManifestParser,
   OperationManifestService,
   RecurrenceType,
   Status,
-  unmap,
   type BoundParameters,
+  map,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../../core';
@@ -17,8 +16,8 @@ import InputsBinder from './inputs';
 import constants from '../../../common/constants';
 import { parseOutputs } from '../monitoring';
 import { getRecurrenceParameters } from '../parameters/recurrence';
-import { getConnectorWithSwagger } from '../../queries/connections';
 import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
+import { ParameterGroupKeys } from '../parameters/helper';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -55,7 +54,7 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
 );
 
 const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Promise<BoundParameters[]> => {
-  let operation: any = getRecordEntry(rootState.operations.operationInfo, nodeId);
+  const operation: any = getRecordEntry(rootState.operations.operationInfo, nodeId);
   const definition: any = getRecordEntry(rootState.workflow.operations, nodeId);
 
   if (!operation) {
@@ -70,28 +69,10 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const inputsToBind = getInputsToBind(operation.type, inputs);
   const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
   const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operation);
-  let inputParameters: Record<string, InputParameter> = {};
+  const nodeInputs = (getRecordEntry(rootState.operations.inputParameters, nodeId))?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
+  const inputParameters: Record<string, InputParameter> = map(nodeInputs, 'key');
 
-  if (manifest) {
-    const manifestParser = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(type, kind));
-    inputParameters = manifestParser.getInputParameters(
-      false /* includeParentObject */,
-      0 /* expandArrayPropertiesDepth */,
-      undefined,
-      undefined
-    );
-  } else {
-    const includeNotificationParameters = !equals(type, constants.NODE.TYPE.API_CONNECTION);
-    const { parsedSwagger } = await getConnectorWithSwagger(operation.connectorId);
-    operation = parsedSwagger.getOperationByOperationId(operation.operationId);
-    inputParameters = parsedSwagger.getInputParameters(operation.operationId, {
-      excludeInternalParameters: false,
-      includeNotificationParameters,
-    }).byId;
-  }
-
-  const primaryInputParametersInArray = unmap(inputParameters);
-  const placeholderForDynamicInputs = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema) ?? undefined;
+  const placeholderForDynamicInputs = nodeInputs.find((parameter) => parameter.dynamicSchema) ?? undefined;
 
   // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
