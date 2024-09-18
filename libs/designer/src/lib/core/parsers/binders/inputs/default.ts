@@ -1,6 +1,6 @@
-import { getIntl, type BoundParameters } from '@microsoft/logic-apps-shared';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
-import constants from '../constants';
+import { parseInputs } from 'lib/core/utils/monitoring';
 
 export default class DefaultInputsBinder extends Binder {
   bind(inputs: any): BoundParameters {
@@ -8,16 +8,6 @@ export default class DefaultInputsBinder extends Binder {
       return {};
     }
 
-    const intl = getIntl();
-
-    const intlMessages = {
-      [constants.DEFAULT.INPUTS]: intl.formatMessage({
-        defaultMessage: 'Inputs',
-        id: '226jzI',
-        description: 'Inputs',
-      }),
-    };
-
-    return this.makeBoundParameter(constants.DEFAULT.INPUTS, intlMessages[constants.DEFAULT.INPUTS], inputs);
+    return parseInputs(inputs);
   }
 }

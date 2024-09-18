@@ -14,7 +14,7 @@ import type { RootState } from '../../../core';
 import { getOperationManifest } from '../../queries/operation';
 import InputsBinder from './inputs';
 import constants from '../../../common/constants';
-import { parseOutputs } from '../monitoring';
+import { parseInputs, parseOutputs } from '../monitoring';
 import { getRecurrenceParameters } from '../parameters/recurrence';
 import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 import { ParameterGroupKeys } from '../parameters/helper';
@@ -48,7 +48,7 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
       return { nodeId, inputs: inputs[0], outputs: parseOutputs(inputsOutputs.outputs) };
     } catch (e) {
       LoggerService().endTrace(traceId, { status: Status.Failure });
-      return { nodeId, inputs: {}, outputs: {} };
+      return { nodeId, inputs: parseInputs(inputsOutputs.inputs), outputs: parseOutputs(inputsOutputs.outputs) };
     }
   }
 );
@@ -69,13 +69,15 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
   const inputsToBind = getInputsToBind(operation.type, inputs);
   const recurrenceSetting = manifest?.properties?.recurrence ?? { type: RecurrenceType.Basic };
   const recurrenceParameters = getRecurrenceParameters(recurrenceSetting, operation);
-  const nodeInputs = (getRecordEntry(rootState.operations.inputParameters, nodeId))?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
-  const nodeRawInputs = (getRecordEntry(rootState.operations.inputParameters, nodeId))?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
+  const nodeInputs =
+    getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
+  const nodeRawInputs =
+    getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
   const inputParameters: Record<string, InputParameter> = map(nodeRawInputs, 'key');
 
   // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
-  const boundInputs: BoundParameters[] =  await inputsBinder.bind(
+  const boundInputs: BoundParameters[] = await inputsBinder.bind(
     inputsToBind,
     type,
     kind,
@@ -86,7 +88,7 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     map(nodeInputs, 'parameterKey'),
     definition.metadata,
     undefined /* recurrence */,
-    recurrenceParameters as unknown as any,
+    recurrenceParameters as unknown as any
   );
 
   return boundInputs;
