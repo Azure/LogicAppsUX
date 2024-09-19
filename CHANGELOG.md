@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [4.95.0](https://github.com/Azure/LogicAppsUX/compare/v4.94.0...v4.95.0) (2024-09-19)
+
+
+### Features
+
+* **designer:** Parse text action designer support ([#5705](https://github.com/Azure/LogicAppsUX/issues/5705)) ([d85c15a](https://github.com/Azure/LogicAppsUX/commit/d85c15a01d48c9b5712bc36582614c446fb1f280))
+* **vscode:** Add copy file assemblies for .net 8 projects ([#5708](https://github.com/Azure/LogicAppsUX/issues/5708)) ([ba2390a](https://github.com/Azure/LogicAppsUX/commit/ba2390a9af3ef191e1ffa44fa4d94aabccf740bc))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update function desc ([#5710](https://github.com/Azure/LogicAppsUX/issues/5710)) ([bf15a43](https://github.com/Azure/LogicAppsUX/commit/bf15a4359e00a971175705136726a447bb16fae1))
+
 ## [4.94.0](https://github.com/Azure/LogicAppsUX/compare/v4.93.0...v4.94.0) (2024-09-17)
 
 
