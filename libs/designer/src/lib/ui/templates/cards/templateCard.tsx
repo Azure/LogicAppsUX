@@ -116,11 +116,13 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       </div>
 
       <div className="msla-template-card-body">
-        <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
-          {title}
-        </Text>
+        <div className="msla-template-card-title-wrapper">
+          <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
+            {title}
+          </Text>
+        </div>
 
-        <div className="msla-template-card-connectors-wrapper">
+        <div className="msla-template-card-footer">
           <div className="msla-template-card-tags">
             {['Type', 'Trigger'].map((key: string) => {
               if (!details[key]) {
@@ -133,24 +135,22 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
               );
             })}
           </div>
-          <div className="msla-template-card-connectors">
-            <div className="msla-template-card-connectors-list">
-              {connectorsToShow.length > 0 ? (
-                connectorsToShow.map((info) => (
-                  <ConnectorIcon
-                    key={info.connectorId}
-                    connectorId={info.connectorId}
-                    operationId={info.operationId}
-                    classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
-                  />
-                ))
-              ) : (
-                <Text className="msla-template-card-connectors-emptyText">{intlText.NO_CONNECTORS}</Text>
-              )}
-              {showOverflow ? (
-                <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
-              ) : null}
-            </div>
+          <div className="msla-template-card-connectors-list">
+            {connectorsToShow.length > 0 ? (
+              connectorsToShow.map((info) => (
+                <ConnectorIcon
+                  key={info.connectorId}
+                  connectorId={info.connectorId}
+                  operationId={info.operationId}
+                  classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
+                />
+              ))
+            ) : (
+              <Text className="msla-template-card-connectors-emptyText">{intlText.NO_CONNECTORS}</Text>
+            )}
+            {showOverflow ? (
+              <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+            ) : null}
           </div>
         </div>
       </div>
