@@ -16,10 +16,11 @@ import {
   nodeHasSpecificInputEventually,
   nodeHasSpecificOutputEventually,
 } from '../Connection.Utils';
-import { isSchemaNodeExtended } from '../Schema.Utils';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary, isSchemaNodeExtended } from '../Schema.Utils';
+import { sourceMockSchema, targetMockSchema } from '../../../__mocks__/schemas';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
@@ -298,6 +299,35 @@ describe('utils/Connections', () => {
         });
 
         expect(mockConnections[currentNodeReactFlowKey].inputs[0].length).toEqual(1);
+      });
+
+      it('creates repeating connection', () => {
+        const newConnections: ConnectionDictionary = {};
+        const destination = 'target-/ns0:Root/Looping/Person';
+        const source = 'source-/ns0:Root/Looping/Employee';
+
+        const sourceSchema: DataMapSchema = sourceMockSchema as any as DataMapSchema;
+        const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
+        const flattenedSchema = flattenSchemaIntoDictionary(extendedSourceSchema, SchemaType.Source);
+
+        const targetSchema: DataMapSchema = targetMockSchema as any as DataMapSchema;
+        const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
+        const flattenedTargetSchema = flattenSchemaIntoDictionary(extendedTargetSchema, SchemaType.Target);
+
+        const sourceNode = flattenedSchema[source];
+        const targetNode = flattenedTargetSchema[destination];
+        // get nodes from schema
+        applyConnectionValue(newConnections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: destination,
+          inputIndex: 0,
+          input: {
+            reactFlowKey: source,
+            node: sourceNode,
+          },
+        });
+
+        expect(newConnections[currentNodeReactFlowKey].inputs[0].length).toEqual(1);
       });
     });
   });
