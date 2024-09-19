@@ -48,6 +48,7 @@ import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import pstree from 'ps-tree';
+import find_process from 'find-process';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -129,14 +130,24 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
 export async function checkFuncProcessId(): Promise<boolean> {
   let correctId = false;
-  await pstree(ext.designChildProcess.pid, (err, children) => {
-    children.forEach((p) => {
-      if (p.PID === ext.designChildFuncProcessId && (p.COMMAND || p.COMM) === 'func.exe') {
-        correctId = true;
+  if (os.platform() === Platform.windows) {
+    await pstree(ext.designChildProcess.pid, (err, children) => {
+      children.forEach((p) => {
+        if (p.PID === ext.designChildFuncProcessId && (p.COMMAND || p.COMM) === 'func.exe') {
+          correctId = true;
+        }
+      });
+    });
+    await delay(1000);
+  } else {
+    await find_process('pid', ext.designChildProcess.pid).then((list) => {
+      if (list.length > 0) {
+        if (list[0].name === 'func' || list[0].name.includes('func')) {
+          correctId = true;
+        }
       }
     });
-  });
-  await delay(1000);
+  }
   return correctId;
 }
 
@@ -228,10 +239,7 @@ export function stopDesignTimeApi(): void {
     });
     cp.exec(`taskkill /pid ${ext.designChildProcess.pid} /t /f`);
   } else {
-    pstree(ext.designChildProcess.pid, (err, children) => {
-      cp.spawn('kill', ['-9'].concat(children.map((p) => p.PID)));
-    });
-    ext.designChildProcess.kill();
+    cp.spawn('kill', ['-9'].concat(`${ext.designChildProcess.pid}`));
   }
   ext.designChildProcess = undefined;
   ext.designChildFuncProcessId = undefined;
