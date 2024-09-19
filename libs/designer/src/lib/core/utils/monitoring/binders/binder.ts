@@ -131,8 +131,8 @@ export abstract class Binder {
     }, {});
   }
 
-  protected makeReducer<T extends { name: string }>(inputs: any, binder: BindFunction): ReduceFunction<BoundParameters, T> {
-    return (previous: BoundParameters, current: T) => {
+  protected makeReducer(inputs: any, binder: BindFunction): ReduceFunction<BoundParameters, InputParameter> {
+    return (previous: BoundParameters, current: InputParameter) => {
       const { name } = current;
       const boundParameter = binder(inputs, current);
 
