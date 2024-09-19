@@ -16,15 +16,14 @@ import {
   UriTemplateGenerator,
   UriTemplateParser,
 } from '@microsoft/logic-apps-shared';
-import constants from './constants';
 
 export abstract class Binder {
   protected buildBoundParameter(
     displayName: string,
     value: any,
     visibility?: string,
-    additionalProperties?: Partial<BoundParameter<any>>
-  ): BoundParameter<any> {
+    additionalProperties?: Partial<BoundParameter>
+  ): BoundParameter {
     return {
       displayName,
       value,
@@ -72,8 +71,8 @@ export abstract class Binder {
     return value;
   }
 
-  protected makeBindFunction(operation: LAOperation): BindFunction<InputParameter> {
-    return (inputs: any, parameter: InputParameter): BoundParameter<any> | undefined => {
+  protected makeBindFunction(operation: LAOperation): BindFunction {
+    return (inputs: any, parameter: InputParameter): BoundParameter | undefined => {
       // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
       // branch which never ran, because the condition expression was false
       if (isNullOrUndefined(inputs)) {
@@ -94,7 +93,7 @@ export abstract class Binder {
     displayName: string,
     value: any,
     visibility?: string,
-    additionalProperties?: Partial<BoundParameter<any>>
+    additionalProperties?: Partial<BoundParameter>
   ): BoundParameters {
     return this._makeBoundParameters(key, this.buildBoundParameter(displayName, value, visibility, additionalProperties));
   }
@@ -104,7 +103,7 @@ export abstract class Binder {
     displayName: string,
     value: any,
     visibility?: string,
-    additionalProperties?: Partial<BoundParameter<any>>
+    additionalProperties?: Partial<BoundParameter>
   ): BoundParameters | undefined {
     return value === undefined ? undefined : this.makeBoundParameter(key, displayName, value, visibility, additionalProperties);
   }
@@ -132,10 +131,10 @@ export abstract class Binder {
     }, {});
   }
 
-  protected makeReducer<T extends { name: string }>(outputs: any, binder: BindFunction<T>): ReduceFunction<BoundParameters, T> {
+  protected makeReducer<T extends { name: string }>(inputs: any, binder: BindFunction): ReduceFunction<BoundParameters, T> {
     return (previous: BoundParameters, current: T) => {
       const { name } = current;
-      const boundParameter = binder(outputs, current);
+      const boundParameter = binder(inputs, current);
 
       return boundParameter && !isNullOrUndefined(boundParameter.value)
         ? { ...previous, ...this._makeBoundParameters(name, boundParameter) }
@@ -143,11 +142,7 @@ export abstract class Binder {
     };
   }
 
-  protected makeUntypedInputsParameters(inputs: any): BoundParameters {
-    return this.makeBoundParameter(constants.UNTYPED.INPUTS, 'Resources.DISPLAY_TEXT_UNTYPED_INPUTS', inputs);
-  }
-
-  private _makeBoundParameters(key: string, boundParameter: BoundParameter<any>): BoundParameters {
+  private _makeBoundParameters(key: string, boundParameter: BoundParameter): BoundParameters {
     return {
       [key]: boundParameter,
     };

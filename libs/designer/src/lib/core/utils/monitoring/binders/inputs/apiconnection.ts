@@ -7,11 +7,8 @@ export default class ApiConnectionInputsBinder extends Binder {
     if (!inputParameters || !operation) {
       return this.makeUntypedInputsParameters(inputs);
     }
-    const boundInputParameters = unmap(inputParameters).reduce(
-      this.makeReducer(inputs, this.makeBindFunction(operation)),
-      {} as BoundParameters
-    );
-    return { ...boundInputParameters };
+
+    return unmap(inputParameters).reduce(this.makeReducer(inputs, this.makeBindFunction(operation)), {} as BoundParameters);
   }
 
   makeUntypedInputsParameters(inputs: any): BoundParameters {

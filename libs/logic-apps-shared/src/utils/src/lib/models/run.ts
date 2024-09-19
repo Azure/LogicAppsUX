@@ -1,3 +1,5 @@
+import type { InputParameter } from 'parsers';
+
 export interface Run {
   id: string;
   name: string;
@@ -52,18 +54,18 @@ export interface SecureData {
   properties: string[];
 }
 
-export type BoundParameters = Record<string, BoundParameter<any>>;
+export type BoundParameters = Record<string, BoundParameter>;
 
-export interface BoundParameter<T> {
+export interface BoundParameter {
   displayName: string;
-  dynamicValue?: string;
+  dynamicValue?: any;
   format?: string;
   language?: string;
-  value: T;
+  value: any;
   visibility?: string;
 }
 
-export type BindFunction<T> = (values: any, parameter: T) => BoundParameter<any> | undefined;
+export type BindFunction = (values: any, parameter: InputParameter) => BoundParameter | undefined;
 
 export type ReduceFunction<T, U> = (previous: T, current: U) => T;
 
