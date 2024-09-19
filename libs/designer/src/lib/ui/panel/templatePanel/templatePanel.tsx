@@ -46,8 +46,8 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
   const intlText = useMemo(() => {
     return {
       CREATE_WORKFLOW: intl.formatMessage({
-        defaultMessage: 'Create a new workflow',
-        id: 'Y9VTmA',
+        defaultMessage: 'Create a new workflow from template',
+        id: 'RZNabt',
         description: 'Panel header title for creating the workflow',
       }),
       BY_MICROSOFT: intl.formatMessage({
