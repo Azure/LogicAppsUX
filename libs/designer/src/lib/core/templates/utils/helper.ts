@@ -1,14 +1,23 @@
-import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
+import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
-import { overviewTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/overviewTab';
+import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
 import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
-export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
-  return [workflowTab(intl, dispatch), overviewTab(intl, dispatch)];
+export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch, { templateId, workflowAppName }: Template.TemplateContext) => {
+  return [
+    workflowTab(intl, dispatch, {
+      templateId,
+      workflowAppName,
+    }),
+    summaryTab(intl, dispatch, {
+      templateId,
+      workflowAppName,
+    }),
+  ];
 };
 
 export const getUniqueConnectors = (
@@ -37,15 +46,6 @@ export const getUniqueConnectorsFromConnections = (
   }
 
   return result;
-};
-
-export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
-  if (!isArmResourceId(connectorId)) {
-    return connectorId;
-  }
-
-  const result = connectorId.replaceAll('#subscription#', subscriptionId);
-  return result.replaceAll('#location#', location);
 };
 
 const templateSearchOptions = {

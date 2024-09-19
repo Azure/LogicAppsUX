@@ -13,6 +13,8 @@ import { appServiceActionManifest, appServiceTriggerManifest } from './manifests
 import { as2EncodeManifest, as2DecodeManifest } from './manifests/as2';
 import { batchTriggerManifest, sendToBatchManifest } from './manifests/batchWorkflow';
 import { composeManifest } from './manifests/compose';
+import { chunkTextManifest } from './manifests/chunktext';
+import { parseDocumentManifest } from './manifests/parsedocument';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
 import { selectFunctionManifest } from './manifests/functions';
 import { inlineCodeManifest } from './manifests/inlinecode';
@@ -141,6 +143,8 @@ const as2decode = 'as2decode';
 const rosettanetencode = 'rosettanetencode';
 const rosettanetdecode = 'rosettanetdecode';
 const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
+const chunktext = 'chunktext';
+const parsedocument = 'parsedocument';
 
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
@@ -186,4 +190,6 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [rosettanetencode, rosettaNetEncodeManifest],
   [rosettanetdecode, rosettaNetDecodeManifest],
   [rosettanetwaitforresponse, rosettaNetWaitForResponseManifest],
+  [chunktext, chunkTextManifest],
+  [parsedocument, parseDocumentManifest]
 ]);

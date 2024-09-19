@@ -95,7 +95,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         workflow: undefined,
         kind: undefined,
         parameters: {},
-        connections: {},
+        connections: undefined,
       },
     };
     const minimalStoreData = {
@@ -139,14 +139,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   it('Hides Connections Tab on no connections', async () => {
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeDefined();
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
-  });
-
-  it('Ensure clicking on next tab button for sequential ordering works', async () => {
-    screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE).click();
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
-    screen.getByTestId(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE).click();
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE);
   });
 });

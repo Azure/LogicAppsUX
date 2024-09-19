@@ -2,9 +2,11 @@
 @import '../panel/templatePanel/panel.less';
 
 .msla-templates-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 373px);
+
     gap: 24px;
+    justify-content: center;
 }
 
 .msla-templates-empty-list {
@@ -48,5 +50,6 @@
 
     .msla-templates-filters-sort-dropdown {
         width: 200px;
+        margin-left: 6px;
     }
 }

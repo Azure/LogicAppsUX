@@ -1,4 +1,4 @@
-import { Dropdown, SearchBox } from '@fluentui/react';
+import { Dropdown, SearchBox, Text } from '@fluentui/react';
 import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-ui';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
@@ -8,15 +8,16 @@ import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnectors } from '../../../core/state/connection/connectionSelector';
 
+export type TemplateDetailFilterType = Record<
+  string,
+  {
+    displayName: string;
+    items: FilterObject[];
+  }
+>;
+
 export interface TemplateFiltersProps {
-  connectors?: FilterObject[];
-  detailFilters: Record<
-    string,
-    {
-      displayName: string;
-      items: FilterObject[];
-    }
-  >;
+  detailFilters: TemplateDetailFilterType;
 }
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
@@ -50,6 +51,11 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       defaultMessage: 'Type',
       id: 'wfekJ7',
       description: 'Label text for type filter',
+    }),
+    SORT_BY: intl.formatMessage({
+      defaultMessage: 'Sort By',
+      id: 'ZOIvqN',
+      description: 'Label text for sort by filter',
     }),
   };
 
@@ -109,6 +115,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         ))}
       </div>
       <div className="msla-templates-filters-sort">
+        <Text>{intlText.SORT_BY}</Text>
         <Dropdown
           className="msla-templates-filters-sort-dropdown"
           options={templateDropdownOptions}

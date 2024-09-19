@@ -3,6 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
 import { type TemplatePanelTab, TemplatesPanelContent } from '@microsoft/designer-ui';
 
+export interface CreateWorkflowTabProps {
+  isCreating: boolean;
+  previousTabId?: string;
+  nextTabId?: string;
+  hasError: boolean;
+}
+
 export const CreateWorkflowPanel = ({
   panelTabs,
 }: {
@@ -14,5 +21,5 @@ export const CreateWorkflowPanel = ({
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
   };
-  return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} isSequence={true} />;
+  return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />;
 };

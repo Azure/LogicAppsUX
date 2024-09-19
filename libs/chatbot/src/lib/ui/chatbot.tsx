@@ -335,6 +335,16 @@ export const Chatbot = ({
     ]
   );
 
+  const dismissCopilot = useCallback(() => {
+    setCollapsed(true);
+    closeChatBot?.();
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'chatbot',
+      message: 'workflow assistant closed',
+    });
+  }, [closeChatBot]);
+
   const abortFetching = useCallback(() => {
     controller.abort();
   }, [controller]);
@@ -351,20 +361,10 @@ export const Chatbot = ({
       hasCloseButton={false}
       isBlocking={false}
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
+      onDismiss={dismissCopilot}
     >
       <div className={'msla-chatbot-container'}>
-        <CopilotPanelHeader
-          closeCopilot={() => {
-            setCollapsed(true);
-            closeChatBot?.();
-            LoggerService().log({
-              level: LogEntryLevel.Warning,
-              area: 'chatbot',
-              message: 'workflow assistant closed',
-            });
-          }}
-        />
-
+        <CopilotPanelHeader closeCopilot={dismissCopilot} />
         <div className={css('msla-chatbot-content')}>
           {!answerGeneration && (
             <ProgressCardWithStopButton

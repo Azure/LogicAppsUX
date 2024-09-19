@@ -23,4 +23,11 @@ export const useStyles = makeStyles({
     alignSelf: 'center',
     marginTop: '20px',
   },
+  cancelButton: {
+    marginTop: '15px',
+    marginLeft: '5px',
+  },
+  errorMessage: {
+    marginTop: '10px',
+  },
 });

@@ -5,14 +5,13 @@ import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
-import { expandPanel, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import {
   useIsPanelCollapsed,
   useOperationPanelPinnedNodeId,
   useOperationPanelSelectedNodeId,
-} from '../../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
-import { useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+} from '../../../core/state/panel/panelSelectors';
+import { expandPanel, setPinnedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
 import { getCustomCodeFileName, getParameterFromName, ParameterGroupKeys } from '../../../core/utils/parameters/helper';
@@ -23,13 +22,17 @@ import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
+  equals,
+  getObjectPropertyValue,
+  HostService,
+  isNullOrEmpty,
   isNullOrUndefined,
   replaceWhiteSpaceWithUnderscore,
   splitFileName,
   SUBGRAPH_TYPES,
   WorkflowService,
 } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
@@ -56,6 +59,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const pinnedNodeData = usePanelNodeData(pinnedNode);
   const selectedNodeData = usePanelNodeData(selectedNode);
+  const actionMetadata = useActionMetadata(selectedNode);
+  const nodeType = actionMetadata?.type ?? '';
 
   const suppressDefaultNodeSelectFunctionality = useSuppressDefaultNodeSelectFunctionality();
 
@@ -93,7 +98,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       dispatch(
         setNodeDescription({
           nodeId,
-          ...(showCommentBox && { description: '' }),
+          description: showCommentBox ? undefined : '',
         })
       );
     },
@@ -109,7 +114,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'];
       const headerMenuItems: JSX.Element[] = [];
       if (!isSubgraphContainer) {
-        headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!!comment} />);
+        headerMenuItems.push(
+          <CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!isNullOrUndefined(comment)} />
+        );
       }
       if (nodeId !== pinnedNode) {
         headerMenuItems.push(<PinMenuItem key={'pin'} nodeId={selectedNode} onClick={() => handlePinClick(nodeId)} />);
@@ -201,6 +208,38 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     isResizeable,
   };
 
+  const getChildRunNameFromOutputs = (outputs: any): string | undefined => {
+    if (!isNullOrEmpty(outputs)) {
+      return getObjectPropertyValue(outputs, ['headers', 'value', 'x-ms-workflow-run-id']);
+    }
+    return undefined;
+  };
+
+  const getChildWorkflowIdFromInputs = (inputs: any): string | undefined => {
+    if (!isNullOrEmpty(inputs)) {
+      const workflow = getObjectPropertyValue(inputs, ['host', 'value', 'workflow']);
+      if (!isNullOrEmpty(workflow)) {
+        return workflow.id;
+      }
+    }
+    return undefined;
+  };
+
+  const runName = useMemo(() => {
+    return getChildRunNameFromOutputs(runData?.outputs);
+  }, [runData?.outputs]);
+
+  const canShowLogicAppRun = useMemo(() => {
+    return equals(nodeType, constants.NODE.TYPE.WORKFLOW) && !!runName && !!HostService() && !!HostService()?.openMonitorView;
+  }, [nodeType, runName]);
+
+  const showLogicAppRunClick = useCallback(() => {
+    const workflowId = getChildWorkflowIdFromInputs(runData?.inputs);
+    if (workflowId && runName && !!HostService()) {
+      HostService().openMonitorView?.(workflowId, runName);
+    }
+  }, [runData?.inputs, runName]);
+
   return (
     <PanelContainer
       {...commonPanelProps}
@@ -213,6 +252,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       pinnedNodeHeaderItems={getHeaderMenuItems(pinnedNode)}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}
+      canShowLogicAppRun={canShowLogicAppRun}
+      showLogicAppRun={showLogicAppRunClick}
       resubmitOperation={resubmitClick}
       onUnpinAction={unpinAction}
       toggleCollapse={() => {

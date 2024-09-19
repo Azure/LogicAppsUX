@@ -1,4 +1,3 @@
-import type { IComboBoxOption } from '@fluentui/react';
 import constants from '../../../constants';
 import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
@@ -6,6 +5,7 @@ import { $isTokenNode } from '../nodes/tokenNode';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
+import type { ComboboxItem } from '../../../combobox';
 
 /**
  * Creates a literal value segment.
@@ -178,19 +178,14 @@ export const removeQuotes = (s: string): string => {
   return s;
 };
 
-export const getDropdownOptionsFromOptions = (editorOptions: any) => {
-  let dropdownOptions: IComboBoxOption[] = editorOptions?.options?.value ?? editorOptions?.options ?? [];
-  if (!Array.isArray(dropdownOptions)) {
-    Object.values(dropdownOptions).forEach((value) => {
-      if (Array.isArray(value)) {
-        dropdownOptions = value.map((option) => {
-          return {
-            key: option,
-            text: option,
-          };
-        });
-      }
-    });
-  }
+export const getDropdownOptionsFromOptions = (editorOptions: any): ComboboxItem[] => {
+  let dropdownOptions: ComboboxItem[] = editorOptions?.options ?? [];
+
+  // handle cases where the displayName is not a string
+  dropdownOptions = dropdownOptions.map((option) => {
+    const stringifiedDisplayName = typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName);
+    return { ...option, displayName: stringifiedDisplayName, key: option.key ?? stringifiedDisplayName };
+  });
+
   return dropdownOptions;
 };

@@ -3,13 +3,14 @@ import * as Constants from '../common/constants';
 import { create, encodePropertySegment } from '../common/helpers/keysutility';
 import {
   getEditorForParameter,
+  getEditorOptionsForParameter,
   getEnum,
   getParameterDynamicSchema,
   getParameterDynamicValues,
   toSwaggerSchema,
 } from '../common/helpers/utils';
 import { SchemaProcessor } from '../common/schemaprocessor';
-import type { InputParameter, InputParameters } from '../models/operation';
+import type { EnumObject, InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
 import type { KeyProjectionOptions } from './parser';
 import { getIntl } from '../../../intl/src';
@@ -210,10 +211,17 @@ export class ParametersProcessor {
 
   private _getParameterFromSchema(parameter: Parameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
     const schema = parameter.schema;
+    const $enum = getEnum(schema, parameter.required);
+
     return {
-      ...this._getScalarParameter(parameter, create(this._getMergedKeySegments(parameter.in, keyProjectionOption))),
+      ...this._getScalarParameter(
+        parameter,
+        create(this._getMergedKeySegments(parameter.in, keyProjectionOption)),
+        /* keyProjectionOption */ undefined,
+        $enum
+      ),
       default: schema.default,
-      enum: getEnum(schema, parameter.required),
+      enum: $enum,
       type: schema.type,
       format: schema.format,
       itemSchema: schema.items,
@@ -223,14 +231,19 @@ export class ParametersProcessor {
     };
   }
 
-  private _getScalarParameter(parameter: Parameter, key?: string, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
+  private _getScalarParameter(
+    parameter: Parameter,
+    key?: string,
+    keyProjectionOption: KeyProjectionOptions = {},
+    schemaEnum?: EnumObject[]
+  ): InputParameter {
     const dynamicValues = getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject);
     const $default = parameter.default;
     const description = parameter.description;
-    const editor = getEditorForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues);
-    const editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions];
-    const encode = parameter[Constants.ExtensionProperties.Encode];
     const $enum = getEnum(parameter as unknown as OpenAPIV2.SchemaObject, parameter.required);
+    const editor = getEditorForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues, schemaEnum ?? $enum);
+    const editorOptions = getEditorOptionsForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues, schemaEnum ?? $enum);
+    const encode = parameter[Constants.ExtensionProperties.Encode];
     const format = parameter.format;
     const $in = parameter.in;
     const name = encodePropertySegment(parameter.name);

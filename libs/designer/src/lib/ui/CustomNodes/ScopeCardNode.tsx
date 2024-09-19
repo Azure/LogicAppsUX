@@ -9,7 +9,7 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
@@ -33,7 +33,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -44,7 +44,6 @@ import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,7 +69,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const getRunRepetition = () => {
     if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
@@ -89,14 +88,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunRepetition) => {
-    dispatch(setRepetitionRunData({ nodeId: scopeId, runData: runDefinition.properties as LogicAppsV2.WorkflowRunAction }));
-  };
-
   const {
     refetch,
     isLoading: isRepetitionLoading,
     isRefetching: isRepetitionRefetching,
+    data: repetitionData,
   } = useQuery<any>(
     ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
     getRunRepetition,
@@ -104,10 +100,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetchOnWindowFocus: false,
       initialData: null,
       refetchOnMount: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+      enabled: parentRunIndex !== undefined && isMonitoringView,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionData)) {
+      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionData.properties as LogicAppsV2.WorkflowRunAction }));
+    }
+  }, [dispatch, scopeId, repetitionData]);
 
   useEffect(() => {
     if (parentRunIndex !== undefined && isMonitoringView) {
@@ -149,7 +150,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   const isPinned = useIsNodePinnedToOperationPanel(scopeId);
-  const selected = useIsNodeSelected(scopeId);
+  const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
@@ -268,6 +269,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const renderLoopsPager = useMemo(() => {
+    if (metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
+      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
+    }
+
+    return null;
+  }, [graphCollapsed, metadata, scopeId]);
+
   const nodeIndex = useNodeIndex(id);
 
   if (!node) {
@@ -332,9 +341,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
-            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
-          ) : null}
+          {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>

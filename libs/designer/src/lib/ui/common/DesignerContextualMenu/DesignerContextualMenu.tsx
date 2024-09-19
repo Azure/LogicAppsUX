@@ -2,7 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CardContextMenu } from '@microsoft/designer-ui';
 import type { LogicAppsV2, TopLevelDropdownMenuItem } from '@microsoft/logic-apps-shared';
-import { SUBGRAPH_TYPES, UiInteractionsService, WorkflowService, getRecordEntry, isScopeOperation } from '@microsoft/logic-apps-shared';
+import {
+  SUBGRAPH_TYPES,
+  UiInteractionsService,
+  WorkflowService,
+  getRecordEntry,
+  isScopeOperation,
+  isUiInteractionsServiceEnabled,
+} from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem } from '../../../ui/menuItems';
@@ -10,9 +17,8 @@ import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { changePanelNode, selectPanelTab, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
-import { useOperationPanelPinnedNodeId } from '../../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
+import { useOperationPanelPinnedNodeId } from '../../../core/state/panel/panelSelectors';
+import { changePanelNode, setSelectedPanelActiveTab, setPinnedNode, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
 import { useNodeDisplayName, useNodeMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
@@ -22,8 +28,8 @@ import {
 } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { copyOperation, copyScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from './CopyTooltip';
-import { CustomMenu } from '../../connections/customMenu';
-import { NodeMenuPriorities } from '../../CustomNodes/Priorities';
+import { CustomMenu } from '../EdgeContextualMenu/customMenu';
+import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
 
 export const DesignerContextualMenu = () => {
@@ -58,7 +64,7 @@ export const DesignerContextualMenu = () => {
 
   const runAfterClick = useCallback(() => {
     handleNodeSelection();
-    dispatch(selectPanelTab(RUN_AFTER_PANEL_TAB));
+    dispatch(setSelectedPanelActiveTab(RUN_AFTER_PANEL_TAB));
   }, [dispatch, handleNodeSelection]);
 
   const deleteClick = useCallback(() => {
@@ -107,7 +113,9 @@ export const DesignerContextualMenu = () => {
 
   const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
     () => [
-      ...transformMenuItems(UiInteractionsService()?.getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? []),
+      ...(isUiInteractionsServiceEnabled()
+        ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
+        : []),
       { priority: NodeMenuPriorities.Delete, renderCustomComponent: () => <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey /> },
       {
         priority: NodeMenuPriorities.Copy,

@@ -1,17 +1,31 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens } from '@fluentui/react-components';
-import { ArrowUndo20Regular, Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarGroup,
+  Switch,
+  tokens,
+  useId,
+  useToastController,
+  Toast,
+  ToastTitle,
+  Toaster,
+  ToastBody,
+} from '@fluentui/react-components';
+import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService, DataMapperWrappedContext, generateDataMapXslt } from '../../core';
+import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
+import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 
 export type EditorCommandBarProps = {};
 
@@ -24,18 +38,33 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+
+  const toasterId = useId('toaster');
+  const { dispatchToast } = useToastController(toasterId);
+
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
+  const canvasRect = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
+
+  const failedXsltMessage = intl.formatMessage({
+    defaultMessage: 'Failed to generate XSLT.',
+    id: 'e9bIKh',
+    description: 'Message on failed generation',
+  });
 
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
   );
 
-  const dataMapDefinition = useMemo<string>(() => {
+  const dataMapDefinition = useMemo<MetaMapDefinition>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
+        const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
+        return result;
       } catch (error) {
         let errorMessage = '';
         if (typeof error === 'string') {
@@ -46,10 +75,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
           message: errorMessage,
         });
-        return '';
+        return { isSuccess: false, errorNodes: [] };
       }
     }
-    return '';
+    return { isSuccess: false, errorNodes: [] };
   }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
 
   const onTestClick = useCallback(() => {
@@ -60,53 +89,70 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     dispatch(toggleCodeView());
   }, [dispatch]);
 
-  const { canvasBounds } = useContext(DataMapperWrappedContext);
-
   const onSaveClick = useCallback(() => {
-    if (!canvasBounds || !canvasBounds.width || !canvasBounds.height) {
+    if (!canvasRect || !canvasRect.width || !canvasRect.height) {
       throw new Error('Canvas bounds are not defined, cannot save map metadata.');
     }
 
-    const mapMetadata = JSON.stringify(
-      generateMapMetadata(functions, currentConnections, {
-        width: canvasBounds.width,
-        height: canvasBounds.height,
-      })
-    );
+    const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections, canvasRect));
 
-    DataMapperFileService().saveMapDefinitionCall(dataMapDefinition, mapMetadata);
+    if (dataMapDefinition.isSuccess) {
+      DataMapperFileService().saveMapDefinitionCall(dataMapDefinition.definition, mapMetadata);
 
-    dispatch(
-      saveDataMap({
-        sourceSchemaExtended: sourceSchema,
-        targetSchemaExtended: targetSchema,
-      })
-    );
+      dispatch(
+        saveDataMap({
+          sourceSchemaExtended: sourceSchema,
+          targetSchemaExtended: targetSchema,
+        })
+      );
 
-    generateDataMapXslt(dataMapDefinition)
-      .then((xsltStr) => {
-        DataMapperFileService().saveXsltCall(xsltStr);
+      generateDataMapXslt(dataMapDefinition.definition)
+        .then((xsltStr) => {
+          DataMapperFileService().saveXsltCall(xsltStr);
 
-        LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-          message: 'Successfully generated xslt',
+          LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+            message: 'Successfully generated xslt',
+          });
+        })
+        .catch((error: Error) => {
+          LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+            message: JSON.stringify(error),
+          });
+          dispatchToast(
+            <Toast>
+              <ToastTitle>{failedXsltMessage}</ToastTitle>
+              <ToastBody>{error.message} </ToastBody>
+            </Toast>,
+            { intent: 'error' }
+          );
         });
-      })
-      .catch((error: Error) => {
-        LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-          message: error.message,
-        });
-
-        // show notification here
-      });
-  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasBounds]);
+    } else {
+      dispatchToast(
+        <Toast>
+          <ToastTitle>{failedXsltMessage}</ToastTitle>
+        </Toast>,
+        { intent: 'error' }
+      );
+    }
+  }, [
+    currentConnections,
+    functions,
+    dataMapDefinition,
+    sourceSchema,
+    targetSchema,
+    dispatch,
+    canvasRect,
+    failedXsltMessage,
+    dispatchToast,
+  ]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());
   }, [dispatch]);
 
   useEffect(() => {
-    if (dataMapDefinition) {
-      dispatch(updateDataMapLML(dataMapDefinition));
+    if (dataMapDefinition && dataMapDefinition.isSuccess) {
+      dispatch(updateDataMapLML(dataMapDefinition.definition));
     }
   }, [dispatch, dataMapDefinition]);
   // Tracks modal (confirmation) state
@@ -148,6 +194,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: '/4vB3J',
         description: 'Button for View Code',
       }),
+      DISABLED_TEST: intl.formatMessage({
+        defaultMessage: 'Please save the map before testing',
+        id: 'wTaSTp',
+        description: 'Tooltip for disabled test button',
+      }),
     }),
     [intl]
   );
@@ -159,52 +210,48 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
       discard: !isDirty,
-      test: sourceInEditState || targetInEditState,
+      test: sourceInEditState || targetInEditState || !xsltFilename,
       codeView: sourceInEditState || targetInEditState,
     }),
-    [isDirty, undoStack.length, sourceInEditState, targetInEditState]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
   );
 
   return (
-    <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
-      <ToolbarGroup className={toolbarStyles.toolbarGroup}>
-        <ToolbarButton
-          aria-label={Resources.SAVE}
-          icon={<Save20Regular color={disabledState.save ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.save}
-          onClick={onSaveClick}
-          className={toolbarStyles.button}
-        >
-          {Resources.SAVE}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={Resources.UNDO}
-          icon={<ArrowUndo20Regular color={disabledState.undo ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.undo}
-          onClick={() => {}}
-        >
-          {Resources.UNDO}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={Resources.DISCARD}
-          icon={<Dismiss20Regular color={disabledState.discard ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.discard}
-          onClick={triggerDiscardWarningModal}
-        >
-          {Resources.DISCARD}
-        </ToolbarButton>
-        <ToolbarButton
-          aria-label={Resources.RUN_TEST}
-          icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
-          disabled={disabledState.test}
-          onClick={onTestClick}
-        >
-          {Resources.RUN_TEST}
-        </ToolbarButton>
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
-      </ToolbarGroup>
-    </Toolbar>
+    <>
+      <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
+        <ToolbarGroup className={toolbarStyles.toolbarGroup}>
+          <ToolbarButton
+            aria-label={Resources.SAVE}
+            icon={<Save20Regular color={disabledState.save ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            disabled={disabledState.save}
+            onClick={onSaveClick}
+            className={toolbarStyles.button}
+          >
+            {Resources.SAVE}
+          </ToolbarButton>
+          <ToolbarButton
+            aria-label={Resources.DISCARD}
+            icon={<Dismiss20Regular color={disabledState.discard ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            disabled={disabledState.discard}
+            onClick={triggerDiscardWarningModal}
+          >
+            {Resources.DISCARD}
+          </ToolbarButton>
+          <ToolbarButton
+            aria-label={Resources.RUN_TEST}
+            icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            disabled={disabledState.test}
+            title={disabledState.test ? Resources.DISABLED_TEST : ''}
+            onClick={onTestClick}
+          >
+            {Resources.RUN_TEST}
+          </ToolbarButton>
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
+        </ToolbarGroup>
+      </Toolbar>
+      <Toaster timeout={10000} toasterId={toasterId} />
+    </>
   );
 };

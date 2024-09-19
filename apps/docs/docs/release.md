@@ -1,4 +1,5 @@
 ---
+sidebar_position: 6
 # Working with h2 to h5 Headings
 toc_min_heading_level: 2
 toc_max_heading_level: 5

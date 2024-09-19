@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { getIntl } from '../../../intl/src';
 import type { ManagedIdentity, Connector, Connection, ConnectionParameter } from '../../../utils/src';
 import {
@@ -158,9 +159,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
     return this._getAzureConnector(connectorId);
   }
 
-  override async getConnections(connectorId?: string): Promise<Connection[]> {
+  override async getConnections(connectorId?: string, queryClient?: QueryClient): Promise<Connection[]> {
     if (connectorId) {
-      return this.getConnectionsForConnector(connectorId);
+      return this.getConnectionsForConnector(connectorId, queryClient);
     }
 
     const [localConnections, apiHubConnections] = await Promise.all([this._options.readConnections(), this.getConnectionsInApiHub()]);
