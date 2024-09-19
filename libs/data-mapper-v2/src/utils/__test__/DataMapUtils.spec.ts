@@ -8,502 +8,53 @@ import {
   getTargetValueWithoutLoops,
   qualifyLoopRelativeSourceKeys,
   splitKeyIntoChildren,
-  isValidToMakeMapDefinition,
   amendSourceKeyForDirectAccessIfNeeded,
+  addParentConnectionForRepeatingElementsNested,
 } from '../DataMap.Utils';
-import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../__mocks__/schemas';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema, targetMockSchema } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
+import { applyConnectionValue } from '../Connection.Utils';
 
 describe('utils/DataMap', () => {
-  describe('isValidToMakeMapDefinition', () => {
-    it('includes a function node that is not connected to any input and outputs', () => {
-      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
-        'ToLower-059C6C37-6BA4-4BF0-B100-4BDC798A5AA7': {
-          self: {
-            node: {
-              key: 'ToLower',
-              maxNumberOfInputs: 1,
-              functionName: 'lower-case',
-              outputValueType: NormalizedDataType.String,
-              inputs: [
-                {
-                  name: 'Value',
-                  allowedTypes: [NormalizedDataType.String],
-                  isOptional: false,
-                  allowCustomInput: true,
-                  tooltip: 'The value to use',
-                  placeHolder: 'The value',
-                },
-              ],
-              displayName: 'To Lower',
-              category: FunctionCategory.String,
-              description: 'Sets a string to be all lower case',
-              tooltip: 'Lower case',
-              children: [],
-            },
-            reactFlowKey: 'ToLower-059C6C37-6BA4-4BF0-B100-4BDC798A5AA7',
-          },
-          inputs: { '0': [] },
-          outputs: [],
-        },
-      };
-      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
-    });
+  describe('addParentConnectionForRepeatingElementsNested', () => {
+    it('adds parent connection for repeating elements simple', () => {
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+      const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
 
-    it('includes a function node that is only connected to an input', () => {
-      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
-        'ToLower-73F91D20-0B8E-4826-A705-76F3E59F1FEB': {
-          self: {
-            node: {
-              key: 'ToLower',
-              maxNumberOfInputs: 1,
-              functionName: 'lower-case',
-              outputValueType: NormalizedDataType.String,
-              inputs: [
-                {
-                  name: 'Value',
-                  allowedTypes: [NormalizedDataType.String],
-                  isOptional: false,
-                  allowCustomInput: true,
-                  tooltip: 'The value to use',
-                  placeHolder: 'The value',
-                },
-              ],
-              displayName: 'To Lower',
-              category: FunctionCategory.String,
-              description: 'Sets a string to be all lower case',
-              tooltip: 'Lower case',
-              children: [],
-            },
-            reactFlowKey: 'ToLower-73F91D20-0B8E-4826-A705-76F3E59F1FEB',
-          },
-          inputs: {
-            '0': [
-              {
-                reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
-                node: {
-                  key: '/ns0:SourcePlaygroundRoot/UserID',
-                  name: 'UserID',
-                  qName: 'UserID',
-                  type: NormalizedDataType.String,
-                  properties: 'None',
-                  parentKey: '/ns0:SourcePlaygroundRoot',
-                  nodeProperties: [SchemaNodeProperty.None],
-                  children: [],
-                  pathToRoot: [
-                    {
-                      key: '/ns0:SourcePlaygroundRoot',
-                      name: 'SourcePlaygroundRoot',
-                      qName: 'ns0:SourcePlaygroundRoot',
-                      repeating: false,
-                    },
-                    {
-                      key: '/ns0:SourcePlaygroundRoot/UserID',
-                      name: 'UserID',
-                      qName: 'UserID',
-                      repeating: false,
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-          outputs: [],
-        },
-        'source-/ns0:SourcePlaygroundRoot/UserID': {
-          self: {
-            node: {
-              key: '/ns0:SourcePlaygroundRoot/UserID',
-              name: 'UserID',
-              qName: 'UserID',
-              type: NormalizedDataType.String,
-              properties: 'None',
-              parentKey: '/ns0:SourcePlaygroundRoot',
-              nodeProperties: [SchemaNodeProperty.None],
-              children: [],
-              pathToRoot: [
-                {
-                  key: '/ns0:SourcePlaygroundRoot',
-                  name: 'SourcePlaygroundRoot',
-                  qName: 'ns0:SourcePlaygroundRoot',
-                  repeating: false,
-                },
-                {
-                  key: '/ns0:SourcePlaygroundRoot/UserID',
-                  name: 'UserID',
-                  qName: 'UserID',
-                  repeating: false,
-                },
-              ],
-            },
-            reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
-          },
-          inputs: {
-            '0': [],
-          },
-          outputs: [
-            {
-              node: {
-                key: 'ToLower',
-                maxNumberOfInputs: 1,
-                functionName: 'lower-case',
-                outputValueType: NormalizedDataType.String,
-                inputs: [
-                  {
-                    name: 'Value',
-                    allowedTypes: [NormalizedDataType.String],
-                    isOptional: false,
-                    allowCustomInput: true,
-                    tooltip: 'The value to use',
-                    placeHolder: 'The value',
-                  },
-                ],
-                displayName: 'To Lower',
-                category: FunctionCategory.String,
-                description: 'Sets a string to be all lower case',
-                tooltip: 'Lower case',
-                children: [],
-              },
-              reactFlowKey: 'ToLower-73F91D20-0B8E-4826-A705-76F3E59F1FEB',
-            },
-          ],
-        },
-      };
-      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
-    });
+      const flattenedSource = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+      const flattenedTarget = flattenSchemaIntoDictionary(extendedTarget, SchemaType.Target);
 
-    it('includes a function node that is only connected to an output', () => {
-      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
-        'ToLower-1C55C194-8062-446F-B5C6-068DD9C5F06F': {
-          self: {
-            node: {
-              key: 'ToLower',
-              maxNumberOfInputs: 1,
-              functionName: 'lower-case',
-              outputValueType: NormalizedDataType.String,
-              inputs: [
-                {
-                  name: 'Value',
-                  allowedTypes: [NormalizedDataType.String],
-                  isOptional: false,
-                  allowCustomInput: true,
-                  tooltip: 'The value to use',
-                  placeHolder: 'The value',
-                },
-              ],
-              displayName: 'To Lower',
-              category: FunctionCategory.String,
-              description: 'Sets a string to be all lower case',
-              tooltip: 'Lower case',
-              children: [],
-            },
-            reactFlowKey: 'ToLower-1C55C194-8062-446F-B5C6-068DD9C5F06F',
-          },
-          inputs: {
-            '0': [],
-          },
-          outputs: [
-            {
-              node: {
-                key: '/ns0:TargetPlaygroundRoot/UserID',
-                name: 'UserID',
-                qName: 'UserID',
-                type: NormalizedDataType.String,
-                properties: 'None',
-                parentKey: '/ns0:TargetPlaygroundRoot',
-                nodeProperties: [SchemaNodeProperty.None],
-                children: [],
-                pathToRoot: [
-                  {
-                    key: '/ns0:TargetPlaygroundRoot',
-                    name: 'TargetPlaygroundRoot',
-                    qName: 'ns0:TargetPlaygroundRoot',
-                    repeating: false,
-                  },
-                  {
-                    key: '/ns0:TargetPlaygroundRoot/UserID',
-                    name: 'UserID',
-                    qName: 'UserID',
-                    repeating: false,
-                  },
-                ],
-              },
-              reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
-            },
-          ],
-        },
-        'target-/ns0:TargetPlaygroundRoot/UserID': {
-          self: {
-            node: {
-              key: '/ns0:TargetPlaygroundRoot/UserID',
-              name: 'UserID',
-              qName: 'UserID',
-              type: NormalizedDataType.String,
-              properties: 'None',
-              parentKey: '/ns0:TargetPlaygroundRoot',
-              nodeProperties: [SchemaNodeProperty.None],
-              children: [],
-              pathToRoot: [
-                {
-                  key: '/ns0:TargetPlaygroundRoot',
-                  name: 'TargetPlaygroundRoot',
-                  qName: 'ns0:TargetPlaygroundRoot',
-                  repeating: false,
-                },
-                {
-                  key: '/ns0:TargetPlaygroundRoot/UserID',
-                  name: 'UserID',
-                  qName: 'UserID',
-                  repeating: false,
-                },
-              ],
-            },
-            reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
-          },
-          inputs: {
-            '0': [
-              {
-                reactFlowKey: 'ToLower-1C55C194-8062-446F-B5C6-068DD9C5F06F',
-                node: {
-                  key: 'ToLower',
-                  maxNumberOfInputs: 1,
-                  functionName: 'lower-case',
-                  outputValueType: NormalizedDataType.String,
-                  inputs: [
-                    {
-                      name: 'Value',
-                      allowedTypes: [NormalizedDataType.String],
-                      isOptional: false,
-                      allowCustomInput: true,
-                      tooltip: 'The value to use',
-                      placeHolder: 'The value',
-                    },
-                  ],
-                  displayName: 'To Lower',
-                  category: FunctionCategory.String,
-                  description: 'Sets a string to be all lower case',
-                  tooltip: 'Lower case',
-                  children: [],
-                },
-              },
-            ],
-          },
-          outputs: [],
-        },
-      };
+      const targetChildNodeId = 'target-/ns0:Root/Looping/Person/Name';
+      const sourceChildNodeId = 'source-/ns0:Root/Looping/Employee/TelephoneNumber';
 
-      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(false);
-    });
+      const sourceChildNode = flattenedSource[sourceChildNodeId];
+      const targetChildNode = flattenedTarget[targetChildNodeId];
 
-    it('includes a function node that connected to both input and output', () => {
-      const connectionsWithUnconnectedFunction: ConnectionDictionary = {
-        'ToLower-5CBBDFEE-0809-4D8D-A62D-8D65ABE13738': {
-          self: {
-            node: {
-              key: 'ToLower',
-              maxNumberOfInputs: 1,
-              functionName: 'lower-case',
-              outputValueType: NormalizedDataType.String,
-              inputs: [
-                {
-                  name: 'Value',
-                  allowedTypes: [NormalizedDataType.String],
-                  isOptional: false,
-                  allowCustomInput: true,
-                  tooltip: 'The value to use',
-                  placeHolder: 'The value',
-                },
-              ],
-              displayName: 'To Lower',
-              category: FunctionCategory.String,
-              description: 'Sets a string to be all lower case',
-              tooltip: 'Lower case',
-              children: [],
-            },
-            reactFlowKey: 'ToLower-5CBBDFEE-0809-4D8D-A62D-8D65ABE13738',
-          },
-          inputs: {
-            '0': [
-              {
-                reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
-                node: {
-                  key: '/ns0:SourcePlaygroundRoot/UserID',
-                  name: 'UserID',
-                  qName: 'UserID',
-                  type: NormalizedDataType.String,
-                  properties: 'None',
-                  parentKey: '/ns0:SourcePlaygroundRoot',
-                  nodeProperties: [SchemaNodeProperty.None],
-                  children: [],
-                  pathToRoot: [
-                    {
-                      key: '/ns0:SourcePlaygroundRoot',
-                      name: 'SourcePlaygroundRoot',
-                      qName: 'ns0:SourcePlaygroundRoot',
-                      repeating: false,
-                    },
-                    {
-                      key: '/ns0:SourcePlaygroundRoot/UserID',
-                      name: 'UserID',
-                      qName: 'UserID',
-                      repeating: false,
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-          outputs: [
-            {
-              node: {
-                key: '/ns0:TargetPlaygroundRoot/UserID',
-                name: 'UserID',
-                qName: 'UserID',
-                type: NormalizedDataType.String,
-                properties: 'None',
-                parentKey: '/ns0:TargetPlaygroundRoot',
-                nodeProperties: [SchemaNodeProperty.None],
-                children: [],
-                pathToRoot: [
-                  {
-                    key: '/ns0:TargetPlaygroundRoot',
-                    name: 'TargetPlaygroundRoot',
-                    qName: 'ns0:TargetPlaygroundRoot',
-                    repeating: false,
-                  },
-                  {
-                    key: '/ns0:TargetPlaygroundRoot/UserID',
-                    name: 'UserID',
-                    qName: 'UserID',
-                    repeating: false,
-                  },
-                ],
-              },
-              reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
-            },
-          ],
-        },
-        'target-/ns0:TargetPlaygroundRoot/UserID': {
-          self: {
-            node: {
-              key: '/ns0:TargetPlaygroundRoot/UserID',
-              name: 'UserID',
-              qName: 'UserID',
-              type: NormalizedDataType.String,
-              properties: 'None',
-              parentKey: '/ns0:TargetPlaygroundRoot',
-              nodeProperties: [SchemaNodeProperty.None],
-              children: [],
-              pathToRoot: [
-                {
-                  key: '/ns0:TargetPlaygroundRoot',
-                  name: 'TargetPlaygroundRoot',
-                  qName: 'ns0:TargetPlaygroundRoot',
-                  repeating: false,
-                },
-                {
-                  key: '/ns0:TargetPlaygroundRoot/UserID',
-                  name: 'UserID',
-                  qName: 'UserID',
-                  repeating: false,
-                },
-              ],
-            },
-            reactFlowKey: 'target-/ns0:TargetPlaygroundRoot/UserID',
-          },
-          inputs: {
-            '0': [
-              {
-                reactFlowKey: 'ToLower-5CBBDFEE-0809-4D8D-A62D-8D65ABE13738',
-                node: {
-                  key: 'ToLower',
-                  maxNumberOfInputs: 1,
-                  functionName: 'lower-case',
-                  outputValueType: NormalizedDataType.String,
-                  inputs: [
-                    {
-                      name: 'Value',
-                      allowedTypes: [NormalizedDataType.String],
-                      isOptional: false,
-                      allowCustomInput: true,
-                      tooltip: 'The value to use',
-                      placeHolder: 'The value',
-                    },
-                  ],
-                  displayName: 'To Lower',
-                  category: FunctionCategory.String,
-                  description: 'Sets a string to be all lower case',
-                  tooltip: 'Lower case',
-                  children: [],
-                },
-              },
-            ],
-          },
-          outputs: [],
-        },
-        'source-/ns0:SourcePlaygroundRoot/UserID': {
-          self: {
-            node: {
-              key: '/ns0:SourcePlaygroundRoot/UserID',
-              name: 'UserID',
-              qName: 'UserID',
-              type: NormalizedDataType.String,
-              properties: 'None',
-              parentKey: '/ns0:SourcePlaygroundRoot',
-              nodeProperties: [SchemaNodeProperty.None],
-              children: [],
-              pathToRoot: [
-                {
-                  key: '/ns0:SourcePlaygroundRoot',
-                  name: 'SourcePlaygroundRoot',
-                  qName: 'ns0:SourcePlaygroundRoot',
-                  repeating: false,
-                },
-                {
-                  key: '/ns0:SourcePlaygroundRoot/UserID',
-                  name: 'UserID',
-                  qName: 'UserID',
-                  repeating: false,
-                },
-              ],
-            },
-            reactFlowKey: 'source-/ns0:SourcePlaygroundRoot/UserID',
-          },
-          inputs: {
-            '0': [],
-          },
-          outputs: [
-            {
-              node: {
-                key: 'ToLower',
-                maxNumberOfInputs: 1,
-                functionName: 'lower-case',
-                outputValueType: NormalizedDataType.String,
-                inputs: [
-                  {
-                    name: 'Value',
-                    allowedTypes: [NormalizedDataType.String],
-                    isOptional: false,
-                    allowCustomInput: true,
-                    tooltip: 'The value to use',
-                    placeHolder: 'The value',
-                  },
-                ],
-                displayName: 'To Lower',
-                category: FunctionCategory.String,
-                description: 'Sets a string to be all lower case',
-                tooltip: 'Lower case',
-                children: [],
-              },
-              reactFlowKey: 'ToLower-E9F823A5-4349-47CA-A49E-273CBEF6A86F',
-            },
-          ],
-        },
-      };
+      const connections: ConnectionDictionary = {};
 
-      expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
+      applyConnectionValue(connections, {
+        targetNode: targetChildNode,
+        targetNodeReactFlowKey: targetChildNodeId,
+        findInputSlot: true,
+        input: {
+          reactFlowKey: sourceChildNodeId,
+          node: sourceChildNode,
+        },
+      });
+
+      addParentConnectionForRepeatingElementsNested(sourceChildNode, targetChildNode, flattenedSource, flattenedTarget, connections);
+
+      const targetParentKey = 'target-/ns0:Root/Looping/Person';
+      const sourceParentKey = 'source-/ns0:Root/Looping/Employee';
+
+      expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
+      expect(connections[sourceParentKey].outputs[0].isRepeating).toEqual(true);
+
+      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
+      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
   });
 

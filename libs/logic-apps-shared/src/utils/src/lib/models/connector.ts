@@ -127,9 +127,11 @@ export interface OAuthSettingProperties {
 export interface OAuthSetting {
   clientId: string;
   identityProvider: string;
-  redirectUrl: string;
   scopes: string[];
+  redirectMode?: string;
+  redirectUrl: string;
   properties: OAuthSettingProperties;
+  customParameters?: Record<string, any>;
 }
 
 export interface ManagedIdentitySetting {

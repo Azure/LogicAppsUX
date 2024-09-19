@@ -158,7 +158,6 @@ export const ConnectorConnectionStatus = ({
 }: { connectorId: string; hasConnection: boolean; intl: IntlShape }) => {
   const { data: connector, isLoading } = useConnectorOnly(connectorId);
   const texts = getConnectorResources(intl);
-  const fontStyle = { color: hasConnection ? '#50821b' : '#8b8b8b' };
 
   return (
     <div className="msla-templates-tab-review-section-details">
@@ -173,9 +172,7 @@ export const ConnectorConnectionStatus = ({
       ) : (
         <Text className="msla-templates-tab-review-section-details-title">{connector?.properties.displayName}</Text>
       )}
-      <Text style={fontStyle} className="msla-templates-tab-review-section-details-value">
-        {hasConnection ? texts.connected : texts.notConnected}
-      </Text>
+      <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
     </div>
   );
 };

@@ -1,13 +1,18 @@
 import * as React from 'react';
-import { describe, vi, it, expect } from 'vitest';
+import { describe, vi, it, expect, beforeAll } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import { Nl2fExpressionAssistant } from '../nl2fExpressionAssistant';
 import { IntlProvider } from '../../../../../logic-apps-shared/src/intl/src/IntlProvider';
 import { getReactQueryClient } from '../../../../../designer/src/lib/core/ReactQueryProvider';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ExpressionEditorEvent } from '../../expressioneditor';
-import { CopilotServiceOptions, ICopilotService, InitCopilotService, Nl2fExpressionResult } from '@microsoft/logic-apps-shared';
-
+import {
+  CopilotServiceOptions,
+  ICopilotService,
+  InitCopilotService,
+  InitLoggerService,
+  Nl2fExpressionResult,
+} from '@microsoft/logic-apps-shared';
 describe('lib/nl2fExpressionAssistant', () => {
   const dataTestIds = {
     panelHeaderBackButton: 'expression-assistant-panel-header-back-button',
@@ -36,6 +41,14 @@ describe('lib/nl2fExpressionAssistant', () => {
   const intlOnError = vi.fn();
 
   const queryClient = getReactQueryClient();
+
+  const loggerService: any = {
+    log() {},
+  };
+
+  beforeAll(() => {
+    InitLoggerService([loggerService]);
+  });
 
   it('Should have the expected header for expression assistant panel', () => {
     const { getByTestId } = render(
@@ -253,6 +266,7 @@ describe('lib/nl2fExpressionAssistant', () => {
         });
       }
     }
+
     InitCopilotService(new TestCopilotService({}));
 
     const { getByTestId } = render(

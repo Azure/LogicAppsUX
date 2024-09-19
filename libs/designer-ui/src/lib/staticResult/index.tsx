@@ -2,7 +2,7 @@ import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
-import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
+import { css, DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
 import type { OpenApiSchema, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -22,13 +22,13 @@ export const StaticResultOption = {
 } as const;
 export type StaticResultOption = (typeof StaticResultOption)[keyof typeof StaticResultOption];
 
-export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
+export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject | null, staticResultOption: StaticResultOption) => void;
 
 export interface StaticResultContainerProps {
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
   properties: OpenAPIV2.SchemaObject;
-  savePropertiesCallback?: StaticResultChangeHandler;
+  savePropertiesCallback: StaticResultChangeHandler;
   cancelPropertiesCallback?: () => void;
 }
 
@@ -125,8 +125,20 @@ export const StaticResultContainer = ({
     description: 'Label for cancel button',
   });
 
+  const removeStaticResultLabel = intl.formatMessage({
+    defaultMessage: 'Delete',
+    id: 'F/13eU',
+    description: 'Label for button to delete static result',
+  });
+
+  const removeStaticResultDescription = intl.formatMessage({
+    defaultMessage: 'Delete the static result configuration',
+    id: 'Wvnl/V',
+    description: 'Label for button to delete static result',
+  });
+
   const saveStaticResults = () => {
-    savePropertiesCallback?.(
+    savePropertiesCallback(
       serializePropertyValues(propertyValues, staticResultSchema),
       showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED
     );
@@ -194,6 +206,17 @@ export const StaticResultContainer = ({
           onClick={cancelStaticResults}
           styles={actionButtonStyles}
         />
+        {Object.keys(initialPropertyValues).length === 0 ? null : (
+          <DefaultButton
+            title={removeStaticResultDescription}
+            className={css('msla-static-result-action-button', 'delete')}
+            text={removeStaticResultLabel}
+            styles={actionButtonStyles}
+            onClick={() => {
+              savePropertiesCallback(null, StaticResultOption.DISABLED);
+            }}
+          />
+        )}
       </div>
     </div>
   );

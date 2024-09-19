@@ -1,11 +1,12 @@
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { validateParameterValueWithSwaggerType } from '../../utils/validation';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl, equals, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface WorkflowParameterDefinition extends WorkflowParameter {
   name: string;
@@ -151,6 +152,7 @@ export const workflowParametersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflowParameters);
   },
 });
 

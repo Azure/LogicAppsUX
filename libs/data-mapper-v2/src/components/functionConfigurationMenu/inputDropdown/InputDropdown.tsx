@@ -1,16 +1,19 @@
 import type { RootState } from '../../../core/state/Store';
-import type { FunctionData } from '../../../models/Function';
+import { FunctionCategory, type FunctionData } from '../../../models/Function';
 import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
-import { Combobox, Option } from '@fluentui/react-components';
+import { Caption2, Combobox, Option } from '@fluentui/react-components';
 import { isNullOrEmpty, SchemaType, type NormalizedDataType } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { useStyles } from './styles';
+import { isSchemaNodeExtended } from '../../../utils';
+import { isValidConnectionByType, isValidCustomValueByType } from '../../../utils/Connection.Utils';
+import { UnboundedInput } from '../../../constants/FunctionConstants';
 
 export interface InputOptionProps {
   key: string;
@@ -30,11 +33,22 @@ export interface InputDropdownProps {
   schemaListType: SchemaType;
   labelId?: string;
   inputAllowsCustomValues?: boolean;
+  index: number;
   validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { inputName, inputValue, labelId, schemaListType, functionId, inputAllowsCustomValues = true, validateAndCreateConnection } = props;
+  const {
+    currentNode,
+    inputName,
+    inputValue,
+    labelId,
+    schemaListType,
+    index,
+    functionId,
+    inputAllowsCustomValues = true,
+    validateAndCreateConnection,
+  } = props;
   const intl = useIntl();
   const styles = useStyles();
 
@@ -44,6 +58,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       : state.dataMap.present.curDataMapOperation.flattenedTargetSchema
   );
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const functionManifest = useSelector((state: RootState) => state.function.availableFunctions);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const [matchingOptions, setMatchingOptions] = useState<InputOptionProps[]>([]);
@@ -70,6 +85,95 @@ export const InputDropdown = (props: InputDropdownProps) => {
       setValue('');
     }
   }, [inputName]);
+
+  const customValueAllowedTypesMismatchLoc = intl.formatMessage({
+    defaultMessage: 'Warning: custom value does not match one of the allowed types for this input',
+    id: 'BCgiRh',
+    description: `Warning message for when custom value does not match one of the function node input's allowed types`,
+  });
+
+  const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
+    defaultMessage: `Warning: input node type does not match the schema node's type`,
+    id: '+0H8Or',
+    description: 'Warning message for when input node type does not match schema node type',
+  });
+
+  const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
+    defaultMessage: 'Warning: input node type does not match one of the allowed types for this input.',
+    id: 'yNtBUV',
+    description: `Warning message for when input node type does not match one of the function node input's allowed types`,
+  });
+
+  const typeValidationMessage = useMemo<string | undefined>(() => {
+    if (inputValue) {
+      const isUnboundedInput = currentNode.maxNumberOfInputs === UnboundedInput;
+      if (customValue) {
+        // Function nodes (>= 1 allowed types)
+        const matchedAnyAllowedType = currentNode.inputs[isUnboundedInput ? 0 : index].allowedTypes.some((type) =>
+          isValidCustomValueByType(inputValue, type)
+        );
+        if (!matchedAnyAllowedType) {
+          return customValueAllowedTypesMismatchLoc;
+        }
+      } else {
+        const selectedOption = matchingOptions.find((option) => option.value === selectedOptions[0]);
+
+        if (selectedOption) {
+          if (isSchemaNodeExtended(currentNode)) {
+            if (!isValidConnectionByType(selectedOption.type, currentNode.type)) {
+              return nodeTypeSchemaNodeTypeMismatchLoc;
+            }
+          } else {
+            let someTypesMatched = false;
+            let possibleConversionFunctions = '';
+            currentNode.inputs[isUnboundedInput ? 0 : index].allowedTypes.forEach((type) => {
+              const conversion = functionManifest.find(
+                (func) => func.category === FunctionCategory.Conversion && func.outputValueType === type
+              );
+              if (conversion) {
+                possibleConversionFunctions += `${conversion?.displayName}, `;
+              }
+              if (isValidConnectionByType(selectedOption.type, type)) {
+                someTypesMatched = true;
+              }
+            });
+            possibleConversionFunctions = possibleConversionFunctions.substring(0, possibleConversionFunctions.length - 2);
+
+            if (!someTypesMatched) {
+              let conversionMessage = '';
+              if (possibleConversionFunctions !== '') {
+                conversionMessage = intl.formatMessage(
+                  {
+                    defaultMessage: ' Try using a Conversion function such as: {conversionFunctions}',
+                    id: 'ur3P27',
+                    description: 'Suggest to the user to try a conversion function instead',
+                  },
+                  {
+                    conversionFunctions: possibleConversionFunctions,
+                  }
+                );
+              }
+              return `${nodeTypeAllowedTypesMismatchLoc} ${conversionMessage}`;
+            }
+          }
+        }
+      }
+    }
+
+    return undefined;
+  }, [
+    inputValue,
+    customValue,
+    currentNode,
+    index,
+    customValueAllowedTypesMismatchLoc,
+    matchingOptions,
+    selectedOptions,
+    nodeTypeSchemaNodeTypeMismatchLoc,
+    nodeTypeAllowedTypesMismatchLoc,
+    functionManifest,
+    intl,
+  ]);
 
   useEffect(() => {
     if (inputValue) {
@@ -199,6 +303,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           </Option>
         )}
       </Combobox>
+      <Caption2>{typeValidationMessage}</Caption2>
     </Stack>
   );
 };

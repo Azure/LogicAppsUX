@@ -13,6 +13,7 @@ import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import * as ClientOperationsData from '../base/operations';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -79,7 +80,7 @@ export class StandardSearchService extends BaseSearchService {
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
-    return [...filteredApiOperations, ...getClientBuiltInOperations(filterOperation)];
+    return [...filteredApiOperations, ...getClientBuiltInOperations(filterOperation), ...(showStatefulOperations ? [ClientOperationsData.slidingWindowOperation] : [])];
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {

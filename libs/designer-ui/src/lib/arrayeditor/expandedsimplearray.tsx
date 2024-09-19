@@ -8,6 +8,7 @@ import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/re
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { getComoboxEnumOptions } from './util/util';
 
 const addItemButtonIconProps: IIconProps = {
   iconName: 'Add',
@@ -73,15 +74,7 @@ export const ExpandedSimpleArray = ({
     }
   };
 
-  const comboboxOptions =
-    options ??
-    itemEnum?.map(
-      (val: string): ComboboxItem => ({
-        displayName: val,
-        key: val,
-        value: val,
-      })
-    );
+  const comboboxOptions = getComoboxEnumOptions(options, itemEnum);
 
   return (
     <div className="msla-array-container msla-array-item-container">
@@ -102,6 +95,7 @@ export const ExpandedSimpleArray = ({
             {comboboxOptions ? (
               <Combobox
                 {...props}
+                valueType={valueType}
                 options={comboboxOptions}
                 initialValue={item.value ?? []}
                 placeholder={placeholder}

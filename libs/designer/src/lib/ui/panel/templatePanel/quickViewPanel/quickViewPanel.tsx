@@ -11,11 +11,15 @@ import Markdown from 'react-markdown';
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { manifest } = useSelector((state: RootState) => ({
+  const { manifest, templateName, workflowAppName } = useSelector((state: RootState) => ({
     manifest: state.template.manifest,
     templateName: state.template.templateName,
+    workflowAppName: state.workflow.workflowAppName,
   }));
-  const panelTabs = getQuickViewTabs(intl, dispatch);
+  const panelTabs = getQuickViewTabs(intl, dispatch, {
+    templateId: templateName ?? '',
+    workflowAppName,
+  });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
   if (!manifest) {
@@ -29,7 +33,6 @@ export const QuickViewPanel = () => {
   return (
     <TemplatesPanelContent
       className="msla-template-quickview-tabs"
-      isSequence={false}
       tabs={panelTabs}
       selectedTab={selectedTabId}
       selectTab={onTabSelected}

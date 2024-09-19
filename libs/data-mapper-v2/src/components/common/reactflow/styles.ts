@@ -2,14 +2,20 @@ import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 const fnIconSize = '17px';
 export const colors = {
-  active: '#62AAD8',
-  connected: '#C6DEEE',
+  nodeActive: '#D5E4FF',
+  edgeActive: '#62AAD8',
+  handleActive: '#62AAD8',
+  handleConnected: '#DCE6ED',
+  edgeConnected: '#DCE6ED',
 };
 
 export const useStyles = makeStyles({
   wrapper: {
     marginTop: '10px',
     fontSize: '18px',
+  },
+  fullNode: {
+    backgroundColor: tokens.colorPaletteYellowBackground3,
   },
   leftWrapper: {
     marginLeft: '23px',
@@ -27,21 +33,14 @@ export const useStyles = makeStyles({
   rightTreeItemLayout: {
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
   },
+  rightHandle: {
+    left: '-15px',
+  },
   handleWrapper: {
     backgroundColor: '#fff',
     width: '14px',
     height: '14px',
     ...shorthands.border('1px', 'solid', '#ddd'),
-  },
-  sourceSchemaHandleWrapper: {
-    left: '-8px',
-  },
-  targetSchemaHandleWrapper: {
-    left: '-7px',
-  },
-  handleConnected: {
-    backgroundColor: colors.connected,
-    ...shorthands.border('1px', 'solid', colors.connected),
   },
   nodeWrapper: {
     width: '14px',
@@ -55,17 +54,35 @@ export const useStyles = makeStyles({
     display: 'inline-flex',
     justifyContent: 'left',
     paddingRight: '20px',
+    ':hover': {
+      ...shorthands.borderColor(colors.handleActive),
+    },
   },
-  activeFunctionButton: {
-    ...shorthands.border('3px', 'solid', colors.active),
+  selectedHoverFunctionButton: {
+    ...shorthands.border('2px', 'solid', colors.handleActive),
+  },
+  loopSourceHandle: {
+    height: '22px',
+    width: '22px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loopIcon: {
+    color: 'white',
   },
   functionName: {
     textWrap: 'nowrap',
     display: 'inline-table',
   },
-  activeHandle: {
-    backgroundColor: colors.active,
-    ...shorthands.border('1px', 'solid', colors.active),
+  selectedHoverHandle: {
+    ...shorthands.border('2px', 'solid', colors.handleActive),
+  },
+  connectedSelectedHoverHandle: {
+    backgroundColor: colors.handleActive,
+  },
+  connectedHandle: {
+    backgroundColor: colors.handleConnected,
   },
   iconContainer: {
     display: 'inline-flex',
@@ -77,5 +94,15 @@ export const useStyles = makeStyles({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: '3px',
+  },
+  temporaryCanvasNodeRoot: {
+    width: '10px',
+    height: '10px',
+    backgroundColor: 'transparent',
+  },
+  temporaryCanvasNodeHandle: {
+    backgroundColor: 'transparent',
+    ...shorthands.border('none'),
+    left: '2px',
   },
 });

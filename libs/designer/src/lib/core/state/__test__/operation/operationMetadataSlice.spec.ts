@@ -1,10 +1,12 @@
+import { beforeEach, describe, expect, test } from 'vitest';
+import { getMockedUndoRedoPartialRootState } from '../../../../__test__/mock-root-state';
+import { setStateAfterUndoRedo } from '../../global';
 import reducer, {
   NodeData,
   OperationMetadataState,
   initializeNodes,
   initializeOperationInfo,
 } from '../../operation/operationMetadataSlice';
-import { describe, beforeEach, test, expect } from 'vitest';
 
 describe('operationMetadataSlice', () => {
   let initialState: OperationMetadataState;
@@ -52,7 +54,7 @@ describe('operationMetadataSlice', () => {
 
   test('should initialize nodes status to true and nodes data remain the same when there are no nodes', () => {
     const nodes: Array<NodeData | undefined> = [];
-    const updatedState = reducer(initialState, initializeNodes(nodes));
+    const updatedState = reducer(initialState, initializeNodes({ nodes: nodes }));
     expect(updatedState.operationInfo).toEqual(initialState.operationInfo);
     expect(updatedState.inputParameters).toEqual(initialState.inputParameters);
     expect(updatedState.outputParameters).toEqual(initialState.outputParameters);
@@ -61,7 +63,45 @@ describe('operationMetadataSlice', () => {
 
   test('should stay the nodes initialized load status as false when any node is set as undefined', () => {
     const nodes: Array<NodeData | undefined> = [undefined, undefined];
-    const updatedState = reducer(initialState, initializeNodes(nodes));
+    const updatedState = reducer(initialState, initializeNodes({ nodes: nodes }));
     expect(updatedState.loadStatus.nodesInitialized).toEqual(false);
+  });
+
+  test('should set operation metadata on undo redo', async () => {
+    const undoRedoPartialRootState = getMockedUndoRedoPartialRootState();
+    const operationMetadataState: OperationMetadataState = {
+      ...undoRedoPartialRootState.operations,
+      inputParameters: {
+        mockParam: {
+          parameterGroups: {
+            mockParamGroup: {
+              id: '',
+              parameters: [
+                {
+                  parameterKey: 'test',
+                  info: {},
+                  id: 'test',
+                  label: 'test',
+                  parameterName: 'test',
+                  required: false,
+                  type: 'test',
+                  value: [],
+                },
+              ],
+            },
+          },
+        },
+      },
+    };
+
+    const state = reducer(
+      initialState,
+      setStateAfterUndoRedo({
+        ...undoRedoPartialRootState,
+        operations: operationMetadataState,
+      })
+    );
+
+    expect(state).toEqual(operationMetadataState);
   });
 });

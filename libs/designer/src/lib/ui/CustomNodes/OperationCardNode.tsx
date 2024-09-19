@@ -19,9 +19,8 @@ import {
   useTokenDependencies,
   useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import {
   useAllOperations,
   useConnectorName,
@@ -47,9 +46,8 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -75,17 +73,17 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runInstance = useRunInstance();
   const runData = useRunData(id);
   const parentRunId = useParentRunId(id);
-  const parenRunData = useRunData(parentRunId ?? '');
+  const parentRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
-  const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
+  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
   const getRunRepetition = () => {
-    if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
+    if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
       return {
         properties: {
           status: constants.FLOW_STATUS.SKIPPED,
@@ -101,27 +99,20 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   };
 
-  const onRunRepetitionSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    dispatch(setRepetitionRunData({ nodeId: id, runData: runDefinition.properties as any }));
-  };
-
-  const { refetch, isFetching: isRepetitionLoading } = useQuery<any>(
-    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
+  const { isFetching: isRepetitionLoading, data: repetitionData } = useQuery<any>(
+    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status, parentRunIndex }],
     getRunRepetition,
     {
       refetchOnWindowFocus: false,
-      initialData: null,
-      refetchIntervalInBackground: true,
-      onSuccess: onRunRepetitionSuccess,
-      enabled: parentRunIndex !== undefined && isMonitoringView && repetitionCount !== undefined,
+      enabled: isMonitoringView && parentRunIndex !== undefined,
     }
   );
 
   useEffect(() => {
-    if (parentRunIndex !== undefined && isMonitoringView) {
-      refetch();
+    if (!isNullOrUndefined(repetitionData)) {
+      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionData.properties as any }));
     }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
+  }, [dispatch, id, repetitionData, runInstance?.id]);
 
   const dependencies = useTokenDependencies(id);
 
@@ -158,7 +149,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [readOnly, metadata, dependencies]
   );
 
-  const selected = useIsNodeSelected(id);
+  const selected = useIsNodeSelectedInOperationPanel(id);
   const isPinned = useIsNodePinnedToOperationPanel(id);
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);

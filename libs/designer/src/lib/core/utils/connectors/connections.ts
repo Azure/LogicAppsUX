@@ -45,6 +45,10 @@ const mockConnectionReference: ConnectionReference = {
   connection: { id: 'connectionId' },
 };
 
+export function isConnectionValid(connection: Connection): boolean {
+  return !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
+}
+
 export async function isConnectionReferenceValid(
   operationInfo: NodeOperation,
   reference: ConnectionReference | undefined
@@ -62,7 +66,7 @@ export async function isConnectionReferenceValid(
 
   try {
     const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
-    return !!connection && !connection.properties?.statuses?.some((status) => equals(status.status, 'error'));
+    return !!connection && isConnectionValid(connection);
   } catch (error: any) {
     return false;
   }

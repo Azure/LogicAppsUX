@@ -3,6 +3,32 @@ import { SettingScope } from '../../../../utils/src';
 import { flatFileGroup } from '../operations';
 import { flatFileDecodingOperations, flatFileEncodingOperations } from '../operations/flatfile';
 
+const integrationAccount = {
+  type: 'object',
+  properties: {
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          title: 'Schema Name',
+          type: 'string',
+          'x-ms-visibility': 'important',
+          description: 'The name of the Flat File schema to use from the associated integration account',
+          'x-ms-dynamic-list': {
+            dynamicState: {
+              operationId: 'getSchemaArtifacts',
+              parameters: {},
+            },
+            parameters: {},
+          },
+        },
+      },
+      required: ['name'],
+    },
+  },
+  required: ['schema'],
+};
+
 export const flatFileDecodingManifest = {
   properties: {
     iconUri: flatFileDecodingOperations.properties.iconUri,
@@ -19,25 +45,7 @@ export const flatFileDecodingManifest = {
           description: 'The Flat File content to decode',
           type: 'string',
         },
-        schema: {
-          type: 'object',
-          properties: {
-            name: {
-              title: 'Schema Name',
-              type: 'string',
-              'x-ms-visibility': 'important',
-              description: 'The name of the Flat File schema to use from the associated integration account',
-              'x-ms-dynamic-list': {
-                dynamicState: {
-                  operationId: 'getSchemaArtifacts',
-                  parameters: {},
-                },
-                parameters: {},
-              },
-            },
-          },
-          required: ['name'],
-        },
+        integrationAccount,
       },
     },
 
@@ -81,31 +89,7 @@ export const flatFileEncodingManifest = {
           description: 'The XML content to encode',
           type: 'string',
         },
-        integrationAccount: {
-          type: 'object',
-          properties: {
-            schema: {
-              type: 'object',
-              properties: {
-                name: {
-                  title: 'Schema Name',
-                  type: 'string',
-                  'x-ms-visibility': 'important',
-                  description: 'The name of the Flat File schema to use from the associated integration account',
-                  'x-ms-dynamic-list': {
-                    dynamicState: {
-                      operationId: 'getSchemaArtifacts',
-                      parameters: {},
-                    },
-                    parameters: {},
-                  },
-                },
-              },
-              required: ['name'],
-            },
-          },
-          required: ['schema'],
-        },
+        integrationAccount,
         emptyNodeGenerationMode: {
           title: 'Mode of empty node generation',
           type: 'string',

@@ -3,4 +3,5 @@ export interface DropdownMenuItem {
   icon?: string | JSX.Element;
   onClick: () => void;
   text: string;
+  dataAutomationId?: string;
 }
