@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { describe, vi, it, expect } from 'vitest';
+import { describe, vi, it, expect, beforeAll } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import { Nl2fExpressionAssistant } from '../nl2fExpressionAssistant';
 import { IntlProvider } from '../../../../../logic-apps-shared/src/intl/src/IntlProvider';
@@ -41,6 +41,14 @@ describe('lib/nl2fExpressionAssistant', () => {
   const intlOnError = vi.fn();
 
   const queryClient = getReactQueryClient();
+
+  const loggerService: any = {
+    log() {},
+  };
+
+  beforeAll(() => {
+    InitLoggerService([loggerService]);
+  });
 
   it('Should have the expected header for expression assistant panel', () => {
     const { getByTestId } = render(
@@ -259,11 +267,6 @@ describe('lib/nl2fExpressionAssistant', () => {
       }
     }
 
-    const loggerService: any = {
-      log() {},
-    };
-
-    InitLoggerService([loggerService]);
     InitCopilotService(new TestCopilotService({}));
 
     const { getByTestId } = render(
