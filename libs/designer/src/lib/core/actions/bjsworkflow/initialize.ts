@@ -197,7 +197,7 @@ export const getInputParametersFromManifest = (
     id: ParameterGroupKeys.DEFAULT,
     description: '',
     parameters: allParametersAsArray,
-    rawInputs: primaryInputParametersInArray.filter(rawInput => !rawInput.dynamicSchema)
+    rawInputs: primaryInputParametersInArray.filter((rawInput) => !rawInput.dynamicSchema),
   };
   const parameterGroups = {
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
@@ -327,7 +327,12 @@ export const getOutputParametersFromManifest = (
   }
 
   return {
-    outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs, originalOutputs },
+    outputs: {
+      dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined,
+      outputs: nodeOutputs,
+      outputParameters: operationOutputs,
+      originalOutputs,
+    },
     dependencies,
   };
 };

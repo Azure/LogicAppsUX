@@ -31,7 +31,7 @@ export default class ApiConnectionInputsBinder extends Binder {
       return this._makeUntypedInputsParameters(inputs);
     }
 
-    return unmap(inputParameters).reduce(this.makeReducer(inputs, this.bindData), {} as BoundParameters);
+    return unmap(inputParameters).reduce(this.makeReducer(inputs, this.bindInputsData), {} as BoundParameters);
   }
 
   getInputParameterValue(inputs: any, parameter: InputParameter): any {

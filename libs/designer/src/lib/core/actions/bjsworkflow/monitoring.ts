@@ -19,6 +19,7 @@ import { getCustomSwaggerIfNeeded } from './initialize';
 import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import OutputsBinder from '../../utils/monitoring/binders/outputs';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -50,6 +51,8 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const inputs = await getInputs(state, nodeId, inputsOutputs.inputs);
+      const outputs = await getOutputs(state, nodeId, inputsOutputs.inputs);
+      console.log(outputs);
 
       LoggerService().endTrace(traceId, { status: Status.Success });
       return { nodeId, inputs: inputs[0], outputs: parseOutputs(inputsOutputs.outputs) };
@@ -109,4 +112,40 @@ const getInputsToBind = (type: string, payloadInputs: any): any => {
     return null;
   }
   return payloadInputs;
+};
+
+const getOutputs = async (rootState: RootState, nodeId: string, outputs: any): Promise<BoundParameters[]> => {
+  const operationInfo: NodeOperation | undefined = getRecordEntry(rootState.operations.operationInfo, nodeId);
+  const definition: LogicAppsV2.OperationDefinition | undefined = getRecordEntry(rootState.workflow.operations, nodeId);
+
+  if (!operationInfo || !definition) {
+    return [];
+  }
+
+  const type = operationInfo.type;
+  const kind = operationInfo.kind;
+
+  const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operationInfo) : undefined;
+  const customSwagger = manifest ? await getCustomSwaggerIfNeeded(manifest.properties, definition) : undefined;
+  const outputsToBind = getInputsToBind(operationInfo.type, outputs);
+  // const nodeOutputs =
+  //   getRecordEntry(rootState.operations.outputParameters, nodeId)?.outputs ?? {};
+  const outputParameters = getRecordEntry(rootState.operations.outputParameters, nodeId)?.outputParameters ?? {};
+
+  const operation = manifest
+    ? undefined
+    : await (await getConnectorWithSwagger(operationInfo.connectorId)).parsedSwagger.getOperationByOperationId(operationInfo.operationId);
+
+  // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
+  const outputsBinder = new OutputsBinder();
+  return await outputsBinder.bind(
+    outputsToBind,
+    type,
+    outputParameters,
+    operation,
+    manifest,
+    customSwagger,
+    undefined,
+    definition.metadata
+  );
 };

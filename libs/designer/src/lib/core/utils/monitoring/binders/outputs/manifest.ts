@@ -1,7 +1,7 @@
 import {
+  type OutputParameter,
   type BoundParameters,
   getObjectPropertyValue,
-  type InputParameter,
   type OperationManifest,
   type ParameterInfo,
   type SwaggerParser,
@@ -10,7 +10,7 @@ import {
 import { Binder } from '../binder';
 import { getInputsValueFromDefinitionForManifest, updateParameterWithValues } from '../../../parameters/helper';
 
-export class ManifestInputsBinder extends Binder {
+export class ManifestOutputsBinder extends Binder {
   private _operationManifest: OperationManifest;
 
   constructor(manifest: OperationManifest, nodeParameters: Record<string, ParameterInfo>, metadata: Record<string, any> | undefined) {
@@ -19,38 +19,40 @@ export class ManifestInputsBinder extends Binder {
   }
 
   async bind(
-    inputs: any,
-    inputParameters: Record<string, InputParameter>,
+    outputs: any,
+    outputsParameters: Record<string, OutputParameter>,
     customSwagger: SwaggerParser | undefined
   ): Promise<BoundParameters> {
-    if (inputs === undefined) {
+    if (outputs === undefined) {
       return {};
     }
 
-    const inputsToBind = { inputs };
+    const inputsToBind = { outputs };
 
     const operationInputs = getInputsValueFromDefinitionForManifest(
-      this._operationManifest.properties.inputsLocation ?? ['inputs'],
+      this._operationManifest.properties.inputsLocation ?? ['outputs'],
       this._operationManifest,
       customSwagger,
       inputsToBind,
-      unmap(inputParameters)
+      unmap(outputsParameters)
     );
 
-    return unmap(inputParameters).reduce(this.makeReducer(operationInputs, this.bindInputsData), {} as BoundParameters);
+    return unmap(outputsParameters).reduce(this.makeReducer(operationInputs, this.bindOutputsData), {} as BoundParameters);
   }
 
-  getInputParameterValue(inputs: any, parameter: InputParameter): any {
-    return parameter.alias ? getObjectPropertyValue(inputs, [parameter.alias as string]) : this._getValueByParameterKey(inputs, parameter);
+  getOutputParameterValue(outputs: any, parameter: OutputParameter): any {
+    return parameter.alias
+      ? getObjectPropertyValue(outputs, [parameter.alias as string])
+      : this._getValueByParameterKey(outputs, parameter);
   }
 
-  private _getValueByParameterKey(inputs: any, parameter: InputParameter): any {
+  private _getValueByParameterKey(outputs: any, parameter: OutputParameter): any {
     const { key } = parameter;
     const prefix = key.substring(0, key.indexOf('$') + 1);
 
     const parametersValue = updateParameterWithValues(
       prefix,
-      inputs,
+      outputs,
       /* in */ '',
       [parameter],
       /* createInvisibleParameter */ false,
