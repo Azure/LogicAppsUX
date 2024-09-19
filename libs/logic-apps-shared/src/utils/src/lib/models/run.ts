@@ -1,5 +1,3 @@
-import type { InputParameter } from 'parsers';
-
 export interface Run {
   id: string;
   name: string;
@@ -65,7 +63,7 @@ export interface BoundParameter {
   visibility?: string;
 }
 
-export type BindFunction = (values: any, parameter: InputParameter) => BoundParameter | undefined;
+export type BindFunction = (values: any, parameter: any) => BoundParameter | undefined;
 
 export type ReduceFunction<T, U> = (previous: T, current: U) => T;
 
