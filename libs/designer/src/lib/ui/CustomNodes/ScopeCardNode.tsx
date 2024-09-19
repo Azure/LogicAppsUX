@@ -33,7 +33,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -270,7 +270,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   ]);
 
   const renderLoopsPager = useMemo(() => {
-    if (metadata?.runData?.status && metadata.runData.status !== 'InProgress') {
+    if (metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
       return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
     }
 
