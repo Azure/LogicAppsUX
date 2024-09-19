@@ -197,6 +197,7 @@ export const getInputParametersFromManifest = (
     id: ParameterGroupKeys.DEFAULT,
     description: '',
     parameters: allParametersAsArray,
+    rawInputs: primaryInputParametersInArray.filter(rawInput => !rawInput.dynamicSchema)
   };
   const parameterGroups = {
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,

@@ -207,6 +207,7 @@ export const getInputParametersFromSwagger = (
     id: ParameterGroupKeys.DEFAULT,
     description: '',
     parameters: allParametersAsArray,
+    rawInputs: inputParametersAsArray.filter((rawInput) => !rawInput.dynamicSchema),
   };
   const parameterGroups = { [ParameterGroupKeys.DEFAULT]: defaultParameterGroup };
 
