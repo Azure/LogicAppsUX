@@ -1,4 +1,4 @@
-import type { InputParameter } from '../../../../parsers/index';
+import type { InputParameter } from '../../../../parsers';
 
 export interface Run {
   id: string;

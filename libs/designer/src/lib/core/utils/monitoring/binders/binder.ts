@@ -3,21 +3,29 @@ import type {
   BoundParameter,
   BoundParameters,
   InputParameter,
-  LAOperation,
+  ListDynamicValue,
+  ParameterInfo,
   ReduceFunction,
 } from '@microsoft/logic-apps-shared';
 import {
-  DefaultKeyPrefix,
-  equals,
-  getPropertyValue,
+  isDynamicListExtension,
+  isDynamicTreeExtension,
+  isLegacyDynamicValuesExtension,
+  isLegacyDynamicValuesTreeExtension,
   isNullOrUndefined,
-  ParameterLocations,
-  removeConnectionPrefix,
-  UriTemplateGenerator,
-  UriTemplateParser,
 } from '@microsoft/logic-apps-shared';
+import constants from '../../../../common/constants';
+import BinderConstants from './constants';
 
 export abstract class Binder {
+  private _nodeParameters: Record<string, ParameterInfo>;
+  private _metadata: Record<string, any> | undefined;
+
+  constructor(nodeParameters: Record<string, ParameterInfo>, metadata: Record<string, any> | undefined) {
+    this._nodeParameters = nodeParameters;
+    this._metadata = metadata;
+  }
+
   protected buildBoundParameter(
     displayName: string,
     value: any,
@@ -37,56 +45,34 @@ export abstract class Binder {
     return title || summary || name;
   }
 
-  protected getInputParameterValue(inputs: any, operation: LAOperation, parameter: InputParameter): any {
-    const template = removeConnectionPrefix(operation.path);
-    const { body, headers, path, queries } = inputs;
-    const { encode, in: $in, key, name } = parameter;
-
-    let value: any;
-    if (key === `${ParameterLocations.Body}.${DefaultKeyPrefix}`) {
-      value = body;
-    } else if (equals($in, ParameterLocations.Body)) {
-      value = getPropertyValue(body, name);
-    } else if (equals($in, ParameterLocations.Header)) {
-      value = getPropertyValue(headers, name);
-    } else if (equals($in, ParameterLocations.Path)) {
-      value = this.makePathObject(path, template);
-      value = getPropertyValue(value, name);
-    } else if (equals($in, ParameterLocations.Query)) {
-      value = getPropertyValue(queries, name);
-    } else {
-      value = inputs;
-    }
-
-    if (equals($in, ParameterLocations.Path) && !isNullOrUndefined(value)) {
-      if (equals(encode, 'triple')) {
-        value = decodeURIComponent(decodeURIComponent(decodeURIComponent(value)));
-      } else if (equals(encode, 'double')) {
-        value = decodeURIComponent(decodeURIComponent(value));
-      } else {
-        value = decodeURIComponent(value);
-      }
-    }
-
-    return value;
+  protected getInputParameterValue(_inputs: any, _parameter: InputParameter): any {
+    throw new Error('getInputParameterValue must be implemented by derived classes');
   }
 
-  protected makeBindFunction(operation: LAOperation): BindFunction {
-    return (inputs: any, parameter: InputParameter): BoundParameter | undefined => {
-      // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
-      // branch which never ran, because the condition expression was false
-      if (isNullOrUndefined(inputs)) {
-        return undefined;
-      }
+  protected bindData = (inputs: any, parameter: InputParameter): BoundParameter | undefined => {
+    // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
+    // branch which never ran, because the condition expression was false
+    if (isNullOrUndefined(inputs)) {
+      return undefined;
+    }
 
-      const displayName = this.getInputParameterDisplayName(parameter);
-      const value = this.getInputParameterValue(inputs, operation, parameter);
+    const displayName = this.getInputParameterDisplayName(parameter);
+    const value = this.getInputParameterValue(inputs, parameter);
 
-      const { dynamicValues, name, visibility } = parameter;
-      const boundParameter = this.buildBoundParameter(displayName, value, visibility);
-      return dynamicValues ? { ...boundParameter, dynamicValue: name } : boundParameter;
-    };
-  }
+    const { dynamicValues, key, visibility } = parameter;
+    const boundParameter = this.buildBoundParameter(displayName, value, visibility, this._getAdditionalProperties(parameter));
+
+    if (dynamicValues) {
+      boundParameter.value =
+        (isDynamicTreeExtension(dynamicValues) || isLegacyDynamicValuesTreeExtension(dynamicValues)) && this._metadata
+          ? getDynamicTreeLookupValue(boundParameter, this._metadata)
+          : isDynamicListExtension(dynamicValues) || isLegacyDynamicValuesExtension(dynamicValues)
+            ? getDynamicListLookupValue(boundParameter, key, this._nodeParameters)
+            : boundParameter.value;
+    }
+
+    return boundParameter;
+  };
 
   protected makeBoundParameter(
     key: string,
@@ -96,39 +82,6 @@ export abstract class Binder {
     additionalProperties?: Partial<BoundParameter>
   ): BoundParameters {
     return this._makeBoundParameters(key, this.buildBoundParameter(displayName, value, visibility, additionalProperties));
-  }
-
-  protected makeOptionalBoundParameter(
-    key: string,
-    displayName: string,
-    value: any,
-    visibility?: string,
-    additionalProperties?: Partial<BoundParameter>
-  ): BoundParameters | undefined {
-    return value === undefined ? undefined : this.makeBoundParameter(key, displayName, value, visibility, additionalProperties);
-  }
-
-  protected makePathObject(path: string, template: string): Record<string, string> {
-    const segments = UriTemplateParser.parse(template);
-    const templateMatcher = UriTemplateGenerator.generateRegularExpressionForTemplate(segments);
-    const pathParameters = templateMatcher.exec(template);
-    if (pathParameters === null) {
-      return {};
-    }
-
-    const pathMatcher = UriTemplateGenerator.generateRegularExpressionForPath(segments);
-    const pathValues = pathMatcher.exec(path);
-    if (pathValues === null) {
-      return {};
-    }
-
-    const parameters = pathParameters.slice(1);
-    const values = pathValues.slice(1);
-
-    return parameters.reduce((acc: Record<string, any>, current: string, index): Record<string, any> => {
-      acc[current] = values[index];
-      return acc;
-    }, {});
   }
 
   protected makeReducer(inputs: any, binder: BindFunction): ReduceFunction<BoundParameters, InputParameter> {
@@ -142,9 +95,41 @@ export abstract class Binder {
     };
   }
 
+  private _getAdditionalProperties(parameter: InputParameter): Partial<BoundParameter> | undefined {
+    if (parameter.editor === constants.EDITOR.DICTIONARY) {
+      return {
+        format: BinderConstants.FORMAT.KEY_VALUE_PAIRS,
+      };
+    }
+
+    if (parameter.editor === constants.EDITOR.CODE) {
+      return {
+        language: parameter.format || (parameter.editorOptions && parameter.editorOptions.language),
+      };
+    }
+
+    return undefined;
+  }
+
   private _makeBoundParameters(key: string, boundParameter: BoundParameter): BoundParameters {
     return {
       [key]: boundParameter,
     };
   }
 }
+
+const getDynamicListLookupValue = (boundInput: BoundParameter, key: string, nodeParameters: Record<string, ParameterInfo>): any => {
+  const nodeInput = nodeParameters[key];
+  if (!nodeInput || !nodeInput.editorOptions?.options?.length) {
+    return boundInput.value;
+  }
+
+  const matchedOption = nodeInput.editorOptions.options.find(
+    (option: ListDynamicValue) => option.value === boundInput.value
+  ) as ListDynamicValue;
+  return matchedOption ? matchedOption.displayName : boundInput.value;
+};
+
+const getDynamicTreeLookupValue = (boundInput: BoundParameter, metadata: Record<string, any>): any => {
+  return metadata[boundInput.value] ?? boundInput.value;
+};
