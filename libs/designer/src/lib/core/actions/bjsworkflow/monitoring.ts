@@ -51,11 +51,10 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const inputs = await getInputs(state, nodeId, inputsOutputs.inputs);
-      const outputs = await getOutputs(state, nodeId, inputsOutputs.inputs);
-      console.log(outputs);
+      const outputs = await getOutputs(state, nodeId, inputsOutputs.outputs);
 
       LoggerService().endTrace(traceId, { status: Status.Success });
-      return { nodeId, inputs: inputs[0], outputs: parseOutputs(inputsOutputs.outputs) };
+      return { nodeId, inputs: inputs[0], outputs: outputs[0] };
     } catch (e) {
       LoggerService().endTrace(traceId, { status: Status.Failure });
       return { nodeId, inputs: parseInputs(inputsOutputs.inputs), outputs: parseOutputs(inputsOutputs.outputs) };

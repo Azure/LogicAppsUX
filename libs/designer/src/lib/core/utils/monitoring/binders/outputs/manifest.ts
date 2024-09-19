@@ -8,7 +8,7 @@ import {
   unmap,
 } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
-import { getInputsValueFromDefinitionForManifest, updateParameterWithValues } from '../../../parameters/helper';
+import { updateParameterWithValues } from '../../../parameters/helper';
 
 export class ManifestOutputsBinder extends Binder {
   private _operationManifest: OperationManifest;
@@ -21,23 +21,13 @@ export class ManifestOutputsBinder extends Binder {
   async bind(
     outputs: any,
     outputsParameters: Record<string, OutputParameter>,
-    customSwagger: SwaggerParser | undefined
+    _customSwagger: SwaggerParser | undefined
   ): Promise<BoundParameters> {
     if (outputs === undefined) {
       return {};
     }
 
-    const inputsToBind = { outputs };
-
-    const operationInputs = getInputsValueFromDefinitionForManifest(
-      this._operationManifest.properties.inputsLocation ?? ['outputs'],
-      this._operationManifest,
-      customSwagger,
-      inputsToBind,
-      unmap(outputsParameters)
-    );
-
-    return unmap(outputsParameters).reduce(this.makeReducer(operationInputs, this.bindOutputsData), {} as BoundParameters);
+    return unmap(outputsParameters).reduce(this.makeReducer(outputs, this.bindOutputsData), {} as BoundParameters);
   }
 
   getOutputParameterValue(outputs: any, parameter: OutputParameter): any {
