@@ -33,7 +33,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
 
   const onRunRepetitionsSuccess = async (repetitionValues: { value: LogicAppsV2.RunRepetition[] }) => {
     const { value } = repetitionValues;
-    const sortedFailedRepetitions: number[] = value
+    const sortedFailedRepetitions: number[] = (Array.isArray(value) ? value : [])
       .reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
         const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === scopeId);
         const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
