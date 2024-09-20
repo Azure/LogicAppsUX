@@ -32,6 +32,9 @@ export namespace ext {
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
   export const prefix = 'azureLogicAppsStandard';
+  export let currentBundleVersion: string;
+  export let pinnedBundleVersion: boolean;
+  export let downloadedBundleVersion: string;
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
