@@ -28,7 +28,6 @@ export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => 
   useEffect(() => {
     // update items when the tree is closed and reopened
     fileService.readCurrentSchemaOptions();
-    console.log('simple use effect file service');
   }, [showDropdownTree, fileService]);
 
   const selectSchema = intl.formatMessage({
