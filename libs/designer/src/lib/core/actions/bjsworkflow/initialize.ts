@@ -330,7 +330,6 @@ export const getOutputParametersFromManifest = (
     outputs: {
       dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined,
       outputs: nodeOutputs,
-      outputParameters: operationOutputs,
       originalOutputs,
     },
     dependencies,

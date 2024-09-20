@@ -1,11 +1,4 @@
-import type {
-  BoundParameters,
-  LAOperation,
-  OperationManifest,
-  OutputParameter,
-  ParameterInfo,
-  SwaggerParser,
-} from '@microsoft/logic-apps-shared';
+import type { BoundParameters, OperationManifest, OutputParameter, ParameterInfo, SwaggerParser } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
 import constants from '../../../../common/constants';
 import { ManifestOutputsBinder, DefaultOutputsBinder, ApiConnectionOutputsBinder } from './outputs/index';
@@ -15,7 +8,6 @@ export default class OutputsBinder {
     outputs: any,
     type: string,
     outputParametersByName: Record<string, OutputParameter>,
-    operation: LAOperation | undefined,
     manifest?: OperationManifest,
     customSwagger?: SwaggerParser,
     nodeParameters?: Record<string, ParameterInfo>,
@@ -54,7 +46,6 @@ export default class OutputsBinder {
         equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ||
         equals(type, constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
       ) {
-        console.log('operation', operation);
         const binder = new ApiConnectionOutputsBinder(nodeParameters ?? {}, operationMetadata);
         return binder.bind(output, outputParametersByName);
       }

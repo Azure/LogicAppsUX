@@ -88,7 +88,7 @@ const getInputsOutputsBinding = async (
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
 
   const inputParameters: Record<string, InputParameter> = map(nodeRawInputs, 'key');
-  const outputParameters = getRecordEntry(rootState.operations.outputParameters, nodeId)?.outputParameters ?? {};
+  const outputParameters = getRecordEntry(rootState.operations.outputParameters, nodeId)?.outputs ?? {};
 
   const operation = manifest
     ? undefined
@@ -111,7 +111,6 @@ const getInputsOutputsBinding = async (
     outputsToBind,
     type,
     outputParameters,
-    operation,
     manifest,
     customSwagger,
     undefined,

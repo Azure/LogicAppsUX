@@ -57,7 +57,6 @@ export interface NodeInputs {
 export interface NodeOutputs {
   dynamicLoadStatus?: DynamicLoadStatus;
   outputs: Record<string, OutputInfo>;
-  outputParameters?: Record<string, OutputParameter>;
   originalOutputs?: Record<string, OutputInfo>;
 }
 
