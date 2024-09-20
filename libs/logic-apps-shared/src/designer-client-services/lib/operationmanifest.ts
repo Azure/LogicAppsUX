@@ -36,6 +36,19 @@ export interface IOperationManifestService {
    * @return {Promise<any>}
    */
   getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest>;
+
+  /**
+   * Gets the operation manifest with transformations applied for splitOn setting.
+   * @arg {OperationManifest} manifest - The operation manifest.
+   * @arg {string | undefined} splitOn - The splitOn setting value.
+   * @arg {boolean} isAliasPathParsingEnabled - Flag to determine if aliases should be applied.
+   * @return {OperationManifest}
+   */
+  getUpdatedOperationManifestForSplitOn?(
+    manifest: OperationManifest,
+    splitOn: string | undefined,
+    isAliasPathParsingEnabled: boolean
+  ): OperationManifest;
 }
 
 let service: IOperationManifestService;
