@@ -57,7 +57,57 @@ describe('utils/DataMap', () => {
       expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
 
-    it.only('adds parent connection for repeating elements when parent is already connected', () => {
+    it.only('does not add extra connection if repeating element is connected', () => {
+      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
+      const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
+
+      const flattenedSource = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
+      const flattenedTarget = flattenSchemaIntoDictionary(extendedTarget, SchemaType.Target);
+
+      const targetChildNodeId = 'target-/ns0:Root/Looping/Person';
+      const sourceChildNodeId = 'source-/ns0:Root/Looping/Employee';
+
+      const targetParentKey = 'target-/ns0:Root/Looping/Person';
+      const sourceParentKey = 'source-/ns0:Root/Looping/Employee';
+
+      const sourceChildNode = flattenedSource[sourceChildNodeId];
+      const targetChildNode = flattenedTarget[targetChildNodeId];
+
+      const sourceParentNode = flattenedSource[sourceParentKey];
+      const targetParentNode = flattenedTarget[targetParentKey];
+
+      const connections: ConnectionDictionary = {};
+
+      applyConnectionValue(connections, {
+        targetNode: targetParentNode,
+        targetNodeReactFlowKey: targetParentKey,
+        findInputSlot: true,
+        input: {
+          reactFlowKey: sourceParentKey,
+          node: sourceParentNode,
+        },
+      });
+
+      applyConnectionValue(connections, {
+        targetNode: targetChildNode,
+        targetNodeReactFlowKey: targetChildNodeId,
+        findInputSlot: true,
+        input: {
+          reactFlowKey: sourceChildNodeId,
+          node: sourceChildNode,
+        },
+      });
+
+      addParentConnectionForRepeatingElementsNested(sourceChildNode, targetChildNode, flattenedSource, flattenedTarget, connections);
+
+      expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
+      expect(connections[sourceParentKey].outputs[0].isRepeating).toEqual(true);
+
+      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
+      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
+    });
+
+    it('adds parent connection for repeating elements when parent is already connected', () => {
       const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
       const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
 

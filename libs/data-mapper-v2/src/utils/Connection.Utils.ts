@@ -84,7 +84,12 @@ export const applyConnectionValue = (
 
   let isFunctionUnboundedInputOrRepeatingSchemaNode = false;
 
-  if (isSchemaNodeExtended(targetNode) && targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+  if (
+    input &&
+    typeof input !== 'string' &&
+    isSchemaNodeExtended(input.node) &&
+    input.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
+  ) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   } else if (isFunctionData(targetNode) && targetNode?.maxNumberOfInputs === UnboundedInput) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
@@ -197,6 +202,10 @@ export const applyConnectionValue = (
         reactFlowKey: targetNodeReactFlowKey,
         isRepeating: isRepeating,
       };
+
+      if (isRepeating) {
+        input.isRepeating = true;
+      }
 
       createConnectionEntryIfNeeded(connections, input.node, input.reactFlowKey);
       connections[input.reactFlowKey].outputs.push(tgtConUnit);
