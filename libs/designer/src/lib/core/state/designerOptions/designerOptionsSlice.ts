@@ -43,6 +43,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     suppressCastingForSerialize: false,
     recurrenceInterval: undefined,
     maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
+    hideContentTransferSettings: false,
   },
 };
 

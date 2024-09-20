@@ -12,7 +12,7 @@ export const useStyles = makeStyles({
   wrapper: {
     height: '100%',
     display: 'flex',
-    wdith: '100%',
+    width: '-webkit-fill-available',
     ...shorthands.flex(1, 1, '1px'),
     backgroundColor: tokens.colorNeutralBackground1,
   },

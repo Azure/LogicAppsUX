@@ -108,6 +108,7 @@ const DesignerEditor = () => {
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
+  const displayChatbotUI = showChatBot && designerView;
 
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
 
@@ -388,37 +389,43 @@ const DesignerEditor = () => {
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
-              <DesignerCommandBar
-                id={workflowId}
-                saveWorkflow={saveWorkflowFromDesigner}
-                discard={discardAllChanges}
-                location={canonicalLocation}
-                isReadOnly={isReadOnly}
-                isDarkMode={isDarkMode}
-                isDesignerView={designerView}
-                showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? chatbotPanelWidth : undefined}
-                enableCopilot={async () => {
-                  dispatch(setIsChatBotEnabled(!showChatBot));
-                }}
-                switchViews={handleSwitchView}
-                saveWorkflowFromCode={saveWorkflowFromCode}
-              />
-              {designerView ? (
-                <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
-              ) : (
-                <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />
-              )}
-              {showChatBot ? (
-                <Chatbot
-                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-                  getAuthToken={getAuthToken}
-                  getUpdatedWorkflow={getUpdatedWorkflow}
-                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                />
+            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+              {displayChatbotUI ? (
+                <div style={{ minWidth: chatbotPanelWidth }}>
+                  <Chatbot
+                    openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                    getAuthToken={getAuthToken}
+                    getUpdatedWorkflow={getUpdatedWorkflow}
+                    openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+                    closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                  />
+                </div>
               ) : null}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'inherit',
+                  width: displayChatbotUI ? `calc(100% - ${chatbotPanelWidth})` : '100%',
+                }}
+              >
+                <DesignerCommandBar
+                  id={workflowId}
+                  saveWorkflow={saveWorkflowFromDesigner}
+                  discard={discardAllChanges}
+                  location={canonicalLocation}
+                  isReadOnly={isReadOnly}
+                  isDarkMode={isDarkMode}
+                  isDesignerView={designerView}
+                  showConnectionsPanel={showConnectionsPanel}
+                  enableCopilot={async () => {
+                    dispatch(setIsChatBotEnabled(!showChatBot));
+                  }}
+                  switchViews={handleSwitchView}
+                  saveWorkflowFromCode={saveWorkflowFromCode}
+                />
+                {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+              </div>
             </div>
           </BJSWorkflowProvider>
         ) : null}
@@ -682,6 +689,7 @@ const getDesignerServices = (
     isDev: false,
     hybridLogicApp: isHybrid,
     locale,
+    unsupportedConnectorIds: ['/subscriptions/#subscription#/providers/Microsoft.Web/locations/#location#/managedApis/gmail'],
   });
 
   const oAuthService = new StandaloneOAuthService({

@@ -54,6 +54,9 @@ export const useStyles = makeStyles({
     display: 'inline-flex',
     justifyContent: 'left',
     paddingRight: '20px',
+    ':hover': {
+      ...shorthands.borderColor(colors.handleActive),
+    },
   },
   selectedHoverFunctionButton: {
     ...shorthands.border('2px', 'solid', colors.handleActive),

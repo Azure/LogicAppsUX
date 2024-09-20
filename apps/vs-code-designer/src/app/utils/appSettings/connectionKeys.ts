@@ -10,9 +10,9 @@ import { ext } from '../../../extensionVariables';
 import type { AzureConnectorDetails, ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from '../codeless/connection';
 
-export async function verifyLocalConnectionKeys(context: IActionContext): Promise<void> {
+export async function verifyLocalConnectionKeys(context: IActionContext, skipPromptOnMultipleFolders?: boolean): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
+    const workspaceFolder = await getWorkspaceFolder(context, undefined, skipPromptOnMultipleFolders);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     let azureDetails: AzureConnectorDetails;
 
