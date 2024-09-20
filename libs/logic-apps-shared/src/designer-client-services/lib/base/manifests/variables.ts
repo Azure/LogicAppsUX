@@ -154,9 +154,16 @@ export const incrementManifest = {
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
-
+    outputs: {
+      type: 'object',
+      properties: {
+        body: {
+          type: 'object',
+          title: 'Body',
+        },
+      },
+    },
     connector,
-
     settings: {
       trackedProperties: {
         scopes: [SettingScope.Action],
