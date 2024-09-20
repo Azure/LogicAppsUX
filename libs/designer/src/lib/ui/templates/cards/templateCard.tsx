@@ -4,15 +4,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
-import { DocumentCard, IconButton } from '@fluentui/react';
+import { DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { equals, getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
-import PeopleCommunityIcon from '../../../common/images/templates/people_community.svg';
+import { PeopleCommunity16Regular } from '@fluentui/react-icons';
 
 interface TemplateCardProps {
   templateName: string;
@@ -98,17 +98,13 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     root: { display: 'inline-block', maxWidth: 1000 },
   };
 
-  const isMicrosoftAuthored = details?.By === 'Microsoft';
+  const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
 
   return (
     <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onSelectTemplate} aria-label={title}>
       <div className="msla-template-card-authored-wrapper">
         <div className="msla-template-card-authored">
-          {isMicrosoftAuthored ? (
-            <img src={MicrosoftIcon} alt="Microsoft" width={16} />
-          ) : (
-            <img src={PeopleCommunityIcon} alt="Community" width={16} />
-          )}
+          {isMicrosoftAuthored ? <Image src={MicrosoftIcon} alt="Microsoft" width={16} /> : <PeopleCommunity16Regular />}
           <Text size={200} weight="semibold" align="start" className="msla-template-card-authored-label">
             {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : intlText.COMMUNITY_AUTHORED}
           </Text>
