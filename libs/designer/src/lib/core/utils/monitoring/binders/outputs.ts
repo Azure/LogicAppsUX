@@ -8,14 +8,14 @@ import type {
 } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
 import constants from '../../../../common/constants';
-import { ManifestOutputsBinder, DefaultOutputsBinder } from './outputs/index';
+import { ManifestOutputsBinder, DefaultOutputsBinder, ApiConnectionOutputsBinder } from './outputs/index';
 
 export default class OutputsBinder {
   async bind(
     outputs: any,
     type: string,
-    inputParametersByName: Record<string, OutputParameter>,
-    _operation: LAOperation | undefined,
+    outputParametersByName: Record<string, OutputParameter>,
+    operation: LAOperation | undefined,
     manifest?: OperationManifest,
     customSwagger?: SwaggerParser,
     nodeParameters?: Record<string, ParameterInfo>,
@@ -46,17 +46,18 @@ export default class OutputsBinder {
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION)
       ) {
         const binder = new ManifestOutputsBinder(manifest, nodeParameters ?? {}, operationMetadata);
-        return binder.bind(output, inputParametersByName, customSwagger);
+        return binder.bind(output, outputParametersByName, customSwagger);
       }
 
-      // if (
-      //   equals(type, constants.NODE.TYPE.API_CONNECTION) ||
-      //   equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ||
-      //   equals(type, constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
-      // ) {
-      //   const binder = new ApiConnectionInputsBinder(operation as LAOperation, nodeParameters ?? {}, operationMetadata);
-      //   return binder.bind(input, inputParametersByName);
-      // }
+      if (
+        equals(type, constants.NODE.TYPE.API_CONNECTION) ||
+        equals(type, constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ||
+        equals(type, constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
+      ) {
+        console.log('operation', operation);
+        const binder = new ApiConnectionOutputsBinder(nodeParameters ?? {}, operationMetadata);
+        return binder.bind(output, outputParametersByName);
+      }
 
       const binder = new DefaultOutputsBinder(nodeParameters ?? {}, operationMetadata);
       return binder.bind(output);

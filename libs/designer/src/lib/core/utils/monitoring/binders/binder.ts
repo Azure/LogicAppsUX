@@ -154,6 +154,16 @@ export abstract class Binder {
       [key]: boundParameter,
     };
   }
+
+  protected _makeOptionalBoundParameter(
+    key: string,
+    displayName: string,
+    value: any,
+    visibility?: string,
+    additionalProperties?: Partial<BoundParameter>
+  ): BoundParameters | undefined {
+    return value === undefined ? undefined : this.makeBoundParameter(key, displayName, value, visibility, additionalProperties);
+  }
 }
 
 const getDynamicListLookupValue = (boundInput: BoundParameter, key: string, nodeParameters: Record<string, ParameterInfo>): any => {
