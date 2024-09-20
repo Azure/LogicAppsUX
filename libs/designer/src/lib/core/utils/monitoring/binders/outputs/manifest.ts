@@ -4,7 +4,6 @@ import {
   getObjectPropertyValue,
   type OperationManifest,
   type ParameterInfo,
-  type SwaggerParser,
   unmap,
 } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
@@ -18,11 +17,7 @@ export class ManifestOutputsBinder extends Binder {
     this._operationManifest = manifest;
   }
 
-  async bind(
-    outputs: any,
-    outputsParameters: Record<string, OutputParameter>,
-    _customSwagger: SwaggerParser | undefined
-  ): Promise<BoundParameters> {
+  async bind(outputs: any, outputsParameters: Record<string, OutputParameter>): Promise<BoundParameters> {
     if (outputs === undefined) {
       return {};
     }

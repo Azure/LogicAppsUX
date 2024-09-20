@@ -107,15 +107,7 @@ const getInputsOutputsBinding = async (
   );
 
   const outputsBinder = new OutputsBinder();
-  const boundOutputs = await outputsBinder.bind(
-    outputsToBind,
-    type,
-    outputParameters,
-    manifest,
-    customSwagger,
-    undefined,
-    definition.metadata
-  );
+  const boundOutputs = await outputsBinder.bind(outputsToBind, type, outputParameters, manifest, undefined, definition.metadata);
 
   return { boundInputs, boundOutputs };
 };
