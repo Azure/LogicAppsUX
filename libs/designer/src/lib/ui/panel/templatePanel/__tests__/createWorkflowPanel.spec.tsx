@@ -18,6 +18,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
   let template1Manifest: Template.Manifest;
+  let template2Manifest: Template.Manifest;
   let param1DefaultValue: string;
 
   const httpClient = new MockHttpClient();
@@ -42,6 +43,41 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       title: 'Template 1',
       description: 'Template 1 Description',
       skus: ['standard', 'consumption'],
+      kinds: ['stateful', 'stateless'],
+      details: {},
+      images: {},
+      artifacts: [
+        {
+          type: 'workflow',
+          file: 'workflow.json',
+        },
+        {
+          type: 'description',
+          file: 'description.md',
+        },
+      ],
+      connections: {},
+      parameters: [
+        {
+          name: 'param1',
+          displayName: 'Param 1',
+          type: 'string',
+          description: 'param1 description',
+          default: param1DefaultValue,
+        },
+        {
+          name: 'param2',
+          displayName: 'Param 2',
+          type: 'object',
+          description: 'param2 description',
+        },
+      ],
+    };
+
+    template2Manifest = {
+      title: 'Template 2',
+      description: 'Template 2 Description - Consumption Only',
+      skus: ['consumption'],
       kinds: ['stateful', 'stateless'],
       details: {},
       images: {},
@@ -140,6 +176,47 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
+  });
+
+  it('Hides basic tab on consumption only template', async () => {
+    templateSliceData = {
+      workflowName: '',
+      kind: undefined,
+      templateName: template2Manifest.title,
+      manifest: template2Manifest,
+      workflowDefinition: {
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        contentVersion: '',
+      },
+      parameterDefinitions: template2Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+        result[parameter.name] = {
+          ...parameter,
+          value: parameter.default,
+        };
+        return result;
+      }, {}),
+      connections: template2Manifest.connections,
+      servicesInitialized: false,
+      errors: {
+        workflow: undefined,
+        kind: undefined,
+        parameters: {},
+        connections: undefined,
+      },
+    };
+    const minimalStoreData = {
+      template: templateSliceData,
+      panel: {
+        isOpen: true,
+        currentPanelView: TemplatePanelView.CreateWorkflow,
+        selectedTabId: undefined,
+      },
+    };
+    store = setupStore(minimalStoreData);
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).not.toBeDefined();
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
   });
 });
