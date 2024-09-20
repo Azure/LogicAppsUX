@@ -1,4 +1,37 @@
 # Logic Apps Designer
+## [4.95.0](https://github.com/Azure/LogicAppsUX/compare/v4.94.0...v4.95.0) (2024-09-19)
+
+
+### Features
+
+* **designer:** Parse text action designer support ([#5705](https://github.com/Azure/LogicAppsUX/issues/5705)) ([d85c15a](https://github.com/Azure/LogicAppsUX/commit/d85c15a01d48c9b5712bc36582614c446fb1f280))
+* **vscode:** Add copy file assemblies for .net 8 projects ([#5708](https://github.com/Azure/LogicAppsUX/issues/5708)) ([ba2390a](https://github.com/Azure/LogicAppsUX/commit/ba2390a9af3ef191e1ffa44fa4d94aabccf740bc))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update function desc ([#5710](https://github.com/Azure/LogicAppsUX/issues/5710)) ([bf15a43](https://github.com/Azure/LogicAppsUX/commit/bf15a4359e00a971175705136726a447bb16fae1))
+
+## [4.94.0](https://github.com/Azure/LogicAppsUX/compare/v4.93.0...v4.94.0) (2024-09-17)
+
+
+### Features
+
+* **Designer:** Support Paste Parallel Action ([#5689](https://github.com/Azure/LogicAppsUX/issues/5689)) ([a773858](https://github.com/Azure/LogicAppsUX/commit/a77385896ed87b92f7834bd39b013d76bfb378e1))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Improving deserialization of conditionals ([#5700](https://github.com/Azure/LogicAppsUX/issues/5700)) ([db9ad5a](https://github.com/Azure/LogicAppsUX/commit/db9ad5a977791e8d3d53a4e8193513d708e85908))
+
+## [4.93.0](https://github.com/Azure/LogicAppsUX/compare/v4.92.0...v4.93.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** OnHover border color take the fluent ui's default value ([#5692](https://github.com/Azure/LogicAppsUX/issues/5692)) ([1d44848](https://github.com/Azure/LogicAppsUX/commit/1d44848ef1b1ce98dfb5e78030d26624f90ad395))
+* **Data Mapper:** Update position and scroll width ([#5691](https://github.com/Azure/LogicAppsUX/issues/5691)) ([dafa1be](https://github.com/Azure/LogicAppsUX/commit/dafa1be230d9a911858bac3c14799f2e114bb02c))
+
 ## [4.92.0](https://github.com/Azure/LogicAppsUX/compare/v4.91.0...v4.92.0) (2024-09-16)
 
 

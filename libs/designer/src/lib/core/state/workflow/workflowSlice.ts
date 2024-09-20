@@ -24,7 +24,6 @@ import {
 import type { RelationshipIds } from '../panel/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
-import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import {
   LogEntryLevel,
   LoggerService,
@@ -41,6 +40,7 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -150,7 +150,7 @@ export const workflowSlice = createSlice({
     },
     pasteNode: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
+      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation; isParallelBranch?: boolean }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) {
@@ -162,6 +162,7 @@ export const workflowSlice = createSlice({
           operation: action.payload.operation as any,
           nodeId: action.payload.nodeId,
           relationshipIds: action.payload.relationshipIds,
+          isParallelBranch: action.payload.isParallelBranch,
         },
         graph,
         state.nodesMetadata,
@@ -169,12 +170,12 @@ export const workflowSlice = createSlice({
       );
     },
     pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
-      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions, isParallelBranch } = action.payload;
       const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
-      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state);
+      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state, isParallelBranch);
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
@@ -324,22 +325,6 @@ export const workflowSlice = createSlice({
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
         duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
-      };
-      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
-    },
-    setRunDataInputOutputs: (
-      state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; inputs: BoundParameters; outputs: BoundParameters }>
-    ) => {
-      const { nodeId, inputs, outputs } = action.payload;
-      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
-      if (!nodeMetadata) {
-        return;
-      }
-      const nodeRunData = {
-        ...nodeMetadata.runData,
-        inputs: inputs,
-        outputs: outputs,
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
@@ -497,6 +482,19 @@ export const workflowSlice = createSlice({
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
     });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
+      const { nodeId, inputs, outputs } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        inputs: inputs,
+        outputs: outputs,
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addMatcher(
       isAnyOf(
@@ -554,7 +552,6 @@ export const {
   setRepetitionRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
-  setRunDataInputOutputs,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
