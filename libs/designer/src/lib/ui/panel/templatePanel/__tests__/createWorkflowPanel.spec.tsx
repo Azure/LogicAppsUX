@@ -216,7 +216,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     store = setupStore(minimalStoreData);
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).not.toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeNull();
     expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
   });
 });
