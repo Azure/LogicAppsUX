@@ -10,6 +10,7 @@ import {
   type OutputParameters,
   OutputSource,
   getIntl,
+  getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
 import constants from '../constants';
@@ -29,20 +30,22 @@ export default class ApiConnectionOutputsBinder extends Binder {
   }
 
   protected bindOutputParameterToTypedOutputs(outputs: any, parameter: OutputParameter): BoundParameter {
-    const { source, visibility } = parameter;
+    const { source, visibility, name } = parameter;
     const displayName = this.getOutputParameterDisplayName(parameter);
 
     let value: any;
     if (equals(source, OutputSource.Headers)) {
       value = outputs.headers;
+      value = getPropertyValue(value, name);
     } else if (equals(source, OutputSource.StatusCode)) {
       value = outputs.statusCode;
     } else if (equals(source, OutputSource.Outputs)) {
       value = outputs.outputs;
+      value = getPropertyValue(value, name);
     } else {
       value = outputs.body;
+      value = getPropertyValue(value, name);
     }
-
     return this.buildBoundParameter(displayName, value, visibility);
   }
 
