@@ -46,7 +46,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     schemaListType,
     index,
     functionId,
-    inputAllowsCustomValues = true,
+    inputAllowsCustomValues,
     validateAndCreateConnection,
   } = props;
   const intl = useIntl();
@@ -250,8 +250,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
   }, [matchingOptions, sourceSchemaDictionary, styles]);
 
   const onChange: ComboboxProps['onChange'] = (event) => {
-    const value = event.target.value;
-    changeValue(value);
+    const value2 = event.target.value;
+    setCustomValue(value2);
+    changeValue(value2);
   };
 
   const onOptionSelect: ComboboxProps['onOptionSelect'] = (_event, data) => {
@@ -282,6 +283,19 @@ export const InputDropdown = (props: InputDropdownProps) => {
     setCustomValue(value);
   };
 
+  const selectCustomValueOnClose: ComboboxProps['onOpenChange'] = (event, data) => {
+    if (data.open === false) {
+      const matchingOption = customValue && matchingOptions.some((option) => option.text === customValue);
+      if (!matchingOption && customValue && customValue !== value) {
+        setSelectedOptions([customValue]);
+        setValue(customValue);
+        setCustomValue(customValue);
+
+        validateAndCreateConnection(customValue, undefined);
+      }
+    }
+  };
+
   return (
     <Stack horizontal={false}>
       <Combobox
@@ -290,6 +304,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         aria-labelledby={labelId}
         freeform={inputAllowsCustomValues}
         placeholder={placeholder}
+        onOpenChange={selectCustomValueOnClose}
         className={styles.inputStyles}
         onChange={onChange}
         onOptionSelect={onOptionSelect}
