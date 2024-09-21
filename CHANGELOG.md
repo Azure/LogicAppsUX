@@ -1,4 +1,81 @@
 # Logic Apps Designer
+## [4.95.0](https://github.com/Azure/LogicAppsUX/compare/v4.94.0...v4.95.0) (2024-09-19)
+
+
+### Features
+
+* **designer:** Parse text action designer support ([#5705](https://github.com/Azure/LogicAppsUX/issues/5705)) ([d85c15a](https://github.com/Azure/LogicAppsUX/commit/d85c15a01d48c9b5712bc36582614c446fb1f280))
+* **vscode:** Add copy file assemblies for .net 8 projects ([#5708](https://github.com/Azure/LogicAppsUX/issues/5708)) ([ba2390a](https://github.com/Azure/LogicAppsUX/commit/ba2390a9af3ef191e1ffa44fa4d94aabccf740bc))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update function desc ([#5710](https://github.com/Azure/LogicAppsUX/issues/5710)) ([bf15a43](https://github.com/Azure/LogicAppsUX/commit/bf15a4359e00a971175705136726a447bb16fae1))
+
+## [4.94.0](https://github.com/Azure/LogicAppsUX/compare/v4.93.0...v4.94.0) (2024-09-17)
+
+
+### Features
+
+* **Designer:** Support Paste Parallel Action ([#5689](https://github.com/Azure/LogicAppsUX/issues/5689)) ([a773858](https://github.com/Azure/LogicAppsUX/commit/a77385896ed87b92f7834bd39b013d76bfb378e1))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Improving deserialization of conditionals ([#5700](https://github.com/Azure/LogicAppsUX/issues/5700)) ([db9ad5a](https://github.com/Azure/LogicAppsUX/commit/db9ad5a977791e8d3d53a4e8193513d708e85908))
+
+## [4.93.0](https://github.com/Azure/LogicAppsUX/compare/v4.92.0...v4.93.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** OnHover border color take the fluent ui's default value ([#5692](https://github.com/Azure/LogicAppsUX/issues/5692)) ([1d44848](https://github.com/Azure/LogicAppsUX/commit/1d44848ef1b1ce98dfb5e78030d26624f90ad395))
+* **Data Mapper:** Update position and scroll width ([#5691](https://github.com/Azure/LogicAppsUX/issues/5691)) ([dafa1be](https://github.com/Azure/LogicAppsUX/commit/dafa1be230d9a911858bac3c14799f2e114bb02c))
+
+## [4.92.0](https://github.com/Azure/LogicAppsUX/compare/v4.91.0...v4.92.0) (2024-09-16)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Use tree's in-built search ([#5687](https://github.com/Azure/LogicAppsUX/issues/5687)) ([68d501b](https://github.com/Azure/LogicAppsUX/commit/68d501ba154b0cbbfe663f6ae83b7dac7aec0046))
+
+## [4.91.0](https://github.com/Azure/LogicAppsUX/compare/v4.90.0...v4.91.0) (2024-09-16)
+
+
+### Features
+
+* **designer:** Allow users to delete static results ([#5659](https://github.com/Azure/LogicAppsUX/issues/5659)) ([0c2dcfb](https://github.com/Azure/LogicAppsUX/commit/0c2dcfb2f515aacca317ca29d3a78e9c0c0747a4))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with `suppressDefaultNodeSelectFunctionality` ([#5686](https://github.com/Azure/LogicAppsUX/issues/5686)) ([78d2c33](https://github.com/Azure/LogicAppsUX/commit/78d2c335ef912f4b5d948ec46deabc50a2ec96a1))
+
+## [4.90.0](https://github.com/Azure/LogicAppsUX/compare/v4.89.0...v4.90.0) (2024-09-16)
+
+
+### Features
+
+* **Data Mapper:** Remove intermediate connections and rather depend on the direct connections to get rid of more re-renders ([#5679](https://github.com/Azure/LogicAppsUX/issues/5679)) ([2f550e4](https://github.com/Azure/LogicAppsUX/commit/2f550e4774ddbbbd1c3dee8ab591687758d8d9f6))
+
+
+### Bug Fixes
+
+* **vscode:** Improve IaC Generation Stability ([#5677](https://github.com/Azure/LogicAppsUX/issues/5677)) ([ea00491](https://github.com/Azure/LogicAppsUX/commit/ea0049102472adf5e76fa78831904a0be143ae53))
+
+## [4.89.0](https://github.com/Azure/LogicAppsUX/compare/v4.88.0...v4.89.0) (2024-09-13)
+
+
+### Features
+
+* **Data Mapper:** Update entire Reactflow structure within Data Mapper reduce re-renders and add in some perf improvments ([#5583](https://github.com/Azure/LogicAppsUX/issues/5583)) ([5b4b2c1](https://github.com/Azure/LogicAppsUX/commit/5b4b2c18ab62141472f71ca6e7454f95c64bb817))
+* **designer:** optionally hide content transfer settings via host option ([#5662](https://github.com/Azure/LogicAppsUX/issues/5662)) ([b28950f](https://github.com/Azure/LogicAppsUX/commit/b28950f15cdbc495cfbc78b7f14abbe892458781))
+
+
+### Bug Fixes
+
+* **Designer:** Hide Unsupported Actions/Connectors for Standard ([#5629](https://github.com/Azure/LogicAppsUX/issues/5629)) ([3e6605b](https://github.com/Azure/LogicAppsUX/commit/3e6605b65714816105633e98dec19ab28df22c05))
+
 ## [4.88.0](https://github.com/Azure/LogicAppsUX/compare/v4.87.0...v4.88.0) (2024-09-12)
 
 

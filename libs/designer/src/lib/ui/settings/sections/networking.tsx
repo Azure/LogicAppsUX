@@ -12,6 +12,7 @@ export interface NetworkingSectionProps extends SectionProps {
   chunkedTransferMode: boolean;
   uploadChunkMetadata: UploadChunkMetadata | undefined;
   downloadChunkMetadata: DownloadChunkMetadata | undefined;
+  hideContentTransferSettings: boolean | undefined;
   onAsyncPatternToggle: ToggleHandler;
   onAsyncResponseToggle: ToggleHandler;
   onRequestOptionsChange: TextChangeHandler;
@@ -46,6 +47,7 @@ export const Networking = ({
   disableAsyncPattern,
   requestOptions,
   chunkedTransferMode,
+  hideContentTransferSettings,
   onAsyncPatternToggle,
   onAsyncResponseToggle,
   onRequestOptionsChange,
@@ -432,7 +434,7 @@ export const Networking = ({
         onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
         ariaLabel: chunkedTransferNodeSizeLabel,
       },
-      visible: downloadChunkMetadata?.acceptDownloadSize,
+      visible: hideContentTransferSettings ? !hideContentTransferSettings : downloadChunkMetadata?.acceptDownloadSize,
     };
   };
 

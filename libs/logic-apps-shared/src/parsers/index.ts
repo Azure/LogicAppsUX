@@ -10,6 +10,7 @@ export * from './lib/manifest/parser';
 export * from './lib/manifest/__test__/data/manifests';
 export * from './lib/swagger/parser';
 export * from './lib/swagger/parameterprocessor';
+export { UriTemplateGenerator, UriTemplateParser } from './lib/swagger/uritemplateparser';
 export * from './lib/models/expression';
 export * from './lib/models/operation';
 export * from './lib/resolution-service/resolution-service';
