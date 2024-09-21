@@ -84,12 +84,7 @@ export const applyConnectionValue = (
 
   let isFunctionUnboundedInputOrRepeatingSchemaNode = false;
 
-  if (
-    input &&
-    typeof input !== 'string' &&
-    isSchemaNodeExtended(input.node) &&
-    input.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
-  ) {
+  if (isSchemaNodeExtended(targetNode) && targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;
   } else if (isFunctionData(targetNode) && targetNode?.maxNumberOfInputs === UnboundedInput) {
     isFunctionUnboundedInputOrRepeatingSchemaNode = true;

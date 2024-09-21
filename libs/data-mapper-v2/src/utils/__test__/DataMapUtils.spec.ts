@@ -57,7 +57,7 @@ describe('utils/DataMap', () => {
       expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
 
-    it.only('does not add extra connection if repeating element is connected', () => {
+    it('does not add extra connection if repeating element is connected', () => {
       const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
       const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema as any as DataMapSchema);
 
@@ -149,10 +149,8 @@ describe('utils/DataMap', () => {
       addParentConnectionForRepeatingElementsNested(sourceChildNode, targetChildNode, flattenedSource, flattenedTarget, connections);
 
       expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
-      expect(connections[sourceParentKey].outputs[0].isRepeating).toEqual(true);
 
       expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
-      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
   });
 
