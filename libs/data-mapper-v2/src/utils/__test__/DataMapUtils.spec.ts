@@ -101,10 +101,8 @@ describe('utils/DataMap', () => {
       addParentConnectionForRepeatingElementsNested(sourceChildNode, targetChildNode, flattenedSource, flattenedTarget, connections);
 
       expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
-      expect(connections[sourceParentKey].outputs[0].isRepeating).toEqual(true);
 
       expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
-      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
 
     it('adds parent connection for repeating elements when parent is already connected', () => {

@@ -327,7 +327,7 @@ describe('utils/Connections', () => {
           },
         });
 
-        expect(newConnections[currentNodeReactFlowKey].inputs[0].length).toEqual(1);
+        expect(newConnections[destination].inputs[0].length).toEqual(1);
       });
     });
   });
