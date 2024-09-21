@@ -1,4 +1,4 @@
-import type { OperationInfo, OperationManifest } from '../../utils/src';
+import type { OpenAPIV2, OperationInfo, OperationManifest } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 /**
@@ -38,17 +38,11 @@ export interface IOperationManifestService {
   getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest>;
 
   /**
-   * Gets the operation manifest with transformations applied for splitOn setting.
-   * @arg {OperationManifest} manifest - The operation manifest.
-   * @arg {string | undefined} splitOn - The splitOn setting value.
-   * @arg {boolean} isAliasPathParsingEnabled - Flag to determine if aliases should be applied.
-   * @return {OperationManifest}
+   * Gets the transformed output property body items with aliases
+   * @arg {OpenAPIV2.SchemaObject | undefined} schemaItem - The output property body items.
+   * @return {OpenAPIV2.SchemaObject | undefined}
    */
-  getUpdatedOperationManifestForSplitOn?(
-    manifest: OperationManifest,
-    splitOn: string | undefined,
-    isAliasPathParsingEnabled: boolean
-  ): OperationManifest;
+  getUpdatedAliasInOutputItemProperties?(schemaItem: OpenAPIV2.SchemaObject | undefined): OpenAPIV2.SchemaObject | undefined;
 }
 
 let service: IOperationManifestService;

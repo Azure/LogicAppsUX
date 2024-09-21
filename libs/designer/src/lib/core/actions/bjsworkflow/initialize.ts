@@ -197,7 +197,7 @@ export const getInputParametersFromManifest = (
     id: ParameterGroupKeys.DEFAULT,
     description: '',
     parameters: allParametersAsArray,
-    rawInputs: primaryInputParametersInArray.filter(rawInput => !rawInput.dynamicSchema)
+    rawInputs: primaryInputParametersInArray.filter((rawInput) => !rawInput.dynamicSchema),
   };
   const parameterGroups = {
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
@@ -243,12 +243,7 @@ export const getOutputParametersFromManifest = (
     }
 
     try {
-      const transformedManifest = OperationManifestService().getUpdatedOperationManifestForSplitOn?.(
-        manifestToParse,
-        splitOnValue,
-        isAliasingSupported
-      );
-      manifestToParse = transformedManifest ? transformedManifest : getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
+      manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
     } catch (error: any) {
       const errorInfo: ErrorInfo = { level: ErrorLevel.Default, error, message: error.message };
       if (error instanceof AssertionException && error.code === AssertionErrorCode.INVALID_SPLITON) {
