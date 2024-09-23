@@ -51,19 +51,25 @@ async function cleanLocalSettings(localSettingsPath: string) {
   const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
 
   if (localSettings.Values) {
-    Object.keys(localSettings.Values).forEach((key) => {
-      if (
-        key === 'WEBSITE_SITE_NAME' ||
-        key === 'WEBSITE_AUTH_ENABLED' ||
-        key === 'WEBSITE_SLOT_NAME' ||
-        key === 'ScmType' ||
-        key === 'FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'
-      ) {
-        delete localSettings.Values[key];
-      } else if (key === 'AzureWebJobsStorage') {
-        localSettings.Values[key] = 'UseDevelopmentStorage=true';
-      }
-    });
+    const localSettingKeys = Object.keys(localSettings.Values);
+    if (localSettingKeys.includes('WEBSITE_SITE_NAME')) {
+      delete localSettings.Values['WEBSITE_SITE_NAME'];
+    }
+    if (localSettingKeys.includes('WEBSITE_AUTH_ENABLED')) {
+      delete localSettings.Values['WEBSITE_AUTH_ENABLED'];
+    }
+    if (localSettingKeys.includes('WEBSITE_SLOT_NAME')) {
+      delete localSettings.Values['WEBSITE_SLOT_NAME'];
+    }
+    if (localSettingKeys.includes('ScmType')) {
+      delete localSettings.Values['ScmType'];
+    }
+    if (localSettingKeys.includes('FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED')) {
+      delete localSettings.Values['FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'];
+    }
+    if (localSettingKeys.includes('AzureWebJobsStorage')) {
+      localSettings.Values['AzureWebJobsStorage'] = 'UseDevelopmentStorage=true';
+    }
 
     await writeFormattedJson(localSettingsPath, localSettings);
   }
@@ -103,7 +109,7 @@ export async function cloudToLocalCommand(
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('cloudToLocal', 'Import zip into new Workspace'),
+    title: localize('importZipToWorkspace', 'Import zip into new workspace'),
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
