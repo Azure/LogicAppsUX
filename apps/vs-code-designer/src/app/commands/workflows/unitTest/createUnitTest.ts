@@ -13,7 +13,11 @@ import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalPro
 import type { IAzureQuickPickItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as portfinder from 'portfinder';
 import * as fs from 'fs-extra';
+import axios from 'axios';
+import { ext } from '../../../../extensionVariables';
+import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 
 /**
  * Creates a unit test for a Logic App workflow.
@@ -56,10 +60,124 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
       await openDesignerObj?.createPanel();
     } else {
       //Create empty C# test project
-      await createEmptyCSharpTestProject(context, projectPath, workflowName, unitTestName);
+      // await createEmptyCSharpTestProject(context, projectPath, workflowName, unitTestName);
+      await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, runId);
     }
   } else {
     vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
+  }
+}
+
+/**
+ * Generates a codeful unit test by calling the backend API and unzipping the response using adm-zip.
+ * @param {IAzureConnectorsContext} context - The context for Azure Connectors.
+ * @param {string} projectPath - The path to the project directory.
+ * @param {string} workflowName - The name of the workflow for which the test is being created.
+ * @param {string} unitTestName - The name of the unit test to be created.
+ * @param {string | undefined} runId - The ID of the run.
+ * @returns {Promise<void>} - A promise that resolves when the unit test has been generated.
+ */
+async function generateCodefulUnitTest(
+  context: IAzureConnectorsContext,
+  projectPath: string,
+  workflowName: string,
+  unitTestName: string,
+  runId?: string
+): Promise<void> {
+  try {
+    // Ensure runId is available
+    if (!runId) {
+      throw new Error(localize('runIdMissing', 'Run ID is required to generate a codeful unit test.'));
+    }
+
+    // Initialize the design time port if not already set
+    if (!ext.designTimePort) {
+      ext.designTimePort = await portfinder.getPortPromise();
+      ext.outputChannel.appendLog(localize('newPortSet', `New workflow designer port set to ${ext.designTimePort}.`));
+    }
+
+    const apiUrl = `http://localhost:${ext.designTimePort}/runtime/webhooks/workflow/api/management/workflows/${encodeURIComponent(
+      workflowName
+    )}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
+
+    ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
+
+    // Construct the request body and serialize it to JSON
+    const unitTestGenerationInput = {
+      UnitTestName: unitTestName,
+    };
+
+    const requestBody = JSON.stringify(unitTestGenerationInput);
+
+    ext.outputChannel.appendLog(
+      localize(
+        'operationalContext',
+        `Operational context: Workflow Name: ${workflowName}, Run ID: ${runId}, Unit Test Name: ${unitTestName}`
+      )
+    );
+    ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating Unit Test Generation API call...'));
+
+    // Make the API call with the unit test name in the HTTP body
+    const response = await axios.post(apiUrl, requestBody, {
+      headers: {
+        Accept: 'application/zip',
+        'Content-Type': 'application/json',
+      },
+      responseType: 'arraybuffer',
+    });
+
+    ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
+
+    // Get the response data as a Buffer
+    const zipBuffer = Buffer.from(response.data);
+
+    // Check if response is a zip file
+    const contentType = response.headers['content-type'];
+    if (contentType !== 'application/zip') {
+      throw new Error(localize('invalidResponseType', 'Expected a zip file but received {0}', contentType));
+    }
+
+    // Get the tests directory
+    const testsDirectoryUri = getTestsDirectory(projectPath);
+    const testsDirectory = testsDirectoryUri.fsPath;
+
+    // Define the path to extract the zip contents
+    const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
+    const testProjectPath = path.join(testsDirectory, logicAppName, workflowName, 'Tests');
+
+    // Ensure the test project path exists
+    await fs.ensureDir(testProjectPath);
+
+    // Unzip the response into the test project path using adm-zip
+    ext.outputChannel.appendLog(localize('unzippingFiles', 'Unzipping files into: {0}', testProjectPath));
+
+    await unzipLogicAppArtifacts(zipBuffer, testProjectPath);
+
+    ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
+
+    vscode.window.showInformationMessage(
+      localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, testProjectPath)
+    );
+  } catch (error) {
+    // Handle errors and parse error response if available
+    let errorMessage: string;
+
+    if (axios.isAxiosError(error) && error.response?.data) {
+      try {
+        const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+        const { message = '', code = '' } = responseData?.error ?? {};
+        errorMessage = localize('apiError', `API Error: ${code} - ${message}`);
+        ext.outputChannel.appendLog(errorMessage);
+      } catch (parseError) {
+        errorMessage = error.message;
+      }
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    } else {
+      errorMessage = String(error);
+    }
+
+    vscode.window.showErrorMessage(localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage));
   }
 }
 
