@@ -41,63 +41,28 @@ export abstract class Binder {
     };
   }
 
-  protected getOutputParameterDisplayName(parameter: OutputParameter): string {
-    const { description, summary, title } = parameter;
-    const displayName = title || summary || description;
+  protected getParameterDisplayName(parameter: OutputParameter): string {
+    const { description, summary, title, name } = parameter;
 
-    return displayName ?? '';
+    return title || summary || name || description || '';
   }
 
-  protected getInputParameterDisplayName(parameter: InputParameter): string {
-    const { name, summary, title } = parameter;
-    return title || summary || name;
+  protected getParameterValue(_inputs: any, _parameter: InputParameter): any {
+    throw new Error('getParameterValue must be implemented by derived classes');
   }
 
-  protected getInputParameterValue(_inputs: any, _parameter: InputParameter): any {
-    throw new Error('getInputParameterValue must be implemented by derived classes');
-  }
-
-  protected getOutputParameterValue(_inputs: any, _parameter: InputParameter): any {
-    throw new Error('getOutputParameterValue must be implemented by derived classes');
-  }
-
-  protected bindOutputsData = (outputs: any, parameter: OutputParameter): BoundParameter | undefined => {
+  protected bindData = (data: any, parameter: OutputParameter | InputParameter): BoundParameter | undefined => {
     // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
     // branch which never ran, because the condition expression was false
-    if (outputs === undefined) {
+    if (isNullOrUndefined(data)) {
       return undefined;
     }
 
-    const displayName = this.getOutputParameterDisplayName(parameter);
-    const value = this.getOutputParameterValue(outputs, parameter);
+    const displayName = this.getParameterDisplayName(parameter);
+    const value = this.getParameterValue(data, parameter);
 
     const { dynamicValues, visibility, key } = parameter;
 
-    const boundParameter = this.buildBoundParameter(displayName, value, visibility, this._getAdditionalProperties(parameter));
-
-    if (dynamicValues) {
-      boundParameter.value =
-        (isDynamicTreeExtension(dynamicValues) || isLegacyDynamicValuesTreeExtension(dynamicValues)) && this._metadata
-          ? getDynamicTreeLookupValue(boundParameter, this._metadata)
-          : isDynamicListExtension(dynamicValues) || isLegacyDynamicValuesExtension(dynamicValues)
-            ? getDynamicListLookupValue(boundParameter, key, this._nodeParameters)
-            : boundParameter.value;
-    }
-
-    return boundParameter;
-  };
-
-  protected bindInputsData = (inputs: any, parameter: InputParameter): BoundParameter | undefined => {
-    // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
-    // branch which never ran, because the condition expression was false
-    if (isNullOrUndefined(inputs)) {
-      return undefined;
-    }
-
-    const displayName = this.getInputParameterDisplayName(parameter);
-    const value = this.getInputParameterValue(inputs, parameter);
-
-    const { dynamicValues, key, visibility } = parameter;
     const boundParameter = this.buildBoundParameter(displayName, value, visibility, this._getAdditionalProperties(parameter));
 
     if (dynamicValues) {

@@ -37,10 +37,10 @@ export class ManifestInputsBinder extends Binder {
       unmap(inputParameters)
     );
 
-    return unmap(inputParameters).reduce(this.makeReducer(operationInputs, this.bindInputsData), {} as BoundParameters);
+    return unmap(inputParameters).reduce(this.makeReducer(operationInputs, this.bindData), {} as BoundParameters);
   }
 
-  getInputParameterValue(inputs: any, parameter: InputParameter): any {
+  getParameterValue(inputs: any, parameter: InputParameter): any {
     return parameter.alias ? getObjectPropertyValue(inputs, [parameter.alias as string]) : this._getValueByParameterKey(inputs, parameter);
   }
 

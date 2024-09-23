@@ -22,10 +22,10 @@ export class ManifestOutputsBinder extends Binder {
       return {};
     }
 
-    return unmap(outputsParameters).reduce(this.makeReducer(outputs, this.bindOutputsData), {} as BoundParameters);
+    return unmap(outputsParameters).reduce(this.makeReducer(outputs, this.bindData), {} as BoundParameters);
   }
 
-  getOutputParameterValue(outputs: any, parameter: OutputParameter): any {
+  getParameterValue(outputs: any, parameter: OutputParameter): any {
     return parameter.alias
       ? getObjectPropertyValue(outputs, [parameter.alias as string])
       : this._getValueByParameterKey(outputs, parameter);

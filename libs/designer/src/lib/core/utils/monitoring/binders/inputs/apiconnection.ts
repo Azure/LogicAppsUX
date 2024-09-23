@@ -30,10 +30,10 @@ export default class ApiConnectionInputsBinder extends Binder {
       return this._makeUntypedInputsParameters(inputs);
     }
 
-    return unmap(inputParameters).reduce(this.makeReducer(inputs, this.bindInputsData), {} as BoundParameters);
+    return unmap(inputParameters).reduce(this.makeReducer(inputs, this.bindData), {} as BoundParameters);
   }
 
-  getInputParameterValue(inputs: any, parameter: InputParameter): any {
+  getParameterValue(inputs: any, parameter: InputParameter): any {
     const template = removeConnectionPrefix(this._operation.path);
     const { body, headers, path, queries } = inputs;
     const { encode, in: $in, key, name } = parameter;
