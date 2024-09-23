@@ -217,6 +217,7 @@ const UnlimitedInputs = (props: {
               inputType={inputType}
               inputValue={inputValue}
               draggable={true}
+              isCustomValueAllowed={inputsFromManifest[0].allowCustomInput}
               validateAndCreateConnection={validateAndCreateConnection}
             />
           );
@@ -397,7 +398,7 @@ export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
       <div ref={props.draggable ? drag : undefined} className={styles.draggableListItem}>
         <span className={styles.inputDropdown}>
           <InputDropdown
-            inputAllowsCustomValues={props.isCustomValueAllowed !== undefined ? props.isCustomValueAllowed : true}
+            inputAllowsCustomValues={props.isCustomValueAllowed}
             index={props.index}
             functionId={props.functionKey}
             currentNode={props.func}

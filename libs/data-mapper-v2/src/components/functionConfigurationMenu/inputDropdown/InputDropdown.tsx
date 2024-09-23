@@ -37,18 +37,17 @@ export interface InputDropdownProps {
   validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
 }
 
-export const InputDropdown = (props: InputDropdownProps) => {
-  const {
-    currentNode,
-    inputName,
-    inputValue,
-    labelId,
-    schemaListType,
-    index,
-    functionId,
-    inputAllowsCustomValues,
-    validateAndCreateConnection,
-  } = props;
+export const InputDropdown = ({
+  currentNode,
+  inputName,
+  inputValue,
+  labelId,
+  schemaListType,
+  index,
+  functionId,
+  inputAllowsCustomValues = true,
+  validateAndCreateConnection,
+}: InputDropdownProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -182,7 +181,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
   }, [inputValue]);
 
   const originalOptions = useMemo(() => {
-    // Add source schema nodes currently on the canvas
     const options = Object.values(sourceSchemaDictionary).map<InputOptionProps>((srcSchemaNode) => {
       return {
         key: srcSchemaNode.key,
@@ -196,10 +194,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
       };
     });
 
-    // Add function nodes currently on the canvas
     Object.entries(functionNodeDictionary).forEach(([key, node]) => {
       // Don't list currentNode as an option
-      if (key === props.functionId) {
+      if (key === functionId) {
         return;
       }
 
@@ -217,14 +214,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return options;
-  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, props.functionId, schemaListType]);
+  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, functionId, schemaListType]);
 
   useEffect(() => {
     setMatchingOptions(originalOptions);
   }, [originalOptions]);
 
   const filteredOptions = useMemo(() => {
-    // Add source schema nodes currently on the canvas
     const options = matchingOptions.map((option) => {
       if (option.isSchema) {
         const srcSchemaNode = sourceSchemaDictionary[option.value];
@@ -289,7 +285,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
       if (!matchingOption && customValue && customValue !== value) {
         setSelectedOptions([customValue]);
         setValue(customValue);
-        setCustomValue(customValue);
 
         validateAndCreateConnection(customValue, undefined);
       }
@@ -312,7 +307,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         selectedOptions={selectedOptions}
       >
         {filteredOptions.length > 0 ? filteredOptions : undefined}
-        {customValue && (
+        {customValue && inputAllowsCustomValues && (
           <Option key="freeform" text={customValue}>
             {customValue} {customValueLoc}
           </Option>
