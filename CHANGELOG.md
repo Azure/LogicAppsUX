@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.85.3](https://github.com/Azure/LogicAppsUX/compare/v4.85.2...v4.85.3) (2024-09-23)
+
+
+### Bug Fixes
+
+* **vscode:** Improve IaC ([#5731](https://github.com/Azure/LogicAppsUX/issues/5731)) ([70f70e0](https://github.com/Azure/LogicAppsUX/commit/70f70e0af240e53b2d5a10f43d8f62753ce7d395)), closes [#5632](https://github.com/Azure/LogicAppsUX/issues/5632) [#5631](https://github.com/Azure/LogicAppsUX/issues/5631) [#5677](https://github.com/Azure/LogicAppsUX/issues/5677) [#5718](https://github.com/Azure/LogicAppsUX/issues/5718) [#5724](https://github.com/Azure/LogicAppsUX/issues/5724)
+
 ### [4.85.2](https://github.com/Azure/LogicAppsUX/compare/v4.85.1...v4.85.2) (2024-09-13)
 
 ### [4.85.1](https://github.com/Azure/LogicAppsUX/compare/v4.85.0...v4.85.1) (2024-09-11)
