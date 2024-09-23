@@ -1,17 +1,12 @@
 import { type EdgeProps, type InternalNode, type Node, useReactFlow } from '@xyflow/react';
 import { NodeIds } from '../../../../constants/ReactFlowConstants';
-import {
-  addSourceReactFlowPrefix,
-  addTargetReactFlowPrefix,
-  getTreeNodeId,
-  isFunctionNode,
-  isIntermediateNode,
-} from '../../../../utils/ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, getTreeNodeId, isFunctionNode } from '../../../../utils/ReactFlow.Util';
 import { useEffect, useMemo, useState } from 'react';
 import type { RootState } from '../../../../core/state/Store';
 import { useSelector } from 'react-redux';
 import { flattenSchemaNode } from '../../../../utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { HandlePosition } from '../../../../core/state/DataMapSlice';
 
 const useEdgePath = (props: EdgeProps) => {
   const { source, target, sourceX, sourceY, targetX, targetY, data } = props;
@@ -30,12 +25,8 @@ const useEdgePath = (props: EdgeProps) => {
 
   const sourceNode = getInternalNode(NodeIds.source);
   const targetNode = getInternalNode(NodeIds.target);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const sourceHandles = sourceNode?.internals?.handleBounds?.source ?? [];
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const targetHandles = targetNode?.internals?.handleBounds?.target ?? [];
 
-  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys } = useSelector(
+  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
 
@@ -55,7 +46,6 @@ const useEdgePath = (props: EdgeProps) => {
       nodeId: string,
       currentX: number,
       currentY: number,
-      allHandles: any[],
       schema: SchemaNodeExtended[],
       openKeys: Record<string, boolean>,
       createReactFlowKey: (key: string) => string,
@@ -67,58 +57,76 @@ const useEdgePath = (props: EdgeProps) => {
         return [currentX, currentY, 'direct'];
       }
 
-      if (handleId && node?.internals.positionAbsolute && allHandles.length > 0) {
+      if (handleId && node?.internals.positionAbsolute) {
         let x: number | undefined = undefined;
         let y: number | undefined = undefined;
         let scenario: 'direct' | 'collapsed' | 'scroll' | undefined;
-        let handle = allHandles.find((handle) => handle.id === handleId);
+        let handle: HandlePosition | undefined = undefined;
 
-        // If the handle is present in the current view, return the x and y coordinates
-        if (handle) {
-          x = handle.x;
-          y = handle.y;
-          scenario = 'direct';
-        } else {
-          // If the handle is not present in the current view, check if the parent is collapsed, if yes,
-
-          const nodeFromSchema = schema.find((node) => node.key === getTreeNodeId(handleId));
-          if (nodeFromSchema?.pathToRoot) {
-            for (const path of nodeFromSchema.pathToRoot) {
-              if (openKeys[path.key] === false) {
-                handle = allHandles.find((handle) => handle.id === createReactFlowKey(path.key));
-                break;
-              }
-              if (path.key === nodeFromSchema.key) {
-                break;
-              }
+        // Check if parent is hidden at some level
+        const nodeFromSchema = schema.find((node) => node.key === getTreeNodeId(handleId));
+        if (nodeFromSchema?.pathToRoot) {
+          for (const path of nodeFromSchema.pathToRoot) {
+            if (path.key === nodeFromSchema.key) {
+              continue;
+            }
+            if (openKeys[path.key] === false) {
+              handle = handlePosition[createReactFlowKey(path.key)];
+              break;
             }
           }
+        }
 
-          // If the collapsed parent is in the current view, return x and y coordinates of the parent
-          if (handle) {
-            x = handle.x;
-            y = handle.y;
-            scenario = 'collapsed';
-          } else {
-            // Check if the handle is scrolled out of view,
-            // if yes, fetch the x and y coordinates of the temporary handle based on the direction of the scroll
-            const firstHandleId = allHandles.find(
-              (handle) => handle.id && !isIntermediateNode(handle.id) && !isFunctionNode(handle.id)
-            )?.id;
-            if (firstHandleId) {
-              const indexForFirstHandleInSchema = schema.findIndex((node) => node.key === getTreeNodeId(firstHandleId));
-              const indexForNodeInSchema = schema.findIndex((node) => node.key === getTreeNodeId(handleId));
-              if (indexForFirstHandleInSchema >= 0 && indexForNodeInSchema >= 0) {
-                handle = allHandles.find((handle) =>
-                  handle.id?.startsWith(indexForNodeInSchema > indexForFirstHandleInSchema ? 'bottom-' : 'top-')
-                );
-                if (handle) {
-                  x = handle.x;
-                  y = handle.y;
-                  scenario = 'scroll';
+        // If handle is found => Parent is collapsed and we have the dimensions for the handle
+        // handle.hidden is used to check if the handle is scrolled out of view or not
+        if (handle && !handle.hidden) {
+          x = handle.position.x;
+          y = handle.position.y;
+          scenario = 'collapsed';
+        } else {
+          // Get the handle directly
+          handle = handlePosition[handleId];
+
+          // Is handle not set or scrolled out of the view
+          if (!handle || handle.hidden) {
+            const indexForNodeInSchema = schema.findIndex((node) => node.key === getTreeNodeId(handleId));
+
+            // Node is found in the schema, this will always be true since we are getting the handle from the schema
+            if (indexForNodeInSchema >= 0) {
+              let top = indexForNodeInSchema - 1;
+              let bottom = indexForNodeInSchema + 1;
+              while (top >= 0 && bottom < schema.length) {
+                const topNode = schema[top];
+                const bottomNode = schema[bottom];
+                if (top >= 0) {
+                  const topHandle = handlePosition[createReactFlowKey(topNode.key)];
+                  if (topHandle && !topHandle.hidden) {
+                    x = topHandle.position.x;
+                    y = topHandle.position.y;
+                    scenario = 'scroll';
+                    break;
+                  }
+                  top--;
+                }
+                if (bottom < schema.length) {
+                  const bottomHandle = handlePosition[createReactFlowKey(bottomNode.key)];
+                  if (bottomHandle && !bottomHandle.hidden) {
+                    x = bottomHandle.position.x;
+                    y = bottomHandle.position.y;
+                    scenario = 'scroll';
+                    break;
+                  }
+                  bottom++;
                 }
               }
+            } else {
+              throw new Error('Node not found in schema');
             }
+          } else {
+            // If the handle is present in the current view, return the x and y coordinates
+            x = handle.position.x;
+            y = handle.position.y;
+            scenario = 'direct';
           }
         }
 
@@ -133,7 +141,6 @@ const useEdgePath = (props: EdgeProps) => {
       source,
       sourceX,
       sourceY,
-      sourceHandles,
       flattenendSourceSchema,
       sourceOpenKeys,
       addSourceReactFlowPrefix,
@@ -144,7 +151,6 @@ const useEdgePath = (props: EdgeProps) => {
       target,
       targetX,
       targetY,
-      targetHandles,
       flattenendTargetSchema,
       targetOpenKeys,
       addTargetReactFlowPrefix,
@@ -173,12 +179,11 @@ const useEdgePath = (props: EdgeProps) => {
     sourceY,
     targetX,
     targetY,
-    targetHandles,
-    sourceHandles,
     flattenendSourceSchema,
     flattenendTargetSchema,
     sourceOpenKeys,
     targetOpenKeys,
+    handlePosition,
   ]);
 
   return updatedCoordinates;
