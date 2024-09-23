@@ -112,6 +112,19 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         const portArgs = `--port ${ext.designTimePort}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
         await waitForDesignTimeStartUp(url, new Date().getTime());
+        ext.pinnedBundleVersion = false;
+        const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
+        const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
+        if (data.extensionBundle) {
+          const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
+          const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
+          if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
+            ext.currentBundleVersion = ext.latestBundleVersion;
+          } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
+            ext.currentBundleVersion = extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version;
+            ext.pinnedBundleVersion = true;
+          }
+        }
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
       } else {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
@@ -126,6 +139,18 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       });
     }
   });
+}
+
+function extractPinnedVersion(input: string): string | null {
+  // Regular expression to match the format "[1.24.58]"
+  const regex = /^\[(\d{1}\.\d{1,2}\.\d{1,2})\]$/;
+  const match = input.match(regex);
+
+  if (match) {
+    // Extracted time part is in the first capturing group
+    return match[1];
+  }
+  return null;
 }
 
 export async function checkFuncProcessId(): Promise<boolean> {
@@ -232,11 +257,7 @@ export function stopDesignTimeApi(): void {
   }
 
   if (os.platform() === Platform.windows) {
-    pstree(ext.designChildProcess.pid, (err, children) => {
-      children.forEach((p) => {
-        cp.exec(`taskkill /pid ${p.PID} /t /f`);
-      });
-    });
+    cp.exec(`taskkill /pid ${ext.designChildFuncProcessId} /t /f`);
     cp.exec(`taskkill /pid ${ext.designChildProcess.pid} /t /f`);
   } else {
     cp.spawn('kill', ['-9'].concat(`${ext.designChildProcess.pid}`));
