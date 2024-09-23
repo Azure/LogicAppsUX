@@ -173,7 +173,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       const newY = handleRef.current.getBoundingClientRect().y - loadedMapMetadata.canvasRect.y;
       const currentHandlePosition = handlePosition[nodeId];
       const newHidden =
-        containerTop > handleRef.current.getBoundingClientRect().y || handleRef.current.getBoundingClientRect().y > containerBottom;
+        containerTop > handleRef.current.getBoundingClientRect().bottom || handleRef.current.getBoundingClientRect().top > containerBottom;
 
       if (
         currentHandlePosition?.position.x !== newX ||

@@ -480,8 +480,9 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
     updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
-      state.curDataMapOperation.handlePosition[action.payload.key] = {
-        ...action.payload,
+      state.curDataMapOperation.handlePosition = {
+        ...state.curDataMapOperation.handlePosition,
+        [action.payload.key]: action.payload,
       };
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
