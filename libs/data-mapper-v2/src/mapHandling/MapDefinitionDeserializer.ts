@@ -166,8 +166,8 @@ export class MapDefinitionDeserializer {
     }
     if (sourceSchemaNode && this._loop.length > 0) {
       addParentConnectionForRepeatingElementsNested(
-        targetNode as SchemaNodeExtended,
         sourceSchemaNode,
+        targetNode as SchemaNodeExtended,
         this._sourceSchemaFlattened,
         this._targetSchemaFlattened,
         connections

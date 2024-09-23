@@ -198,6 +198,10 @@ export const applyConnectionValue = (
         isRepeating: isRepeating,
       };
 
+      if (isRepeating) {
+        input.isRepeating = true;
+      }
+
       createConnectionEntryIfNeeded(connections, input.node, input.reactFlowKey);
       connections[input.reactFlowKey].outputs.push(tgtConUnit);
       connections[input.reactFlowKey].outputs = connections[input.reactFlowKey].outputs.filter(onlyUniqueConnections);
