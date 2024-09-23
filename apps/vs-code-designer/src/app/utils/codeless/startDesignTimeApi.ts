@@ -119,7 +119,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
           const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
           const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
           if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
-            ext.currentBundleVersion = ext.downloadedBundleVersion;
+            ext.currentBundleVersion = ext.latestBundleVersion;
           } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
             ext.currentBundleVersion = extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version;
             ext.pinnedBundleVersion = true;

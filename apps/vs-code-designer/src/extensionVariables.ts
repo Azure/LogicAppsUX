@@ -34,7 +34,7 @@ export namespace ext {
   export const prefix = 'azureLogicAppsStandard';
   export let currentBundleVersion: string;
   export let pinnedBundleVersion: boolean;
-  export let downloadedBundleVersion: string;
+  export let latestBundleVersion: string;
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;

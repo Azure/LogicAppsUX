@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   managementApiPrefix,
+  workflowFileName,
   workflowLocationKey,
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
@@ -109,11 +110,11 @@ function getWorkflowFilePaths(source: string): string[] {
       const dirPath = path.join(source, name);
       if (fs.statSync(dirPath).isDirectory()) {
         const files = fs.readdirSync(dirPath);
-        return files.length === 1 && files[0] === 'workflow.json';
+        return files.length === 1 && files[0] === workflowFileName;
       }
       return false;
     })
-    .map((name) => path.join(source, name, 'workflow.json'));
+    .map((name) => path.join(source, name, workflowFileName));
 }
 
 function updateMetadata(filePath: string, correlationId: string, currentDateTime: string): void {
