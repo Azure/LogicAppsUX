@@ -31,7 +31,7 @@ export default class ApiConnectionOutputsBinder extends Binder {
 
   protected bindOutputParameterToTypedOutputs(outputs: any, parameter: OutputParameter): BoundParameter {
     const { source, visibility, name } = parameter;
-    const displayName = this.getOutputParameterDisplayName(parameter);
+    const displayName = this.getParameterDisplayName(parameter);
 
     let value: any;
     if (equals(source, OutputSource.Headers)) {
