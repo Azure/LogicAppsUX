@@ -355,10 +355,6 @@ importers:
         version: 5.4.5
 
   apps/vs-code-designer:
-    dependencies:
-      uuid:
-        specifier: ^10.0.0
-        version: 10.0.0
     devDependencies:
       '@azure/arm-appinsights':
         specifier: ^5.0.0-beta.7
@@ -447,6 +443,9 @@ importers:
       tslib:
         specifier: 2.4.0
         version: 2.4.0
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
       vsce:
         specifier: ^2.11.0
         version: 2.15.0

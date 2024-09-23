@@ -31,6 +31,7 @@
     "request": "2.88.2",
     "semver": "^6.3.1",
     "tslib": "2.4.0",
+    "uuid": "^10.0.0",
     "vsce": "^2.11.0",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
@@ -45,8 +46,5 @@
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest --retry=3"
-  },
-  "dependencies": {
-    "uuid": "^10.0.0"
   }
 }
