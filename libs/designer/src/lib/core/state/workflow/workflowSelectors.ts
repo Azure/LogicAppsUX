@@ -81,7 +81,7 @@ export const useIsGraphCollapsed = (graphId: string): boolean =>
 export const useGetSwitchParentId = (nodeId: string): string | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) =>
-      state.nodesMetadata[nodeId].subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? state.nodesMetadata[nodeId].parentNodeId : undefined
+      state.nodesMetadata[nodeId]?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? state.nodesMetadata[nodeId]?.parentNodeId : undefined
     )
   );
 };
