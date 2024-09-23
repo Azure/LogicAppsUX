@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -79,7 +79,11 @@ export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
 
 export const useGetSwitchParentId = (nodeId: string): string | undefined => {
-  return useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getSwitchParentId(nodeId, state.graph)));
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) =>
+      state.nodesMetadata[nodeId].subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? state.nodesMetadata[nodeId].parentNodeId : undefined
+    )
+  );
 };
 
 export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
@@ -217,37 +221,6 @@ const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?:
     if (current?.children) {
       for (const child of current.children) {
         queue.enqueue(child);
-      }
-    }
-  }
-
-  return undefined;
-};
-
-const getSwitchParentId = (nodeId: string, rootNode: WorkflowNode | null): string | undefined => {
-  if (!rootNode) {
-    return undefined;
-  }
-
-  const queue = new Queue<{ node: WorkflowNode; parentId: string | undefined }>();
-  queue.enqueue({ node: rootNode, parentId: undefined });
-
-  while (queue.size > 0) {
-    const current = queue.dequeue();
-
-    if (!current) {
-      continue;
-    }
-
-    const { node, parentId } = current;
-
-    if (node.id === nodeId && node.subGraphLocation === 'cases') {
-      return parentId;
-    }
-
-    if (node.children) {
-      for (const child of node.children) {
-        queue.enqueue({ node: child, parentId: node.id });
       }
     }
   }
