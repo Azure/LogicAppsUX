@@ -20,7 +20,7 @@ import {
   isFunctionData,
   isIfAndGuid,
 } from './Function.Utils';
-import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+import { addReactFlowPrefix, addSourceReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
@@ -550,9 +550,14 @@ export const addParentConnectionForRepeatingElementsNested = (
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
 ): boolean => {
-  if (sourceNode?.parentKey && targetNode?.pathToRoot) {
-    const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
-    const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+  if (sourceNode && sourceNode.parentKey) {
+    if (targetNode.parentKey === undefined || sourceNode.parentKey === undefined) {
+      return false;
+    }
+    const parentTargetNode = flattenedTargetSchema[addTargetReactFlowPrefix(targetNode.parentKey)];
+    const parentSourceNode = flattenedSourceSchema[addSourceReactFlowPrefix(sourceNode.parentKey)];
+    const firstTargetNodeWithRepeatingPathItem = findLast(parentTargetNode.pathToRoot, (pathItem) => pathItem.repeating);
+    const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
     if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
       const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
