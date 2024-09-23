@@ -20,7 +20,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public supportsDuplicateSteps = false;
 
   // will likely need to change the location of the start zip path
-  public static async setZipFilePath(_context: Partial<IFunctionWizardContext>): Promise<void> {
+  private static async setZipFilePath(_context: Partial<IFunctionWizardContext>): Promise<void> {
     const fileUris = await vscode.window.showOpenDialog({
       canSelectMany: false,
       defaultUri: vscode.Uri.file(path.join(os.homedir(), 'Downloads')),
@@ -42,7 +42,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
     return this.zipContent === undefined;
   }
 
-  public async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
+  private async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
     if (!this.wizardContext) {
       console.error('wizardContext is not set in getzipfILes.');
       return []; // Return early if wizardContext is not set

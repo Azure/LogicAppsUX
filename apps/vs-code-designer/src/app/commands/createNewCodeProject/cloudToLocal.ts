@@ -70,7 +70,7 @@ async function cleanLocalSettings(localSettingsPath: string) {
 }
 
 // Main function to orchestrate the cloud to local process
-export async function cloudToLocalInternal(
+export async function cloudToLocalCommand(
   context: IActionContext,
   options: ICreateFunctionOptions = {
     folderPath: undefined,

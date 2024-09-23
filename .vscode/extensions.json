@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "biomejs.biome",
-    "dbaeumer.vscode-eslint",
-    "ms-vscode.azure-account"
+    "dbaeumer.vscode-eslint"
   ]
 }

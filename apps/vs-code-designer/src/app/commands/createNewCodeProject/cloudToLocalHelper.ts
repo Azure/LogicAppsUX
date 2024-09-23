@@ -68,7 +68,7 @@ export async function getConnectionsJsonContent(context: IFunctionWizardContext)
 }
 
 export async function changeAuthTypeToRaw(
-  connections: ConnectionsData,
+  connections: any,
   parameters: ParametersData | undefined,
   parameterizeConnectionsSetting: any
 ): Promise<any> {

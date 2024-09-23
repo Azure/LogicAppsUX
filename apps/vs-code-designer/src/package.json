@@ -388,12 +388,8 @@
           "group": "1_create@2"
         },
         {
-          "command": "azureLogicAppsStandard.cloudToLocal",
-          "group": "1_create@3"
-        },
-        {
           "command": "azureLogicAppsStandard.createCodeless",
-          "group": "1_create@4"
+          "group": "1_create@3"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
@@ -401,7 +397,11 @@
         },
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
-          "group": "4_export@1"
+          "group": "3_export@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.cloudToLocal",
+          "group": "4_create@3"
         }
       ],
       "view/title": [
