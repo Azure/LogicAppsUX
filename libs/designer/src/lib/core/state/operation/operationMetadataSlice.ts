@@ -17,6 +17,7 @@ export interface ParameterGroup {
   id: string;
   description?: string;
   parameters: ParameterInfo[];
+  rawInputs: InputParameter[];
   showAdvancedParameters?: boolean;
   hasAdvancedParameters?: boolean;
 }
@@ -184,6 +185,7 @@ interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
   inputs: ParameterInfo[];
+  rawInputs: InputParameter[];
   dependencies?: Record<string, DependencyInfo>;
 }
 
@@ -260,13 +262,14 @@ export const operationMetadataSlice = createSlice({
       });
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
-      const { nodeId, groupId, inputs, dependencies } = action.payload;
+      const { nodeId, groupId, inputs, rawInputs, dependencies } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId) ?? {
         parameterGroups: {},
       };
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
       if (parameterGroup) {
         parameterGroup.parameters = inputs;
+        parameterGroup.rawInputs = rawInputs;
       }
 
       if (dependencies) {
