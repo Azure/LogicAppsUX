@@ -186,8 +186,9 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
   }
 
-  context.telemetry.properties.latestLocalBundleVersion = latestLocalBundleVersion;
-  context.telemetry.properties.latestFeedBundleVersion = latestFeedBundleVersion;
+  context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
+    ? latestFeedBundleVersion
+    : latestLocalBundleVersion;
 
   if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
     const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);

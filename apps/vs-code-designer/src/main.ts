@@ -68,6 +68,9 @@ export async function activate(context: vscode.ExtensionContext) {
     await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
+    ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+    ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
