@@ -1,6 +1,3 @@
-// Used createNewCodeProject.ts as a template to create this file
-// This file is used to take a zipped Logic App from the desktop and unzip to the local workspace
-// Reorganized file with constants at the top, grouped functions, and a main cloudToLocalInternal to call everything
 import {
   extensionCommand,
   funcVersionSetting,
@@ -33,15 +30,12 @@ import * as fs from 'fs';
 import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { writeFormattedJson } from '../../utils/fs';
 
-// Constants
 const openFolder = true;
 
-// Function to create an AdmZip instance
 function createAdmZipInstance(zipFilePath: string) {
   return new AdmZip(zipFilePath);
 }
 
-// Function to get zip entries
 function getZipEntries(zipFilePath: string) {
   const zip = createAdmZipInstance(zipFilePath);
   return zip.getEntries();
@@ -75,7 +69,6 @@ async function cleanLocalSettings(localSettingsPath: string) {
   }
 }
 
-// Main function to orchestrate the cloud to local process
 export async function cloudToLocalCommand(
   context: IActionContext,
   options: ICreateFunctionOptions = {
@@ -113,7 +106,7 @@ export async function cloudToLocalCommand(
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
-      new SetLogicAppType(), // is it only supporting one type?
+      new SetLogicAppType(),
       new SetLogicAppName(),
       new ZipFileStep(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings, true),
@@ -126,6 +119,7 @@ export async function cloudToLocalCommand(
     await wizard.prompt();
     await wizard.execute();
   } catch (error) {
+    context.telemetry.properties.error = error.message;
     console.error('Error during wizard execution:', error);
   }
   const zipFilePath = ZipFileStep.zipFilePath;
@@ -142,24 +136,21 @@ export async function cloudToLocalCommand(
   const connectionsData = await getConnectionsJsonContent(wizardContext as IFunctionWizardContext);
   const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
+  const localSettingsContent = fs.readFileSync(localSettingsPath, 'utf8');
+  localSettings = JSON.parse(localSettingsContent);
+  const localParametersContent = fs.readFileSync(parametersPath, 'utf8');
+  localParameters = JSON.parse(localParametersContent);
+
   if (localSettingsEntry) {
+    wizardContext.telemetry.properties.localSettingsFoundZip = 'true';
     const zipSettingsContent = localSettingsEntry.getData().toString('utf8');
     zipSettings = JSON.parse(zipSettingsContent);
   }
 
-  if (fs.existsSync(localSettingsPath)) {
-    const localSettingsContent = fs.readFileSync(localSettingsPath, 'utf8');
-    localSettings = JSON.parse(localSettingsContent);
-  }
-
   if (parametersEntry) {
+    wizardContext.telemetry.properties.parametersFoundZip = 'true';
     const parametersContent = parametersEntry.getData().toString('utf8');
     zipParameters = JSON.parse(parametersContent);
-  }
-
-  if (fs.existsSync(parametersPath)) {
-    const localParametersContent = fs.readFileSync(parametersPath, 'utf8');
-    localParameters = JSON.parse(localParametersContent);
   }
 
   async function mergeSettings(): Promise<Record<string, any>> {
@@ -177,6 +168,7 @@ export async function cloudToLocalCommand(
 
       return settings;
     } catch (error) {
+      context.telemetry.properties.error = error.message;
       console.error('Error writing file:', error);
     }
   }
@@ -186,20 +178,26 @@ export async function cloudToLocalCommand(
 
   if (connectionsData.managedApiConnections) {
     const [convertedConnections, convertedParameters] = await changeAuthTypeToRaw(
+      wizardContext as IFunctionWizardContext,
       connectionsData,
       localParameters,
       parameterizeConnectionsSetting
     );
+    context.telemetry.properties.finishedConvertingAuthToRaw = 'Finished converting connection authentication to Raw';
     const mergedSettings = await mergeSettings();
 
     await writeFormattedJson(connectionspath, convertedConnections);
     await writeFormattedJson(parametersPath, convertedParameters);
     await writeFormattedJson(localSettingsPath, mergedSettings);
+    await cleanLocalSettings(localSettingsPath);
 
     await updateConnectionKeys(wizardContext as IFunctionWizardContext);
+  } else {
+    await writeFormattedJson(parametersPath, localParameters);
+    await writeFormattedJson(localSettingsPath, localSettings);
+    await cleanLocalSettings(localSettingsPath);
   }
 
-  await cleanLocalSettings(localSettingsPath);
-
-  window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+  context.telemetry.properties.finishedImportingProject = 'Finished importing project';
+  window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
 }

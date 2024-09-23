@@ -48,10 +48,6 @@ export async function extractConnectionDetails(connections: ConnectionsData): Pr
 
 export async function getConnectionsJsonContent(context: IFunctionWizardContext): Promise<ConnectionsData> {
   try {
-    if (!context) {
-      console.error('wizardContext is not set in getConnections');
-      return null;
-    }
     const connectionsJsonPath = path.join(context.workspacePath, 'connections.json');
 
     if (fs.existsSync(connectionsJsonPath)) {
@@ -68,6 +64,7 @@ export async function getConnectionsJsonContent(context: IFunctionWizardContext)
 }
 
 export async function changeAuthTypeToRaw(
+  context: IFunctionWizardContext,
   connections: any,
   parameters: ParametersData | undefined,
   parameterizeConnectionsSetting: any
@@ -81,6 +78,7 @@ export async function changeAuthTypeToRaw(
             scheme: 'Key',
             parameter: `@appsetting('${referenceKey}-connectionKey')`,
           };
+          context.telemetry.properties.convertParamToRaw = `Converted ${referenceKey}-Authentication parameter to Raw`;
         }
       } else {
         for (const referenceKey of Object.keys(connections.managedApiConnections)) {
@@ -92,6 +90,7 @@ export async function changeAuthTypeToRaw(
                 scheme: 'Key',
                 parameter: `@appsetting('${referenceKey}-connectionKey')`,
               };
+              context.telemetry.properties.convertParamToRaw = `Converted ${referenceKey}-Authentication parameter to Raw`;
             }
           } else {
             connections.managedApiConnections[referenceKey].authentication = {
@@ -99,10 +98,12 @@ export async function changeAuthTypeToRaw(
               scheme: 'Key',
               parameter: `@appsetting('${referenceKey}-connectionKey')`,
             };
+            context.telemetry.properties.convertAuthInConnectionToRaw = `Converted ${referenceKey} connection authentication to Raw`;
           }
         }
       }
     } catch (error) {
+      context.telemetry.properties.error = error.message;
       console.error(error);
     }
     return [connections, parameters];

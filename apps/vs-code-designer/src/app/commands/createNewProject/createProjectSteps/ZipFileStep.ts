@@ -42,10 +42,6 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   }
 
   private async getZipFiles(): Promise<IAzureQuickPickItem<Buffer>[]> {
-    if (!this.wizardContext) {
-      console.error('wizardContext is not set in getzipfILes.');
-      return [];
-    }
     try {
       if (ZipFileStep.zipFilePath) {
         this.zipContent = fs.readFileSync(ZipFileStep.zipFilePath);
@@ -60,6 +56,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
         }
       }
     } catch (error) {
+      this.wizardContext.telemetry.properties.error = error.message;
       console.error('Failed to unzip the Logic App artifacts', error);
     }
     return Promise.resolve([]);
