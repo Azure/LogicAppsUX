@@ -46,6 +46,9 @@ import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
 import { Uri, window, workspace, type MessageItem } from 'vscode';
+import { findChildProcess } from '../../commands/pickFuncProcess';
+import pstree from 'ps-tree';
+import find_process from 'find-process';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -73,6 +76,11 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     const url = `http://localhost:${ext.designTimePort}${designerStartApi}`;
     if (await isDesignTimeUp(url)) {
       actionContext.telemetry.properties.isDesignTimeUp = 'true';
+      const correctFuncProcess = await checkFuncProcessId();
+      if (!correctFuncProcess) {
+        stopDesignTimeApi();
+        await startDesignTimeApi(projectPath);
+      }
       return;
     }
 
@@ -81,6 +89,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         localize('azureFunctions.designTimeApi', 'Starting workflow design-time API, which might take a few seconds.'),
         'OK'
       );
+      ext.outputChannel.appendLog('Starting Design Time Api');
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
       const settingsFileContent = getLocalSettingsSchema(true, projectPath);
@@ -103,6 +112,19 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         const portArgs = `--port ${ext.designTimePort}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
         await waitForDesignTimeStartUp(url, new Date().getTime());
+        ext.pinnedBundleVersion = false;
+        const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
+        const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
+        if (data.extensionBundle) {
+          const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
+          const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
+          if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
+            ext.currentBundleVersion = ext.latestBundleVersion;
+          } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
+            ext.currentBundleVersion = extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version;
+            ext.pinnedBundleVersion = true;
+          }
+        }
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
       } else {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
@@ -117,6 +139,41 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       });
     }
   });
+}
+
+function extractPinnedVersion(input: string): string | null {
+  // Regular expression to match the format "[1.24.58]"
+  const regex = /^\[(\d{1}\.\d{1,2}\.\d{1,2})\]$/;
+  const match = input.match(regex);
+
+  if (match) {
+    // Extracted time part is in the first capturing group
+    return match[1];
+  }
+  return null;
+}
+
+export async function checkFuncProcessId(): Promise<boolean> {
+  let correctId = false;
+  if (os.platform() === Platform.windows) {
+    await pstree(ext.designChildProcess.pid, (err, children) => {
+      children.forEach((p) => {
+        if (p.PID === ext.designChildFuncProcessId && (p.COMMAND || p.COMM) === 'func.exe') {
+          correctId = true;
+        }
+      });
+    });
+    await delay(1000);
+  } else {
+    await find_process('pid', ext.designChildProcess.pid).then((list) => {
+      if (list.length > 0) {
+        if (list[0].name === 'func' || list[0].name.includes('func')) {
+          correctId = true;
+        }
+      }
+    });
+  }
+  return correctId;
 }
 
 export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
@@ -137,6 +194,7 @@ export async function waitForDesignTimeStartUp(url: string, initialTime: number)
     await delay(2000);
   }
   if (await isDesignTimeUp(url)) {
+    ext.designChildFuncProcessId = await findChildProcess(ext.designChildProcess.pid);
     return Promise.resolve();
   }
   return Promise.reject();
@@ -199,16 +257,19 @@ export function stopDesignTimeApi(): void {
   }
 
   if (os.platform() === Platform.windows) {
+    cp.exec(`taskkill /pid ${ext.designChildFuncProcessId} /t /f`);
     cp.exec(`taskkill /pid ${ext.designChildProcess.pid} /t /f`);
   } else {
-    ext.designChildProcess.kill();
+    cp.spawn('kill', ['-9'].concat(`${ext.designChildProcess.pid}`));
   }
   ext.designChildProcess = undefined;
+  ext.designChildFuncProcessId = undefined;
+  ext.designTimePort = undefined;
 }
 
 export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
+    const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);

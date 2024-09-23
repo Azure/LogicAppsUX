@@ -24,6 +24,7 @@ export namespace ext {
   export let context: ExtensionContext;
   export let designTimePort: number;
   export let designChildProcess: cp.ChildProcess | undefined;
+  export let designChildFuncProcessId: string | undefined;
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let logicAppWorkspace: string;
@@ -31,6 +32,9 @@ export namespace ext {
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
   export const prefix = 'azureLogicAppsStandard';
+  export let currentBundleVersion: string;
+  export let pinnedBundleVersion: boolean;
+  export let latestBundleVersion: string;
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
