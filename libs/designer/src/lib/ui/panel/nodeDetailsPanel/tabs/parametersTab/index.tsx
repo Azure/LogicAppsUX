@@ -14,7 +14,12 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import {
+  useGetSwitchParentId,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useReplacedIds,
+} from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -89,6 +94,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
+  const parentIdOfSwitch = useGetSwitchParentId(selectedNodeId);
 
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
@@ -135,7 +141,13 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     );
   }
 
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const tokenGroup = getOutputTokenSections(
+    parentIdOfSwitch ?? selectedNodeId,
+    parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
+    tokenState,
+    workflowParametersState,
+    replacedIds
+  );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (

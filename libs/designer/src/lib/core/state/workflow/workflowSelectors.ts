@@ -78,6 +78,10 @@ const reduceCollapsed =
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
 
+export const useGetSwitchParentId = (nodeId: string): string | undefined => {
+  return useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getSwitchParentId(nodeId, state.graph)));
+};
+
 export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
@@ -209,13 +213,41 @@ const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?:
     if (current && current.id === nodeId) {
       return getAllChildren(current, childrenNodes);
     }
-    if (current?.id === nodeId) {
-      return current;
-    }
 
     if (current?.children) {
       for (const child of current.children) {
         queue.enqueue(child);
+      }
+    }
+  }
+
+  return undefined;
+};
+
+const getSwitchParentId = (nodeId: string, rootNode: WorkflowNode | null): string | undefined => {
+  if (!rootNode) {
+    return undefined;
+  }
+
+  const queue = new Queue<{ node: WorkflowNode; parentId: string | undefined }>();
+  queue.enqueue({ node: rootNode, parentId: undefined });
+
+  while (queue.size > 0) {
+    const current = queue.dequeue();
+
+    if (!current) {
+      continue;
+    }
+
+    const { node, parentId } = current;
+
+    if (node.id === nodeId && node.subGraphLocation === 'cases') {
+      return parentId;
+    }
+
+    if (node.children) {
+      for (const child of node.children) {
+        queue.enqueue({ node: child, parentId: node.id });
       }
     }
   }
