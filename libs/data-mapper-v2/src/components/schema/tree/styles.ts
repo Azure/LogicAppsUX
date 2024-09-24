@@ -110,7 +110,6 @@ export const useHandleStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: 'violet',
   },
   repeatingHoverIcon: {
     color: colors.handleActive,

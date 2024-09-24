@@ -72,8 +72,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [edges, handle.id]
   );
 
-  const isRepeatingNode = useMemo(() => data.nodeProperties.includes(SchemaNodeProperty.Repeating), [data.nodeProperties]);
-
   const onClick = useCallback(
     (e?: any) => {
       if (e) {
@@ -133,7 +131,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
           handle.className,
           isRepeating ? handleStyles.repeating : '',
           isConnected ? handleStyles.connected : '',
-          isRepeatingNode && isHover ? handleStyles.repeatingHover : '',
           isSelected || isHover ? handleStyles.selected : '',
           (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
         )}
@@ -141,9 +138,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         type={handle.type}
         isConnectable={true}
       >
-        {(isRepeating || (isRepeatingNode && isHover)) && (
-          <ArrowClockwiseFilled className={isRepeatingNode && isHover ? handleStyles.repeatingHoverIcon : handleStyles.repeatingIcon} />
-        )}
+        {isRepeating && <ArrowClockwiseFilled className={handleStyles.repeatingIcon} />}
       </Handle>
     ),
     [
@@ -157,13 +152,10 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handleStyles.selected,
       handleStyles.connectedAndSelected,
       handleStyles.repeatingIcon,
-      handleStyles.repeatingHoverIcon,
-      handleStyles.repeatingHover,
       isRepeating,
       isConnected,
       isSelected,
       isHover,
-      isRepeatingNode,
     ]
   );
 
