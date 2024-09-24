@@ -42,7 +42,7 @@ export interface IOperationManifestService {
    * @arg {OpenAPIV2.SchemaObject | undefined} schemaItem - The output property body items.
    * @return {OpenAPIV2.SchemaObject | undefined}
    */
-  getUpdatedAliasInOutputItemProperties?(schemaItem: OpenAPIV2.SchemaObject | undefined): OpenAPIV2.SchemaObject | undefined;
+  getUpdatedOutputsForSplitOn?(schemaItem: OpenAPIV2.SchemaObject | undefined): OpenAPIV2.SchemaObject | undefined;
 }
 
 let service: IOperationManifestService;

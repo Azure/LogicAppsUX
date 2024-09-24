@@ -204,7 +204,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
     let updatedManifestItems = manifestItems;
     if (isAliasPathParsingEnabled && updatedManifestItems) {
       updatedManifestItems =
-        OperationManifestService().getUpdatedAliasInOutputItemProperties?.(manifestItems) || getUpdatedAliasInItemProperties(manifestItems);
+        OperationManifestService().getUpdatedOutputsForSplitOn?.(manifestItems) || getUpdatedAliasInItemProperties(manifestItems);
     }
 
     updatedManifest.properties.outputs = {
