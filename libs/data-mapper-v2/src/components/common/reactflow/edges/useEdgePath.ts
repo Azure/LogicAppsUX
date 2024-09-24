@@ -40,7 +40,7 @@ const getCoordinatesForHandle = (
         if (path.key === nodeFromSchema.key) {
           continue;
         }
-        if (openKeys[path.key] === false) {
+        if (openKeys[path.key] !== undefined && openKeys[path.key] === false) {
           currentHandle = handlePositionFromStore[createReactFlowKey(path.key)];
           break;
         }
