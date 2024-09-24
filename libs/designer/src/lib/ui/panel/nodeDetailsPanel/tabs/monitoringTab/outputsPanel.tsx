@@ -8,15 +8,14 @@ export interface OutputsPanelProps {
   runMetaData: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   brandColor: string;
   nodeId: string;
-  values: Record<string, any>;
   isLoading: boolean;
   isError: boolean;
 }
 
-export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, values, isLoading, isError }) => {
+export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandColor, nodeId, isLoading, isError }) => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const intl = useIntl();
-  const { outputsLink } = runMetaData;
+  const { outputsLink, outputs } = runMetaData;
   const { uri, secureData } = outputsLink ?? {};
   const areOutputsSecured = !isNullOrUndefined(secureData);
 
@@ -66,15 +65,15 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
         <ValuesPanel
           brandColor={brandColor}
           headerText={intlText.outputs}
-          linkText={isNullOrUndefined(values) ? '' : intlText.showOutputs}
+          linkText={isNullOrUndefined(outputs) ? '' : intlText.showOutputs}
           showLink={!!uri}
-          values={values}
+          values={outputs ?? {}}
           labelledBy={`outputs-${nodeId}`}
           noValuesText={isError ? intlText.outputsError : isLoading ? intlText.outputsLoading : intlText.noOutputs}
           showMore={showMore}
           onMoreClick={onMoreClick}
           onLinkClick={onSeeRawOutputsClick}
-          isDownload={isNullOrUndefined(values)}
+          isDownload={isNullOrUndefined(outputs)}
           link={uri}
         />
       ) : null}
