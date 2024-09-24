@@ -6,15 +6,6 @@ trigger: none
 # Disable PR trigger
 pr: none
 
-# Scheduled nightly build of `main`
-schedules:
-  - cron: "0 0 * * *"
-    displayName: Nightly scheduled build
-    always: false # Don't rebuild if there haven't been changes
-    branches:
-      include:
-        - main
-
 # Note: not using template outlined in https://github.com/microsoft/vscode-azuretools/blob/main/azure-pipelines/README.md
 # so that we can customize sdl parameters.
 #
@@ -61,11 +52,17 @@ extends:
       - name: Build extension
         jobs:
           - job: Build
+            templateContext:
+              mb: # Enable the MicroBuild Signing toolset
+                signing:
+                  enabled: ${{ parameters.enableSigning }}
+                  signType: real # options are 'real' & 'test'
+                  zipSources: false
+            outputs:
+              - output: pipelineArtifact
+                targetPath: $(build.artifactstagingdirectory)/build/${{ job.name }}
+                artifactName: Build ${{ job.name }}
             steps:
-            - task: Npm@1
-              displayName: "Build"
-              inputs:
-                command: custom
-                customCommand: run build:extension
-                workingDir: $(working_directory)
-              condition: succeeded()
+              - template: ./templates/build.yml
+              - template: ./templates/package.yml
+
