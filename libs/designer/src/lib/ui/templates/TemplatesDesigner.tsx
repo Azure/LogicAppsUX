@@ -17,8 +17,8 @@ export const TemplatesDesigner = ({
 }: {
   detailFilters: TemplateDetailFilterType;
   createWorkflowCall: (
-    workflowName: string,
-    workflowKind: string,
+    workflowName: string | undefined,
+    workflowKind: string | undefined,
     workflow: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
@@ -26,7 +26,7 @@ export const TemplatesDesigner = ({
 }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
-  const { existingWorkflowName, connections } = useSelector((state: RootState) => state.workflow);
+  const { existingWorkflowName, connections, isConsumption } = useSelector((state: RootState) => state.workflow);
   const {
     workflowName,
     kind,
@@ -56,15 +56,16 @@ export const TemplatesDesigner = ({
 
   const onCreateClick = async () => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
-    if (
-      !workflowNameToUse ||
+    const isMissingInfoForStandard = !workflowNameToUse || !kind || kindError;
+
+    const isMissingInfo =
+      (!isConsumption && isMissingInfoForStandard) ||
       workflowError ||
-      !kind ||
-      kindError ||
       !workflowDefinition ||
       connectionsError ||
-      Object.values(parametersError)?.filter((error) => error).length > 0
-    ) {
+      Object.values(parametersError)?.filter((error) => error).length > 0;
+
+    if (isMissingInfo) {
       throw new Error(intlText.MISSING_INFO_ERROR);
     }
 

@@ -29,11 +29,12 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     kind,
     manifest: selectedManifest,
   } = useSelector((state: RootState) => state.template);
-  const { mapping, selectedTabId, templateName, workflowAppName } = useSelector((state: RootState) => ({
+  const { mapping, selectedTabId, templateName, workflowAppName, isConsumption } = useSelector((state: RootState) => ({
     mapping: state.workflow.connections.mapping,
     selectedTabId: state.panel.selectedTabId,
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
+    isConsumption: state.workflow.isConsumption,
   }));
 
   const [isCreated, setIsCreated] = useState(false);
@@ -54,13 +55,13 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
     }
-    if (selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
+    if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
       if (!existingWorkflowName) {
         dispatch(validateWorkflowName(existingWorkflowNames ?? []));
       }
       dispatch(validateKind());
     }
-  }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
+  }, [dispatch, isConsumption, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
 
   const { isLoading: isCreating, mutate: createWorkflowFromTemplate } = useMutation(async () => {
     setErrorMessage(undefined);
@@ -164,7 +165,9 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
 
   const tabs = useMemo(() => {
     const validTabs = [];
-    validTabs.push(nameStateTabItem);
+    if (!isConsumption) {
+      validTabs.push(nameStateTabItem);
+    }
     if (connectionsExist) {
       validTabs.push(connectionsTabItem);
     }
@@ -173,7 +176,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     }
     validTabs.push(reviewCreateTabItem);
     return validTabs;
-  }, [connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
+  }, [isConsumption, connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
 
   return tabs;
 };
