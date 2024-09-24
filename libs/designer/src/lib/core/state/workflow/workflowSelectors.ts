@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -77,6 +77,14 @@ const reduceCollapsed =
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+
+export const useGetSwitchParentId = (nodeId: string): string | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) =>
+      state.nodesMetadata[nodeId]?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? state.nodesMetadata[nodeId]?.parentNodeId : undefined
+    )
+  );
+};
 
 export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
   useSelector(
@@ -208,9 +216,6 @@ const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?:
     const current = queue.dequeue();
     if (current && current.id === nodeId) {
       return getAllChildren(current, childrenNodes);
-    }
-    if (current?.id === nodeId) {
-      return current;
     }
 
     if (current?.children) {
