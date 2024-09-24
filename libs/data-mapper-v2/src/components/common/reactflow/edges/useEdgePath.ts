@@ -16,7 +16,6 @@ const getCoordinatesForHandle = (
   currentY: number,
   schema: SchemaNodeExtended[],
   openKeys: Record<string, boolean>,
-  handlesFromReactFlow: any[],
   createReactFlowKey: (key: string) => string,
   handlePositionFromStore: Record<string, HandlePosition>,
   node?: InternalNode<Node>,
@@ -26,6 +25,8 @@ const getCoordinatesForHandle = (
   if (isFunctionNode(nodeId)) {
     return [currentX, currentY, 'direct'];
   }
+
+  const reactflowHandles = node?.internals.handleBounds?.source ?? node?.internals.handleBounds?.target ?? [];
 
   if (handleId && node?.internals.positionAbsolute) {
     let x: number | undefined = undefined;
@@ -86,10 +87,10 @@ const getCoordinatesForHandle = (
             }
           }
 
-          currentHandle = handlesFromReactFlow.find((handle) => handle.id?.startsWith(top >= 0 ? 'bottom-' : 'top-'));
+          const reactflowHandle = reactflowHandles.find((handle) => handle.id?.startsWith(top >= 0 ? 'bottom-' : 'top-'));
 
           // Top or bottom handles are always there in the react flow
-          if (currentHandle) {
+          if (reactflowHandle) {
             x = currentHandle.position.x;
             y = currentHandle.position.y;
             scenario = 'scroll';
@@ -107,8 +108,8 @@ const getCoordinatesForHandle = (
       }
     }
 
-    if (x && y) {
-      return [x + node.internals.positionAbsolute.x + 8, y + node.internals.positionAbsolute.y + 8, scenario];
+    if (x !== undefined && y !== undefined) {
+      return [x + 8, y + 8, scenario];
     }
   }
   return [undefined, undefined, undefined];
@@ -160,7 +161,6 @@ const useEdgePath = (props: EdgeProps) => {
       sourceY,
       flattenendSourceSchema,
       sourceOpenKeys,
-      sourceNode?.internals?.handleBounds?.source ?? [],
       addSourceReactFlowPrefix,
       handlePosition,
       sourceNode,
@@ -199,7 +199,6 @@ const useEdgePath = (props: EdgeProps) => {
       targetY,
       flattenendTargetSchema,
       targetOpenKeys,
-      targetNode?.internals?.handleBounds?.target ?? [],
       addTargetReactFlowPrefix,
       handlePosition,
       targetNode,
