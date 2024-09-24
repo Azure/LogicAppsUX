@@ -217,6 +217,7 @@ const UnlimitedInputs = (props: {
               inputType={inputType}
               inputValue={inputValue}
               draggable={true}
+              isCustomValueAllowed={inputsFromManifest[0].allowCustomInput}
               validateAndCreateConnection={validateAndCreateConnection}
             />
           );
@@ -381,6 +382,7 @@ interface UnboundedInputEntryProps {
   removeItem: () => void;
   schemaListType: SchemaType;
   draggable: boolean;
+  isCustomValueAllowed?: boolean;
   validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
 }
 
@@ -396,6 +398,7 @@ export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
       <div ref={props.draggable ? drag : undefined} className={styles.draggableListItem}>
         <span className={styles.inputDropdown}>
           <InputDropdown
+            inputAllowsCustomValues={props.isCustomValueAllowed}
             index={props.index}
             functionId={props.functionKey}
             currentNode={props.func}

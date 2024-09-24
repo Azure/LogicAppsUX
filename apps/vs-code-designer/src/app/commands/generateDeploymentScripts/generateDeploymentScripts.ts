@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   managementApiPrefix,
+  workflowFileName,
   workflowLocationKey,
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
@@ -34,6 +35,8 @@ import { startDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
 import axios from 'axios';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
   try {
@@ -48,6 +51,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const connectionsJson = await getConnectionsJson(projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
+    const workflowFiles = getWorkflowFilePaths(projectPath);
 
     if (!isParameterized) {
       const message = localize(
@@ -83,14 +87,64 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     } else {
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
+
+    const correlationId = uuidv4();
+    const currentDateTime = new Date().toISOString();
+    workflowFiles.forEach((filePath) => updateMetadata(filePath, correlationId, currentDateTime));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
+    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.toString();
+    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion;
     if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
       throw new Error(errorMessage);
     }
   }
+}
+
+function getWorkflowFilePaths(source: string): string[] {
+  return fs
+    .readdirSync(source)
+    .filter((name) => {
+      const dirPath = path.join(source, name);
+      if (fs.statSync(dirPath).isDirectory()) {
+        const files = fs.readdirSync(dirPath);
+        return files.length === 1 && files[0] === workflowFileName;
+      }
+      return false;
+    })
+    .map((name) => path.join(source, name, workflowFileName));
+}
+
+function updateMetadata(filePath: string, correlationId: string, currentDateTime: string): void {
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+  // Normalize the metadata key to lowercase
+  const metadataKey = Object.keys(data.definition).find((key) => key.toLowerCase() === 'metadata');
+  if (metadataKey && metadataKey !== 'metadata') {
+    data.definition.metadata = data.definition[metadataKey];
+    delete data.definition[metadataKey];
+  }
+
+  const iacMetadata = {
+    IaCGenerationDate: currentDateTime,
+    IaCWorkflowCorrelationId: correlationId,
+    LogicAppsExtensionVersion: ext.extensionVersion,
+    LogicAppsPinnedBundle: ext.pinnedBundleVersion,
+    LogicAppsCurrentBundleVersion: ext.currentBundleVersion,
+  };
+
+  if (data.definition.metadata) {
+    data.definition.metadata.IaCMetadata = {
+      ...data.definition.metadata.IaCMetadata,
+      ...iacMetadata,
+    };
+  } else {
+    data.definition.metadata = { IaCMetadata: iacMetadata };
+  }
+
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 /**
