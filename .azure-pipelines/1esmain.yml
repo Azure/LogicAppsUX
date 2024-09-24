@@ -65,4 +65,5 @@ extends:
             steps:
               - template: ./templates/build.yml
               - template: ./templates/package.yml
-
+              - template: ./templates/sign.yml
+              - template: ./templates/stage-artifacts.yml
