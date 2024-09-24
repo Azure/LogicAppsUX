@@ -13,6 +13,8 @@ import {
   isNullOrUndefined,
 } from '../../../utils/src';
 import { isHybridLogicApp } from './hybrid';
+import { LogEntryLevel } from '../logging/logEntry';
+import { LoggerService } from '../logger';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -42,14 +44,16 @@ export class StandardRunService implements IRunService {
     const { uri, contentSize } = contentLink;
     const { httpClient } = this.options;
 
-    // 2^18
-    if (contentSize > 262144) {
-      return undefined;
-    }
-
     if (!uri) {
       throw new Error();
     }
+
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'getContent standard run service',
+      message: `Content size: ${contentSize}`,
+      args: [`size: ${contentSize}`],
+    });
 
     try {
       const response = await httpClient.get<any>({

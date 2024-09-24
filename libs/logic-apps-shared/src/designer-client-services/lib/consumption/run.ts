@@ -12,6 +12,8 @@ import {
   UnsupportedException,
   isNullOrUndefined,
 } from '../../../utils/src';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 
 export interface ConsumptionRunServiceOptions {
   apiVersion: string;
@@ -41,14 +43,16 @@ export class ConsumptionRunService implements IRunService {
     const { uri, contentSize } = contentLink;
     const { httpClient } = this.options;
 
-    // 2^18
-    if (contentSize > 262144) {
-      return undefined;
-    }
-
     if (!uri) {
       throw new Error();
     }
+
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'getContent consumption run service',
+      message: `Content size: ${contentSize}`,
+      args: [`size: ${contentSize}`],
+    });
 
     try {
       const response = await httpClient.get<any>({
