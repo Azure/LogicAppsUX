@@ -10,16 +10,15 @@ import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { setRunDataInputOutputs } from '../../../../../core/state/workflow/workflowSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../../core';
+import { initializeInputsOutputsBinding } from '../../../../../core/actions/bjsworkflow/monitoring';
 
 export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = useRunData(selectedNodeId);
   const dispatch = useDispatch<AppDispatch>();
-
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
@@ -43,8 +42,10 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   }, [runMetaData, refetch]);
 
   useEffect(() => {
-    dispatch(setRunDataInputOutputs({ nodeId: selectedNodeId, inputs: inputOutputs.inputs, outputs: inputOutputs.outputs }));
-  }, [dispatch, inputOutputs, selectedNodeId]);
+    if (!isLoading) {
+      dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
+    }
+  }, [dispatch, inputOutputs, selectedNodeId, isLoading]);
 
   return isNullOrUndefined(runMetaData) ? null : (
     <>
@@ -55,7 +56,6 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         isLoading={isFetching || isLoading}
         isError={isError}
         nodeId={selectedNodeId}
-        values={inputOutputs.inputs}
       />
       <OutputsPanel
         runMetaData={runMetaData}
@@ -63,7 +63,6 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
         isLoading={isFetching || isLoading}
         isError={isError}
         nodeId={selectedNodeId}
-        values={inputOutputs.outputs}
       />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
     </>

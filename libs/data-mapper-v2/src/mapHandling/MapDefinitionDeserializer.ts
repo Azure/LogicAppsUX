@@ -157,13 +157,17 @@ export class MapDefinitionDeserializer {
 
     let sourceSchemaNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
 
+    if (!sourceSchemaNode && funcMetadata?.type === 'SingleValueMetadata') {
+      sourceSchemaNode = findNodeForKey(funcMetadata.value, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
+    }
+
     if (this._loop.length > 0 && !sourceSchemaNode) {
       sourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
     }
     if (sourceSchemaNode && this._loop.length > 0) {
       addParentConnectionForRepeatingElementsNested(
-        targetNode as SchemaNodeExtended,
         sourceSchemaNode,
+        targetNode as SchemaNodeExtended,
         this._sourceSchemaFlattened,
         this._targetSchemaFlattened,
         connections

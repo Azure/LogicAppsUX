@@ -107,6 +107,7 @@ export const OutputTabContents = (props: {
         }
         const listItem = (
           <UnboundedDropdownListItem
+            isCustomValueAllowed={false}
             key={`output-list-item-${index}`}
             schemaListType={SchemaType.Target}
             inputName={outputValue}
