@@ -128,7 +128,14 @@ export const SchemaTree = (props: SchemaTreeProps) => {
             searchTerm={searchTerm}
           >
             {(treeProps: NodeRendererProps<SchemaNodeExtended>) => (
-              <SchemaTreeNode id={id} flattenedSchemaMap={flattenedSchemaMap} schema={props.schema} {...treeProps} />
+              <SchemaTreeNode
+                id={id}
+                flattenedSchemaMap={flattenedSchemaMap}
+                schema={props.schema}
+                containerTop={ref?.current?.getBoundingClientRect().top}
+                containerBottom={ref?.current?.getBoundingClientRect().bottom}
+                {...treeProps}
+              />
             )}
           </Tree>
         </>
