@@ -53,6 +53,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     () => hover?.type === 'node' && hover?.isSourceSchema === isSourceSchema && equals(hover?.id, key),
     [hover?.id, hover?.isSourceSchema, hover?.type, isSourceSchema, key]
   );
+
   const isRepeating = useMemo(
     () =>
       edges.some(
