@@ -65,7 +65,7 @@ export const useConnector = (connectorId: string | undefined, enabled = true): U
 
 export const useConnectorAndSwagger = (connectorId: string | undefined, enabled = true) => {
   return useQuery(
-    ['apiWithSwaggers', { connectorId }],
+    ['apiWithSwaggers', connectorId?.toLowerCase()],
     async () => {
       if (!connectorId) {
         return null;

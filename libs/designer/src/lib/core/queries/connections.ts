@@ -12,13 +12,11 @@ export interface ConnectorWithParsedSwagger {
 }
 
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
-  const { connector, swagger } = await getReactQueryClient().fetchQuery(['apiWithSwaggers', connectorId.toLowerCase()], async () => {
-    const { connector, swagger } = await ConnectionService().getConnectorAndSwagger(connectorId);
-    const parsedSwagger = await SwaggerParser.parse(swagger);
-    return { connector, swagger: parsedSwagger };
-  });
-
-  return { connector, parsedSwagger: new SwaggerParser(swagger) };
+  const { connector, swagger } = await getReactQueryClient().fetchQuery(['apiWithSwaggers', connectorId.toLowerCase()], async () =>
+    ConnectionService().getConnectorAndSwagger(connectorId)
+  );
+  const parsedSwagger = await SwaggerParser.parse(swagger);
+  return { connector, parsedSwagger: new SwaggerParser(parsedSwagger) };
 };
 
 export const getSwaggerFromEndpoint = async (uri: string): Promise<SwaggerParser> => {
