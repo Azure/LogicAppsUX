@@ -100,7 +100,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetchOnWindowFocus: false,
       initialData: null,
       refetchOnMount: true,
-      enabled: parentRunIndex !== undefined && isMonitoringView,
+      enabled: parentRunIndex !== undefined && !!isMonitoringView,
     }
   );
 
