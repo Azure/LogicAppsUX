@@ -18,6 +18,7 @@
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
     "lodash.frompairs": "4.0.1",
+    "lodash.isequal": "4.5.0",
     "lodash.merge": "4.6.2",
     "monaco-editor": "0.44.0",
     "pako": "2.1.0",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "@formatjs/intl": "^2.10.1",
     "@types/lodash.frompairs": "^4.0.9",
+    "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.merge": "^4.6.9",
     "@types/pako": "^2.0.3",
     "@types/to-title-case": "^1.0.2"
