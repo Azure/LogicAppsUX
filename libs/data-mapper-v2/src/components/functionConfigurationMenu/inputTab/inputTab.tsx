@@ -1,5 +1,5 @@
 import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
-import { LinkDismissRegular, ReOrderRegular, AddRegular } from '@fluentui/react-icons';
+import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
 import { List, ListItem } from '@fluentui/react-list-preview';
 import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
@@ -417,7 +417,6 @@ export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
             )}
           </span>
           <Button className={styles.listButton} appearance="transparent" icon={<LinkDismissRegular />} onClick={() => props.removeItem()} />
-          {props.draggable && <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} />}
         </span>
       </div>
     </ListItem>
