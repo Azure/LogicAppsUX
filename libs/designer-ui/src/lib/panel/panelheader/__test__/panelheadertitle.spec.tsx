@@ -7,7 +7,7 @@ describe('ui/panel/panelheadertitle', () => {
   let minimal: PanelHeaderTitleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
-    minimal = { onChange: vi.fn() };
+    minimal = { onChange: vi.fn(), handleTitleUpdate: vi.fn() };
     renderer = ReactShallowRenderer.createRenderer();
   });
 

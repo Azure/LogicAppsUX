@@ -23,6 +23,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       setOverrideWidth: vi.fn(),
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
+      handleTitleUpdate: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

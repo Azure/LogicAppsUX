@@ -208,6 +208,19 @@ export interface RepetitionReference {
   repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
 }
 
+export interface UpdateParameterAndDependenciesPayload {
+  nodeId: string;
+  groupId: string;
+  parameterId: string;
+  properties: Partial<ParameterInfo>;
+  isTrigger: boolean;
+  operationInfo: NodeOperation;
+  connectionReference: ConnectionReference;
+  nodeInputs: NodeInputs;
+  dependencies: NodeDependencies;
+  operationDefinition?: any;
+}
+
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
   return parameters.sort((a, b) => {
     // Sort by dynamic data dependencies
@@ -1702,21 +1715,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
 
 export const updateParameterAndDependencies = createAsyncThunk(
   'updateParameterAndDependencies',
-  async (
-    actionPayload: {
-      nodeId: string;
-      groupId: string;
-      parameterId: string;
-      properties: Partial<ParameterInfo>;
-      isTrigger: boolean;
-      operationInfo: NodeOperation;
-      connectionReference: ConnectionReference;
-      nodeInputs: NodeInputs;
-      dependencies: NodeDependencies;
-      operationDefinition?: any;
-    },
-    { dispatch, getState }
-  ): Promise<void> => {
+  async (actionPayload: UpdateParameterAndDependenciesPayload, { dispatch, getState }): Promise<void> => {
     const {
       nodeId,
       groupId,

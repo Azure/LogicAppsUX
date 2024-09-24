@@ -34,6 +34,7 @@ export type PanelContainerProps = {
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
+  handleTitleUpdate: (originalId: string, newId: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
@@ -58,6 +59,7 @@ export const PanelContainer = ({
   onCommentChange,
   onTitleChange,
   onTitleBlur,
+  handleTitleUpdate,
   setOverrideWidth,
   overrideWidth,
   isResizeable,
@@ -113,6 +115,7 @@ export const PanelContainer = ({
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
+          handleTitleUpdate={handleTitleUpdate}
           onTitleBlur={onTitleBlur}
         />
       );
@@ -135,6 +138,7 @@ export const PanelContainer = ({
       toggleCollapse,
       onTitleChange,
       onTitleBlur,
+      handleTitleUpdate,
       resubmitOperation,
       onCommentChange,
     ]

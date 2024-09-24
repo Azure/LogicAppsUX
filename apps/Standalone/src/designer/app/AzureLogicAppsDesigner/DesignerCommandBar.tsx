@@ -21,6 +21,10 @@ import {
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
   collapsePanel,
+  onUndoClick,
+  useCanUndo,
+  useCanRedo,
+  onRedoClick,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -126,6 +130,10 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
+
+  const isUndoDisabled = !useCanUndo();
+  const isRedoDisabled = !useCanRedo();
+
   const items: ICommandBarItemProps[] = useMemo(
     () => [
       {
@@ -216,6 +224,20 @@ export const DesignerCommandBar = ({
           window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
         },
       },
+      {
+        key: 'Undo',
+        text: 'Undo',
+        iconProps: { iconName: 'Undo' },
+        onClick: () => dispatch(onUndoClick()),
+        disabled: isUndoDisabled,
+      },
+      {
+        key: 'Redo',
+        text: 'Redo',
+        iconProps: { iconName: 'Redo' },
+        onClick: () => dispatch(onRedoClick()),
+        disabled: isRedoDisabled,
+      },
     ],
     [
       saveIsDisabled,
@@ -225,6 +247,8 @@ export const DesignerCommandBar = ({
       haveErrors,
       isDarkMode,
       isCopilotReady,
+      isUndoDisabled,
+      isRedoDisabled,
       saveWorkflowMutate,
       saveWorkflowFromCode,
       discard,
