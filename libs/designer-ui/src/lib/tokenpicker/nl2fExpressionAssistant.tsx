@@ -193,6 +193,12 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         return;
       }
 
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'nl2fExpressionAssistant',
+        message: 'Clicked Create Expression Button',
+      });
+
       if (lastSubmittedQuery === query) {
         setNl2fOutputError(intlText.errors.duplicateSubmissionError);
         setIsGeneratingAnswer(false);
@@ -215,11 +221,21 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         if (response.errorMessage) {
           setNl2fOutputError(response.errorMessage);
           setSuggestedExpressions(undefined);
+          LoggerService().log({
+            level: LogEntryLevel.Trace,
+            area: 'nl2fExpressionAssistant',
+            message: `Unable to provide response due to: ${response.errorMessage}`,
+          });
         } else {
           setSuggestedExpressions(response.suggestions);
           setSuggestedExpressionIndex(0);
           setNl2fOutput((response.suggestions && response.suggestions[0].suggestedExpression) ?? '');
           setNl2fOutputError('');
+          LoggerService().log({
+            level: LogEntryLevel.Trace,
+            area: 'nl2fExpressionAssistant',
+            message: 'Expression assistant provided response',
+          });
         }
       } catch (error: any) {
         const cancelled_code = 'ERR_CANCELED';
@@ -255,6 +271,11 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
     setExpressionEditorError('');
     setExpression({ ...expression, value: nl2fOutput });
     setSelectedMode(TokenPickerMode.EXPRESSION);
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'nl2fExpressionAssistant',
+      message: 'Accepted Expression Assistant result',
+    });
   };
 
   const navigateToPreviousSuggestion = () => {

@@ -104,7 +104,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     getRunRepetition,
     {
       refetchOnWindowFocus: false,
-      enabled: isMonitoringView && parentRunIndex !== undefined,
+      enabled: !!isMonitoringView && parentRunIndex !== undefined,
     }
   );
 

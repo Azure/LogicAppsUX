@@ -16,6 +16,7 @@ export * from './helpers';
 export * from './uiInteractionData';
 export * from './topLevelDropdownMenuItem';
 export * from './token';
+export * from './logicAppsV2Integration';
 
 import * as LogicApps from './logicApps';
 import * as LogicAppsV2 from './logicAppsV2';

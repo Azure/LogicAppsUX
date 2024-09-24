@@ -33,7 +33,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -100,7 +100,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetchOnWindowFocus: false,
       initialData: null,
       refetchOnMount: true,
-      enabled: parentRunIndex !== undefined && isMonitoringView,
+      enabled: parentRunIndex !== undefined && !!isMonitoringView,
     }
   );
 
@@ -269,6 +269,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const renderLoopsPager = useMemo(() => {
+    if (metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
+      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
+    }
+
+    return null;
+  }, [graphCollapsed, metadata, scopeId]);
+
   const nodeIndex = useNodeIndex(id);
 
   if (!node) {
@@ -333,9 +341,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
-            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
-          ) : null}
+          {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>

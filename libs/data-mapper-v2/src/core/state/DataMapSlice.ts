@@ -65,6 +65,12 @@ export interface Draft2 {
   draft: Draft<DataMapState>;
 }
 
+export interface HandlePosition {
+  key: string;
+  position: XYPosition;
+  hidden?: boolean;
+}
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
@@ -90,6 +96,8 @@ export interface DataMapOperationState {
   // Temporary Nodes for when the scrolling is happening and the tree-nodes are not in view
   // For each corner of the canvas
   nodesForScroll: Record<string, string>;
+  handlePosition: Record<string, HandlePosition>;
+  edgePopOverId?: string;
   state?: ComponentState;
 }
 
@@ -107,6 +115,7 @@ const emptyPristineState: DataMapOperationState = {
   sourceOpenKeys: {},
   targetOpenKeys: {},
   edgeLoopMapping: {},
+  handlePosition: {},
   nodesForScroll: getIntermedateScrollNodeHandles(guid()),
 };
 
@@ -244,6 +253,7 @@ export const dataMapSlice = createSlice({
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
+        handlePosition: {},
         loadedMapMetadata: metadata,
       };
 
@@ -477,6 +487,12 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation.selectedItemKey = key;
       state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
+    updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
+      state.curDataMapOperation.handlePosition = {
+        ...state.curDataMapOperation.handlePosition,
+        [action.payload.key]: action.payload,
+      };
+    },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
       const { keys, isExpanded } = action.payload;
@@ -625,6 +641,7 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
+  updateHandlePosition,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

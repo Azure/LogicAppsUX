@@ -97,6 +97,13 @@ export const useHandleStyles = makeStyles({
   connectedAndSelected: {
     backgroundColor: colors.handleActive,
   },
+  repeatingHover: {
+    height: '18px',
+    width: '18px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   repeating: {
     height: '16px',
     width: '16px',
@@ -104,13 +111,16 @@ export const useHandleStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  repeatingHoverIcon: {
+    color: colors.handleActive,
+  },
   repeatingIcon: {
     color: 'white',
   },
   left: {
-    right: '1px',
+    right: '7.5px',
   },
   right: {
-    left: '-0.5px',
+    left: '7.5px',
   },
 });

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useStyles } from './styles';
 import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
@@ -17,6 +17,7 @@ export const FunctionPanel = (_props: PanelProps) => {
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const styles = useStyles();
   const intl = useIntl();
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const dispatch = useDispatch<AppDispatch>();
   const isFunctionPanelOpen = useSelector((state: RootState) => state.panel.functionPanel.isOpen);
@@ -24,6 +25,12 @@ export const FunctionPanel = (_props: PanelProps) => {
   const openFunctionPanel = useCallback(() => {
     dispatch(toggleFunctionPanel());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (Object.keys(connections).length === 0 && sourceSchema !== undefined && targetSchema !== undefined) {
+      openFunctionPanel();
+    }
+  }, [connections, sourceSchema, targetSchema, openFunctionPanel]);
 
   const onChevronClick = useCallback(() => {
     setSearchTerm('');

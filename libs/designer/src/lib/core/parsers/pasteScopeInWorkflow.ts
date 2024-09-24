@@ -10,6 +10,7 @@ export interface PasteScopeNodePayload {
   operations: Operations;
   nodesMetadata: NodesMetadata;
   allActions: string[];
+  isParallelBranch?: boolean;
 }
 
 export const pasteScopeInWorkflow = (
@@ -19,7 +20,8 @@ export const pasteScopeInWorkflow = (
   operations: Operations,
   nodesMetadata: NodesMetadata,
   allActions: string[],
-  state: WorkflowState
+  state: WorkflowState,
+  isParallelBranch?: boolean
 ) => {
   const nodeId = scopeNode.id;
 
@@ -58,8 +60,11 @@ export const pasteScopeInWorkflow = (
 
   // clear the existing runAfter
   (getRecordEntry(state.operations, nodeId) as any).runAfter = {};
+  if (isParallelBranch && parentId) {
+    addNewEdge(state, parentId, nodeId, workflowGraph, shouldAddRunAfters);
+  }
   // 1 parent, 1 child
-  if (parentId && childId) {
+  else if (parentId && childId) {
     const childRunAfter = (getRecordEntry(state.operations, childId) as any)?.runAfter;
     addNewEdge(state, parentId, nodeId, workflowGraph, shouldAddRunAfters);
     addNewEdge(state, nodeId, childId, workflowGraph, true);

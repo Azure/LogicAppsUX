@@ -26,7 +26,6 @@ export type FileSelectorProps<T> = {
   existing: {
     fileList?: IFileSysTreeItem[];
     onSelect: (item: IFileSysTreeItem) => void;
-    onOpenClose: () => void;
   };
   cancel?: {
     onCancel: () => void;
@@ -41,7 +40,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     onOptionChange,
     upload: { onUpload, acceptedExtensions, uploadButtonText, inputPlaceholder, fileName },
     cancel,
-    existing: { fileList = [], onSelect, onOpenClose },
+    existing: { onSelect },
     errorMessage,
   } = props;
   const uploadFileRef = useRef<HTMLInputElement>(null);
@@ -89,12 +88,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     </div>
                   ) : null}
                   {selectedKey === key && key === 'select-existing' ? (
-                    <DropdownTree
-                      items={fileList}
-                      onItemSelect={onSelect}
-                      onDropdownOpenClose={onOpenClose}
-                      className={styles.selectorDropdownRoot}
-                    />
+                    <DropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} />
                   ) : null}
                 </div>
               }

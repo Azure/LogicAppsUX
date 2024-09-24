@@ -20,6 +20,7 @@ export default {
         },
         format: {
           type: 'string',
+          title: 'Format',
           default: 'CSV',
           required: true,
           'x-ms-visibility': 'hideInUI',

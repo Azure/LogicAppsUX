@@ -7,7 +7,7 @@ export const storeStateHistoryMiddleware: ThunkMiddleware =
   (next) =>
   (action) => {
     if (undoableActionTypes.includes(action.type)) {
-      dispatch(storeStateToUndoRedoHistory());
+      dispatch(storeStateToUndoRedoHistory(action));
     }
     next(action);
   };

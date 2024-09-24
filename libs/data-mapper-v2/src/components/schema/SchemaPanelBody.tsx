@@ -106,10 +106,6 @@ export const SchemaPanelBody = ({
     [setSelectedSchemaFile, schemaType]
   );
 
-  const onOpenClose = useCallback(() => {
-    return fileService.readCurrentSchemaOptions ? fileService.readCurrentSchemaOptions : undefined;
-  }, [fileService]);
-
   const onUpload = useCallback(
     (files?: FileList) => {
       if (!files) {
@@ -157,7 +153,6 @@ export const SchemaPanelBody = ({
           existing={{
             fileList: availableSchemaList,
             onSelect: onSelectExistingFile,
-            onOpenClose: onOpenClose,
           }}
           errorMessage={errorMessage}
           cancel={
