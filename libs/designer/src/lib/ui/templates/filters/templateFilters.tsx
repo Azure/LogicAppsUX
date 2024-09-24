@@ -170,7 +170,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>
           {templateTabs.map(({ value, displayName }) => (
             <Tab key={value} id={value} value={value}>
-              <Text>{displayName}</Text>
+              {displayName}
             </Tab>
           ))}
         </TabList>
