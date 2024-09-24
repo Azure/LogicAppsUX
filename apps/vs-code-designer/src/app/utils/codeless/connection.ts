@@ -189,7 +189,7 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
+      if (parameterizeConnectionsSetting) {
         parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
       }
 

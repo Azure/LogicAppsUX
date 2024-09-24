@@ -71,7 +71,7 @@ export async function changeAuthTypeToRaw(
 ): Promise<any> {
   if (connections.managedApiConnections && Object.keys(connections.managedApiConnections).length) {
     try {
-      if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
+      if (parameterizeConnectionsSetting) {
         for (const referenceKey of Object.keys(connections.managedApiConnections)) {
           parameters[`${referenceKey}-Authentication`].value = {
             type: 'Raw',
