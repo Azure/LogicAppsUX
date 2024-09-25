@@ -24,6 +24,21 @@ export const TemplatesPanelHeader = ({ title, description }: TemplatesPanelHeade
       id: 'Xs7Uvt',
       description: 'Panel description for stating it was created by Microsoft',
     }),
+    TEMPLATE_DETAILS: intl.formatMessage({
+      defaultMessage: 'Template Details',
+      id: 'ZD8dme',
+      description: 'Panel description title for template details, allowing to click to read more',
+    }),
+    NAME: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'DX9jWz',
+      description: 'Description label for template name',
+    }),
+    DESCRIPTION: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'l9+EbH',
+      description: 'Description label for template description',
+    }),
   };
 
   return (
@@ -35,17 +50,17 @@ export const TemplatesPanelHeader = ({ title, description }: TemplatesPanelHeade
           setIsOpen(!isOpen);
         }}
       >
-        <Text className="msla-templates-panel-header-details-title-text">{'Template Details'}</Text>
+        <Text className="msla-templates-panel-header-details-title-text">{intlText.TEMPLATE_DETAILS}</Text>
         {isOpen ? <ChevronUp16Regular /> : <ChevronDown16Regular />}
       </div>
       {isOpen && (
         <div className="msla-templates-panel-header-description-wrapper">
           <div className="msla-templates-panel-header-description">
-            <Label className="msla-templates-panel-header-description-title">Name</Label>
+            <Label className="msla-templates-panel-header-description-title">{intlText.NAME}</Label>
             <Text className="msla-templates-panel-header-description-text">{title}</Text>
           </div>
           <div className="msla-templates-panel-header-description">
-            <Label className="msla-templates-panel-header-description-title">Description</Label>
+            <Label className="msla-templates-panel-header-description-title">{intlText.DESCRIPTION}</Label>
             <Markdown className="msla-templates-panel-header-description-text" linkTarget="_blank">
               {description}
             </Markdown>
