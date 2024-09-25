@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
+import { getOperationManifest } from '../../queries/operation';
 
 interface QueryResult {
   isLoading?: boolean;
@@ -80,7 +81,7 @@ export const useOperationManifest = (
         return null;
       }
       return operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
-        ? operationManifestService.getOperationManifest(connectorId, operationId)
+        ? getOperationManifest({ connectorId, operationId })
         : null;
     },
     {

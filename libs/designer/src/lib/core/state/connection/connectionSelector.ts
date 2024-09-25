@@ -20,23 +20,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { ConnectionsStoreState } from './connectionSlice';
 
-export const useConnectorOnly = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
-  return useQuery(
-    ['apiOnly', { connectorId }],
-    async () => {
-      if (!connectorId) {
-        return null;
-      }
-      return await ConnectionService().getConnector(connectorId);
-    },
-    {
-      enabled: !!connectorId && enabled,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+export const useConnectorOnly = (connectorId: string, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
+  return useQuery(['connector', { connectorId }], () => ConnectionService().getConnector(connectorId), {
+    enabled: !!connectorId && enabled,
+    cacheTime: 1000 * 60 * 60 * 24,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 };
 
 export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> => {

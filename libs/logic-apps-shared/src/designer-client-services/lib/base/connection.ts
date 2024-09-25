@@ -331,13 +331,18 @@ export abstract class BaseConnectionService implements IConnectionService {
 
       const { location, apiVersion, httpClient } = this.options;
 
-      const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
-      const queryParameters: QueryParameters = {
-        'api-version': apiVersion,
-        $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq '${this._vVersion}'`,
-      };
-      return await getAzureResourceRecursive(httpClient, uri, queryParameters);
+      return (
+        (await queryClient?.fetchQuery(['connections', connectorId], async () => {
+          const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
+          const queryParameters: QueryParameters = {
+            'api-version': apiVersion,
+            $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq '${this._vVersion}'`,
+          };
+          return await getAzureResourceRecursive(httpClient, uri, queryParameters);
+        })) ?? []
+      );
     }
+
     if (!this._allConnectionsInitialized) {
       await this.getConnections();
     }
