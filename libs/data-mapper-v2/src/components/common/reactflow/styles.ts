@@ -61,16 +61,6 @@ export const useStyles = makeStyles({
   selectedHoverFunctionButton: {
     ...shorthands.border('2px', 'solid', colors.handleActive),
   },
-  loopSourceHandle: {
-    height: '22px',
-    width: '22px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loopIcon: {
-    color: 'white',
-  },
   functionName: {
     textWrap: 'nowrap',
     display: 'inline-table',
