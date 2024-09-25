@@ -126,16 +126,19 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         className={mergeClasses(
           handleStyles.wrapper,
           handle.className,
-          isRepeatingConnection ? handleStyles.repeating : '',
+          isRepeatingConnection ? handleStyles.repeatingConnection : '',
           isConnected ? handleStyles.connected : '',
           isSelected || isHover ? handleStyles.selected : '',
+          (isSelected || isHover) && isRepeatingNode ? handleStyles.repeatingNode : '',
           (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
         )}
         position={handle.position}
         type={handle.type}
         isConnectable={true}
       >
-        {(isRepeatingConnection || (isHover && isRepeatingNode)) && <ArrowClockwiseFilled className={handleStyles.repeatingIcon} />}
+        {(isRepeatingConnection || ((isHover || isSelected) && isRepeatingNode)) && (
+          <ArrowClockwiseFilled className={isRepeatingConnection ? handleStyles.repeatingConnectionIcon : handleStyles.repeatingNodeIcon} />
+        )}
       </Handle>
     ),
     [
@@ -144,11 +147,13 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handle.position,
       handle.type,
       handleStyles.wrapper,
-      handleStyles.repeating,
+      handleStyles.repeatingConnection,
       handleStyles.connected,
       handleStyles.selected,
+      handleStyles.repeatingNode,
       handleStyles.connectedAndSelected,
-      handleStyles.repeatingIcon,
+      handleStyles.repeatingConnectionIcon,
+      handleStyles.repeatingNodeIcon,
       isRepeatingConnection,
       isConnected,
       isSelected,
@@ -165,8 +170,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       loadedMapMetadata?.canvasRect &&
       loadedMapMetadata.canvasRect.width > 0 &&
       loadedMapMetadata.canvasRect.height > 0 &&
-      !isHover &&
-      !isSelected
+      !isHover
     ) {
       const newX = handleRef.current.getBoundingClientRect().x - loadedMapMetadata.canvasRect.x;
       const newY = handleRef.current.getBoundingClientRect().y - loadedMapMetadata.canvasRect.y;
@@ -202,7 +206,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     loadedMapMetadata?.canvasRect?.height,
     loadedMapMetadata?.canvasRect?.width,
     isHover,
-    isSelected,
   ]);
 
   return (
