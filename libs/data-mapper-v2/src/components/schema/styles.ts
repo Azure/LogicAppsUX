@@ -2,7 +2,7 @@ import { makeStyles, shorthands } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   root: {
-    width: '307px',
+    width: '308px',
     height: '100vh',
   },
   targetScehmaRoot: {
@@ -31,7 +31,7 @@ export const usePanelStyles = makeStyles({
   body: {
     paddingRight: '0px',
     paddingLeft: '0px',
-    width: '307px',
+    width: '308px',
     scrollbarWidth: 'none',
   },
   targetSchemaBody: {

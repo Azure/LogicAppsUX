@@ -11,7 +11,7 @@ import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import { useStyles } from './styles';
 import { ListItem } from '@fluentui/react-list-preview';
 import { Badge, Button } from '@fluentui/react-components';
-import { LinkDismissRegular } from '@fluentui/react-icons';
+import { LinkDismissRegular, ReOrderRegular } from '@fluentui/react-icons';
 import type { SchemaType } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
 
@@ -29,9 +29,10 @@ type InputListProps = TemplateProps<TemplateItemProps, CommonProps> & {};
 type CustomListItemProps = {
   name?: string;
   value?: string;
-  remove: () => void;
+  dragHandleProps?: object;
   type?: string;
   draggable?: boolean;
+  remove: () => void;
   index: number;
   customValueAllowed?: boolean;
   schemaType: SchemaType;
@@ -49,6 +50,7 @@ const InputList = (props: InputListProps) => {
   const {
     item: { input, index },
     commonProps,
+    dragHandleProps,
   } = props;
   const { functionKey, data, inputsFromManifest, connections, schemaType } = commonProps;
 
@@ -115,14 +117,27 @@ const InputList = (props: InputListProps) => {
       functionKey={functionKey}
       key={`input-${inputName}`}
       draggable={commonProps.draggable}
+      dragHandleProps={dragHandleProps}
     />
   );
 };
 
 export const CustomListItem = (props: CustomListItemProps) => {
   const styles = useStyles();
-  const { name, validateAndCreateConnection, customValueAllowed, index, functionKey, functionData, schemaType, value, type, remove } =
-    props;
+  const {
+    name,
+    validateAndCreateConnection,
+    customValueAllowed,
+    index,
+    functionKey,
+    functionData,
+    schemaType,
+    value,
+    type,
+    remove,
+    draggable,
+    dragHandleProps,
+  } = props;
 
   return (
     <ListItem key={`input-${name}`}>
@@ -148,6 +163,9 @@ export const CustomListItem = (props: CustomListItemProps) => {
             )}
           </span>
           <Button className={styles.listButton} appearance="transparent" icon={<LinkDismissRegular />} onClick={remove} />
+          {draggable && dragHandleProps && (
+            <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} {...dragHandleProps} />
+          )}
         </span>
       </div>
     </ListItem>

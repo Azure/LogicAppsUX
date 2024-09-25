@@ -91,14 +91,14 @@ const getCoordinatesForHandle = (
 
           // Top or bottom handles are always there in the react flow
           if (reactflowHandle) {
-            x = currentHandle.position.x;
-            y = currentHandle.position.y;
+            x = reactflowHandle.x + node.internals.positionAbsolute.x;
+            y = reactflowHandle.y + node.internals.positionAbsolute.y;
             scenario = 'scroll';
           } else {
-            throw new Error('Dummy Node not found in schema');
+            // Todo: Log error here
           }
         } else {
-          throw new Error('Node not found in schema');
+          // Todo: Log error here
         }
       } else {
         // If the handle is present in the current view, return the x and y coordinates
