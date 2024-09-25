@@ -1,10 +1,8 @@
 import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
-import { List, ListItem } from '@fluentui/react-list-preview';
-import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
-import { createInputSlotForUnboundedInput, setConnectionInput } from '../../../core/state/DataMapSlice';
+import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
@@ -16,6 +14,10 @@ import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
 import { newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import DraggableList from 'react-draggable-list';
+import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
+import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -138,91 +140,66 @@ const UnlimitedInputs = (props: {
   const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
   const dispatch = useDispatch();
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const intl = useIntl();
 
-  const addUnboundedInputSlot = () => {
+  const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
+
+  const stringResources = useMemo(
+    () => ({
+      ACCEPT_TYPES: intl.formatMessage({
+        defaultMessage: 'Accepted types: ',
+        id: 'ZgyD93',
+        description: 'Accepted types',
+      }),
+      OPTIONAL: intl.formatMessage({
+        defaultMessage: 'optional',
+        id: '6eDY1H',
+        description: 'Optional Keyword',
+      }),
+    }),
+    [intl]
+  );
+
+  const addUnboundedInputSlot = useCallback(() => {
     dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  };
+  }, [dispatch, props.functionKey]);
 
-  const functionConnection = props.connections[props.functionKey];
-
-  const removeConnection = (inputIndex: number, newValue: InputConnection | null) => {
-    const targetNodeReactFlowKey = props.functionKey;
-    dispatch(
-      setConnectionInput({
-        targetNode: props.func,
-        targetNodeReactFlowKey,
-        inputIndex,
-        input: newValue,
-      })
-    );
-  };
+  const onDragMoveEnd = useCallback(
+    (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+      dispatch(
+        updateFunctionConnectionInputs({
+          functionKey: props.functionKey,
+          inputs: newList.map((item) => item.input),
+        })
+      );
+    },
+    [dispatch, props.functionKey]
+  );
 
   return (
     <div>
       <div>
         <span className={styles.unlimitedInputHeaderCell} key="input-name">
-          <Caption1>{inputsFromManifest[0].name}</Caption1>
+          <Caption1>{`${inputsFromManifest[0].name}${inputsFromManifest[0].isOptional ? ` (${stringResources.OPTIONAL})` : ''}`}</Caption1>
         </span>
         <span className={mergeStyles(styles.unlimitedInputHeaderCell, styles.allowedTypes)} key="input-types">
-          <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
+          <Caption2>{`${stringResources.ACCEPT_TYPES}${inputsFromManifest[0].allowedTypes}`}</Caption2>
         </span>
       </div>
-      <List>
-        {Object.entries(functionConnection.inputs[0]).map((input, index) => {
-          const updateInput = (newValue: InputConnection) => {
-            const targetNodeReactFlowKey = props.functionKey;
-            dispatch(
-              setConnectionInput({
-                targetNode: props.func,
-                targetNodeReactFlowKey,
-                inputIndex: index,
-                input: newValue,
-              })
-            );
-          };
-
-          const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
-            if (optionValue) {
-              const input = validateAndCreateConnectionInput(
-                optionValue,
-                option,
-                connectionDictionary,
-                props.func,
-                functionNodeDictionary,
-                sourceSchemaDictionary
-              );
-              if (input) {
-                updateInput(input);
-              }
-            }
-          };
-          const inputName = getInputName(input[1], props.connections);
-          const inputValue = getInputValue(input[1]);
-          const inputType = getInputTypeFromNode(input[1]);
-          const removeUnboundedInput = () => {
-            removeConnection(index, null);
-          };
-          return (
-            <UnboundedDropdownListItem
-              index={index}
-              key={input[0]}
-              schemaListType={SchemaType.Source}
-              removeItem={removeUnboundedInput}
-              functionKey={props.functionKey}
-              func={props.func}
-              inputName={inputName}
-              inputType={inputType}
-              inputValue={inputValue}
-              draggable={true}
-              isCustomValueAllowed={inputsFromManifest[0].allowCustomInput}
-              validateAndCreateConnection={validateAndCreateConnection}
-            />
-          );
-        })}
-      </List>
+      <DraggableList<TemplateItemProps, CommonProps, any>
+        list={Object.entries(functionConnection.inputs[0]).map((input, index) => ({ input: input[1], index }))}
+        commonProps={{
+          functionKey: props.functionKey,
+          data: props.func,
+          inputsFromManifest,
+          connections: props.connections,
+          schemaType: SchemaType.Source,
+          draggable: true,
+        }}
+        onMoveEnd={onDragMoveEnd}
+        itemKey={'index'}
+        template={InputListWrapper}
+      />
       <Button
         icon={<AddRegular className={styles.addIcon} />}
         onClick={() => addUnboundedInputSlot()}
@@ -235,7 +212,7 @@ const UnlimitedInputs = (props: {
   );
 };
 
-const getInputTypeFromNode = (input: InputConnection | undefined) => {
+export const getInputTypeFromNode = (input: InputConnection | undefined) => {
   let inputType = '';
   if (typeof input !== 'string' && input !== undefined) {
     if (isSchemaNodeExtended(input.node)) {
@@ -247,96 +224,7 @@ const getInputTypeFromNode = (input: InputConnection | undefined) => {
   return inputType;
 };
 
-// const getTypeValidationMessge = (intl: IntlShape,currentNode: FunctionData, inputValue: string | undefined, customValue: string | undefined) => {
-
-//     const customValueSchemaNodeTypeMismatchLoc = intl.formatMessage({
-//       defaultMessage: `Warning: custom value does not match the schema node's type`,
-//       id: 'sRpETS',
-//       description: 'Warning message for when custom value does not match schema node type',
-//     });
-
-//     const customValueAllowedTypesMismatchLoc = intl.formatMessage({
-//       defaultMessage: 'Warning: custom value does not match one of the allowed types for this input',
-//       id: 'BCgiRh',
-//       description: `Warning message for when custom value does not match one of the function node input's allowed types`,
-//     });
-
-//     const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
-//       defaultMessage: `Warning: input node type does not match the schema node's type`,
-//       id: '+0H8Or',
-//       description: 'Warning message for when input node type does not match schema node type',
-//     });
-
-//     const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
-//       defaultMessage: 'Warning: input node type does not match one of the allowed types for this input.',
-//       id: 'yNtBUV',
-//       description: `Warning message for when input node type does not match one of the function node input's allowed types`,
-//     });
-
-//     if (inputValue) {
-//       if (customValue) {
-//         // Schema node (single type)
-//         if (isSchemaNodeExtended(currentNode)) {
-//           if (!isValidCustomValueByType(inputValue, currentNode.type)) {
-//             return customValueSchemaNodeTypeMismatchLoc;
-//           }
-//         } else {
-//           // Function nodes (>= 1 allowed types)
-//           const matchedAnyAllowedType = currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.some((type) =>
-//             isValidCustomValueByType(inputValue, type)
-//           );
-
-//           if (!matchedAnyAllowedType) {
-//             return customValueAllowedTypesMismatchLoc;
-//           }
-//         }
-//       } else {
-//         const selectedOption = matchingOptions.find((option) => option.value === selectedOptions[0]);
-
-//         if (selectedOption) {
-//           // if (isSchemaNodeExtended(currentNode)) { danielle add back in if we use again for target schema node
-//           //   if (!isValidConnectionByType(selectedOption.type, currentNode.type)) {
-//           //     return nodeTypeSchemaNodeTypeMismatchLoc;
-//           //   }
-//           // } else {
-//             let someTypesMatched = false;
-//             let possibleConversionFunctions = '';
-//             currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
-//               const conversion = functions.find((func) => func.category === FunctionCategory.Conversion && func.outputValueType === type);
-//               if (conversion) {
-//                 possibleConversionFunctions += `${conversion?.displayName}, `;
-//               }
-//               if (isValidConnectionByType(selectedOption.type, type)) {
-//                 someTypesMatched = true;
-//               }
-//             });
-//             possibleConversionFunctions = possibleConversionFunctions.substring(0, possibleConversionFunctions.length - 2);
-
-//             if (!someTypesMatched) {
-//               let conversionMessage = '';
-//               if (possibleConversionFunctions !== '') {
-//                 conversionMessage = intl.formatMessage(
-//                   {
-//                     defaultMessage: ' Try using a Conversion function such as: {conversionFunctions}',
-//                     id: 'ur3P27',
-//                     description: 'Suggest to the user to try a conversion function instead',
-//                   },
-//                   {
-//                     conversionFunctions: possibleConversionFunctions,
-//                   }
-//                 );
-//               }
-//               return `${nodeTypeAllowedTypesMismatchLoc} ${conversionMessage}`;
-//             }
-//           }
-//        // }
-//       }
-//     }
-
-//     return undefined;
-// }
-
-const validateAndCreateConnectionInput = (
+export const validateAndCreateConnectionInput = (
   optionValue: string | undefined,
   option: InputOptionProps | undefined,
   connectionDictionary: ConnectionDictionary,
@@ -351,7 +239,6 @@ const validateAndCreateConnectionInput = (
 
       // ensure that new connection won't create loop/circular logic
       if (newConnectionWillHaveCircularLogic(func.key, selectedInputKey, connectionDictionary)) {
-        //dispatch(showNotification({ type: NotificationTypes.CircularLogicError, autoHideDurationMs: errorNotificationAutoHideDuration }));
         return;
       }
 
@@ -370,55 +257,4 @@ const validateAndCreateConnectionInput = (
     return srcConUnit;
   }
   return;
-};
-
-interface UnboundedInputEntryProps {
-  functionKey: string;
-  func: FunctionData;
-  index: number;
-  inputName: string | undefined;
-  inputValue: string | undefined;
-  inputType: string | undefined;
-  removeItem: () => void;
-  schemaListType: SchemaType;
-  draggable: boolean;
-  isCustomValueAllowed?: boolean;
-  validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
-}
-
-export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
-  const styles = useStyles();
-
-  const [, drag] = useDrag(() => ({
-    type: 'functionInput',
-    item: props.functionKey,
-  }));
-  return (
-    <ListItem key={`input-${props.inputName}`}>
-      <div ref={props.draggable ? drag : undefined} className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
-          <InputDropdown
-            inputAllowsCustomValues={props.isCustomValueAllowed}
-            index={props.index}
-            functionId={props.functionKey}
-            currentNode={props.func}
-            schemaListType={props.schemaListType}
-            inputName={props.inputName}
-            inputValue={props.inputValue}
-            validateAndCreateConnection={props.validateAndCreateConnection}
-          />
-        </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {props.inputType && (
-              <Badge appearance="filled" color="informative">
-                {props.inputType}
-              </Badge>
-            )}
-          </span>
-          <Button className={styles.listButton} appearance="transparent" icon={<LinkDismissRegular />} onClick={() => props.removeItem()} />
-        </span>
-      </div>
-    </ListItem>
-  );
 };

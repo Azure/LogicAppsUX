@@ -11,4 +11,9 @@ export default {
   FORMAT: {
     KEY_VALUE_PAIRS: 'key-value-pairs',
   },
+  OUTPUTS: {
+    BODY: 'body',
+    HEADERS: 'headers',
+    STATUS_CODE: 'statusCode',
+  },
 };
