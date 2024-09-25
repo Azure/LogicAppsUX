@@ -330,13 +330,6 @@ const getServices = (
 
   const templateService = isConsumption
     ? new ConsumptionTemplateService({
-        baseUrl: armUrl,
-        appId: siteResourceId,
-        httpClient,
-        apiVersions: {
-          subscription: apiVersion,
-          gateway: '2018-11-01',
-        },
         openBladeAfterCreate: (workflowName: string) => {
           console.log('Open blade after create, workflowName is: ', workflowName);
         },

@@ -1,9 +1,20 @@
 import { ArgumentException } from '../../../utils/src';
 import type { TemplateServiceOptions } from '../base/template';
+import type { IHttpClient } from '../httpClient';
 import type { ITemplateService } from '../template';
 
+export interface StandardTemplateServiceOptions extends TemplateServiceOptions {
+  baseUrl: string;
+  appId?: string;
+  httpClient: IHttpClient;
+  apiVersions: {
+    subscription: string;
+    gateway: string;
+  };
+}
+
 export class StandardTemplateService implements ITemplateService {
-  constructor(private readonly options: TemplateServiceOptions) {
+  constructor(private readonly options: StandardTemplateServiceOptions) {
     const { baseUrl, apiVersions } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
