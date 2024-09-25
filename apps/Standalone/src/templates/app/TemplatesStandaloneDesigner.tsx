@@ -16,6 +16,7 @@ import {
   isArmResourceId,
   optional,
   StandardOperationManifestService,
+  ConsumptionTemplateService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -317,7 +318,18 @@ const getServices = (
   };
 
   const templateService = isConsumption
-    ? undefined
+    ? new ConsumptionTemplateService({
+        baseUrl: armUrl,
+        appId: siteResourceId,
+        httpClient,
+        apiVersions: {
+          subscription: apiVersion,
+          gateway: '2018-11-01',
+        },
+        openBladeAfterCreate: (workflowName: string) => {
+          console.log('Open blade after create, workflowName is: ', workflowName);
+        },
+      })
     : new StandardTemplateService({
         baseUrl: armUrl,
         appId: siteResourceId,
