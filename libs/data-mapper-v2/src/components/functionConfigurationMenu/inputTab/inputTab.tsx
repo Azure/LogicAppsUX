@@ -17,6 +17,7 @@ import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-sha
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
 import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -139,8 +140,25 @@ const UnlimitedInputs = (props: {
   const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
   const dispatch = useDispatch();
+  const intl = useIntl();
 
   const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
+
+  const stringResources = useMemo(
+    () => ({
+      ACCEPT_TYPES: intl.formatMessage({
+        defaultMessage: 'Accepted types: ',
+        id: 'ZgyD93',
+        description: 'Accepted types',
+      }),
+      OPTIONAL: intl.formatMessage({
+        defaultMessage: 'optional',
+        id: '6eDY1H',
+        description: 'Optional Keyword',
+      }),
+    }),
+    [intl]
+  );
 
   const addUnboundedInputSlot = useCallback(() => {
     dispatch(createInputSlotForUnboundedInput(props.functionKey));
@@ -148,7 +166,12 @@ const UnlimitedInputs = (props: {
 
   const onDragMoveEnd = useCallback(
     (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
-      dispatch(updateFunctionConnectionInputs({ functionKey: props.functionKey, inputs: newList.map((item) => item.input) }));
+      dispatch(
+        updateFunctionConnectionInputs({
+          functionKey: props.functionKey,
+          inputs: newList.map((item) => item.input),
+        })
+      );
     },
     [dispatch, props.functionKey]
   );
@@ -157,10 +180,10 @@ const UnlimitedInputs = (props: {
     <div>
       <div>
         <span className={styles.unlimitedInputHeaderCell} key="input-name">
-          <Caption1>{inputsFromManifest[0].name}</Caption1>
+          <Caption1>{`${inputsFromManifest[0].name}${inputsFromManifest[0].isOptional ? ` (${stringResources.OPTIONAL})` : ''}`}</Caption1>
         </span>
         <span className={mergeStyles(styles.unlimitedInputHeaderCell, styles.allowedTypes)} key="input-types">
-          <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
+          <Caption2>{`${stringResources.ACCEPT_TYPES}${inputsFromManifest[0].allowedTypes}`}</Caption2>
         </span>
       </div>
       <DraggableList<TemplateItemProps, CommonProps, any>
