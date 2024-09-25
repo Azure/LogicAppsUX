@@ -8,9 +8,48 @@
         line-height: 32px;
     }
 
+    .msla-templates-panel-header-details-title {
+        padding: 8px 0px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        height: fit-content;
+        cursor: pointer;
+
+        .msla-templates-panel-header-details-title-text {
+            margin-right: 16px;
+        }
+    }
+
+    .msla-templates-panel-header-description-wrapper {
+        padding: 8px 0px;
+    }
+
     .msla-templates-panel-header-description {
-        font-size: 12px;
-        color: #605E5C;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+
+        .msla-templates-panel-header-description-title {
+            min-width: 100px;
+            height: max-content;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            color: #605E5C;
+            font-size: 12px;
+        }
+
+        .msla-templates-panel-header-description-text {
+            font-size: 12px;
+        }
+
+        .msla-templates-panel-header-description-text {
+            * {
+                margin: 0;
+            }
+        }
     }
 }
 
