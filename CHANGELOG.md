@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.97.0](https://github.com/Azure/LogicAppsUX/compare/v4.96.0...v4.97.0) (2024-09-24)
+
+
+### Features
+
+* **designer:** Add panel action changes to undo/redo history ([#5695](https://github.com/Azure/LogicAppsUX/issues/5695)) ([a9d0539](https://github.com/Azure/LogicAppsUX/commit/a9d05398852b7a072c733edbc3e5c62195ab74a2))
+* **Templates:** Consumption Support - Remove Unwanted Displaying/Validating from Designer ([#5722](https://github.com/Azure/LogicAppsUX/issues/5722)) ([3c80b57](https://github.com/Azure/LogicAppsUX/commit/3c80b57b8b12a468ebc82c00453af13a38a8efb8))
+* **vscode:** IaC Metadata and Fixes ([#5724](https://github.com/Azure/LogicAppsUX/issues/5724)) ([e0cc548](https://github.com/Azure/LogicAppsUX/commit/e0cc548a9239613697975ec08282813209475008))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Handle edge changes with redux store rather than reactflow ([#5727](https://github.com/Azure/LogicAppsUX/issues/5727)) ([2b1084b](https://github.com/Azure/LogicAppsUX/commit/2b1084b6fd4be6b1bc14f01a87c21487d2848eb7))
+* **Data Mapper:** Remove re-ordering icon until we implement the behavior ([#5740](https://github.com/Azure/LogicAppsUX/issues/5740)) ([c95cbb5](https://github.com/Azure/LogicAppsUX/commit/c95cbb5f75573a4330733fa81b562ff4f3e2b665))
+* **designer:** Adding support for output tokens in case nodes ([#5733](https://github.com/Azure/LogicAppsUX/issues/5733)) ([d8a7e6d](https://github.com/Azure/LogicAppsUX/commit/d8a7e6d1c8e4268d33100e8b8eeb081972f3e541))
+
 ## [4.96.0](https://github.com/Azure/LogicAppsUX/compare/v4.95.0...v4.96.0) (2024-09-23)
 
 

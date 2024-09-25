@@ -776,6 +776,9 @@ importers:
       react-dom:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0(react@18.2.0)
+      react-draggable-list:
+        specifier: ^4.2.1
+        version: 4.2.1(react@18.2.0)
       react-icons:
         specifier: 4.8.0
         version: 4.8.0(react@18.2.0)
@@ -864,6 +867,9 @@ importers:
       lodash.frompairs:
         specifier: 4.0.1
         version: 4.0.1
+      lodash.isequal:
+        specifier: 4.5.0
+        version: 4.5.0
       lodash.merge:
         specifier: 4.6.2
         version: 4.6.2
@@ -925,6 +931,9 @@ importers:
       '@types/lodash.frompairs':
         specifier: ^4.0.9
         version: 4.0.9
+      '@types/lodash.isequal':
+        specifier: ^4.5.8
+        version: 4.5.8
       '@types/lodash.merge':
         specifier: ^4.6.9
         version: 4.6.9
@@ -9605,6 +9614,9 @@ packages:
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
 
+  performance-now@0.2.0:
+    resolution: {integrity: sha512-YHk5ez1hmMR5LOkb9iJkLKqoBlL7WD5M8ljC75ZfzXriuBIVNuecaXuU7e+hOwyqf24Wxhh7Vxgt7Hnw9288Tg==}
+
   performance-now@2.1.0:
     resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
 
@@ -10063,6 +10075,9 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
 
+  raf@3.4.1:
+    resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
+
   railroad-diagrams@1.0.0:
     resolution: {integrity: sha512-cz93DjNeLY0idrCNOH6PviZGRN9GJhsdm9hpn1YCS879fj4W+x5IFJhhkRZcwVgMmFF7R82UA/7Oh+R8lLZg6A==}
 
@@ -10167,6 +10182,11 @@ packages:
     peerDependencies:
       react: ^18.2.0
 
+  react-draggable-list@4.2.1:
+    resolution: {integrity: sha512-seSieUYYfMElCJAgYWZvnwCdg42Ca9lta3K9mHOWOI4v2temDHEodhk3UCvqJQGtOaKTeMUVWXnWLvEo+gSJ6g==}
+    peerDependencies:
+      react: ^16.6.0 || ^17.0.0
+
   react-error-boundary@3.1.4:
     resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
     engines: {node: '>=10', npm: '>=6'}
@@ -10249,6 +10269,14 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
+
+  react-motion@0.5.2:
+    resolution: {integrity: sha512-9q3YAvHoUiWlP3cK0v+w1N5Z23HXMj4IF4YuvjvWegWqNPfLXsOBE/V7UvQGpXxHFKRQQcNcVQE31g9SB/6qgQ==}
+    peerDependencies:
+      react: ^0.14.9 || ^15.3.0 || ^16.0.0
+
+  react-multi-ref@1.0.2:
+    resolution: {integrity: sha512-6oS5yzrZ4UrdMHbF6QAnnaoIe9h8R+Xv4m8uJWVK8/Q4RCc6RTT0XJ/LZ7llVgFcVbnDHeUAcVIhtRgFyzjJpA==}
 
   react-redux@8.0.2:
     resolution: {integrity: sha512-nBwiscMw3NoP59NFCXFf02f8xdo+vSHT/uZ1ldDwF7XaTpzm+Phk97VT4urYBl5TYAPNVaFm12UHAEyzkpNzRA==}
@@ -12355,7 +12383,7 @@ snapshots:
 
   '@azure/abort-controller@2.1.1':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/arm-appinsights@5.0.0-beta.7':
     dependencies:
@@ -12474,7 +12502,7 @@ snapshots:
     dependencies:
       '@azure/abort-controller': 2.1.1
       '@azure/core-util': 1.8.1
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-client@1.9.1':
     dependencies:
@@ -12484,7 +12512,7 @@ snapshots:
       '@azure/core-tracing': 1.1.1
       '@azure/core-util': 1.8.1
       '@azure/logger': 1.1.1
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - supports-color
 
@@ -12512,11 +12540,11 @@ snapshots:
       '@azure/abort-controller': 2.1.1
       '@azure/core-util': 1.8.1
       '@azure/logger': 1.1.1
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-paging@1.6.1':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-rest-pipeline@1.15.1':
     dependencies:
@@ -12527,7 +12555,7 @@ snapshots:
       '@azure/logger': 1.1.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.4
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - supports-color
 
@@ -12538,16 +12566,16 @@ snapshots:
 
   '@azure/core-tracing@1.1.1':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/core-util@1.8.1':
     dependencies:
       '@azure/abort-controller': 2.1.1
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/logger@1.1.1':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@azure/ms-rest-azure-env@2.0.0': {}
 
@@ -13549,12 +13577,12 @@ snapshots:
       cssnano-preset-advanced: 5.3.10(postcss@8.4.38)
       postcss: 8.4.38
       postcss-sort-media-queries: 4.4.1(postcss@8.4.38)
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@docusaurus/logger@3.2.1':
     dependencies:
       chalk: 4.1.2
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@docusaurus/mdx-loader@3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -13578,7 +13606,7 @@ snapshots:
       remark-frontmatter: 5.0.0
       remark-gfm: 4.0.0
       stringify-object: 3.3.0
-      tslib: 2.6.2
+      tslib: 2.7.0
       unified: 11.0.4
       unist-util-visit: 5.0.0
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0(esbuild@0.19.12)))(webpack@5.91.0(esbuild@0.19.12))
@@ -13628,7 +13656,7 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       reading-time: 1.5.0
       srcset: 4.0.0
-      tslib: 2.6.2
+      tslib: 2.7.0
       unist-util-visit: 5.0.0
       utility-types: 3.11.0
       webpack: 5.91.0(esbuild@0.19.12)
@@ -13667,7 +13695,7 @@ snapshots:
       lodash: 4.17.21
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
       utility-types: 3.11.0
       webpack: 5.91.0(esbuild@0.19.12)
     transitivePeerDependencies:
@@ -13698,7 +13726,7 @@ snapshots:
       fs-extra: 11.2.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
       webpack: 5.91.0(esbuild@0.19.12)
     transitivePeerDependencies:
       - '@parcel/css'
@@ -13727,7 +13755,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       react-json-view-lite: 1.3.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@parcel/css'
       - '@rspack/core'
@@ -13753,7 +13781,7 @@ snapshots:
       '@docusaurus/utils-validation': 3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(esbuild@0.19.12)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@parcel/css'
       - '@rspack/core'
@@ -13780,7 +13808,7 @@ snapshots:
       '@types/gtag.js': 0.0.12
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@parcel/css'
       - '@rspack/core'
@@ -13806,7 +13834,7 @@ snapshots:
       '@docusaurus/utils-validation': 3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(esbuild@0.19.12)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@parcel/css'
       - '@rspack/core'
@@ -13837,7 +13865,7 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       sitemap: 7.1.1
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@parcel/css'
       - '@rspack/core'
@@ -13927,7 +13955,7 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       react-router-dom: 5.3.4(react@18.2.0)
       rtlcss: 4.1.1
-      tslib: 2.6.2
+      tslib: 2.7.0
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@parcel/css'
@@ -13965,7 +13993,7 @@ snapshots:
       prism-react-renderer: 2.3.1(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@docusaurus/types'
@@ -14004,7 +14032,7 @@ snapshots:
       lodash: 4.17.21
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.2
+      tslib: 2.7.0
       utility-types: 3.11.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -14031,7 +14059,7 @@ snapshots:
   '@docusaurus/theme-translations@3.2.1':
     dependencies:
       fs-extra: 11.2.0
-      tslib: 2.6.2
+      tslib: 2.7.0
 
   '@docusaurus/tsconfig@3.2.1': {}
 
@@ -14057,7 +14085,7 @@ snapshots:
 
   '@docusaurus/utils-common@3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.7.0
     optionalDependencies:
       '@docusaurus/types': 3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
@@ -14068,7 +14096,7 @@ snapshots:
       '@docusaurus/utils-common': 3.2.1(@docusaurus/types@3.2.1(esbuild@0.19.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       joi: 17.12.2
       js-yaml: 4.1.0
-      tslib: 2.6.2
+      tslib: 2.7.0
     transitivePeerDependencies:
       - '@docusaurus/types'
       - '@swc/core'
@@ -14095,7 +14123,7 @@ snapshots:
       prompts: 2.4.2
       resolve-pathname: 3.0.0
       shelljs: 0.8.5
-      tslib: 2.6.2
+      tslib: 2.7.0
       url-loader: 4.1.1(file-loader@6.2.0(webpack@5.91.0(esbuild@0.19.12)))(webpack@5.91.0(esbuild@0.19.12))
       webpack: 5.91.0(esbuild@0.19.12)
     optionalDependencies:
@@ -15428,7 +15456,7 @@ snapshots:
     dependencies:
       '@griffel/react': 1.5.24(react@18.2.0)
       react: 18.2.0
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   '@fluentui/react-image@9.1.62(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -17644,7 +17672,7 @@ snapshots:
       '@types/node': 17.0.45
       chalk: 4.1.2
       json-stable-stringify: 1.1.1
-      tslib: 2.6.2
+      tslib: 2.4.0
       typescript: 5.4.5
 
   '@griffel/core@1.15.3':
@@ -17654,7 +17682,7 @@ snapshots:
       csstype: 3.1.3
       rtl-css-js: 1.16.1
       stylis: 4.3.1
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   '@griffel/core@1.17.1':
     dependencies:
@@ -17663,7 +17691,7 @@ snapshots:
       csstype: 3.1.3
       rtl-css-js: 1.16.1
       stylis: 4.3.1
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   '@griffel/react@1.5.21(react@18.2.0)':
     dependencies:
@@ -18676,7 +18704,7 @@ snapshots:
   '@testing-library/dom@10.0.0':
     dependencies:
       '@babel/code-frame': 7.24.2
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
       chalk: 4.1.2
@@ -18993,7 +19021,7 @@ snapshots:
 
   '@types/lodash.isequal@4.5.8':
     dependencies:
-      '@types/lodash': 4.17.0
+      '@types/lodash': 4.17.7
 
   '@types/lodash.merge@4.6.9':
     dependencies:
@@ -20089,7 +20117,7 @@ snapshots:
   camel-case@4.1.2:
     dependencies:
       pascal-case: 3.1.2
-      tslib: 2.6.2
+      tslib: 2.4.0
 
   camelcase-keys@6.2.2:
     dependencies:
@@ -20809,7 +20837,7 @@ snapshots:
 
   date-fns@2.30.0:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
 
   dateformat@3.0.3: {}
 
@@ -20998,7 +21026,7 @@ snapshots:
 
   dom-helpers@5.2.1:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       csstype: 3.1.3
 
   dom-serializer@1.4.1:
@@ -21042,7 +21070,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.4.0
 
   dot-prop@5.3.0:
     dependencies:
@@ -22278,7 +22306,7 @@ snapshots:
 
   history@4.10.1:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       loose-envify: 1.4.0
       resolve-pathname: 3.0.0
       tiny-invariant: 1.3.1
@@ -23028,7 +23056,7 @@ snapshots:
     dependencies:
       copy-anything: 2.0.6
       parse-node-version: 1.0.1
-      tslib: 2.7.0
+      tslib: 2.4.0
     optionalDependencies:
       errno: 0.1.8
       graceful-fs: 4.2.11
@@ -24338,7 +24366,7 @@ snapshots:
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.4.0
 
   parent-module@1.0.1:
     dependencies:
@@ -24405,7 +24433,7 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.6.2
+      tslib: 2.4.0
 
   path-browserify@1.0.1: {}
 
@@ -24465,6 +24493,8 @@ snapshots:
       sha.js: 2.4.11
 
   pend@1.2.0: {}
+
+  performance-now@0.2.0: {}
 
   performance-now@2.1.0: {}
 
@@ -24890,6 +24920,10 @@ snapshots:
 
   quick-lru@5.1.1: {}
 
+  raf@3.4.1:
+    dependencies:
+      performance-now: 2.1.0
+
   railroad-diagrams@1.0.0: {}
 
   randexp@0.4.6:
@@ -25033,9 +25067,19 @@ snapshots:
       react: 18.2.0
       scheduler: 0.23.0
 
+  react-draggable-list@4.2.1(react@18.2.0):
+    dependencies:
+      '@babel/runtime': 7.25.6
+      '@types/prop-types': 15.7.12
+      immutability-helper: 3.1.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-motion: 0.5.2(react@18.2.0)
+      react-multi-ref: 1.0.2
+
   react-error-boundary@3.1.4(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       react: 18.2.0
 
   react-error-overlay@6.0.11: {}
@@ -25044,7 +25088,7 @@ snapshots:
 
   react-helmet-async@1.3.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       invariant: 2.2.4
       prop-types: 15.8.1
       react: 18.2.0
@@ -25106,7 +25150,7 @@ snapshots:
 
   react-loadable-ssr-addon-v5-slorber@1.0.1(@docusaurus/react-loadable@5.5.2(react@18.2.0))(webpack@5.91.0(esbuild@0.19.12)):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       react-loadable: '@docusaurus/react-loadable@5.5.2(react@18.2.0)'
       webpack: 5.91.0(esbuild@0.19.12)
 
@@ -25131,6 +25175,17 @@ snapshots:
       vfile: 5.3.7
     transitivePeerDependencies:
       - supports-color
+
+  react-motion@0.5.2(react@18.2.0):
+    dependencies:
+      performance-now: 0.2.0
+      prop-types: 15.8.1
+      raf: 3.4.1
+      react: 18.2.0
+
+  react-multi-ref@1.0.2:
+    dependencies:
+      '@babel/runtime': 7.25.6
 
   react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1):
     dependencies:
@@ -25166,13 +25221,13 @@ snapshots:
 
   react-router-config@5.1.1(react-router@5.3.4(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       react: 18.2.0
       react-router: 5.3.4(react@18.2.0)
 
   react-router-dom@5.3.4(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       history: 4.10.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
@@ -25190,7 +25245,7 @@ snapshots:
 
   react-router@5.3.4(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       history: 4.10.1
       hoist-non-react-statics: 3.3.2
       loose-envify: 1.4.0
@@ -25209,7 +25264,7 @@ snapshots:
   react-shallow-renderer@16.15.0:
     dependencies:
       object-assign: 4.1.1
-      react-is: 18.2.0
+      react-is: 18.3.1
 
   react-test-renderer@18.2.0:
     dependencies:
@@ -25219,7 +25274,7 @@ snapshots:
 
   react-transition-group@4.4.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
@@ -25278,7 +25333,7 @@ snapshots:
 
   react-window@1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
       memoize-one: 5.2.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -25400,7 +25455,7 @@ snapshots:
 
   redux@4.2.1:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
 
   redux@5.0.1: {}
 
@@ -25426,7 +25481,7 @@ snapshots:
 
   regenerator-transform@0.15.2:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
 
   regexp.prototype.flags@1.5.2:
     dependencies:
@@ -25707,7 +25762,7 @@ snapshots:
 
   rtl-css-js@1.16.1:
     dependencies:
-      '@babel/runtime': 7.24.4
+      '@babel/runtime': 7.25.6
 
   rtl-detect@1.1.2: {}
 
@@ -25724,7 +25779,7 @@ snapshots:
 
   rxjs@7.8.1:
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   sade@1.8.1:
     dependencies:
@@ -26009,7 +26064,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   sockjs@0.3.24:
     dependencies:
@@ -26336,17 +26391,17 @@ snapshots:
   tabster@6.1.0:
     dependencies:
       keyborg: 2.5.0
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   tabster@7.1.2:
     dependencies:
       keyborg: 2.6.0
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   tabster@8.0.1:
     dependencies:
       keyborg: 2.6.0
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   tapable@1.1.3: {}
 

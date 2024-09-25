@@ -38,6 +38,7 @@ describe('lib/panel/panelHeader/main', () => {
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
       commentChange: vi.fn(),
+      handleTitleUpdate: vi.fn(),
     };
     minimalWithHeader = {
       ...minimal,
