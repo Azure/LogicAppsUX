@@ -47,23 +47,21 @@ export const QuickViewPanelHeader = ({
 }: { title: string; description: string; details: Record<string, string> }) => {
   return (
     <TemplatesPanelHeader title={title}>
-      <div className="msla-template-quickview-header">
-        <div className="msla-template-quickview-tags">
-          {Object.keys(details).map((key: string, index: number, array: any[]) => {
-            return (
-              <div key={key}>
-                <Text className="msla-template-card-tag">
-                  {key}: {details[key]}
-                </Text>
-                {index !== array.length - 1 ? (
-                  <Icon style={{ padding: '3px 10px 3px 10px', color: '#dedede', fontSize: 10 }} iconName="LocationDot" />
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-        <Markdown linkTarget="_blank">{description}</Markdown>
+      <div className="msla-template-quickview-tags">
+        {Object.keys(details).map((key: string, index: number, array: any[]) => {
+          return (
+            <div key={key}>
+              <Text className="msla-template-card-tag">
+                {key}: {details[key]}
+              </Text>
+              {index !== array.length - 1 ? (
+                <Icon style={{ padding: '3px 10px 3px 10px', color: '#dedede', fontSize: 10 }} iconName="LocationDot" />
+              ) : null}
+            </div>
+          );
+        })}
       </div>
+      <Markdown linkTarget="_blank">{description}</Markdown>
     </TemplatesPanelHeader>
   );
 };
