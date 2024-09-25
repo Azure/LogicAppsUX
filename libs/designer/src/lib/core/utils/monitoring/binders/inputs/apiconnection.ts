@@ -13,7 +13,6 @@ import {
   DefaultKeyPrefix,
   UriTemplateParser,
   UriTemplateGenerator,
-  type BoundParameter,
 } from '@microsoft/logic-apps-shared';
 import { Binder } from '../binder';
 import constants from '../constants';
@@ -34,7 +33,7 @@ export default class ApiConnectionInputsBinder extends Binder {
     return unmap(inputParameters).reduce(this.makeReducer(inputs, this.bindData), {} as BoundParameters);
   }
 
-  getInputParameterValue(inputs: any, parameter: InputParameter): any {
+  getParameterValue(inputs: any, parameter: InputParameter): any {
     const template = removeConnectionPrefix(this._operation.path);
     const { body, headers, path, queries } = inputs;
     const { encode, in: $in, key, name } = parameter;
@@ -89,16 +88,6 @@ export default class ApiConnectionInputsBinder extends Binder {
       acc[current] = values[index];
       return acc;
     }, {});
-  }
-
-  private _makeOptionalBoundParameter(
-    key: string,
-    displayName: string,
-    value: any,
-    visibility?: string,
-    additionalProperties?: Partial<BoundParameter>
-  ): BoundParameters | undefined {
-    return value === undefined ? undefined : this.makeBoundParameter(key, displayName, value, visibility, additionalProperties);
   }
 
   private _makeUntypedInputsParameters(inputs: any): BoundParameters {

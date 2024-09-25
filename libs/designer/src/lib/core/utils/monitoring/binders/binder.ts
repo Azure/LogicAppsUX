@@ -4,6 +4,7 @@ import type {
   BoundParameters,
   InputParameter,
   ListDynamicValue,
+  OutputParameter,
   ParameterInfo,
   ReduceFunction,
 } from '@microsoft/logic-apps-shared';
@@ -40,26 +41,28 @@ export abstract class Binder {
     };
   }
 
-  protected getInputParameterDisplayName(parameter: InputParameter): string {
-    const { name, summary, title } = parameter;
-    return title || summary || name;
+  protected getParameterDisplayName(parameter: OutputParameter): string {
+    const { description, summary, title, name } = parameter;
+
+    return title || summary || name || description || '';
   }
 
-  protected getInputParameterValue(_inputs: any, _parameter: InputParameter): any {
-    throw new Error('getInputParameterValue must be implemented by derived classes');
+  protected getParameterValue(_inputs: any, _parameter: InputParameter): any {
+    throw new Error('getParameterValue must be implemented by derived classes');
   }
 
-  protected bindData = (inputs: any, parameter: InputParameter): BoundParameter | undefined => {
+  protected bindData = (data: any, parameter: OutputParameter | InputParameter): BoundParameter | undefined => {
     // inputs may be missing if we are trying to bind to inputs which do not exist, e.g., a card in an If
     // branch which never ran, because the condition expression was false
-    if (isNullOrUndefined(inputs)) {
+    if (isNullOrUndefined(data)) {
       return undefined;
     }
 
-    const displayName = this.getInputParameterDisplayName(parameter);
-    const value = this.getInputParameterValue(inputs, parameter);
+    const displayName = this.getParameterDisplayName(parameter);
+    const value = this.getParameterValue(data, parameter);
 
-    const { dynamicValues, key, visibility } = parameter;
+    const { dynamicValues, visibility, key } = parameter;
+
     const boundParameter = this.buildBoundParameter(displayName, value, visibility, this._getAdditionalProperties(parameter));
 
     if (dynamicValues) {
@@ -115,6 +118,16 @@ export abstract class Binder {
     return {
       [key]: boundParameter,
     };
+  }
+
+  protected _makeOptionalBoundParameter(
+    key: string,
+    displayName: string,
+    value: any,
+    visibility?: string,
+    additionalProperties?: Partial<BoundParameter>
+  ): BoundParameters | undefined {
+    return value === undefined ? undefined : this.makeBoundParameter(key, displayName, value, visibility, additionalProperties);
   }
 }
 
