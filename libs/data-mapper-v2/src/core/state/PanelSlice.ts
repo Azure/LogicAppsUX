@@ -51,7 +51,7 @@ const initialState: PanelState = {
     showSelection: true,
   },
   functionPanel: {
-    isOpen: false,
+    isOpen: true,
   },
 };
 
