@@ -1,0 +1,90 @@
+# Trigger the build whenever `main` or `rel/*` is updated
+trigger: none
+  # - main
+  # - rel/*
+
+# Disable PR trigger
+pr: none
+
+# `resources` specifies the location of templates to pick up, use it to get 1ES templates
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/tags/release
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: main
+      endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
+    - repository: MicroBuildTemplate
+      type: git
+      name: MicroBuildTemplates/MicroBuildTemplates
+      ref: refs/heads/release 
+
+parameters:
+  # When true, skips the deployment job which actually publishes the extension
+  - name: dryRun
+    type: boolean
+    default: true
+
+  # The intended extension version to publish. 
+  # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
+  - name: publishVersion
+    type: string
+
+  # Customize the environment to associate the deployment with. 
+  # Useful to control which group of people should be required to approve the deployment.
+  - name: environmentName
+    type: string
+    default: AzCodeDeploy
+
+variables:
+  # Required by MicroBuild template
+  - name: TeamName
+    value: "Azure Logic Apps for VS Code"
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  parameters:
+    sdl:
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
+      codeql:
+        language: javascript # only build a codeql database for javascript, since the jsoncli pipeline handles csharp
+      #   enabled: true # TODO: would like to enable only on scheduled builds but CodeQL cannot currently be disabled per https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/1es-codeql
+    pool:
+      name: VSEngSS-MicroBuild2022-1ES # Name of your hosted pool
+      image: server2022-microbuildVS2022-1es # Name of the image in your pool. If not specified, first image of the pool is used
+      os: windows # OS of the image. Allowed values: windows, linux, macOS
+    stages:
+      - stage: Build
+        displayName: Build extension
+        jobs:
+          - job: Build
+            templateContext:
+              mb: # Enable the MicroBuild Signing toolset
+                signing:
+                  enabled: ${{ parameters.enableSigning }}
+                  signType: real # options are 'real' & 'test'
+                  zipSources: false
+            outputs:
+              - output: pipelineArtifact
+                targetPath: $(build.artifactstagingdirectory)/build/${{ job.name }}
+                artifactName: Build ${{ job.name }}
+            steps:
+              - template: ./templates/build.yml
+              - template: ./templates/package.yml
+              - template: ./templates/sign.yml
+              - template: ./templates/stage-artifacts.yml
+      - stage: Release      
+        displayName: Publish extension
+        extends:
+          template: azure-pipelines/release-extension.yml@azExtTemplates
+          parameters:
+            pipelineID: $(resources.pipeline.build.pipelineID)
+            runID: $(resources.pipeline.build.runID)
+            publishVersion: ${{ parameters.publishVersion }}
+            dryRun: ${{ parameters.dryRun }}
+            environmentName: AzCodeDeploy
