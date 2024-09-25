@@ -163,9 +163,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   );
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
-  useEffect(() => {
     if (
       handleRef?.current &&
       containerTop !== undefined &&
