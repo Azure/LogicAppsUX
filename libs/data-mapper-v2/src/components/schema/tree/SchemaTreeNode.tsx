@@ -54,16 +54,13 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [hover?.id, hover?.isSourceSchema, hover?.type, isSourceSchema, key]
   );
 
-  const isRepeating = useMemo(
-    () =>
-      edges.some(
-        (edge) =>
-          (edge.sourceHandle === handle.id || edge.targetHandle === handle.id) &&
-          edge.data?.isRepeating &&
-          data.nodeProperties.includes(SchemaNodeProperty.Repeating)
-      ),
-    [edges, handle.id, data.nodeProperties]
+  const isRepeatingConnection = useMemo(
+    () => edges.some((edge) => edge.data?.sourceHandleId === handle.id && edge.data?.isRepeating),
+    [edges, handle.id]
   );
+
+  const isRepeatingNode = useMemo(() => data.nodeProperties.includes(SchemaNodeProperty.Repeating), [data]);
+
   const isConnected = useMemo(
     () =>
       edges.some(
@@ -129,7 +126,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         className={mergeClasses(
           handleStyles.wrapper,
           handle.className,
-          isRepeating ? handleStyles.repeating : '',
+          isRepeatingConnection ? handleStyles.repeating : '',
           isConnected ? handleStyles.connected : '',
           isSelected || isHover ? handleStyles.selected : '',
           (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
@@ -138,7 +135,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         type={handle.type}
         isConnectable={true}
       >
-        {isRepeating && <ArrowClockwiseFilled className={handleStyles.repeatingIcon} />}
+        {(isRepeatingConnection || (isHover && isRepeatingNode)) && <ArrowClockwiseFilled className={handleStyles.repeatingIcon} />}
       </Handle>
     ),
     [
@@ -152,10 +149,11 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handleStyles.selected,
       handleStyles.connectedAndSelected,
       handleStyles.repeatingIcon,
-      isRepeating,
+      isRepeatingConnection,
       isConnected,
       isSelected,
       isHover,
+      isRepeatingNode,
     ]
   );
 
@@ -193,7 +191,19 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         );
       }
     }
-  }, [dispatch, nodeId, handleRef, handlePosition, containerTop, containerBottom, loadedMapMetadata, isHover, isSelected]);
+  }, [
+    dispatch,
+    nodeId,
+    handleRef,
+    handlePosition,
+    containerTop,
+    containerBottom,
+    loadedMapMetadata?.canvasRect,
+    loadedMapMetadata?.canvasRect?.height,
+    loadedMapMetadata?.canvasRect?.width,
+    isHover,
+    isSelected,
+  ]);
 
   return (
     <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)} ref={dragHandle}>
