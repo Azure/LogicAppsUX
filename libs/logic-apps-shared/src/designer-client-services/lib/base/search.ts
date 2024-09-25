@@ -143,9 +143,6 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
-    if (this._isHybridLogicApp) {
-      return Promise.resolve([]);
-    }
     if (this._isDev) {
       if (page === 0) {
         return Promise.resolve(azureOperationsResponse);
@@ -184,9 +181,6 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
-    if (this._isHybridLogicApp) {
-      return Promise.resolve([]);
-    }
     if (this._isDev) {
       if (page === 0) {
         const connectors = AzureConnectorMock.value as Connector[];

@@ -609,7 +609,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       >
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar intent={'error'} style={{ width: '100%' }}>
+          <MessageBar intent={'error'} style={{ width: '100%', whiteSpace: 'normal' }}>
             <MessageBarBody>{errorMessage}</MessageBarBody>
             <MessageBarActions
               containerAction={
