@@ -2,7 +2,7 @@ import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
-import { createInputSlotForUnboundedInput, setConnectionInput } from '../../../core/state/DataMapSlice';
+import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
@@ -16,6 +16,7 @@ import { newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Ut
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
+import { useCallback, useMemo } from 'react';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -139,11 +140,18 @@ const UnlimitedInputs = (props: {
   const styles = useStyles();
   const dispatch = useDispatch();
 
-  const addUnboundedInputSlot = () => {
-    dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  };
+  const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
 
-  const functionConnection = props.connections[props.functionKey];
+  const addUnboundedInputSlot = useCallback(() => {
+    dispatch(createInputSlotForUnboundedInput(props.functionKey));
+  }, [dispatch, props.functionKey]);
+
+  const onDragMoveEnd = useCallback(
+    (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+      dispatch(updateFunctionConnectionInputs({ functionKey: props.functionKey, inputs: newList.map((item) => item.input) }));
+    },
+    [dispatch, props.functionKey]
+  );
 
   return (
     <div>
@@ -156,7 +164,7 @@ const UnlimitedInputs = (props: {
         </span>
       </div>
       <DraggableList<TemplateItemProps, CommonProps, any>
-        list={Object.entries(functionConnection.inputs[0]).map((input, index) => ({ input, index }))}
+        list={Object.entries(functionConnection.inputs[0]).map((input, index) => ({ input: input[1], index }))}
         commonProps={{
           functionKey: props.functionKey,
           data: props.func,
@@ -165,6 +173,7 @@ const UnlimitedInputs = (props: {
           schemaType: SchemaType.Source,
           draggable: true,
         }}
+        onMoveEnd={onDragMoveEnd}
         itemKey={'index'}
         template={InputListWrapper}
       />
@@ -207,7 +216,6 @@ export const validateAndCreateConnectionInput = (
 
       // ensure that new connection won't create loop/circular logic
       if (newConnectionWillHaveCircularLogic(func.key, selectedInputKey, connectionDictionary)) {
-        //dispatch(showNotification({ type: NotificationTypes.CircularLogicError, autoHideDurationMs: errorNotificationAutoHideDuration }));
         return;
       }
 

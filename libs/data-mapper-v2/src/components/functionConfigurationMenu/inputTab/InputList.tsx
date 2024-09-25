@@ -24,7 +24,7 @@ export type CommonProps = {
   draggable: boolean;
 };
 
-export type TemplateItemProps = { input: InputConnection[]; index: number };
+export type TemplateItemProps = { input: InputConnection; index: number };
 type InputListProps = TemplateProps<TemplateItemProps, CommonProps> & {};
 type CustomListItemProps = {
   name?: string;
@@ -52,9 +52,9 @@ const InputList = (props: InputListProps) => {
   } = props;
   const { functionKey, data, inputsFromManifest, connections, schemaType } = commonProps;
 
-  const inputName = useMemo(() => getInputName(input[1], connections), [connections, input]);
-  const inputValue = useMemo(() => getInputValue(input[1]), [input]);
-  const inputType = useMemo(() => getInputTypeFromNode(input[1]), [input]);
+  const inputName = useMemo(() => getInputName(input, connections), [connections, input]);
+  const inputValue = useMemo(() => getInputValue(input), [input]);
+  const inputType = useMemo(() => getInputTypeFromNode(input), [input]);
   const removeUnboundedInput = useCallback(() => {
     const targetNodeReactFlowKey = functionKey;
     dispatch(
