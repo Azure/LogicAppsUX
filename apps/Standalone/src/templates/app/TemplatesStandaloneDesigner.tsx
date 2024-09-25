@@ -17,6 +17,7 @@ import {
   optional,
   StandardOperationManifestService,
   ConsumptionTemplateService,
+  ConsumptionConnectionService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -274,21 +275,31 @@ const getServices = (
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
-  const connectionService = new StandardConnectionService({
-    ...defaultServiceParams,
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      baseUrl: armUrl,
-      subscriptionId,
-      resourceGroup,
-      location,
-      tenantId,
-      httpClient,
-    },
-    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
-    writeConnection: addConnection as any,
-  });
+  const connectionService = isConsumption
+    ? new ConsumptionConnectionService({
+        apiVersion: '2018-07-01-preview',
+        baseUrl,
+        subscriptionId,
+        resourceGroup,
+        location,
+        tenantId,
+        httpClient,
+      })
+    : new StandardConnectionService({
+        ...defaultServiceParams,
+        apiHubServiceDetails: {
+          apiVersion: '2018-07-01-preview',
+          baseUrl: armUrl,
+          subscriptionId,
+          resourceGroup,
+          location,
+          tenantId,
+          httpClient,
+        },
+        workflowAppDetails: { appName, identity: workflowApp?.identity as any },
+        readConnections: () => Promise.resolve(connectionsData),
+        writeConnection: addConnection as any,
+      });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,
     httpClient,
