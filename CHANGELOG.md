@@ -1,4 +1,23 @@
 # Logic Apps Designer
+## [4.98.0](https://github.com/Azure/LogicAppsUX/compare/v4.97.0...v4.98.0) (2024-09-25)
+
+
+### Features
+
+* **Data Mapper:** Add re-ordering for the input list ([#5745](https://github.com/Azure/LogicAppsUX/issues/5745)) ([8fc4da1](https://github.com/Azure/LogicAppsUX/commit/8fc4da127b9863e43f74f4128ec3a84993496307))
+* **Data Mapper:** Panel close on vscode start, and loop UX improvement ([#5743](https://github.com/Azure/LogicAppsUX/issues/5743)) ([850fe4f](https://github.com/Azure/LogicAppsUX/commit/850fe4f771f54c24e8a689b92def0241d8fd6152))
+* **designer:** Bind outputs for monitoring view ([#5723](https://github.com/Azure/LogicAppsUX/issues/5723)) ([0817b6f](https://github.com/Azure/LogicAppsUX/commit/0817b6fc43356514a9d9fbb8416822274f2873d4))
+* **designer:** Handle high content size in monitoring view  ([#5739](https://github.com/Azure/LogicAppsUX/issues/5739)) ([cd9e2f4](https://github.com/Azure/LogicAppsUX/commit/cd9e2f42c6b02652ae94a837dedd2cc04e7e3234))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Add loop icon on hover for repeating  ([#5749](https://github.com/Azure/LogicAppsUX/issues/5749)) ([67f9faa](https://github.com/Azure/LogicAppsUX/commit/67f9faafca6aa7c0a558ce229ac95aa846444f0e))
+* **Data Mapper:** Add optional keyword ([#5751](https://github.com/Azure/LogicAppsUX/issues/5751)) ([e3612b4](https://github.com/Azure/LogicAppsUX/commit/e3612b4525c9d8eb935ceeaca5f8c2b3c1df74fa))
+* **Data Mapper:** Overlay and disable function panel when both source and target isn't selected ([#5750](https://github.com/Azure/LogicAppsUX/issues/5750)) ([fcf5fcd](https://github.com/Azure/LogicAppsUX/commit/fcf5fcd9e5c064ab952e0128d5bc247a684ad141))
+* **designer:** Add Type check when resolving non-string app settings ([#5738](https://github.com/Azure/LogicAppsUX/issues/5738)) ([b18496b](https://github.com/Azure/LogicAppsUX/commit/b18496b66bc50ee09317d38209f265f08fd06f9f))
+* **Designer:** MI Connections now require a MI ([#5742](https://github.com/Azure/LogicAppsUX/issues/5742)) ([d4978ae](https://github.com/Azure/LogicAppsUX/commit/d4978ae47ca3af97b73ba934934d22ffa7592339))
+
 ## [4.97.0](https://github.com/Azure/LogicAppsUX/compare/v4.96.0...v4.97.0) (2024-09-24)
 
 
