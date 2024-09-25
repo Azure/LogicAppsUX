@@ -587,6 +587,16 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
+    updateFunctionConnectionInputs: (state, action: PayloadAction<{ functionKey: string; inputs: InputConnection[] }>) => {
+      const newState = { ...state.curDataMapOperation };
+      if (newState.dataMapConnections[action.payload.functionKey]?.inputs[0]) {
+        newState.dataMapConnections[action.payload.functionKey].inputs[0] = action.payload.inputs;
+      } else {
+        throw new Error('Function node not found in connections');
+      }
+
+      doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Update function connection inputs');
+    },
   },
 });
 
@@ -613,6 +623,7 @@ export const {
   setHoverState,
   updateCanvasDimensions,
   updateHandlePosition,
+  updateFunctionConnectionInputs,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
