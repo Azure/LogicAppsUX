@@ -3,7 +3,7 @@ import type { TemplateServiceOptions } from '../base/template';
 import type { IHttpClient } from '../httpClient';
 import type { ITemplateService } from '../template';
 
-export interface StandardTemplateServiceOptions extends TemplateServiceOptions {
+interface StandardTemplateServiceOptions extends TemplateServiceOptions {
   baseUrl: string;
   appId?: string;
   httpClient: IHttpClient;
