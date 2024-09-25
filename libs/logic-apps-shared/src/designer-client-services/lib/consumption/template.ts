@@ -1,16 +1,7 @@
-import type { BaseTemplateServiceOptions } from '../base/template';
-import type { ITemplateService } from '../template';
+import { BaseTemplateService } from '../base/template';
 
-export class ConsumptionTemplateService implements ITemplateService {
-  constructor(private readonly options: BaseTemplateServiceOptions) {}
-
-  dispose(): void {
-    return;
-  }
-
+export class ConsumptionTemplateService extends BaseTemplateService {
   public async getExistingWorkflowNames(): Promise<string[]> {
     return [];
   }
-
-  public openBladeAfterCreate = (workflowName: string): void => this.options.openBladeAfterCreate(workflowName);
 }
