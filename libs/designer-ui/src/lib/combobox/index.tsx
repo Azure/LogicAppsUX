@@ -113,7 +113,7 @@ export const Combobox = ({
       setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [isLoading, options]);
 
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
