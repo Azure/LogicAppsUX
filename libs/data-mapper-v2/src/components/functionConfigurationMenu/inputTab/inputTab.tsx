@@ -1,10 +1,8 @@
 import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
-import { List, ListItem } from '@fluentui/react-list-preview';
-import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
-import { createInputSlotForUnboundedInput, setConnectionInput } from '../../../core/state/DataMapSlice';
+import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
@@ -16,6 +14,9 @@ import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
 import { newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import DraggableList from 'react-draggable-list';
+import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
+import { useCallback, useMemo } from 'react';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -138,27 +139,19 @@ const UnlimitedInputs = (props: {
   const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
   const dispatch = useDispatch();
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
 
-  const addUnboundedInputSlot = () => {
+  const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
+
+  const addUnboundedInputSlot = useCallback(() => {
     dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  };
+  }, [dispatch, props.functionKey]);
 
-  const functionConnection = props.connections[props.functionKey];
-
-  const removeConnection = (inputIndex: number, newValue: InputConnection | null) => {
-    const targetNodeReactFlowKey = props.functionKey;
-    dispatch(
-      setConnectionInput({
-        targetNode: props.func,
-        targetNodeReactFlowKey,
-        inputIndex,
-        input: newValue,
-      })
-    );
-  };
+  const onDragMoveEnd = useCallback(
+    (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+      dispatch(updateFunctionConnectionInputs({ functionKey: props.functionKey, inputs: newList.map((item) => item.input) }));
+    },
+    [dispatch, props.functionKey]
+  );
 
   return (
     <div>
@@ -170,59 +163,20 @@ const UnlimitedInputs = (props: {
           <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
         </span>
       </div>
-      <List>
-        {Object.entries(functionConnection.inputs[0]).map((input, index) => {
-          const updateInput = (newValue: InputConnection) => {
-            const targetNodeReactFlowKey = props.functionKey;
-            dispatch(
-              setConnectionInput({
-                targetNode: props.func,
-                targetNodeReactFlowKey,
-                inputIndex: index,
-                input: newValue,
-              })
-            );
-          };
-
-          const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
-            if (optionValue) {
-              const input = validateAndCreateConnectionInput(
-                optionValue,
-                option,
-                connectionDictionary,
-                props.func,
-                functionNodeDictionary,
-                sourceSchemaDictionary
-              );
-              if (input) {
-                updateInput(input);
-              }
-            }
-          };
-          const inputName = getInputName(input[1], props.connections);
-          const inputValue = getInputValue(input[1]);
-          const inputType = getInputTypeFromNode(input[1]);
-          const removeUnboundedInput = () => {
-            removeConnection(index, null);
-          };
-          return (
-            <UnboundedDropdownListItem
-              index={index}
-              key={input[0]}
-              schemaListType={SchemaType.Source}
-              removeItem={removeUnboundedInput}
-              functionKey={props.functionKey}
-              func={props.func}
-              inputName={inputName}
-              inputType={inputType}
-              inputValue={inputValue}
-              draggable={true}
-              isCustomValueAllowed={inputsFromManifest[0].allowCustomInput}
-              validateAndCreateConnection={validateAndCreateConnection}
-            />
-          );
-        })}
-      </List>
+      <DraggableList<TemplateItemProps, CommonProps, any>
+        list={Object.entries(functionConnection.inputs[0]).map((input, index) => ({ input: input[1], index }))}
+        commonProps={{
+          functionKey: props.functionKey,
+          data: props.func,
+          inputsFromManifest,
+          connections: props.connections,
+          schemaType: SchemaType.Source,
+          draggable: true,
+        }}
+        onMoveEnd={onDragMoveEnd}
+        itemKey={'index'}
+        template={InputListWrapper}
+      />
       <Button
         icon={<AddRegular className={styles.addIcon} />}
         onClick={() => addUnboundedInputSlot()}
@@ -235,7 +189,7 @@ const UnlimitedInputs = (props: {
   );
 };
 
-const getInputTypeFromNode = (input: InputConnection | undefined) => {
+export const getInputTypeFromNode = (input: InputConnection | undefined) => {
   let inputType = '';
   if (typeof input !== 'string' && input !== undefined) {
     if (isSchemaNodeExtended(input.node)) {
@@ -247,7 +201,7 @@ const getInputTypeFromNode = (input: InputConnection | undefined) => {
   return inputType;
 };
 
-const validateAndCreateConnectionInput = (
+export const validateAndCreateConnectionInput = (
   optionValue: string | undefined,
   option: InputOptionProps | undefined,
   connectionDictionary: ConnectionDictionary,
@@ -262,7 +216,6 @@ const validateAndCreateConnectionInput = (
 
       // ensure that new connection won't create loop/circular logic
       if (newConnectionWillHaveCircularLogic(func.key, selectedInputKey, connectionDictionary)) {
-        //dispatch(showNotification({ type: NotificationTypes.CircularLogicError, autoHideDurationMs: errorNotificationAutoHideDuration }));
         return;
       }
 
@@ -281,55 +234,4 @@ const validateAndCreateConnectionInput = (
     return srcConUnit;
   }
   return;
-};
-
-interface UnboundedInputEntryProps {
-  functionKey: string;
-  func: FunctionData;
-  index: number;
-  inputName: string | undefined;
-  inputValue: string | undefined;
-  inputType: string | undefined;
-  removeItem: () => void;
-  schemaListType: SchemaType;
-  draggable: boolean;
-  isCustomValueAllowed?: boolean;
-  validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
-}
-
-export const UnboundedDropdownListItem = (props: UnboundedInputEntryProps) => {
-  const styles = useStyles();
-
-  const [, drag] = useDrag(() => ({
-    type: 'functionInput',
-    item: props.functionKey,
-  }));
-  return (
-    <ListItem key={`input-${props.inputName}`}>
-      <div ref={props.draggable ? drag : undefined} className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
-          <InputDropdown
-            inputAllowsCustomValues={props.isCustomValueAllowed}
-            index={props.index}
-            functionId={props.functionKey}
-            currentNode={props.func}
-            schemaListType={props.schemaListType}
-            inputName={props.inputName}
-            inputValue={props.inputValue}
-            validateAndCreateConnection={props.validateAndCreateConnection}
-          />
-        </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {props.inputType && (
-              <Badge appearance="filled" color="informative">
-                {props.inputType}
-              </Badge>
-            )}
-          </span>
-          <Button className={styles.listButton} appearance="transparent" icon={<LinkDismissRegular />} onClick={() => props.removeItem()} />
-        </span>
-      </div>
-    </ListItem>
-  );
 };
