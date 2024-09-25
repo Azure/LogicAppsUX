@@ -19,6 +19,7 @@ import { getCustomSwaggerIfNeeded } from './initialize';
 import { ParameterGroupKeys } from '../../utils/parameters/helper';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import OutputsBinder from '../../utils/monitoring/binders/outputs';
 
 interface InitInputsOutputsPayload {
   nodeId: string;
@@ -49,10 +50,10 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
 
     try {
       const state = getState() as RootState;
-      const inputs = await getInputs(state, nodeId, inputsOutputs.inputs);
+      const { boundInputs, boundOutputs } = await getInputsOutputsBinding(state, nodeId, inputsOutputs);
 
       LoggerService().endTrace(traceId, { status: Status.Success });
-      return { nodeId, inputs: inputs[0], outputs: parseOutputs(inputsOutputs.outputs) };
+      return { nodeId, inputs: boundInputs[0], outputs: boundOutputs[0] };
     } catch (e) {
       LoggerService().endTrace(traceId, { status: Status.Failure });
       return { nodeId, inputs: parseInputs(inputsOutputs.inputs), outputs: parseOutputs(inputsOutputs.outputs) };
@@ -60,12 +61,17 @@ export const initializeInputsOutputsBinding = createAsyncThunk(
   }
 );
 
-const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Promise<BoundParameters[]> => {
+const getInputsOutputsBinding = async (
+  rootState: RootState,
+  nodeId: string,
+  inputsOutputs: any
+): Promise<{ boundInputs: BoundParameters[]; boundOutputs: BoundParameters[] }> => {
   const operationInfo: NodeOperation | undefined = getRecordEntry(rootState.operations.operationInfo, nodeId);
   const definition: LogicAppsV2.OperationDefinition | undefined = getRecordEntry(rootState.workflow.operations, nodeId);
+  const { inputs, outputs } = inputsOutputs;
 
   if (!operationInfo || !definition) {
-    return [];
+    return { boundInputs: [], boundOutputs: [] };
   }
 
   const type = operationInfo.type;
@@ -73,17 +79,21 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
 
   const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operationInfo) : undefined;
   const customSwagger = manifest ? await getCustomSwaggerIfNeeded(manifest.properties, definition) : undefined;
-  const inputsToBind = getInputsToBind(operationInfo.type, inputs);
+  const inputsToBind = getParametersToBind(operationInfo.type, inputs);
+  const outputsToBind = getParametersToBind(operationInfo.type, outputs);
+
   const nodeInputs =
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
   const nodeRawInputs =
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs ?? [];
+
   const inputParameters: Record<string, InputParameter> = map(nodeRawInputs, 'key');
+  const outputParameters = getRecordEntry(rootState.operations.outputParameters, nodeId)?.outputs ?? {};
+
   const operation = manifest
     ? undefined
     : await (await getConnectorWithSwagger(operationInfo.connectorId)).parsedSwagger.getOperationByOperationId(operationInfo.operationId);
 
-  // Bind inputs from the inputs record to input parameters using the schema derived from the inputs record
   const inputsBinder = new InputsBinder();
   const boundInputs: BoundParameters[] = await inputsBinder.bind(
     inputsToBind,
@@ -96,10 +106,13 @@ const getInputs = async (rootState: RootState, nodeId: string, inputs: any): Pro
     definition.metadata
   );
 
-  return boundInputs;
+  const outputsBinder = new OutputsBinder();
+  const boundOutputs = await outputsBinder.bind(outputsToBind, type, outputParameters, manifest, undefined, definition.metadata);
+
+  return { boundInputs, boundOutputs };
 };
 
-const getInputsToBind = (type: string, payloadInputs: any): any => {
+const getParametersToBind = (type: string, payloadInputs: any): any => {
   if (equals(type, constants.NODE.TYPE.QUERY)) {
     if (payloadInputs) {
       return {

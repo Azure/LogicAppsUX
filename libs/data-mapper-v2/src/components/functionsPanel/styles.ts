@@ -33,6 +33,10 @@ export const useStyles = makeStyles({
   root: {
     width: '240px',
   },
+  overlay: {
+    opacity: '0.7',
+    pointerEvents: 'none',
+  },
   collapseChevronButton: {
     paddingBottom: '0px',
     paddingTop: '0px',
