@@ -1,8 +1,8 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useStyles } from './styles';
 import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { Button } from '@fluentui/react-components';
+import { Button, mergeClasses } from '@fluentui/react-components';
 import { FunctionList } from '../functionList/FunctionList';
 import { FunctionsSVG } from '../../images/icons';
 import { Panel } from '../../components/common/panel/Panel';
@@ -17,7 +17,6 @@ export const FunctionPanel = (_props: PanelProps) => {
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const styles = useStyles();
   const intl = useIntl();
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const dispatch = useDispatch<AppDispatch>();
   const isFunctionPanelOpen = useSelector((state: RootState) => state.panel.functionPanel.isOpen);
@@ -25,12 +24,6 @@ export const FunctionPanel = (_props: PanelProps) => {
   const openFunctionPanel = useCallback(() => {
     dispatch(toggleFunctionPanel());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (Object.keys(connections).length === 0 && sourceSchema !== undefined && targetSchema !== undefined) {
-      openFunctionPanel();
-    }
-  }, [connections, sourceSchema, targetSchema, openFunctionPanel]);
 
   const onChevronClick = useCallback(() => {
     setSearchTerm('');
@@ -88,7 +81,11 @@ export const FunctionPanel = (_props: PanelProps) => {
         text: searchTerm,
       }}
       styles={{
-        root: styles.root,
+        root: mergeClasses(
+          styles.root,
+          // Overlay if both source and target schema are not selected
+          sourceSchema === undefined && targetSchema === undefined ? styles.overlay : ''
+        ),
       }}
     />
   ) : (
