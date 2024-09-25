@@ -45,3 +45,4 @@ steps:
       exit 0
     displayName: "\U0001F449 Verify extension.signature.p7s file was created"
     condition: eq(variables['signprojExists'], True)
+    

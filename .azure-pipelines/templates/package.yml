@@ -6,3 +6,4 @@ steps:
       customCommand: run vscode:designer:pack
       workingDir: $(working_directory)
     condition: succeeded()
+    

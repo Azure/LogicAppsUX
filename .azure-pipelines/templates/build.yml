@@ -6,3 +6,4 @@ steps:
       customCommand: run build:extension
       workingDir: $(working_directory)
     condition: succeeded()
+    
