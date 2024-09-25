@@ -1,9 +1,9 @@
 import { ArgumentException } from '../../../utils/src';
-import type { TemplateServiceOptions } from '../base/template';
+import type { BaseTemplateServiceOptions } from '../base/template';
 import type { IHttpClient } from '../httpClient';
 import type { ITemplateService } from '../template';
 
-interface StandardTemplateServiceOptions extends TemplateServiceOptions {
+interface StandardTemplateServiceOptions extends BaseTemplateServiceOptions {
   baseUrl: string;
   appId?: string;
   httpClient: IHttpClient;

@@ -1,3 +1,3 @@
-export interface TemplateServiceOptions {
+export interface BaseTemplateServiceOptions {
   openBladeAfterCreate: (workflowName: string) => void;
 }

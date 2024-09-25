@@ -1,8 +1,8 @@
-import type { TemplateServiceOptions } from '../base/template';
+import type { BaseTemplateServiceOptions } from '../base/template';
 import type { ITemplateService } from '../template';
 
 export class ConsumptionTemplateService implements ITemplateService {
-  constructor(private readonly options: TemplateServiceOptions) {}
+  constructor(private readonly options: BaseTemplateServiceOptions) {}
 
   dispose(): void {
     return;
