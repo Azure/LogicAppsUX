@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionBundleId, hostFileName, localSettingsFileName, extensionCommand } from '../../constants';
+import { extensionBundleId, hostFileName, extensionCommand } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isString } from '@microsoft/logic-apps-shared';
@@ -19,14 +19,13 @@ const projectSubpathKey = 'projectSubpath';
 export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   const hostFilePath = path.join(folderPath, hostFileName);
   const hasHostJson: boolean = await fse.pathExists(hostFilePath);
-  const hasLocalSettingsJson: boolean = await fse.pathExists(path.join(folderPath, localSettingsFileName));
 
   if (hasHostJson) {
     const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
 
     const hasWorkflowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
-    return hasHostJson && hasLocalSettingsJson && hasWorkflowBundle;
+    return hasHostJson && hasWorkflowBundle;
   }
 
   return false;

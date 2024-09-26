@@ -275,6 +275,12 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
 
     if (projectPath) {
+      if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
+        const settingsFileContent = getLocalSettingsSchema(false, projectPath);
+        const projectUri: Uri = Uri.file(projectPath);
+        await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
+      }
+
       if (autoStartDesignTime) {
         startDesignTimeApi(projectPath);
       } else if (showStartDesignTimeMessage) {

@@ -9,6 +9,7 @@ import {
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
   extensionCommand,
+  localSettingsFileName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -116,7 +117,7 @@ class ExportEngine {
 
       const connectionsTemplate = await fse.readJSON(templatePath);
       const parametersFile = await fse.readJSON(`${this.targetDirectory}/parameters.json`);
-      const localSettingsFile = await fse.readJSON(`${this.targetDirectory}/local.settings.json`);
+      const localSettingsFile = await fse.readJSON(`${this.targetDirectory}/${localSettingsFileName}`);
 
       try {
         await this.getResourceGroup();
@@ -306,7 +307,7 @@ class ExportEngine {
     localSettingsFile.Values[workflowManagementBaseURIKey] = `${this.baseGraphUri}/`;
 
     writeFileSync(`${this.targetDirectory}/parameters.json`, JSON.stringify(parametersFile, null, 4));
-    writeFileSync(`${this.targetDirectory}/local.settings.json`, JSON.stringify(localSettingsFile, null, 4));
+    writeFileSync(`${this.targetDirectory}/${localSettingsFileName}`, JSON.stringify(localSettingsFile, null, 4));
     this.addStatus(this.intlText.DONE);
   }
 }

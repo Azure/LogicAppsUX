@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  gitignoreFileName,
   func,
   projectLanguageSetting,
   funcVersionSetting,
@@ -22,6 +21,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { isSubpath, isPathEqual, confirmEditJsonFile } from '../../utils/fs';
+import { removeFromGitIgnore } from '../../utils/git';
 import {
   getDebugConfigs,
   getLaunchVersion,
@@ -89,15 +89,10 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     await this.writeExtensionsJson(context, vscodePath, language);
 
     // Remove '.vscode' from gitignore if applicable
-    const gitignorePath: string = path.join(context.workspacePath, gitignoreFileName);
-    if (await fse.pathExists(gitignorePath)) {
-      let gitignoreContents: string = (await fse.readFile(gitignorePath)).toString();
-      gitignoreContents = gitignoreContents.replace(/^\.vscode(\/|\\)?\s*$/gm, '');
-      await fse.writeFile(gitignorePath, gitignoreContents);
-    }
+    await removeFromGitIgnore(context.workspacePath, /^\.vscode(\/|\\)?\s*$/gm);
   }
 
-  public shouldExecute(_context: IProjectWizardContext): boolean {
+  public shouldExecute(): boolean {
     return true;
   }
 
