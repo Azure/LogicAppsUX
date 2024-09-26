@@ -542,7 +542,7 @@ const serializeParameterWithPath = (
     let p = result;
     while (pathSegments.length > 0) {
       const pathSegment = pathSegments.shift() as Segment;
-      const propertyKey = getAndEscapeSegment(pathSegment);
+      const propertyKey = getAndEscapeSegment(pathSegment, /** decodeSegment*/ false); // Disable decoding as it already happens with parseEx(valueKey) above
       const lastSegment = pathSegments.length === 0;
       if (lastSegment) {
         p[propertyKey] = serializedValue !== undefined ? serializedValue : null;
