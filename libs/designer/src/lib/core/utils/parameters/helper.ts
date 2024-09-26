@@ -1493,11 +1493,11 @@ function deletePropertyValueWithSpecifiedPathSegment(value: any, segments: Segme
   }
 }
 
-export function getAndEscapeSegment(segment: Segment): string | number {
+export function getAndEscapeSegment(segment: Segment, decodeSegment = true): string | number {
   // NOTE: for property segment, return the property name as key; for index segment, return the index value or 0
   switch (segment.type) {
     case SegmentType.Property:
-      return tryConvertStringToExpression(decodePropertySegment(segment.value as string));
+      return tryConvertStringToExpression(decodeSegment ? decodePropertySegment(segment.value as string) : (segment.value as string));
     case SegmentType.Index:
       return segment.value || 0;
     default:
