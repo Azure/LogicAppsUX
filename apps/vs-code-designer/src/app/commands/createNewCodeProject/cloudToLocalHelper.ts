@@ -10,13 +10,14 @@ import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getParametersJson } from '../../utils/codeless/parameter';
-import { parameterizeConnection } from '../../utils/codeless/parameterizer';
+import { isConnectionsParameterized, parameterizeConnection } from '../../utils/codeless/parameterizer';
 import * as path from 'path';
 import * as fs from 'fs';
 import { isCSharpProject } from '../initProjectForVSCode/detectProjectLanguage';
 import { parametersFileName } from '../../../constants';
 import { addNewFileInCSharpProject } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
+import { window } from 'vscode';
 
 export async function extractConnectionDetails(connections: any): Promise<any> {
   const SUBSCRIPTION_INDEX = 2;
@@ -65,6 +66,8 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
 
       const connectionsValues = await extractConnectionDetails(connectionsData);
       const connectionDetail = connectionsValues[0];
+
+      context.telemetry.properties.addedConnectionDetails = `Extracted the following settings ${connectionDetail}`;
       const newValues = {
         ...connectionDetail,
         ...localSettings.Values,
@@ -77,7 +80,7 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
       return settings;
     } catch (error) {
       context.telemetry.properties.error = error.message;
-      console.error('Error writing file:', error);
+      console.error('Error extracting connection details:', error);
     }
   }
 }
@@ -208,6 +211,11 @@ export async function parameterizeConnectionsDuringImport(
       const connectionsData = JSON.parse(connectionsJson);
       const parametersJson = await getParametersJson(projectPath);
 
+      if (isConnectionsParameterized(connectionsData)) {
+        window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+        return;
+      }
+
       Object.keys(connectionsData).forEach((connectionType) => {
         if (connectionType !== 'serviceProviderConnections') {
           const connectionTypeJson = connectionsData[connectionType];
@@ -218,6 +226,8 @@ export async function parameterizeConnectionsDuringImport(
               parametersJson,
               localSettingsValues
             );
+
+            context.telemetry.properties.parameterizedConnections = `Parameterized ${connectionKey} connection`;
           });
         }
       });
@@ -252,21 +262,27 @@ export async function cleanLocalSettings(context: IFunctionWizardContext): Promi
   if (localSettings.Values) {
     const localSettingKeys = Object.keys(localSettings.Values);
     if (localSettingKeys.includes('WEBSITE_SITE_NAME')) {
+      context.telemetry.properties.removedSetting = `Removing ${localSettings['WEBSITE_SITE_NAME']} from local settings`;
       delete localSettings.Values['WEBSITE_SITE_NAME'];
     }
     if (localSettingKeys.includes('WEBSITE_AUTH_ENABLED')) {
+      context.telemetry.properties.removedSetting = `Removing ${localSettings['WEBSITE_AUTH_ENABLED']} from local settings`;
       delete localSettings.Values['WEBSITE_AUTH_ENABLED'];
     }
     if (localSettingKeys.includes('WEBSITE_SLOT_NAME')) {
+      context.telemetry.properties.removedSetting = `Removing ${localSettings['WEBSITE_SLOT_NAME']} from local settings`;
       delete localSettings.Values['WEBSITE_SLOT_NAME'];
     }
     if (localSettingKeys.includes('ScmType')) {
+      context.telemetry.properties.removedSetting = `Removing ${localSettings['ScmType']} from local settings`;
       delete localSettings.Values['ScmType'];
     }
     if (localSettingKeys.includes('FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED')) {
+      context.telemetry.properties.removedSetting = `Removing ${localSettings['FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED']} from local settings`;
       delete localSettings.Values['FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'];
     }
     if (localSettingKeys.includes('AzureWebJobsStorage')) {
+      context.telemetry.properties.removedSetting = `Removing ${localSettings['AzureWebJobsStorage']} from local settings`;
       localSettings.Values['AzureWebJobsStorage'] = 'UseDevelopmentStorage=true';
     }
 

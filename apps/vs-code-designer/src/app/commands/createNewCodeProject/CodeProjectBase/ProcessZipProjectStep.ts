@@ -14,7 +14,9 @@ import { writeFormattedJson } from '../../../utils/fs';
 import { getConnectionsJson } from '../../../utils/codeless/connection';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import AdmZip from 'adm-zip';
-import { extend } from '@microsoft/logic-apps-shared';
+import { extend, isEmptyString } from '@microsoft/logic-apps-shared';
+import { window } from 'vscode';
+import { localize } from 'vscode-nls';
 
 export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 200;
@@ -39,15 +41,18 @@ export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizard
       const zipEntries = this.getZipEntries(context.zipFilePath);
       const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === 'local.settings.json');
       if (zipSettingsBuffer) {
+        context.telemetry.properties.localSettingsInZip = 'Local settings found in the zip file';
         zipSettings = JSON.parse(zipSettingsBuffer.getData().toString('utf8'));
         await writeFormattedJson(localSettingsPath, extend(appSettings, zipSettings));
       }
 
-      if (connectionsString) {
-        connectionsData = JSON.parse(connectionsString);
+      if (isEmptyString(connectionsString)) {
+        context.telemetry.properties.noConnectionsInZip = 'No connections found in the zip file';
+        return;
       }
 
-      if (Object.keys(connectionsData).length > 0 && connectionsData.managedApiConnections) {
+      connectionsData = JSON.parse(connectionsString);
+      if (Object.keys(connectionsData).length && connectionsData.managedApiConnections) {
         await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
         if (parameterizeConnectionsSetting) {
@@ -57,6 +62,9 @@ export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizard
         await changeAuthTypeToRaw(context, parameterizeConnectionsSetting);
         await updateConnectionKeys(context);
         await cleanLocalSettings(context);
+
+        context.telemetry.properties.finishedImportingProject = 'Finished importing project';
+        window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
       }
     } catch (error) {
       context.telemetry.properties.error = error.message;
