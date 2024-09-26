@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.100.0](https://github.com/Azure/LogicAppsUX/compare/v4.99.0...v4.100.0) (2024-09-26)
+
+
+### Bug Fixes
+
+* **Designer:** Removed duplicated api requests ([#5764](https://github.com/Azure/LogicAppsUX/issues/5764)) ([4a75ba1](https://github.com/Azure/LogicAppsUX/commit/4a75ba156d71604b614f96e1ed97ca3e1e7bcd22))
+
 ## [4.99.0](https://github.com/Azure/LogicAppsUX/compare/v4.98.0...v4.99.0) (2024-09-26)
 
 
