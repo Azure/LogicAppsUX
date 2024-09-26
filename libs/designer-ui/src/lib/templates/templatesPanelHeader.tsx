@@ -1,18 +1,15 @@
 import { Text } from '@fluentui/react-components';
-import Markdown from 'react-markdown';
 
 export interface TemplatesPanelHeaderProps {
   title: string;
-  description: string;
+  children: React.ReactNode;
 }
 
-export const TemplatesPanelHeader = ({ title, description }: TemplatesPanelHeaderProps) => {
+export const TemplatesPanelHeader = ({ title, children }: TemplatesPanelHeaderProps) => {
   return (
     <div className="msla-templates-panel-header">
       <Text className="msla-templates-panel-header-title">{title}</Text>
-      <Markdown className="msla-templates-panel-header-description" linkTarget="_blank">
-        {description}
-      </Markdown>
+      {children}
     </div>
   );
 };
