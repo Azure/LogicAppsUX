@@ -4,11 +4,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
+export const templatesCountPerPage = 25;
+
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
+    pageNum: number;
     keyword?: string;
     sortKey: string;
     connectors: FilterObject[] | undefined;
@@ -21,6 +24,7 @@ type ManifestName = string;
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
   filters: {
+    pageNum: 0,
     sortKey: 'a-to-z',
     connectors: undefined,
     detailFilters: {},

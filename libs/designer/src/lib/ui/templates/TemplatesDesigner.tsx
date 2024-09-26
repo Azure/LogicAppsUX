@@ -10,6 +10,7 @@ import { useIntl } from 'react-intl';
 import { TemplateFilters, type TemplateDetailFilterType } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
+import { templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 
 export const TemplatesDesigner = ({
   detailFilters,
@@ -34,7 +35,10 @@ export const TemplatesDesigner = ({
     parameterDefinitions,
     errors: { workflow: workflowError, kind: kindError, parameters: parametersError, connections: connectionsError },
   } = useSelector((state: RootState) => state.template);
-  const filteredTemplateNames = useSelector((state: RootState) => state.manifest.filteredTemplateNames);
+  const {
+    filteredTemplateNames,
+    filters: { pageNum },
+  } = useSelector((state: RootState) => state.manifest);
 
   const intlText = {
     NO_RESULTS: intl.formatMessage({
@@ -72,6 +76,10 @@ export const TemplatesDesigner = ({
     await createWorkflowCall(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
   };
 
+  const startingIndex = pageNum * templatesCountPerPage;
+  const endingIndex = startingIndex + templatesCountPerPage;
+  const lastPage = Math.ceil((filteredTemplateNames?.length ?? 0) / templatesCountPerPage);
+
   return (
     <>
       <TemplateFilters detailFilters={detailFilters} />
@@ -79,8 +87,8 @@ export const TemplatesDesigner = ({
 
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div className="msla-templates-list">
-          <Pager current={1} max={10} maxLength={2} min={1} readonlyPagerInput={true} showPageNumbers={true} />
-          {filteredTemplateNames.map((templateName: string) => (
+          <Pager current={pageNum + 1} max={lastPage} min={1} readonlyPagerInput={true} showPageNumbers={true} />
+          {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
             <TemplateCard key={templateName} templateName={templateName} />
           ))}
         </div>
