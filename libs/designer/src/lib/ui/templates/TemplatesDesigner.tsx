@@ -1,5 +1,5 @@
-import type { RootState } from '../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { TemplateCard } from './cards/templateCard';
 import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -10,7 +10,7 @@ import { useIntl } from 'react-intl';
 import { TemplateFilters, type TemplateDetailFilterType } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
-import { templatesCountPerPage } from '../../core/state/templates/manifestSlice';
+import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 
 export const TemplatesDesigner = ({
   detailFilters,
@@ -26,6 +26,7 @@ export const TemplatesDesigner = ({
   ) => Promise<void>;
 }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
+  const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { existingWorkflowName, connections, isConsumption } = useSelector((state: RootState) => state.workflow);
   const {
@@ -84,13 +85,21 @@ export const TemplatesDesigner = ({
     <>
       <TemplateFilters detailFilters={detailFilters} />
       <br />
-
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
-        <div className="msla-templates-list">
-          <Pager current={pageNum + 1} max={lastPage} min={1} readonlyPagerInput={true} showPageNumbers={true} />
-          {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
-            <TemplateCard key={templateName} templateName={templateName} />
-          ))}
+        <div>
+          <div className="msla-templates-list">
+            {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
+              <TemplateCard key={templateName} templateName={templateName} />
+            ))}
+          </div>
+          <Pager
+            current={pageNum + 1}
+            max={lastPage}
+            min={1}
+            readonlyPagerInput={true}
+            showPageNumbers={true}
+            onChange={(page) => dispatch(setPageNum(page.value - 1))}
+          />
         </div>
       ) : (
         <div className="msla-templates-empty-list">

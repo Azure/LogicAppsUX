@@ -1,7 +1,7 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
 import { css, Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
@@ -119,7 +119,7 @@ export const Pager: React.FC<PagerProps> = ({
 
   const handlePageNumberClick = useCallback(
     (pageNumber: number): void => {
-      changeValue(String(pageNumber + 1));
+      changeValue(String(pageNumber));
     },
     [changeValue]
   );
@@ -195,7 +195,36 @@ export const Pager: React.FC<PagerProps> = ({
     description: 'Button indicating to go to the next page',
   });
 
-  const pageNumbers = [current - 2, current - 1, current, current + 1, current + 2];
+  const pageNumbers = useMemo(() => {
+    const result = [];
+
+    // Calculate initial range around the current number
+    let rangeStart = Math.max(current - 2, min);
+    let rangeEnd = Math.min(current + 2, max);
+
+    // Adjust the range if it's less than 5 numbers
+    while (rangeEnd - rangeStart + 1 < 5) {
+      // Try to expand the range to the left if possible
+      if (rangeStart > min) {
+        rangeStart--;
+      }
+      // If no more room on the left, try to expand to the right
+      else if (rangeEnd < max) {
+        rangeEnd++;
+      }
+      // If both are at their limits, stop
+      else {
+        break;
+      }
+    }
+
+    // Fill the result array
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      result.push(i);
+    }
+
+    return result;
+  }, [current, max, min]);
 
   return (
     <div className="msla-pager-v2" onClick={handleClick}>
@@ -216,7 +245,9 @@ export const Pager: React.FC<PagerProps> = ({
               className={css('msla-pager-pageNum', pageNum === current ? '' : 'toSelect')}
               key={pageNum}
               onClick={() => {
-                handlePageNumberClick(pageNum);
+                if (pageNum !== current) {
+                  handlePageNumberClick(pageNum);
+                }
               }}
             >
               {pageNum}

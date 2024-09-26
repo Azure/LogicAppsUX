@@ -70,6 +70,9 @@ export const manifestSlice = createSlice({
         state.filteredTemplateNames = action.payload;
       }
     },
+    setPageNum: (state, action: PayloadAction<number>) => {
+      state.filters.pageNum = action.payload;
+    },
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
       state.filters.keyword = action.payload;
     },
@@ -120,6 +123,7 @@ export const {
   setavailableTemplatesNames,
   setavailableTemplates,
   setFilteredTemplateNames,
+  setPageNum,
   setKeywordFilter,
   setSortKey,
   setConnectorsFilters,
