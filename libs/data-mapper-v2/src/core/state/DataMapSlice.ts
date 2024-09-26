@@ -70,6 +70,12 @@ export interface HandlePosition {
   hidden?: boolean;
 }
 
+export interface SchemaTreeDataProps {
+  visibleNodes: SchemaNodeExtended[];
+  startIndex: number;
+  endIndex: number;
+}
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
@@ -94,6 +100,7 @@ export interface DataMapOperationState {
   // For each corner of the canvas
   nodesForScroll: Record<string, string>;
   handlePosition: Record<string, HandlePosition>;
+  schemaTreeData: Record<string, SchemaTreeDataProps>;
   edgePopOverId?: string;
   state?: ComponentState;
 }
@@ -113,6 +120,7 @@ const emptyPristineState: DataMapOperationState = {
   targetOpenKeys: {},
   edgeLoopMapping: {},
   handlePosition: {},
+  schemaTreeData: {},
   nodesForScroll: getIntermedateScrollNodeHandles(guid()),
 };
 
@@ -247,6 +255,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: dataMapConnections ?? {},
         handlePosition: {},
         loadedMapMetadata: metadata,
+        schemaTreeData: {},
       };
 
       state.curDataMapOperation = newState;
@@ -587,6 +596,22 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
+    updateFunctionConnectionInputs: (state, action: PayloadAction<{ functionKey: string; inputs: InputConnection[] }>) => {
+      const newState = { ...state.curDataMapOperation };
+      if (newState.dataMapConnections[action.payload.functionKey]?.inputs[0]) {
+        newState.dataMapConnections[action.payload.functionKey].inputs[0] = action.payload.inputs;
+      } else {
+        throw new Error('Function node not found in connections');
+      }
+
+      doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Update function connection inputs');
+    },
+    updateTreeData: (state, action: PayloadAction<{ key: string; data: SchemaTreeDataProps }>) => {
+      state.curDataMapOperation.schemaTreeData = {
+        ...state.curDataMapOperation.schemaTreeData,
+        [action.payload.key]: action.payload.data,
+      };
+    },
   },
 });
 
@@ -613,6 +638,8 @@ export const {
   setHoverState,
   updateCanvasDimensions,
   updateHandlePosition,
+  updateFunctionConnectionInputs,
+  updateTreeData,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

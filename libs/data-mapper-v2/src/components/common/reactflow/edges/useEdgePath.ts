@@ -6,7 +6,7 @@ import type { RootState } from '../../../../core/state/Store';
 import { useSelector } from 'react-redux';
 import { flattenSchemaNode } from '../../../../utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import type { HandlePosition } from '../../../../core/state/DataMapSlice';
+import type { HandlePosition, SchemaTreeDataProps } from '../../../../core/state/DataMapSlice';
 
 // Return [x, y] coordinates for the handle along with the scenario of the handle,
 // Scenario can be one of 'direct' (straight connection), or 'collpased' (parent is collapsed, at any level) or 'scroll' (handle scrolled out of view)
@@ -18,6 +18,7 @@ const getCoordinatesForHandle = (
   openKeys: Record<string, boolean>,
   createReactFlowKey: (key: string) => string,
   handlePositionFromStore: Record<string, HandlePosition>,
+  treeData?: SchemaTreeDataProps,
   node?: InternalNode<Node>,
   handleId?: string
 ): [number | undefined, number | undefined, string | undefined] => {
@@ -28,83 +29,66 @@ const getCoordinatesForHandle = (
 
   const reactflowHandles = node?.internals.handleBounds?.source ?? node?.internals.handleBounds?.target ?? [];
 
-  if (handleId && node?.internals.positionAbsolute) {
+  if (handleId && node?.internals.positionAbsolute && treeData && treeData.startIndex > -1 && treeData.endIndex > -1) {
     let x: number | undefined = undefined;
     let y: number | undefined = undefined;
     let scenario: 'direct' | 'collapsed' | 'scroll' | undefined;
-    let currentHandle: HandlePosition | undefined = undefined;
+    let currentHandle: HandlePosition | undefined = handlePositionFromStore[handleId];
 
-    // Check if parent is hidden at some level
-    const nodeFromSchema = schema.find((node) => node.key === getTreeNodeId(handleId));
-    if (nodeFromSchema?.pathToRoot) {
-      for (const path of nodeFromSchema.pathToRoot) {
-        if (path.key === nodeFromSchema.key) {
-          continue;
-        }
-        if (openKeys[path.key] !== undefined && openKeys[path.key] === false) {
-          currentHandle = handlePositionFromStore[createReactFlowKey(path.key)];
-          break;
-        }
-      }
-    }
-
-    // If handle is found => Parent is collapsed and we have the dimensions for the handle
-    // handle.hidden is used to check if the handle is scrolled out of view or not
-    if (currentHandle && !currentHandle.hidden) {
-      x = currentHandle.position.x;
-      y = currentHandle.position.y;
-      scenario = 'collapsed';
-    } else {
-      // Get the handle directly
-      currentHandle = handlePositionFromStore[handleId];
-
-      // Is handle not set or scrolled out of the view
-      if (!currentHandle || currentHandle.hidden) {
-        const indexForNodeInSchema = schema.findIndex((node) => node.key === getTreeNodeId(handleId));
-
-        // Node is found in the schema, this will always be true since we are getting the handle from the schema
-        if (indexForNodeInSchema >= 0) {
-          let top = indexForNodeInSchema - 1;
-          let bottom = indexForNodeInSchema + 1;
-          while (top >= 0 && bottom < schema.length) {
-            const topNode = schema[top];
-            const bottomNode = schema[bottom];
-            if (top >= 0) {
-              const topHandle = handlePositionFromStore[createReactFlowKey(topNode.key)];
-              if (topHandle && !topHandle.hidden) {
-                bottom = schema.length;
-                break;
-              }
-              top--;
-            }
-            if (bottom < schema.length) {
-              const bottomHandle = handlePositionFromStore[createReactFlowKey(bottomNode.key)];
-              if (bottomHandle && !bottomHandle.hidden) {
-                top = -1;
-                break;
-              }
-              bottom++;
-            }
-          }
-
-          const reactflowHandle = reactflowHandles.find((handle) => handle.id?.startsWith(top >= 0 ? 'bottom-' : 'top-'));
-
-          // Top or bottom handles are always there in the react flow
-          if (reactflowHandle) {
-            x = currentHandle.position.x;
-            y = currentHandle.position.y;
-            scenario = 'scroll';
-          } else {
-            throw new Error('Dummy Node not found in schema');
-          }
-        } else {
-          throw new Error('Node not found in schema');
-        }
-      } else {
+    if (treeData.visibleNodes.find((node) => node.key === getTreeNodeId(handleId))) {
+      if (currentHandle && !currentHandle.hidden) {
         // If the handle is present in the current view, return the x and y coordinates
         x = currentHandle.position.x;
         y = currentHandle.position.y;
         scenario = 'direct';
+      }
+    }
+
+    if (x === undefined && y === undefined) {
+      // Check if parent is hidden at some level
+      const nodeFromSchema = schema.find((node) => node.key === getTreeNodeId(handleId));
+      if (nodeFromSchema?.pathToRoot) {
+        for (const path of nodeFromSchema.pathToRoot) {
+          if (path.key === nodeFromSchema.key) {
+            continue;
+          }
+          if (
+            openKeys[path.key] !== undefined &&
+            openKeys[path.key] === false &&
+            treeData.visibleNodes.find((node) => node.key === path.key)
+          ) {
+            currentHandle = handlePositionFromStore[createReactFlowKey(path.key)];
+            // If handle is found => Parent is collapsed and we have the dimensions for the handle
+            // handle.hidden is used to check if the handle is scrolled out of view or not
+            if (currentHandle && !currentHandle.hidden) {
+              x = currentHandle.position.x;
+              y = currentHandle.position.y;
+              scenario = 'collapsed';
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (x === undefined && y === undefined) {
+      const indexForNodeInSchema = schema.findIndex((node) => node.key === getTreeNodeId(handleId));
+      if (indexForNodeInSchema >= 0) {
+        if (indexForNodeInSchema > treeData.endIndex) {
+          const reactflowHandle = reactflowHandles.find((handle) => handle.id?.startsWith('bottom-'));
+          if (reactflowHandle) {
+            x = reactflowHandle.x + node.internals.positionAbsolute.x;
+            y = reactflowHandle.y + node.internals.positionAbsolute.y;
+            scenario = 'scroll';
+          }
+        } else {
+          const reactflowHandle = reactflowHandles.find((handle) => handle.id?.startsWith('top-'));
+          if (reactflowHandle) {
+            x = reactflowHandle.x + node.internals.positionAbsolute.x;
+            y = reactflowHandle.y + node.internals.positionAbsolute.y;
+            scenario = 'scroll';
+          }
+        }
       }
     }
 
@@ -141,7 +125,7 @@ const useEdgePath = (props: EdgeProps) => {
   const sourceNode = useMemo(() => getInternalNode(NodeIds.source), [getInternalNode]);
   const targetNode = useMemo(() => getInternalNode(NodeIds.target), [getInternalNode]);
 
-  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition } = useSelector(
+  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition, schemaTreeData } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
 
@@ -163,6 +147,7 @@ const useEdgePath = (props: EdgeProps) => {
       sourceOpenKeys,
       addSourceReactFlowPrefix,
       handlePosition,
+      schemaTreeData[source],
       sourceNode,
       data?.sourceHandleId as string | undefined
     );
@@ -182,6 +167,7 @@ const useEdgePath = (props: EdgeProps) => {
     data?.sourceHandleId,
     flattenendSourceSchema,
     handlePosition,
+    schemaTreeData,
     source,
     sourceNode,
     sourceOpenKeys,
@@ -201,6 +187,7 @@ const useEdgePath = (props: EdgeProps) => {
       targetOpenKeys,
       addTargetReactFlowPrefix,
       handlePosition,
+      schemaTreeData[target],
       targetNode,
       data?.targetHandleId as string | undefined
     );
@@ -235,6 +222,7 @@ const useEdgePath = (props: EdgeProps) => {
     updatedTargetCoordinates.targetX,
     updatedTargetCoordinates.targetY,
     updatedTargetCoordinates.targetScenario,
+    schemaTreeData,
   ]);
 
   return { ...updatedSourceCoordinates, ...updatedTargetCoordinates };
