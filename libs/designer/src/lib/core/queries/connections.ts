@@ -4,6 +4,7 @@ import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getConnector, getSwagger } from './operation';
 
 const connectionKey = 'connections';
 export interface ConnectorWithParsedSwagger {
@@ -12,9 +13,7 @@ export interface ConnectorWithParsedSwagger {
 }
 
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
-  const { connector, swagger } = await getReactQueryClient().fetchQuery(['apiWithSwaggers', connectorId.toLowerCase()], async () =>
-    ConnectionService().getConnectorAndSwagger(connectorId)
-  );
+  const [connector, swagger] = await Promise.all([await getConnector(connectorId), await getSwagger(connectorId)]);
   const parsedSwagger = await SwaggerParser.parse(swagger);
   return { connector, parsedSwagger: new SwaggerParser(parsedSwagger) };
 };

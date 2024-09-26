@@ -20,18 +20,26 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { ConnectionsStoreState } from './connectionSlice';
 
-export const useConnectorOnly = (connectorId: string, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
-  return useQuery(['connector', { connectorId }], () => ConnectionService().getConnector(connectorId), {
-    enabled: !!connectorId && enabled,
-    cacheTime: 1000 * 60 * 60 * 24,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-};
+export const useConnector = (connectorId?: string, enabled = true): UseQueryResult<Connector | undefined, unknown> =>
+  useQuery(
+    ['connector', { connectorId: connectorId?.toLowerCase() }],
+    async () => {
+      if (!connectorId) {
+        return null;
+      }
+      return ConnectionService().getConnector(connectorId);
+    },
+    {
+      enabled: !!connectorId && enabled,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
-export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> => {
-  return useQuery(
+export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> =>
+  useQuery(
     ['connectors', connectorIds],
     async () => {
       if (!connectorIds) {
@@ -47,31 +55,15 @@ export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, 
       refetchOnReconnect: false,
     }
   );
-};
 
-export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
-  const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
-  return { data: data?.connector, ...rest };
-};
-
-export const useConnectorAndSwagger = (connectorId: string | undefined, enabled = true) => {
-  return useQuery(
-    ['apiWithSwaggers', connectorId?.toLowerCase()],
-    async () => {
-      if (!connectorId) {
-        return null;
-      }
-      return await ConnectionService().getConnectorAndSwagger(connectorId);
-    },
-    {
-      enabled: !!connectorId && enabled,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-};
+export const useSwagger = (connectorId?: string, enabled = true) =>
+  useQuery(['swagger', { connectorId }], async () => ConnectionService().getSwaggerFromConnector(connectorId ?? ''), {
+    enabled: !!connectorId && enabled,
+    cacheTime: 1000 * 60 * 60 * 24,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
 export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> =>
   useQuery(['gateways', { subscriptionId }, { connectorName }], async () => GatewayService().getGateways(subscriptionId, connectorName), {
