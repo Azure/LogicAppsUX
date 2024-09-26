@@ -85,13 +85,12 @@ interface ConnectorCardWrapperProps {
 }
 
 const ConnectorCardWrapper = ({ apiId, connectionRefs, disconnectedNodes }: ConnectorCardWrapperProps) => {
-  const connectorQuery = useConnector(apiId);
-  const connector = connectorQuery.data;
+  const { data: connector, isFetching } = useConnector(apiId);
 
   return (
     <div>
       <ConnectorConnectionsCard
-        isLoading={connectorQuery.isLoading}
+        isLoading={isFetching}
         connectorId={apiId}
         connector={connector}
         connectionRefs={connectionRefs}

@@ -12,7 +12,7 @@ import {
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
   useConnectorByNodeId,
-  useConnectorOnly,
+  useConnector,
   useGatewayServiceConfig,
   useGateways,
   useSubscriptions,
@@ -148,7 +148,7 @@ export const CreateConnectionInternal = (props: {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const { data: connector } = useConnectorOnly(connectorId);
+  const { data: connector } = useConnector(connectorId);
   const iconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);

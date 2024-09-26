@@ -4,7 +4,7 @@ import type { Connection } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
 import type { CreatedConnectionPayload } from '../connectionsPanel/createConnection/createConnectionWrapper';
 import { CreateConnectionInternal } from '../connectionsPanel/createConnection/createConnectionWrapper';
-import { useConnectorOnly } from '../../../core/state/connection/connectionSelector';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
@@ -19,7 +19,7 @@ export const CreateConnectionInTemplate = (props: {
   const intl = useIntl();
   const { connectorId, connectionKey, onConnectionCreated, onConnectionCancelled } = props;
   const dispatch = useDispatch<AppDispatch>();
-  const { data: connector } = useConnectorOnly(connectorId);
+  const { data: connector } = useConnector(connectorId);
 
   const { references, connections } = useSelector((state: RootState) => ({
     references: Object.keys(state.workflow.connections.references),
