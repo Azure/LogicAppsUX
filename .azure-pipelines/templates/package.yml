@@ -1,0 +1,9 @@
+steps:
+  - task: Npm@1
+    displayName: "Package"
+    inputs:
+      command: custom
+      customCommand: run vscode:designer:pack
+      workingDir: $(working_directory)
+    condition: succeeded()
+    

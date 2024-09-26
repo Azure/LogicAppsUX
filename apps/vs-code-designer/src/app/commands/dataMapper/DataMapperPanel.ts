@@ -30,6 +30,7 @@ import {
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
+import * as vscode from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -46,6 +47,9 @@ export default class DataMapperPanel {
     this.dataMapStateIsDirty = false;
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
+
+    vscode.commands.executeCommand('workbench.action.toggleSidebarVisibility');
+    vscode.commands.executeCommand('workbench.action.togglePanel');
 
     ext.context.subscriptions.push(panel);
 
