@@ -31,6 +31,7 @@ import type { Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
+import { isEqual } from 'lodash';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -394,7 +395,9 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Make connection');
     },
     updateDataMapLML: (state, action: PayloadAction<string>) => {
-      state.curDataMapOperation.dataMapLML = action.payload;
+      if (state.curDataMapOperation.dataMapLML !== action.payload) {
+        state.curDataMapOperation.dataMapLML = action.payload;
+      }
     },
     addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
       const newState: DataMapState = {
@@ -449,11 +452,13 @@ export const dataMapSlice = createSlice({
       if (!node) {
         return;
       }
-      newOp.functionNodes[action.payload.id] = {
-        ...node,
-        position: action.payload.position,
-      };
-      state.curDataMapOperation = newOp;
+      if (node.position?.x !== action.payload.position.x || node.position?.y !== action.payload.position.y) {
+        newOp.functionNodes[action.payload.id] = {
+          ...node,
+          position: action.payload.position,
+        };
+        state.curDataMapOperation = newOp;
+      }
     },
     deleteFunction: (state, action: PayloadAction<string>) => {
       const reactFlowKey = action.payload;
@@ -485,14 +490,24 @@ export const dataMapSlice = createSlice({
     },
     setSelectedItem: (state, action: PayloadAction<string | undefined>) => {
       const key = action.payload;
-      state.curDataMapOperation.selectedItemKey = key;
-      state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
+      if (key !== state.curDataMapOperation.selectedItemKey) {
+        state.curDataMapOperation.selectedItemKey = key;
+        state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
+      }
     },
     updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
-      state.curDataMapOperation.handlePosition = {
-        ...state.curDataMapOperation.handlePosition,
-        [action.payload.key]: action.payload,
-      };
+      const currentHandlePosition = state.curDataMapOperation.handlePosition[action.payload.key];
+      if (
+        currentHandlePosition?.hidden !== action.payload.hidden ||
+        currentHandlePosition?.key !== action.payload.key ||
+        currentHandlePosition?.position.x !== action.payload.position.x ||
+        currentHandlePosition?.position.y !== action.payload.position.y
+      ) {
+        state.curDataMapOperation.handlePosition = {
+          ...state.curDataMapOperation.handlePosition,
+          [action.payload.key]: action.payload,
+        };
+      }
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
@@ -524,7 +539,9 @@ export const dataMapSlice = createSlice({
       };
     },
     updateEdgePopOverId: (state, action: PayloadAction<string | undefined>) => {
-      state.curDataMapOperation.edgePopOverId = action.payload;
+      if (state.curDataMapOperation.edgePopOverId !== action.payload) {
+        state.curDataMapOperation.edgePopOverId = action.payload;
+      }
     },
     deleteEdge: (state, action: PayloadAction<string>) => {
       const edgeId = action.payload;
@@ -607,10 +624,17 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Update function connection inputs');
     },
     updateTreeData: (state, action: PayloadAction<{ key: string; data: SchemaTreeDataProps }>) => {
-      state.curDataMapOperation.schemaTreeData = {
-        ...state.curDataMapOperation.schemaTreeData,
-        [action.payload.key]: action.payload.data,
-      };
+      const currentTreeData = state.curDataMapOperation.schemaTreeData[action.payload.key];
+      if (
+        currentTreeData?.endIndex !== action.payload.data.endIndex ||
+        currentTreeData?.startIndex !== action.payload.data.startIndex ||
+        !isEqual(currentTreeData?.visibleNodes ?? [], action.payload.data.visibleNodes ?? [])
+      ) {
+        state.curDataMapOperation.schemaTreeData = {
+          ...state.curDataMapOperation.schemaTreeData,
+          [action.payload.key]: action.payload.data,
+        };
+      }
     },
   },
 });
