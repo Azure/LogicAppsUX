@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [4.99.0](https://github.com/Azure/LogicAppsUX/compare/v4.98.0...v4.99.0) (2024-09-26)
+
+
+### Features
+
+* **Data Mapper:** Use virtual tree api for visible nodes and indexes ([#5759](https://github.com/Azure/LogicAppsUX/issues/5759)) ([5ed71a5](https://github.com/Azure/LogicAppsUX/commit/5ed71a53d2fd98d844ab959401a61070e8c1773c))
+* **Templates:** Templates Tab for Single/Multi Workflows ([#5741](https://github.com/Azure/LogicAppsUX/issues/5741)) ([a7efe6f](https://github.com/Azure/LogicAppsUX/commit/a7efe6f81fcd40a4b9a05e033fa578b547e580e5))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Show loop onHover or onSelect ([#5757](https://github.com/Azure/LogicAppsUX/issues/5757)) ([6ae59f3](https://github.com/Azure/LogicAppsUX/commit/6ae59f370eb95e85c220108b712e91ea70725874))
+* **designer:** Create Connection Error message overflow ([#5752](https://github.com/Azure/LogicAppsUX/issues/5752)) ([3648aa9](https://github.com/Azure/LogicAppsUX/commit/3648aa9f8675e6f8b4b6d71c88457c1ec16ad920))
+* **designer:** Opening action before dependent dynamic data fetch finishes causes the key to never be fetched ([#5755](https://github.com/Azure/LogicAppsUX/issues/5755)) ([42fb4da](https://github.com/Azure/LogicAppsUX/commit/42fb4dac99d1ba3b966628a21d36ee6f023c1700))
+
 ## [4.98.0](https://github.com/Azure/LogicAppsUX/compare/v4.97.0...v4.98.0) (2024-09-25)
 
 
