@@ -17,6 +17,7 @@ import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
+import { Open16Regular } from '@fluentui/react-icons';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,9 +35,8 @@ export const NameStatePanel = () => {
   const intlText = useMemo(
     () => ({
       WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
-        defaultMessage:
-          'Provide a unique, descriptive name. Use underscores (_) or dashes (-) instead of spaces to keep names clean and searchable. To prevent any issues, avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
-        id: 'xtDCgy',
+        defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'ZbeL1D',
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
@@ -45,8 +45,9 @@ export const NameStatePanel = () => {
         description: 'Label for choosing State type',
       }),
       STATE_TYPE_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'The workflow state determines how data is managed and retained during execution of workflows.',
-        id: 'ixEnhz',
+        defaultMessage:
+          'This workflow supports the following states. The state determines how data is managed and retained during execution of workflows.',
+        id: 'NaW0ga',
         description: 'Description for state type choice group.',
       }),
       LEARN_MORE: intl.formatMessage({
@@ -147,12 +148,13 @@ export const NameStatePanel = () => {
         <Text className="msla-templates-tab-label-description">
           {intlText.STATE_TYPE_DESCRIPTION}{' '}
           <a
+            className="msla-templates-tab-label-link"
             href={'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless'}
             target="_blank"
             rel="noreferrer"
-            style={{ display: 'inline' }}
           >
             {intlText.LEARN_MORE}
+            <Open16Regular className="msla-templates-tab-description-icon" />
           </a>
         </Text>
         <ChoiceGroup

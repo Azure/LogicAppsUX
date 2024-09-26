@@ -4,7 +4,7 @@ import { Text } from '@fluentui/react-components';
 import { Icon } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useState } from 'react';
-import { TemplatesPanelContent } from '@microsoft/designer-ui';
+import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useDefaultWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
@@ -47,8 +47,7 @@ export const QuickViewPanelHeader = ({
   details,
 }: { title: string; description: string; details: Record<string, string> }) => {
   return (
-    <div className="msla-template-quickview-header">
-      <Text className="msla-template-panel-header">{title}</Text>
+    <TemplatesPanelHeader title={title}>
       <div className="msla-template-quickview-tags">
         {Object.keys(details).map((key: string, index: number, array: any[]) => {
           return (
@@ -64,6 +63,6 @@ export const QuickViewPanelHeader = ({
         })}
       </div>
       <Markdown linkTarget="_blank">{description}</Markdown>
-    </div>
+    </TemplatesPanelHeader>
   );
 };
