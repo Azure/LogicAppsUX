@@ -1,5 +1,5 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
+import { css, Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
 import React, { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
@@ -27,6 +27,7 @@ export interface PagerProps {
   min: number;
   pagerTitleText?: string;
   readonlyPagerInput?: boolean;
+  showPageNumbers?: boolean;
   onChange?: PageChangeEventHandler;
 }
 
@@ -69,6 +70,7 @@ export const Pager: React.FC<PagerProps> = ({
   maxLength,
   min,
   readonlyPagerInput,
+  showPageNumbers = false,
   onChange,
 }) => {
   const [current, setCurrent] = React.useState(initialCurrent);
@@ -114,6 +116,13 @@ export const Pager: React.FC<PagerProps> = ({
   const handleClick = useCallback((e: React.MouseEvent<HTMLElement>): void => {
     e.stopPropagation();
   }, []);
+
+  const handlePageNumberClick = useCallback(
+    (pageNumber: number): void => {
+      changeValue(String(pageNumber + 1));
+    },
+    [changeValue]
+  );
 
   const handleNextClick = useCallback((): void => {
     changeValue(String(current + 1));
@@ -186,6 +195,8 @@ export const Pager: React.FC<PagerProps> = ({
     description: 'Button indicating to go to the next page',
   });
 
+  const pageNumbers = [current - 2, current - 1, current, current + 1, current + 2];
+
   return (
     <div className="msla-pager-v2" onClick={handleClick}>
       <PagerButton disabled={current <= min} iconProps={previousIconProps} text={pagerPreviousString} onClick={handlePreviousClick} />
@@ -198,22 +209,44 @@ export const Pager: React.FC<PagerProps> = ({
           onClick={handlePreviousFailedClick}
         />
       )}
-      <div className="msla-pager-v2--inner">
-        {readonlyPagerInput ? null : (
-          <TextField
-            ariaLabel={pagerOfStringAria}
-            borderless={readonlyPagerInput}
-            max={max}
-            min={min}
-            maxLength={maxLength}
-            readOnly={readonlyPagerInput}
-            styles={textFieldStyles}
-            value={String(current)}
-            onChange={handleChange as any}
-          />
-        )}
-        {readonlyPagerInput ? <Text>{pagerOfStringAria}</Text> : <Text>&nbsp;{pagerOfString}</Text>}
-      </div>
+      {showPageNumbers ? (
+        <div className="msla-pager-v2--inner">
+          {pageNumbers.map((pageNum) => (
+            <Text
+              className={css('msla-pager-pageNum', pageNum === current ? '' : 'toSelect')}
+              key={pageNum}
+              onClick={() => {
+                handlePageNumberClick(pageNum);
+              }}
+            >
+              {pageNum}
+            </Text>
+          ))}
+        </div>
+      ) : (
+        <div className="msla-pager-v2--inner">
+          {readonlyPagerInput ? null : (
+            <TextField
+              ariaLabel={pagerOfStringAria}
+              borderless={readonlyPagerInput}
+              max={max}
+              min={min}
+              maxLength={maxLength}
+              readOnly={readonlyPagerInput}
+              styles={textFieldStyles}
+              value={String(current)}
+              onChange={handleChange as any}
+            />
+          )}
+          {showPageNumbers ? (
+            <Text>{current}</Text>
+          ) : readonlyPagerInput ? (
+            <Text>{pagerOfStringAria}</Text>
+          ) : (
+            <Text>&nbsp;{pagerOfString}</Text>
+          )}
+        </div>
+      )}
       {failedIterationProps && (
         <PagerButton
           disabled={failedMax < 1 || current >= failedMax}

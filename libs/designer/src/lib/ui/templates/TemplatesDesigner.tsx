@@ -4,7 +4,7 @@ import { TemplateCard } from './cards/templateCard';
 import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionMapping } from '../../core/state/templates/workflowSlice';
-import { EmptySearch } from '@microsoft/designer-ui';
+import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { TemplateFilters, type TemplateDetailFilterType } from './filters/templateFilters';
@@ -79,6 +79,7 @@ export const TemplatesDesigner = ({
 
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div className="msla-templates-list">
+          <Pager current={1} max={10} maxLength={2} min={1} readonlyPagerInput={true} showPageNumbers={true} />
           {filteredTemplateNames.map((templateName: string) => (
             <TemplateCard key={templateName} templateName={templateName} />
           ))}
