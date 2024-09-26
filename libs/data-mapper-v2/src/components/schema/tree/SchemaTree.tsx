@@ -7,7 +7,7 @@ import type { AppDispatch, RootState } from '../../../core/state/Store';
 import useSchema from '../useSchema';
 import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
 import SchemaTreeNode from './SchemaTreeNode';
-import { toggleNodeExpandCollapse } from '../../../core/state/DataMapSlice';
+import { toggleNodeExpandCollapse, updateTreeData } from '../../../core/state/DataMapSlice';
 import { mergeClasses } from '@fluentui/react-components';
 import { useDragDropManager } from 'react-dnd';
 
@@ -37,7 +37,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const { height: currentHeight } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
-  const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { nodesForScroll, schemaTreeData } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const updateNodeInternals = useUpdateNodeInternals();
 
   const onScroll = useCallback(() => {
@@ -56,6 +56,46 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     },
     [openKeys, dispatch, isSourceSchema]
   );
+
+  useEffect(() => {
+    const visibleNodes = treeRef?.current?.visibleNodes.map((node) => node.data) ?? [];
+    const startIndex = treeRef?.current?.visibleStartIndex ?? -1;
+    const endIndex = treeRef?.current?.visibleStopIndex ?? -1;
+
+    const visibleNodeSet = new Set<string>();
+    visibleNodes.forEach((node) => {
+      visibleNodeSet.add(node.key);
+    });
+
+    let visibleNodesUpdated = false;
+
+    for (const node of schemaTreeData[id]?.visibleNodes ?? []) {
+      if (!visibleNodeSet.has(node.key)) {
+        visibleNodesUpdated = true;
+        break;
+      }
+    }
+
+    if (visibleNodesUpdated || schemaTreeData[id]?.startIndex !== startIndex || schemaTreeData[id]?.endIndex !== endIndex) {
+      dispatch(
+        updateTreeData({
+          key: id,
+          data: {
+            visibleNodes,
+            startIndex,
+            endIndex,
+          },
+        })
+      );
+    }
+  }, [
+    dispatch,
+    id,
+    schemaTreeData,
+    treeRef?.current?.visibleNodes,
+    treeRef?.current?.visibleStartIndex,
+    treeRef?.current?.visibleStopIndex,
+  ]);
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
