@@ -62,21 +62,26 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     const startIndex = treeRef?.current?.visibleStartIndex ?? -1;
     const endIndex = treeRef?.current?.visibleStopIndex ?? -1;
 
-    const visibleNodeSet = new Set<string>();
-    visibleNodes.forEach((node) => {
-      visibleNodeSet.add(node.key);
-    });
+    const isVisibleNodesUpdated = (newNodes: SchemaNodeExtended[], currentNodes: SchemaNodeExtended[]) => {
+      const nodeSet = new Set<string>();
+      newNodes.forEach((node) => {
+        nodeSet.add(node.key);
+      });
 
-    let visibleNodesUpdated = false;
-
-    for (const node of schemaTreeData[id]?.visibleNodes ?? []) {
-      if (!visibleNodeSet.has(node.key)) {
-        visibleNodesUpdated = true;
-        break;
+      for (const node of currentNodes) {
+        if (!nodeSet.has(node.key)) {
+          return true;
+        }
       }
-    }
+      return false;
+    };
 
-    if (visibleNodesUpdated || schemaTreeData[id]?.startIndex !== startIndex || schemaTreeData[id]?.endIndex !== endIndex) {
+    if (
+      isVisibleNodesUpdated(visibleNodes, schemaTreeData[id]?.visibleNodes ?? []) ||
+      isVisibleNodesUpdated(schemaTreeData[id]?.visibleNodes ?? [], visibleNodes) ||
+      schemaTreeData[id]?.startIndex !== startIndex ||
+      schemaTreeData[id]?.endIndex !== endIndex
+    ) {
       dispatch(
         updateTreeData({
           key: id,
