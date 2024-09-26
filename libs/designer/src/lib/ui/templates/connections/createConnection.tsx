@@ -2,8 +2,8 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
-import type { CreatedConnectionPayload } from '../connectionsPanel/createConnection/createConnectionWrapper';
-import { CreateConnectionInternal } from '../connectionsPanel/createConnection/createConnectionWrapper';
+import type { CreatedConnectionPayload } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
+import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
 import { useConnectorOnly } from '../../../core/state/connection/connectionSelector';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getAssistedConnectionProps } from '../../../core/utils/connectors/connections';
@@ -23,7 +23,7 @@ export const CreateConnectionInTemplate = (props: {
 
   const { references, connections } = useSelector((state: RootState) => ({
     references: Object.keys(state.workflow.connections.references),
-    connections: state.template.manifest?.connections,
+    connections: state.template.connections,
   }));
   const isInAppConnector = equals(connections?.[connectionKey]?.kind, 'inapp');
 

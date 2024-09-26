@@ -11,6 +11,7 @@ import { clearTemplateDetails } from '../../../core/state/templates/templateSlic
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
+import { useDefaultWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +21,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
   }));
-  const manifest = useSelector((state: RootState) => state.template?.manifest);
+  const { manifest } = useDefaultWorkflowTemplate() ?? {};
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
   const dismissPanel = useCallback(() => {
