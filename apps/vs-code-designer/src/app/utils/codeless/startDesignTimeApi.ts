@@ -96,6 +96,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
+        // Base implementation on this
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
         await addOrUpdateLocalAppSettings(
           actionContext,

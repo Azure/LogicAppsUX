@@ -34,7 +34,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     '__azurite_db*__.json',
     '.git*',
     '.vscode',
-    'local.settings.json',
+    localSettingsFileName,
     'test',
     '.debug',
   ];
