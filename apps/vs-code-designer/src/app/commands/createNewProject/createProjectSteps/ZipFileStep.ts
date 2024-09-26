@@ -34,6 +34,7 @@ export class ZipFileStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public async prompt(context: IFunctionWizardContext): Promise<void> {
     this.wizardContext = context;
     await ZipFileStep.setZipFilePath();
+    context.zipFilePath = ZipFileStep.zipFilePath;
     await this.getZipFiles();
   }
 

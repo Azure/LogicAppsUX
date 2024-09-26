@@ -13,8 +13,12 @@ import { getParametersJson } from '../../utils/codeless/parameter';
 import { parameterizeConnection } from '../../utils/codeless/parameterizer';
 import * as path from 'path';
 import * as fs from 'fs';
+import { isCSharpProject } from '../initProjectForVSCode/detectProjectLanguage';
+import { parametersFileName } from '../../../constants';
+import { addNewFileInCSharpProject } from '../../utils/codeless/updateBuildFile';
+import { writeFormattedJson } from '../../utils/fs';
 
-export async function extractConnectionDetails(connections: ConnectionsData): Promise<any> {
+export async function extractConnectionDetails(connections: any): Promise<any> {
   const SUBSCRIPTION_INDEX = 2;
   const MANAGED_API_LOCATION_INDEX = 6;
   const MANAGED_CONNECTION_RESOURCE_GROUP_INDEX = 4;
@@ -46,34 +50,68 @@ export async function extractConnectionDetails(connections: ConnectionsData): Pr
   }
 }
 
-export async function getConnectionsJsonContent(context: IFunctionWizardContext): Promise<ConnectionsData> {
-  try {
-    const connectionsJsonPath = path.join(context.workspacePath, 'connections.json');
+export async function extractConnectionSettings(context: IFunctionWizardContext): Promise<Record<string, any>> {
+  const projectPath = context.projectPath;
+  const localSettingsPath = path.join(projectPath, 'local.settings.json');
 
-    if (fs.existsSync(connectionsJsonPath)) {
-      const connectionsJsonContent = fs.readFileSync(connectionsJsonPath, 'utf8');
-      const connection = JSON.parse(connectionsJsonContent);
+  if (projectPath) {
+    try {
+      const connectionsJson = await getConnectionsJson(projectPath);
+      const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
+      if (isEmptyString(connectionsJson)) {
+        return;
+      }
+      const connectionsData = JSON.parse(connectionsJson);
 
-      return connection;
+      const connectionsValues = await extractConnectionDetails(connectionsData);
+      const connectionDetail = connectionsValues[0];
+      const newValues = {
+        ...connectionDetail,
+        ...localSettings.Values,
+      };
+      const settings = {
+        ...localSettings,
+        Values: newValues,
+      };
+
+      return settings;
+    } catch (error) {
+      context.telemetry.properties.error = error.message;
+      console.error('Error writing file:', error);
     }
-    return null;
-  } catch (error) {
-    console.error('Failed to process connections.json', error);
   }
-  return null;
 }
 
-export async function changeAuthTypeToRaw(
-  context: IFunctionWizardContext,
-  connections: any,
-  parameters: ParametersData | undefined,
-  parameterizeConnectionsSetting: any
-): Promise<any> {
-  if (connections.managedApiConnections && Object.keys(connections.managedApiConnections).length) {
+export async function getParametersArtifactData(projectRoot: string): Promise<string> {
+  const connectionFilePath: string = path.join(projectRoot, parametersFileName);
+  if (await fs.existsSync(connectionFilePath)) {
+    const data: string = (await fs.readFileSync(connectionFilePath, 'utf-8')).toString();
+    if (/[^\s]/.test(data)) {
+      return data;
+    }
+  }
+
+  return '';
+}
+
+export async function changeAuthTypeToRaw(context: IFunctionWizardContext, parameterizeConnectionsSetting: any): Promise<any> {
+  const projectPath = context.projectPath;
+  const connectionsPath = path.join(projectPath, 'connections.json');
+  const parametersPath = path.join(projectPath, 'parameters.json');
+  let connectionsData: ConnectionsData = {};
+  let parametersJson: ParametersData = {};
+
+  if (projectPath) {
     try {
+      const connectionsJson = await getConnectionsJson(projectPath);
+      if (isEmptyString(connectionsJson)) {
+        return;
+      }
+      connectionsData = JSON.parse(connectionsJson);
+      parametersJson = await getParametersJson(projectPath);
       if (parameterizeConnectionsSetting) {
-        for (const referenceKey of Object.keys(connections.managedApiConnections)) {
-          parameters[`${referenceKey}-Authentication`].value = {
+        for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+          parametersJson[`${referenceKey}-Authentication`].value = {
             type: 'Raw',
             scheme: 'Key',
             parameter: `@appsetting('${referenceKey}-connectionKey')`,
@@ -81,11 +119,11 @@ export async function changeAuthTypeToRaw(
           context.telemetry.properties.convertParamToRaw = `Converted ${referenceKey}-Authentication parameter to Raw`;
         }
       } else {
-        for (const referenceKey of Object.keys(connections.managedApiConnections)) {
-          const authentication: string | any = connections.managedApiConnections[referenceKey].authentication;
+        for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
+          const authentication: string | any = connectionsData.managedApiConnections[referenceKey].authentication;
           if (typeof authentication === 'string') {
             if (authentication.includes('@parameters(') || authentication.includes('@{parameters(')) {
-              parameters[`${referenceKey}-Authentication`].value = {
+              parametersJson[`${referenceKey}-Authentication`].value = {
                 type: 'Raw',
                 scheme: 'Key',
                 parameter: `@appsetting('${referenceKey}-connectionKey')`,
@@ -93,7 +131,7 @@ export async function changeAuthTypeToRaw(
               context.telemetry.properties.convertParamToRaw = `Converted ${referenceKey}-Authentication parameter to Raw`;
             }
           } else {
-            connections.managedApiConnections[referenceKey].authentication = {
+            connectionsData.managedApiConnections[referenceKey].authentication = {
               type: 'Raw',
               scheme: 'Key',
               parameter: `@appsetting('${referenceKey}-connectionKey')`,
@@ -106,7 +144,10 @@ export async function changeAuthTypeToRaw(
       context.telemetry.properties.error = error.message;
       console.error(error);
     }
-    return [connections, parameters];
+    await writeFormattedJson(connectionsPath, connectionsData);
+    if (Object.keys(parametersJson).length) {
+      await writeFormattedJson(parametersPath, parametersJson);
+    }
   }
 }
 
@@ -125,7 +166,7 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
       const parametersData = getParametersJson(projectPath);
       const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
 
-      if (connectionsData.managedApiConnections && !(Object.keys(connectionsData.managedApiConnections).length === 0)) {
+      if (connectionsData.managedApiConnections && Object.keys(connectionsData.managedApiConnections).length) {
         const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
           context,
           projectPath,
@@ -150,9 +191,13 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
   }
 }
 
-export async function parameterizeConnections(context: IFunctionWizardContext, localSettingsJson: Record<string, any>): Promise<void> {
+export async function parameterizeConnectionsDuringImport(
+  context: IFunctionWizardContext,
+  localSettingsValues: Record<string, string>
+): Promise<void> {
   const projectPath = context.projectPath;
-  const parametersPath = path.join(context.workspacePath, 'parameters.json');
+  const parametersFilePath = path.join(projectPath, parametersFileName);
+  const parametersFileExists = fs.existsSync(parametersFilePath);
 
   if (projectPath) {
     try {
@@ -160,7 +205,7 @@ export async function parameterizeConnections(context: IFunctionWizardContext, l
       if (isEmptyString(connectionsJson)) {
         return;
       }
-      const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+      const connectionsData = JSON.parse(connectionsJson);
       const parametersJson = await getParametersJson(projectPath);
 
       Object.keys(connectionsData).forEach((connectionType) => {
@@ -171,14 +216,22 @@ export async function parameterizeConnections(context: IFunctionWizardContext, l
               connectionTypeJson[connectionKey],
               connectionKey,
               parametersJson,
-              localSettingsJson.Values
+              localSettingsValues
             );
           });
         }
       });
 
-      fs.writeFileSync(parametersPath, JSON.stringify(parametersJson, null, 2), 'utf-8');
-      await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
+      if (parametersJson && Object.keys(parametersJson).length) {
+        await writeFormattedJson(parametersFilePath, parametersJson);
+        if (!parametersFileExists && (await isCSharpProject(context, projectPath))) {
+          await addNewFileInCSharpProject(context, parametersFileName, projectPath);
+        }
+      } else if (parametersFileExists) {
+        await writeFormattedJson(parametersFilePath, parametersJson);
+      }
+
+      await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsValues });
     } catch (error) {
       const errorMessage = localize(
         'errorParameterizeConnections',
@@ -189,5 +242,34 @@ export async function parameterizeConnections(context: IFunctionWizardContext, l
       context.telemetry.properties.error = errorMessage;
       throw new Error(errorMessage);
     }
+  }
+}
+
+export async function cleanLocalSettings(context: IFunctionWizardContext): Promise<void> {
+  const localSettingsPath = path.join(context.projectPath, 'local.settings.json');
+  const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
+
+  if (localSettings.Values) {
+    const localSettingKeys = Object.keys(localSettings.Values);
+    if (localSettingKeys.includes('WEBSITE_SITE_NAME')) {
+      delete localSettings.Values['WEBSITE_SITE_NAME'];
+    }
+    if (localSettingKeys.includes('WEBSITE_AUTH_ENABLED')) {
+      delete localSettings.Values['WEBSITE_AUTH_ENABLED'];
+    }
+    if (localSettingKeys.includes('WEBSITE_SLOT_NAME')) {
+      delete localSettings.Values['WEBSITE_SLOT_NAME'];
+    }
+    if (localSettingKeys.includes('ScmType')) {
+      delete localSettings.Values['ScmType'];
+    }
+    if (localSettingKeys.includes('FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED')) {
+      delete localSettings.Values['FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'];
+    }
+    if (localSettingKeys.includes('AzureWebJobsStorage')) {
+      localSettings.Values['AzureWebJobsStorage'] = 'UseDevelopmentStorage=true';
+    }
+
+    await writeFormattedJson(localSettingsPath, localSettings);
   }
 }
