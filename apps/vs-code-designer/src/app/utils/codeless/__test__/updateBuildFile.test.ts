@@ -8,7 +8,7 @@ import {
   suppressJavaScriptBuildWarnings,
   updateFunctionsSDKVersion,
 } from '../updateBuildFile';
-import { DotnetVersion } from '../../../../constants';
+import { DotnetVersion, localSettingsFileName } from '../../../../constants';
 import path from 'path';
 
 describe('utils/codeless/updateBuildFile', () => {
@@ -209,7 +209,7 @@ describe('utils/codeless/updateBuildFile', () => {
             None: [
               {
                 $: {
-                  Update: 'local.settings.json',
+                  Update: localSettingsFileName,
                 },
                 CopyToOutputDirectory: 'PreserveNewest',
                 CopyToPublishDirectory: 'PreserveNewest',
