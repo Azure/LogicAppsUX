@@ -98,6 +98,10 @@ export const TemplatesDesigner = ({
             min={1}
             readonlyPagerInput={true}
             showPageNumbers={true}
+            countInfo={{
+              countPerPage: templatesCountPerPage,
+              totalCount: filteredTemplateNames.length,
+            }}
             onChange={(page) => dispatch(setPageNum(page.value - 1))}
           />
         </div>
