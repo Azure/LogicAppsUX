@@ -27,7 +27,8 @@ describe('lib/pager', () => {
   it('should render', () => {
     renderer.render(<Pager {...minimal} />);
 
-    const pager = renderer.getRenderOutput();
+    const pagerWrapper = renderer.getRenderOutput();
+    const pager = pagerWrapper.props.children[0];
     expect(pager.props.className).toBe(classNames.Pager);
 
     const [previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
@@ -52,7 +53,8 @@ describe('lib/pager', () => {
   it('should render with read-only pager input', () => {
     renderer.render(<Pager {...minimal} readonlyPagerInput={true} />);
 
-    const pager = renderer.getRenderOutput();
+    const pagerWrapper = renderer.getRenderOutput();
+    const pager = pagerWrapper.props.children[0];
     const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
     const [textField] = React.Children.toArray(inner.props.children) as React.ReactElement[];
     const [str] = React.Children.toArray(textField.props.children) as React.ReactElement[];
@@ -71,7 +73,8 @@ describe('lib/pager', () => {
 
     renderer.render(<Pager {...minimal} failedIterationProps={failedIterationProps} />);
 
-    const pager = renderer.getRenderOutput();
+    const pagerWrapper = renderer.getRenderOutput();
+    const pager = pagerWrapper.props.children[0];
     const [, previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
     expect(previous.props.disabled).toBeTruthy();
     expect(previous.props.failed).toBeTruthy();
