@@ -47,23 +47,8 @@ describe('parseOutputs', () => {
       statusCode: 200,
       headers: {
         'Cache-Control': 'no-store, no-cache',
-        Pragma: 'no-cache',
-        'Transfer-Encoding': 'chunked',
-        Vary: 'Accept-Encoding',
-        'Set-Cookie':
-          'ARRAffinity=9a6f156b4f1c7e60286e4506de82d3f03dfb44924275c5a68e69a492197f767e;Path=/;HttpOnly;Secure;Domain=azureblob-wus.azconn-wus-001.p.azurewebsites.net,ARRAffinitySameSite=9a6f156b4f1c7e60286e4506de82d3f03dfb44924275c5a68e69a492197f767e;Path=/;HttpOnly;SameSite=None;Secure;Domain=azureblob-wus.azconn-wus-001.p.azurewebsites.net',
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-        'x-ms-request-id': '349a8740-3cca-41c4-9533-0cfacc4df7c4',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'DENY',
-        'x-ms-connection-parameter-set-name': 'keyBasedAuth',
-        'Timing-Allow-Origin': '*',
-        'x-ms-apihub-cached-response': 'false',
-        'x-ms-apihub-obo': 'false',
-        Date: 'Wed, 18 Sep 2024 20:20:03 GMT',
         'Content-Type': 'application/json; charset=utf-8',
         'Content-Length': '290',
-        Expires: '-1',
       },
     };
     const result = parseInputs(outputs);
