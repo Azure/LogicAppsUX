@@ -104,7 +104,11 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onSelectTemplate} aria-label={title}>
       <div className="msla-template-card-authored-wrapper">
         <div className="msla-template-card-authored">
-          {isMicrosoftAuthored ? <Image src={MicrosoftIcon} alt="Microsoft" width={16} /> : <PeopleCommunity16Regular />}
+          {isMicrosoftAuthored ? (
+            <Image src={MicrosoftIcon} aria-label={intlText.MICROSOFT_AUTHORED} width={16} />
+          ) : (
+            <PeopleCommunity16Regular aria-label={intlText.COMMUNITY_AUTHORED} />
+          )}
           <Text size={200} weight="semibold" align="start" className="msla-template-card-authored-label">
             {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : intlText.COMMUNITY_AUTHORED}
           </Text>
