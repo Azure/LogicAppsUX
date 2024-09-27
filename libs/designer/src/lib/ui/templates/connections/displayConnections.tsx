@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectorIconWithName } from './connector';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useFunctionalState } from '@react-hookz/web';
-import { CreateConnectionInTemplate } from '../../panel/templatePanel/createConnection';
+import { CreateConnectionInTemplate } from './createConnection';
 import React, { useEffect, useState } from 'react';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getConnector } from '../../../core/queries/operation';

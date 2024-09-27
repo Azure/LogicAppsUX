@@ -11,10 +11,10 @@ import {
   setResourceDetails,
   initializeConnectionReferences,
 } from '../state/templates/workflowSlice';
-import { initializeTemplateServices } from '../state/templates/templateSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
+import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;

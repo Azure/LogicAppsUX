@@ -9,10 +9,13 @@ import { closePanel, selectPanelTab } from '../../../../../core/state/templates/
 import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { workflowName, kind, manifest, parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, manifest } = useDefaultWorkflowTemplate() as WorkflowTemplateData;
   const {
     existingWorkflowName,
     connections: { mapping },

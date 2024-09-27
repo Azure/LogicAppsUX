@@ -10,17 +10,23 @@ describe('template store reducers', () => {
   beforeAll(() => {
     store = setupStore({
       template: {
-        workflowName: '',
-        kind: undefined,
+        workflows: {
+          default: {
+            workflowName: '',
+            kind: undefined,
+            manifest: undefined,
+            workflowDefinition: undefined,
+            errors: {
+              workflow: undefined,
+              kind: undefined,
+            },
+          },
+        },
         templateName: '',
-        manifest: undefined,
-        workflowDefinition: undefined,
         parameterDefinitions: {},
         connections: {},
         servicesInitialized: false,
         errors: {
-          workflow: undefined,
-          kind: undefined,
           parameters: {},
           connections: undefined,
         },
@@ -37,7 +43,7 @@ describe('template store reducers', () => {
   });
 
   it('initial state tests for template store', async () => {
-    expect(store.getState().template.workflowName).toBe('');
+    expect(store.getState().template.workflows['default'].workflowName).toBe('');
     expect(store.getState().manifest.availableTemplateNames).toBe(undefined);
   });
 
@@ -45,11 +51,11 @@ describe('template store reducers', () => {
     store.dispatch(changeCurrentTemplateName('templateName1'));
     expect(store.getState().template.templateName).toBe('templateName1');
 
-    store.dispatch(updateWorkflowName('workflowName1'));
-    expect(store.getState().template.workflowName).toBe('workflowName1');
+    store.dispatch(updateWorkflowName({ id: 'default', name: 'workflowName1' }));
+    expect(store.getState().template.workflows['default'].workflowName).toBe('workflowName1');
 
-    store.dispatch(updateKind('kind1'));
-    expect(store.getState().template.kind).toBe('kind1');
+    store.dispatch(updateKind({ id: 'default', kind: 'kind1' }));
+    expect(store.getState().template.workflows['default'].kind).toBe('kind1');
   });
 
   it('update state call tests for manifest slice', async () => {
@@ -79,7 +85,7 @@ describe('template store reducers', () => {
     });
     expect(store.getState().manifest.availableTemplates?.['workflowName1']).toEqual(manifest1);
 
-    store.dispatch(updateKind('kind1'));
-    expect(store.getState().template.kind).toBe('kind1');
+    store.dispatch(updateKind({ id: 'default', kind: 'kind1' }));
+    expect(store.getState().template.workflows['default'].kind).toBe('kind1');
   });
 });

@@ -11,10 +11,11 @@ import { ConnectorWithDetails } from '../../../../templates/connections/connecto
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 
 export const SummaryPanel: React.FC = () => {
   const intl = useIntl();
-  const { manifest } = useSelector((state: RootState) => state.template);
+  const { manifest } = useDefaultWorkflowTemplate() ?? {};
   const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
