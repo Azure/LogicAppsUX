@@ -248,7 +248,7 @@ export const Pager: React.FC<PagerProps> = ({
   }, [current, max, min]);
 
   return (
-    <div className={countInfo ? 'msla-pager-v2-pagenumbers' : ''}>
+    <div className={countInfo && 'msla-pager-v2-pagenumbers'}>
       {countInfo && (
         <div className="msla-pager-v2">
           <div className="msla-pager-v2--inner">
