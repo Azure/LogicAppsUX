@@ -6,6 +6,53 @@ import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { ControlButton, Controls } from '@xyflow/react';
+import { toSvg } from 'html-to-image';
+const downloadImage = (dataUrl: string) => {
+  const a = document.createElement('a');
+
+  a.setAttribute('download', 'workflow.svg');
+  a.setAttribute('href', dataUrl);
+  a.click();
+};
+
+// const imageWidth = 1024;
+// const imageHeight = 768;
+
+const DownloadButton = () => {
+  // const { getNodes } = useReactFlow();
+  const intl = useIntl();
+
+  const downloadImageAria = intl.formatMessage({
+    defaultMessage: 'Download svg image of the workflow',
+    id: 'SHDMrx',
+    description: 'Aria label for a button that downloads an svg formatted image of the users workflow',
+  });
+
+  const onClick = () => {
+    // we calculate a transform for the nodes so that all nodes are visible
+    // we then overwrite the transform of the `.react-flow__viewport` element
+    // with the style option of the html-to-image library
+    // const nodesBounds = getNodesBounds(getNodes());
+    // const viewport = getViewportForBounds(nodesBounds, imageWidth*3, imageHeight*3, 0.1, 8, 0);
+
+    const sel = document.querySelector('.react-flow__viewport') as HTMLElement;
+    if (sel) {
+      toSvg(sel, {
+        // style: {
+        //   transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+        // },
+      }).then((dataUrl: string) => downloadImage(dataUrl));
+    }
+  };
+
+  const downloadImageId = 'control-download-image-button';
+
+  return (
+    <ControlButton id={downloadImageId} aria-label={downloadImageAria} title={downloadImageAria} onClick={onClick}>
+      <Icon iconName={'Download'} />
+    </ControlButton>
+  );
+};
 
 const CustomControls = () => {
   const intl = useIntl();
@@ -71,6 +118,7 @@ const CustomControls = () => {
       }}
       showInteractive={false}
     >
+      <DownloadButton />
       <ControlButton id={searchId} aria-label={searchAria} title={searchAria} onClick={searchToggleClick}>
         <Icon iconName={'Search'} />
       </ControlButton>
