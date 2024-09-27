@@ -5,6 +5,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
   <div
     className="msla-retrypanel-callout-pager"
   >
+  <div>
     <div
       className="msla-pager-v2"
       onClick={[Function]}
@@ -152,6 +153,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>,
   <div
@@ -581,6 +583,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
   <div
     className="msla-retrypanel-callout-pager"
   >
+  <div>
     <div
       className="msla-pager-v2"
       onClick={[Function]}
@@ -728,6 +731,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>,
   <div
@@ -1578,6 +1582,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
   <div
     className="msla-retrypanel-callout-pager"
   >
+    <div>
     <div
       className="msla-pager-v2"
       onClick={[Function]}
@@ -1725,6 +1730,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>,
   <div
@@ -2575,6 +2581,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
   <div
     className="msla-retrypanel-callout-pager"
   >
+  <div>
     <div
       className="msla-pager-v2"
       onClick={[Function]}
@@ -2722,6 +2729,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>,
   <div
@@ -3182,6 +3190,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
   <div
     className="msla-retrypanel-callout-pager"
   >
+  <div>
     <div
       className="msla-pager-v2"
       onClick={[Function]}
@@ -3329,6 +3338,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>,
   <div
