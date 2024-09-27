@@ -22,7 +22,7 @@ describe('InputsBinder', () => {
 
   it('should bind inputs using ManifestInputsBinder when manifest is provided and type is not special', async () => {
     const inputs = { key: 'value' };
-    const type = constants.NODE.TYPE.INITIALIZE_VARIABLE;
+    const type = 'JavaScriptCode';
     const operation = undefined;
     const manifest = {
       properties: {
