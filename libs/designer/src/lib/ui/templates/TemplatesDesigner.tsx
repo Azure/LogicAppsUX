@@ -97,8 +97,8 @@ export const TemplatesDesigner = ({
             max={lastPage}
             min={1}
             readonlyPagerInput={true}
-            showPageNumbers={true}
-            countInfo={{
+            clickablePageNumbers={true}
+            countToDisplay={{
               countPerPage: templatesCountPerPage,
               totalCount: filteredTemplateNames.length,
             }}

@@ -27,8 +27,9 @@ export interface PagerProps {
   min: number;
   pagerTitleText?: string;
   readonlyPagerInput?: boolean;
-  showPageNumbers?: boolean;
-  countInfo?: {
+  clickablePageNumbers?: boolean; // If true, the pager will show clickable page numbers instead of a text field.
+  countToDisplay?: {
+    // If provided, the pager will show the count of items displayed on the left
     countPerPage: number;
     totalCount: number;
   };
@@ -74,8 +75,8 @@ export const Pager: React.FC<PagerProps> = ({
   maxLength,
   min,
   readonlyPagerInput,
-  showPageNumbers = false,
-  countInfo,
+  clickablePageNumbers: showPageNumbers = false,
+  countToDisplay: countInfo,
   onChange,
 }) => {
   const [current, setCurrent] = React.useState(initialCurrent);
