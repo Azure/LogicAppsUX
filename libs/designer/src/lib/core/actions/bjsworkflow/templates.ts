@@ -30,7 +30,7 @@ export interface WorkflowTemplateData {
   manifest: Template.Manifest | undefined;
   workflowName: string | undefined;
   kind: string | undefined;
-  images?: Record<string, any>;
+  images?: Record<string, string>;
   errors: {
     workflow: string | undefined;
     kind: string | undefined;

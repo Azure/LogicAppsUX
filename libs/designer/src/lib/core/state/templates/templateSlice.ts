@@ -28,7 +28,7 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string }>) => {
+    updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string | undefined }>) => {
       const { id, name } = action.payload;
       if (state.workflows[id]) {
         state.workflows[id].workflowName = name;

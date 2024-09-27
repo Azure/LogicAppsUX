@@ -133,7 +133,7 @@ export const NameStatePanel = () => {
         ariaLabel={intlText.WORKFLOW_NAME}
         value={existingWorkflowName ?? workflowName}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName({ id: workflowId, name: newValue as string }))
+          dispatch(updateWorkflowName({ id: workflowId, name: newValue }))
         }
         disabled={!!existingWorkflowName}
         onBlur={() => {
