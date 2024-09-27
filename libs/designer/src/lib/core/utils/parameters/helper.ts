@@ -117,6 +117,7 @@ import {
   isBodySegment,
   canStringBeConverted,
   isStringLiteral,
+  splitAtIndex,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -589,8 +590,11 @@ const toSimpleQueryBuilderViewModel = (
       return advancedModeResult;
     }
 
-    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
-    const [operand1String, operand2String] = operandSubstring.splitAt(getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
+    const operandSubstring: string = stringValue.substring(
+      stringValue.indexOf('(') + 1,
+      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
+    );
+    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
 
     return {
       isOldFormat: true,

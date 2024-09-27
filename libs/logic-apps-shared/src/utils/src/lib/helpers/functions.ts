@@ -1107,3 +1107,13 @@ export const FindPreviousAndNextPage = (page: number, bookmarks: number[]) => {
   }
   return { nextFailedRepetition, prevFailedRepetition };
 };
+
+/**
+ * Splits a string at an index not empty.
+ * @param str - The string to split.
+ * @param index - The index to split at.
+ * @returns {[string, string]} - The split string mapped into an array.
+ */
+export const splitAtIndex = (str: string, index: number): [string, string] => {
+  return [str.substring(0, index), str.substring(index + 1)];
+};
