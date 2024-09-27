@@ -11,6 +11,7 @@ import { TemplateFilters, type TemplateDetailFilterType } from './filters/templa
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
+import { useDefaultWorkflowTemplate } from '../../core/state/templates/templateselectors';
 
 export const TemplatesDesigner = ({
   detailFilters,
@@ -30,12 +31,11 @@ export const TemplatesDesigner = ({
   const intl = useIntl();
   const { existingWorkflowName, connections, isConsumption } = useSelector((state: RootState) => state.workflow);
   const {
-    workflowName,
-    kind,
-    workflowDefinition,
     parameterDefinitions,
-    errors: { workflow: workflowError, kind: kindError, parameters: parametersError, connections: connectionsError },
+    errors: { parameters: parametersError, connections: connectionsError },
   } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, workflowDefinition, errors } = useDefaultWorkflowTemplate() ?? {};
+  const { workflow: workflowError, kind: kindError } = errors ?? {};
   const {
     filteredTemplateNames,
     filters: { pageNum },

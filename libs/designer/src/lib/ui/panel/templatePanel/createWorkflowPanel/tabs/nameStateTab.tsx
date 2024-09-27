@@ -15,16 +15,19 @@ import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
 import { Open16Regular } from '@fluentui/react-icons';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {
+    id: workflowId,
     workflowName,
     errors: { workflow: workflowError, kind: kindError },
     kind,
     manifest,
-  } = useSelector((state: RootState) => state.template);
+  } = useDefaultWorkflowTemplate() as { id: string } & WorkflowTemplateData;
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const intl = useIntl();
@@ -130,11 +133,11 @@ export const NameStatePanel = () => {
         ariaLabel={intlText.WORKFLOW_NAME}
         value={existingWorkflowName ?? workflowName}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName(newValue))
+          dispatch(updateWorkflowName({ id: workflowId, name: newValue }))
         }
         disabled={!!existingWorkflowName}
         onBlur={() => {
-          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+          dispatch(validateWorkflowName({ id: workflowId, existingNames: existingWorkflowNames ?? [] }));
         }}
         errorMessage={workflowError}
       />
@@ -166,7 +169,7 @@ export const NameStatePanel = () => {
           ]}
           onChange={(_, option) => {
             if (option?.key) {
-              dispatch(updateKind(option?.key));
+              dispatch(updateKind({ id: workflowId, kind: option?.key }));
             }
           }}
           selectedKey={kind}

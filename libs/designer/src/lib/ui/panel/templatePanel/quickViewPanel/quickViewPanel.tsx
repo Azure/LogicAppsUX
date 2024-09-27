@@ -7,15 +7,16 @@ import { useState } from 'react';
 import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
+import { useDefaultWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { manifest, templateName, workflowAppName } = useSelector((state: RootState) => ({
-    manifest: state.template.manifest,
+  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
   }));
+  const { manifest } = useDefaultWorkflowTemplate() ?? {};
   const panelTabs = getQuickViewTabs(intl, dispatch, {
     templateId: templateName ?? '',
     workflowAppName,
