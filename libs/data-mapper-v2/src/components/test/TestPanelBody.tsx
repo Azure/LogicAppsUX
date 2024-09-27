@@ -1,12 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from '@fluentui/react-components';
 import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { updateTestInput } from '../../core/state/PanelSlice';
+import useReduxStore from '../useReduxStore';
 
 const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
 const resultPlaceHolderEditorId = 'result-editor-placeholder';
@@ -16,10 +17,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { testMapInput, testMapOutput, testMapOutputError } = useSelector((state: RootState) => state.panel.testPanel);
-
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const { testMapInput, testMapOutput, testMapOutputError, sourceSchema, targetSchema } = useReduxStore();
 
   const stringResources = useMemo(
     () => ({

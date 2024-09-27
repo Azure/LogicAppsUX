@@ -1,5 +1,5 @@
-import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
-import type { AppDispatch, RootState } from '../../core/state/Store';
+import { openDiscardWarningModal } from '../../core/state/ModalSlice';
+import type { AppDispatch } from '../../core/state/Store';
 import {
   Toolbar,
   ToolbarButton,
@@ -16,7 +16,7 @@ import {
 import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
 import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
@@ -25,40 +25,37 @@ import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerialize
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
-import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
+import useReduxStore from '../useReduxStore';
 
 export type EditorCommandBarProps = {};
 
 export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-
-  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
-  const undoStack = useSelector((state: RootState) => state.dataMap.past);
-  const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
-  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const {
+    isDirty,
+    sourceInEditState,
+    targetInEditState,
+    past: undoStack,
+    isCodeViewOpen,
+    sourceSchema,
+    targetSchema,
+    xsltFilename,
+    currentConnections,
+    functionNodes: functions,
+    targetSchemaSortArray,
+    canvasRect,
+    isDiscardConfirmed,
+  } = useReduxStore();
 
   const toasterId = useId('toaster');
   const { dispatchToast } = useToastController(toasterId);
-
-  const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
-  const canvasRect = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
-  );
 
   const failedXsltMessage = intl.formatMessage({
     defaultMessage: 'Failed to generate XSLT.',
     id: 'e9bIKh',
     description: 'Message on failed generation',
   });
-
-  const isDiscardConfirmed = useSelector(
-    (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
-  );
 
   const dataMapDefinition = useMemo<MetaMapDefinition>(() => {
     if (sourceSchema && targetSchema) {

@@ -32,6 +32,14 @@ import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode 
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
 
+const getIntermedateScrollNodeHandles = (guid: string) => {
+  const record: Record<string, string> = {};
+  record['top-left'] = `top-left-${guid}`;
+  record['bottom-left'] = `bottom-left-${guid}`;
+  record['top-right'] = `top-right-${guid}`;
+  record['bottom-right'] = `bottom-right-${guid}`;
+  return record;
+};
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
@@ -42,24 +50,15 @@ export interface DataMapState {
   lastAction: string;
 }
 
-interface HoverState {
+export interface HoverState {
   id: string;
   type: 'node' | 'edge' | 'function';
   isSourceSchema?: boolean;
 }
 
-interface ComponentState {
+export interface ComponentState {
   hover?: HoverState;
 }
-
-const getIntermedateScrollNodeHandles = (guid: string) => {
-  const record: Record<string, string> = {};
-  record['top-left'] = `top-left-${guid}`;
-  record['bottom-left'] = `bottom-left-${guid}`;
-  record['top-right'] = `top-right-${guid}`;
-  record['bottom-right'] = `bottom-right-${guid}`;
-  return record;
-};
 export interface Draft2 {
   draft: Draft<DataMapState>;
 }

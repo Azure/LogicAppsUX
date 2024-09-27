@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
 import { toggleTestPanel, updateTestOutput } from '../../core/state/PanelSlice';
@@ -11,14 +11,14 @@ import { TestPanelBody } from './TestPanelBody';
 import { testDataMap } from '../../core/queries/datamap';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { guid } from '@microsoft/logic-apps-shared';
+import useReduxStore from '../useReduxStore';
 type TestPanelProps = {};
 
 export const TestPanel = (_props: TestPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { testMapInput, isOpen } = useSelector((state: RootState) => state.panel.testPanel);
-  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const { testMapInput, isTestPanelOpen, xsltFilename } = useReduxStore();
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleTestPanel());
@@ -91,7 +91,7 @@ export const TestPanel = (_props: TestPanelProps) => {
   return (
     <Panel
       id={'test-panel'}
-      isOpen={isOpen}
+      isOpen={isTestPanelOpen}
       title={{
         text: resources.TEST_MAP,
         rightAction: (

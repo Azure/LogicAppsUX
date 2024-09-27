@@ -6,20 +6,19 @@ import { Button, mergeClasses } from '@fluentui/react-components';
 import { FunctionList } from '../functionList/FunctionList';
 import { FunctionsSVG } from '../../images/icons';
 import { Panel } from '../../components/common/panel/Panel';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
 import { toggleFunctionPanel } from '../../core/state/PanelSlice';
+import useReduxStore from '../useReduxStore';
 
 type PanelProps = {};
 
 export const FunctionPanel = (_props: PanelProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceSchema, targetSchema, isFunctionPanelOpen } = useReduxStore();
   const styles = useStyles();
   const intl = useIntl();
-
   const dispatch = useDispatch<AppDispatch>();
-  const isFunctionPanelOpen = useSelector((state: RootState) => state.panel.functionPanel.isOpen);
 
   const openFunctionPanel = useCallback(() => {
     dispatch(toggleFunctionPanel());
