@@ -329,29 +329,12 @@ export class StandardConnectionService extends BaseConnectionService implements 
 
     const intl = getIntl();
 
-    if (!isHybridLogicApp(baseUrl) && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'A managed identity is not configured on the logic app.',
-          id: 'WnU9v0',
-          description: 'Error message when no identity is associated',
-        })
-      );
-    }
+    validateLogicAppIdentity(baseUrl, workflowAppDetails.identity);
 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
     var identityDetailsForApiHubAuth: {principalId: string; tenantId: string};
     if(isHybridLogicApp(baseUrl)){
-      if (!identity?.principalId || !identity?.tenantId) {
-        throw new Error(
-          intl.formatMessage({
-            defaultMessage: 'App identity is not configured on the logic app environment variables.',
-            id: 'WnU9v0',
-            description: 'Error message when no app identity is added in environment variables',
-          })
-        );
-      }
       identityDetailsForApiHubAuth = { principalId: identity.principalId, tenantId: identity.tenantId };
     }else{
       identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
@@ -423,6 +406,30 @@ export class StandardConnectionService extends BaseConnectionService implements 
         },
       },
     });
+  }
+
+  private validateLogicAppIdentity(baseUrl: string, identity: Identity | undefined) {
+    if (!isHybridLogicApp(baseUrl) && !isIdentityAssociatedWithLogicApp(identity)) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'A managed identity is not configured on the logic app.',
+          id: 'WnU9v0',
+          description: 'Error message when no identity is associated',
+        })
+      );
+    }
+  
+    if (isHybridLogicApp(baseUrl)) {
+      if (!identity?.principalId || !identity?.tenantId) {
+        throw new Error(
+          intl.formatMessage({
+            defaultMessage: 'App identity is not configured on the logic app environment variables.',
+            id: 'WnU9v0',
+            description: 'Error message when no app identity is added in environment variables',
+          })
+        );
+      }
+    }
   }
 
   // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity if identity is not specified.
