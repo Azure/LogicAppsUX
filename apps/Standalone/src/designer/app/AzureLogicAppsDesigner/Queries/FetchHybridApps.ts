@@ -10,7 +10,8 @@ export const useFetchHybridApps = () => {
       if (!environment.armToken) {
         return [];
       }
-      const query = `resources | where type =~ "microsoft.app/containerApps" and kind contains "workflowapp"`;      const data = await fetchAppsByQuery(query);
+      const query = `resources | where type =~ "microsoft.app/containerApps" and kind contains "workflowapp"`;
+      const data = await fetchAppsByQuery(query);
       return data.map((item: any) => ({
         id: item[0],
         name: item[1],

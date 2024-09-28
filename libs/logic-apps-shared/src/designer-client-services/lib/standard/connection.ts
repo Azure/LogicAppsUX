@@ -334,9 +334,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
     var identityDetailsForApiHubAuth: {principalId: string; tenantId: string};
-    if(isHybridLogicApp(baseUrl)){
+
+    if (isHybridLogicApp(baseUrl)) {
       identityDetailsForApiHubAuth = { principalId: identity.principalId, tenantId: identity.tenantId };
-    }else{
+    }
+    else {
       identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
     }
 
