@@ -25,7 +25,7 @@ export class StandardTemplateService extends BaseTemplateService {
     }
   }
 
-  override async getExistingWorkflowNames(): Promise<string[]> {
+  async getExistingWorkflowNames(): Promise<string[]> {
     try {
       const { baseUrl, appId, apiVersions, httpClient } = this.options;
       const uri = `${baseUrl}${appId}/workflows`;

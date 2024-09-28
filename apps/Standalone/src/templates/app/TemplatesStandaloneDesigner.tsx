@@ -16,7 +16,6 @@ import {
   isArmResourceId,
   optional,
   StandardOperationManifestService,
-  ConsumptionTemplateService,
   ConsumptionConnectionService,
 } from '@microsoft/logic-apps-shared';
 import {
@@ -39,6 +38,7 @@ import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/M
 import axios from 'axios';
 import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
+import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 
 const workflowIdentifier = '#workflowname#';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
@@ -329,7 +329,7 @@ const getServices = (
   };
 
   const templateService = isConsumption
-    ? new ConsumptionTemplateService({
+    ? new BaseTemplateService({
         openBladeAfterCreate: (workflowName: string) => {
           console.log('Open blade after create, workflowName is: ', workflowName);
         },
