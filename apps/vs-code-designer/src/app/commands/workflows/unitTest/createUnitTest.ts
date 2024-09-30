@@ -10,7 +10,6 @@ import { getTestsDirectory, validateUnitTestName } from '../../../utils/unitTest
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
 import type { IAzureQuickPickItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -21,7 +20,7 @@ import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared/src/utils/src';
 
 /**
- * Creates a unit test for a Logic App workflow.
+ * Creates a unit test for a Logic App workflow (codeful only).
  * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
  * @param {string | undefined} runId - The ID of the run, if available.
@@ -47,22 +46,8 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
       validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
     });
 
-    // Ask user to choose between codeless and codeful scenarios
-    const scenarioChoice = await context.ui.showQuickPick(
-      [
-        { label: 'Codeless', description: 'Create unit test using designer' },
-        { label: 'Codeful', description: 'Create empty C# test project' },
-      ],
-      { placeHolder: 'Select unit test creation method' }
-    );
-
-    if (scenarioChoice.label === 'Codeless') {
-      const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, null, runId);
-      await openDesignerObj?.createPanel();
-    } else {
-      // Generate codeful unit test
-      await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, runId);
-    }
+    // Generate codeful unit test
+    await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, runId);
   } else {
     vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
@@ -89,8 +74,6 @@ async function generateCodefulUnitTest(
     if (!runId) {
       throw new Error(localize('runIdMissing', 'Run ID is required to generate a codeful unit test.'));
     }
-    //ext.workflowRuntimePort = getFunctionRuntimePort(funcTask);
-
     // Check if the workflow runtime port is set
     if (isNullOrUndefined(ext.workflowRuntimePort)) {
       throw new Error(
@@ -98,19 +81,12 @@ async function generateCodefulUnitTest(
       );
     }
 
-    // Construct the base URL using the workflow runtime port and management API prefix
     const baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
-    // Construct the API URL for generating the unit test
     const apiUrl = `${baseUrl}/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
-
-    //const apiUrl = `http://localhost:${ext.designTimePort}/runtime/webhooks/workflow/api/management/workflows/${encodeURIComponent(
-    //workflowName
-    //)}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
 
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
-    // Construct the request body
     const unitTestGenerationInput = {
       UnitTestName: unitTestName,
     };
@@ -124,7 +100,6 @@ async function generateCodefulUnitTest(
 
     ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating Unit Test Generation API call...'));
 
-    // Make the API call with the unit test name in the HTTP body
     const response = await axios.post(apiUrl, unitTestGenerationInput, {
       headers: {
         Accept: 'application/zip',
@@ -135,20 +110,16 @@ async function generateCodefulUnitTest(
 
     ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
 
-    // Get the response data as a Buffer
     const zipBuffer = Buffer.from(response.data);
 
-    // Check if response is a zip file
     const contentType = response.headers['content-type'];
     if (contentType !== 'application/zip') {
       throw new Error(localize('invalidResponseType', 'Expected a zip file but received {0}', contentType));
     }
 
-    // Get the tests directory
     const testsDirectoryUri = getTestsDirectory(projectPath);
     const testsDirectory = testsDirectoryUri.fsPath;
 
-    // Define the paths based on your desired folder structure
     const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
 
     // Path to the logic app folder under Tests
