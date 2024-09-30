@@ -29,7 +29,11 @@ describe('lib/pager', () => {
 
     const pagerWrapper = renderer.getRenderOutput();
 
-    const [, pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
+    console.log('pagerWrapper', pagerWrapper);
+    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
+
+    console.log('pager', pager);
+
     expect(pager.props.className).toBe(classNames.Pager);
 
     const [previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
@@ -55,7 +59,7 @@ describe('lib/pager', () => {
     renderer.render(<Pager {...minimal} readonlyPagerInput={true} />);
 
     const pagerWrapper = renderer.getRenderOutput();
-    const [, pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
+    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
     const [, inner] = React.Children.toArray(pager.props.children) as React.ReactElement[];
     const [textField] = React.Children.toArray(inner.props.children) as React.ReactElement[];
     const [str] = React.Children.toArray(textField.props.children) as React.ReactElement[];
@@ -75,7 +79,7 @@ describe('lib/pager', () => {
     renderer.render(<Pager {...minimal} failedIterationProps={failedIterationProps} />);
 
     const pagerWrapper = renderer.getRenderOutput();
-    const [, pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
+    const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
     const [, previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
     expect(previous.props.disabled).toBeTruthy();
     expect(previous.props.failed).toBeTruthy();
