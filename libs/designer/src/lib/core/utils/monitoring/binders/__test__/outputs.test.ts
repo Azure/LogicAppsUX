@@ -69,7 +69,7 @@ describe('OutputsBinder', () => {
     expect(result).toEqual([parsedOutputs]);
   });
 
-  it('should not bind inputs and return an empty array when outputs is an empty array', async () => {
+  it('should not bind outputs and return an empty array when outputs is an empty array', async () => {
     const outputs = [];
     const type = constants.NODE.TYPE.FOREACH;
 
