@@ -37,7 +37,7 @@ export default {
       visibility: '',
       in: 'body',
       hideInUI: false,
-      value: 'ccastrotrejo@microsoft.com',
+      value: 'user@contoso.com',
     },
     'body.$.Subject': {
       description: 'Specify the subject of the mail',
@@ -923,8 +923,7 @@ export default {
     headers: {
       'Cache-Control': 'no-store, no-cache',
       Pragma: 'no-cache',
-      'Set-Cookie':
-        'ARRAffinity=3918252a89b1afdb8c3dc464535f8a9dbabe6782d2c64ae7d28576826f1f4c2f;Path=/;HttpOnly;Secure;Domain=office365-wus.azconn-wus-001.p.azurewebsites.net,ARRAffinitySameSite=3918252a89b1afdb8c3dc464535f8a9dbabe6782d2c64ae7d28576826f1f4c2f;Path=/;HttpOnly;SameSite=None;Secure;Domain=office365-wus.azconn-wus-001.p.azurewebsites.net',
+      'Set-Cookie': 'cookies',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
       'x-ms-request-id': 'd7108db1-47b8-bcce-8239-d67e8eaf3cad',
       'X-Content-Type-Options': 'nosniff',
@@ -934,8 +933,6 @@ export default {
       'x-ms-apihub-cached-response': 'false',
       'x-ms-apihub-obo': 'false',
       Date: 'Wed, 18 Sep 2024 20:20:03 GMT',
-      'Content-Length': '0',
-      Expires: '-1',
     },
   },
   outputsParametersByName: {
