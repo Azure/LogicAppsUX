@@ -1,24 +1,33 @@
 import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
-import { LinkDismissRegular, ReOrderRegular, AddRegular } from '@fluentui/react-icons';
-import { List, ListItem } from '@fluentui/react-list-preview';
-import { useDrag } from 'react-dnd';
+import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
-import { createInputSlotForUnboundedInput, setConnectionInput } from '../../../core/state/DataMapSlice';
+import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
-import type { FunctionData } from '../../../models';
-import type { ConnectionDictionary, InputConnection } from '../../../models/Connection';
+import type { FunctionData, FunctionDictionary } from '../../../models';
+import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
+import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
 import { useStyles } from './styles';
 import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
+import { newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import DraggableList from 'react-draggable-list';
+import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
+import { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export const InputTabContents = (props: {
   func: FunctionData;
   functionKey: string;
 }) => {
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
@@ -35,24 +44,64 @@ export const InputTabContents = (props: {
 
       const inputType = getInputTypeFromNode(inputConnection);
 
+      const updateInput = (newValue: InputConnection) => {
+        const targetNodeReactFlowKey = props.functionKey;
+        dispatch(
+          setConnectionInput({
+            targetNode: props.func,
+            targetNodeReactFlowKey,
+            inputIndex: index,
+            input: newValue,
+          })
+        );
+      };
+      const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
+        if (optionValue) {
+          const input = validateAndCreateConnectionInput(
+            optionValue,
+            option,
+            connectionDictionary,
+            props.func,
+            functionNodeDictionary,
+            sourceSchemaDictionary
+          );
+          if (input) {
+            updateInput(input);
+          }
+        }
+      };
+
+      const removeConnection = (inputIndex: number) => {
+        const targetNodeReactFlowKey = props.functionKey;
+        dispatch(
+          setConnectionInput({
+            targetNode: props.func,
+            targetNodeReactFlowKey,
+            inputIndex,
+            input: undefined,
+          })
+        );
+      };
+
       return (
         <div className={styles.boundedInputRow} key={index}>
           <div className={styles.boundedInputTopRow}>
             <div className={styles.inputNameDiv}>
               <Caption1 className={styles.inputName}>{input.name}</Caption1>
-              <Caption2>{input.placeHolder}</Caption2>
+              <Caption2>{input.tooltip ?? input.placeHolder ?? ''}</Caption2>
             </div>
             <Caption2 className={styles.allowedTypes}>Allowed types: {input.allowedTypes}</Caption2>
           </div>
           <div>
             <span className={styles.inputDropdownWrapper}>
               <InputDropdown
+                index={index}
+                schemaListType={SchemaType.Source}
                 functionId={props.functionKey}
                 currentNode={props.func}
                 inputName={getInputName(inputConnection, connections)}
                 inputValue={getInputValue(inputConnection)}
-                inputIndex={index}
-                isUnboundedInput={true}
+                validateAndCreateConnection={validateAndCreateConnection}
               />
             </span>
             <span className={styles.badgeWrapper}>
@@ -62,6 +111,12 @@ export const InputTabContents = (props: {
                 </Badge>
               )}
             </span>
+            <Button
+              className={styles.listButton}
+              appearance="transparent"
+              icon={<LinkDismissRegular />}
+              onClick={() => removeConnection(index)}
+            />
           </div>
         </div>
       );
@@ -85,54 +140,66 @@ const UnlimitedInputs = (props: {
   const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
   const dispatch = useDispatch();
+  const intl = useIntl();
 
-  const addUnboundedInputSlot = () => {
+  const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
+
+  const stringResources = useMemo(
+    () => ({
+      ACCEPT_TYPES: intl.formatMessage({
+        defaultMessage: 'Accepted types: ',
+        id: 'ZgyD93',
+        description: 'Accepted types',
+      }),
+      OPTIONAL: intl.formatMessage({
+        defaultMessage: 'optional',
+        id: '6eDY1H',
+        description: 'Optional Keyword',
+      }),
+    }),
+    [intl]
+  );
+
+  const addUnboundedInputSlot = useCallback(() => {
     dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  };
+  }, [dispatch, props.functionKey]);
 
-  const removeUnboundedInput = (index: number) => {
-    updateInput(index, null);
-  };
-
-  const functionConnection = props.connections[props.functionKey];
-
-  const updateInput = (inputIndex: number, newValue: InputConnection | null) => {
-    const targetNodeReactFlowKey = props.functionKey;
-    dispatch(
-      setConnectionInput({
-        targetNode: props.func,
-        targetNodeReactFlowKey,
-        inputIndex,
-        input: newValue,
-      })
-    );
-  };
+  const onDragMoveEnd = useCallback(
+    (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+      dispatch(
+        updateFunctionConnectionInputs({
+          functionKey: props.functionKey,
+          inputs: newList.map((item) => item.input),
+        })
+      );
+    },
+    [dispatch, props.functionKey]
+  );
 
   return (
     <div>
       <div>
         <span className={styles.unlimitedInputHeaderCell} key="input-name">
-          <Caption1>{inputsFromManifest[0].name}</Caption1>
+          <Caption1>{`${inputsFromManifest[0].name}${inputsFromManifest[0].isOptional ? ` (${stringResources.OPTIONAL})` : ''}`}</Caption1>
         </span>
         <span className={mergeStyles(styles.unlimitedInputHeaderCell, styles.allowedTypes)} key="input-types">
-          <Caption2>{`Accepted types: ${inputsFromManifest[0].allowedTypes}`}</Caption2>
+          <Caption2>{`${stringResources.ACCEPT_TYPES}${inputsFromManifest[0].allowedTypes}`}</Caption2>
         </span>
       </div>
-      <List>
-        {Object.entries(functionConnection.inputs[0]).map((input, index) => {
-          return (
-            <UnboundedInputEntry
-              key={input[0]}
-              connections={props.connections}
-              removeUnboundedInput={removeUnboundedInput}
-              functionKey={props.functionKey}
-              func={props.func}
-              input={input}
-              index={index}
-            />
-          );
-        })}
-      </List>
+      <DraggableList<TemplateItemProps, CommonProps, any>
+        list={Object.entries(functionConnection.inputs[0]).map((input, index) => ({ input: input[1], index }))}
+        commonProps={{
+          functionKey: props.functionKey,
+          data: props.func,
+          inputsFromManifest,
+          connections: props.connections,
+          schemaType: SchemaType.Source,
+          draggable: true,
+        }}
+        onMoveEnd={onDragMoveEnd}
+        itemKey={'index'}
+        template={InputListWrapper}
+      />
       <Button
         icon={<AddRegular className={styles.addIcon} />}
         onClick={() => addUnboundedInputSlot()}
@@ -145,16 +212,7 @@ const UnlimitedInputs = (props: {
   );
 };
 
-interface UnboundedInputEntryProps {
-  functionKey: string;
-  func: FunctionData;
-  input: [string, InputConnection];
-  index: number;
-  connections: ConnectionDictionary;
-  removeUnboundedInput: (index: number) => void;
-}
-
-const getInputTypeFromNode = (input: InputConnection | undefined) => {
+export const getInputTypeFromNode = (input: InputConnection | undefined) => {
   let inputType = '';
   if (typeof input !== 'string' && input !== undefined) {
     if (isSchemaNodeExtended(input.node)) {
@@ -166,47 +224,37 @@ const getInputTypeFromNode = (input: InputConnection | undefined) => {
   return inputType;
 };
 
-const UnboundedInputEntry = (props: UnboundedInputEntryProps) => {
-  const inputsFromManifest = props.func.inputs;
-  const styles = useStyles();
+export const validateAndCreateConnectionInput = (
+  optionValue: string | undefined,
+  option: InputOptionProps | undefined,
+  connectionDictionary: ConnectionDictionary,
+  func: FunctionData,
+  functionNodeDictionary: FunctionDictionary,
+  sourceSchemaDictionary: SchemaNodeDictionary
+) => {
+  if (optionValue) {
+    if (option) {
+      const selectedInputKey = option.value;
+      const isSelectedInputFunction = option.isFunction;
 
-  const inputType = getInputTypeFromNode(props.input[1]);
+      // ensure that new connection won't create loop/circular logic
+      if (newConnectionWillHaveCircularLogic(func.key, selectedInputKey, connectionDictionary)) {
+        return;
+      }
 
-  const [, drag] = useDrag(() => ({
-    type: 'functionInput',
-    item: props.functionKey,
-  }));
-  return (
-    <ListItem key={props.input[0] + props.index}>
-      <div ref={drag} className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
-          <InputDropdown
-            functionId={props.functionKey}
-            currentNode={props.func}
-            inputName={getInputName(props.input[1], props.connections)}
-            inputValue={getInputValue(props.input[1])}
-            inputIndex={props.index}
-            isUnboundedInput={true}
-            placeholder={inputsFromManifest[0].placeHolder}
-          />
-        </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {inputType && (
-              <Badge appearance="filled" color="informative">
-                {inputType}
-              </Badge>
-            )}
-          </span>
-          <Button
-            className={styles.listButton}
-            appearance="transparent"
-            icon={<LinkDismissRegular />}
-            onClick={() => props.removeUnboundedInput(props.index)}
-          />
-          <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} />
-        </span>
-      </div>
-    </ListItem>
-  );
+      // Create connection
+      const source = isSelectedInputFunction ? functionNodeDictionary[selectedInputKey] : sourceSchemaDictionary[selectedInputKey];
+      const srcConUnit: ConnectionUnit = {
+        node: source,
+        reactFlowKey: selectedInputKey,
+      };
+
+      return srcConUnit;
+    }
+    // Create custom value connection
+    const srcConUnit: InputConnection = optionValue;
+
+    return srcConUnit;
+  }
+  return;
 };

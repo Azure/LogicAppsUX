@@ -14,17 +14,22 @@ import {
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllConnectionErrors,
-  serializeWorkflow,
   validateParameter,
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
+  collapsePanel,
+  onUndoClick,
+  useCanUndo,
+  useCanRedo,
+  onRedoClick,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import LogicAppsIcon from '../../../assets/logicapp.svg';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -41,22 +46,25 @@ const classNames = mergeStyleSets({
 export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
+  isDesignerView,
   isDarkMode,
   showConnectionsPanel,
-  rightShift,
   enableCopilot,
+  switchViews,
+  saveWorkflowFromCode,
 }: {
   id: string;
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
+  isDesignerView?: boolean;
   isDarkMode: boolean;
-  isConsumption?: boolean;
   showConnectionsPanel?: boolean;
-  rightShift?: string;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
+  switchViews: () => void;
+  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -122,6 +130,10 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
+
+  const isUndoDisabled = !useCanUndo();
+  const isRedoDisabled = !useCanRedo();
+
   const items: ICommandBarItemProps[] = useMemo(
     () => [
       {
@@ -136,12 +148,12 @@ export const DesignerCommandBar = ({
           );
         },
         onClick: () => {
-          saveWorkflowMutate();
+          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
         },
       },
       {
         key: 'discard',
-        disabled: isSaving,
+        disabled: isSaving || !isDesignerView,
         text: 'Discard',
         iconProps: { iconName: 'Clear' },
         onClick: () => {
@@ -151,17 +163,18 @@ export const DesignerCommandBar = ({
       {
         key: 'parameters',
         text: 'Parameters',
+        disabled: !isDesignerView,
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
       },
       {
         key: 'codeview',
-        text: 'View Code',
-        iconProps: { iconName: 'Code' },
-        onClick: async () => {
-          console.log(await serializeWorkflow(DesignerStore.getState()));
-          alert('Check console for workflow serialization');
+        text: isDesignerView ? 'Code View' : 'Designer View',
+        iconProps: isDesignerView ? { iconName: 'Code' } : { imageProps: { src: LogicAppsIcon } },
+        onClick: () => {
+          switchViews();
+          dispatch(collapsePanel());
         },
       },
       ...(showConnectionsPanel
@@ -228,20 +241,39 @@ export const DesignerCommandBar = ({
           window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
         },
       },
+      {
+        key: 'Undo',
+        text: 'Undo',
+        iconProps: { iconName: 'Undo' },
+        onClick: () => dispatch(onUndoClick()),
+        disabled: isUndoDisabled,
+      },
+      {
+        key: 'Redo',
+        text: 'Redo',
+        iconProps: { iconName: 'Redo' },
+        onClick: () => dispatch(onRedoClick()),
+        disabled: isRedoDisabled,
+      },
     ],
     [
+      saveIsDisabled,
+      isSaving,
+      isDesignerView,
+      showConnectionsPanel,
+      haveErrors,
+      isDarkMode,
+      isCopilotReady,
+      isUndoDisabled,
+      isRedoDisabled,
+      saveWorkflowMutate,
+      saveWorkflowFromCode,
       discard,
       dispatch,
-      haveErrors,
       haveWorkflowParameterErrors,
+      switchViews,
       haveConnectionErrors,
-      isDarkMode,
-      isSaving,
-      saveIsDisabled,
-      saveWorkflowMutate,
-      showConnectionsPanel,
       enableCopilot,
-      isCopilotReady,
     ]
   );
 
@@ -253,8 +285,6 @@ export const DesignerCommandBar = ({
         root: {
           borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
           position: 'relative',
-          // we should modify what we pass back from logic app designer to simplify this logic
-          left: rightShift ?? 0,
           padding: '4px 8px',
         },
       }}

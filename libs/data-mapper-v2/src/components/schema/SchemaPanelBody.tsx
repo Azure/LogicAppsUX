@@ -1,35 +1,44 @@
-import { equals, type ITreeFile, type IFileSysTreeItem, SchemaType } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { equals, type ITreeFile, type IFileSysTreeItem, type SchemaNodeExtended, type SchemaExtended } from '@microsoft/logic-apps-shared';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useStyles } from './styles';
-import { SchemaItemView } from '../schemaView/schemaView';
+import { usePanelBodyStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
+import { SchemaTree } from './tree/SchemaTree';
+import { Spinner } from '@fluentui/react-components';
+import useSchema from './useSchema';
 
 export interface SchemaPanelBodyProps {
-  schemaType: SchemaType;
-  selectedSchema?: string;
+  id: string;
+  flattenedSchemaMap?: Record<string, SchemaNodeExtended>;
+  schema?: SchemaExtended;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
   fileSelectorOptions: FileSelectorOption;
   setFileSelectorOptions: (option: FileSelectorOption) => void;
   showScehmaSelection?: boolean;
+  searchTerm?: string;
 }
 
 export const SchemaPanelBody = ({
-  schemaType,
+  id,
   selectedSchemaFile,
   setSelectedSchemaFile,
   fileSelectorOptions,
   setFileSelectorOptions,
   showScehmaSelection,
+  flattenedSchemaMap,
+  errorMessage,
+  searchTerm,
+  schema,
 }: SchemaPanelBodyProps) => {
   const intl = useIntl();
-  const styles = useStyles();
+  const styles = usePanelBodyStyles();
+  const { schemaType, toggleEditState } = useSchema({ id });
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
   const fileService = DataMapperFileService();
 
@@ -70,24 +79,32 @@ export const SchemaPanelBody = ({
         id: '2CXCOt',
         description: 'Placeholder for input to load a schema file',
       }),
+      CANCEL: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: '6PdOcy',
+        description: 'Cancel',
+      }),
     }),
     [intl]
   );
+
+  // Read current schema file options if method exists
+  useEffect(() => {
+    if (fileService && fileService.readCurrentSchemaOptions && availableSchemaList.length === 0) {
+      fileService.readCurrentSchemaOptions();
+    }
+  }, [fileService, availableSchemaList]);
 
   const onSelectExistingFile = useCallback(
     (item: IFileSysTreeItem) => {
       setSelectedSchemaFile({
         name: item.name ?? '',
         path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
-        type: schemaType ?? SchemaType.Source,
+        type: schemaType,
       });
     },
     [setSelectedSchemaFile, schemaType]
   );
-
-  const onOpenClose = useCallback(() => {
-    return fileService.readCurrentSchemaOptions ? fileService.readCurrentSchemaOptions : undefined;
-  }, [fileService]);
 
   const onUpload = useCallback(
     (files?: FileList) => {
@@ -99,7 +116,7 @@ export const SchemaPanelBody = ({
       const schemaFile = files[0] as FileWithVsCodePath;
       if (!schemaFile.path) {
         console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile && schemaType) {
+      } else if (schemaFile) {
         setSelectedSchemaFile({
           name: schemaFile.name,
           path: schemaFile.path,
@@ -112,8 +129,12 @@ export const SchemaPanelBody = ({
     [schemaType, setSelectedSchemaFile]
   );
 
+  const onCancel = useCallback(() => {
+    toggleEditState(false);
+  }, [toggleEditState]);
+
   return (
-    <div className={styles.bodyWrapper}>
+    <div className={styles.root}>
       {showScehmaSelection ? (
         <FileSelector
           selectedKey={fileSelectorOptions}
@@ -132,12 +153,24 @@ export const SchemaPanelBody = ({
           existing={{
             fileList: availableSchemaList,
             onSelect: onSelectExistingFile,
-            onOpenClose: onOpenClose,
           }}
+          errorMessage={errorMessage}
+          cancel={
+            schema && flattenedSchemaMap
+              ? {
+                  onCancel: onCancel,
+                  cancelButtonText: stringResources.CANCEL,
+                }
+              : undefined
+          }
         />
-      ) : (
-        <SchemaItemView schemaType={schemaType} />
-      )}
+      ) : schema && flattenedSchemaMap ? (
+        <div className={styles.treeContainer}>
+          <SchemaTree id={id} schema={schema} flattenedSchemaMap={flattenedSchemaMap} searchTerm={searchTerm} />
+        </div>
+      ) : (!schema || !flattenedSchemaMap) && !errorMessage && selectedSchemaFile ? (
+        <Spinner size={'small'} />
+      ) : null}
     </div>
   );
 };

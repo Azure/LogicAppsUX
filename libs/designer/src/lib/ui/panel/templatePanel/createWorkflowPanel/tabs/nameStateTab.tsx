@@ -14,15 +14,20 @@ import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
+import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
+import { Open16Regular } from '@fluentui/react-icons';
 
 export const NameStatePanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {
+    id: workflowId,
     workflowName,
     errors: { workflow: workflowError, kind: kindError },
     kind,
     manifest,
-  } = useSelector((state: RootState) => state.template);
+  } = useDefaultWorkflowTemplate() as { id: string } & WorkflowTemplateData;
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const intl = useIntl();
@@ -30,24 +35,24 @@ export const NameStatePanel = () => {
   const intlText = useMemo(
     () => ({
       WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
-        defaultMessage:
-          'Provide a unique, descriptive name. Use underscores (_) or dashes (-) instead of spaces to keep names clean and searchable. To prevent any issues, avoid using the following symbols and characters in your project names: \\ / : * ? " < > | @, #, $, %, &',
-        id: 'xtDCgy',
+        defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'ZbeL1D',
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
-        defaultMessage: 'State Type',
-        id: 'X2xiq1',
+        defaultMessage: 'State type',
+        id: 'W1rlxU',
         description: 'Label for choosing State type',
       }),
       STATE_TYPE_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'The workflow state determines how data is managed and retained during execution of workflows.',
-        id: 'ixEnhz',
+        defaultMessage:
+          'This workflow supports the following states. The state determines how data is managed and retained during execution of workflows.',
+        id: 'NaW0ga',
         description: 'Description for state type choice group.',
       }),
       LEARN_MORE: intl.formatMessage({
-        defaultMessage: 'Learn More',
-        id: 'Kxq/yR',
+        defaultMessage: 'Learn more',
+        id: 'Xg1UDw',
         description: 'Link to learn more about state type',
       }),
       STATEFUL: intl.formatMessage({
@@ -81,8 +86,8 @@ export const NameStatePanel = () => {
         description: 'Second bullet point of stateless type',
       }),
       WORKFLOW_NAME: intl.formatMessage({
-        defaultMessage: 'Workflow Name',
-        id: '8WZwsC',
+        defaultMessage: 'Workflow name',
+        id: 'ekM77J',
         description: 'Label for workflow Name',
       }),
     }),
@@ -116,7 +121,7 @@ export const NameStatePanel = () => {
   );
 
   return (
-    <div className="msla-templates-tab">
+    <div className="msla-templates-tab msla-panel-no-description-tab">
       <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
         {intlText.WORKFLOW_NAME}
       </Label>
@@ -128,11 +133,11 @@ export const NameStatePanel = () => {
         ariaLabel={intlText.WORKFLOW_NAME}
         value={existingWorkflowName ?? workflowName}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName(newValue))
+          dispatch(updateWorkflowName({ id: workflowId, name: newValue }))
         }
         disabled={!!existingWorkflowName}
         onBlur={() => {
-          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+          dispatch(validateWorkflowName({ id: workflowId, existingNames: existingWorkflowNames ?? [] }));
         }}
         errorMessage={workflowError}
       />
@@ -143,12 +148,13 @@ export const NameStatePanel = () => {
         <Text className="msla-templates-tab-label-description">
           {intlText.STATE_TYPE_DESCRIPTION}{' '}
           <a
+            className="msla-templates-tab-label-link"
             href={'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless'}
             target="_blank"
             rel="noreferrer"
-            style={{ display: 'inline' }}
           >
             {intlText.LEARN_MORE}
+            <Open16Regular className="msla-templates-tab-description-icon" />
           </a>
         </Text>
         <ChoiceGroup
@@ -163,7 +169,7 @@ export const NameStatePanel = () => {
           ]}
           onChange={(_, option) => {
             if (option?.key) {
-              dispatch(updateKind(option?.key));
+              dispatch(updateKind({ id: workflowId, kind: option?.key }));
             }
           }}
           selectedKey={kind}
@@ -178,27 +184,15 @@ export const NameStatePanel = () => {
 export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  {
-    previousTabId,
-    hasError,
-  }: {
-    previousTabId: string | undefined;
-    hasError: boolean;
-  }
+  { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
-  id: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
-    defaultMessage: 'Name and State',
-    id: '+sz9Ur',
+    defaultMessage: 'Basic',
+    id: '8vPuBZ',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
-  description: intl.formatMessage({
-    defaultMessage: 'Provide a unique, descriptive name and review the state type to ensure your workflow is properly configured.',
-    id: 'ZXyMDQ',
-    description: 'An accessability label that describes the objective of name and state tab',
-  }),
   hasError: hasError,
-  order: 2,
   content: <NameStatePanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
@@ -207,26 +201,17 @@ export const nameStateTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
+      dispatch(selectPanelTab(nextTabId));
     },
-    secondaryButtonText: previousTabId
-      ? intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        }),
-    secondaryButtonOnClick: previousTabId
-      ? () => {
-          dispatch(selectPanelTab(previousTabId));
-        }
-      : () => {
-          dispatch(closePanel());
-          dispatch(clearTemplateDetails());
-        },
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Close',
+      id: 'FTrMxN',
+      description: 'Button text for closing the panel',
+    }),
+    secondaryButtonOnClick: () => {
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+    },
+    secondaryButtonDisabled: isCreating,
   },
 });

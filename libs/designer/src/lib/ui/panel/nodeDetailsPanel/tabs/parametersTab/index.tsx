@@ -5,7 +5,7 @@ import { useHostOptions, useReadOnly } from '../../../../../core/state/designerO
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
-import { usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
+import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -14,11 +14,17 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import {
+  useGetSwitchParentId,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useReplacedIds,
+} from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
+  getTypeForTokenFiltering,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
@@ -88,12 +94,22 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
+  const parentIdOfSwitch = useGetSwitchParentId(selectedNodeId);
+
+  const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
   const intl = useIntl();
+
   const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
     id: 'BtL7UI',
     description: 'Message to show when there are no parameters to author in operation.',
+  });
+  const cannotUpdateConnectionIfPinnedMessage = intl.formatMessage({
+    defaultMessage: 'Connections cannot be edited in pinned view. Release the pinned action to make connection changes.',
+    id: 'rl9UOO',
+    description:
+      'Descriptive message to show if the connection for an action cannot be changed or edited due to being shown in dual-pane (pinned action) view.',
   });
 
   const isLoading = useMemo(() => {
@@ -125,7 +141,13 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     );
   }
 
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const tokenGroup = getOutputTokenSections(
+    parentIdOfSwitch ?? selectedNodeId,
+    parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
+    tokenState,
+    workflowParametersState,
+    replacedIds
+  );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
@@ -163,7 +185,8 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
             connectionName={connectionName.result}
             nodeId={selectedNodeId}
             isLoading={connectionName.isLoading}
-            readOnly={!!readOnly}
+            readOnly={!!readOnly || isPaneInPinnedViewMode}
+            readOnlyReason={isPaneInPinnedViewMode ? cannotUpdateConnectionIfPinnedMessage : undefined}
             hasError={errorInfo?.level === ErrorLevel.Connection}
           />
         </>
@@ -338,10 +361,8 @@ const ParameterSection = ({
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
-      editorType ??
-      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
-      constants.SWAGGER.TYPE.ANY;
-    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+      editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(parameterType));
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,

@@ -2,9 +2,11 @@
 @import '../panel/templatePanel/panel.less';
 
 .msla-templates-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 373px);
+
     gap: 24px;
+    justify-content: center;
 }
 
 .msla-templates-empty-list {
@@ -19,6 +21,13 @@
         padding-top: 24px;
         padding-bottom: 8px;
     }
+}
+
+.msla-templates-filters-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .msla-templates-filters {
@@ -48,5 +57,6 @@
 
     .msla-templates-filters-sort-dropdown {
         width: 200px;
+        margin-left: 6px;
     }
 }

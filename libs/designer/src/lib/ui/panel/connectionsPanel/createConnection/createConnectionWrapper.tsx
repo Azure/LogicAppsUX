@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
+import { useOperationInfo } from '../../../../core';
 import {
   getApiHubAuthentication,
   getConnectionMetadata,
@@ -12,12 +12,16 @@ import {
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
   useConnectorByNodeId,
-  useConnectorOnly,
+  useConnector,
   useGatewayServiceConfig,
   useGateways,
   useSubscriptions,
 } from '../../../../core/state/connection/connectionSelector';
-import { useReferencePanelMode } from '../../../../core/state/panel/panelSelectors';
+import {
+  useConnectionPanelSelectedNodeIds,
+  useOperationPanelSelectedNodeId,
+  usePreviousPanelMode,
+} from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
@@ -52,8 +56,8 @@ import type { ApiHubAuthentication } from 'lib/common/models/workflow';
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const nodeId: string = useSelectedNodeId();
-  const nodeIds = useSelectedNodeIds();
+  const nodeId: string = useOperationPanelSelectedNodeId();
+  const nodeIds = useConnectionPanelSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
@@ -67,7 +71,7 @@ export const CreateConnectionWrapper = () => {
     [connector, operationManifest]
   );
 
-  const referencePanelMode = useReferencePanelMode();
+  const referencePanelMode = usePreviousPanelMode();
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';
     const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
@@ -118,6 +122,7 @@ export const CreateConnectionInternal = (props: {
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled?: () => void;
+  createButtonText?: string;
   description?: string;
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
@@ -135,6 +140,7 @@ export const CreateConnectionInternal = (props: {
     nodeIds = [],
     hideCancelButton,
     showActionBar,
+    createButtonText,
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
@@ -142,7 +148,7 @@ export const CreateConnectionInternal = (props: {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const { data: connector } = useConnectorOnly(connectorId);
+  const { data: connector } = useConnector(connectorId);
   const iconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
@@ -358,6 +364,7 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
+      createText={createButtonText}
       description={description}
       identity={identity}
       createConnectionCallback={createConnectionCallback}

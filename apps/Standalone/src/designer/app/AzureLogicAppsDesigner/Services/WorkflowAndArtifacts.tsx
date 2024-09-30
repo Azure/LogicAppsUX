@@ -3,7 +3,7 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getReactQueryClient, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
 import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
+import { ArmParser } from '../Utilities/ArmParser';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -181,12 +182,7 @@ const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<W
   return response.data;
 };
 
-export const useRunInstanceStandard = (
-  workflowName: string,
-  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
-  appId?: string,
-  runId?: string
-) => {
+export const useRunInstanceStandard = (workflowName: string, appId?: string, runId?: string) => {
   return useQuery(
     ['getRunInstance', appId, workflowName, runId],
     async () => {
@@ -218,7 +214,6 @@ export const useRunInstanceStandard = (
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      onSuccess: onRunInstanceSuccess,
     }
   );
 };
@@ -257,46 +252,50 @@ export const listCallbackUrl = async (
   triggerName: string | undefined,
   isConsumption = false
 ): Promise<CallbackInfo> => {
-  let callbackInfo: any;
-  if (triggerName) {
-    const authToken = {
-      Authorization: `Bearer ${environment.armToken}`,
-    };
-    if (HybridAppUtility.isHybridLogicApp(workflowId)) {
-      callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+  return getReactQueryClient().fetchQuery(['callbackUrl', { triggerName }], async () => {
+    let callbackInfo: any;
+    if (triggerName) {
+      const authToken = {
+        Authorization: `Bearer ${environment.armToken}`,
+      };
+      if (HybridAppUtility.isHybridLogicApp(workflowId)) {
+        callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+      } else {
+        const result = await axios.post(
+          `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
+            isConsumption ? '2016-10-01' : standardApiVersion
+          }`,
+          null,
+          {
+            headers: {
+              ...authToken,
+            },
+          }
+        );
+        callbackInfo = result.data;
+      }
     } else {
-      const result = await axios.post(
-        `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
-        null,
-        {
-          headers: {
-            ...authToken,
-          },
-        }
-      );
-      callbackInfo = result.data;
+      callbackInfo = {
+        basePath: '',
+        method: '',
+        queries: {},
+        value: '',
+      };
     }
-  } else {
-    callbackInfo = {
-      basePath: '',
-      method: '',
-      queries: {},
-      value: '',
+
+    let callbackUri: URL;
+    if (callbackInfo.relativePath) {
+      callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
+      Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
+    } else {
+      callbackUri = callbackInfo.value;
+    }
+
+    return {
+      method: callbackInfo.method,
+      value: callbackUri.toString(),
     };
-  }
-
-  let callbackUri: URL;
-  if (callbackInfo.relativePath) {
-    callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
-    Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
-  } else {
-    callbackUri = callbackInfo.value;
-  }
-
-  return {
-    method: callbackInfo.method,
-    value: callbackUri.toString(),
-  };
+  });
 };
 
 export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
@@ -463,7 +462,10 @@ export const saveWorkflowStandard = async (
   settings: Record<string, string> | undefined,
   customCodeData: AllCustomCodeFiles | undefined,
   clearDirtyState: () => void,
-  skipValidation?: boolean
+  options?: {
+    skipValidation?: boolean;
+    throwError?: boolean;
+  }
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -484,9 +486,9 @@ export const saveWorkflowStandard = async (
   }
 
   try {
-    if (!skipValidation) {
+    if (!options?.skipValidation) {
       try {
-        await validateWorkflow(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
+        await validateWorkflowStandard(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
       } catch (error: any) {
         if (error.status !== 404) {
           return;
@@ -517,15 +519,21 @@ export const saveWorkflowStandard = async (
 
     if (!isSuccessResponse(response.status)) {
       alert('Failed to save workflow');
+      if (options?.throwError) {
+        throw Error('Failed to save workflow');
+      }
       return;
     }
     clearDirtyState();
   } catch (error) {
     console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
   }
 };
 
-export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any): Promise<any> => {
+export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any, clearDirtyState: () => void): Promise<any> => {
   const workflowToSave = await convertDesignerWorkflowToConsumptionWorkflow(workflow);
 
   const outputWorkflow: Workflow = {
@@ -544,19 +552,19 @@ export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workfl
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
+    clearDirtyState();
   } catch (error) {
     console.log(error);
   }
 };
 
-const validateWorkflow = async (
+export const validateWorkflowStandard = async (
   siteResourceId: string,
   workflowName: string,
   workflow: any,
   connectionsData?: ConnectionsData,
   parametersData?: ParametersData,
-  settings?: Record<string, string>,
-  isConsumption = false
+  settings?: Record<string, string>
 ): Promise<any> => {
   const requestPayload = { properties: { ...workflow } };
 
@@ -583,9 +591,7 @@ const validateWorkflow = async (
     );
   } else {
     response = await axios.post(
-      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${
-        isConsumption ? consumptionApiVersion : standardApiVersion
-      }`,
+      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${standardApiVersion}`,
       requestPayload,
       {
         headers: {
@@ -595,6 +601,27 @@ const validateWorkflow = async (
       }
     );
   }
+
+  if (response.status !== 200) {
+    return Promise.reject(response);
+  }
+};
+
+export const validateWorkflowConsumption = async (siteResourceId: string, location: string, workflow: any): Promise<any> => {
+  const { subscriptionId, resourceGroup, topResourceName } = new ArmParser(siteResourceId);
+  const logicApp = {
+    properties: { definition: workflow.definition, parameters: workflow.parameters, connectionReferences: workflow.connectionReferences },
+  };
+  const response = await axios.post(
+    `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
+    logicApp,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    }
+  );
 
   if (response.status !== 200) {
     return Promise.reject(response);

@@ -2,6 +2,7 @@ import { SchemaType } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { SchemaFile } from '../../models/Schema';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { TestMapResponse } from '../services/dataMapperApiService';
 
 export const ConfigPanelView = {
   DefaultConfig: 'defaultConfig',
@@ -14,6 +15,13 @@ export type TestPanelState = {
   isOpen: boolean;
   showSelection: boolean;
   selectedFile?: SchemaFile;
+  testMapInput?: string;
+  testMapOutput?: TestMapResponse;
+  testMapOutputError?: Error;
+};
+
+export type FunctionPanelState = {
+  isOpen: boolean;
 };
 
 export type CodeViewState = {
@@ -25,6 +33,12 @@ export interface PanelState {
   schemaType?: SchemaType;
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
+  functionPanel: FunctionPanelState;
+}
+
+export interface TestMapOutput {
+  response?: TestMapResponse;
+  error?: Error;
 }
 
 const initialState: PanelState = {
@@ -35,6 +49,9 @@ const initialState: PanelState = {
   testPanel: {
     isOpen: false,
     showSelection: true,
+  },
+  functionPanel: {
+    isOpen: true,
   },
 };
 
@@ -49,19 +66,48 @@ export const panelSlice = createSlice({
     },
 
     toggleCodeView: (state) => {
-      // Close test panel first if code view needs to open
-      if (!state.codeViewPanel.isOpen && state.testPanel.isOpen) {
+      const newState = !state.codeViewPanel.isOpen;
+
+      // Close other panels if code view panel is opened
+      if (newState) {
         state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
       }
-      state.codeViewPanel.isOpen = !state.codeViewPanel.isOpen;
+
+      state.codeViewPanel.isOpen = newState;
     },
 
     toggleTestPanel: (state) => {
-      // Close code view first if test panel needs to open
-      if (!state.testPanel.isOpen && state.codeViewPanel.isOpen) {
+      const newState = !state.testPanel.isOpen;
+
+      // Close other panels if test panel is opened
+      if (newState) {
         state.codeViewPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
       }
-      state.testPanel.isOpen = !state.testPanel.isOpen;
+
+      state.testPanel.isOpen = newState;
+    },
+
+    toggleFunctionPanel: (state) => {
+      const newState = !state.functionPanel.isOpen;
+
+      // Close other panels if function panel is opened
+      if (newState) {
+        state.codeViewPanel.isOpen = false;
+        state.testPanel.isOpen = false;
+      }
+
+      state.functionPanel.isOpen = newState;
+    },
+
+    updateTestInput: (state, action: PayloadAction<string>) => {
+      state.testPanel.testMapInput = action.payload;
+    },
+
+    updateTestOutput: (state, action: PayloadAction<TestMapOutput>) => {
+      state.testPanel.testMapOutput = action.payload.response;
+      state.testPanel.testMapOutputError = action.payload.error;
     },
 
     toggleShowSelection: (state) => {
@@ -110,6 +156,9 @@ export const {
   toggleTestPanel,
   toggleShowSelection,
   setTestFile,
+  updateTestInput,
+  updateTestOutput,
+  toggleFunctionPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

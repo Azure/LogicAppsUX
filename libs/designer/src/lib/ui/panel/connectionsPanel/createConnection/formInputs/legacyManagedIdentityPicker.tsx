@@ -14,11 +14,19 @@ const LegacyManagedIdentityDropdown = (props: LegacyManagedIdentityDropdownProps
   const intl = useIntl();
   const dropdownOptions = useMemo(() => getIdentityDropdownOptions(identity, intl), [identity, intl]);
 
+  const noIdentitiesAvailable = useMemo(() => dropdownOptions.length === 0, [dropdownOptions]);
+  const noIdentityText = intl.formatMessage({
+    defaultMessage: 'No identities available',
+    id: 'Z8BOCl',
+    description: 'Placeholder warning for no identities available',
+  });
+
   return (
     <Dropdown
       className={'connection-parameter-input'}
       onChange={onChange}
-      disabled={disabled}
+      placeholder={noIdentitiesAvailable ? noIdentityText : undefined}
+      disabled={disabled || noIdentitiesAvailable}
       options={dropdownOptions}
       defaultSelectedKey={dropdownOptions[0]?.key}
     />

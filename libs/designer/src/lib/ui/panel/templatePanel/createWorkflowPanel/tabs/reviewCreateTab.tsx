@@ -4,21 +4,24 @@ import { Label, Text } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { TemplateService } from '@microsoft/logic-apps-shared';
+import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
-import { normalizeConnectorId } from '../../../../../core/templates/utils/helper';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { workflowName, kind, manifest, parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, manifest } = useDefaultWorkflowTemplate() as WorkflowTemplateData;
   const {
     existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
+    isConsumption,
   } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
@@ -68,16 +71,20 @@ export const ReviewCreatePanel = () => {
           <Text className="msla-templates-tab-review-section-details-title">{intlText.TEMPLATE_NAME}</Text>
           <Text className="msla-templates-tab-review-section-details-value">{manifest?.title}</Text>
         </div>
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">
-            {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
-          </Text>
-        </div>
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
-        </div>
+        {!isConsumption && (
+          <>
+            <div className="msla-templates-tab-review-section-details">
+              <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
+              <Text className="msla-templates-tab-review-section-details-value">
+                {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
+              </Text>
+            </div>
+            <div className="msla-templates-tab-review-section-details">
+              <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
+              <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
+            </div>
+          </>
+        )}
       </div>
 
       {Object.keys(manifest?.connections ?? {}).length > 0 && (
@@ -120,52 +127,63 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  onCreateClick: () => Promise<void>,
+  onCreateClick: () => void,
   {
     workflowName,
-    isLoadingCreate,
+    isCreating,
     isCreated,
+    errorMessage,
     isPrimaryButtonDisabled,
+    previousTabId,
   }: {
     workflowName: string;
-    isLoadingCreate: boolean;
+    isCreating: boolean;
     isCreated: boolean;
+    errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
+    previousTabId: string;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
-    defaultMessage: 'Review and Create',
-    id: 'vlWl7f',
+    defaultMessage: 'Review + create',
+    id: 'JQBEOg',
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
   description: isCreated ? (
     <MessageBar messageBarType={MessageBarType.success}>
       {intl.formatMessage({
-        defaultMessage:
-          'Your workflow has been created. You will be automatically redirected to Workflows in Logic Apps. If nothing happens click the button below to navigate to the page.',
-        id: 'eiv5l8',
+        defaultMessage: 'Your workflow has been created. ',
+        id: 'J+bMkk',
         description: 'The message displayed when the workflow is successfully created',
       })}
+      <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
+        {intl.formatMessage({
+          defaultMessage: 'Go to workflow.',
+          id: 'OqrmYm',
+          description: 'The link displayed to navigate to workflow when the workflow is successfully created',
+        })}
+      </Link>
     </MessageBar>
+  ) : errorMessage ? (
+    <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
   ) : (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
-      id: 'BPSraP',
-      description: 'An accessability label that describes the objective of review and create tab',
+      id: 'xDHpeS',
+      description: 'An accessibility label that describes the objective of review and create tab',
     })
   ),
   hasError: false,
-  order: 3,
   content: <ReviewCreatePanel />,
   footerContent: {
     primaryButtonText: isCreated ? (
       intl.formatMessage({
-        defaultMessage: 'Take me to my workflow',
-        id: '//uf06',
+        defaultMessage: 'Go to my workflow',
+        id: 'P3OMN/',
         description: 'The button text for navigating to the workflows page after creating the workflow',
       })
-    ) : isLoadingCreate ? (
+    ) : isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />
     ) : (
       intl.formatMessage({
@@ -174,12 +192,8 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated
-      ? () => TemplateService()?.openBladeAfterCreate(workflowName)
-      : isLoadingCreate
-        ? () => {}
-        : onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
+    primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate(workflowName) : onCreateClick,
+    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
     secondaryButtonText: isCreated
       ? intl.formatMessage({
           defaultMessage: 'Close',
@@ -197,8 +211,8 @@ export const reviewCreateTab = (
           dispatch(clearTemplateDetails());
         }
       : () => {
-          dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
+          dispatch(selectPanelTab(previousTabId));
         },
-    secondaryButtonDisabled: isLoadingCreate,
+    secondaryButtonDisabled: isCreating,
   },
 });

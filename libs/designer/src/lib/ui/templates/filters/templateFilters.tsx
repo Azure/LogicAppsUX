@@ -1,4 +1,4 @@
-import { Dropdown, SearchBox } from '@fluentui/react';
+import { Dropdown, SearchBox, Text } from '@fluentui/react';
 import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-ui';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
@@ -7,21 +7,26 @@ import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey }
 import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import { useConnectors } from '../../../core/state/connection/connectionSelector';
+import { Tab, TabList } from '@fluentui/react-components';
+import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
+
+export type TemplateDetailFilterType = Record<
+  string,
+  {
+    displayName: string;
+    items: FilterObject[];
+  }
+>;
 
 export interface TemplateFiltersProps {
-  connectors?: FilterObject[];
-  detailFilters: Record<
-    string,
-    {
-      displayName: string;
-      items: FilterObject[];
-    }
-  >;
+  detailFilters: TemplateDetailFilterType;
 }
+
+const templateDefaultTabKey = 'all';
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const sortKey = useSelector((state: RootState) => state?.manifest?.filters?.sortKey);
+  const { sortKey, detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
   const intl = useIntl();
   const { availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
     availableTemplates: state.manifest.availableTemplates ?? {},
@@ -34,6 +39,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
   }, [availableTemplates, location, subscriptionId]);
   const { data: allUniqueConnectorsEntries } = useConnectors(allTemplatesUniqueConnectorIds);
+  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
     SEARCH: intl.formatMessage({
@@ -50,6 +56,11 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       defaultMessage: 'Type',
       id: 'wfekJ7',
       description: 'Label text for type filter',
+    }),
+    SORT_BY: intl.formatMessage({
+      defaultMessage: 'Sort By',
+      id: 'ZOIvqN',
+      description: 'Label text for sort by filter',
     }),
   };
 
@@ -71,6 +82,53 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       }),
     },
   ];
+
+  const templateTabs = [
+    {
+      value: templateDefaultTabKey,
+      displayName: intl.formatMessage({
+        defaultMessage: 'All',
+        id: 'YX0jQs',
+        description: 'All templates tab',
+      }),
+    },
+    {
+      value: 'Workflow',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Workflows',
+        id: 'fxue5l',
+        description: 'Workflows only templates tab',
+      }),
+    },
+    {
+      value: 'Accelerator',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Accelerators',
+        id: 'A5/UwX',
+        description: 'Accelerators only templates tab',
+      }),
+    },
+  ];
+
+  const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
+    if (data) {
+      const itemKey = data.value as string;
+      dispatch(
+        setDetailsFilters({
+          filterName: 'Type',
+          filters:
+            itemKey === templateDefaultTabKey
+              ? undefined
+              : [
+                  {
+                    displayName: itemKey,
+                    value: itemKey,
+                  },
+                ],
+        })
+      );
+    }
+  };
 
   return (
     <div className="msla-templates-filters">
@@ -108,17 +166,28 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
           />
         ))}
       </div>
-      <div className="msla-templates-filters-sort">
-        <Dropdown
-          className="msla-templates-filters-sort-dropdown"
-          options={templateDropdownOptions}
-          selectedKey={sortKey as string}
-          onChange={(_e, item) => {
-            if (item?.key) {
-              dispatch(setSortKey(item?.key as string));
-            }
-          }}
-        />
+      <div className="msla-templates-filters-row">
+        <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>
+          {templateTabs.map(({ value, displayName }) => (
+            <Tab key={value} id={value} value={value}>
+              {displayName}
+            </Tab>
+          ))}
+        </TabList>
+
+        <div className="msla-templates-filters-sort">
+          <Text>{intlText.SORT_BY}</Text>
+          <Dropdown
+            className="msla-templates-filters-sort-dropdown"
+            options={templateDropdownOptions}
+            selectedKey={sortKey as string}
+            onChange={(_e, item) => {
+              if (item?.key) {
+                dispatch(setSortKey(item?.key as string));
+              }
+            }}
+          />
+        </div>
       </div>
     </div>
   );

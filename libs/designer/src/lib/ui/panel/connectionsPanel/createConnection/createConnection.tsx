@@ -22,6 +22,7 @@ import {
   usesLegacyManagedIdentity,
   isUsingAadAuthentication,
   equals,
+  isTenantServiceEnabled,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -55,6 +56,7 @@ export interface CreateConnectionProps {
   description?: string;
   identity?: ManagedIdentity;
   isLoading?: boolean;
+  createText?: string;
   createConnectionCallback?: (
     newName?: string,
     selectedParameterSet?: ConnectionParameterSet,
@@ -81,6 +83,7 @@ export interface CreateConnectionProps {
 export const CreateConnection = (props: CreateConnectionProps) => {
   const {
     classes,
+    createText,
     nodeIds = [],
     showActionBar = true,
     iconUri = '',
@@ -235,7 +238,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   const unfilteredParameters: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = useMemo(
-    () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }) ?? {},
+    () => (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }),
     [isMultiAuth, multiAuthParams, singleAuthParams]
   );
 
@@ -296,9 +299,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const usingAadConnection = useMemo(() => (connector ? isUsingAadAuthentication(connector) : false), [connector]);
   const showTenantIdSelection = useMemo(
     () =>
+      isTenantServiceEnabled() &&
       usingAadConnection &&
       isUsingOAuth &&
-      Object.keys(connectionParameters ?? {}).some((key) => equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)),
+      Object.keys(connectionParameters?.['token']?.oAuthSettings?.customParameters ?? {}).some((key: string) => equals(key, 'tenantId')) &&
+      Object.keys(connectionParameters ?? {}).some((key: string) =>
+        equals(key, SERVICE_PRINCIPLE_CONSTANTS.CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
+      ),
     [connectionParameters, isUsingOAuth, usingAadConnection]
   );
 
@@ -322,13 +329,24 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     ) {
       return false;
     }
+    if (legacyManagedIdentitySelected && !selectedManagedIdentity) {
+      return false;
+    }
     if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) {
       return true;
     }
     return Object.entries(capabilityEnabledParameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
-  }, [showNameInput, connectionDisplayName, resourceSelectorProps, capabilityEnabledParameters, parameterValues]);
+  }, [
+    showNameInput,
+    connectionDisplayName,
+    resourceSelectorProps,
+    legacyManagedIdentitySelected,
+    selectedManagedIdentity,
+    capabilityEnabledParameters,
+    parameterValues,
+  ]);
 
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
@@ -391,8 +409,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   });
 
   const createButtonText = intl.formatMessage({
-    defaultMessage: 'Create New',
-    id: 'jMLmag',
+    defaultMessage: 'Create new',
+    id: 'JKfEGS',
     description: 'Button to add a new connection',
   });
 
@@ -465,8 +483,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   });
 
   const legacyManagedIdentityLabelText = intl.formatMessage({
-    defaultMessage: 'Managed Identity',
-    id: 'l72gf4',
+    defaultMessage: 'Managed identity',
+    id: 'uIgGKj',
     description: 'Dropdown text for legacy managed identity connection',
   });
 
@@ -480,12 +498,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return '';
   }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
 
+  const createConnectionText = createText ?? createButtonText;
   const submitButtonText = useMemo(() => {
     if (isLoading) {
       return isUsingOAuth ? signInButtonLoadingText : createButtonLoadingText;
     }
-    return isUsingOAuth ? signInButtonText : createButtonText;
-  }, [createButtonLoadingText, createButtonText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
+    return isUsingOAuth ? signInButtonText : createConnectionText;
+  }, [createButtonLoadingText, createConnectionText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
 
   const submitButtonAriaLabel = useMemo(() => {
     return isUsingOAuth ? signInButtonAria : createButtonAria;
@@ -590,7 +609,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       >
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar intent={'error'} style={{ width: '100%' }}>
+          <MessageBar intent={'error'} style={{ width: '100%', whiteSpace: 'normal' }}>
             <MessageBarBody>{errorMessage}</MessageBarBody>
             <MessageBarActions
               containerAction={

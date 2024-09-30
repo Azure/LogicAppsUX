@@ -46,8 +46,10 @@ export {
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export {
-  useSelectedNodeId,
-  useSelectedNodeIds,
+  useConnectionPanelSelectedNodeIds,
+  useDiscoveryPanelSelectedNodeIds,
+  useOperationPanelPinnedNodeId,
+  useOperationPanelSelectedNodeId,
 } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
@@ -74,3 +76,7 @@ export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
 } from './utils/card';
+export { addOperation } from './actions/bjsworkflow/add';
+export { updateNodeConnection } from './actions/bjsworkflow/connections';
+export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
+export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';

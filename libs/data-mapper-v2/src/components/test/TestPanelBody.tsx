@@ -1,125 +1,168 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
-import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
-import type { FileWithVsCodePath } from '../../models/Schema';
-import { toggleShowSelection, setTestFile } from '../../core/state/PanelSlice';
-import { equals, type ITreeFile, SchemaType, type IFileSysTreeItem } from '@microsoft/logic-apps-shared';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from '@fluentui/react-components';
+import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
+import { EditorLanguage, SchemaFileFormat } from '@microsoft/logic-apps-shared';
+import { updateTestInput } from '../../core/state/PanelSlice';
+
+const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
+const resultPlaceHolderEditorId = 'result-editor-placeholder';
 
 type TestPanelBodyProps = {};
-
 export const TestPanelBody = (_props: TestPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const [fileSelectorOption, setFileSelectorOption] = useState<FileSelectorOption>('select-existing');
-  const showSelection = useSelector((state: RootState) => state.panel.testPanel.showSelection);
-  const selectedFile = useSelector((state: RootState) => state.panel.testPanel.selectedFile);
+  const { testMapInput, testMapOutput, testMapOutputError } = useSelector((state: RootState) => state.panel.testPanel);
+
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const stringResources = useMemo(
     () => ({
-      TEST_MAP: intl.formatMessage({
-        defaultMessage: 'Test map',
-        id: 'GFnJQe',
-        description: 'Code view title',
+      SAMPLE_TEST_DATA: intl.formatMessage({
+        defaultMessage: 'Sample test data',
+        id: 'zR2qGG',
+        description: 'Sample test data for testing',
       }),
-      CLOSE_TEST_MAP: intl.formatMessage({
-        defaultMessage: 'Close test map',
-        id: '6oOQnD',
-        description: 'Close code view button',
+      SAMPLE_TEST_DATA_PLACEHOLDER: intl.formatMessage({
+        defaultMessage: 'Paste your sample data to test the mapping',
+        id: 'S5kFNK',
+        description: 'Sample test data placeholder',
       }),
-      BROWSE: intl.formatMessage({
-        defaultMessage: 'Browse',
-        id: 'syiNc+',
-        description: 'Browse for file',
+      RESULT: intl.formatMessage({
+        defaultMessage: 'Result',
+        id: '3hHkAn',
+        description: 'Result',
       }),
-      BROWSE_MESSAGE: intl.formatMessage({
-        defaultMessage: 'Select a file to upload',
-        id: '2CXCOt',
-        description: 'Placeholder for input to load a schema file',
-      }),
-      ADD_NEW: intl.formatMessage({
-        defaultMessage: 'Upload sample data',
-        id: 'lQnUbu',
-        description: 'Upload sample data option',
-      }),
-      SELECT_EXISTING: intl.formatMessage({
-        defaultMessage: 'Select from existing sample data',
-        id: 'bXTpVp',
-        description: 'Select existing option',
+      RESULT_PLACEHOLDER: intl.formatMessage({
+        defaultMessage: 'Test your map to see a result',
+        id: 'UVr0mL',
+        description: 'Placeholder result',
       }),
     }),
     [intl]
   );
 
-  const onSelectExistingFile = useCallback(
-    (item: IFileSysTreeItem) => {
-      dispatch(toggleShowSelection());
-      dispatch(
-        setTestFile({
-          name: item.name ?? '',
-          path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
-          type: SchemaType.Source,
-        })
-      );
+  const updatePlaceHolder = useCallback((id: string, value?: string) => {
+    const placeholder = document.getElementById(id);
+    if (placeholder) {
+      placeholder.style.display = value ? 'none' : 'block';
+    }
+  }, []);
+
+  const onSampleDataChange = useCallback(
+    (e: EditorContentChangedEventArgs) => {
+      const value = e?.value ?? '';
+      dispatch(updateTestInput(value));
+      updatePlaceHolder(sampleDataPlaceHolderEditorId, value);
     },
-    [dispatch]
+    [dispatch, updatePlaceHolder]
   );
 
-  const onOpenClose = useCallback(() => {}, []);
+  const onSampleDataEditorLoaded = useCallback(() => {
+    updatePlaceHolder(sampleDataPlaceHolderEditorId, testMapInput);
+  }, [testMapInput, updatePlaceHolder]);
 
-  const onUpload = useCallback(
-    (files?: FileList) => {
-      if (!files) {
-        console.error('Files array is empty');
-        return;
-      }
-
-      const schemaFile = files[0] as FileWithVsCodePath;
-      if (!schemaFile.path) {
-        console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile) {
-        dispatch(
-          setTestFile({
-            name: schemaFile.name,
-            path: schemaFile.path,
-            type: SchemaType.Source,
-          })
-        );
-        dispatch(toggleShowSelection());
-      } else {
-        console.error('Missing test file');
-      }
+  const onResultContentChange = useCallback(
+    (e: EditorContentChangedEventArgs) => {
+      updatePlaceHolder(resultPlaceHolderEditorId, e?.value ?? '');
     },
-    [dispatch]
+    [updatePlaceHolder]
   );
+
+  const onResultEditorLoaded = useCallback(() => {
+    updatePlaceHolder(resultPlaceHolderEditorId, testMapInput);
+  }, [testMapInput, updatePlaceHolder]);
+
+  const content = useMemo(() => {
+    let content: any;
+
+    // If there's an error, show the error message
+    if (testMapOutputError) {
+      content = testMapOutputError;
+    }
+
+    // If there's a response, show the response content
+    if (!content && testMapOutput?.outputInstance?.$content) {
+      content = testMapOutput?.outputInstance?.$content;
+    }
+
+    // If there's neither of the above, show the status code and status text
+    if (!content && testMapOutput?.statusCode) {
+      content = testMapOutput?.statusCode;
+
+      if (testMapOutput?.statusText) {
+        content = `${content} - ${testMapOutput?.statusText}`;
+      }
+    }
+
+    if (content) {
+      try {
+        return JSON.stringify(JSON.parse(content), null, 2);
+      } catch (_err) {
+        return content;
+      }
+    }
+
+    return undefined;
+  }, [testMapOutput, testMapOutputError]);
 
   return (
     <div className={styles.bodyWrapper}>
-      {showSelection ? (
-        <FileSelector
-          selectedKey={fileSelectorOption}
-          options={{
-            'upload-new': { text: stringResources.ADD_NEW },
-            'select-existing': { text: stringResources.SELECT_EXISTING },
-          }}
-          onOptionChange={setFileSelectorOption}
-          upload={{
-            uploadButtonText: stringResources.BROWSE,
-            inputPlaceholder: stringResources.BROWSE_MESSAGE,
-            acceptedExtensions: '.xsd, .json',
-            fileName: selectedFile?.name,
-            onUpload: onUpload,
-          }}
-          existing={{
-            fileList: [],
-            onSelect: onSelectExistingFile,
-            onOpenClose: onOpenClose,
-          }}
-        />
-      ) : null}
+      <Accordion multiple={true} collapsible={true} defaultOpenItems={['sample-data', 'result']}>
+        <AccordionItem value={'sample-data'}>
+          <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
+            {stringResources.SAMPLE_TEST_DATA}
+          </AccordionHeader>
+          <AccordionPanel className={styles.accordianPanel}>
+            <MonacoEditor
+              language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
+              value={testMapInput ?? ''}
+              className={styles.editorStyle}
+              lineNumbers={'on'}
+              scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
+              height="200px"
+              width="100%"
+              wordWrap="on"
+              wrappingIndent="same"
+              onContentChanged={onSampleDataChange}
+              onEditorLoaded={onSampleDataEditorLoaded}
+            />
+            <div id={sampleDataPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+              {stringResources.SAMPLE_TEST_DATA_PLACEHOLDER}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem value={'result'}>
+          <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
+            {stringResources.RESULT}
+          </AccordionHeader>
+          <AccordionPanel className={styles.accordianPanel}>
+            <MonacoEditor
+              language={
+                content ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
+              }
+              value={content}
+              className={styles.editorStyle}
+              lineNumbers={'on'}
+              scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
+              height="200px"
+              width="100%"
+              wordWrap="on"
+              onContentChanged={onResultContentChange}
+              onEditorLoaded={onResultEditorLoaded}
+              readOnly
+            />
+            <div id={resultPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+              {stringResources.RESULT_PLACEHOLDER}
+            </div>
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };

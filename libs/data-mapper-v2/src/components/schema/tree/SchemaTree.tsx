@@ -1,115 +1,190 @@
-import { type SchemaExtended, SchemaType, equals } from '@microsoft/logic-apps-shared';
-import { Tree, mergeClasses } from '@fluentui/react-components';
-import { useStyles } from './styles';
-import { useState, useMemo, useLayoutEffect, useRef, useCallback } from 'react';
-import { useIntl } from 'react-intl';
-import RecursiveTree from './RecursiveTree';
-import { flattenSchemaNodeMap } from '../../../utils';
-import { type Node, applyNodeChanges, type NodeChange } from '@xyflow/react';
-import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { emptyCanvasRect, type SchemaExtended, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useHandleStyles, useStyles, useTreeStyles } from './styles';
+import { useCallback, useEffect, useRef } from 'react';
+import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateReactFlowNodes } from '../../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../../core/state/Store';
+import useSchema from '../useSchema';
+import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
+import SchemaTreeNode from './SchemaTreeNode';
+import { toggleNodeExpandCollapse, updateTreeData } from '../../../core/state/DataMapSlice';
+import { mergeClasses } from '@fluentui/react-components';
+import { useDragDropManager } from 'react-dnd';
 
 export type SchemaTreeProps = {
-  schemaType?: SchemaType;
+  id: string;
   schema: SchemaExtended;
+  flattenedSchemaMap: Record<string, SchemaNodeExtended>;
+  searchTerm?: string;
 };
 
 export const SchemaTree = (props: SchemaTreeProps) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const dndManager = useDragDropManager();
+  const treeRef = useRef<TreeApi<SchemaNodeExtended> | null>(null);
   const styles = useStyles();
+  const treeStyles = useTreeStyles();
+  const dispatch = useDispatch<AppDispatch>();
+  const handleStyles = useHandleStyles();
   const {
-    schemaType,
+    id,
+    flattenedSchemaMap,
     schema: { schemaTreeRoot },
+    searchTerm,
   } = props;
 
-  const isLeftDirection = useMemo(() => equals(schemaType, SchemaType.Source), [schemaType]);
-  const [openKeys, setOpenKeys] = useState<Set<string>>(new Set());
-  const updatedNodesRef = useRef<Record<string, Node>>({});
-  const [totalUpdatedNodes, setTotalUpdatedNodes] = useState(0);
+  const { panelNodeId, openKeys, isSourceSchema } = useSchema({ id });
+  const { height: currentHeight } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
+  );
+  const { nodesForScroll, schemaTreeData } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const updateNodeInternals = useUpdateNodeInternals();
 
-  const intl = useIntl();
-  const dispatch = useDispatch<AppDispatch>();
-  const treeRef = useRef<HTMLDivElement | null>(null);
-  const flattenedScehmaMap = useMemo(() => flattenSchemaNodeMap(schemaTreeRoot), [schemaTreeRoot]);
+  const onScroll = useCallback(() => {
+    updateNodeInternals(panelNodeId);
+  }, [panelNodeId, updateNodeInternals]);
 
-  const totalNodes = useMemo(() => Object.keys(flattenedScehmaMap).length, [flattenedScehmaMap]);
-
-  const { nodes } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
-
-  const setUpdatedNode = useCallback(
-    (node: Node) => {
-      const existingNodes = updatedNodesRef.current;
-      setTotalUpdatedNodes((prev) => (existingNodes[node.id] ? prev : prev + 1));
-      updatedNodesRef.current = {
-        ...existingNodes,
-        [node.id]: node,
-      };
+  const onToggle = useCallback(
+    (id: string) => {
+      dispatch(
+        toggleNodeExpandCollapse({
+          isSourceSchema: isSourceSchema,
+          keys: [id],
+          isExpanded: !openKeys[id],
+        })
+      );
     },
-    [updatedNodesRef]
+    [openKeys, dispatch, isSourceSchema]
   );
 
-  const treeAriaLabel = intl.formatMessage({
-    defaultMessage: 'Schema tree',
-    id: 't2Xi1/',
-    description: 'tree showing schema nodes',
-  });
+  useEffect(() => {
+    const visibleNodes = treeRef?.current?.visibleNodes.map((node) => node.data) ?? [];
+    const startIndex = treeRef?.current?.visibleStartIndex ?? -1;
+    const endIndex = treeRef?.current?.visibleStopIndex ?? -1;
 
-  useLayoutEffect(() => {
-    // NOTE: Update the nodes when all the updated position has been fetched for the keys
-    if (totalUpdatedNodes === totalNodes) {
-      const updatedNodes = updatedNodesRef.current;
-      const keys = Object.keys(updatedNodes);
-      const currentNodesMap: Record<string, Node> = {};
-      for (const node of nodes) {
-        currentNodesMap[node.id] = node;
-      }
+    const isVisibleNodesUpdated = (newNodes: SchemaNodeExtended[], currentNodes: SchemaNodeExtended[]) => {
+      const nodeSet = new Set<string>();
+      newNodes.forEach((node) => {
+        nodeSet.add(node.key);
+      });
 
-      const nodeChanges: NodeChange[] = [];
-      for (const key of keys) {
-        const updatedNode = updatedNodes[key];
-        const currentNode = currentNodesMap[key];
-
-        if (updatedNode.position.x < 0 && updatedNode.position.y < 0) {
-          if (currentNode) {
-            nodeChanges.push({ id: key, type: 'remove' });
-          }
-        } else if (!currentNode) {
-          nodeChanges.push({ type: 'add', item: updatedNode });
-        } else if (currentNode.position.x !== updatedNode.position.x || currentNode.position.y !== updatedNode.position.y) {
-          nodeChanges.push({
-            id: key,
-            type: 'position',
-            position: updatedNode.position,
-          });
+      for (const node of currentNodes) {
+        if (!nodeSet.has(node.key)) {
+          return true;
         }
       }
+      return false;
+    };
 
-      if (nodeChanges.length > 0) {
-        const newNodes = applyNodeChanges(nodeChanges, nodes);
-        dispatch(updateReactFlowNodes(newNodes));
-      }
-      updatedNodesRef.current = {};
-      setTotalUpdatedNodes(0);
+    if (
+      isVisibleNodesUpdated(visibleNodes, schemaTreeData[id]?.visibleNodes ?? []) ||
+      isVisibleNodesUpdated(schemaTreeData[id]?.visibleNodes ?? [], visibleNodes) ||
+      schemaTreeData[id]?.startIndex !== startIndex ||
+      schemaTreeData[id]?.endIndex !== endIndex
+    ) {
+      dispatch(
+        updateTreeData({
+          key: id,
+          data: {
+            visibleNodes,
+            startIndex,
+            endIndex,
+          },
+        })
+      );
     }
-  }, [nodes, updatedNodesRef, totalNodes, dispatch, setTotalUpdatedNodes, totalUpdatedNodes]);
+  }, [
+    dispatch,
+    id,
+    schemaTreeData,
+    treeRef?.current?.visibleNodes,
+    treeRef?.current?.visibleStartIndex,
+    treeRef?.current?.visibleStopIndex,
+  ]);
 
-  useLayoutEffect(() => {
-    setOpenKeys(new Set<string>(Object.keys(flattenedScehmaMap).filter((key) => flattenedScehmaMap[key].children.length > 0)));
-  }, [flattenedScehmaMap, setOpenKeys]);
-  return schemaTreeRoot ? (
-    <Tree
-      ref={treeRef}
-      className={isLeftDirection ? mergeClasses(styles.leftWrapper, styles.wrapper) : mergeClasses(styles.rightWrapper, styles.wrapper)}
-      aria-label={treeAriaLabel}
-    >
-      <RecursiveTree
-        root={schemaTreeRoot}
-        isLeftDirection={isLeftDirection}
-        setOpenKeys={setOpenKeys}
-        openKeys={openKeys}
-        flattenedScehmaMap={flattenedScehmaMap}
-        setUpdatedNode={setUpdatedNode}
-      />
-    </Tree>
-  ) : null;
+  useEffect(() => {
+    updateNodeInternals(panelNodeId);
+  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys]);
+
+  return (
+    <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
+      {ref?.current ? (
+        <>
+          {isSourceSchema ? (
+            <>
+              {nodesForScroll['top-left'] && (
+                <Handle
+                  id={nodesForScroll['top-left']}
+                  position={Position.Right}
+                  type="source"
+                  className={handleStyles.hidden}
+                  style={{ top: '87px', right: '4px' }}
+                />
+              )}
+              {currentHeight !== undefined && nodesForScroll['bottom-left'] && (
+                <Handle
+                  id={nodesForScroll['bottom-left']}
+                  position={Position.Right}
+                  type="source"
+                  className={handleStyles.hidden}
+                  style={{ top: `${currentHeight}px`, right: '4px' }}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {nodesForScroll['top-right'] && (
+                <Handle
+                  id={nodesForScroll['top-right']}
+                  position={Position.Left}
+                  type="target"
+                  className={handleStyles.hidden}
+                  style={{ top: '0px', left: '8px' }}
+                />
+              )}
+              {currentHeight !== undefined && nodesForScroll['bottom-right'] && (
+                <Handle
+                  id={nodesForScroll['bottom-right']}
+                  position={Position.Left}
+                  type="target"
+                  className={handleStyles.hidden}
+                  style={{ top: `${currentHeight}px`, left: '8px' }}
+                />
+              )}
+            </>
+          )}
+          <Tree
+            ref={treeRef}
+            data={schemaTreeRoot ? [schemaTreeRoot] : []}
+            idAccessor={'key'}
+            onScroll={onScroll}
+            openByDefault={true}
+            disableEdit={true}
+            disableDrag={true}
+            disableDrop={true}
+            rowHeight={35}
+            indent={10}
+            width={ref.current.getBoundingClientRect().width}
+            height={ref.current.getBoundingClientRect().height}
+            dndRootElement={ref.current}
+            className={treeStyles.root}
+            onToggle={onToggle}
+            dndManager={dndManager}
+            searchTerm={searchTerm}
+          >
+            {(treeProps: NodeRendererProps<SchemaNodeExtended>) => (
+              <SchemaTreeNode
+                id={id}
+                flattenedSchemaMap={flattenedSchemaMap}
+                schema={props.schema}
+                containerTop={ref?.current?.getBoundingClientRect().top}
+                containerBottom={ref?.current?.getBoundingClientRect().bottom}
+                {...treeProps}
+              />
+            )}
+          </Tree>
+        </>
+      ) : null}
+    </div>
+  );
 };

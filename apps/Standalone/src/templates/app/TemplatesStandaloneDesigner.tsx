@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from 'react';
-import { TemplateFilters, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, templateStore } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -45,13 +45,14 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 };
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const { appId, isConsumption, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowAppData } = useWorkflowApp(appId as string, isConsumption ? 'consumption' : 'standard');
+  const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
+  const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: settingsData } = useAppSettings(appId as string);
+  const isConsumption = hostingPlan === 'consumption';
 
   const connectionsData = useMemo(() => {
     return JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {})));
@@ -60,16 +61,16 @@ export const TemplatesStandaloneDesigner = () => {
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
 
   const createWorkflowCall = async (
-    workflowName: string,
-    workflowKind: string,
+    workflowName: string | undefined,
+    workflowKind: string | undefined,
     workflowDefinition: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
-      if (isConsumption) {
-        console.log('Consumption is not ready yet!');
+      if (hostingPlan !== 'standard' || !workflowNameToUse || !workflowName || !workflowKind) {
+        console.log('Hosting plan is not ready yet!');
       } else {
         let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
         const sanitizedParameterData: ParametersData = {};
@@ -84,8 +85,8 @@ export const TemplatesStandaloneDesigner = () => {
             value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
           };
           sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
-            `@parameters('${parameter.name}')`,
-            `@parameters('${sanitizedParameterName}')`
+            `parameters('${parameter.name}')`,
+            `parameters('${sanitizedParameterName}')`
           );
         });
 
@@ -102,9 +103,13 @@ export const TemplatesStandaloneDesigner = () => {
         );
         sanitizedWorkflowDefinitionString = updatedWorkflowJsonString;
 
+        const templateName = templateStore.getState().template.templateName;
         const workflow = {
           definition: JSON.parse(sanitizedWorkflowDefinitionString),
           kind: workflowKind,
+          metadata: {
+            templates: { name: templateName },
+          },
         };
 
         const getExistingParametersData = async () => {
@@ -124,32 +129,28 @@ export const TemplatesStandaloneDesigner = () => {
             return error?.response?.status === 404 ? {} : undefined;
           }
         };
-        try {
-          const existingParametersData = await getExistingParametersData();
+        const existingParametersData = await getExistingParametersData();
 
-          if (!existingParametersData) {
-            alert('Error fetching parameters');
-            return;
-          }
-
-          const updatedParametersData: ParametersData = {
-            ...existingParametersData,
-            ...sanitizedParameterData,
-          };
-          await saveWorkflowStandard(
-            appId,
-            workflowNameToUse,
-            workflow,
-            updatedConnectionsData,
-            updatedParametersData,
-            updatedSettingProperties,
-            undefined,
-            () => {},
-            true
-          );
-        } catch (error) {
-          console.log(error);
+        if (!existingParametersData) {
+          alert('Error fetching parameters');
+          throw new Error('Error fetching parameters');
         }
+
+        const updatedParametersData: ParametersData = {
+          ...existingParametersData,
+          ...sanitizedParameterData,
+        };
+        await saveWorkflowStandard(
+          appId,
+          workflowNameToUse,
+          workflow,
+          updatedConnectionsData,
+          updatedParametersData,
+          updatedSettingProperties,
+          undefined,
+          () => {},
+          { skipValidation: true, throwError: true }
+        );
       }
     } else {
       console.log('Select App Id first!');
@@ -186,6 +187,7 @@ export const TemplatesStandaloneDesigner = () => {
               subscriptionId: resourceDetails.subscriptionId,
               resourceGroup: resourceDetails.resourceGroup,
               location: canonicalLocation,
+              workflowAppName: workflowAppData.name as string,
             }}
             connectionReferences={connectionReferences}
             services={services}
@@ -197,18 +199,18 @@ export const TemplatesStandaloneDesigner = () => {
                 margin: '20px',
               }}
             >
-              <TemplateFilters
+              <TemplatesDesigner
                 detailFilters={{
-                  Categories: {
-                    displayName: 'Category',
+                  Category: {
+                    displayName: 'Categories',
                     items: [
                       {
                         value: 'Design Patterns',
                         displayName: 'Design Patterns',
                       },
                       {
-                        value: 'Generative AI',
-                        displayName: 'Generative AI',
+                        value: 'AI',
+                        displayName: 'AI',
                       },
                       {
                         value: 'B2B',
@@ -222,12 +224,27 @@ export const TemplatesStandaloneDesigner = () => {
                         value: 'Approval',
                         displayName: 'Approval',
                       },
+                      {
+                        value: 'RAG',
+                        displayName: 'RAG',
+                      },
+                      {
+                        value: 'Automation',
+                        displayName: 'Automation',
+                      },
+                      {
+                        value: 'BizTalk Migration',
+                        displayName: 'BizTalk Migration',
+                      },
+                      {
+                        value: 'Mainframe Modernization',
+                        displayName: 'Mainframe Modernization',
+                      },
                     ],
                   },
                 }}
+                createWorkflowCall={createWorkflowCall}
               />
-              <br />
-              <TemplatesDesigner createWorkflowCall={createWorkflowCall} />
             </div>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>

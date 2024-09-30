@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
@@ -49,7 +49,7 @@ const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => 
 export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
-  const currentNodeId = useSelectedNodeId();
+  const currentNodeId = useOperationPanelSelectedNodeId();
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
@@ -66,13 +66,13 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       .map(([key, value]) => ({ ...value, id: key }));
   });
   const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
-    defaultMessage: 'Filter Actions',
-    id: 'AHB418',
+    defaultMessage: 'Filter actions',
+    id: 'U2juKb',
     description: 'Filter Actions',
   });
   const RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE = intl.formatMessage({
-    defaultMessage: 'Select Actions',
-    id: 'zTKAc9',
+    defaultMessage: 'Select actions',
+    id: '3a3eHg',
     description: 'Select Actions',
   });
 

@@ -244,8 +244,8 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
     case Constants.SWAGGER.FORMAT.DOUBLE: {
       if (!regex.double.test(parameterValue)) {
         return intl.formatMessage({
-          defaultMessage: 'Enter a valid Double number.',
-          id: 'osKNnl',
+          defaultMessage: 'Enter a valid double number.',
+          id: 'APKdYG',
           description: 'Error validation message for doubles',
         });
       }
@@ -314,8 +314,8 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
       }
       if (regex.whiteSpace.test(parameterValue)) {
         return intl.formatMessage({
-          defaultMessage: 'Whitespaces must be encoded for URIs',
-          id: 'P4XUjW',
+          defaultMessage: 'Whitespaces must be encoded for URIs.',
+          id: 'A8T1X/',
           description: 'Error validation message for URIs with whitespace',
         });
       }
@@ -549,7 +549,7 @@ export const validateParameterValueWithSwaggerType = (
       }
 
       error = isInvalid
-        ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
+        ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', id: 'MVrv+N', description: 'Error validation message' })
         : undefined;
       break;
     }

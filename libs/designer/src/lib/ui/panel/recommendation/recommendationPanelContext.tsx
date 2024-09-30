@@ -3,10 +3,10 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
-  useIsAddingTrigger,
-  useIsParallelBranch,
-  useRelationshipIds,
-  useSelectedSearchOperationGroupId,
+  useDiscoveryPanelIsAddingTrigger,
+  useDiscoveryPanelIsParallelBranch,
+  useDiscoveryPanelRelationshipIds,
+  useDiscoveryPanelSelectedOperationGroupId,
 } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId, selectOperationId } from '../../../core/state/panel/panelSlice';
 import { AzureResourceSelection } from './azureResourceSelection';
@@ -40,7 +40,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const { toggleCollapse } = props;
   const { displayRuntimeInfo } = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
-  const isTrigger = useIsAddingTrigger();
+  const isTrigger = useDiscoveryPanelIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isTrigger ? 'triggers' : 'actions',
@@ -90,7 +90,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     300
   );
 
-  const selectedOperationGroupId = useSelectedSearchOperationGroupId();
+  const selectedOperationGroupId = useDiscoveryPanelSelectedOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
   const selectedConnector = allConnectors?.find((c) => c.id === selectedOperationGroupId);
 
@@ -132,8 +132,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     setSelectionState(SELECTION_STATES.SEARCH);
   }, [dispatch]);
 
-  const relationshipIds = useRelationshipIds();
-  const isParallelBranch = useIsParallelBranch();
+  const relationshipIds = useDiscoveryPanelRelationshipIds();
+  const isParallelBranch = useDiscoveryPanelIsParallelBranch();
 
   const hasAzureResourceSelection = useCallback((operation: DiscoveryOperation<DiscoveryResultTypes>) => {
     return operation.properties.capabilities?.some((capability) => equals(capability, 'azureResourceSelection'));
@@ -203,15 +203,16 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
 
   const closeButtonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Close Add Action Panel',
-    id: 'Yg/vvm',
+    defaultMessage: 'Close panel',
+    id: 'yjjXCQ',
     description: 'Aria label for the close button in the Add Action Panel',
   });
+
   return (
     <>
       <div className="msla-app-action-header">
         <XLargeText text={headingText} />
-        <Button appearance="subtle" aria-label={closeButtonAriaLabel} onClick={toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
@@ -225,7 +226,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         {
           [SELECTION_STATES.AZURE_RESOURCE]: selectedOperation ? <AzureResourceSelection operation={selectedOperation} /> : null,
           [SELECTION_STATES.CUSTOM_SWAGGER]: selectedOperation ? <CustomSwaggerSelection operation={selectedOperation} /> : null,
-          [SELECTION_STATES.DETAILS]: selectedConnector ? (
+          [SELECTION_STATES.DETAILS]: selectedOperationGroupId ? (
             <OperationGroupDetailView
               connector={selectedConnector}
               groupOperations={allOperationsForGroup}

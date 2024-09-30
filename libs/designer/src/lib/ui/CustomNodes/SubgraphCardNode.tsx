@@ -4,10 +4,9 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useIsNodePinned } from '../../core/state/panelV2/panelSelectors';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
@@ -21,7 +20,6 @@ import {
 import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
@@ -39,8 +37,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isPinned = useIsNodePinned(subgraphId);
-  const selected = useIsNodeSelected(subgraphId);
+  const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
+  const selected = useIsNodeSelectedInOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
@@ -49,7 +47,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
 
-  const label = useNodeDisplayName(subgraphId);
+  const title = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -99,13 +97,20 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
-  const contextMenuItems: JSX.Element[] = useMemo(
-    () => [
-      ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']
-        ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
-        : []),
-    ],
-    [deleteClick, metadata?.subgraphType]
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: subgraphId,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, subgraphId]
   );
 
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
@@ -135,13 +140,14 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 id={subgraphId}
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
-                title={label}
+                title={title}
                 selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}
+                onContextMenu={onContextMenu}
+                onDeleteClick={deleteClick}
                 collapsed={graphCollapsed}
                 handleCollapse={handleGraphCollapse}
-                contextMenuItems={contextMenuItems}
                 errorLevel={errorLevel}
                 errorMessage={errorMessage}
                 nodeIndex={nodeIndex}

@@ -1,13 +1,15 @@
-import { makeStyles, tokens } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   surface: {
     display: 'flex',
     width: '390px',
-    minHeight: '410px',
+    maxHeight: '410px',
+    minHeight: '300px',
     flexDirection: 'column',
     paddingLeft: '24px',
     paddingRight: '24px',
+    ...shorthands.overflow('scroll'),
   },
   detailsButton: {
     paddingLeft: '10px',
@@ -30,5 +32,8 @@ export const useStyles = makeStyles({
   },
   tabWrapper: {
     paddingTop: '8px',
+  },
+  detailsText: {
+    color: '#605E5C',
   },
 });

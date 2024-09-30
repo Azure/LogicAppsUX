@@ -12,7 +12,7 @@ export const useStyles = makeStyles({
   },
   inputDropdownWrapper: {
     display: 'inline-block',
-    width: '300px',
+    width: '270px',
     paddingRight: '8px',
   },
   inputDropdown: {

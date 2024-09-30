@@ -4,7 +4,7 @@ import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 type OperationGroupDetailViewProps = {
-  connector: Connector;
+  connector?: Connector;
   groupOperations: DiscoveryOpArray;
   filters: Record<string, string>;
   onOperationClick: (id: string, apiId?: string) => void;

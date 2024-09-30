@@ -30,6 +30,7 @@ import {
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
+import * as vscode from 'vscode';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -46,6 +47,9 @@ export default class DataMapperPanel {
     this.dataMapStateIsDirty = false;
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
+
+    vscode.commands.executeCommand('workbench.action.toggleSidebarVisibility');
+    vscode.commands.executeCommand('workbench.action.togglePanel');
 
     ext.context.subscriptions.push(panel);
 
@@ -496,7 +500,12 @@ export default class DataMapperPanel {
 
   private getMapMetadataPath() {
     const projectPath = ext.logicAppWorkspace;
-    const vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+    let vscodeFolderPath = '';
+    if (this.dataMapVersion === 2) {
+      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata-v2.json`);
+    } else {
+      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+    }
     return vscodeFolderPath;
   }
 }

@@ -1,7 +1,7 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
-import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
@@ -49,6 +49,7 @@ import type {
   SettingDropdownProps,
   ChangeState,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -149,7 +150,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
-  const selectedNodeId = useSelectedNodeId();
+  const selectedNodeId = useOperationPanelSelectedNodeId();
   const settingNodeId = nodeId ?? selectedNodeId;
 
   const intl = useIntl();
@@ -164,13 +165,13 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     description: 'A label to represent setting section being collapsed',
   });
   const expandAriaLabel = intl.formatMessage({
-    defaultMessage: 'Click to Collapse',
-    id: 'hJbr09',
+    defaultMessage: 'Click to collapse',
+    id: 'elWEjT',
     description: 'An accessible label for button to collapse setting section',
   });
   const collapseAriaLabel = intl.formatMessage({
-    defaultMessage: 'Click to Expand',
-    id: 'qdUeUk',
+    defaultMessage: 'Click to expand',
+    id: 'G+6Juu',
     description: 'An accessible label for button to expand setting section',
   });
   const internalSettings = (
@@ -381,7 +382,7 @@ const Setting = ({
               multiSelect: true,
               options: conditionallyInvisibleSettings.map(
                 (setting): IDropdownOption => ({
-                  key: (setting.settingProp as any).id,
+                  key: (setting.settingProp as any).id ?? guid(),
                   text: (setting.settingProp as any).label ?? '',
                 })
               ),

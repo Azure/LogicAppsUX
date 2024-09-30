@@ -42,6 +42,52 @@ export const parseJsonOperation = {
   },
 };
 
+export const chunktext = {
+  name: 'chunktext',
+  id: 'chunktext',
+  type: 'ChunkText',
+  properties: {
+    api: {
+      id: 'connectionProviders/dataOperationNew',
+      name: 'dataOperationNew',
+      brandColor: '#8c6cff',
+      description: 'Data operations',
+      displayName: 'Data operations',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    },
+    summary: 'Chunk text',
+    description: 'Chunk text to a fixed length.',
+    visibility: 'Important',
+    operationType: 'ChunkText',
+    brandColor: '#8c6cff',
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    annotation: { status: 'Preview' },
+  },
+};
+
+export const parsedocument = {
+  name: 'parsedocument',
+  id: 'parsedocument',
+  type: 'ParseDocument',
+  properties: {
+    api: {
+      id: 'connectionProviders/dataOperationNew',
+      name: 'dataOperationNew',
+      brandColor: '#8c6cff',
+      description: 'Data operations',
+      displayName: 'Data operations',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    },
+    summary: 'Parse a document',
+    description: 'Parse a document to extract text from the document.',
+    visibility: 'Important',
+    operationType: 'ParseDocument',
+    brandColor: '#8c6cff',
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    annotation: { status: 'Preview' },
+  },
+};
+
 export const queryOperation = {
   name: 'query',
   id: 'query',

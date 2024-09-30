@@ -21,8 +21,8 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
   const intl = useIntl();
 
   const loadingMessage = intl.formatMessage({
-    defaultMessage: 'Loading Files...',
-    id: 'O27gKq',
+    defaultMessage: 'Loading files…',
+    id: 'LPzAHC',
     description: 'Loading indicator message showing that the UX is getting the next list of files',
   });
 
@@ -60,7 +60,7 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
             file={file}
             handleFolderNavigation={handleFolderNavigation}
             handleItemSelected={handleItemSelected}
-            key={`FilePickerPopover.item.${file.value.Id}`}
+            key={`FilePickerPopover.item.${file.id}`}
           />
         ))}
       </MenuList>

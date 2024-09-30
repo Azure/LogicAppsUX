@@ -1,13 +1,6 @@
 import { getIntl } from '../../../intl/src';
 import type { OpenAPIV2, OperationInfo } from '../../../utils/src';
-import {
-  ArgumentException,
-  equals,
-  ConnectorServiceException,
-  ConnectorServiceErrorCode,
-  isArmResourceId,
-  UnsupportedException,
-} from '../../../utils/src';
+import { ArgumentException, equals, ConnectorServiceException, ConnectorServiceErrorCode } from '../../../utils/src';
 import type {
   IConnectorService,
   ListDynamicValue,
@@ -15,7 +8,7 @@ import type {
   TreeDynamicExtension,
   TreeDynamicValue,
 } from '../connector';
-import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
+import { getClientRequestIdFromHeaders } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 
 import type { IntlShape } from 'react-intl';
@@ -124,7 +117,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     }
     const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
     const defaultErrorMessage = intl.formatMessage(
-      { defaultMessage: 'Error executing the api - {url}', id: '8BoVtZ', description: 'Error message to show on dynamic call failure' },
+      { defaultMessage: 'Error executing the API - {url}', id: 'XHQwyJ', description: 'Error message to show on dynamic call failure' },
       { url: requestUrl }
     );
     const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
@@ -173,57 +166,33 @@ export abstract class BaseConnectorService implements IConnectorService {
   }
 
   protected async _executeAzureDynamicApi(
-    connectionId: string,
-    connectorId: string,
     dynamicInvokeUrl: string,
+    apiVersion: string,
     parameters: Record<string, any>,
-    managedIdentityProperties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
+    properties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
-    const { baseUrl, apiVersion: _apiVersion, httpClient, apiHubServiceDetails } = this.options;
+    const { httpClient } = this.options;
     const intl = getIntl();
     const method = parameters['method'];
-    const isManagedIdentityTypeConnection = !!managedIdentityProperties;
 
-    const uri = isManagedIdentityTypeConnection
-      ? `${dynamicInvokeUrl}/dynamicInvoke`
-      : isArmResourceId(connectorId) && apiHubServiceDetails?.baseUrl
-        ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
-        : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
+    const uri = `${dynamicInvokeUrl}/dynamicInvoke`;
+    const queryParameters = { 'api-version': apiVersion };
+    const request = {
+      method,
+      path: parameters['path'],
+      body: parameters['body'],
+      queries: parameters['queries'],
+      headers: parameters['headers'],
+    };
+    const content = properties ? { request, properties } : { request };
 
     try {
-      if (isManagedIdentityTypeConnection) {
-        const request = {
-          method,
-          path: parameters['path'],
-          body: parameters['body'],
-          queries: parameters['queries'],
-          headers: parameters['headers'],
-        };
-        const response = await httpClient.post({
-          uri,
-          queryParameters: { 'api-version': _apiVersion },
-          content: { request, properties: managedIdentityProperties },
-        });
-        return this._getResponseFromDynamicApi(response, uri);
-      }
-      const apiVersion = isArmResourceId(connectorId) ? apiHubServiceDetails?.apiVersion ?? _apiVersion : _apiVersion;
-      const options = {
+      const response = await httpClient.post({
         uri,
-        queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
-        headers: parameters['headers'],
-      };
-      const bodyContent = parameters['body'];
-
-      switch (method.toLowerCase()) {
-        case 'get':
-          return httpClient.get(options);
-        case 'post':
-          return httpClient.post(bodyContent ? { ...options, content: bodyContent } : options);
-        case 'put':
-          return httpClient.put(bodyContent ? { ...options, content: bodyContent } : options);
-        default:
-          throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
-      }
+        queryParameters,
+        content,
+      });
+      return this._getResponseFromDynamicApi(response, uri);
     } catch (ex: any) {
       throw new ConnectorServiceException(
         ConnectorServiceErrorCode.API_EXECUTION_FAILED,

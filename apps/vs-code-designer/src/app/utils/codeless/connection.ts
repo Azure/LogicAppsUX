@@ -30,6 +30,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
+import { window } from 'vscode';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -145,6 +146,7 @@ function formatSetting(setting: string): string {
 }
 
 async function getConnectionReference(
+  context: IActionContext,
   referenceKey: string,
   reference: any,
   accessToken: string,
@@ -185,6 +187,7 @@ async function getConnectionReference(
       return connectionReference;
     })
     .catch((error) => {
+      context.telemetry.properties.connectionKeyFailure = `Error fetching ${referenceKey}-connectionKey`;
       throw new Error(`Error in fetching connection keys for ${connectionId}. ${error}`);
     });
 }
@@ -201,6 +204,8 @@ export async function getConnectionsAndSettingsToUpdate(
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  let areKeysRefreshed = false;
+  let areKeysGenerated = false;
 
   const referencesToAdd = connectionsData.managedApiConnections || {};
   const settingsToAdd: Record<string, string> = {};
@@ -210,9 +215,11 @@ export async function getConnectionsAndSettingsToUpdate(
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
 
+    context.telemetry.properties.checkingConnectionKey = `Checking ${referenceKey}-connectionKey validity`;
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
+        context,
         referenceKey,
         reference,
         accessToken,
@@ -220,6 +227,9 @@ export async function getConnectionsAndSettingsToUpdate(
         settingsToAdd,
         parametersFromDefinition
       );
+
+      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
+      areKeysGenerated = true;
     } else if (
       localSettings.Values[`${referenceKey}-connectionKey`] &&
       isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
@@ -228,6 +238,7 @@ export async function getConnectionsAndSettingsToUpdate(
 
       accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
+        context,
         referenceKey,
         resolvedConnectionReference,
         accessToken,
@@ -235,10 +246,23 @@ export async function getConnectionsAndSettingsToUpdate(
         settingsToAdd,
         parametersFromDefinition
       );
+
+      context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
+      areKeysRefreshed = true;
+    } else {
+      context.telemetry.properties.connectionKeyValid = `${referenceKey}-connectionKey exists and is valid`;
     }
   }
 
   connectionsData.managedApiConnections = referencesToAdd;
+
+  if (areKeysRefreshed) {
+    window.showInformationMessage(localize('connectionKeysRefreshed', 'Connection keys have been refreshed and are valid for 7 days.'));
+  }
+
+  if (areKeysGenerated) {
+    window.showInformationMessage(localize('connectionKeysGenerated', 'New connection keys have been generated and are valid for 7 days.'));
+  }
 
   return {
     connections: connectionsData,

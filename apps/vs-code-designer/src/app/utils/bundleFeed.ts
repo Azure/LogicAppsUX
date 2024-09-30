@@ -68,7 +68,7 @@ async function getBundleDependencyFeed(
   }
 
   const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
-  const url = `${baseUrl}/ExtensionBundles/${bundleId}.Workflows/dependency.json`;
+  const url = `${baseUrl}/ExtensionBundles/${bundleId}/dependency.json`;
   return getJsonFeed(context, url);
 }
 
@@ -168,7 +168,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
   if (envVarVer) {
     const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
-    await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+    await downloadAndExtractDependency(context, extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
     return;
   }
 
@@ -186,11 +186,18 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
     latestFeedBundleVersion = semver.gt(latestFeedBundleVersion, bundleVersion) ? latestFeedBundleVersion : bundleVersion;
   }
 
-  context.telemetry.properties.latestLocalBundleVersion = latestLocalBundleVersion;
-  context.telemetry.properties.latestFeedBundleVersion = latestFeedBundleVersion;
+  context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
+    ? latestFeedBundleVersion
+    : latestLocalBundleVersion;
 
   if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
     const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
-    await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, latestFeedBundleVersion);
+    await downloadAndExtractDependency(
+      context,
+      extensionBundleUrl,
+      defaultExtensionBundlePathValue,
+      extensionBundleId,
+      latestFeedBundleVersion
+    );
   }
 }

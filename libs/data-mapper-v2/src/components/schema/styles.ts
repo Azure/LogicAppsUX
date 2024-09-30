@@ -2,49 +2,55 @@ import { makeStyles, shorthands } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   root: {
+    width: '308px',
+    height: '100vh',
+  },
+  targetScehmaRoot: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+});
+
+export const usePanelStyles = makeStyles({
+  root: {
     width: '300px',
     height: '100%',
+    ...shorthands.overflow('visible'),
   },
-  rootWithSchemaSelection: {
+  schemaSelection: {
     backgroundColor: '#fff',
   },
-  rootWithSchemaTree: {
+  schemaTree: {
     backgroundColor: '#F6FAFE',
-  },
-  headerWrapper: {
-    display: 'flex',
-    width: '100%',
-    marginTop: '20px',
-    marginBottom: '10px',
-  },
-  rightCustomHeader: {
-    alignSelf: 'center',
-    marginLeft: 'auto',
-    marginRight: '10px',
   },
   header: {
     paddingLeft: '20px',
     fontWeight: 'initial',
     fontSize: '20px',
   },
-  bodyWrapper: {
+  body: {
+    paddingRight: '0px',
+    paddingLeft: '0px',
+    width: '308px',
+    scrollbarWidth: 'none',
+  },
+  targetSchemaBody: {
+    position: 'relative',
+    left: '-7px',
+  },
+});
+
+export const usePanelBodyStyles = makeStyles({
+  root: {
     display: 'flex',
     width: '100%',
     flexDirection: 'column',
     height: '100%',
   },
-  selectSchemaWrapper: {
-    paddingLeft: '20px',
+  treeContainer: {
     display: 'flex',
+    width: '100%',
     flexDirection: 'column',
-  },
-  fileSelectedDrawer: {
-    backgroundColor: '#F6FAFE',
-  },
-  leftDrawer: {
-    ...shorthands.borderRight('1px', 'solid', '#ddd'),
-  },
-  rightDrawer: {
-    ...shorthands.borderLeft('1px', 'solid', '#ddd'),
+    height: '100%',
   },
 });

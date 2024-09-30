@@ -18,14 +18,15 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   },
 };
 
-export type TitleChangeHandler = (newValue: string) => { valid: boolean; oldValue?: string };
+export type TitleChangeHandler = (originalValue: string, newValue: string) => { valid: boolean; oldValue?: string };
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   titleValue?: string;
   titleId?: string;
-  onChange: TitleChangeHandler;
+  onChange: (newId: string) => ReturnType<TitleChangeHandler>;
   onBlur?: (prevTitle: string) => void;
+  handleTitleUpdate: (newId: string) => void;
 }
 
 export const PanelHeaderTitle = ({
@@ -35,6 +36,7 @@ export const PanelHeaderTitle = ({
   renameTitleDisabled,
   onChange,
   onBlur,
+  handleTitleUpdate,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 
@@ -64,6 +66,7 @@ export const PanelHeaderTitle = ({
   };
 
   const onTitleBlur = (): void => {
+    handleTitleUpdate(newTitleValue || '');
     if (errorMessage) {
       onChange(validValue || '');
       setNewTitleValue(validValue);
@@ -76,8 +79,8 @@ export const PanelHeaderTitle = ({
 
   const readOnly = readOnlyMode || renameTitleDisabled;
   const panelHeaderCardTitle = intl.formatMessage({
-    defaultMessage: 'Card Title',
-    id: 'rCl53e',
+    defaultMessage: 'Card title',
+    id: 's5AOpV',
     description: 'Label for the title for panel header card',
   });
 

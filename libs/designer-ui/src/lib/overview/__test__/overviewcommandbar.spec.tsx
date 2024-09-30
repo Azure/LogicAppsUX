@@ -1,8 +1,9 @@
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { OverviewCommandBar, type OverviewCommandBarProps } from '../overviewcommandbar';
-import type { CallbackInfo } from '../types';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, beforeAll, it, expect } from 'vitest';
+import React from 'react';
+
 describe('lib/overview/overviewcommandbar', () => {
   let minimal: OverviewCommandBarProps;
 
@@ -25,10 +26,7 @@ describe('lib/overview/overviewcommandbar', () => {
   });
 
   it('renders with Run trigger button', () => {
-    const callbackInfo: CallbackInfo = {
-      value: 'workflowProperties.callbackInfo.value',
-    };
-    const tree = renderer.create(<OverviewCommandBar {...minimal} callbackInfo={callbackInfo} />).toJSON();
+    const tree = renderer.create(<OverviewCommandBar {...minimal} triggerName={'Request'} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

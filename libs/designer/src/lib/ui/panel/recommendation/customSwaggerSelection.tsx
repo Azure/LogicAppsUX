@@ -1,6 +1,10 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
+import {
+  useDiscoveryPanelIsAddingTrigger,
+  useDiscoveryPanelIsParallelBranch,
+  useDiscoveryPanelRelationshipIds,
+} from '../../../core/state/panel/panelSelectors';
 import { TextField } from '@fluentui/react';
 import { Text, Button } from '@fluentui/react-components';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
@@ -19,9 +23,9 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const intl = useIntl();
 
-  const isTrigger = useIsAddingTrigger();
-  const relationshipIds = useRelationshipIds();
-  const isParallelBranch = useIsParallelBranch();
+  const isTrigger = useDiscoveryPanelIsAddingTrigger();
+  const relationshipIds = useDiscoveryPanelRelationshipIds();
+  const isParallelBranch = useDiscoveryPanelIsParallelBranch();
 
   const [swaggerUrl, setSwaggerUrl] = useState('');
 
@@ -43,8 +47,8 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
   }, [dispatch, isParallelBranch, isTrigger, operation, relationshipIds, swaggerUrl]);
 
   const inputLabel = intl.formatMessage({
-    defaultMessage: 'Swagger Endpoint',
-    id: 'qUMXpq',
+    defaultMessage: 'Swagger endpoint',
+    id: '3Xf/4S',
     description: 'Swagger endpoint input label',
   });
 
@@ -109,7 +113,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
         }}
         appearance="primary"
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add action', id: '0/VGiF', description: 'Add action button text' })}
       </Button>
     </div>
   );

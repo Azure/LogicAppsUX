@@ -1,3 +1,4 @@
+import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { getInputParametersFromManifest } from '../initialize';
 import {
   mockGetMyOffice365ProfileOpenApiManifest,
@@ -7,6 +8,15 @@ import {
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('bjsworkflow initialize', () => {
   describe('getInputParametersFromManifest', () => {
+    beforeAll(() => {
+      InitOperationManifestService({
+        isSupported: () => true,
+        isAliasingSupported: () => true,
+        getOperationInfo: () => Promise.resolve({} as any),
+        getOperationManifest: () => Promise.resolve({} as any),
+      });
+    });
+
     test('works for an OpenAPI operation with input parameters and values', () => {
       const stepDefinition = {
         runAfter: {},
@@ -32,6 +42,7 @@ describe('bjsworkflow initialize', () => {
 
       const inputParameters = getInputParametersFromManifest(
         'Send_an_email',
+        { type: 'OpenApiConnection', operationId: 'SendEmailV2', connectorId: '/providers/Microsoft.PowerApps/apis/shared_office365' },
         mockSendAnOfficeOutlookEmailOpenApiManifest,
         undefined /* presetParameterValues */,
         undefined /* customSwagger */,
@@ -72,6 +83,11 @@ describe('bjsworkflow initialize', () => {
 
       const inputParameters = getInputParametersFromManifest(
         'Post_an_adaptive_card',
+        {
+          type: 'OpenApiConnectionWebhook',
+          operationId: 'PostCardAndWaitForResponse',
+          connectorId: '/providers/Microsoft.PowerApps/apis/shared_teams',
+        },
         mockPostTeamsAdaptiveCardOpenApiManifest,
         undefined /* presetParameterValues */,
         undefined /* customSwagger */,
@@ -104,6 +120,11 @@ describe('bjsworkflow initialize', () => {
 
       const inputParameters = getInputParametersFromManifest(
         'Get_my_profile',
+        {
+          type: 'OpenApiConnection',
+          operationId: 'MyProfile_V2',
+          connectorId: '/providers/Microsoft.PowerApps/apis/shared_office365users',
+        },
         mockGetMyOffice365ProfileOpenApiManifest,
         undefined /* presetParameterValues */,
         undefined /* customSwagger */,

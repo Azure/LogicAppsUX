@@ -35,6 +35,7 @@ import {
   equals,
   ConnectionReferenceKeyFormat,
   getRecordEntry,
+  UserPreferenceService,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -60,6 +61,8 @@ export const updateTemplateConnection = createAsyncThunk(
   'updateTemplateConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
     const { nodeId, connector, connection, connectionProperties, authentication } = payload;
+    const workflows = (getState() as TemplateRootState).template.workflows;
+    const defaultWorkflow = Object.values(workflows).length > 0 ? Object.values(workflows)[0] : undefined;
     dispatch(
       changeTemplateConnectionMapping({
         nodeId,
@@ -67,7 +70,7 @@ export const updateTemplateConnection = createAsyncThunk(
         connectionId: connection.id,
         authentication: authentication ?? getApiHubAuthenticationIfRequired(),
         connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
-        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as TemplateRootState).template.workflowDefinition)
+        connectionRuntimeUrl: isOpenApiSchemaVersion(defaultWorkflow?.workflowDefinition)
           ? connection.properties.connectionRuntimeUrl
           : undefined,
       })
@@ -81,6 +84,8 @@ export const updateNodeConnection = createAsyncThunk(
     const { nodeId, connector, connection, connectionProperties, authentication } = payload;
 
     dispatch(updateErrorDetails({ id: nodeId, clear: true }));
+
+    UserPreferenceService()?.setMostRecentlyUsedConnectionId(connector.id, connection.id);
     return updateNodeConnectionAndProperties(
       {
         nodeId,

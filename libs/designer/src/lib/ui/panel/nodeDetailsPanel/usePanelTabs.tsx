@@ -3,7 +3,7 @@ import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
-import { useIsNodePinned } from '../../../core/state/panelV2/panelSelectors';
+import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
 import { useHasSchema } from '../../../core/state/staticresultschema/staitcresultsSelector';
 import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors';
@@ -28,7 +28,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isMonitoringView = useMonitoringView();
   const panelTabHideKeys = usePanelTabHideKeys();
 
-  const isPinnedNode = useIsNodePinned(nodeId);
+  const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);

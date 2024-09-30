@@ -5,7 +5,7 @@ import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import { ExpressionEditor } from '../expressioneditor';
 import { PanelSize } from '../panel/panelUtil';
-import type { TokenGroup } from './models/token';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import TokenPickerHandler from './plugins/TokenPickerHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerFooter } from './tokenpickerfooter';
@@ -16,7 +16,7 @@ import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
 import { SearchBox, DirectionalHint, Callout } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { LexicalEditor, NodeKey } from 'lexical';
+import { $getSelection, type LexicalEditor, type NodeKey } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
@@ -32,13 +32,16 @@ export const TokenPickerMode = {
 } as const;
 export type TokenPickerMode = (typeof TokenPickerMode)[keyof typeof TokenPickerMode];
 
-export type { Token as OutputToken } from './models/token';
+export type { Token as OutputToken } from '@microsoft/logic-apps-shared';
 
 const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
 
 let calloutStyles: Partial<ICalloutContentStyles> = {
+  root: {
+    zIndex: 1,
+  },
   calloutMain: {
     overflow: 'visible',
   },
@@ -58,6 +61,14 @@ calloutStyles = isCopilotServiceEnabled()
       },
     }
   : calloutStyles;
+
+const calloutStylesWithTopMargin: Partial<ICalloutContentStyles> = {
+  ...calloutStyles,
+  root: {
+    ...(calloutStyles.root as object),
+    marginTop: '80px',
+  },
+};
 
 export type SearchTextChangedEventHandler = (e: string) => void;
 
@@ -99,8 +110,17 @@ export function TokenPicker({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<ISearchBox | null>(null);
-  const isExpression = selectedMode === TokenPickerMode.EXPRESSION;
+  const isExpression = initialMode === TokenPickerMode.EXPRESSION;
   const isNl2fExpression = selectedMode === TokenPickerMode.NL2F_EXPRESSION;
+  const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
+  const [styleWithMargin, setStyleWithMargin] = useState(false);
+
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
 
   useEffect(() => {
     function handleResize() {
@@ -122,6 +142,27 @@ export function TokenPicker({
       }, 0);
     }
   }, [isExpression, isNl2fExpression]);
+
+  useEffect(() => {
+    editor?.getEditorState().read(() => {
+      setAnchorKey($getSelection()?.getNodes()[0]?.__key ?? null);
+    });
+  }, [editor]);
+
+  useEffect(() => {
+    if (anchorKey && containerRef && editor) {
+      const calloutContainer = containerRef.current;
+      const rootElement = editor.getRootElement();
+      if (calloutContainer && rootElement) {
+        const { height } = rootElement.getBoundingClientRect();
+        if (height / windowDimensions.height > 0.4) {
+          setStyleWithMargin(true);
+        } else {
+          setStyleWithMargin(false);
+        }
+      }
+    }
+  }, [anchorKey, editor, windowDimensions.height]);
 
   const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
@@ -181,13 +222,6 @@ export function TokenPicker({
     description: 'Button text for the create expression with copilot feature',
   });
 
-  let editor: LexicalEditor | null;
-  try {
-    [editor] = useLexicalComposerContext();
-  } catch {
-    editor = null;
-  }
-
   const nl2fExpressionPane = (
     <Callout
       role="dialog"
@@ -233,6 +267,7 @@ export function TokenPicker({
         ref={containerRef}
       >
         <Nl2fExpressionAssistant
+          tokenGroup={tokenGroup ?? []}
           isFullScreen={fullScreen}
           expression={expression}
           isFixErrorRequest={expressionEditorError !== ''}
@@ -274,7 +309,7 @@ export function TokenPicker({
         onRestoreFocus={() => {
           return;
         }}
-        styles={calloutStyles}
+        styles={styleWithMargin ? calloutStylesWithTopMargin : calloutStyles}
         layerProps={{
           hostId: 'msla-layer-host',
         }}
@@ -284,13 +319,14 @@ export function TokenPicker({
           style={
             fullScreen
               ? {
-                  height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
+                  maxHeight: windowDimensions.height - 16,
+                  height: windowDimensions.height - 16,
                   width: Math.max(
                     windowDimensions.width - (Number.parseInt(PanelSize.Medium, 10) + 40),
                     Math.min(windowDimensions.width - 16, 400)
                   ),
                 }
-              : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
+              : { maxHeight: Math.min(windowDimensions.height - 16, 550), width: Math.min(windowDimensions.width - 16, 400) }
           }
           ref={containerRef}
         >

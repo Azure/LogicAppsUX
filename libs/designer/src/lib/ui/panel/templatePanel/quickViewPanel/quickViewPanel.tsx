@@ -4,17 +4,23 @@ import { Text } from '@fluentui/react-components';
 import { Icon } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useState } from 'react';
-import { TemplatesPanelContent } from '@microsoft/designer-ui';
+import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
+import Markdown from 'react-markdown';
+import { useDefaultWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
 export const QuickViewPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { manifest } = useSelector((state: RootState) => ({
-    manifest: state.template.manifest,
+  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
+    workflowAppName: state.workflow.workflowAppName,
   }));
-  const panelTabs = getQuickViewTabs(intl, dispatch);
+  const { manifest } = useDefaultWorkflowTemplate() ?? {};
+  const panelTabs = getQuickViewTabs(intl, dispatch, {
+    templateId: templateName ?? '',
+    workflowAppName,
+  });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
   if (!manifest) {
@@ -28,7 +34,6 @@ export const QuickViewPanel = () => {
   return (
     <TemplatesPanelContent
       className="msla-template-quickview-tabs"
-      isSequence={false}
       tabs={panelTabs}
       selectedTab={selectedTabId}
       selectTab={onTabSelected}
@@ -42,8 +47,7 @@ export const QuickViewPanelHeader = ({
   details,
 }: { title: string; description: string; details: Record<string, string> }) => {
   return (
-    <div className="msla-template-quickview-header">
-      <Text className="msla-template-panel-header">{title}</Text>
+    <TemplatesPanelHeader title={title}>
       <div className="msla-template-quickview-tags">
         {Object.keys(details).map((key: string, index: number, array: any[]) => {
           return (
@@ -58,7 +62,7 @@ export const QuickViewPanelHeader = ({
           );
         })}
       </div>
-      <Text className="msla-template-description">{description}</Text>
-    </div>
+      <Markdown linkTarget="_blank">{description}</Markdown>
+    </TemplatesPanelHeader>
   );
 };

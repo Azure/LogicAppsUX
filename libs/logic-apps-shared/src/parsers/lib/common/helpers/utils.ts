@@ -191,17 +191,49 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
   return {};
 }
 
-export function getEditorForParameter(parameter: SchemaObject, dynamicValues: ParameterDynamicValues | undefined): string | undefined {
-  if (!dynamicValues) {
+export function getEditorForParameter(
+  parameter: SchemaObject,
+  dynamicValues: ParameterDynamicValues | undefined,
+  $enum: EnumObject[] | undefined
+): string | undefined {
+  // If the parameter is in an array, break out so we render the array editor
+  if (parameter?.type === Constants.Types.Array) {
     return parameter[Constants.ExtensionProperties.Editor];
   }
-  if (parameter?.type === Constants.Types.Array) {
-    return parameter[Constants.ExtensionProperties.Editor]; // If the parameter is in an array, break out so we render the array editor
+
+  if (!dynamicValues && !$enum) {
+    return parameter[Constants.ExtensionProperties.Editor];
   }
-  if (isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)) {
-    return 'filepicker';
+
+  // Dynamic Values
+  if (dynamicValues) {
+    if (isLegacyDynamicValuesTreeExtension(dynamicValues) || isDynamicTreeExtension(dynamicValues)) {
+      return 'filepicker';
+    }
+    return 'combobox';
   }
+
+  // Static Enum
   return 'combobox';
+}
+
+export function getEditorOptionsForParameter(
+  parameter: SchemaObject,
+  dynamicValues: ParameterDynamicValues | undefined,
+  $enum: EnumObject[] | undefined
+): any {
+  const editorOptions = parameter[Constants.ExtensionProperties.EditorOptions];
+  if (!dynamicValues && !$enum) {
+    return editorOptions;
+  }
+
+  // Dynamic Values
+  if (dynamicValues) {
+    return { options: [] };
+  }
+
+  // Static Enum
+  return { ...editorOptions, options: $enum?.map((value) => ({ ...value, key: value.displayName })) };
 }
 
 type MakeDefinitionReducer = (previous: Record<string, any>, current: string) => Record<string, any>;
@@ -283,8 +315,8 @@ export function getKnownTitles(name: string, description?: string): string {
       });
     case OutputKeys.StatusCode:
       return intl.formatMessage({
-        defaultMessage: 'Status Code',
-        id: 'x10E1p',
+        defaultMessage: 'Status code',
+        id: 'eUxnDx',
         description: 'Display name for status code in outputs',
       });
     case OutputKeys.Item:
@@ -295,8 +327,8 @@ export function getKnownTitles(name: string, description?: string): string {
       });
     case OutputKeys.PathParameters:
       return intl.formatMessage({
-        defaultMessage: 'Path Parameters',
-        id: 'BJNUxN',
+        defaultMessage: 'Path parameters',
+        id: 'IHzSSN',
         description: 'Display name for relative path parameters in trigger outputs',
       });
     default: {

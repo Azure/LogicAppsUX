@@ -229,7 +229,11 @@ export async function getDynamicSchema(
   }
 }
 
-export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dynamicParameter: OutputParameter): OutputParameters {
+export function getDynamicOutputsFromSchema(
+  schema: OpenAPIV2.SchemaObject,
+  dynamicParameter: OutputParameter,
+  operationInfo: NodeOperation
+): OutputParameters {
   const { key, name, parentArray, required, source } = dynamicParameter;
   const keyPrefix = _getKeyPrefixFromParameter(key);
   const processorOptions: SchemaProcessorOptions = {
@@ -241,6 +245,7 @@ export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dyna
     includeParentObject: true,
     parentProperty: parentArray ? { arrayName: parentArray, isArray: true } : undefined,
     dataKeyPrefix: '$',
+    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
   };
 
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
@@ -277,10 +282,11 @@ export async function getDynamicInputsFromSchema(
       visibility: dynamicParameter.visibility,
     },
     required: dynamicParameter.required || schemaHasRequiredParameters,
-    useAliasedIndexing: true,
+    useAliasedIndexing: OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind),
     excludeAdvanced: false,
     excludeInternal: false,
     includeParentObject: true,
+    isInputSchema: true,
   };
   const schemaProperties = new SchemaProcessor(processorOptions).getSchemaProperties(schema);
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
@@ -291,13 +297,14 @@ export async function getDynamicInputsFromSchema(
     required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
+  // TODO: This code should be removed once keys are correctly stamped for aliasing inputs since in normal parsing this does not happen.
   // We are recieving some swagger parameters with keys in the following format, ex:
   //     body.$.body/content.body/content/appId
   // We need to reformat to the below string:
   //     body.$.content.appId
   for (const inputParameter of dynamicInputs) {
-    if (isOpenApiParameter(inputParameter) && inputParameter?.in) {
-      const { key: _key, in: _in } = inputParameter;
+    const { key: _key, in: _in } = inputParameter;
+    if (isOpenApiParameter(inputParameter) && _in && _key !== `${_in}.$`) {
       // _key = body.$.body/content.body/content/appId
       const path = replaceSubsegmentSeparator(_key.split('.').pop() ?? '');
       // path = body.content.appId
@@ -318,7 +325,7 @@ export async function getDynamicInputsFromSchema(
   }
 
   if (!schemaProperties.length) {
-    dynamicInputs = [dynamicParameter];
+    dynamicInputs = [getDynamicInputParameterFromDynamicParameter(dynamicParameter)];
   }
 
   if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
@@ -570,9 +577,11 @@ export function getManifestBasedInputParameters(
   let formDataInputKeyPrefix = '';
   let formDataLocation = '';
   // Load known parameters directly by key.
+  const suppressCasting = !manifest.properties?.autoCast;
 
   for (const inputParameter of dynamicInputs) {
     const clonedInputParameter = copy({ copyNonEnumerableProps: false }, {}, inputParameter);
+    clonedInputParameter.suppressCasting = suppressCasting;
     if (inputParameter.key === keyPrefix) {
       // Load the entire input if the key is the entire input.
       clonedInputParameter.value = stepInputs;
@@ -728,14 +737,12 @@ function getSwaggerBasedInputParameters(
     propertyNames,
     getObjectPropertyValue(operationDefinition.inputs, propertyNames)
   );
-  let dynamicInputParameters = loadInputValuesFromDefinition(
+  const dynamicInputParameters = loadInputValuesFromDefinition(
     dynamicInputDefinition as Record<string, any>,
-    isNested ? [dynamicParameter] : inputs,
+    isNested ? [getDynamicInputParameterFromDynamicParameter(dynamicParameter)] : inputs,
     operationPath,
     basePath as string
   );
-
-  dynamicInputParameters = removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
 
   if (isNested) {
     const parameter = first((inputParameter) => inputParameter.key === key, dynamicInputParameters);
@@ -758,9 +765,23 @@ function getSwaggerBasedInputParameters(
       result.push(inputParameter);
     }
 
-    return result;
+    return removeParentObjectInputsIfNotNeeded(result);
   }
-  return dynamicInputParameters;
+  return removeParentObjectInputsIfNotNeeded(dynamicInputParameters);
+}
+
+// We should remove any reference to dynamic schema if parameter containing dynamic schema is used directly as an input.
+function getDynamicInputParameterFromDynamicParameter(dynamicParameter: InputParameter): InputParameter {
+  const result = {
+    ...dynamicParameter,
+    isDynamic: true,
+    dynamicParameterReference: dynamicParameter.key,
+    in: dynamicParameter.in,
+    required: (dynamicParameter.schema?.required as any) ?? dynamicParameter.required ?? false,
+  };
+
+  delete result.dynamicSchema;
+  return result;
 }
 
 function _getKeyPrefixFromParameter(parameterKey: string): string {

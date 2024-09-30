@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react';
-import { SchemaPanel } from '../components/schema/SchemaPanel';
+import { useCallback, useEffect, useState } from 'react';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
 import { FunctionPanel } from '../components/functionsPanel/FunctionPanel';
-import type { IDataMapperFileService } from '../core';
-import { DataMapperWrappedContext, InitDataMapperFileService } from '../core';
+import {
+  DataMapperWrappedContext,
+  InitDataMapperFileService,
+  type ScrollLocation,
+  type ScrollProps,
+  type IDataMapperFileService,
+} from '../core';
 import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
-import { DMReactFlow } from './ReactFlow';
+import { ReactFlowWrapper } from '../components/canvas/ReactFlow';
 import { TestPanel } from '../components/test/TestPanel';
-import { SchemaType } from '@microsoft/logic-apps-shared';
-import type { SchemaFile } from '../models/Schema';
+import DialogView from './DialogView';
+import { useDispatch } from 'react-redux';
+import { setSelectedItem } from '../core/state/DataMapSlice';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -19,11 +24,33 @@ interface DataMapperDesignerProps {
 export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
-  const [canvasBounds, setCanvasBounds] = useState<DOMRect>();
+  const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
+  const [targetScroll, setTargetScroll] = useState<ScrollProps>();
+  const dispatch = useDispatch();
+
+  const setScroll = useCallback(
+    (scrollProps: ScrollProps, location: ScrollLocation) => {
+      if (location === 'source') {
+        setSourceScroll(scrollProps);
+      } else if (location === 'target') {
+        setTargetScroll(scrollProps);
+      }
+    },
+    [setSourceScroll, setTargetScroll]
+  );
 
   if (fileService) {
     InitDataMapperFileService(fileService);
   }
+
+  const onContainerClick = useCallback(
+    (e?: any) => {
+      if (!e?.target?.dataset?.selectableid) {
+        dispatch(setSelectedItem());
+      }
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     if (fileService) {
@@ -34,20 +61,18 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
     // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
       value={{
-        canvasBounds: {
-          x: canvasBounds?.x,
-          y: canvasBounds?.y,
-          height: canvasBounds?.height,
-          width: canvasBounds?.width,
+        scroll: {
+          source: sourceScroll,
+          target: targetScroll,
+          setScroll,
         },
       }}
     >
-      <EditorCommandBar onUndoClick={() => {}} />
-      <div className={styles.dataMapperShell}>
+      <EditorCommandBar />
+      <div className={styles.root} onClick={onContainerClick}>
+        <DialogView />
         <FunctionPanel />
-        <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Source} />
-        <DMReactFlow setIsMapStateDirty={setIsMapStateDirty} updateCanvasBoundsParent={setCanvasBounds} />
-        <SchemaPanel onSubmitSchemaFileSelection={(schema: SchemaFile) => console.log(schema)} schemaType={SchemaType.Target} />
+        <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} />
         <CodeViewPanel />
         <TestPanel />
       </div>

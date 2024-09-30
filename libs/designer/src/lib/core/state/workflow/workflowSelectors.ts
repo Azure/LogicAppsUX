@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -60,7 +60,8 @@ const reduceCollapsed =
     return nodes.reduce((acc: any, child: WorkflowNode) => {
       const shouldFilter = condition(child);
       if (!shouldFilter) {
-        acc.push({ ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } });
+        const reducedChildren = child.children ? { children: reduceCollapsed(condition)(child.children) } : {};
+        acc.push({ ...child, ...reducedChildren });
         return acc;
       }
 
@@ -76,6 +77,14 @@ const reduceCollapsed =
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+
+export const useGetSwitchParentId = (nodeId: string): string | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) =>
+      state.nodesMetadata[nodeId]?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? state.nodesMetadata[nodeId]?.parentNodeId : undefined
+    )
+  );
+};
 
 export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
   useSelector(
@@ -122,12 +131,7 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!nodeId || !state.graph) {
-        return [];
-      }
-      return getRecordEntry(state.edgeIdsBySource, nodeId) ?? [];
-    })
+    createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.edgeIdsBySource ?? {}, nodeId ?? '') ?? [])
   );
 };
 
@@ -183,6 +187,19 @@ export const useAllGraphParents = (graphId: string): string[] => {
   );
 };
 
+export const getParentsUncollapseFromGraphState = (state: WorkflowState, actionId: string): Record<string, boolean> => {
+  const collapsedGraphIds = state.collapsedGraphIds;
+  if (state.graph) {
+    const nodeParents = getWorkflowGraphPath(state.graph, actionId);
+    nodeParents.forEach((nodeId) => {
+      if (nodeId !== actionId && collapsedGraphIds[nodeId]) {
+        collapsedGraphIds[nodeId] = false;
+      }
+    });
+  }
+  return collapsedGraphIds;
+};
+
 export const useNodeGraphId = (nodeId: string): string =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? ''));
 
@@ -199,9 +216,6 @@ const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?:
     const current = queue.dequeue();
     if (current && current.id === nodeId) {
       return getAllChildren(current, childrenNodes);
-    }
-    if (current?.id === nodeId) {
-      return current;
     }
 
     if (current?.children) {
@@ -257,13 +271,7 @@ export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
 
 export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
-  useSelector(
-    createSelector(
-      getWorkflowState,
-      (state: WorkflowState) =>
-        getRecordEntry(state.runInstance?.properties.actions, id)?.retryHistory ?? state.runInstance?.properties.trigger?.retryHistory
-    )
-  );
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData?.retryHistory));
 
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));

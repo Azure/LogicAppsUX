@@ -10,7 +10,6 @@
 @import "./nodeCollapseToggle/nodeCollapseToggle.less";
 @import "./card/batch.less";
 @import "./card/card.less";
-@import "./card/cardmonitor.less";
 @import "./checkbox/checkbox.less";
 @import "./colorizer/colorizer.less";
 @import "./code/codeeditor.less";
@@ -20,7 +19,6 @@
 @import "./dictionary/dictionaryeditor.less";
 @import "./html/htmleditor.less";
 @import "./infoDot/infoDot.less";
-@import "./inputcontrol/inputcontrol.less";
 @import "./label/label.less";
 @import "./modaldialog/modaldialog.less";
 @import "./pager/pager.less";
@@ -29,13 +27,10 @@
 @import "./schemaeditor/schemaeditor.less";
 @import "./table/table.less";
 @import "./texteditor.less";
-@import "./templates.less";
 @import "./card/parameters/parameters.less";
-@import "./conditioncontrol/conditioncontrol.less";
 @import "./connectorsummarycard/connectorsummarycard.less";
-@import "./card/query/query.less";
-@import "./card/swaggerendpoint/swaggerendpoint.less";
 @import "./token/token.less";
+@import "./copyinputcontrol/copyinputcontrol.less";
 @import "./tokenpicker/tokenpicker.less";
 @import "./floatingactionmenu/_floatingactionmenu.less";
 @import "./monitoring/monitoring.less";
@@ -53,10 +48,6 @@
 @import "./querybuilder/querybuilder.less";
 @import "./peek/peek.less";
 @import "./expressioneditor/expressioneditor.less";
-@import "./rulescontrol/rulescontrol.less";
-@import "./itemspicker/itemspicker.less";
-@import "./schemadataeditorcard.less";
-@import "./recommendation/recommendation.less";
 @import "./configItem/connectiongatewaypicker.less";
 @import "./settings/settings.less";
 @import "./searchbox/searchbox.less";
@@ -88,19 +79,12 @@
   padding-top: 1em;
 }
 
-.msla-main-page {
-  .msla-monitor-container {
-    padding-top: 2em;
-  }
-}
-
-.msla-designer-canvas,
-.msla-monitor-canvas {
+.msla-designer-canvas {
   display: inline-block;
-  min-height: 600px;
+  flex: 1;
   margin: 0 auto;
   min-width: 100%;
-  height: 100%;
+
   @media only screen and (max-width: calc(@card-max-width + 40)) {
     width: 100%;
     min-width: @card-min-width;
@@ -112,64 +96,9 @@
 }
 
 .msla-theme-dark {
-  .msla-designer-canvas,
-  .msla-monitor-canvas {
+  .msla-designer-canvas {
     background-color: @ms-color-bodyBackground;
   }
-}
-
-.msla-connectionwizard-canvas {
-  min-width: 100%;
-  margin: 0 auto;
-}
-
-.msla-designer-canvas-parallel {
-  display: inline-flex;
-  min-width: 100%;
-}
-
-.msla-diet-view {
-  width: 100%;
-}
-
-.msla-designer-canvas-classic {
-  display: inline-block;
-}
-
-.msla-drop-zone {
-  position: relative;
-  height: @card-header-height;
-}
-
-.msla-aria-description {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-.public-DraftEditorPlaceholder-root,
-.msla-input-parameter-placeholder {
-  color: @parameter-placeholder-color;
-  font-family: @font-family;
-  font-size: @parameter-value-font-size;
-  position: absolute;
-  z-index: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: initial;
-}
-
-.public-DraftEditorPlaceholder-root {
-  width: 100%;
-}
-
-.msla-input-parameter-placeholder {
-  width: calc(
-    100% - 2px - 10px
-  ); /* 10px for .msla-input-control and 2px for this class */
-  margin-top: 5px;
 }
 
 ::-webkit-input-placeholder {
@@ -233,87 +162,27 @@
   transform: translateX(0.5px);
 }
 
-.viewmanager2 {
-  .msla-connector-add-step-button {
-    transform: translateX(-0.5px);
-  }
-}
-
 .msla-panel-mode {
-  .msla-drop-zone-container {
-    display: flex;
-    justify-content: center;
-    margin: 4px 0 4px 0;
-    width: 100%;
-  }
+  position: relative;
 
-  .msla-drop-zone-new-step {
-    display: flex;
-    justify-content: center;
-    &.multiple-predecessors {
-      margin-top: 40px;
-    }
-  }
-
-  .msla-drop-zone-viewmanager2,
-  .msla-drop-zone {
+  .msla-drop-zone-viewmanager2 {
     display: flex;
     justify-content: center;
     align-content: center;
     width: 196px; /* Note: Width is set to 196px and not 200px here because the border radius is 2px when dragging over this div which makes the parent scope container increase in width by 4px and create a jumping effect. */
     height: @card-v2-small-height;
     cursor: grab;
-    .msla-drop-zone-info {
-      width: 24px;
-      height: 24px;
-      position: relative;
-      pointer-events: none;
-
-      .msla-connector-add-step {
-        pointer-events: auto;
-      }
-
-      .msla-drop-zone-allow-target,
-      .msla-drop-zone-block-target {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        visibility: hidden;
-        position: absolute;
-      }
-
-      .msla-drop-zone-children {
-        width: 100%;
-        height: 100%;
-        visibility: visible;
-        position: absolute;
-      }
-    }
 
     &.canDrop {
       background: #e7f4ff;
       outline: 2px dashed #0078d4;
       border-radius: 2px;
-      .msla-drop-zone-allow-target {
-        visibility: visible;
-      }
-      .msla-drop-zone-children {
-        visibility: hidden;
-      }
     }
 
     &.cannotDrop {
       background: #edebe9;
       outline: 2px dashed #797775;
       border-radius: 2px;
-      .msla-drop-zone-block-target {
-        visibility: visible;
-      }
-      .msla-drop-zone-children {
-        visibility: hidden;
-      }
     }
   }
 }
@@ -324,11 +193,6 @@
 
   [class^="ms-Fabric"] {
     color: @ms-color-black;
-  }
-
-  .public-DraftEditorPlaceholder-root,
-  .msla-input-parameter-placeholder {
-    color: @ms-color-neutralSecondary;
   }
 
   ::-webkit-input-placeholder {
@@ -346,76 +210,19 @@
     stroke: #c2cbd6;
   }
 
-  .msla-drop-zone-viewmanager2,
-  .msla-drop-zone {
+  .msla-drop-zone-viewmanager2 {
     &.canDrop {
       background: #00245b;
       outline: 2px dashed #2899f5;
       border-radius: 2px;
-
-      .msla-drop-zone-info {
-        svg rect {
-          fill: #2899f5;
-        }
-      }
     }
 
     &.cannotDrop {
       background: #323130;
       outline: 2px dashed #a19f9d;
       border-radius: 2px;
-
-      .msla-drop-zone-info {
-        svg path {
-          fill: #a19f9d;
-        }
-      }
     }
   }
-}
-
-.msla-sr-only {
-  overflow: hidden;
-  position: absolute;
-  left: -10000px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-}
-
-.msla-diet-view-canvas {
-  min-height: auto;
-  width: 100%;
-
-  .msla-designer-canvas-parallel {
-    display: block;
-  }
-
-  .msla-connection-container {
-    max-width: none;
-  }
-
-  .msla-drop-zone {
-    height: unset;
-  }
-}
-
-.msla-psuedo-badge {
-  height: 18px;
-  font-size: 11px;
-  line-height: 16px;
-  font-weight: 600;
-  flex: 0 0 auto;
-  color: rgba(47, 107, 183, 1);
-
-  // padding: 0px 6px;
-  // border: 1px solid rgb(180, 214, 250);
-  // border-radius: 64px;
-  // background: rgb(235, 243, 252);
-
-  padding: 0px 4px;
-  border: 1px solid rgba(47, 107, 183, 1);
-  border-radius: 2px;
 }
 
 .react-flow__node {
