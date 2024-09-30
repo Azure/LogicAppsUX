@@ -163,12 +163,14 @@ const validateAndCreateConnectionOutput = (
       const srcConUnit: ConnectionUnit = {
         node: output,
         reactFlowKey: selectedOutputKey,
+        isCustom: false,
+        isDefined: true,
       };
 
       return srcConUnit;
     }
     // Create custom value connection
-    const srcConUnit: InputConnection = optionValue;
+    const srcConUnit: InputConnection = { isCustom: true, isDefined: true, value: optionValue };
 
     return srcConUnit;
   }

@@ -214,7 +214,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
     fnInputValues = Object.values(connection.inputs)
       .flat()
       .map((input) => {
-        if (!input || !isEmptyConnection(input)) {
+        if (!input || isEmptyConnection(input)) {
           return undefined;
         }
 
@@ -258,14 +258,17 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
   return nodeName;
 };
 
-export const getInputName= (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary): string | undefined => {
+export const getInputName = (
+  inputConnection: InputConnection | undefined,
+  connectionDictionary: ConnectionDictionary
+): string | undefined => {
   if (inputConnection && !isEmptyConnection(inputConnection)) {
     if (isCustomValue(inputConnection)) {
       return inputConnection.value;
     }
     return isSchemaNodeExtended(inputConnection.node)
-        ? inputConnection.node.name
-        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+      ? inputConnection.node.name
+      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
   }
 
   return undefined;
@@ -273,7 +276,7 @@ export const getInputName= (inputConnection: InputConnection | undefined, connec
 
 export const getInputValue = (inputConnection: InputConnection | undefined) => {
   if (inputConnection && !isEmptyConnection(inputConnection)) {
-    return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
+    return isCustomValue(inputConnection) ? inputConnection.value : inputConnection.reactFlowKey;
   }
 
   return undefined;

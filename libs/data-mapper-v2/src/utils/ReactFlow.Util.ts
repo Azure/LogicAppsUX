@@ -84,28 +84,28 @@ export const convertWholeDataMapToLayoutTree = (
 
   // loops through all connections and adds if not a custom value
   Object.values(connections).forEach((connection) => {
-    Object.values(connection.inputs).forEach((inputValue, inputIndex) => {
-        if (isConnectionUnit(inputValue)) {
-          const targetId = connection.self.reactFlowKey;
-          const labels = isFunctionData(connection.self.node)
-            ? connection.self.node?.maxNumberOfInputs > -1
-              ? [connection.self.node.inputs[inputIndex].name]
-              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputIndex)]
-            : [];
+    connection.inputs.forEach((input, inputIndex) => {
+      if (isConnectionUnit(input)) {
+        const targetId = connection.self.reactFlowKey;
+        const labels = isFunctionData(connection.self.node)
+          ? connection.self.node?.maxNumberOfInputs > -1
+            ? [connection.self.node.inputs[inputIndex].name]
+            : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputIndex)]
+          : [];
 
-          const nextEdge: LayoutEdge = {
-            id: `e${nextEdgeIndex}`,
-            sourceId: inputValue.reactFlowKey,
-            targetId,
-            labels,
-            isRepeating: inputValue.isRepeating ?? false,
-          };
+        const nextEdge: LayoutEdge = {
+          id: `e${nextEdgeIndex}`,
+          sourceId: input.reactFlowKey,
+          targetId,
+          labels,
+          isRepeating: input.isRepeating ?? false,
+        };
 
-          layoutEdges.push(nextEdge);
-          nextEdgeIndex += 1;
-        }
-      });
+        layoutEdges.push(nextEdge);
+        nextEdgeIndex += 1;
+      }
     });
+  });
 
   const layoutTree: RootLayoutNode = {
     id: rootLayoutNodeId,

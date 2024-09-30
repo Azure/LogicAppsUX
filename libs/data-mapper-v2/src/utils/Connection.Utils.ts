@@ -1,7 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
-import type { CustomInput, EmptyConnection, Connection,  ConnectionDictionary,  ConnectionUnit,  InputConnection,  InputConnections } from '../models/Connection';
+import type {
+  CustomInput,
+  EmptyConnection,
+  Connection,
+  ConnectionDictionary,
+  ConnectionUnit,
+  InputConnection,
+  InputConnections,
+} from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { createEdgeId } from './Edge.Utils';
 import { isFunctionData } from './Function.Utils';
@@ -132,16 +140,17 @@ export const applyConnectionValue = (
     } else if (isConnectionUnit(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
       confirmedInputIndex = connection.inputs.findIndex((inputCon) => isEmptyConnection(inputCon)); // danielle this might not be right
-    // } else if (isCustomValue(input) && targetNode) {
-    //   // Add input to first available that allows custom values danielle revisit
-    //   confirmedInputIndex = values(connection.inputs.findIndex(
-    //     (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
-    //   );
+      // } else if (isCustomValue(input) && targetNode) {
+      //   // Add input to first available that allows custom values danielle revisit
+      //   confirmedInputIndex = values(connection.inputs.findIndex(
+      //     (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
+      //   );
     }
   }
 
   // null is signal to delete unbounded input value
-  if (input === null) {  // danielle test this
+  if (input === null) {
+    // danielle test this
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       // const newUnboundedInputValues = connection.inputs[0];
       // newUnboundedInputValues.splice(confirmedInputIndex, 1);
@@ -149,7 +158,8 @@ export const applyConnectionValue = (
     } else {
       console.error('Invalid Connection Input Op: null was provided for non-unbounded-input value');
     }
-  } else if (input === undefined) { // danielle what is the intended effect? do we want to delete the connection?
+  } else if (input === undefined || isEmptyConnection(input)) {
+    // danielle what is the intended effect? do we want to delete the connection?
     // Explicit undefined check to handle empty custom values ('') in the next block
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       connection.inputs[confirmedInputIndex] = undefined;
@@ -164,7 +174,7 @@ export const applyConnectionValue = (
         if (typeof input !== 'string') {
           input.isRepeating = isRepeating;
         }
-        connection.inputs[0] = input;  // danielle should this always be 0?
+        connection.inputs[0] = input; // danielle should this always be 0?
       } else {
         // Function unbounded input
         const inputCopy: InputConnection[] = [...connection.inputs]; // created to prevent issues with immutable state
@@ -187,7 +197,7 @@ export const applyConnectionValue = (
         reactFlowKey: targetNodeReactFlowKey,
         isRepeating: isRepeating,
         isCustom: false,
-        isDefined: true
+        isDefined: true,
       };
 
       if (isRepeating) {
@@ -274,9 +284,9 @@ export const flattenInputs = (inputs: InputConnections): InputConnection[] => Ob
 export const createNewEmptyConnection = (): EmptyConnection => {
   return {
     isDefined: false,
-    isCustom: false
-  }
-}
+    isCustom: false,
+  };
+};
 
 export const isEmptyConnection = (connectionInput: InputConnection): connectionInput is EmptyConnection =>
   connectionInput !== undefined && connectionInput.isDefined === false;

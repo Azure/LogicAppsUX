@@ -20,9 +20,7 @@ import {
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 describe('utils/Functions', () => {
-  describe('functionDropDownItemText',() => {
-    
-  })
+  describe('functionDropDownItemText', () => {});
   describe('getFunctionOutputValue', () => {
     const functionName = 'testFunction';
     const inputArgs: string[] = ['arg1', 'arg2', 'arg3'];
@@ -78,10 +76,10 @@ describe('utils/Functions', () => {
         self: {
           reactFlowKey: mockReactFlowKey,
           node: {} as FunctionData,
+          isCustom: false,
+          isDefined: true,
         },
-        inputs: {
-          0: [],
-        },
+        inputs: [],
         outputs: [],
       },
     };
@@ -91,7 +89,7 @@ describe('utils/Functions', () => {
     });
 
     it('Test function input that has inputs', () => {
-      mockConnections[mockReactFlowKey].inputs[0] = ['testInput'];
+      mockConnections[mockReactFlowKey].inputs[0] = { isCustom: true, isDefined: true, value: 'testInput' };
       expect(functionInputHasInputs(mockReactFlowKey, mockConnections)).toEqual(true);
     });
   });

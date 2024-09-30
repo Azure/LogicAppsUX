@@ -2,6 +2,7 @@ import type { Rect } from '@xyflow/react';
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { ConnectionAndOrder, FunctionMetadata, MapMetadataV2 } from '@microsoft/logic-apps-shared';
+import { isConnectionUnit } from '../utils/Connection.Utils';
 
 export const generateMapMetadata = (
   functionDictionary: FunctionDictionary,
@@ -47,9 +48,9 @@ export const generateFunctionConnectionMetadata = (connectionKey: string, connec
     let index = 0;
     const firstOutputObj = connections[firstOutputKey];
     const outputsInput = firstOutputObj.inputs;
-    while (outputsInput[index.toString()]) {
-      const possibleMatchingInput = outputsInput[index.toString()][0];
-      if (possibleMatchingInput && typeof possibleMatchingInput !== 'string' && possibleMatchingInput.reactFlowKey === connectionKey) {
+    while (outputsInput[index]) {
+      const possibleMatchingInput = outputsInput[index];
+      if (possibleMatchingInput && isConnectionUnit(possibleMatchingInput) && possibleMatchingInput.reactFlowKey === connectionKey) {
         const connAndOrder: ConnectionAndOrder = {
           name: firstOutputKey,
           inputOrder: index,

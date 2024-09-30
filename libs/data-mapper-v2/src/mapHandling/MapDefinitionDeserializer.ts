@@ -211,6 +211,8 @@ export class MapDefinitionDeserializer {
           input: {
             reactFlowKey: funcKey,
             node: func,
+            isCustom: false,
+            isDefined: true,
           },
         });
 
@@ -232,6 +234,8 @@ export class MapDefinitionDeserializer {
         input: {
           reactFlowKey: addSourceReactFlowPrefix((sourceSchemaNode as SchemaNodeExtended).key),
           node: sourceSchemaNode as SchemaNodeExtended,
+          isCustom: false,
+          isDefined: true,
         },
       });
     }
@@ -267,6 +271,8 @@ export class MapDefinitionDeserializer {
               input: {
                 reactFlowKey: key,
                 node: loopSrc,
+                isCustom: false,
+                isDefined: true,
               },
             });
             loop.needsConnection = false;
@@ -294,6 +300,8 @@ export class MapDefinitionDeserializer {
         input: {
           reactFlowKey: this._conditional.key,
           node: ifFunction,
+          isCustom: false,
+          isDefined: true,
         },
       });
       if (isSchemaNodeExtended(targetNode) && targetNode.children.length !== 0) {
@@ -398,6 +406,8 @@ export class MapDefinitionDeserializer {
           input: {
             reactFlowKey: addSourceReactFlowPrefix(lowestCommonParent),
             node: findNodeForKey(lowestCommonParent, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended,
+            isCustom: false,
+            isDefined: true,
           },
         });
       }
@@ -444,6 +454,8 @@ export class MapDefinitionDeserializer {
         input: {
           reactFlowKey: addSourceReactFlowPrefix(loopSource.key),
           node: loopSource,
+          isCustom: false,
+          isDefined: true,
         },
       });
       loopSourceRef.indexFn = indexFullKey;
@@ -535,6 +547,8 @@ export class MapDefinitionDeserializer {
         input: {
           reactFlowKey: addSourceReactFlowPrefix(loopNode.key),
           node: loopNode,
+          isCustom: false,
+          isDefined: true,
         },
       });
     } else if (this.isCustomValue(key)) {
@@ -542,7 +556,7 @@ export class MapDefinitionDeserializer {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: key,
+        input: { isCustom: true, isDefined: true, value: key },
       });
       // index
     } else if (key.startsWith('$')) {
@@ -556,6 +570,8 @@ export class MapDefinitionDeserializer {
           input: {
             reactFlowKey: indexFn.self.reactFlowKey,
             node: indexFn.self.node,
+            isCustom: false,
+            isDefined: true,
           },
         });
       }
@@ -575,7 +591,7 @@ export class MapDefinitionDeserializer {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: key,
+        input: { value: key, isCustom: true, isDefined: true }, // danielle check
       });
     }
   };

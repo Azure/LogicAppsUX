@@ -4,6 +4,7 @@ import type { Draft } from 'immer';
 import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
+  createNewEmptyConnection,
   flattenInputs,
   generateInputHandleId,
   getActiveNodes,
@@ -275,7 +276,7 @@ export const dataMapSlice = createSlice({
           },
         },
       };
-      newState.curDataMapOperation.dataMapConnections[action.payload].inputs[0].push(undefined);
+      newState.curDataMapOperation.dataMapConnections[action.payload].inputs.push(undefined); // danielle double check
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
@@ -599,7 +600,7 @@ export const dataMapSlice = createSlice({
     updateFunctionConnectionInputs: (state, action: PayloadAction<{ functionKey: string; inputs: InputConnection[] }>) => {
       const newState = { ...state.curDataMapOperation };
       if (newState.dataMapConnections[action.payload.functionKey]?.inputs[0]) {
-        newState.dataMapConnections[action.payload.functionKey].inputs[0] = action.payload.inputs;
+        newState.dataMapConnections[action.payload.functionKey].inputs = action.payload.inputs; // danielle double check
       } else {
         throw new Error('Function node not found in connections');
       }
@@ -671,6 +672,8 @@ const addConnection = (
     input: {
       reactFlowKey: nodes.reactFlowSource,
       node: sourceNode,
+      isDefined: true,
+      isCustom: false,
     },
   });
 };
@@ -691,11 +694,9 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
 
     // Step through all the outputs and delete the selected key from their inputs
     newConnections[keyToDelete].outputs.forEach((outputConnection) => {
-      Object.values(newConnections[outputConnection.reactFlowKey].inputs).forEach((outputConnectionInput, index) => {
-        newConnections[outputConnection.reactFlowKey].inputs[index] = outputConnectionInput.filter((input) =>
-          isConnectionUnit(input) ? input.reactFlowKey !== keyToDelete : true
-        );
-      });
+      newConnections[outputConnection.reactFlowKey].inputs = newConnections[outputConnection.reactFlowKey].inputs.filter((input) =>
+        isConnectionUnit(input) ? input.reactFlowKey !== keyToDelete : true
+      );
     });
   }
 
@@ -705,6 +706,7 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
 };
 
 export const deleteConnectionFromConnections = (
+  // danielle test this
   connections: ConnectionDictionary,
   inputKey: string,
   outputKey: string,
@@ -713,21 +715,18 @@ export const deleteConnectionFromConnections = (
   connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
 
   const outputNode = connections[outputKey].self.node;
-  const outputNodeInputs = connections[outputKey].inputs;
+  let outputNodeInputs = connections[outputKey].inputs;
   if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
-    Object.values(outputNodeInputs).forEach((input, inputIndex) =>
-      input.forEach((inputValue, inputValueIndex) => {
-        if (isConnectionUnit(inputValue) && inputValue.reactFlowKey === inputKey) {
-          if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputValueIndex) === port)) {
-            outputNodeInputs[inputIndex][inputValueIndex] = undefined;
-          }
+    outputNodeInputs.forEach((input, inputIndex) => {
+      if (isConnectionUnit(input) && input.reactFlowKey === inputKey) {
+        if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {
+          outputNodeInputs[inputIndex] = createNewEmptyConnection(); // danielle test
         }
-      })
-    );
+      }
+    });
   } else {
-    Object.entries(outputNodeInputs).forEach(
-      ([key, input]) =>
-        (outputNodeInputs[key] = input.filter((inputEntry) => (isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true)))
+    outputNodeInputs = outputNodeInputs.filter((inputEntry) =>
+      isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
     );
   }
 };
