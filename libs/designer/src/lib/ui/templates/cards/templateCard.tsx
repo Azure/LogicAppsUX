@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { changeCurrentTemplateName, loadTemplate } from '../../../core/state/templates/templateSlice';
+import { changeCurrentTemplateName } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
@@ -11,6 +11,7 @@ import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import { getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 
 interface TemplateCardProps {
   templateName: string;
