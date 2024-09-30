@@ -82,15 +82,15 @@ export const convertWholeDataMapToLayoutTree = (
   let nextEdgeIndex = 0;
   const layoutEdges: LayoutEdge[] = [];
 
+  // loops through all connections and adds if not a custom value
   Object.values(connections).forEach((connection) => {
-    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
-      inputValueArray.forEach((inputValue, inputValueIndex) => {
+    Object.values(connection.inputs).forEach((inputValue, inputIndex) => {
         if (isConnectionUnit(inputValue)) {
           const targetId = connection.self.reactFlowKey;
           const labels = isFunctionData(connection.self.node)
             ? connection.self.node?.maxNumberOfInputs > -1
               ? [connection.self.node.inputs[inputIndex].name]
-              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
+              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputIndex)]
             : [];
 
           const nextEdge: LayoutEdge = {
@@ -106,7 +106,6 @@ export const convertWholeDataMapToLayoutTree = (
         }
       });
     });
-  });
 
   const layoutTree: RootLayoutNode = {
     id: rootLayoutNodeId,

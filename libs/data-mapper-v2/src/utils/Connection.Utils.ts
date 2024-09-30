@@ -1,11 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
-import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
+import type { CustomInput, EmptyConnection, Connection,  ConnectionDictionary,  ConnectionUnit,  InputConnection,  InputConnections } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { createEdgeId } from './Edge.Utils';
 import { isFunctionData } from './Function.Utils';
-import { LogCategory, LogService } from './Logging.Utils';
 //import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
@@ -29,23 +28,24 @@ export const createConnectionEntryIfNeeded = (
 ) => {
   if (!connections[reactFlowKey]) {
     connections[reactFlowKey] = {
-      self: { node: node, reactFlowKey: reactFlowKey },
-      inputs: {},
+      self: { node: node, reactFlowKey: reactFlowKey, isDefined: true, isCustom: false },
+      inputs: [],
       outputs: [],
     };
 
     if (node && isFunctionData(node)) {
       if (node?.maxNumberOfInputs !== UnboundedInput) {
         for (let index = 0; index < node.maxNumberOfInputs; index++) {
-          connections[reactFlowKey].inputs[index] = [];
+          connections[reactFlowKey].inputs[index] = createNewEmptyConnection();
         }
       } else {
         // Start unbounded inputs off with two empty fields (instead of no fields at all)
-        connections[reactFlowKey].inputs[0] = [undefined, undefined];
+        connections[reactFlowKey].inputs[0] = createNewEmptyConnection();
+        connections[reactFlowKey].inputs[1] = createNewEmptyConnection();
       }
     } else {
       // Schema nodes start with a single empty inputValArray
-      connections[reactFlowKey].inputs[0] = [];
+      connections[reactFlowKey].inputs[0] = createNewEmptyConnection();
     }
   }
 };
@@ -96,9 +96,9 @@ export const applyConnectionValue = (
       let inputConnection: InputConnection = undefined;
 
       if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-        inputConnection = connection.inputs[0][inputIndex];
-      } else if (connection.inputs[inputIndex].length > 0) {
-        inputConnection = connection.inputs[inputIndex][0];
+        inputConnection = connection.inputs[inputIndex];
+      } else if (connection.inputs[inputIndex]) {
+        inputConnection = connection.inputs[inputIndex];
       }
 
       if (inputConnection && isConnectionUnit(inputConnection)) {
@@ -126,66 +126,56 @@ export const applyConnectionValue = (
       // Check if an undefined input field exists first (created through PropPane)
       // - otherwise we can safely just append its value to the end
       if (connection.inputs && connection.inputs[0]) {
-        const indexOfFirstOpenInput = connection.inputs[0].findIndex((inputCon) => !inputCon);
+        const indexOfFirstOpenInput = connection.inputs.findIndex((inputCon) => !inputCon);
         confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : UnboundedInput;
       }
     } else if (isConnectionUnit(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
-      confirmedInputIndex = Object.values(connection.inputs).findIndex((inputCon) => inputCon.length < 1);
-    } else if (isCustomValue(input) && targetNode) {
-      // Add input to first available that allows custom values
-      confirmedInputIndex = Object.values(connection.inputs).findIndex(
-        (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
-      );
+      confirmedInputIndex = connection.inputs.findIndex((inputCon) => isEmptyConnection(inputCon)); // danielle this might not be right
+    // } else if (isCustomValue(input) && targetNode) {
+    //   // Add input to first available that allows custom values danielle revisit
+    //   confirmedInputIndex = values(connection.inputs.findIndex(
+    //     (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
+    //   );
     }
   }
 
   // null is signal to delete unbounded input value
-  if (input === null) {
+  if (input === null) {  // danielle test this
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      const newUnboundedInputValues = connection.inputs[0];
-      newUnboundedInputValues.splice(confirmedInputIndex, 1);
-      connection.inputs[0] = newUnboundedInputValues;
+      // const newUnboundedInputValues = connection.inputs[0];
+      // newUnboundedInputValues.splice(confirmedInputIndex, 1);
+      // connection.inputs[0] = newUnboundedInputValues;
     } else {
       console.error('Invalid Connection Input Op: null was provided for non-unbounded-input value');
     }
-  } else if (input === undefined) {
+  } else if (input === undefined) { // danielle what is the intended effect? do we want to delete the connection?
     // Explicit undefined check to handle empty custom values ('') in the next block
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      connection.inputs[0][confirmedInputIndex] = undefined;
+      connection.inputs[confirmedInputIndex] = undefined;
     } else {
-      connection.inputs[confirmedInputIndex] = [];
+      connection.inputs[confirmedInputIndex] = createNewEmptyConnection(); // danielle confirm
     }
   } else {
     // Set the value (ConnectionUnit or custom value)
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      if (confirmedInputIndex === UnboundedInput) {
+      if (confirmedInputIndex === UnboundedInput && isConnectionUnit(input)) {
         // Repeating schema node
         if (typeof input !== 'string') {
           input.isRepeating = isRepeating;
         }
-        connection.inputs[0].push(input);
+        connection.inputs[0] = input;  // danielle should this always be 0?
       } else {
         // Function unbounded input
-        const inputCopy: InputConnection[] = [...connection.inputs[0]]; // created to prevent issues with immutable state
+        const inputCopy: InputConnection[] = [...connection.inputs]; // created to prevent issues with immutable state
         inputCopy[confirmedInputIndex] = input;
-        connection.inputs[0] = inputCopy;
+        connection.inputs = inputCopy;
         connections[targetNodeReactFlowKey] = connection;
       }
     } else if (confirmedInputIndex !== UnboundedInput) {
-      connection.inputs[confirmedInputIndex][0] = input;
+      connection.inputs[confirmedInputIndex] = input;
     } else {
-      connection.inputs[0].push(input);
-
-      const selfNode = connection.self.node;
-      if (isFunctionData(selfNode) && selfNode?.maxNumberOfInputs !== UnboundedInput && connection.inputs[0].length > 1) {
-        LogService.log(LogCategory.ConnectionUtils, 'applyConnectionValue', {
-          message: 'Too many inputs applied to connection',
-          data: {
-            reactFlowId: connection.self.reactFlowKey,
-          },
-        });
-      }
+      connection.inputs.push(input);
     }
 
     connections[targetNodeReactFlowKey] = connection;
@@ -196,6 +186,8 @@ export const applyConnectionValue = (
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
         isRepeating: isRepeating,
+        isCustom: false,
+        isDefined: true
       };
 
       if (isRepeating) {
@@ -277,12 +269,22 @@ export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | 
   return true;
 };
 
-export const flattenInputs = (inputs: InputConnectionDictionary): InputConnection[] => Object.values(inputs).flatMap((value) => value);
+export const flattenInputs = (inputs: InputConnections): InputConnection[] => Object.values(inputs).flatMap((value) => value);
 
-export const isCustomValue = (connectionInput: InputConnection): connectionInput is string =>
-  connectionInput !== undefined && typeof connectionInput === 'string';
+export const createNewEmptyConnection = (): EmptyConnection => {
+  return {
+    isDefined: false,
+    isCustom: false
+  }
+}
+
+export const isEmptyConnection = (connectionInput: InputConnection): connectionInput is EmptyConnection =>
+  connectionInput !== undefined && connectionInput.isDefined === false;
+
+export const isCustomValue = (connectionInput: InputConnection): connectionInput is CustomInput =>
+  connectionInput !== undefined && connectionInput.isCustom === true;
 export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is ConnectionUnit =>
-  connectionInput !== undefined && typeof connectionInput !== 'string';
+  connectionInput !== undefined && connectionInput.isDefined === true && connectionInput.isCustom === false;
 
 const onlyUniqueConnections = (value: ConnectionUnit, index: number, self: ConnectionUnit[]) => {
   return self.findIndex((selfValue) => selfValue.reactFlowKey === value.reactFlowKey) === index;

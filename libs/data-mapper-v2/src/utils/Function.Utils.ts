@@ -14,7 +14,7 @@ import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } fr
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionDictionary, FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { isConnectionUnit, isCustomValue, isEmptyConnection } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
@@ -89,14 +89,14 @@ export const getFunctionOutputValue = (inputValues: string[], functionName: stri
 
 export const functionInputHasInputs = (fnInputReactFlowKey: string, connections: ConnectionDictionary): boolean => {
   const fnInputConnection = connections[fnInputReactFlowKey];
-  return !!fnInputConnection && Object.values(fnInputConnection.inputs).some((inputConArr) => inputConArr.length > 0);
+  return !!fnInputConnection && fnInputConnection.inputs.length > 0;
 };
 
 export const getIndexValueForCurrentConnection = (currentConnection: Connection, connections: ConnectionDictionary): string => {
-  const firstInput = currentConnection.inputs[0][0];
+  const firstInput = currentConnection.inputs[0];
 
   if (isCustomValue(firstInput)) {
-    return firstInput;
+    return firstInput.value;
   }
   if (isConnectionUnit(firstInput)) {
     const node = firstInput.node;
@@ -214,7 +214,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
     fnInputValues = Object.values(connection.inputs)
       .flat()
       .map((input) => {
-        if (!input) {
+        if (!input || !isEmptyConnection(input)) {
           return undefined;
         }
 
@@ -224,7 +224,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
 
         if (input.node && isFunctionData(input.node)) {
           if (input.node.key === indexPseudoFunctionKey) {
-            const sourceNode = connections[input.reactFlowKey].inputs[0][0];
+            const sourceNode = connections[input.reactFlowKey].inputs[0];
             return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
           }
 
@@ -241,7 +241,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
   }
 
   const inputs = connections?.[key]?.inputs?.[0];
-  const sourceNode = inputs && inputs[0];
+  const sourceNode = inputs;
   let nodeName: string;
   if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
     nodeName = calculateIndexValue(sourceNode.node);
@@ -258,11 +258,12 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
   return nodeName;
 };
 
-export const getInputName = (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary) => {
-  if (inputConnection) {
-    return isCustomValue(inputConnection)
-      ? inputConnection
-      : isSchemaNodeExtended(inputConnection.node)
+export const getInputName= (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary): string | undefined => {
+  if (inputConnection && !isEmptyConnection(inputConnection)) {
+    if (isCustomValue(inputConnection)) {
+      return inputConnection.value;
+    }
+    return isSchemaNodeExtended(inputConnection.node)
         ? inputConnection.node.name
         : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
   }
@@ -271,7 +272,7 @@ export const getInputName = (inputConnection: InputConnection | undefined, conne
 };
 
 export const getInputValue = (inputConnection: InputConnection | undefined) => {
-  if (inputConnection) {
+  if (inputConnection && !isEmptyConnection(inputConnection)) {
     return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
   }
 

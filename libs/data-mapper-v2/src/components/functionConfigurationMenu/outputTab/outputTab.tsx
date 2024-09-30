@@ -9,7 +9,7 @@ import { useStyles } from '../styles';
 import { List } from '@fluentui/react-list-preview';
 import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { flattenInputs, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { flattenInputs, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
 import { isSchemaNodeExtended } from '../../../utils';
@@ -37,11 +37,8 @@ export const OutputTabContents = (props: {
   };
 
   const getIDForTargetConnection = (connection: InputConnection) => {
-    if (connection === undefined) {
+    if (connection === undefined || !isConnectionUnit(connection)) {
       return '';
-    }
-    if (typeof connection === 'string') {
-      return connection;
     }
     return connection.reactFlowKey;
   };

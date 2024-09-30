@@ -44,6 +44,10 @@ export const getInputValues = (
             return undefined;
           }
 
+          if (!input.isDefined) {
+            return undefined
+          }
+
           // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
@@ -149,7 +153,7 @@ export const invalidFunctions = (connections: ConnectionDictionary) => {
     const selfNode = connection.self.node;
     if (isFunctionData(selfNode)) {
       return selfNode.inputs.find((nodeInput, index) => {
-        return !nodeInput.isOptional && connection.inputs[index].length === 0;
+        return !nodeInput.isOptional && connection.inputs[index] !== undefined;
       });
     }
 
@@ -594,6 +598,8 @@ export const addParentConnectionForRepeatingElementsNested = (
           input: {
             reactFlowKey: prefixedSourceKey,
             node: firstRepeatingSourceNode,
+            isCustom: false,
+            isDefined: true,
           },
           isRepeating: true,
         });

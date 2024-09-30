@@ -20,6 +20,9 @@ import {
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 describe('utils/Functions', () => {
+  describe('functionDropDownItemText',() => {
+    
+  })
   describe('getFunctionOutputValue', () => {
     const functionName = 'testFunction';
     const inputArgs: string[] = ['arg1', 'arg2', 'arg3'];
