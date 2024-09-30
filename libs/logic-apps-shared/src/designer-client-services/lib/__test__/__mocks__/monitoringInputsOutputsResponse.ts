@@ -29,7 +29,7 @@ export const outputsResponse: Record<string, any> = {
       'sec-fetch-mode': 'cors',
       'sec-fetch-dest': 'empty',
       'x-ms-arm-resource-system-data':
-        '{"lastModifiedBy":"ccastrotrejo@microsoft.com","lastModifiedByType":"User","lastModifiedAt":"2023-01-30T15:29:21.3404921Z"}',
+        '{"lastModifiedBy":"user@contoso.com","lastModifiedByType":"User","lastModifiedAt":"2023-01-30T15:29:21.3404921Z"}',
       'x-ms-arm-request-tracking-id': '0deff501-b7d3-4ed8-853a-fec4060d8093',
       'x-ms-correlation-request-id': '0deff501-b7d3-4ed8-853a-fec4060d8093',
       'x-ms-routing-request-id': 'WESTCENTRALUS:20230130T152921Z:0deff501-b7d3-4ed8-853a-fec4060d8093',
@@ -54,7 +54,7 @@ export const outputsResponse: Record<string, any> = {
       'x-ms-client-identity-provider': '',
       'x-ms-client-authentication-methods': 'pwd, mfa',
       'x-ms-client-principal-group-membership-source': 'Graph',
-      'x-ms-client-principal-name': 'ccastrotrejo@microsoft.com',
+      'x-ms-client-principal-name': 'user@contoso.com',
       'x-ms-client-family-name-encoded': 'Q2FzdHJvIFRyZWpv',
       'x-ms-client-given-name-encoded': 'Q2FybG9z',
       'x-ms-arm-network-source': 'PublicNetwork',

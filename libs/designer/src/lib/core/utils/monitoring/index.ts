@@ -6,9 +6,9 @@ import { getIntl, isBoolean, isNullOrUndefined, isNumber, isString } from '@micr
  * @param outputs - The outputs to parse, which can be a record of any type.
  * @returns A BoundParameters object where each key is a parameter name and the value is an object containing the display name and value.
  */
-export const parseOutputs = (outputs: Record<string, any>): BoundParameters => {
+export const parseOutputs = (outputs: any): BoundParameters => {
   if (isNullOrUndefined(outputs)) {
-    return outputs;
+    return {};
   }
   const intl = getIntl();
   const ouputsTitle = intl.formatMessage({
@@ -31,9 +31,9 @@ export const parseOutputs = (outputs: Record<string, any>): BoundParameters => {
  * @param inputs - A record containing the inputs to be parsed.
  * @returns A BoundParameters object with the parsed inputs.
  */
-export const parseInputs = (inputs: Record<string, any>): BoundParameters => {
+export const parseInputs = (inputs: any): BoundParameters => {
   if (isNullOrUndefined(inputs)) {
-    return inputs;
+    return {};
   }
 
   const intl = getIntl();
