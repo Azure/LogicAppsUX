@@ -409,16 +409,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
 
   private validateLogicAppIdentity(baseUrl: string, identity: ManagedIdentity | undefined) {
     const intl = getIntl();
-    if (!isHybridLogicApp(baseUrl) && !isIdentityAssociatedWithLogicApp(identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'A managed identity is not configured on the logic app.',
-          id: 'WnU9v0',
-          description: 'Error message when no identity is associated',
-        })
-      );
-    }
-
     if (isHybridLogicApp(baseUrl)) {
       if (!identity?.principalId || !identity?.tenantId) {
         throw new Error(
@@ -429,6 +419,14 @@ export class StandardConnectionService extends BaseConnectionService implements 
           })
         );
       }
+    } else if (!isIdentityAssociatedWithLogicApp(identity)) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'A managed identity is not configured on the logic app.',
+          id: 'WnU9v0',
+          description: 'Error message when no identity is associated',
+        })
+      );
     }
   }
 
