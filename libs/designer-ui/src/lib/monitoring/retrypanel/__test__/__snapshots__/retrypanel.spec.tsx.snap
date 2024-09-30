@@ -861,7 +861,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
             </button>
             <div
               hidden={true}
-              id="tooltip44"
+              id="tooltip88"
               style={
                 {
                   "border": 0,
@@ -937,7 +937,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
             </button>
             <div
               hidden={true}
-              id="tooltip48"
+              id="tooltip92"
               style={
                 {
                   "border": 0,
@@ -1081,7 +1081,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="token plain"
                   >
-                    18 minutes
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -1367,7 +1367,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 3:10:00 PM (Local time)
+                    2/10/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -1592,6 +1592,118 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                     className="token plain"
                   >
                     clientRequestId
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            Service request ID
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="Service request ID"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Select all text in 'Service request ID'"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'Service request ID'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-124 ms-Button-icon icon-121"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'Service request ID' to the clipboard"
+                  className="ms-Button ms-Button--icon root-120"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'Service request ID' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-126 ms-Button-icon icon-121"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    serviceRequestId
                   </span>
                 </div>
               </pre>
@@ -2465,7 +2577,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
             </button>
             <div
               hidden={true}
-              id="tooltip44"
+              id="tooltip138"
               style={
                 {
                   "border": 0,
@@ -2541,7 +2653,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
             </button>
             <div
               hidden={true}
-              id="tooltip48"
+              id="tooltip142"
               style={
                 {
                   "border": 0,
@@ -2565,6 +2677,36 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
   <div
     className="msla-panel-callout-content"
   >
+    <div
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-129"
+    >
+      <div
+        className="ms-MessageBar-content content-130"
+      >
+        <div
+          aria-hidden={true}
+          className="ms-MessageBar-icon iconContainer-131"
+        >
+          <i
+            aria-hidden={true}
+            className="icon-139"
+            data-icon-name="Warning"
+          >
+            
+          </i>
+        </div>
+        <div
+          aria-live="assertive"
+          className="ms-MessageBar-text text-133"
+          id="MessageBar146"
+          role="alert"
+        >
+          <span
+            className="ms-MessageBar-innerText innerText-134"
+          />
+        </div>
+      </div>
+    </div>
     <div
       className="msla-trace-inputs-outputs"
     >
@@ -2685,7 +2827,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="token plain"
                   >
-                    18 minutes
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -2971,7 +3113,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 3:10:00 PM (Local time)
+                    2/10/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
