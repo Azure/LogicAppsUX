@@ -65,7 +65,7 @@ export const QueryBuilderEditor = ({
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: JSON.parse(JSON.stringify({ items: getRootProp() })) });
+    onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: { items: getRootProp() } });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
