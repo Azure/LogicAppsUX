@@ -321,24 +321,21 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const {
       apiHubServiceDetails: { tenantId },
       workflowAppDetails,
-      baseUrl
+      baseUrl,
     } = this._options;
     if (!isArmResourceId(connection.id) || !workflowAppDetails) {
       return;
     }
 
-    const intl = getIntl();
-
-    validateLogicAppIdentity(baseUrl, workflowAppDetails.identity);
+    this.validateLogicAppIdentity(baseUrl, workflowAppDetails.identity);
 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
-    var identityDetailsForApiHubAuth: {principalId: string; tenantId: string};
+    let identityDetailsForApiHubAuth: { principalId: string; tenantId: string };
 
-    if (isHybridLogicApp(baseUrl)) {
-      identityDetailsForApiHubAuth = { principalId: identity.principalId, tenantId: identity.tenantId };
-    }
-    else {
+    if (isHybridLogicApp(baseUrl) && identity?.principalId && identity?.tenantId) {
+      identityDetailsForApiHubAuth = { principalId: identity?.principalId, tenantId: identity?.tenantId };
+    } else {
       identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
     }
 
@@ -410,7 +407,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
     });
   }
 
-  private validateLogicAppIdentity(baseUrl: string, identity: Identity | undefined) {
+  private validateLogicAppIdentity(baseUrl: string, identity: ManagedIdentity | undefined) {
+    const intl = getIntl();
     if (!isHybridLogicApp(baseUrl) && !isIdentityAssociatedWithLogicApp(identity)) {
       throw new Error(
         intl.formatMessage({
@@ -420,13 +418,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
         })
       );
     }
-  
+
     if (isHybridLogicApp(baseUrl)) {
       if (!identity?.principalId || !identity?.tenantId) {
         throw new Error(
           intl.formatMessage({
             defaultMessage: 'App identity is not configured on the logic app environment variables.',
-            id: 'WnU9v0',
+            id: 'zPRSM9',
             description: 'Error message when no app identity is added in environment variables',
           })
         );
