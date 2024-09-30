@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ManifestInputsBinder } from '../../inputs/index';
 import initializeVariable from '../../__mocks__/initializeVariable';
-import * as parseModules from '../../../../parameters/helper'; // Import the module that contains the external function
+import * as helperModules from '../../../../parameters/helper'; // Import the module that contains the external function
 
 describe('ManifestInputsBinder', () => {
   let binder: ManifestInputsBinder;
@@ -47,7 +47,7 @@ describe('ManifestInputsBinder', () => {
   });
 
   it('should call functions to bind inputs properly', async () => {
-    const spyInputsValue = vi.spyOn(parseModules, 'getInputsValueFromDefinitionForManifest');
+    const spyInputsValue = vi.spyOn(helperModules, 'getInputsValueFromDefinitionForManifest');
     const spyGetParameterValue = vi.spyOn(binder, 'getParameterValue');
     const spyBind = vi.spyOn(binder, 'bind');
 
