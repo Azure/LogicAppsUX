@@ -108,7 +108,7 @@ const getInputsOutputsBinding = async (
 
   const outputsBinder = new OutputsBinder();
   const boundOutputs = await outputsBinder.bind(outputsToBind, type, outputParameters, manifest, undefined, definition.metadata);
-
+  console.log('charlie - ', 'boundInputs', boundInputs, 'boundOutputs', boundOutputs);
   return { boundInputs, boundOutputs };
 };
 
