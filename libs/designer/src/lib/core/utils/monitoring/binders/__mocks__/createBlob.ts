@@ -874,7 +874,7 @@ export default {
       Expires: '-1',
     },
     body: {
-      Id: 'JTJmdGVzdDElMmZ0ZXN0MQ==',
+      Id: 'idValues',
       Name: 'test1',
       DisplayName: 'test1',
       Path: '/test1/test1',
@@ -883,7 +883,7 @@ export default {
       MediaType: 'application/octet-stream',
       IsFolder: false,
       ETag: '"0x8DCD81F4823D141"',
-      FileLocator: 'JTJmdGVzdDElMmZ0ZXN0MQ==',
+      FileLocator: 'idValues',
       LastModifiedBy: null,
     },
   },
