@@ -29,6 +29,7 @@ describe('lib/pager', () => {
 
     const pagerWrapper = renderer.getRenderOutput();
     const pager = pagerWrapper.props.children[2];
+    console.log('---2', pager);
     expect(pager.props.className).toBe(classNames.Pager);
 
     const [previous, inner, next] = React.Children.toArray(pager.props.children) as React.ReactElement[];
