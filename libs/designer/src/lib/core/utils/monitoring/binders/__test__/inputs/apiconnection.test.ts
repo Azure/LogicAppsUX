@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { ApiConnectionInputsBinder } from '../../inputs/index';
-import { ParameterLocations, DefaultKeyPrefix } from '@microsoft/logic-apps-shared';
 import sendEmail from '../../__mocks__/sendEmail';
 
 describe('ApiConnectionInputsBinder', () => {
@@ -76,5 +75,12 @@ describe('ApiConnectionInputsBinder', () => {
         value: '/v2/Mail',
       },
     });
+  });
+
+  it('should handle untyped inputs correctly without inputs', async () => {
+    binder = new ApiConnectionInputsBinder(undefined as any, nodeParameters, metadata);
+
+    const result = await binder.bind({}, sendEmail.inputsParametersByName as Record<string, any>);
+    expect(result).toEqual({});
   });
 });
