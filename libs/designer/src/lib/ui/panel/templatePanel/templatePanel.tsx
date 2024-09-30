@@ -3,14 +3,15 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel } from '../../../core/state/templates/panelSlice';
-import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
+import { CreateWorkflowPanel, CreateWorkflowPanelHeader } from './createWorkflowPanel/createWorkflowPanel';
 import { QuickViewPanel, QuickViewPanelHeader } from './quickViewPanel/quickViewPanel';
-import { type TemplatePanelTab, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { type TemplatePanelTab, TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
+import { useDefaultWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 
 export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +21,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
   }));
-  const manifest = useSelector((state: RootState) => state.template?.manifest);
+  const { manifest } = useDefaultWorkflowTemplate() ?? {};
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
   const dismissPanel = useCallback(() => {
@@ -42,22 +43,6 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
-
-  const intlText = useMemo(() => {
-    return {
-      CREATE_WORKFLOW: intl.formatMessage({
-        defaultMessage: 'Create a new workflow',
-        id: 'Y9VTmA',
-        description: 'Panel header title for creating the workflow',
-      }),
-      BY_MICROSOFT: intl.formatMessage({
-        defaultMessage: 'By Microsoft',
-        id: 'Xs7Uvt',
-        description: 'Panel description for stating it was created by Microsoft',
-      }),
-    };
-  }, [intl]);
-
   const layerProps = {
     hostId: 'msla-layer-host',
     eventBubblingEnabled: true,
@@ -68,12 +53,9 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       currentPanelView === 'quickView' ? (
         <QuickViewPanelHeader title={templateTitle} description={templateDescription} details={manifest?.details ?? {}} />
       ) : (
-        <TemplatesPanelHeader
-          title={currentPanelView === 'createWorkflow' ? intlText.CREATE_WORKFLOW : templateTitle}
-          description={currentPanelView === 'createWorkflow' ? templateDescription : intlText.BY_MICROSOFT}
-        />
+        <CreateWorkflowPanelHeader title={templateTitle} description={templateDescription} />
       ),
-    [currentPanelView, templateTitle, templateDescription, manifest?.details, intlText.CREATE_WORKFLOW, intlText.BY_MICROSOFT]
+    [currentPanelView, templateTitle, templateDescription, manifest?.details]
   );
   const onRenderFooterContent = useCallback(
     () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),

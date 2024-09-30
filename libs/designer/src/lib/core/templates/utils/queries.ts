@@ -1,6 +1,6 @@
-import { ConnectionService, OperationManifestService } from '@microsoft/logic-apps-shared';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
+import { getConnector, getOperationManifest } from '../../queries/operation';
 
 export interface ConnectorInfo {
   id: string;
@@ -20,7 +20,7 @@ export const useConnectorInfo = (
         return null;
       }
       if (operationId) {
-        const { properties } = await OperationManifestService().getOperationManifest(connectorId, operationId);
+        const { properties } = await getOperationManifest({ connectorId, operationId });
         return {
           id: connectorId,
           displayName: properties?.connector?.properties?.displayName,
@@ -28,7 +28,7 @@ export const useConnectorInfo = (
         };
       }
 
-      const { properties } = await ConnectionService().getConnector(connectorId);
+      const { properties } = await getConnector(connectorId);
       return {
         id: connectorId,
         displayName: properties?.displayName,
