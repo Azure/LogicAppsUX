@@ -14,6 +14,24 @@ export interface DocumentationRequestBody {
   };
 }
 
+export const formatResponseToMarkdown = (response: string) => {
+  const formattedResponse = response.replace(new RegExp(/\n/, 'g'), '  \n');
+  console.log(formattedResponse);
+  return response;
+};
+
+export const downloadDocumentAsFile = (sampleResponseDocument: string) => {
+  const mdFileInString = formatResponseToMarkdown(sampleResponseDocument);
+  const element = document.createElement('a');
+  const file = new Blob([mdFileInString], {
+    type: 'text/plain',
+  });
+  element.href = URL.createObjectURL(file);
+  element.download = 'myFile.md';
+  document.body.appendChild(element);
+  element.click();
+};
+
 export const getSampleRequestBody = (
   workflow: Workflow,
   operationInfo: Record<string, NodeOperation>,

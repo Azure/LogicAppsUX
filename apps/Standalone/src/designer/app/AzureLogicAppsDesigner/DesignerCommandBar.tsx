@@ -32,6 +32,9 @@ import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
+import { environment } from '../../../environments/environment';
+import { isSuccessResponse } from './Services/HttpClient';
+import { downloadDocumentAsFile } from '@microsoft/logic-apps-designer';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -109,6 +112,10 @@ export const DesignerCommandBar = ({
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });
+
+  const getAuthToken = () => {
+    return environment?.armToken ? `Bearer ${environment.armToken}` : '';
+  };
 
   const designerIsDirty = useIsDesignerDirty();
 
@@ -223,11 +230,16 @@ export const DesignerCommandBar = ({
         text: 'Document',
         iconProps: { iconName: 'Download' },
         onClick: async () => {
-          console.log('download document!');
           const designerState = DesignerStore.getState();
           const workflow = await serializeWorkflow(designerState);
           const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
-          ChatbotService().getCopilotDocumentation(docMetaData, workflow, '');
+          const response = await ChatbotService().getCopilotDocumentation(docMetaData, workflow, getAuthToken());
+          if (!isSuccessResponse(response.status)) {
+            throw new Error(response.statusText);
+          }
+          const queryResponse: string = response.data.properties.response;
+          console.log(queryResponse);
+          downloadDocumentAsFile(queryResponse);
         },
       },
       {
