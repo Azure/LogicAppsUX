@@ -271,7 +271,7 @@ export const Pager: React.FC<PagerProps> = ({
           <div className="msla-pager-v2--inner">
             {pageNumbers.map((pageNum) => (
               <Text
-                className={css('msla-pager-pageNum', pageNum === current ? '' : 'toSelect')}
+                className={css('msla-pager-pageNum', pageNum !== current && 'toSelect')}
                 key={pageNum}
                 onClick={() => {
                   if (pageNum !== current) {
