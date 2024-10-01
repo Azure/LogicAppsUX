@@ -64,6 +64,18 @@ export interface Draft2 {
   draft: Draft<DataMapState>;
 }
 
+export interface HandlePosition {
+  key: string;
+  position: XYPosition;
+  hidden?: boolean;
+}
+
+export interface SchemaTreeDataProps {
+  visibleNodes: SchemaNodeExtended[];
+  startIndex: number;
+  endIndex: number;
+}
+
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   dataMapLML: string;
@@ -87,6 +99,8 @@ export interface DataMapOperationState {
   // Temporary Nodes for when the scrolling is happening and the tree-nodes are not in view
   // For each corner of the canvas
   nodesForScroll: Record<string, string>;
+  handlePosition: Record<string, HandlePosition>;
+  schemaTreeData: Record<string, SchemaTreeDataProps>;
   edgePopOverId?: string;
   state?: ComponentState;
 }
@@ -105,6 +119,8 @@ const emptyPristineState: DataMapOperationState = {
   sourceOpenKeys: {},
   targetOpenKeys: {},
   edgeLoopMapping: {},
+  handlePosition: {},
+  schemaTreeData: {},
   nodesForScroll: getIntermedateScrollNodeHandles(guid()),
 };
 
@@ -237,7 +253,9 @@ export const dataMapSlice = createSlice({
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
+        handlePosition: {},
         loadedMapMetadata: metadata,
+        schemaTreeData: {},
       };
 
       state.curDataMapOperation = newState;
@@ -470,6 +488,12 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation.selectedItemKey = key;
       state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
+    updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
+      state.curDataMapOperation.handlePosition = {
+        ...state.curDataMapOperation.handlePosition,
+        [action.payload.key]: action.payload,
+      };
+    },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
       const { keys, isExpanded } = action.payload;
@@ -572,6 +596,22 @@ export const dataMapSlice = createSlice({
         canvasRect: action.payload,
       };
     },
+    updateFunctionConnectionInputs: (state, action: PayloadAction<{ functionKey: string; inputs: InputConnection[] }>) => {
+      const newState = { ...state.curDataMapOperation };
+      if (newState.dataMapConnections[action.payload.functionKey]?.inputs[0]) {
+        newState.dataMapConnections[action.payload.functionKey].inputs[0] = action.payload.inputs;
+      } else {
+        throw new Error('Function node not found in connections');
+      }
+
+      doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Update function connection inputs');
+    },
+    updateTreeData: (state, action: PayloadAction<{ key: string; data: SchemaTreeDataProps }>) => {
+      state.curDataMapOperation.schemaTreeData = {
+        ...state.curDataMapOperation.schemaTreeData,
+        [action.payload.key]: action.payload.data,
+      };
+    },
   },
 });
 
@@ -597,6 +637,9 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
+  updateHandlePosition,
+  updateFunctionConnectionInputs,
+  updateTreeData,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

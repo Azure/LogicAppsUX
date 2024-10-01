@@ -52,31 +52,51 @@ export const serializePropertyValuesAsArray = (
   staticResultSchema: OpenAPIV2.SchemaObject
 ): OpenAPIV2.SchemaObject[] => {
   const serializedProperty: OpenAPIV2.SchemaObject[] = [];
-  const schemaObject = Object.entries(staticResultSchema?.items?.properties ?? {});
-  // cycles through element in the array
-  Object.values(propertyValues).forEach((propertyValue) => {
+  const schemaProperties = staticResultSchema?.items?.properties ?? {};
+  const schemaEntries = Object.entries(schemaProperties);
+
+  // if the schema does not define properties (this can happen incases of dynamic schema or schema with no properties)
+  if (schemaEntries.length === 0) {
+    // if the schema is an object, we need to serialize the object properties
+    if (staticResultSchema?.items?.type === constants.SWAGGER.TYPE.OBJECT) {
+      Object.entries(propertyValues).forEach(([key, value]) => {
+        if (value !== undefined) {
+          serializedProperty.push({ [key]: value });
+        }
+      });
+    } else {
+      serializedProperty.push(...Object.values(propertyValues));
+    }
+
+    return serializedProperty;
+  }
+
+  // if the schema defines properties
+  Object.entries(propertyValues).forEach(([, propertyValue]) => {
+    if (typeof propertyValue !== 'object' || propertyValue === null) {
+      return;
+    }
+
     const serializedPropertyValue: OpenAPIV2.SchemaObject = {};
-    schemaObject.forEach(([schemaPropertyName, schemaPropertyValue]) => {
-      if (propertyValue[schemaPropertyName]) {
-        // if is a nested array property value
-        if (schemaPropertyValue.type === constants.SWAGGER.TYPE.ARRAY && schemaPropertyValue.items && propertyValue[schemaPropertyName]) {
-          const serializedPropertyValueArray = serializePropertyValuesAsArray(propertyValue[schemaPropertyName], schemaPropertyValue);
-          if (serializedPropertyValueArray && serializedPropertyValueArray.length > 0) {
-            serializedPropertyValue[schemaPropertyName] = serializedPropertyValueArray;
+    schemaEntries.forEach(([schemaPropertyName, schemaPropertyValue]) => {
+      const value = propertyValue[schemaPropertyName];
+      if (value !== undefined) {
+        if (schemaPropertyValue.type === constants.SWAGGER.TYPE.ARRAY && schemaPropertyValue.items) {
+          const serializedArrayValue = serializePropertyValuesAsArray(value, schemaPropertyValue);
+          if (serializedArrayValue.length > 0) {
+            serializedPropertyValue[schemaPropertyName] = serializedArrayValue;
           }
         } else {
-          serializedPropertyValue[schemaPropertyName] = propertyValue[schemaPropertyName];
+          serializedPropertyValue[schemaPropertyName] = value;
         }
       }
     });
+
     if (Object.keys(serializedPropertyValue).length > 0) {
       serializedProperty.push(serializedPropertyValue);
     }
   });
 
-  if (!staticResultSchema?.items?.properties && propertyValues) {
-    serializedProperty.push(...Object.values(propertyValues));
-  }
   return serializedProperty;
 };
 

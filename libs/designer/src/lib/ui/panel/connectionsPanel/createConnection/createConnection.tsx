@@ -329,13 +329,24 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     ) {
       return false;
     }
+    if (legacyManagedIdentitySelected && !selectedManagedIdentity) {
+      return false;
+    }
     if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) {
       return true;
     }
     return Object.entries(capabilityEnabledParameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
-  }, [showNameInput, connectionDisplayName, resourceSelectorProps, capabilityEnabledParameters, parameterValues]);
+  }, [
+    showNameInput,
+    connectionDisplayName,
+    resourceSelectorProps,
+    legacyManagedIdentitySelected,
+    selectedManagedIdentity,
+    capabilityEnabledParameters,
+    parameterValues,
+  ]);
 
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
@@ -598,7 +609,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       >
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar intent={'error'} style={{ width: '100%' }}>
+          <MessageBar intent={'error'} style={{ width: '100%', whiteSpace: 'normal' }}>
             <MessageBarBody>{errorMessage}</MessageBarBody>
             <MessageBarActions
               containerAction={

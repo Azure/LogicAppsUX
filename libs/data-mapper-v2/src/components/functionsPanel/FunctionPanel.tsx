@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useStyles } from './styles';
 import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import { Button } from '@fluentui/react-components';
+import { Button, mergeClasses } from '@fluentui/react-components';
 import { FunctionList } from '../functionList/FunctionList';
 import { FunctionsSVG } from '../../images/icons';
 import { Panel } from '../../components/common/panel/Panel';
@@ -81,7 +81,11 @@ export const FunctionPanel = (_props: PanelProps) => {
         text: searchTerm,
       }}
       styles={{
-        root: styles.root,
+        root: mergeClasses(
+          styles.root,
+          // Overlay if both source and target schema are not selected
+          sourceSchema === undefined && targetSchema === undefined ? styles.overlay : ''
+        ),
       }}
     />
   ) : (

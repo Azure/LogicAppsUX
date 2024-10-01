@@ -3,11 +3,11 @@ import type { NodeRendererProps } from 'react-arborist';
 import { useTreeNodeStyles, useStyles, useHandleStyles } from './styles';
 import { Caption2, mergeClasses } from '@fluentui/react-components';
 import { ChevronRightRegular, ChevronDownRegular, ArrowClockwiseFilled } from '@fluentui/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import useSchema from '../useSchema';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
+import { setHoverState, setSelectedItem, updateHandlePosition } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { Handle, useEdges } from '@xyflow/react';
 
@@ -15,6 +15,8 @@ type SchemaTreeNodeProps = {
   id: string;
   schema: SchemaExtended;
   flattenedSchemaMap: Record<string, SchemaNodeExtended>;
+  containerTop?: number;
+  containerBottom?: number;
 } & NodeRendererProps<SchemaNodeExtended>;
 
 const TypeAnnotation = (props: { schemaNode: SchemaNodeExtended }) => {
@@ -30,7 +32,8 @@ const TypeAnnotation = (props: { schemaNode: SchemaNodeExtended }) => {
 };
 
 const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
-  const { style, node, dragHandle, id } = props;
+  const { style, node, dragHandle, id, containerTop, containerBottom } = props;
+  const handleRef = useRef<HTMLDivElement | null>(null);
   const styles = useTreeNodeStyles();
   const handleStyles = useHandleStyles();
   const edges = useEdges();
@@ -44,21 +47,20 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   });
   const isSelected = useSelector((state: RootState) => !!state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[nodeId]);
   const hover = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
+  const { handlePosition, loadedMapMetadata } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const isHover = useMemo(
     () => hover?.type === 'node' && hover?.isSourceSchema === isSourceSchema && equals(hover?.id, key),
     [hover?.id, hover?.isSourceSchema, hover?.type, isSourceSchema, key]
   );
-  const isRepeating = useMemo(
-    () =>
-      edges.some(
-        (edge) =>
-          (edge.sourceHandle === handle.id || edge.targetHandle === handle.id) &&
-          edge.data?.isRepeating &&
-          data.nodeProperties.includes(SchemaNodeProperty.Repeating)
-      ),
-    [edges, handle.id, data.nodeProperties]
+
+  const isRepeatingConnection = useMemo(
+    () => edges.some((edge) => edge.data?.sourceHandleId === handle.id && edge.data?.isRepeating),
+    [edges, handle.id]
   );
+
+  const isRepeatingNode = useMemo(() => data.nodeProperties.includes(SchemaNodeProperty.Repeating), [data]);
+
   const isConnected = useMemo(
     () =>
       edges.some(
@@ -117,22 +119,26 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   const handleComponent = useMemo(
     () => (
       <Handle
+        ref={handleRef}
         data-selectableid={handle.id}
         id={handle.id}
         key={handle.id}
         className={mergeClasses(
           handleStyles.wrapper,
           handle.className,
-          isRepeating ? handleStyles.repeating : '',
+          isRepeatingConnection ? handleStyles.repeatingConnection : '',
           isConnected ? handleStyles.connected : '',
           isSelected || isHover ? handleStyles.selected : '',
+          (isSelected || isHover) && isRepeatingNode ? handleStyles.repeatingNode : '',
           (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
         )}
         position={handle.position}
         type={handle.type}
         isConnectable={true}
       >
-        {isRepeating && <ArrowClockwiseFilled className={handleStyles.repeatingIcon} />}
+        {(isRepeatingConnection || ((isHover || isSelected) && isRepeatingNode)) && (
+          <ArrowClockwiseFilled className={isRepeatingConnection ? handleStyles.repeatingConnectionIcon : handleStyles.repeatingNodeIcon} />
+        )}
       </Handle>
     ),
     [
@@ -141,17 +147,66 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handle.position,
       handle.type,
       handleStyles.wrapper,
-      handleStyles.repeating,
+      handleStyles.repeatingConnection,
       handleStyles.connected,
       handleStyles.selected,
+      handleStyles.repeatingNode,
       handleStyles.connectedAndSelected,
-      handleStyles.repeatingIcon,
-      isRepeating,
+      handleStyles.repeatingConnectionIcon,
+      handleStyles.repeatingNodeIcon,
+      isRepeatingConnection,
       isConnected,
       isSelected,
       isHover,
+      isRepeatingNode,
     ]
   );
+
+  useEffect(() => {
+    if (
+      handleRef?.current &&
+      containerTop !== undefined &&
+      containerBottom !== undefined &&
+      loadedMapMetadata?.canvasRect &&
+      loadedMapMetadata.canvasRect.width > 0 &&
+      loadedMapMetadata.canvasRect.height > 0 &&
+      !isHover
+    ) {
+      const newX = handleRef.current.getBoundingClientRect().x - loadedMapMetadata.canvasRect.x;
+      const newY = handleRef.current.getBoundingClientRect().y - loadedMapMetadata.canvasRect.y;
+      const currentHandlePosition = handlePosition[nodeId];
+      const newHidden =
+        containerTop > handleRef.current.getBoundingClientRect().bottom || handleRef.current.getBoundingClientRect().top > containerBottom;
+
+      if (
+        currentHandlePosition?.position.x !== newX ||
+        currentHandlePosition?.position.y !== newY ||
+        newHidden !== currentHandlePosition?.hidden
+      ) {
+        dispatch(
+          updateHandlePosition({
+            key: nodeId,
+            position: {
+              x: newX,
+              y: newY,
+            },
+            hidden: newHidden,
+          })
+        );
+      }
+    }
+  }, [
+    dispatch,
+    nodeId,
+    handleRef,
+    handlePosition,
+    containerTop,
+    containerBottom,
+    loadedMapMetadata?.canvasRect,
+    loadedMapMetadata?.canvasRect?.height,
+    loadedMapMetadata?.canvasRect?.width,
+    isHover,
+  ]);
 
   return (
     <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)} ref={dragHandle}>

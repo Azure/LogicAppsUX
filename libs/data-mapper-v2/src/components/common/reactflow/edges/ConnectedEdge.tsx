@@ -11,7 +11,7 @@ const ConnectedEdge = (props: EdgeProps) => {
   const isSelected = useSelectedEdge(id);
   const dispatch = useDispatch();
   const isHovered = useHoverEdge(id);
-  const { sourceX, sourceY, targetX, targetY } = useEdgePath(props);
+  const { sourceX, sourceY, targetX, targetY, sourceScenario, targetScenario } = useEdgePath(props);
 
   const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
 
@@ -32,7 +32,7 @@ const ConnectedEdge = (props: EdgeProps) => {
     targetY,
   });
 
-  return (
+  return sourceScenario === 'scroll' && targetScenario === 'scroll' ? null : (
     <g id={`${id}_customEdge`} onClick={onClick} data-selectableid={id}>
       <path fill="none" stroke={strokeColor} strokeWidth={5} className="animated" d={path} data-selectableid={id} />
     </g>

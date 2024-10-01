@@ -1,8 +1,13 @@
+/* eslint-disable no-undef */
 const copy = require('recursive-copy');
+const path = require('path');
 
 const copyDoc = async (projectPath) => {
   await copy('./src', `${projectPath}`, {
-    filter: ['LICENSE.md', 'CHANGELOG.md', 'package.json', 'README.md', 'assets/**'],
+    filter: ['LICENSE.md', 'package.json', 'README.md', 'assets/**'],
+  });
+  await copy(path.resolve(__dirname, '..', '..'), `${projectPath}`, {
+    filter: ['CHANGELOG.md'],
   });
 };
 
