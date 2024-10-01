@@ -92,6 +92,7 @@ export const extensionCommand = {
   openFile: 'azureLogicAppsStandard.openFile',
   createNewProject: 'azureLogicAppsStandard.createNewProject',
   createNewCodeProject: 'azureLogicAppsStandard.createNewCodeProject',
+  cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',

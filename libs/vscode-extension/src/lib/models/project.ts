@@ -79,6 +79,7 @@ export interface IProjectWizardContext extends IActionContext {
   projectType?: ProjectType;
   isWorkspaceWithFunctions?: boolean;
   logicAppName?: string;
+  zipFilePath?: string;
 }
 
 export const OpenBehavior = {
