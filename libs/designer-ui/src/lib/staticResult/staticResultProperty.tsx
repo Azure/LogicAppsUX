@@ -6,7 +6,7 @@ import { PropertyEditor } from './propertyEditor';
 import { initializePropertyValueInput } from './util';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { ExtensionProperties, type OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -205,19 +205,18 @@ function WrappedStaticResultProperty({
         );
       case constants.SWAGGER.TYPE.ARRAY:
       case constants.SWAGGER.TYPE.OBJECT: {
-        if (schema.items) {
+        const propertyEditorTitle = schema.title ?? title;
+        if (schema.items || schema.additionalProperties) {
           return (
             <>
-              <Label text={schema.title ?? title} isRequiredField={required} />
-              <PropertyEditor title={schema.title} schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
-            </>
-          );
-        }
-        if (schema.additionalProperties) {
-          return (
-            <>
-              <Label text={schema.title ?? title} isRequiredField={required} />
-              <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
+              <Label text={propertyEditorTitle} isRequiredField={required} />
+              <PropertyEditor
+                title={propertyEditorTitle}
+                // do not use dynamic schema in Static Results
+                schema={schema?.items?.[ExtensionProperties.DynamicSchema] ? undefined : schema?.items}
+                properties={currProperties}
+                updateProperties={setCurrProperties}
+              />
             </>
           );
         }
