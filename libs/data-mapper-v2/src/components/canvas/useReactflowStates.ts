@@ -1,13 +1,13 @@
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, type Edge, type Node, type NodeChange, applyNodeChanges, type XYPosition } from '@xyflow/react';
 import { useEffect, useMemo, useState } from 'react';
 import { convertWholeDataMapToLayoutTree, isFunctionNode } from '../../utils/ReactFlow.Util';
 import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
-import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import { NodeIds } from '../../constants/ReactFlowConstants';
 import { updateCanvasDimensions, updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
+import useReduxStore from 'components/useReduxStore';
 
 type ReactFlowStatesProps = {
   newWidth?: number;
@@ -27,11 +27,9 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
     flattenedSourceSchema,
     flattenedTargetSchema,
     dataMapConnections,
-  } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+    canvasRect: currentCanvasRect,
+  } = useReduxStore();
 
-  const currentCanvasRect = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
-  );
   const { width: currentWidth, height: currentHeight, x: currentX, y: currentY } = currentCanvasRect;
 
   const edgesFromSchema: Record<string, Edge> = useMemo(() => {

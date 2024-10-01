@@ -1,13 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { isSourceNode } from '../../utils/ReactFlow.Util';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import type { AppDispatch, RootState } from '../../core/state/Store';
-import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
 import { toggleSourceEditState, toggleTargetEditState } from '../../core/state/DataMapSlice';
 import { NodeIds } from '../../constants/ReactFlowConstants';
 import { getReactFlowNodeId } from '../../utils';
 import { type HandleType, Position } from '@xyflow/react';
 import { useHandleStyles } from './tree/styles';
+import useReduxStore from '../useReduxStore';
 
 type useSchemaProps = {
   id: string;
@@ -18,7 +19,7 @@ const useSchema = (props: useSchemaProps) => {
   const { id, currentNodeKey } = props;
   const handleStyles = useHandleStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceOpenKeys, targetOpenKeys } = useReduxStore();
 
   const isSourceSchema = useMemo(() => isSourceNode(id), [id]);
   const schemaType = useMemo(() => (isSourceNode(id) ? SchemaType.Source : SchemaType.Target), [id]);

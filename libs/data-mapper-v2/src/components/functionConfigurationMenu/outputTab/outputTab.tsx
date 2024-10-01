@@ -1,7 +1,6 @@
 import { Caption1, Button } from '@fluentui/react-components';
 import { AddRegular } from '@fluentui/react-icons';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../../core/state/Store';
+import { useDispatch } from 'react-redux';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
@@ -14,17 +13,19 @@ import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/D
 import { useState } from 'react';
 import { isSchemaNodeExtended } from '../../../utils';
 import { CustomListItem } from '../inputTab/InputList';
+import useReduxStore from '../../useReduxStore';
 
 export const OutputTabContents = (props: {
   func: FunctionData;
   functionId: string;
 }) => {
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const {
+    dataMapConnections: connectionDictionary,
+    flattenedTargetSchema: targetSchemaDictionary,
+    functionNodes: functionNodeDictionary,
+  } = useReduxStore();
   const styles = useStyles();
-  const outputs: (ConnectionUnit | undefined)[] = [...connections[props.functionId].outputs];
+  const outputs: (ConnectionUnit | undefined)[] = [...connectionDictionary[props.functionId].outputs];
   const dispatch = useDispatch();
   const [additionalOutput, setAdditionalOutput] = useState<(ConnectionUnit | undefined)[]>([]);
 

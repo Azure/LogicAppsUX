@@ -18,7 +18,10 @@ export const TestPanel = (_props: TestPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { testMapInput, isTestPanelOpen, xsltFilename } = useReduxStore();
+  const {
+    test: { testMapInput, isOpen: isTestPanelOpen },
+    xsltFilename,
+  } = useReduxStore();
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleTestPanel());

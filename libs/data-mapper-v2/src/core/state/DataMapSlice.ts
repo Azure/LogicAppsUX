@@ -40,14 +40,18 @@ const getIntermedateScrollNodeHandles = (guid: string) => {
   record['bottom-right'] = `bottom-right-${guid}`;
   return record;
 };
-export interface DataMapState {
-  curDataMapOperation: DataMapOperationState;
-  pristineDataMap: DataMapOperationState;
+
+export interface DataMapComponentState {
   isDirty: boolean;
   sourceInEditState: boolean;
   targetInEditState: boolean;
   sourceNodeConnectionBeingDrawnFromId?: string;
   lastAction: string;
+}
+
+export interface DataMapState extends DataMapComponentState {
+  curDataMapOperation: DataMapOperationState;
+  pristineDataMap: DataMapOperationState;
 }
 
 export interface HoverState {

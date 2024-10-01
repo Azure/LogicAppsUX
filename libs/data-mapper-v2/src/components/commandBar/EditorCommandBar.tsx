@@ -1,5 +1,5 @@
 import { openDiscardWarningModal } from '../../core/state/ModalSlice';
-import type { AppDispatch } from '../../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import {
   Toolbar,
   ToolbarButton,
@@ -16,7 +16,7 @@ import {
 import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
 import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
@@ -36,17 +36,18 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     isDirty,
     sourceInEditState,
     targetInEditState,
-    past: undoStack,
-    isCodeViewOpen,
+    code: { isOpen: isCodeViewOpen },
     sourceSchema,
     targetSchema,
     xsltFilename,
-    currentConnections,
+    dataMapConnections: currentConnections,
     functionNodes: functions,
-    targetSchemaSortArray,
+    targetSchemaOrdering: targetSchemaSortArray,
     canvasRect,
     isDiscardConfirmed,
   } = useReduxStore();
+
+  const undoStack = useSelector((state: RootState) => state.dataMap.past, shallowEqual);
 
   const toasterId = useId('toaster');
   const { dispatchToast } = useToastController(toasterId);

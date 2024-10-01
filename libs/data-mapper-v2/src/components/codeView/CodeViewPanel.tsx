@@ -2,13 +2,14 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { Button } from '@fluentui/react-components';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState, AppDispatch } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
 import { Code24Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
 import { MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { toggleCodeView } from '../../core/state/PanelSlice';
+import useReduxStore from 'components/useReduxStore';
 
 type CodeViewPanelProps = {};
 
@@ -16,8 +17,10 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
-  const dataMapDefinition = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
+  const {
+    code: { isOpen: isCodeViewOpen },
+    dataMapLML: dataMapDefinition,
+  } = useReduxStore();
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleCodeView());

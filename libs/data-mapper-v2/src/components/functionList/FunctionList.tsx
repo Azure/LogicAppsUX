@@ -1,4 +1,3 @@
-import type { RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { hasOnlyCustomInputType } from '../../utils/Function.Utils';
@@ -10,7 +9,7 @@ import { Tree } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
 import React, { useCallback, useMemo } from 'react';
 import { useStyles } from './styles';
-import { useSelector } from 'react-redux';
+import useReduxStore from '../useReduxStore';
 
 const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
   includeScore: true,
@@ -37,14 +36,15 @@ export const FunctionList = (props: FunctionListProps) => {
   const styles = useStyles();
 
   const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory).slice(0, 2));
-  const handleOpenChange = (_event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
-    setOpenItems(data.openItems);
-  };
 
-  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
-  const inlineFunctionInputOutputKeys = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
+  const handleOpenChange = useCallback(
+    (_event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
+      setOpenItems(data.openItems);
+    },
+    [setOpenItems]
   );
+
+  const { availableFunctions: functionData, inlineFunctionInputOutputKeys } = useReduxStore();
 
   const functionList: FunctionData[] = useMemo(() => {
     if (functionData) {

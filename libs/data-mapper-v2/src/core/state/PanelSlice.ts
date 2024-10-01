@@ -13,7 +13,7 @@ export type ConfigPanelView = (typeof ConfigPanelView)[keyof typeof ConfigPanelV
 
 export type TestPanelState = {
   isOpen: boolean;
-  showSelection: boolean;
+  showSelection?: boolean;
   selectedFile?: SchemaFile;
   testMapInput?: string;
   testMapOutput?: TestMapResponse;

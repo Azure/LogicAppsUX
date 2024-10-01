@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl';
 import { usePanelBodyStyles } from './styles';
 import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
 import { SchemaTree } from './tree/SchemaTree';
@@ -39,7 +39,7 @@ export const SchemaPanelBody = ({
   const intl = useIntl();
   const styles = usePanelBodyStyles();
   const { schemaType, toggleEditState } = useSchema({ id });
-  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas, shallowEqual);
   const fileService = DataMapperFileService();
 
   const stringResources = useMemo(

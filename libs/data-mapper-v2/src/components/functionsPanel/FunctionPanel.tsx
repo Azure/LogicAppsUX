@@ -15,7 +15,11 @@ type PanelProps = {};
 
 export const FunctionPanel = (_props: PanelProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { sourceSchema, targetSchema, isFunctionPanelOpen } = useReduxStore();
+  const {
+    sourceSchema,
+    targetSchema,
+    function: { isOpen: isFunctionPanelOpen },
+  } = useReduxStore();
   const styles = useStyles();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();

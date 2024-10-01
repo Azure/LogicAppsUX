@@ -2,8 +2,7 @@ import { useCallback, useMemo } from 'react';
 import type { ConnectionDictionary, InputConnection } from '../../../models/Connection';
 import type { TemplateProps } from 'react-draggable-list';
 import type { FunctionData, FunctionInput } from '../../../models';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../../core/state/Store';
+import { useDispatch } from 'react-redux';
 import { InputDropdown, type InputOptionProps } from '../inputDropdown/InputDropdown';
 import { getInputTypeFromNode, validateAndCreateConnectionInput } from './inputTab';
 import { setConnectionInput } from '../../../core/state/DataMapSlice';
@@ -14,6 +13,7 @@ import { Badge, Button } from '@fluentui/react-components';
 import { LinkDismissRegular, ReOrderRegular } from '@fluentui/react-icons';
 import type { SchemaType } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
+import useReduxStore from '../../useReduxStore';
 
 export type CommonProps = {
   functionKey: string;
@@ -43,9 +43,11 @@ type CustomListItemProps = {
 };
 
 const InputList = (props: InputListProps) => {
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const {
+    dataMapConnections: connectionDictionary,
+    flattenedSourceSchema: sourceSchemaDictionary,
+    functionNodes: functionNodeDictionary,
+  } = useReduxStore();
   const dispatch = useDispatch();
   const {
     item: { input, index },

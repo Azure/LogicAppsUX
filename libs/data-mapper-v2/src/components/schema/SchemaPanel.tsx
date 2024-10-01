@@ -15,6 +15,7 @@ import { Button, mergeClasses } from '@fluentui/react-components';
 import type { FileSelectorOption } from '../common/selector/FileSelector';
 import { EditRegular } from '@fluentui/react-icons';
 import useSchema from './useSchema';
+import useReduxStore from '../useReduxStore';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -39,13 +40,10 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
-  const { sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
-  const selectedSchema = useSelector((state: RootState) => {
-    if (isSourceSchema) {
-      return state.dataMap.present.curDataMapOperation.sourceSchema;
-    }
-    return state.dataMap.present.curDataMapOperation.targetSchema;
-  });
+
+  const { sourceInEditState, targetInEditState, sourceSchema, targetSchema } = useReduxStore();
+
+  const selectedSchema = useMemo(() => (isSourceSchema ? sourceSchema : targetSchema), [isSourceSchema, sourceSchema, targetSchema]);
 
   const flattenedScehmaMap = useMemo(() => (selectedSchema ? flattenSchemaNodeMap(selectedSchema.schemaTreeRoot) : {}), [selectedSchema]);
 

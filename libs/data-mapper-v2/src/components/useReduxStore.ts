@@ -2,16 +2,32 @@ import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../core/state/Store';
 import { shallowEqual, useSelector } from 'react-redux';
 import { WarningModalState } from '../core/state/ModalSlice';
+import type { DataMapComponentState, DataMapOperationState } from '../core/state/DataMapSlice';
+import type { CodeViewState, FunctionPanelState, TestPanelState } from '../core/state/PanelSlice';
+import type { Rect } from '@xyflow/react';
+import type { FunctionState } from '../core/state/FunctionSlice';
 
-const useReduxStore = (): any => {
+type ReduxStoreState = DataMapOperationState &
+  DataMapComponentState &
+  FunctionState & {
+    test: TestPanelState;
+    code: CodeViewState;
+    function: FunctionPanelState;
+    isDiscardConfirmed: boolean;
+    canvasRect: Rect;
+  };
+
+const useReduxStore = (): ReduxStoreState => {
   // boolean or generic types
   const isDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const lastAction = useSelector((state: RootState) => state.dataMap.present.lastAction);
   const sourceInEditState = useSelector((state: RootState) => state.dataMap.present.sourceInEditState);
   const targetInEditState = useSelector((state: RootState) => state.dataMap.present.targetInEditState);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
   const xsltContent = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
+  const dataMapLML = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapLML);
   const edgePopOverId = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.edgePopOverId);
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
@@ -23,8 +39,7 @@ const useReduxStore = (): any => {
   const isFunctionPanelOpen = useSelector((state: RootState) => state.panel.functionPanel.isOpen);
 
   // array or object
-  const past = useSelector((state: RootState) => state.dataMap.past, shallowEqual);
-  const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections, shallowEqual);
+  const dataMapConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections, shallowEqual);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema, shallowEqual);
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema, shallowEqual);
   const functionNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes, shallowEqual);
@@ -36,7 +51,7 @@ const useReduxStore = (): any => {
     (state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema,
     shallowEqual
   );
-  const targetSchemaSortArray = useSelector(
+  const targetSchemaOrdering = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering,
     shallowEqual
   );
@@ -60,25 +75,27 @@ const useReduxStore = (): any => {
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect,
     shallowEqual
   );
+  const availableFunctions = useSelector((state: RootState) => state.function.availableFunctions, shallowEqual);
+  const customXsltFilePaths = useSelector((state: RootState) => state.function.customXsltFilePaths, shallowEqual);
 
   return {
     isDirty,
     sourceInEditState,
     targetInEditState,
-    isCodeViewOpen,
+    lastAction,
+    dataMapLML,
     xsltFilename,
     xsltContent,
     selectedItemKey,
     edgePopOverId,
     isDiscardConfirmed,
-    past,
-    currentConnections,
+    dataMapConnections,
     sourceSchema,
     targetSchema,
     functionNodes,
     flattenedSourceSchema,
     flattenedTargetSchema,
-    targetSchemaSortArray,
+    targetSchemaOrdering,
     sourceOpenKeys,
     targetOpenKeys,
     selectedItemConnectedNodes,
@@ -90,11 +107,20 @@ const useReduxStore = (): any => {
     schemaTreeData,
     state,
     canvasRect,
-    testMapInput,
-    isTestPanelOpen,
-    testMapOutput,
-    testMapOutputError,
-    isFunctionPanelOpen,
+    availableFunctions,
+    customXsltFilePaths,
+    code: {
+      isOpen: isCodeViewOpen,
+    },
+    test: {
+      isOpen: isTestPanelOpen,
+      testMapInput: testMapInput,
+      testMapOutput: testMapOutput,
+      testMapOutputError: testMapOutputError,
+    },
+    function: {
+      isOpen: isFunctionPanelOpen,
+    },
   };
 };
 

@@ -3,7 +3,7 @@ import { useStyles } from './styles';
 import { DeleteRegular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
 import type { RootState } from '../../core/state/Store';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
 import { deleteFunction } from '../../core/state/DataMapSlice';
 import { useIntl } from 'react-intl';
@@ -24,7 +24,7 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
   const [selectedTab, setSelectedTab] = useState<TabTypes>('input');
   const func = useSelector((state: RootState) => {
     return state.dataMap.present.curDataMapOperation.functionNodes[functionId];
-  });
+  }, shallowEqual);
   const intl = useIntl();
 
   const stringResources = useMemo(

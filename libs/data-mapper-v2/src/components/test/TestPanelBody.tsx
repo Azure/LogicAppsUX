@@ -17,7 +17,11 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { testMapInput, testMapOutput, testMapOutputError, sourceSchema, targetSchema } = useReduxStore();
+  const {
+    test: { testMapInput, testMapOutput, testMapOutputError },
+    sourceSchema,
+    targetSchema,
+  } = useReduxStore();
 
   const stringResources = useMemo(
     () => ({

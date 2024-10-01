@@ -9,20 +9,21 @@ import {
   MenuItem,
   tokens,
 } from '@fluentui/react-components';
-import { useSelector, useDispatch } from 'react-redux';
-import type { AppDispatch, RootState } from '../../core/state/Store';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../core/state/Store';
 import { deleteEdge, updateEdgePopOverId } from '../../core/state/DataMapSlice';
 import type { Bounds } from '../../core';
 import { useStyles } from './styles';
 import { ArrowRepeatAllRegular, DeleteRegular, ArrowRepeatAllOffRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useLooping } from '../../core/state/selectors/selectors';
+import useReduxStore from 'components/useReduxStore';
 
 type EdgePopOverProps = Bounds & {};
 
 const EdgePopOver = (props: EdgePopOverProps) => {
   const { x, y, height, width } = props;
-  const { edgePopOverId } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { edgePopOverId } = useReduxStore();
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const intl = useIntl();

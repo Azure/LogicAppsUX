@@ -1,9 +1,8 @@
 import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
 import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
-import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
@@ -18,21 +17,22 @@ import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import useReduxStore from '../../useReduxStore';
 
 export const InputTabContents = (props: {
   func: FunctionData;
   functionKey: string;
 }) => {
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const {
+    dataMapConnections: connectionDictionary,
+    flattenedSourceSchema: sourceSchemaDictionary,
+    functionNodes: functionNodeDictionary,
+  } = useReduxStore();
   const styles = useStyles();
   const dispatch = useDispatch();
 
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-
   let table: JSX.Element;
-  const functionConnection = connections[props.functionKey];
+  const functionConnection = useMemo(() => connectionDictionary[props.functionKey], [connectionDictionary, props.functionKey]);
 
   if (props.func.maxNumberOfInputs !== UnboundedInput) {
     const tableContents = props.func.inputs.map((input, index) => {
@@ -99,7 +99,7 @@ export const InputTabContents = (props: {
                 schemaListType={SchemaType.Source}
                 functionId={props.functionKey}
                 currentNode={props.func}
-                inputName={getInputName(inputConnection, connections)}
+                inputName={getInputName(inputConnection, connectionDictionary)}
                 inputValue={getInputValue(inputConnection)}
                 validateAndCreateConnection={validateAndCreateConnection}
               />
@@ -123,7 +123,7 @@ export const InputTabContents = (props: {
     });
     table = <div>{tableContents}</div>;
   } else {
-    table = <UnlimitedInputs func={props.func} functionKey={props.functionKey} connections={connections} />;
+    table = <UnlimitedInputs func={props.func} functionKey={props.functionKey} connections={connectionDictionary} />;
   }
   return (
     <div>

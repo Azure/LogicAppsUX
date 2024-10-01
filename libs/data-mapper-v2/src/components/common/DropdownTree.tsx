@@ -7,18 +7,16 @@ import useStyles from './styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { DataMapperFileService } from '../../core';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
 
 interface DropdownTreeProps {
   onItemSelect: (item: IFileSysTreeItem) => void;
   className?: string;
+  list?: IFileSysTreeItem[];
 }
 
-export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => {
+export const DropdownTree = ({ onItemSelect, className, list = [] }: DropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
 
   const fileService = DataMapperFileService();
 
@@ -70,9 +68,8 @@ export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => 
   }, []);
 
   const filteredItems = useMemo(
-    () =>
-      availableSchemaList.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
-    [availableSchemaList, searchValue, filterDropdownItem]
+    () => list.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
+    [list, searchValue, filterDropdownItem]
   );
 
   const displayTree = (item: IFileSysTreeItem): JSX.Element => {

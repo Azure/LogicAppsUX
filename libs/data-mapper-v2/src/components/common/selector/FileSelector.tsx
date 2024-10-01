@@ -40,7 +40,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     onOptionChange,
     upload: { onUpload, acceptedExtensions, uploadButtonText, inputPlaceholder, fileName },
     cancel,
-    existing: { onSelect },
+    existing: { onSelect, fileList },
     errorMessage,
   } = props;
   const uploadFileRef = useRef<HTMLInputElement>(null);
@@ -88,7 +88,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     </div>
                   ) : null}
                   {selectedKey === key && key === 'select-existing' ? (
-                    <DropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} />
+                    <DropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} list={fileList} />
                   ) : null}
                 </div>
               }

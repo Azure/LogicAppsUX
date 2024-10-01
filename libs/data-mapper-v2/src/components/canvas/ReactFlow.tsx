@@ -1,6 +1,6 @@
-import type { AppDispatch, RootState } from '../../core/state/Store';
+import type { AppDispatch } from '../../core/state/Store';
 import { useEffect, useRef, useCallback, useState, type MouseEvent } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
 import { PanOnScrollMode, ReactFlow, useReactFlow } from '@xyflow/react';
 import { reactFlowStyle, useStyles } from './styles';
@@ -19,6 +19,7 @@ import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
+import useReduxStore from 'components/useReduxStore';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
@@ -51,7 +52,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
 
   useAutoLayout();
 
-  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+  const { isDirty: isMapStateDirty } = useReduxStore();
 
   const onEdgeConnect = useCallback(
     (connection: Connection) => {

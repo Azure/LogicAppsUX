@@ -1,4 +1,3 @@
-import type { RootState } from '../../../core/state/Store';
 import { FunctionCategory, type FunctionData } from '../../../models/Function';
 import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
@@ -9,11 +8,11 @@ import { Caption2, Combobox, Option } from '@fluentui/react-components';
 import { isNullOrEmpty, SchemaType, type NormalizedDataType } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 import { useStyles } from './styles';
 import { isSchemaNodeExtended } from '../../../utils';
 import { isValidConnectionByType, isValidCustomValueByType } from '../../../utils/Connection.Utils';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
+import useReduxStore from '../../useReduxStore';
 
 export interface InputOptionProps {
   key: string;
@@ -51,14 +50,18 @@ export const InputDropdown = ({
   const intl = useIntl();
   const styles = useStyles();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) =>
-    schemaListType === SchemaType.Source
-      ? state.dataMap.present.curDataMapOperation.flattenedSourceSchema
-      : state.dataMap.present.curDataMapOperation.flattenedTargetSchema
+  const {
+    dataMapConnections: connectionDictionary,
+    flattenedSourceSchema: sourceSchemaDictionary,
+    flattenedTargetSchema: targetSchemaDictionary,
+    functionNodes: functionNodeDictionary,
+    availableFunctions: functionManifest,
+  } = useReduxStore();
+
+  const schemaDictionary = useMemo(
+    () => (schemaListType === SchemaType.Source ? sourceSchemaDictionary : targetSchemaDictionary),
+    [schemaListType, sourceSchemaDictionary, targetSchemaDictionary]
   );
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const functionManifest = useSelector((state: RootState) => state.function.availableFunctions);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const [matchingOptions, setMatchingOptions] = useState<InputOptionProps[]>([]);
   const [customValue, setCustomValue] = useState<string | undefined>(inputName === inputValue ? inputName : undefined); // if the name and value are the same, that's a custom value
@@ -181,7 +184,7 @@ export const InputDropdown = ({
   }, [inputValue]);
 
   const originalOptions = useMemo(() => {
-    const options = Object.values(sourceSchemaDictionary).map<InputOptionProps>((srcSchemaNode) => {
+    const options = Object.values(schemaDictionary).map<InputOptionProps>((srcSchemaNode) => {
       return {
         key: srcSchemaNode.key,
         text: srcSchemaNode.name,
@@ -214,7 +217,7 @@ export const InputDropdown = ({
     });
 
     return options;
-  }, [connectionDictionary, sourceSchemaDictionary, functionNodeDictionary, functionId, schemaListType]);
+  }, [schemaDictionary, functionNodeDictionary, schemaListType, functionId, connectionDictionary]);
 
   useEffect(() => {
     setMatchingOptions(originalOptions);
