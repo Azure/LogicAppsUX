@@ -6,14 +6,14 @@ import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useStyles } from './styles';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { FunctionConfigurationPopover } from '../../functionConfigurationMenu/functionConfigurationPopover';
-import type { RootState } from '../../../core/state/Store';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useHoverFunctionNode, useSelectedNode } from '../../../core/state/selectors/selectors';
 import { useCallback, useMemo } from 'react';
 import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
 import { customTokens } from '../../../core/ThemeConect';
+import useReduxStore from '../../useReduxStore';
 
 export interface FunctionCardProps extends CardProps {
   functionData: FunctionData;
@@ -31,7 +31,8 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const { id } = props;
   const dispatch = useDispatch();
   const { functionData, disabled, dataTestId } = props.data;
-  const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[id]);
+  const { dataMapConnections } = useReduxStore();
+  const functionWithConnections = useMemo(() => dataMapConnections[id], [dataMapConnections, id]);
   const isSelected = useSelectedNode(id);
   const isHover = useHoverFunctionNode(id);
 

@@ -2,11 +2,10 @@ import { type EdgeProps, type InternalNode, type Node, useReactFlow } from '@xyf
 import { NodeIds } from '../../../../constants/ReactFlowConstants';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, getTreeNodeId, isFunctionNode } from '../../../../utils/ReactFlow.Util';
 import { useEffect, useMemo, useState } from 'react';
-import type { RootState } from '../../../../core/state/Store';
-import { useSelector } from 'react-redux';
 import { flattenSchemaNode } from '../../../../utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import type { HandlePosition, SchemaTreeDataProps } from '../../../../core/state/DataMapSlice';
+import useReduxStore from '../../../useReduxStore';
 
 // Return [x, y] coordinates for the handle along with the scenario of the handle,
 // Scenario can be one of 'direct' (straight connection), or 'collpased' (parent is collapsed, at any level) or 'scroll' (handle scrolled out of view)
@@ -125,9 +124,7 @@ const useEdgePath = (props: EdgeProps) => {
   const sourceNode = useMemo(() => getInternalNode(NodeIds.source), [getInternalNode]);
   const targetNode = useMemo(() => getInternalNode(NodeIds.target), [getInternalNode]);
 
-  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition, schemaTreeData } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
+  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition, schemaTreeData } = useReduxStore();
 
   const flattenendSourceSchema = useMemo(
     () => (sourceSchema?.schemaTreeRoot ? flattenSchemaNode(sourceSchema?.schemaTreeRoot) : []),
