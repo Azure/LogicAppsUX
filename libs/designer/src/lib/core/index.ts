@@ -69,6 +69,7 @@ export {
   getOutputTokenSections,
   getExpressionTokenSections,
 } from './utils/tokens';
+export { getDocumentationMetadata } from './utils/documentation';
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';

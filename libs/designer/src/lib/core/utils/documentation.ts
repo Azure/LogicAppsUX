@@ -1,22 +1,38 @@
 import { getConnectorCategoryString } from '@microsoft/designer-ui';
 import type { NodeOperation } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens } from '../state/tokens/tokensSlice';
+import type { Workflow } from '../../common/models/workflow';
+import type { DocumentationMetadataState, OperationMetadata, SummaryMetadata } from '@microsoft/logic-apps-shared';
 
-export interface OperationMetadata {
-  connectorCategoryString?: string;
-  outputTokenIds: string[];
-}
-
-export interface SummaryMetadata {
-  connectorCountByTypes: {
-    [connectorCategory: string]: number;
+export interface DocumentationRequestBody {
+  createTime: string;
+  queryId: string;
+  queryType: 'documentation';
+  query: {
+    workflow: Workflow;
+    operationsData: DocumentationMetadataState;
   };
 }
 
-export interface DocumentationMetadataState {
-  operationsMetadata: Record<string, OperationMetadata>;
-  summary: SummaryMetadata;
-}
+export const getSampleRequestBody = (
+  workflow: Workflow,
+  operationInfo: Record<string, NodeOperation>,
+  outputTokens: Record<string, NodeTokens>,
+  workflowKind?: string
+): DocumentationRequestBody => {
+  return {
+    createTime: '2023-12-14T18:48:50.756Z',
+    queryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    queryType: 'documentation',
+    query: {
+      workflow: {
+        kind: workflowKind,
+        ...workflow,
+      },
+      operationsData: getDocumentationMetadata(operationInfo, outputTokens),
+    },
+  };
+};
 
 export const getDocumentationMetadata = (
   operationInfo: Record<string, NodeOperation>,

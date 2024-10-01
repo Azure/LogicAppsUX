@@ -4,7 +4,7 @@ import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -25,6 +25,8 @@ import {
   useCanUndo,
   useCanRedo,
   onRedoClick,
+  serializeWorkflow,
+  getDocumentationMetadata,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -222,15 +224,10 @@ export const DesignerCommandBar = ({
         iconProps: { iconName: 'Download' },
         onClick: async () => {
           console.log('download document!');
-          // const designerState = DesignerStore.getState();
-          // console.log(designerState);
-          // const sampleRequestBody = getSampleRequestBody(
-          //   await serializeWorkflow(designerState),
-          //   designerState.operations.operationInfo,
-          //   designerState.tokens.outputTokens,
-          //   designerState?.workflow?.workflowKind
-          // );
-          // await getBackendResponse(sampleRequestBody);
+          const designerState = DesignerStore.getState();
+          const workflow = await serializeWorkflow(designerState);
+          const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
+          ChatbotService().getCopilotDocumentation(docMetaData, workflow, '');
         },
       },
       {

@@ -1,7 +1,7 @@
 import type { IChatbotService } from '../chatbot';
 import type { AxiosResponse } from 'axios';
 import axios from 'axios';
-import { ArgumentException } from '../../../utils/src';
+import { ArgumentException, type DocumentationMetadataState } from '../../../utils/src';
 
 export interface ChatbotServiceOptions {
   baseUrl: string;
@@ -29,10 +29,23 @@ export class BaseChatbotService implements IChatbotService {
       prompt: query,
       workflow,
     };
-    return this.getCopilotResponseV2('chatbot', queryData, signal, armToken);
+    return this._getCopilotResponseV2('chatbot', queryData, signal, armToken);
   }
 
-  async getCopilotResponseV2(queryType: string, query: any, signal: AbortSignal, armToken: string): Promise<AxiosResponse<any>> {
+  async getCopilotDocumentation(operationsData: DocumentationMetadataState, workflow: any, armToken: string): Promise<AxiosResponse<any>> {
+    const queryData = {
+      workflow,
+      operationsData,
+    };
+    return this._getCopilotResponseV2('documentation', queryData, undefined, armToken);
+  }
+
+  async _getCopilotResponseV2(
+    queryType: string,
+    query: any,
+    signal: AbortSignal | undefined,
+    armToken: string
+  ): Promise<AxiosResponse<any>> {
     const { baseUrl, subscriptionId, apiVersion, location } = this.options;
     const requestData = {
       properties: {
