@@ -1,4 +1,21 @@
 # Logic Apps Designer
+## [4.101.0](https://github.com/Azure/LogicAppsUX/compare/v4.100.0...v4.101.0) (2024-10-01)
+
+
+### Features
+
+* **Designer:** Adding managed connector support for hybrid LA ([#5774](https://github.com/Azure/LogicAppsUX/issues/5774)) ([9d54a52](https://github.com/Azure/LogicAppsUX/commit/9d54a52d972151ae2bfdc0f6b8ddb1aa8bc45a0a))
+* **designer:** Unit test for binding inputs and outputs monitoring view ([#5786](https://github.com/Azure/LogicAppsUX/issues/5786)) ([cf462c0](https://github.com/Azure/LogicAppsUX/commit/cf462c01bb3187c3a1995b377fdc5a79afa6947d))
+* **templates:** Data model and store changes for multi-workflow template support ([#5760](https://github.com/Azure/LogicAppsUX/issues/5760)) ([0dc1c2e](https://github.com/Azure/LogicAppsUX/commit/0dc1c2e77cf66c6d7bcf6dcda7dc38e2533a006f))
+* **vscode:** Local settings file creation in project root when missing ([#5765](https://github.com/Azure/LogicAppsUX/issues/5765)) ([b619a51](https://github.com/Azure/LogicAppsUX/commit/b619a5125346818b2c18a515c4ce04f1fa7d8005))
+
+
+### Bug Fixes
+
+* **Designer:** Remove extra property decoding on input serialization ([#5747](https://github.com/Azure/LogicAppsUX/issues/5747)) ([ca45fd8](https://github.com/Azure/LogicAppsUX/commit/ca45fd8adf9139db0b6fc38bfdc3f3f612404c5e))
+* **designer:** Simple Query Builder not deserializing ([#5772](https://github.com/Azure/LogicAppsUX/issues/5772)) ([4851a02](https://github.com/Azure/LogicAppsUX/commit/4851a0274f4ad2be444054f9777d103ed0624e6e))
+* **designer:** Static Result breaking on Dynamic Schema ([#5790](https://github.com/Azure/LogicAppsUX/issues/5790)) ([f2faabc](https://github.com/Azure/LogicAppsUX/commit/f2faabc22a67cc23fa135f8cd654cf75a95b7d31))
+
 ## [4.100.0](https://github.com/Azure/LogicAppsUX/compare/v4.99.0...v4.100.0) (2024-09-26)
 
 
