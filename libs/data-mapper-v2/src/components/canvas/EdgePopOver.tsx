@@ -17,7 +17,7 @@ import { useStyles } from './styles';
 import { ArrowRepeatAllRegular, DeleteRegular, ArrowRepeatAllOffRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { useLooping } from '../../core/state/selectors/selectors';
-import useReduxStore from 'components/useReduxStore';
+import useReduxStore from '../useReduxStore';
 
 type EdgePopOverProps = Bounds & {};
 

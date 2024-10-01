@@ -9,7 +9,7 @@ import { Panel } from '../common/panel/Panel';
 import { MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { toggleCodeView } from '../../core/state/PanelSlice';
-import useReduxStore from 'components/useReduxStore';
+import useReduxStore from '../useReduxStore';
 
 type CodeViewPanelProps = {};
 

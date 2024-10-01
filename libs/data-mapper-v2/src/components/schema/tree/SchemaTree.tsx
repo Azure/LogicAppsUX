@@ -10,7 +10,7 @@ import SchemaTreeNode from './SchemaTreeNode';
 import { toggleNodeExpandCollapse, updateTreeData } from '../../../core/state/DataMapSlice';
 import { mergeClasses } from '@fluentui/react-components';
 import { useDragDropManager } from 'react-dnd';
-import useReduxStore from 'components/useReduxStore';
+import useReduxStore from '../../useReduxStore';
 
 export type SchemaTreeProps = {
   id: string;

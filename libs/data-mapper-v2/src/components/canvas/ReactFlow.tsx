@@ -19,7 +19,7 @@ import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
-import useReduxStore from 'components/useReduxStore';
+import useReduxStore from '../useReduxStore';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }

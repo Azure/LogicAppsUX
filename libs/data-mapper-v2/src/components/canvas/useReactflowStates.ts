@@ -7,7 +7,7 @@ import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import { NodeIds } from '../../constants/ReactFlowConstants';
 import { updateCanvasDimensions, updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
-import useReduxStore from 'components/useReduxStore';
+import useReduxStore from '../useReduxStore';
 
 type ReactFlowStatesProps = {
   newWidth?: number;
