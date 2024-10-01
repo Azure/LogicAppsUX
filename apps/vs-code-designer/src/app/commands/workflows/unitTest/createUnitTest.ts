@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { managementApiPrefix, workflowFileName } from '../../../../constants';
+import { workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
 import { getTestsDirectory, validateUnitTestName } from '../../../utils/unitTests';
@@ -17,7 +17,7 @@ import * as fs from 'fs-extra';
 import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared/src/utils/src';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
@@ -81,9 +81,13 @@ async function generateCodefulUnitTest(
       );
     }
 
-    const baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    // Base URL with dynamic port from ext.workflowRuntimePort
+    const baseUrl = `http://localhost:${ext.workflowRuntimePort}`;
 
-    const apiUrl = `${baseUrl}/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
+    // Hardcoded route path except for workflowName and runId
+    const apiUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/workflows/${encodeURIComponent(
+      workflowName
+    )}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
 
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
@@ -193,7 +197,7 @@ async function generateCodefulUnitTest(
 async function createCsprojFile(csprojFilePath: string, logicAppName: string): Promise<void> {
   // Define the path to the template
   const templateFolderName = 'UnitTestTemplates';
-  const csprojTemplateFileName = 'TestProjectFile.csproj';
+  const csprojTemplateFileName = 'TestProjectFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
 
   // Read the template content
@@ -218,7 +222,8 @@ async function createCsprojFile(csprojFilePath: string, logicAppName: string): P
 async function createCsFile(unitTestFolderPath: string, unitTestName: string, workflowName: string): Promise<void> {
   // Define the path to the template
   const templateFolderName = 'UnitTestTemplates';
-  const csTemplateFileName = 'TestClassFile.cs';
+  const csTemplateFileName = 'TestClassFile';
+  //apps/vs-code-designer/dist/assets/UnitTestTemplates/TestClassFile
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
   // Read the template content
