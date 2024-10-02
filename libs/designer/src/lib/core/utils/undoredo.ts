@@ -6,6 +6,7 @@ import { updateParameterAndDependencies, type UpdateParameterAndDependenciesPayl
 import constants from '../../common/constants';
 import { updateStaticResults } from '../state/operation/operationMetadataSlice';
 import type { AnyAction } from '@reduxjs/toolkit';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export const getCompressedStateFromRootState = (rootState: RootState): Uint8Array => {
   const partialRootState: UndoRedoPartialRootState = {
@@ -19,7 +20,23 @@ export const getCompressedStateFromRootState = (rootState: RootState): Uint8Arra
     workflow: rootState.workflow,
     workflowParameters: rootState.workflowParameters,
   };
-  return deflate(JSON.stringify(partialRootState));
+
+  const stringifiedPartialRootState = JSON.stringify(partialRootState);
+  const compressedState = deflate(stringifiedPartialRootState);
+
+  LoggerService().log({
+    level: LogEntryLevel.Verbose,
+    area: 'getCompressedStateFromRootState',
+    message: 'Compression size',
+    args: [
+      {
+        partialRootStateSize: Buffer.from(stringifiedPartialRootState).byteLength,
+        compressedStateSize: Buffer.from(compressedState).byteLength,
+      },
+    ],
+  });
+
+  return compressedState;
 };
 
 export const getRootStateFromCompressedState = (compressedState: Uint8Array): UndoRedoPartialRootState =>
