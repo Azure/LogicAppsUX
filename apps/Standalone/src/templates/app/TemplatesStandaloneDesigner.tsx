@@ -63,12 +63,11 @@ export const TemplatesStandaloneDesigner = () => {
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
 
   const createWorkflowCall = async (
-    workflowName: string | undefined,
-    workflowKind: string | undefined,
-    workflowDefinition: LogicAppsV2.WorkflowDefinition,
+    workflows: { name: string | undefined; kind: string | undefined; definition: LogicAppsV2.WorkflowDefinition }[],
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
+    const { definition: workflowDefinition, name: workflowName, kind: workflowKind } = workflows[0];
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
       if (hostingPlan !== 'standard' || !workflowNameToUse || !workflowName || !workflowKind) {

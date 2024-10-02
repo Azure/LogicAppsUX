@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
@@ -9,78 +9,113 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
-import {
-  validateConnections,
-  validateKind,
-  validateParameters,
-  validateWorkflowName,
-} from '../../../../core/state/templates/templateSlice';
+import { validateConnections, validateWorkflowsBasicInfo, validateParameters } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
-import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
+import type { CreateWorkflowHandler } from '../../../templates';
 
 export const useCreateWorkflowPanelTabs = ({
-  workflowId,
-  onCreateClick,
-}: { onCreateClick: () => Promise<void>; workflowId: string }): TemplatePanelTab[] => {
+  isMultiWorkflowTemplate,
+  createWorkflow,
+}: { createWorkflow: CreateWorkflowHandler; isMultiWorkflowTemplate: boolean }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
-  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const {
+    connections,
+    existingWorkflowName,
+    selectedTabId,
+    templateName,
+    workflowAppName,
+    isConsumption,
+    parameterDefinitions,
     errors: { parameters: parameterErrors, connections: connectionsError },
-  } = useSelector((state: RootState) => state.template);
-  const { errors, workflowName, kind, manifest: selectedManifest, id } = useWorkflowTemplate(workflowId);
-  const { workflow: workflowError, kind: kindError } = errors ?? {};
-  const { mapping, selectedTabId, templateName, workflowAppName, isConsumption } = useSelector((state: RootState) => ({
-    mapping: state.workflow.connections.mapping,
-    selectedTabId: state.panel.selectedTabId,
-    templateName: state.template.templateName,
+    templateConnections,
+    workflows,
+  } = useSelector((state: RootState) => ({
+    existingWorkflowName: state.workflow.existingWorkflowName,
+    connections: state.workflow.connections,
     workflowAppName: state.workflow.workflowAppName,
     isConsumption: state.workflow.isConsumption,
+    selectedTabId: state.panel.selectedTabId,
+    templateName: state.template.templateName,
+    parameterDefinitions: state.template.parameterDefinitions,
+    errors: state.template.errors,
+    templateConnections: state.template.connections,
+    workflows: state.template.workflows,
   }));
 
   const [isCreated, setIsCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
-  const connectionsExist = useMemo(() => selectedManifest && Object.keys(selectedManifest?.connections).length > 0, [selectedManifest]);
-  const parametersExist = useMemo(() => selectedManifest && selectedManifest.parameters.length > 0, [selectedManifest]);
+  const connectionsExist = useMemo(() => Object.keys(templateConnections).length > 0, [templateConnections]);
+  const parametersExist = useMemo(() => Object.keys(parameterDefinitions).length > 0, [parameterDefinitions]);
   const hasParametersValidationErrors = useMemo(() => Object.values(parameterErrors).some((error) => !!error), [parameterErrors]);
 
-  useEffect(() => {
-    setIsCreated(false);
-  }, [selectedManifest]);
-
+  // Validation user inputs based on the selected tab.
   useEffect(() => {
     if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS) {
-      dispatch(validateConnections(mapping));
+      dispatch(validateConnections(connections.mapping));
     } else if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
-      dispatch(validateConnections(mapping));
+      dispatch(validateConnections(connections.mapping));
       dispatch(validateParameters());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
-      if (!existingWorkflowName) {
-        dispatch(validateWorkflowName({ id: id as string, existingNames: existingWorkflowNames ?? [] }));
-      }
-      dispatch(validateKind());
+      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingNames: existingWorkflowNames ?? [] }));
     }
-  }, [dispatch, isConsumption, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind, id]);
+  }, [dispatch, isConsumption, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
+
+  const onCreateClick = useCallback(async () => {
+    const resources = {
+      singleMissingInfo: intl.formatMessage({
+        defaultMessage: 'Missing information for workflow creation',
+        id: 'wBBu4g',
+        description: 'Error message when missing information for workflow creation',
+      }),
+      multiMissingInfo: intl.formatMessage({
+        defaultMessage: 'Missing information for workflows creation',
+        id: 'rHySVF',
+        description: 'Error message when missing information for workflows creation',
+      }),
+    };
+
+    const isMissingWorkflowInfo = Object.values(workflows).some(
+      (workflowData) =>
+        !workflowData.workflowName || workflowData.errors.kind || workflowData.errors.workflow || !workflowData.workflowDefinition
+    );
+
+    const isMissingInfo = isMissingWorkflowInfo || connectionsError || Object.values(parameterErrors)?.filter((error) => error).length > 0;
+
+    if (isMissingInfo) {
+      throw new Error(isMultiWorkflowTemplate ? resources.multiMissingInfo : resources.singleMissingInfo);
+    }
+
+    await createWorkflow(
+      Object.values(workflows).map((data) => ({
+        name: data.workflowName as string,
+        kind: data.kind as string,
+        definition: data.workflowDefinition as any,
+      })),
+      connections,
+      parameterDefinitions
+    );
+  }, [connections, connectionsError, createWorkflow, intl, isMultiWorkflowTemplate, parameterDefinitions, parameterErrors, workflows]);
 
   const { isLoading: isCreating, mutate: createWorkflowFromTemplate } = useMutation(async () => {
     setErrorMessage(undefined);
     const logId = LoggerService().startTrace({
-      name: 'Create Workflow from Template',
-      action: 'createWorkflowFromTemplate',
+      name: isMultiWorkflowTemplate ? 'Create Workflows from Accelerator Template' : 'Create Workflow from Template',
+      action: isMultiWorkflowTemplate ? 'createMultiWorkflowsFromTemplate' : 'createWorkflowFromTemplate',
       source: 'Templates.createTab',
     });
     try {
       await onCreateClick();
       setIsCreated(true);
       LoggerService().log({
-        level: LogEntryLevel.Trace,
+        level: LogEntryLevel.Verbose,
         area: 'Templates.createTab',
-        message: 'Template is created',
-        args: [templateName, workflowAppName],
+        message: isMultiWorkflowTemplate ? 'Multi workflows template is created' : 'Template is created',
+        args: [`isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`, templateName, workflowAppName],
       });
       LoggerService().endTrace(logId, { status: Status.Success });
     } catch (e: any) {
@@ -90,7 +125,7 @@ export const useCreateWorkflowPanelTabs = ({
         area: 'Templates.createTab',
         message: e.message,
         error: e instanceof Error ? e : undefined,
-        args: [templateName, workflowAppName],
+        args: [`isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`, templateName, workflowAppName],
       });
       LoggerService().endTrace(logId, { status: Status.Failure });
     }
@@ -98,17 +133,17 @@ export const useCreateWorkflowPanelTabs = ({
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch, {
+      ...nameStateTab(intl, dispatch, !isMultiWorkflowTemplate, {
         nextTabId: connectionsExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
           : parametersExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
             : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-        hasError: !!workflowError || !!kindError,
+        hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
         isCreating,
       }),
     }),
-    [intl, dispatch, isCreating, workflowError, kindError, connectionsExist, parametersExist]
+    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating]
   );
 
   const connectionsTabItem = useMemo(
@@ -135,12 +170,12 @@ export const useCreateWorkflowPanelTabs = ({
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
-        workflowName: existingWorkflowName ?? workflowName ?? '',
+      ...reviewCreateTab(intl, dispatch, !isMultiWorkflowTemplate, createWorkflowFromTemplate, {
+        workflowName: existingWorkflowName ?? Object.values(workflows)?.[0]?.workflowName ?? '',
         isCreating,
         isCreated,
         errorMessage,
-        isPrimaryButtonDisabled: !!workflowError || !kind || !!connectionsError || hasParametersValidationErrors,
+        isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
@@ -151,18 +186,18 @@ export const useCreateWorkflowPanelTabs = ({
     [
       intl,
       dispatch,
+      isMultiWorkflowTemplate,
       createWorkflowFromTemplate,
       existingWorkflowName,
-      workflowName,
+      workflows,
       isCreating,
-      workflowError,
-      kind,
       isCreated,
       errorMessage,
+      nameStateTabItem.hasError,
       connectionsError,
       hasParametersValidationErrors,
-      connectionsExist,
       parametersExist,
+      connectionsExist,
     ]
   );
 

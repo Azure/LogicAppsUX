@@ -35,6 +35,26 @@ export const templateSlice = createSlice({
         state.workflows[id].workflowName = name;
       }
     },
+    validateWorkflowsBasicInfo: (state, action: PayloadAction<{ validateName: boolean; existingNames: string[] }>) => {
+      const { validateName, existingNames } = action.payload;
+      const workflows = Object.keys(state.workflows);
+      if (workflows.length) {
+        const intl = getIntl();
+        for (const id of workflows) {
+          if (!state.workflows[id].kind) {
+            state.workflows[id].errors.kind = intl.formatMessage({
+              defaultMessage: 'The value must not be empty.',
+              id: 'JzvOUc',
+              description: 'Error message when the stage progressed without selecting kind.',
+            });
+          }
+
+          if (validateName) {
+            state.workflows[id].errors.workflow = _validateWorkflowName(state.workflows[id].workflowName, existingNames);
+          }
+        }
+      }
+    },
     validateWorkflowName: (state, action: PayloadAction<{ id: string; existingNames: string[] }>) => {
       const { id, existingNames } = action.payload;
       if (!state.workflows[id]) {
@@ -50,21 +70,6 @@ export const templateSlice = createSlice({
       }
       state.workflows[id].kind = kind;
       state.workflows[id].errors.kind = undefined;
-    },
-    validateKind: (state) => {
-      const workflows = Object.keys(state.workflows);
-      if (workflows.length) {
-        const intl = getIntl();
-        for (const id of workflows) {
-          if (!state.workflows[id].kind) {
-            state.workflows[id].errors.kind = intl.formatMessage({
-              defaultMessage: 'The value must not be empty.',
-              id: 'JzvOUc',
-              description: 'Error message when the stage progressed without selecting kind.',
-            });
-          }
-        }
-      }
     },
     updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
@@ -141,7 +146,7 @@ export const {
   changeCurrentTemplateName,
   updateWorkflowName,
   updateKind,
-  validateKind,
+  validateWorkflowsBasicInfo,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,

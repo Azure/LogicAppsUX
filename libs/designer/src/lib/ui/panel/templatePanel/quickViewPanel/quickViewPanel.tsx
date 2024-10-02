@@ -9,7 +9,7 @@ import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
-export const QuickViewPanel = ({ workflowId, showCreate }: { workflowId: string; showCreate: boolean }) => {
+export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId: string; clearDetailsOnClose: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { templateName, workflowAppName } = useSelector((state: RootState) => ({
@@ -17,7 +17,7 @@ export const QuickViewPanel = ({ workflowId, showCreate }: { workflowId: string;
     workflowAppName: state.workflow.workflowAppName,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
-  const panelTabs = getQuickViewTabs(intl, dispatch, showCreate, {
+  const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
     templateId: templateName ?? '',
     workflowAppName,
   });

@@ -31,7 +31,11 @@ export const CreateWorkflowPanel = ({
   return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />;
 };
 
-export const CreateWorkflowPanelHeader = ({ title, description }: { title: string; description: string }) => {
+export const CreateWorkflowPanelHeader = ({
+  headerTitle,
+  title,
+  description,
+}: { title: string; description: string; headerTitle?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const intl = useIntl();
 
@@ -59,7 +63,7 @@ export const CreateWorkflowPanelHeader = ({ title, description }: { title: strin
   };
 
   return (
-    <TemplatesPanelHeader title={intlText.CREATE_WORKFLOW}>
+    <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW}>
       <div
         className="msla-template-createworkflow-title"
         onClick={() => {
