@@ -22,7 +22,7 @@ export const downloadDocumentAsFile = (sampleResponseDocument: string) => {
 
 export const getDocumentationMetadata = (
   operationInfo: Record<string, NodeOperation>,
-  outputTokens: Record<string, NodeTokens>
+  _outputTokens: Record<string, NodeTokens>
 ): DocumentationMetadataState => {
   const summary: SummaryMetadata = {
     connectorCountByTypes: {},
@@ -34,7 +34,7 @@ export const getDocumentationMetadata = (
 
       operationDocMetadata[nodeId] = {
         connectorCategoryString: connectorCategoryInString,
-        outputTokenIds: outputTokens[nodeId]?.upstreamNodeIds,
+        outputTokenIds: [], // _outputTokens[nodeId]?.upstreamNodeIds // disabling this for payload limit for now
       };
 
       return operationDocMetadata;

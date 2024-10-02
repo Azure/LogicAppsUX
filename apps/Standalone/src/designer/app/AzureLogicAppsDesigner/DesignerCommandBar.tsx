@@ -241,12 +241,12 @@ export const DesignerCommandBar = ({
       {
         key: 'document',
         text: 'Document',
-        disabled: isDownloadingDocument,
+        disabled: haveErrors || isDownloadingDocument,
         onRenderIcon: () => {
           return isDownloadingDocument ? (
             <Spinner size={SpinnerSize.small} />
           ) : (
-            <FontIcon aria-label="Download" iconName="Download" className={classNames.azureBlue} />
+            <FontIcon aria-label="Download" iconName="Download" className={haveErrors ? classNames.azureGrey : classNames.azureBlue} />
           );
         },
         onClick: () => {
