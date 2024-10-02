@@ -1,9 +1,9 @@
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 export interface IExperimentationService {
-  isFeatureEnabled: (featureGateName: string, type: 'extension' | 'shell') => Promise<boolean>;
+  isFeatureEnabled: (featureGateName: string, assignmentType: 'extension' | 'shell') => Promise<boolean>;
   // Setting the return as any since depending on the feature, you can return a string, number or a boolean
-  getFeatureValue: (featureGateName: string, type: 'extension' | 'shell') => Promise<any>;
+  getFeatureValue: (featureGateName: string, assignmentType: 'extension' | 'shell', type: 'string' | 'number' | 'boolean') => Promise<any>;
 }
 
 let service: IExperimentationService;
