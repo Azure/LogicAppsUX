@@ -17,9 +17,12 @@ import {
 } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
-import { useDefaultWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
+import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
-export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
+export const useCreateWorkflowPanelTabs = ({
+  workflowId,
+  onCreateClick,
+}: { onCreateClick: () => Promise<void>; workflowId: string }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
@@ -27,7 +30,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
   const {
     errors: { parameters: parameterErrors, connections: connectionsError },
   } = useSelector((state: RootState) => state.template);
-  const { errors, workflowName, kind, manifest: selectedManifest, id } = useDefaultWorkflowTemplate() ?? {};
+  const { errors, workflowName, kind, manifest: selectedManifest, id } = useWorkflowTemplate(workflowId);
   const { workflow: workflowError, kind: kindError } = errors ?? {};
   const { mapping, selectedTabId, templateName, workflowAppName, isConsumption } = useSelector((state: RootState) => ({
     mapping: state.workflow.connections.mapping,

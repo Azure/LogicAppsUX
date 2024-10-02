@@ -10,10 +10,15 @@ export const useTemplateWorkflows = () => {
   return useSelector((state: RootState) => state.template.workflows ?? {});
 };
 
-export const useDefaultWorkflowTemplate = (): (WorkflowTemplateData & { id: string }) | undefined => {
+export const useWorkflowTemplate = (workflowId: string): WorkflowTemplateData => {
+  return useSelector((state: RootState) => {
+    return state.template.workflows[workflowId];
+  });
+};
+
+export const useDefaultWorkflowTemplate = (): WorkflowTemplateData => {
   return useSelector((state: RootState) => {
     const workflows = state.template.workflows ?? {};
-    const workflowIds = Object.keys(workflows);
-    return Object.keys(workflows).length > 0 ? { id: workflowIds[0], ...workflows[workflowIds[0]] } : undefined;
+    return Object.values(workflows)[0];
   });
 };

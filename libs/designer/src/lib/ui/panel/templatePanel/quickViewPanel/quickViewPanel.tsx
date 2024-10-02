@@ -7,17 +7,17 @@ import { useState } from 'react';
 import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
-import { useDefaultWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
+import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
-export const QuickViewPanel = () => {
+export const QuickViewPanel = ({ workflowId, showCreate }: { workflowId: string; showCreate: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { templateName, workflowAppName } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
   }));
-  const { manifest } = useDefaultWorkflowTemplate() ?? {};
-  const panelTabs = getQuickViewTabs(intl, dispatch, {
+  const { manifest } = useWorkflowTemplate(workflowId);
+  const panelTabs = getQuickViewTabs(intl, dispatch, showCreate, {
     templateId: templateName ?? '',
     workflowAppName,
   });
@@ -45,14 +45,16 @@ export const QuickViewPanelHeader = ({
   title,
   description,
   details,
-}: { title: string; description: string; details: Record<string, string> }) => {
+  features,
+}: { title: string; description: string; details: Record<string, string>; features?: string }) => {
+  const intl = useIntl();
   return (
     <TemplatesPanelHeader title={title}>
       <div className="msla-template-quickview-tags">
         {Object.keys(details).map((key: string, index: number, array: any[]) => {
           return (
             <div key={key}>
-              <Text className="msla-template-card-tag">
+              <Text className={index === array.length - 1 ? 'msla-template-last-tag' : ''}>
                 {key}: {details[key]}
               </Text>
               {index !== array.length - 1 ? (
@@ -63,6 +65,19 @@ export const QuickViewPanelHeader = ({
         })}
       </div>
       <Markdown linkTarget="_blank">{description}</Markdown>
+      {features && (
+        <div className="msla-template-quickview-features">
+          <Text>
+            {intl.formatMessage({
+              defaultMessage: 'Features',
+              id: 'SZ78Xp',
+              description: 'Title for the features section in the template overview',
+            })}
+            :
+          </Text>
+          <Markdown linkTarget="_blank">{features}</Markdown>
+        </div>
+      )}
     </TemplatesPanelHeader>
   );
 };
