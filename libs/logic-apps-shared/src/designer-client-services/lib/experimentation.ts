@@ -1,4 +1,4 @@
-import { AssertionErrorCode, AssertionException } from 'utils/src';
+import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 export interface IExperimentationService {
   isFeatureEnabled: (featureGateName: string, type: 'extension' | 'shell') => Promise<boolean>;
