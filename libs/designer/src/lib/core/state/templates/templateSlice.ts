@@ -11,6 +11,7 @@ export interface TemplateState extends TemplatePayload {
 }
 
 const initialState: TemplateState = {
+  manifest: undefined,
   workflows: {},
   parameterDefinitions: {},
   connections: {},
@@ -103,16 +104,19 @@ export const templateSlice = createSlice({
         parameters: {},
         connections: undefined,
       };
+      state.templateName = undefined;
+      state.manifest = undefined;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loadTemplate.fulfilled, (state, action: PayloadAction<TemplatePayload | undefined>) => {
       if (action.payload) {
-        const { workflows, parameterDefinitions, connections, errors } = action.payload;
+        const { workflows, parameterDefinitions, connections, errors, manifest } = action.payload;
         state.workflows = workflows;
         state.parameterDefinitions = parameterDefinitions;
         state.connections = connections;
         state.errors = errors;
+        state.manifest = manifest;
       }
     });
 

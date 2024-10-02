@@ -60,7 +60,10 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
-    dispatch(openQuickViewPanelView());
+
+    if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
+      dispatch(openQuickViewPanelView());
+    }
   };
 
   if (!templateManifest) {

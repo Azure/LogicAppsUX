@@ -20,6 +20,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   let template1Manifest: Template.Manifest;
   let template2Manifest: Template.Manifest;
   let param1DefaultValue: string;
+  const defaultWorkflowId = 'default';
 
   const httpClient = new MockHttpClient();
   InitTemplateService(
@@ -110,14 +111,24 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     };
 
     templateSliceData = {
-      workflowName: '',
-      kind: undefined,
+      workflows: {
+        [defaultWorkflowId]: {
+          id: defaultWorkflowId,
+          workflowName: '',
+          kind: undefined,
+          manifest: template1Manifest,
+          workflowDefinition: {
+            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+            contentVersion: '',
+          },
+          errors: {
+            workflow: undefined,
+            kind: undefined,
+          },
+        },
+      },
       templateName: template1Manifest.title,
       manifest: template1Manifest,
-      workflowDefinition: {
-        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-        contentVersion: '',
-      },
       parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
@@ -128,8 +139,6 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       connections: template1Manifest.connections,
       servicesInitialized: false,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },
@@ -150,15 +159,15 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
     renderWithProviders(
       <QueryClientProvider client={queryClient}>
-        <TemplatePanel onCreateClick={vi.fn()} />
+        <TemplatePanel workflowId={defaultWorkflowId} showCreate={true} createWorkflow={vi.fn()} />
       </QueryClientProvider>,
       { store }
     );
   });
 
   it('Ensure template state for showing information is correct', async () => {
-    expect(store.getState().template.workflowName).toBe('');
-    expect(store.getState().template.kind).toBe(undefined);
+    expect(store.getState().template.workflows[defaultWorkflowId].workflowName).toBe('');
+    expect(store.getState().template.workflows[defaultWorkflowId].kind).toBe(undefined);
     expect(store.getState().template.templateName).toBe(template1Manifest.title);
     expect(store.getState().template.manifest).toBe(template1Manifest);
     expect(store.getState().template.parameterDefinitions).toBeDefined();
@@ -181,14 +190,24 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
   it('Hides basic tab on consumption only template', async () => {
     templateSliceData = {
-      workflowName: '',
-      kind: undefined,
+      workflows: {
+        [defaultWorkflowId]: {
+          id: defaultWorkflowId,
+          workflowName: '',
+          kind: undefined,
+          manifest: template2Manifest,
+          workflowDefinition: {
+            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+            contentVersion: '',
+          },
+          errors: {
+            workflow: undefined,
+            kind: undefined,
+          },
+        },
+      },
       templateName: template2Manifest.title,
       manifest: template2Manifest,
-      workflowDefinition: {
-        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-        contentVersion: '',
-      },
       parameterDefinitions: template2Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
@@ -199,8 +218,6 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       connections: template2Manifest.connections,
       servicesInitialized: false,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },
