@@ -31,6 +31,8 @@ export interface WorkflowTemplateData {
   workflowName: string | undefined;
   kind: string | undefined;
   images?: Record<string, string>;
+  connectionKeys: string[];
+  parameterKeys: string[];
   errors: {
     workflow: string | undefined;
     kind: string | undefined;
@@ -199,6 +201,8 @@ const loadWorkflowTemplateFromManifest = async (
         workflowName: '',
         kind: templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful',
         images: templateManifest.images,
+        connectionKeys: Object.keys(templateManifest.connections),
+        parameterKeys: Object.keys(parameterDefinitions),
         errors: {
           workflow: undefined,
           kind: undefined,
@@ -222,9 +226,9 @@ const loadWorkflowTemplateFromManifest = async (
 const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined) => {
   const paths = templatePath.split('/');
   const templateManifest: Template.Manifest =
-    manifest ?? paths.length === 2
+    !manifest && paths.length === 2
       ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
-      : (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default;
+      : manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default;
 
   const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition =
     paths.length === 2

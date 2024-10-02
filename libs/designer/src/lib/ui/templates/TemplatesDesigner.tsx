@@ -8,9 +8,11 @@ import { isMultiWorkflowTemplate } from '../../core/actions/bjsworkflow/template
 import { TemplateOverview } from './templateoverview';
 
 export type CreateWorkflowHandler = (
-  workflowName: string | undefined,
-  workflowKind: string | undefined,
-  workflow: LogicAppsV2.WorkflowDefinition,
+  workflows: {
+    name: string | undefined;
+    kind: string | undefined;
+    definition: LogicAppsV2.WorkflowDefinition;
+  }[],
   connectionsMapping: ConnectionMapping,
   parametersData: Record<string, Template.ParameterDefinition>
 ) => Promise<void>;

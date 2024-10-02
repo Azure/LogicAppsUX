@@ -126,6 +126,7 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  shouldClearDetails: boolean,
   onCreateClick: () => void,
   {
     workflowName,
@@ -207,7 +208,9 @@ export const reviewCreateTab = (
     secondaryButtonOnClick: isCreated
       ? () => {
           dispatch(closePanel());
-          dispatch(clearTemplateDetails());
+          if (shouldClearDetails) {
+            dispatch(clearTemplateDetails());
+          }
         }
       : () => {
           dispatch(selectPanelTab(previousTabId));

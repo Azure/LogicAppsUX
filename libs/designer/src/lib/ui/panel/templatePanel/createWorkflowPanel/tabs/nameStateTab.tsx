@@ -183,6 +183,7 @@ export const NameStatePanel = () => {
 export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  shouldClearDetails: boolean,
   { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
@@ -209,7 +210,10 @@ export const nameStateTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      dispatch(clearTemplateDetails());
+
+      if (shouldClearDetails) {
+        dispatch(clearTemplateDetails());
+      }
     },
     secondaryButtonDisabled: isCreating,
   },

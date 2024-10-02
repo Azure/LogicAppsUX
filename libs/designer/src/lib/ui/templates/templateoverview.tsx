@@ -20,7 +20,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const [workflowDetails, setWorkflowDetails] = useState<string | undefined>(undefined);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<string | undefined>(undefined);
   const [showCreatePanel, setShowCreatePanel] = useState<boolean>(false);
   const { templateName, workflowAppName, manifest, connections, workflows } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
@@ -50,14 +50,21 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
 
   const showDetails = (workflowId: string) => {
     dispatch(openQuickViewPanelView());
-    setWorkflowDetails(workflowId);
+    setSelectedWorkflow(workflowId);
   };
 
   // TODO: Need to open new create panel for multi workflow here.
-  const footerContentProps = workflowTab(intl, dispatch, true, () => setShowCreatePanel(true), {
-    templateId: templateName ?? '',
-    workflowAppName,
-  }).footerContent;
+  const footerContentProps = workflowTab(
+    intl,
+    dispatch,
+    /* workflowId */ '',
+    /* clearDetailsOnClose */ true,
+    () => setShowCreatePanel(true),
+    {
+      templateId: templateName ?? '',
+      workflowAppName,
+    }
+  ).footerContent;
   return (
     <>
       <QuickViewPanelHeader title={title} description={description} details={info} features={detailsDescription} />
@@ -89,19 +96,19 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
           {templateHasConnections ? <ConnectionsList connections={connections} /> : null}
         </div>
       </div>
-      <TemplatesPanelFooter showPrimaryButton={true} {...footerContentProps} />
+      <div className="msla-template-overview-footer">
+        <TemplatesPanelFooter showPrimaryButton={true} {...footerContentProps} />
+      </div>
 
-      {workflowDetails ? (
-        <TemplatePanel showCreate={false} workflowId={workflowDetails} onClose={() => setWorkflowDetails(undefined)} />
-      ) : null}
-      {showCreatePanel ? (
+      {selectedWorkflow ? (
         <TemplatePanel
-          showCreate={true}
-          workflowId={Object.keys(workflows)[0]}
-          createWorkflow={createWorkflow}
-          onClose={() => setShowCreatePanel(false)}
+          showCreate={false}
+          workflowId={selectedWorkflow}
+          clearDetailsOnClose={false}
+          onClose={() => setSelectedWorkflow(undefined)}
         />
       ) : null}
+      {showCreatePanel ? <TemplatePanel showCreate={true} createWorkflow={createWorkflow} clearDetailsOnClose={false} /> : null}
       <div
         id={'msla-layer-host'}
         style={{
