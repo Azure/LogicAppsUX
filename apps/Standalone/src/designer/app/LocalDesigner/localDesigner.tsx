@@ -20,7 +20,6 @@ import {
   // Uncomment to use dummy version of copilot expression assistant
   // BaseCopilotService,
   BaseTenantService,
-  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -208,7 +207,6 @@ export const LocalDesigner = () => {
       connectionParameterEditorService,
       customCodeService,
       uiInteractionsService,
-      expeimentationService: new BaseExperimentationService(),
     },
     readOnly: isReadOnly,
     isMonitoringView,

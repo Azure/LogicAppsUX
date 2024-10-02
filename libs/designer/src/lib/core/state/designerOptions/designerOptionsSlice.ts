@@ -24,6 +24,7 @@ import {
   InitUiInteractionsService,
   InitUserPreferenceService,
   InitExperimentationServiceService,
+  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -132,10 +133,7 @@ export const initializeServices = createAsyncThunk(
       InitUserPreferenceService(userPreferenceService);
     }
 
-    if (experimentationService) {
-      InitExperimentationServiceService(experimentationService);
-    }
-
+    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
 

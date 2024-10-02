@@ -15,7 +15,6 @@ import {
   HTTP_METHODS,
   clone,
   BaseTenantService,
-  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -57,7 +56,6 @@ export const getDesignerServices = (
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
-  experimentationService: BaseExperimentationService;
 } => {
   let authToken = '';
   let panelId = '';
@@ -335,7 +333,6 @@ export const getDesignerServices = (
     editorService,
     apimService,
     functionService,
-    experimentationService: new BaseExperimentationService(),
   };
 };
 
