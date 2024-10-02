@@ -113,9 +113,20 @@ export const DesignerCommandBar = ({
     }
   });
 
-  const getAuthToken = () => {
-    return environment?.armToken ? `Bearer ${environment.armToken}` : '';
-  };
+  const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const workflow = await serializeWorkflow(designerState);
+    const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
+    const response = await ChatbotService().getCopilotDocumentation(
+      docMetaData,
+      workflow,
+      environment?.armToken ? `Bearer ${environment.armToken}` : ''
+    );
+    if (isSuccessResponse(response.status)) {
+      const queryResponse: string = response.data.properties.response;
+      downloadDocumentAsFile(queryResponse);
+    }
+  });
 
   const designerIsDirty = useIsDesignerDirty();
 
@@ -228,18 +239,16 @@ export const DesignerCommandBar = ({
       {
         key: 'document',
         text: 'Document',
-        iconProps: { iconName: 'Download' },
-        onClick: async () => {
-          const designerState = DesignerStore.getState();
-          const workflow = await serializeWorkflow(designerState);
-          const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
-          const response = await ChatbotService().getCopilotDocumentation(docMetaData, workflow, getAuthToken());
-          if (!isSuccessResponse(response.status)) {
-            throw new Error(response.statusText);
-          }
-          const queryResponse: string = response.data.properties.response;
-          console.log(queryResponse);
-          downloadDocumentAsFile(queryResponse);
+        disabled: isDownloadingDocument,
+        onRenderIcon: () => {
+          return isDownloadingDocument ? (
+            <Spinner size={SpinnerSize.small} />
+          ) : (
+            <FontIcon aria-label="Download" iconName="Download" className={classNames.azureBlue} />
+          );
+        },
+        onClick: () => {
+          downloadDocument();
         },
       },
       {
@@ -283,6 +292,8 @@ export const DesignerCommandBar = ({
       switchViews,
       haveConnectionErrors,
       enableCopilot,
+      isDownloadingDocument,
+      downloadDocument,
     ]
   );
 

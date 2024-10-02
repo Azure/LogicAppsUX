@@ -41,7 +41,7 @@ export class BaseChatbotService implements IChatbotService {
   }
 
   async _getCopilotResponseV2(
-    queryType: string,
+    queryType: 'chatbot' | 'documentation',
     query: any,
     signal: AbortSignal | undefined,
     armToken: string
