@@ -31,6 +31,7 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
+  BaseExperimentationService,
   BaseFunctionService,
   BaseGatewayService,
   BaseTenantService,
@@ -789,6 +790,7 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
     userPreferenceService: new BaseUserPreferenceService(),
+    experimentationService: new BaseExperimentationService(),
   };
 };
 

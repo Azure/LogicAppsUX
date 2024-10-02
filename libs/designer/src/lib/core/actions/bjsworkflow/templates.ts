@@ -6,6 +6,7 @@ import {
   InitAppServiceService,
   InitConnectionParameterEditorService,
   InitConnectionService,
+  InitExperimentationServiceService,
   InitFunctionService,
   InitGatewayService,
   InitLoggerService,
@@ -70,6 +71,7 @@ export const initializeTemplateServices = createAsyncThunk(
     templateService,
     loggerService,
     uiInteractionsService,
+    experimentationService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
@@ -109,6 +111,10 @@ export const initializeTemplateServices = createAsyncThunk(
 
     if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
+    }
+
+    if (experimentationService) {
+      InitExperimentationServiceService(experimentationService);
     }
 
     return true;
@@ -152,7 +158,10 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
       if (workflowData) {
         workflowData.workflow.workflowName = workflows[workflowPath].name;
         data.workflows[workflowPath] = workflowData.workflow;
-        data.parameterDefinitions = { ...data.parameterDefinitions, ...workflowData.parameterDefinitions };
+        data.parameterDefinitions = {
+          ...data.parameterDefinitions,
+          ...workflowData.parameterDefinitions,
+        };
         data.connections = { ...data.connections, ...workflowData.connections };
       }
     }
