@@ -11,35 +11,61 @@ import { clearTemplateDetails } from '../../../core/state/templates/templateSlic
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
-import { useDefaultWorkflowTemplate } from '../../../core/state/templates/templateselectors';
+import type { CreateWorkflowHandler } from '../../templates';
 
-export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
+export interface TemplatePanelProps {
+  showCreate: boolean;
+  workflowId?: string;
+  createWorkflow?: CreateWorkflowHandler;
+  clearDetailsOnClose?: boolean;
+  onClose?: () => void;
+}
+
+export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId, clearDetailsOnClose = true }: TemplatePanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
-  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
+  const { templateName, workflowAppName, manifest, workflows } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
+    manifest: state.template.manifest,
+    workflows: state.template.workflows,
   }));
-  const { manifest } = useDefaultWorkflowTemplate() ?? {};
+  const isMultiWorkflowTemplate = useMemo(() => Object.keys(workflows).length > 1, [workflows]);
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
+
+  const resources = {
+    multiWorkflowCreateTitle: intl.formatMessage({
+      defaultMessage: 'Create workflows from template',
+      id: '5pSOjg',
+      description: 'Panel header title for creating workflows',
+    }),
+  };
+
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
-    dispatch(clearTemplateDetails());
-  }, [dispatch]);
+
+    if (clearDetailsOnClose) {
+      dispatch(clearTemplateDetails());
+    }
+
+    onClose?.();
+  }, [clearDetailsOnClose, dispatch, onClose]);
+
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({
-    onCreateClick,
+    isMultiWorkflowTemplate,
+    createWorkflow: createWorkflow ?? (() => Promise.resolve()),
   });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () =>
       currentPanelView === 'createWorkflow'
         ? createWorkflowPanelTabs
-        : getQuickViewTabs(intl, dispatch, {
+        : getQuickViewTabs(intl, dispatch, workflowId as string, showCreate, {
             templateId: templateName ?? 'Unknown',
             workflowAppName,
           }),
-    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, templateName, workflowAppName]
+    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, workflowId, showCreate, templateName, workflowAppName]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -53,13 +79,18 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       currentPanelView === 'quickView' ? (
         <QuickViewPanelHeader title={templateTitle} description={templateDescription} details={manifest?.details ?? {}} />
       ) : (
-        <CreateWorkflowPanelHeader title={templateTitle} description={templateDescription} />
+        <CreateWorkflowPanelHeader
+          headerTitle={isMultiWorkflowTemplate ? resources.multiWorkflowCreateTitle : undefined}
+          title={templateTitle}
+          description={templateDescription}
+        />
       ),
-    [currentPanelView, templateTitle, templateDescription, manifest?.details]
+    [currentPanelView, templateTitle, templateDescription, manifest?.details, isMultiWorkflowTemplate, resources.multiWorkflowCreateTitle]
   );
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps]
+    () =>
+      selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
+    [selectedTabProps?.footerContent, showCreate]
   );
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
   useEffect(() => {
@@ -84,7 +115,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       {currentPanelView === 'createWorkflow' ? (
         <CreateWorkflowPanel panelTabs={createWorkflowPanelTabs} />
       ) : currentPanelView === 'quickView' ? (
-        <QuickViewPanel />
+        <QuickViewPanel workflowId={workflowId as string} clearDetailsOnClose={clearDetailsOnClose} />
       ) : null}
     </Panel>
   );

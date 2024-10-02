@@ -16,7 +16,6 @@ import { closePanel, selectPanelTab } from '../../../../../core/state/templates/
 import { useExistingWorkflowNames } from '../../../../../core/queries/template';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
-import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
 import { Open16Regular } from '@fluentui/react-icons';
 
 export const NameStatePanel = () => {
@@ -27,7 +26,7 @@ export const NameStatePanel = () => {
     errors: { workflow: workflowError, kind: kindError },
     kind,
     manifest,
-  } = useDefaultWorkflowTemplate() as { id: string } & WorkflowTemplateData;
+  } = useDefaultWorkflowTemplate();
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const intl = useIntl();
@@ -184,6 +183,7 @@ export const NameStatePanel = () => {
 export const nameStateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  shouldClearDetails: boolean,
   { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
@@ -210,7 +210,10 @@ export const nameStateTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      dispatch(clearTemplateDetails());
+
+      if (shouldClearDetails) {
+        dispatch(clearTemplateDetails());
+      }
     },
     secondaryButtonDisabled: isCreating,
   },

@@ -10,12 +10,11 @@ import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-sha
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
 import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
-import type { WorkflowTemplateData } from '../../../../../core/actions/bjsworkflow/templates';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
   const { parameterDefinitions } = useSelector((state: RootState) => state.template);
-  const { workflowName, kind, manifest } = useDefaultWorkflowTemplate() as WorkflowTemplateData;
+  const { workflowName, kind, manifest } = useDefaultWorkflowTemplate();
   const {
     existingWorkflowName,
     connections: { mapping },
@@ -127,6 +126,7 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  shouldClearDetails: boolean,
   onCreateClick: () => void,
   {
     workflowName,
@@ -208,7 +208,9 @@ export const reviewCreateTab = (
     secondaryButtonOnClick: isCreated
       ? () => {
           dispatch(closePanel());
-          dispatch(clearTemplateDetails());
+          if (shouldClearDetails) {
+            dispatch(clearTemplateDetails());
+          }
         }
       : () => {
           dispatch(selectPanelTab(previousTabId));
