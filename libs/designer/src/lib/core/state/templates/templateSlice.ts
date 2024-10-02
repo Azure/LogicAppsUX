@@ -35,7 +35,7 @@ export const templateSlice = createSlice({
         state.workflows[id].workflowName = name;
       }
     },
-    validateWorkflows: (state, action: PayloadAction<{ validateName: boolean; existingNames: string[] }>) => {
+    validateWorkflowsBasicInfo: (state, action: PayloadAction<{ validateName: boolean; existingNames: string[] }>) => {
       const { validateName, existingNames } = action.payload;
       const workflows = Object.keys(state.workflows);
       if (workflows.length) {
@@ -146,7 +146,7 @@ export const {
   changeCurrentTemplateName,
   updateWorkflowName,
   updateKind,
-  validateWorkflows,
+  validateWorkflowsBasicInfo,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,
