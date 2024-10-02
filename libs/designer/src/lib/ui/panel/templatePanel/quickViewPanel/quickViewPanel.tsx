@@ -17,7 +17,7 @@ export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId
     workflowAppName: state.workflow.workflowAppName,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
-  const panelTabs = getQuickViewTabs(intl, dispatch, clearDetailsOnClose, {
+  const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
     templateId: templateName ?? '',
     workflowAppName,
   });

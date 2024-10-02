@@ -7,12 +7,12 @@ import { Text } from '@fluentui/react-components';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
-import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 import { ConnectionsList } from '../../../../templates/connections/connections';
 
-export const SummaryPanel: React.FC = () => {
+export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
-  const { manifest } = useDefaultWorkflowTemplate();
+  const { manifest } = useWorkflowTemplate(workflowId);
   const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
@@ -111,6 +111,7 @@ export const SummaryPanel: React.FC = () => {
 export const summaryTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  workflowId: string,
   clearDetailsOnClose: boolean,
   { templateId, workflowAppName }: Template.TemplateContext
 ): TemplatePanelTab => ({
@@ -121,7 +122,7 @@ export const summaryTab = (
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
-  content: <SummaryPanel />,
+  content: <SummaryPanel workflowId={workflowId} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',

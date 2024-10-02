@@ -63,14 +63,14 @@ export const CreateWorkflowPanelHeader = ({
   };
 
   return (
-    <TemplatesPanelHeader title={intlText.CREATE_WORKFLOW}>
+    <TemplatesPanelHeader title={headerTitle ?? intlText.CREATE_WORKFLOW}>
       <div
         className="msla-template-createworkflow-title"
         onClick={() => {
           setIsOpen(!isOpen);
         }}
       >
-        <Text className="msla-template-createworkflow-title-text">{headerTitle ?? intlText.TEMPLATE_DETAILS}</Text>
+        <Text className="msla-template-createworkflow-title-text">{intlText.TEMPLATE_DETAILS}</Text>
         {isOpen ? <ChevronUp16Regular /> : <ChevronDown16Regular />}
       </div>
       {isOpen && (

@@ -54,10 +54,17 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
   };
 
   // TODO: Need to open new create panel for multi workflow here.
-  const footerContentProps = workflowTab(intl, dispatch, true, () => setShowCreatePanel(true), {
-    templateId: templateName ?? '',
-    workflowAppName,
-  }).footerContent;
+  const footerContentProps = workflowTab(
+    intl,
+    dispatch,
+    /* workflowId */ '',
+    /* clearDetailsOnClose */ true,
+    () => setShowCreatePanel(true),
+    {
+      templateId: templateName ?? '',
+      workflowAppName,
+    }
+  ).footerContent;
   return (
     <>
       <QuickViewPanelHeader title={title} description={description} details={info} features={detailsDescription} />
@@ -94,9 +101,14 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
       </div>
 
       {selectedWorkflow ? (
-        <TemplatePanel showCreate={false} workflowId={selectedWorkflow} onClose={() => setSelectedWorkflow(undefined)} />
+        <TemplatePanel
+          showCreate={false}
+          workflowId={selectedWorkflow}
+          clearDetailsOnClose={false}
+          onClose={() => setSelectedWorkflow(undefined)}
+        />
       ) : null}
-      {showCreatePanel ? <TemplatePanel showCreate={true} createWorkflow={createWorkflow} /> : null}
+      {showCreatePanel ? <TemplatePanel showCreate={true} createWorkflow={createWorkflow} clearDetailsOnClose={false} /> : null}
       <div
         id={'msla-layer-host'}
         style={{

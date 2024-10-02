@@ -7,10 +7,10 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
-import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 
-export const WorkflowPanel: React.FC = () => {
-  const { manifest, images } = useDefaultWorkflowTemplate();
+export const WorkflowPanel = ({ workflowId }: { workflowId: string }) => {
+  const { manifest, images } = useWorkflowTemplate(workflowId);
   const { isInverted } = useTheme();
   const imageName = useMemo(() => (isInverted ? images?.dark : images?.light), [isInverted, images]);
 
@@ -24,6 +24,7 @@ export const WorkflowPanel: React.FC = () => {
 export const workflowTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  workflowId: string,
   clearDetailsOnClose: boolean,
   onPrimaryButtonClick: (() => void) | undefined,
   { templateId, workflowAppName }: Template.TemplateContext
@@ -35,7 +36,7 @@ export const workflowTab = (
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
-  content: <WorkflowPanel />,
+  content: <WorkflowPanel workflowId={workflowId} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',

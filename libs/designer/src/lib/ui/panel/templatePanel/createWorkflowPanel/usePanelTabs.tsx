@@ -133,7 +133,7 @@ export const useCreateWorkflowPanelTabs = ({
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch, {
+      ...nameStateTab(intl, dispatch, !isMultiWorkflowTemplate, {
         nextTabId: connectionsExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
           : parametersExist
@@ -143,7 +143,7 @@ export const useCreateWorkflowPanelTabs = ({
         isCreating,
       }),
     }),
-    [intl, dispatch, connectionsExist, parametersExist, workflows, isCreating]
+    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating]
   );
 
   const connectionsTabItem = useMemo(
@@ -170,7 +170,7 @@ export const useCreateWorkflowPanelTabs = ({
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
+      ...reviewCreateTab(intl, dispatch, !isMultiWorkflowTemplate, createWorkflowFromTemplate, {
         workflowName: existingWorkflowName ?? Object.values(workflows)?.[0]?.workflowName ?? '',
         isCreating,
         isCreated,
@@ -186,6 +186,7 @@ export const useCreateWorkflowPanelTabs = ({
     [
       intl,
       dispatch,
+      isMultiWorkflowTemplate,
       createWorkflowFromTemplate,
       existingWorkflowName,
       workflows,

@@ -10,15 +10,16 @@ import { validateParameterValueWithSwaggerType } from '../../../core/utils/valid
 export const getQuickViewTabs = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  workflowId: string,
   showCreate: boolean,
   { templateId, workflowAppName }: Template.TemplateContext
 ) => {
   return [
-    workflowTab(intl, dispatch, showCreate, undefined, {
+    workflowTab(intl, dispatch, workflowId, showCreate, undefined, {
       templateId,
       workflowAppName,
     }),
-    summaryTab(intl, dispatch, showCreate, {
+    summaryTab(intl, dispatch, workflowId, showCreate, {
       templateId,
       workflowAppName,
     }),
