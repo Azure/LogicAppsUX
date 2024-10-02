@@ -15,6 +15,7 @@ import {
   HTTP_METHODS,
   clone,
   BaseTenantService,
+  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -56,6 +57,7 @@ export const getDesignerServices = (
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
+  experimentationService: BaseExperimentationService;
 } => {
   let authToken = '';
   let panelId = '';
@@ -85,7 +87,12 @@ export const getDesignerServices = (
     });
   };
 
-  const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubDetails.baseUrl, hostVersion });
+  const httpClient = new HttpClient({
+    accessToken: authToken,
+    baseUrl,
+    apiHubBaseUrl: apiHubDetails.baseUrl,
+    hostVersion,
+  });
   const apiHubServiceDetails = {
     ...apiHubDetails,
     httpClient,
@@ -126,8 +133,16 @@ export const getDesignerServices = (
     mapArtifacts: panelMetadata?.mapArtifacts,
   });
 
-  const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
-  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
+  const manualWorkflows = Object.keys(workflowDetails).map((name) => ({
+    value: name,
+    displayName: name,
+  }));
+  const appService = new BaseAppServiceService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
 
   const connectorService = new StandardConnectorService({
     apiVersion,
@@ -140,7 +155,10 @@ export const getDesignerServices = (
       }
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connnectionsInfo = { ...connectionsData?.serviceProviderConnections, ...connectionsData?.apiManagementConnections };
+      const connnectionsInfo = {
+        ...connectionsData?.serviceProviderConnections,
+        ...connectionsData?.apiManagementConnections,
+      };
       const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
@@ -317,6 +335,7 @@ export const getDesignerServices = (
     editorService,
     apimService,
     functionService,
+    experimentationService: new BaseExperimentationService(),
   };
 };
 
