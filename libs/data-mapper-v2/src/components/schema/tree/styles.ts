@@ -29,7 +29,7 @@ export const useTreeStyles = makeStyles({
 export const useTreeNodeStyles = makeStyles({
   required: {
     ':after': {
-      content: '"*"',
+      content: '" *"',
     },
   },
   root: {
@@ -97,15 +97,27 @@ export const useHandleStyles = makeStyles({
   connectedAndSelected: {
     backgroundColor: colors.handleActive,
   },
-  repeating: {
+  repeatingNode: {
     height: '16px',
     width: '16px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  repeatingIcon: {
+  repeatingConnection: {
+    height: '16px',
+    width: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  repeatingConnectionIcon: {
     color: 'white',
+    fontSize: '12px',
+  },
+  repeatingNodeIcon: {
+    color: colors.handleActive,
+    fontSize: '12px',
   },
   left: {
     right: '7.5px',

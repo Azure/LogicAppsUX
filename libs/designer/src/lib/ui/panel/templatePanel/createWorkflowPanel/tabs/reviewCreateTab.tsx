@@ -9,15 +9,18 @@ import { closePanel, selectPanelTab } from '../../../../../core/state/templates/
 import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { workflowName, kind, manifest, parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { workflowName, kind, manifest } = useDefaultWorkflowTemplate();
   const {
     existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
+    isConsumption,
   } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
@@ -67,16 +70,20 @@ export const ReviewCreatePanel = () => {
           <Text className="msla-templates-tab-review-section-details-title">{intlText.TEMPLATE_NAME}</Text>
           <Text className="msla-templates-tab-review-section-details-value">{manifest?.title}</Text>
         </div>
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">
-            {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
-          </Text>
-        </div>
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
-        </div>
+        {!isConsumption && (
+          <>
+            <div className="msla-templates-tab-review-section-details">
+              <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
+              <Text className="msla-templates-tab-review-section-details-value">
+                {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
+              </Text>
+            </div>
+            <div className="msla-templates-tab-review-section-details">
+              <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
+              <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
+            </div>
+          </>
+        )}
       </div>
 
       {Object.keys(manifest?.connections ?? {}).length > 0 && (

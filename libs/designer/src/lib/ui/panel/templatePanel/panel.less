@@ -1,25 +1,61 @@
-.msla-template-quickview-header {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0 20px 0;
-    width: 100%;
-}
-
-.msla-template-panel-header {
-    font-size: 22px !important;
-    font-weight: 600 !important;
-    padding-bottom: 10px;
-}
-
 .msla-template-quickview-tags {
     display: flex;
     flex-direction: row;
     color: grey;
     padding: 10px 0 10px 0;
+
+    .msla-template-last-tag {
+        vertical-align: middle;
+    }
+}
+
+.msla-template-quickview-features {
+    padding-top: 10px;
 }
 
 .msla-template-quickview-tabs {
     border-bottom: solid #d4d4d4 1px;
+}
+
+.msla-template-createworkflow-title {
+    padding: 8px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: fit-content;
+    cursor: pointer;
+
+    .msla-template-createworkflow-title-text {
+        margin-right: 16px;
+    }
+}
+
+.msla-template-createworkflow-description-wrapper {
+    padding: 8px 0px;
+
+    .msla-template-createworkflow-description {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+
+        .msla-template-createworkflow-description-title {
+            min-width: 100px;
+            height: max-content;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            color: #605E5C;
+            font-size: 12px;
+        }
+
+        .msla-template-createworkflow-description-text {
+            font-size: 12px;
+            * {
+                margin: 0;
+            }
+        }
+    }
 }
 
 .msla-template-workflow-preview {
@@ -46,7 +82,19 @@
 
     .msla-templates-tab-label-description {
         font-size: 13px;
-        line-height: 18px;   
+        line-height: 18px;
+
+        .msla-templates-tab-label-link {
+            display: inline-flex;
+            flex-direction: row;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .msla-templates-tab-description-icon {
+            padding-left: 4px;
+        }
     }
 
     .msla-templates-tab-choiceGroup {

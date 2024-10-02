@@ -117,6 +117,7 @@ import {
   isBodySegment,
   canStringBeConverted,
   isStringLiteral,
+  splitAtIndex,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -206,6 +207,19 @@ export interface RepetitionReference {
   repetitionValue: any; // NOTE: the expression for foreach, and its type could be string or array.
   repetitionStep?: string; // NOTE: the output original step
   repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
+}
+
+export interface UpdateParameterAndDependenciesPayload {
+  nodeId: string;
+  groupId: string;
+  parameterId: string;
+  properties: Partial<ParameterInfo>;
+  isTrigger: boolean;
+  operationInfo: NodeOperation;
+  connectionReference: ConnectionReference;
+  nodeInputs: NodeInputs;
+  dependencies: NodeDependencies;
+  operationDefinition?: any;
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
@@ -576,8 +590,11 @@ const toSimpleQueryBuilderViewModel = (
       return advancedModeResult;
     }
 
-    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
-    const [operand1String, operand2String] = operandSubstring.splitAt(getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
+    const operandSubstring: string = stringValue.substring(
+      stringValue.indexOf('(') + 1,
+      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
+    );
+    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
 
     return {
       isOldFormat: true,
@@ -1476,11 +1493,11 @@ function deletePropertyValueWithSpecifiedPathSegment(value: any, segments: Segme
   }
 }
 
-export function getAndEscapeSegment(segment: Segment): string | number {
+export function getAndEscapeSegment(segment: Segment, decodeSegment = true): string | number {
   // NOTE: for property segment, return the property name as key; for index segment, return the index value or 0
   switch (segment.type) {
     case SegmentType.Property:
-      return tryConvertStringToExpression(decodePropertySegment(segment.value as string));
+      return tryConvertStringToExpression(decodeSegment ? decodePropertySegment(segment.value as string) : (segment.value as string));
     case SegmentType.Index:
       return segment.value || 0;
     default:
@@ -1702,21 +1719,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
 
 export const updateParameterAndDependencies = createAsyncThunk(
   'updateParameterAndDependencies',
-  async (
-    actionPayload: {
-      nodeId: string;
-      groupId: string;
-      parameterId: string;
-      properties: Partial<ParameterInfo>;
-      isTrigger: boolean;
-      operationInfo: NodeOperation;
-      connectionReference: ConnectionReference;
-      nodeInputs: NodeInputs;
-      dependencies: NodeDependencies;
-      operationDefinition?: any;
-    },
-    { dispatch, getState }
-  ): Promise<void> => {
+  async (actionPayload: UpdateParameterAndDependenciesPayload, { dispatch, getState }): Promise<void> => {
     const {
       nodeId,
       groupId,
@@ -2045,7 +2048,15 @@ export const loadDynamicContentForInputsInNode = async (
 
       const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
 
-      dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, rawInputs: updatedRawParameters, dependencies }));
+      dispatch(
+        addDynamicInputs({
+          nodeId,
+          groupId: ParameterGroupKeys.DEFAULT,
+          inputs: updatedParameters,
+          rawInputs: updatedRawParameters,
+          dependencies,
+        })
+      );
 
       // Recursively load dynamic content for the newly added dynamic inputs
       return updateDynamicDataInNode(

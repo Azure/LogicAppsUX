@@ -1,5 +1,4 @@
-import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch } from '../../../../../core/state/templates/store';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { useTheme } from '@fluentui/react';
@@ -8,9 +7,10 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
+import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 
 export const WorkflowPanel: React.FC = () => {
-  const { manifest, images } = useSelector((state: RootState) => state.template);
+  const { manifest, images } = useDefaultWorkflowTemplate();
   const { isInverted } = useTheme();
   const imageName = useMemo(() => (isInverted ? images?.dark : images?.light), [isInverted, images]);
 
@@ -24,6 +24,8 @@ export const WorkflowPanel: React.FC = () => {
 export const workflowTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  showCreate: boolean,
+  onPrimaryButtonClick: (() => void) | undefined,
   { templateId, workflowAppName }: Template.TemplateContext
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
@@ -48,6 +50,7 @@ export const workflowTab = (
         args: [templateId, workflowAppName],
       });
       dispatch(openCreateWorkflowPanelView());
+      onPrimaryButtonClick?.();
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
@@ -56,7 +59,9 @@ export const workflowTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      dispatch(clearTemplateDetails());
+      if (showCreate) {
+        dispatch(clearTemplateDetails());
+      }
     },
   },
 });

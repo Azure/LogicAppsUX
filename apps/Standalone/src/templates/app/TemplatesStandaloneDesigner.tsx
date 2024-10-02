@@ -16,6 +16,7 @@ import {
   isArmResourceId,
   optional,
   StandardOperationManifestService,
+  ConsumptionConnectionService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -37,6 +38,7 @@ import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/M
 import axios from 'axios';
 import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
+import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 
 const workflowIdentifier = '#workflowname#';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
@@ -61,15 +63,15 @@ export const TemplatesStandaloneDesigner = () => {
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
 
   const createWorkflowCall = async (
-    workflowName: string,
-    workflowKind: string,
+    workflowName: string | undefined,
+    workflowKind: string | undefined,
     workflowDefinition: LogicAppsV2.WorkflowDefinition,
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
     const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
-      if (hostingPlan !== 'standard') {
+      if (hostingPlan !== 'standard' || !workflowNameToUse || !workflowName || !workflowKind) {
         console.log('Hosting plan is not ready yet!');
       } else {
         let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
@@ -273,21 +275,31 @@ const getServices = (
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
-  const connectionService = new StandardConnectionService({
-    ...defaultServiceParams,
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      baseUrl: armUrl,
-      subscriptionId,
-      resourceGroup,
-      location,
-      tenantId,
-      httpClient,
-    },
-    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
-    writeConnection: addConnection as any,
-  });
+  const connectionService = isConsumption
+    ? new ConsumptionConnectionService({
+        apiVersion: '2018-07-01-preview',
+        baseUrl,
+        subscriptionId,
+        resourceGroup,
+        location,
+        tenantId,
+        httpClient,
+      })
+    : new StandardConnectionService({
+        ...defaultServiceParams,
+        apiHubServiceDetails: {
+          apiVersion: '2018-07-01-preview',
+          baseUrl: armUrl,
+          subscriptionId,
+          resourceGroup,
+          location,
+          tenantId,
+          httpClient,
+        },
+        workflowAppDetails: { appName, identity: workflowApp?.identity as any },
+        readConnections: () => Promise.resolve(connectionsData),
+        writeConnection: addConnection as any,
+      });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,
     httpClient,
@@ -317,7 +329,11 @@ const getServices = (
   };
 
   const templateService = isConsumption
-    ? undefined
+    ? new BaseTemplateService({
+        openBladeAfterCreate: (workflowName: string) => {
+          console.log('Open blade after create, workflowName is: ', workflowName);
+        },
+      })
     : new StandardTemplateService({
         baseUrl: armUrl,
         appId: siteResourceId,

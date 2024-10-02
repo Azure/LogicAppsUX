@@ -17,23 +17,27 @@ import {
 } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
+import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
-export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: () => Promise<void> }): TemplatePanelTab[] => {
+export const useCreateWorkflowPanelTabs = ({
+  workflowId,
+  onCreateClick,
+}: { onCreateClick: () => Promise<void>; workflowId: string }): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const {
-    errors: { workflow: workflowError, kind: kindError, parameters: parameterErrors, connections: connectionsError },
-    workflowName,
-    kind,
-    manifest: selectedManifest,
+    errors: { parameters: parameterErrors, connections: connectionsError },
   } = useSelector((state: RootState) => state.template);
-  const { mapping, selectedTabId, templateName, workflowAppName } = useSelector((state: RootState) => ({
+  const { errors, workflowName, kind, manifest: selectedManifest, id } = useWorkflowTemplate(workflowId);
+  const { workflow: workflowError, kind: kindError } = errors ?? {};
+  const { mapping, selectedTabId, templateName, workflowAppName, isConsumption } = useSelector((state: RootState) => ({
     mapping: state.workflow.connections.mapping,
     selectedTabId: state.panel.selectedTabId,
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
+    isConsumption: state.workflow.isConsumption,
   }));
 
   const [isCreated, setIsCreated] = useState(false);
@@ -54,13 +58,13 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
       dispatch(validateConnections(mapping));
       dispatch(validateParameters());
     }
-    if (selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
+    if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
       if (!existingWorkflowName) {
-        dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+        dispatch(validateWorkflowName({ id: id as string, existingNames: existingWorkflowNames ?? [] }));
       }
       dispatch(validateKind());
     }
-  }, [dispatch, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind]);
+  }, [dispatch, isConsumption, mapping, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, kind, id]);
 
   const { isLoading: isCreating, mutate: createWorkflowFromTemplate } = useMutation(async () => {
     setErrorMessage(undefined);
@@ -164,7 +168,9 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
 
   const tabs = useMemo(() => {
     const validTabs = [];
-    validTabs.push(nameStateTabItem);
+    if (!isConsumption) {
+      validTabs.push(nameStateTabItem);
+    }
     if (connectionsExist) {
       validTabs.push(connectionsTabItem);
     }
@@ -173,7 +179,7 @@ export const useCreateWorkflowPanelTabs = ({ onCreateClick }: { onCreateClick: (
     }
     validTabs.push(reviewCreateTabItem);
     return validTabs;
-  }, [connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
+  }, [isConsumption, connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
 
   return tabs;
 };

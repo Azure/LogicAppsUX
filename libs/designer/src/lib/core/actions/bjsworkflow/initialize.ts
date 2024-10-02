@@ -327,7 +327,11 @@ export const getOutputParametersFromManifest = (
   }
 
   return {
-    outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs, originalOutputs },
+    outputs: {
+      dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined,
+      outputs: nodeOutputs,
+      originalOutputs,
+    },
     dependencies,
   };
 };

@@ -8,6 +8,7 @@ export interface TemplatePanelFooterProps {
   secondaryButtonText: string;
   secondaryButtonOnClick: () => void;
   secondaryButtonDisabled?: boolean;
+  showPrimaryButton?: boolean;
 }
 
 export const TemplatesPanelFooter = ({
@@ -17,17 +18,20 @@ export const TemplatesPanelFooter = ({
   secondaryButtonText,
   secondaryButtonOnClick,
   secondaryButtonDisabled = false,
+  showPrimaryButton = true,
 }: TemplatePanelFooterProps) => {
   return (
     <div className="msla-templates-panel-footer">
-      <PrimaryButton
-        data-testid={'template-footer-primary-button'}
-        data-automation-id={'template-footer-primary-button'}
-        onClick={primaryButtonOnClick}
-        disabled={primaryButtonDisabled}
-      >
-        {primaryButtonText}
-      </PrimaryButton>
+      {showPrimaryButton ? (
+        <PrimaryButton
+          data-testid={'template-footer-primary-button'}
+          data-automation-id={'template-footer-primary-button'}
+          onClick={primaryButtonOnClick}
+          disabled={primaryButtonDisabled}
+        >
+          {primaryButtonText}
+        </PrimaryButton>
+      ) : null}
       <DefaultButton
         onClick={secondaryButtonOnClick}
         style={{
