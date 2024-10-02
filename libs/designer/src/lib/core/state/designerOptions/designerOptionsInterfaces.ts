@@ -63,7 +63,6 @@ export interface ServiceOptions {
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
-  experimentationService: IExperimentationService;
   hostService?: IHostService;
   apimService?: IApiManagementService;
   functionService?: IFunctionService;
@@ -76,4 +75,5 @@ export interface ServiceOptions {
   copilotService?: ICopilotService;
   uiInteractionsService?: IDesignerUiInteractionsService;
   userPreferenceService?: IUserPreferenceService;
+  experimentationService?: IExperimentationService;
 }
