@@ -133,6 +133,8 @@ export const initializeServices = createAsyncThunk(
       InitUserPreferenceService(userPreferenceService);
     }
 
+    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+    // we are always defaulting to the false implementation of the experimentation service.
     InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
