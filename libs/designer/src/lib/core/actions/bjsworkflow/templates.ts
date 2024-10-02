@@ -1,4 +1,5 @@
 import {
+  BaseExperimentationService,
   DevLogger,
   guid,
   type ILoggerService,
@@ -113,9 +114,9 @@ export const initializeTemplateServices = createAsyncThunk(
       InitUiInteractionsService(uiInteractionsService);
     }
 
-    if (experimentationService) {
-      InitExperimentationServiceService(experimentationService);
-    }
+    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+    // we are always defaulting to the false implementation of the experimentation service.
+    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
 
     return true;
   }
