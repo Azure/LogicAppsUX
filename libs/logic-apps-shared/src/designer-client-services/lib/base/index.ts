@@ -1,5 +1,9 @@
 // Search
-export { BaseSearchService, getClientBuiltInOperations, getClientBuiltInConnectors } from './search';
+export {
+  BaseSearchService,
+  getClientBuiltInOperations,
+  getClientBuiltInConnectors,
+} from './search';
 export type { BaseSearchServiceOptions } from './search';
 // Manifests
 export {
@@ -47,3 +51,5 @@ export { BaseTenantService } from './tenant';
 export type { BaseTenantServiceOptions } from './tenant';
 
 export { BaseUserPreferenceService } from './userpreference';
+
+export { BaseExperimentationService } from './experimentation';
