@@ -11,35 +11,104 @@ import { clearTemplateDetails } from '../../../core/state/templates/templateSlic
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
-import { useDefaultWorkflowTemplate } from '../../../core/state/templates/templateselectors';
+import { useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
+import type { CreateWorkflowHandler } from '../../templates';
 
-export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<void> }) => {
+export interface TemplatePanelProps {
+  showCreate: boolean;
+  workflowId: string;
+  createWorkflow?: CreateWorkflowHandler;
+  onClose?: () => void;
+}
+
+export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId }: TemplatePanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
-  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
+  const {
+    templateName,
+    workflowAppName,
+    existingWorkflowName,
+    connections,
+    isConsumption,
+    connectionsError,
+    parametersError,
+    parameterDefinitions,
+  } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
+    existingWorkflowName: state.workflow.existingWorkflowName,
+    connections: state.workflow.connections,
+    isConsumption: state.workflow.isConsumption,
+    connectionsError: state.template.errors.connections,
+    parametersError: state.template.errors.parameters,
+    parameterDefinitions: state.template.parameterDefinitions,
   }));
-  const { manifest } = useDefaultWorkflowTemplate() ?? {};
+  const { manifest, workflowName, kind, errors, workflowDefinition } = useWorkflowTemplate(workflowId);
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
+
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
-    dispatch(clearTemplateDetails());
-  }, [dispatch]);
+
+    if (showCreate) {
+      dispatch(clearTemplateDetails());
+    }
+
+    onClose?.();
+  }, [dispatch, onClose, showCreate]);
+
+  const onCreateClick = useCallback(async () => {
+    const workflowNameToUse = existingWorkflowName ?? workflowName;
+    const isMissingInfoForStandard = !workflowNameToUse || !kind || errors?.kind;
+
+    const isMissingInfo =
+      (!isConsumption && isMissingInfoForStandard) ||
+      errors?.workflow ||
+      !workflowDefinition ||
+      connectionsError ||
+      Object.values(parametersError)?.filter((error) => error).length > 0;
+
+    if (isMissingInfo) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'Missing information for workflow creation',
+          id: 'wBBu4g',
+          description: 'Error message when missing information for workflow creation',
+        })
+      );
+    }
+
+    await createWorkflow?.(workflowNameToUse, kind, workflowDefinition, connections, parameterDefinitions);
+  }, [
+    connections,
+    connectionsError,
+    createWorkflow,
+    errors?.kind,
+    errors?.workflow,
+    existingWorkflowName,
+    intl,
+    isConsumption,
+    kind,
+    parameterDefinitions,
+    parametersError,
+    workflowDefinition,
+    workflowName,
+  ]);
+
   const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({
     onCreateClick,
+    workflowId,
   });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () =>
       currentPanelView === 'createWorkflow'
         ? createWorkflowPanelTabs
-        : getQuickViewTabs(intl, dispatch, {
+        : getQuickViewTabs(intl, dispatch, showCreate, {
             templateId: templateName ?? 'Unknown',
             workflowAppName,
           }),
-    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, templateName, workflowAppName]
+    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, showCreate, templateName, workflowAppName]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -58,8 +127,9 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
     [currentPanelView, templateTitle, templateDescription, manifest?.details]
   );
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
-    [selectedTabProps]
+    () =>
+      selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
+    [selectedTabProps?.footerContent, showCreate]
   );
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
   useEffect(() => {
@@ -84,7 +154,7 @@ export const TemplatePanel = ({ onCreateClick }: { onCreateClick: () => Promise<
       {currentPanelView === 'createWorkflow' ? (
         <CreateWorkflowPanel panelTabs={createWorkflowPanelTabs} />
       ) : currentPanelView === 'quickView' ? (
-        <QuickViewPanel />
+        <QuickViewPanel workflowId={workflowId} showCreate={showCreate} />
       ) : null}
     </Panel>
   );
