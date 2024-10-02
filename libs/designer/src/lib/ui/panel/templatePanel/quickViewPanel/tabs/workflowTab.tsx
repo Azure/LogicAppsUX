@@ -24,7 +24,7 @@ export const WorkflowPanel: React.FC = () => {
 export const workflowTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  showCreate: boolean,
+  clearDetailsOnClose: boolean,
   onPrimaryButtonClick: (() => void) | undefined,
   { templateId, workflowAppName }: Template.TemplateContext
 ): TemplatePanelTab => ({
@@ -59,7 +59,7 @@ export const workflowTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      if (showCreate) {
+      if (clearDetailsOnClose) {
         dispatch(clearTemplateDetails());
       }
     },

@@ -111,7 +111,7 @@ export const SummaryPanel: React.FC = () => {
 export const summaryTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  showCreate: boolean,
+  clearDetailsOnClose: boolean,
   { templateId, workflowAppName }: Template.TemplateContext
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
@@ -144,7 +144,7 @@ export const summaryTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      if (showCreate) {
+      if (clearDetailsOnClose) {
         dispatch(clearTemplateDetails());
       }
     },

@@ -31,6 +31,8 @@ export interface WorkflowTemplateData {
   workflowName: string | undefined;
   kind: string | undefined;
   images?: Record<string, string>;
+  connectionKeys: string[];
+  parameterKeys: string[];
   errors: {
     workflow: string | undefined;
     kind: string | undefined;
@@ -199,6 +201,8 @@ const loadWorkflowTemplateFromManifest = async (
         workflowName: '',
         kind: templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful',
         images: templateManifest.images,
+        connectionKeys: Object.keys(templateManifest.connections),
+        parameterKeys: Object.keys(parameterDefinitions),
         errors: {
           workflow: undefined,
           kind: undefined,
