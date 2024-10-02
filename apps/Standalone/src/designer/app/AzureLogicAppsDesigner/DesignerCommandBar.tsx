@@ -122,10 +122,12 @@ export const DesignerCommandBar = ({
       workflow,
       environment?.armToken ? `Bearer ${environment.armToken}` : ''
     );
-    if (isSuccessResponse(response.status)) {
-      const queryResponse: string = response.data.properties.response;
-      downloadDocumentAsFile(queryResponse);
+    if (!isSuccessResponse(response.status)) {
+      alert('Failed to download document');
+      return;
     }
+    const queryResponse: string = response.data.properties.response;
+    downloadDocumentAsFile(queryResponse);
   });
 
   const designerIsDirty = useIsDesignerDirty();
