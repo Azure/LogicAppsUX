@@ -1,12 +1,15 @@
-import type { IHttpClient } from '../httpClient';
+import type { ITemplateService } from '../template';
 
-export interface TemplateServiceOptions {
-  baseUrl: string;
-  appId?: string;
-  httpClient: IHttpClient;
-  apiVersions: {
-    subscription: string;
-    gateway: string;
-  };
+export interface BaseTemplateServiceOptions {
   openBladeAfterCreate: (workflowName: string) => void;
+}
+
+export class BaseTemplateService implements ITemplateService {
+  constructor(readonly options: BaseTemplateServiceOptions) {}
+
+  dispose(): void {
+    return;
+  }
+
+  public openBladeAfterCreate = (workflowName: string): void => this.options.openBladeAfterCreate(workflowName);
 }
