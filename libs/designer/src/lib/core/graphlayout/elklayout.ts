@@ -165,20 +165,41 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
     };
   }
   const children = node.children?.map(convertWorkflowGraphToElkGraph);
+  const allChildrenIds = children?.map((child) => child.id) ?? [];
+
   return {
     id: node.id,
     height: node.height,
     width: node.width,
     children,
     edges:
-      node.edges?.map((edge) => ({
-        id: edge.id,
-        sources: [edge.source],
-        targets: [edge.target],
-        layoutOptions: {
-          edgeType: edge?.type ?? defaultEdgeType,
-        },
-      })) ?? [],
+      node.edges?.map((_edge) => {
+        const edge = { ..._edge };
+        // Check for mis-cased runafter values, legacy designer allowed this
+        if (edge.target && !allChildrenIds.includes(edge.target)) {
+          // if the edge target is not a child, check for a node with the same id different case
+          const alternativeIdCasing = allChildrenIds.find((childId) => childId.toLowerCase() === edge.target.toLowerCase());
+          if (alternativeIdCasing) {
+            edge.target = alternativeIdCasing;
+          }
+        }
+        if (edge.source && !allChildrenIds.includes(edge.source)) {
+          // if the edge source is not a child, check for a node with the same id different case
+          const alternativeIdCasing = allChildrenIds?.find((childId) => childId.toLowerCase() === edge.source.toLowerCase());
+          if (alternativeIdCasing) {
+            edge.source = alternativeIdCasing;
+          }
+        }
+
+        return {
+          id: edge.id,
+          sources: [edge.source],
+          targets: [edge.target],
+          layoutOptions: {
+            edgeType: edge?.type ?? defaultEdgeType,
+          },
+        };
+      }) ?? [],
     layoutOptions: {
       'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
@@ -233,6 +254,16 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
             traceId: traceId,
           });
           LoggerService().endTrace(traceId, { status: Status.Failure });
+          setReactFlowNodes([
+            {
+              id: 'flowErrorNode',
+              position: { x: 0, y: 0 },
+              data: { error: err },
+              type: WORKFLOW_NODE_TYPES.FLOW_ERROR_NODE,
+            },
+          ]);
+          setReactFlowEdges([]);
+          setReactFlowSize([0, 0]);
         });
     },
     [readOnly, workflowGraph],
