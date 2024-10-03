@@ -198,19 +198,10 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
   // Define the path to the template
   const templateFolderName = 'UnitTestTemplates';
   const csTemplateFileName = 'TestClassFile';
-  //apps/vs-code-designer/dist/assets/UnitTestTemplates/TestClassFile
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
-
-  // Read the template content
   const templateContent = await fs.readFile(templatePath, 'utf-8');
-
-  // Replace placeholders with actual values
   const csContent = templateContent.replace(/<%= unitTestName %>/g, unitTestName).replace(/<%= workflowName %>/g, workflowName);
-
-  // Path to the .cs file
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
-
-  // Write the .cs file
   await fs.writeFile(csFilePath, csContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
