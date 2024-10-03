@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
+import { executeCommandWithSanityLogging } from '../../../utils/funcCoreTools/cpUtils';
 import { localize } from '../../../../localize';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../extensionVariables';
@@ -44,14 +44,18 @@ export const connectToSMB = async (context: IActionContext, node: SlotTreeItem, 
 
 const mountSMB = async (hostName: string, fileSharePath: string, userName: string, password: string, mountDrive: string) => {
   let mountCommand: string;
+  let sanitizedCommandForLogging: string;
   if (process.platform === Platform.windows) {
     mountCommand = `net use ${mountDrive} \\\\${hostName}\\${fileSharePath} ${password} /user:${userName}`;
+    sanitizedCommandForLogging = `net use ${mountDrive} \\\\${hostName}\\${fileSharePath} /user:${userName}`;
   } else if (process.platform === Platform.mac) {
     mountCommand = `open smb://${userName}:${password}@${hostName}/${fileSharePath}`;
+    sanitizedCommandForLogging = `open smb://${userName}@${hostName}/${fileSharePath}`;
   } else {
     mountCommand = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},password=${password},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
+    sanitizedCommandForLogging = `mount -t cifs //${hostName}/${fileSharePath} /mnt/test -o username=${userName},dir_mode=0777,file_mode=0777,serverino,nosharesock,actimeo=30`;
   }
-  await executeCommand(undefined, undefined, mountCommand);
+  await executeCommandWithSanityLogging(undefined, undefined, sanitizedCommandForLogging, mountCommand);
 };
 
 const uploadFiles = async (files: File[], smbFolderPath: string) => {
