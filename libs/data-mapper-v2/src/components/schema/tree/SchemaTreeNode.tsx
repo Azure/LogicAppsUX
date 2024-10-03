@@ -128,10 +128,8 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
           handleStyles.wrapper,
           handle.className,
           isRepeatingNode ? handleStyles.repeating : '',
-          isRepeatingConnection ? handleStyles.repeatingConnection : '',
           isConnected ? handleStyles.connected : '',
           isSelected || isHover ? handleStyles.selected : '',
-          (isSelected || isHover) && isRepeatingNode ? handleStyles.repeatingAndActiveNode : '',
           (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
         )}
         position={handle.position}
@@ -159,10 +157,8 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handle.type,
       handleStyles.wrapper,
       handleStyles.repeating,
-      handleStyles.repeatingConnection,
       handleStyles.connected,
       handleStyles.selected,
-      handleStyles.repeatingAndActiveNode,
       handleStyles.connectedAndSelected,
       handleStyles.repeatingIcon,
       handleStyles.repeatingConnectionIcon,

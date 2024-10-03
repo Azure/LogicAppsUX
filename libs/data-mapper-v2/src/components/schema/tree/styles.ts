@@ -101,18 +101,13 @@ export const useHandleStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  repeatingAndActiveNode: {
-    height: '16px',
-    width: '16px',
-  },
-  repeatingConnection: {
     height: '16px',
     width: '16px',
   },
   repeatingIcon: {
-    fontSize: '10px',
+    fontSize: '12px',
     pointerEvents: 'none',
+    color: '#ddd',
   },
   repeatingConnectionIcon: {
     color: 'white',
