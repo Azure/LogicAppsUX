@@ -11,15 +11,16 @@ import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
-    const hasValidName = await ContainerAppNameStep.isNameAvailable(context, context.resourceGroup.name, context.newSiteName);
+    const nameAvailabiltyValidationError = await this.validateNameAvailable(context, context.newSiteName);
+    const nameValidationError = ContainerAppNameStep.validateInput(context.newSiteName);
 
-    if (hasValidName) {
+    if (!nameAvailabiltyValidationError && !nameValidationError) {
       return;
     }
 
     const prompt: string = localize(
       'newLogicAppName',
-      'Enter a new logic app name, the logic app "{0}" already exists in resource group "{1}".',
+      `Enter a new logic app name, ${nameAvailabiltyValidationError ?? nameValidationError}.`,
       context.newSiteName,
       context.resourceGroup.name
     );
@@ -47,7 +48,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
         `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`
       );
     }
-    if (name.length < minLength || name.length > maxLength) {
+    if (name.length < minLength || name.length >= maxLength) {
       return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
     }
 

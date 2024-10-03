@@ -11,7 +11,6 @@ import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAp
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
-import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { createActivityContext } from '../../utils/activityUtils';
 import { createWebSiteClient } from '../../utils/azureClients';
@@ -129,7 +128,6 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
-    promptSteps.push(new CustomLocationStorageAccountStep());
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,
