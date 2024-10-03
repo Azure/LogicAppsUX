@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.101.1](https://github.com/Azure/LogicAppsUX/compare/v4.101.0...v4.101.1) (2024-10-03)
+
+
+### Bug Fixes
+
+* **Templates:** Temporary Removal of Multi Workflow Tab ([#5802](https://github.com/Azure/LogicAppsUX/issues/5802)) ([63125cb](https://github.com/Azure/LogicAppsUX/commit/63125cb32e4389ed7a82fc903d81460d741b97a6))
+
 ## [4.101.0](https://github.com/Azure/LogicAppsUX/compare/v4.100.0...v4.101.0) (2024-10-01)
 
 
