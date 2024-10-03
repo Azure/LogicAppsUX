@@ -97,25 +97,27 @@ export const useHandleStyles = makeStyles({
   connectedAndSelected: {
     backgroundColor: colors.handleActive,
   },
-  repeatingNode: {
-    height: '16px',
-    width: '16px',
+  repeating: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  repeatingAndActiveNode: {
+    height: '16px',
+    width: '16px',
+  },
   repeatingConnection: {
     height: '16px',
     width: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  repeatingIcon: {
+    fontSize: '10px',
   },
   repeatingConnectionIcon: {
     color: 'white',
     fontSize: '12px',
   },
-  repeatingNodeIcon: {
+  repeatingAndActiveNodeIcon: {
     color: colors.handleActive,
     fontSize: '12px',
   },
