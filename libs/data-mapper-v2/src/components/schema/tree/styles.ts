@@ -112,6 +112,7 @@ export const useHandleStyles = makeStyles({
   },
   repeatingIcon: {
     fontSize: '10px',
+    pointerEvents: 'none',
   },
   repeatingConnectionIcon: {
     color: 'white',
