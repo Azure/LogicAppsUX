@@ -27,6 +27,8 @@ import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
 export async function createUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | undefined, runId?: string): Promise<void> {
+  const validatedRunId = await extractAndValidateRunId(runId);
+
   let workflowNode: vscode.Uri;
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
@@ -46,8 +48,7 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
       validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
     });
 
-    // Generate codeful unit test
-    await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, runId);
+    await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, validatedRunId);
   } else {
     vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
@@ -70,21 +71,18 @@ async function generateCodefulUnitTest(
   runId?: string
 ): Promise<void> {
   try {
-    // Ensure runId is available
     if (!runId) {
       throw new Error(localize('runIdMissing', 'Run ID is required to generate a codeful unit test.'));
     }
-    // Check if the workflow runtime port is set
+
     if (isNullOrUndefined(ext.workflowRuntimePort)) {
       throw new Error(
         localize('workflowRuntimeNotRunning', 'The workflow runtime is not running. Please start the workflow runtime and try again.')
       );
     }
 
-    // Base URL with dynamic port from ext.workflowRuntimePort
     const baseUrl = `http://localhost:${ext.workflowRuntimePort}`;
 
-    // Hardcoded route path except for workflowName and runId
     const apiUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/workflows/${encodeURIComponent(
       workflowName
     )}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
@@ -123,38 +121,21 @@ async function generateCodefulUnitTest(
 
     const testsDirectoryUri = getTestsDirectory(projectPath);
     const testsDirectory = testsDirectoryUri.fsPath;
-
     const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
-
-    // Path to the logic app folder under Tests
     const logicAppFolderPath = path.join(testsDirectory, logicAppName);
-
-    // Ensure the logic app folder exists
     await fs.ensureDir(logicAppFolderPath);
-
-    // Path to the workflow folder under the logic app folder
     const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
-
-    // Ensure the workflow folder exists
     await fs.ensureDir(workflowFolderPath);
-
-    // Path to the unit test folder (e.g., Test1Folder)
     const unitTestFolderPath = path.join(workflowFolderPath, unitTestName);
-
-    // Ensure the unit test folder exists
     await fs.ensureDir(unitTestFolderPath);
 
-    // Path to the .csproj file at the logic app folder level
     const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
 
     // Unzip the response into the unit test folder (Mock.json)
     ext.outputChannel.appendLog(localize('unzippingFiles', 'Unzipping Mock.json into: {0}', unitTestFolderPath));
-
     await unzipLogicAppArtifacts(zipBuffer, unitTestFolderPath);
 
     ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
-
-    // Create the .cs file under the unit test folder
     await createCsFile(unitTestFolderPath, unitTestName, workflowName);
 
     // Generate the .csproj file if it doesn't exist
@@ -195,18 +176,12 @@ async function generateCodefulUnitTest(
  * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
  */
 async function createCsprojFile(csprojFilePath: string, logicAppName: string): Promise<void> {
-  // Define the path to the template
   const templateFolderName = 'UnitTestTemplates';
   const csprojTemplateFileName = 'TestProjectFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
 
-  // Read the template content
   const templateContent = await fs.readFile(templatePath, 'utf-8');
-
-  // Replace placeholders with actual values
   const csprojContent = templateContent.replace(/<%= logicAppName %>/g, logicAppName);
-
-  // Write the .csproj file
   await fs.writeFile(csprojFilePath, csprojContent);
 
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
@@ -239,6 +214,40 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
   await fs.writeFile(csFilePath, csContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
+}
+
+/**
+ * Validates and extracts the runId from a given input.
+ * Ensures the runId format is correct and extracts it from a path if needed.
+ * @param {string | undefined} runId - The input runId to validate and extract.
+ * @returns {Promise<string>} - A Promise that resolves to the validated and extracted runId.
+ */
+async function extractAndValidateRunId(runId?: string): Promise<string> {
+  if (!runId) {
+    throw new Error(localize('runIdMissing', 'Run ID is required to generate a codeful unit test.'));
+  }
+
+  // Regular expression to extract the runId from a path
+  const runIdRegex = /\/workflows\/[^/]+\/runs\/(.+)$/;
+  const match = runId.match(runIdRegex);
+  const extractedRunId = match ? match[1].trim() : runId.trim();
+
+  // Validate the extracted runId
+  await validateRunId(extractedRunId);
+  return extractedRunId;
+}
+
+/**
+ * Validates the format of the runId.
+ * Ensures that the runId consists of only uppercase letters and numbers.
+ * @param {string} runId - The runId to validate.
+ * @throws {Error} - Throws an error if the runId format is invalid.
+ */
+async function validateRunId(runId: string): Promise<void> {
+  const runIdFormat = /^[A-Z0-9]+$/;
+  if (!runIdFormat.test(runId)) {
+    throw new Error(localize('invalidRunIdFormat', 'Invalid runId format.'));
+  }
 }
 
 /**
