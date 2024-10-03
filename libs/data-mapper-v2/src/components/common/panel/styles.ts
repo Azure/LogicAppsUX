@@ -12,6 +12,9 @@ export const useStyles = makeStyles({
     paddingTop: '15px',
     width: '100%',
   },
+  title: {
+    fontWeight: '600',
+  },
   titleIcon: {
     display: 'inline-block',
     verticalAlign: 'text-bottom',
