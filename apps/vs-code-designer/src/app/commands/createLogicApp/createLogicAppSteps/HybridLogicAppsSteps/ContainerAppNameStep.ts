@@ -11,15 +11,16 @@ import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
-    const validationError = await ContainerAppNameStep.validateName(context, context.newSiteName);
+    const nameAvailabiltyValidationError = await this.validateNameAvailable(context, context.newSiteName);
+    const nameValidationError = ContainerAppNameStep.validateInput(context.newSiteName);
 
-    if (!validationError) {
+    if (!nameAvailabiltyValidationError && !nameValidationError) {
       return;
     }
 
     const prompt: string = localize(
       'newLogicAppName',
-      `Enter a new logic app name, ${validationError}`,
+      `Enter a new logic app name, ${nameAvailabiltyValidationError ?? nameValidationError}.`,
       context.newSiteName,
       context.resourceGroup.name
     );
@@ -27,7 +28,8 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
     context.newSiteName = (
       await context.ui.showInputBox({
         prompt,
-        asyncValidationTask: (name: string) => ContainerAppNameStep.validateName(context, name),
+        validateInput: ContainerAppNameStep.validateInput,
+        asyncValidationTask: (name: string) => this.validateNameAvailable(context, name),
       })
     ).trim();
   }
@@ -53,13 +55,12 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
     return undefined;
   }
 
-  public static async validateName(context: ILogicAppWizardContext, name: string): Promise<string | undefined> {
+  private async validateNameAvailable(context: ILogicAppWizardContext, name: string): Promise<string | undefined> {
     const resourceGroupName: string = context.resourceGroup.name;
     if (!(await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name))) {
       return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
     }
-
-    return ContainerAppNameStep.validateInput(name);
+    return undefined;
   }
 
   public static async isNameAvailable(
