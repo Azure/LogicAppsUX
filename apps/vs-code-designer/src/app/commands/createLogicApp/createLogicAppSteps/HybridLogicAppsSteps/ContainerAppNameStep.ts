@@ -11,15 +11,15 @@ import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
-    const hasValidName = await ContainerAppNameStep.isNameAvailable(context, context.resourceGroup.name, context.newSiteName);
+    const validationError = await ContainerAppNameStep.validateName(context, context.newSiteName);
 
-    if (hasValidName) {
+    if (!validationError) {
       return;
     }
 
     const prompt: string = localize(
       'newLogicAppName',
-      'Enter a new logic app name, the logic app "{0}" already exists in resource group "{1}".',
+      `Enter a new logic app name, ${validationError}`,
       context.newSiteName,
       context.resourceGroup.name
     );
@@ -27,8 +27,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
     context.newSiteName = (
       await context.ui.showInputBox({
         prompt,
-        validateInput: ContainerAppNameStep.validateInput,
-        asyncValidationTask: (name: string) => this.validateNameAvailable(context, name),
+        asyncValidationTask: (name: string) => ContainerAppNameStep.validateName(context, name),
       })
     ).trim();
   }
@@ -47,19 +46,20 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
         `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`
       );
     }
-    if (name.length < minLength || name.length > maxLength) {
+    if (name.length < minLength || name.length >= maxLength) {
       return localize('invalidLength', 'The name must be between {0} and {1} characters.', minLength, maxLength);
     }
 
     return undefined;
   }
 
-  private async validateNameAvailable(context: ILogicAppWizardContext, name: string): Promise<string | undefined> {
+  public static async validateName(context: ILogicAppWizardContext, name: string): Promise<string | undefined> {
     const resourceGroupName: string = context.resourceGroup.name;
     if (!(await ContainerAppNameStep.isNameAvailable(context, resourceGroupName, name))) {
       return localize('containerAppExists', 'The container app "{0}" already exists in resource group "{1}".', name, resourceGroupName);
     }
-    return undefined;
+
+    return ContainerAppNameStep.validateInput(name);
   }
 
   public static async isNameAvailable(
