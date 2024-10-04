@@ -180,6 +180,7 @@ export const MultiWorkflowBasics = () => {
       case '$name':
         return (
           <TextField
+            className="msla-templates-basics-name"
             value={item.name}
             onChange={(_event, newValue) => handleWorkflowNameChange(item, newValue)}
             onBlur={() => handleWorkflowNameBlur(item)}
@@ -190,6 +191,7 @@ export const MultiWorkflowBasics = () => {
       case '$kind':
         return (
           <Dropdown
+            className="msla-templates-basics-state"
             disabled={item.allowedKinds.length === 1}
             options={item.allowedKinds}
             selectedKey={item.kind}
@@ -215,6 +217,7 @@ export const MultiWorkflowBasics = () => {
       </div>
       <DetailsList
         setKey="id"
+        className="msla-templates-basics-list"
         items={workflowsList()}
         columns={columns()}
         compact={true}
