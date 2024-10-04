@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { connectionsTab } from './tabs/connectionsTab';
 import { parametersTab } from './tabs/parametersTab';
-import { nameStateTab } from './tabs/nameStateTab';
+import { basicsTab } from './tabs/basicsTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
@@ -133,7 +133,7 @@ export const useCreateWorkflowPanelTabs = ({
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...nameStateTab(intl, dispatch, !isMultiWorkflowTemplate, {
+      ...basicsTab(intl, dispatch, !isMultiWorkflowTemplate, {
         nextTabId: connectionsExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
           : parametersExist

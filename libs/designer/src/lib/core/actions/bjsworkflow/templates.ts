@@ -28,8 +28,8 @@ import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerCo
 
 export interface WorkflowTemplateData {
   id: string;
-  workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
-  manifest: Template.Manifest | undefined;
+  workflowDefinition: LogicAppsV2.WorkflowDefinition;
+  manifest: Template.Manifest;
   workflowName: string | undefined;
   kind: string | undefined;
   images?: Record<string, string>;
