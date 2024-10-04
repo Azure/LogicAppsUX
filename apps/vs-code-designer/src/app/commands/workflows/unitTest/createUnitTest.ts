@@ -48,9 +48,13 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
       validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
     });
 
+    ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
+
     await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, validatedRunId);
   } else {
-    vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
+    const message = localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.');
+    vscode.window.showInformationMessage(message);
+    ext.outputChannel.appendLog(message);
   }
 }
 
@@ -165,7 +169,9 @@ async function generateCodefulUnitTest(
     } else {
       errorMessage = String(error);
     }
-    vscode.window.showErrorMessage(localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage));
+    const errorDisplayMessage = localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage);
+    vscode.window.showErrorMessage(errorDisplayMessage);
+    ext.outputChannel.appendLog(errorDisplayMessage);
   }
 }
 
