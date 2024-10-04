@@ -5,7 +5,9 @@ import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserial
 import { getConnection } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
+import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
@@ -33,6 +35,7 @@ import {
   equals,
   ConnectionReferenceKeyFormat,
   getRecordEntry,
+  UserPreferenceService,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -54,12 +57,35 @@ export interface UpdateConnectionPayload {
   connectionRuntimeUrl?: string;
 }
 
+export const updateTemplateConnection = createAsyncThunk(
+  'updateTemplateConnection',
+  async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
+    const { nodeId, connector, connection, connectionProperties, authentication } = payload;
+    const workflows = (getState() as TemplateRootState).template.workflows;
+    const defaultWorkflow = Object.values(workflows).length > 0 ? Object.values(workflows)[0] : undefined;
+    dispatch(
+      changeTemplateConnectionMapping({
+        nodeId,
+        connectorId: connector.id,
+        connectionId: connection.id,
+        authentication: authentication ?? getApiHubAuthenticationIfRequired(),
+        connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
+        connectionRuntimeUrl: isOpenApiSchemaVersion(defaultWorkflow?.workflowDefinition)
+          ? connection.properties.connectionRuntimeUrl
+          : undefined,
+      })
+    );
+  }
+);
+
 export const updateNodeConnection = createAsyncThunk(
   'updateNodeConnection',
   async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
     const { nodeId, connector, connection, connectionProperties, authentication } = payload;
 
     dispatch(updateErrorDetails({ id: nodeId, clear: true }));
+
+    UserPreferenceService()?.setMostRecentlyUsedConnectionId(connector.id, connection.id);
     return updateNodeConnectionAndProperties(
       {
         nodeId,

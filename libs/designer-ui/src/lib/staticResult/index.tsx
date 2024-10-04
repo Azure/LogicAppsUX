@@ -2,7 +2,7 @@ import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
-import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
+import { css, DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
 import type { OpenApiSchema, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -22,13 +22,13 @@ export const StaticResultOption = {
 } as const;
 export type StaticResultOption = (typeof StaticResultOption)[keyof typeof StaticResultOption];
 
-export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
+export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject | null, staticResultOption: StaticResultOption) => void;
 
 export interface StaticResultContainerProps {
   enabled?: boolean;
   staticResultSchema: OpenAPIV2.SchemaObject;
   properties: OpenAPIV2.SchemaObject;
-  savePropertiesCallback?: StaticResultChangeHandler;
+  savePropertiesCallback: StaticResultChangeHandler;
   cancelPropertiesCallback?: () => void;
 }
 
@@ -77,16 +77,16 @@ export const StaticResultContainer = ({
     } else if (serializedValue['status'] === constants.STATUS.FAILED && !(serializedValue['error'] && serializedValue['error']['code'])) {
       setErrorMessage(
         intl.formatMessage({
-          defaultMessage: 'The Error and its code is required when status is "Failed"',
-          id: 'HGA9iU',
+          defaultMessage: 'The error and its code are required when status is "Failed"',
+          id: 'l8lP1X',
           description: 'Error message for when status is failed and error and error code are not provided',
         })
       );
     } else if (serializedValue['status'] === constants.STATUS.FAILED && serializedValue['outputs']) {
       setErrorMessage(
         intl.formatMessage({
-          defaultMessage: 'Ouputs should not be provided when status is "Failed"',
-          id: 'LPdGu/',
+          defaultMessage: 'Outputs should not be provided when status is "Failed"',
+          id: 'SbCUKw',
           description: 'Error message for when status is failed and outputs are provided',
         })
       );
@@ -96,14 +96,14 @@ export const StaticResultContainer = ({
   }, [intl, properties, propertyValues, staticResultSchema]);
 
   const toggleLabelOn = intl.formatMessage({
-    defaultMessage: 'Disable Static Result',
-    id: 'Yw7Nfl',
+    defaultMessage: 'Disable static result',
+    id: '7fZkLA',
     description: 'Label for toggle to disable static result',
   });
 
   const toggleLabelOff = intl.formatMessage({
-    defaultMessage: 'Enable Static Result',
-    id: 'OdoUEu',
+    defaultMessage: 'Enable static result',
+    id: 'chEskq',
     description: 'Label for toggle to enable static result',
   });
 
@@ -125,8 +125,20 @@ export const StaticResultContainer = ({
     description: 'Label for cancel button',
   });
 
+  const removeStaticResultLabel = intl.formatMessage({
+    defaultMessage: 'Delete',
+    id: 'F/13eU',
+    description: 'Label for button to delete static result',
+  });
+
+  const removeStaticResultDescription = intl.formatMessage({
+    defaultMessage: 'Delete the static result configuration',
+    id: 'Wvnl/V',
+    description: 'Label for button to delete static result',
+  });
+
   const saveStaticResults = () => {
-    savePropertiesCallback?.(
+    savePropertiesCallback(
       serializePropertyValues(propertyValues, staticResultSchema),
       showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED
     );
@@ -194,6 +206,17 @@ export const StaticResultContainer = ({
           onClick={cancelStaticResults}
           styles={actionButtonStyles}
         />
+        {Object.keys(initialPropertyValues).length === 0 ? null : (
+          <DefaultButton
+            title={removeStaticResultDescription}
+            className={css('msla-static-result-action-button', 'delete')}
+            text={removeStaticResultLabel}
+            styles={actionButtonStyles}
+            onClick={() => {
+              savePropertiesCallback(null, StaticResultOption.DISABLED);
+            }}
+          />
+        )}
       </div>
     </div>
   );

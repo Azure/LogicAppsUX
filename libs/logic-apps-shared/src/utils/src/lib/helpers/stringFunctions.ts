@@ -34,7 +34,7 @@ export const escapeString = (s: string): string => {
   return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
 };
 
-export const isStringNonPrimitive = (s: string): boolean => {
+export const canStringBeConverted = (s: string): boolean => {
   if (typeof s !== 'string' || s.trim() === '') {
     return false;
   }
@@ -44,7 +44,16 @@ export const isStringNonPrimitive = (s: string): boolean => {
   if (!Number.isNaN(Number(s))) {
     return true;
   }
-  return false;
+  try {
+    const parsed = JSON.parse(s);
+    return Array.isArray(parsed);
+  } catch (e) {
+    return false;
+  }
 };
 
 export const createIdCopy = (id: string) => `${id}-copy`;
+
+export const cleanResourceId = (resourceId?: string): string => {
+  return resourceId?.startsWith('/') ? resourceId : `/${resourceId}`;
+};

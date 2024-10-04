@@ -1,29 +1,34 @@
-import { Tree, TreeItem, TreeItemLayout, Text } from '@fluentui/react-components';
+import { Tree, TreeItem, TreeItemLayout, Text, mergeClasses } from '@fluentui/react-components';
 import { SearchBox } from '@fluentui/react';
 import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
-import type { IFileSysTreeItem } from 'models/Tree';
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import useStyles from './styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
+import { DataMapperFileService } from '../../core';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../core/state/Store';
 
 interface DropdownTreeProps {
-  items: IFileSysTreeItem[];
   onItemSelect: (item: IFileSysTreeItem) => void;
-  onDropdownOpenClose: () => void;
+  className?: string;
 }
 
-export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: DropdownTreeProps) => {
+export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+
+  const fileService = DataMapperFileService();
 
   const intl = useIntl();
   const styles = useStyles();
 
   useEffect(() => {
     // update items when the tree is closed and reopened
-    onDropdownOpenClose();
-  }, [showDropdownTree, onDropdownOpenClose]);
+    fileService.readCurrentSchemaOptions();
+  }, [showDropdownTree, fileService]);
 
   const selectSchema = intl.formatMessage({
     defaultMessage: 'Select schema',
@@ -40,7 +45,6 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: Dropd
   const onFileNameSelect = (item: IFileSysTreeItem) => {
     onItemSelect(item);
     setShowDropdownTree(false);
-    console.log(item.name);
   };
 
   const filterDropdownItem = useCallback((item: IFileSysTreeItem, value: string): IFileSysTreeItem | undefined => {
@@ -66,8 +70,9 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: Dropd
   }, []);
 
   const filteredItems = useMemo(
-    () => items.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
-    [items, searchValue, filterDropdownItem]
+    () =>
+      availableSchemaList.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
+    [availableSchemaList, searchValue, filterDropdownItem]
   );
 
   const displayTree = (item: IFileSysTreeItem): JSX.Element => {
@@ -92,7 +97,7 @@ export const DropdownTree = ({ items, onItemSelect, onDropdownOpenClose }: Dropd
   };
 
   return (
-    <div className={styles.componentWrapper}>
+    <div className={mergeClasses(styles.componentWrapper, className ?? '')}>
       <div
         className={styles.dropdownInputWrapper}
         onClick={() => {

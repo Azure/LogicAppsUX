@@ -12,6 +12,7 @@ import {
   isServiceProviderOperation,
   getRecordEntry,
   type Connector,
+  TenantService,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -19,19 +20,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { ConnectionsStoreState } from './connectionSlice';
 
-export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
-  const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
-  return { data: data?.connector, ...rest };
-};
-
-export const useConnectorAndSwagger = (connectorId: string | undefined, enabled = true) => {
-  return useQuery(
-    ['apiWithSwaggers', { connectorId }],
+export const useConnector = (connectorId?: string, enabled = true): UseQueryResult<Connector | undefined, unknown> =>
+  useQuery(
+    ['connector', { connectorId: connectorId?.toLowerCase() }],
     async () => {
       if (!connectorId) {
         return null;
       }
-      return await ConnectionService().getConnectorAndSwagger(connectorId);
+      return ConnectionService().getConnector(connectorId);
     },
     {
       enabled: !!connectorId && enabled,
@@ -41,21 +37,44 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
       refetchOnReconnect: false,
     }
   );
-};
 
-export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> => {
-  return useQuery(
-    ['gateways', { subscriptionId }, { connectorName }],
-    async () => GatewayService().getGateways(subscriptionId, connectorName),
+export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> =>
+  useQuery(
+    ['connectors', connectorIds],
+    async () => {
+      if (!connectorIds) {
+        return null;
+      }
+      return await Promise.all(connectorIds.map(async (connectorId) => [connectorId, await ConnectionService().getConnector(connectorId)]));
+    },
     {
-      enabled: !!connectorName,
+      enabled: !!connectorIds,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
   );
-};
+
+export const useSwagger = (connectorId?: string, enabled = true) =>
+  useQuery(['swagger', { connectorId }], async () => ConnectionService().getSwaggerFromConnector(connectorId ?? ''), {
+    enabled: !!connectorId && enabled,
+    cacheTime: 1000 * 60 * 60 * 24,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> =>
+  useQuery(['gateways', { subscriptionId }, { connectorName }], async () => GatewayService().getGateways(subscriptionId, connectorName), {
+    enabled: !!connectorName,
+  });
 
 export const useSubscriptions = () => useQuery(['subscriptions'], async () => GatewayService().getSubscriptions());
 
 export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getConfig?.() ?? {}, []);
+
+export const useTenants = () => useQuery(['tenants'], async () => TenantService().getTenants?.());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;

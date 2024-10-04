@@ -1,7 +1,7 @@
-import { getWindowDimensions, TokenPickerMode } from '..';
+import { TokenPickerMode } from '..';
 import type { ValueSegment } from '../../editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
-import type { TokenGroup } from '../models/token';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
 import type { GetValueSegmentHandler } from './tokenpickeroption';
@@ -11,7 +11,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 
 export interface TokenPickerBaseProps {
-  selectedKey: TokenPickerMode;
+  selectedMode: TokenPickerMode;
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
@@ -28,13 +28,11 @@ interface TokenPickerSectionProps extends TokenPickerBaseProps {
 }
 
 export const TokenPickerSection = ({
-  selectedKey,
+  selectedMode,
   tokenGroup,
   expressionGroup,
   searchQuery,
-  fullScreen,
   noDynamicContent,
-  expressionEditorCurrentHeight,
   ...tokenPickerBaseProps
 }: TokenPickerSectionProps): JSX.Element => {
   const [dynamicTokenLength, setDynamicTokenLength] = useState(new Array<number>(tokenGroup.length));
@@ -42,38 +40,20 @@ export const TokenPickerSection = ({
   const [noItems, setNoItems] = useState(false);
 
   useEffect(() => {
-    if (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN) {
+    if (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN) {
       setNoItems(dynamicTokenLength.reduce((sum, a) => sum + a, 0) === 0);
     } else {
       setNoItems(expressionTokenLength.reduce((sum, a) => sum + a, 0) === 0);
     }
-  }, [dynamicTokenLength, expressionTokenLength, searchQuery, selectedKey]);
-
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [dynamicTokenLength, expressionTokenLength, searchQuery, selectedMode]);
 
   return (
-    <div
-      className="msla-token-picker-sections"
-      style={{
-        maxHeight: fullScreen
-          ? windowDimensions.height - (expressionEditorCurrentHeight + 287)
-          : Math.min(windowDimensions.height - (expressionEditorCurrentHeight + 197), 540),
-      }}
-    >
+    <div className="msla-token-picker-sections">
       {searchQuery && noItems ? <TokenPickerNoMatches /> : null}
-      {noDynamicContent && (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN) ? (
+      {noDynamicContent && (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN) ? (
         <TokenPickerNoDynamicContent />
       ) : (
-        (selectedKey === TokenPickerMode.TOKEN_EXPRESSION || selectedKey === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map(
+        (selectedMode === TokenPickerMode.TOKEN_EXPRESSION || selectedMode === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map(
           (section, i) => {
             if (section.tokens.length > 0) {
               return (
@@ -81,8 +61,8 @@ export const TokenPickerSection = ({
                   <TokenPickerOptions
                     section={section}
                     index={i}
-                    setTokenLength={selectedKey === TokenPickerMode.EXPRESSION ? setExpressionTokenLength : setDynamicTokenLength}
-                    selectedKey={selectedKey}
+                    setTokenLength={selectedMode === TokenPickerMode.EXPRESSION ? setExpressionTokenLength : setDynamicTokenLength}
+                    selectedMode={selectedMode}
                     searchQuery={searchQuery}
                     {...tokenPickerBaseProps}
                   />

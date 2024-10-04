@@ -8,11 +8,12 @@ import mkcert from 'vite-plugin-mkcert';
 // https://vitejs.dev/config/
 export default defineConfig({
   root: './src',
+  base: './',
   resolve: {
     alias: [
       {
-        find: '~reactflow',
-        replacement: 'reactflow',
+        find: '~@xyflow/react',
+        replacement: '@xyflow/react',
       },
     ],
   },

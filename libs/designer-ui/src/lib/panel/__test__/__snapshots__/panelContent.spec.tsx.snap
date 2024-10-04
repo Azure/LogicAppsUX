@@ -12,11 +12,12 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
       onTabSelect={[Function]}
       style={
         {
-          "margin": "0px -12px",
+          "margin": "5px 5px 0px 5px",
         }
       }
     >
       <OverflowMenu
+        onTabSelect={[MockFunction spy]}
         tabs={[]}
       />
     </TabList>

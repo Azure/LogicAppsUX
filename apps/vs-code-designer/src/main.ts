@@ -15,6 +15,7 @@ import { extensionCommand, logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
 import { startOnboarding } from './onboarding';
 import { registerAppServiceExtensionVariables } from '@microsoft/vscode-azext-azureappservice';
+import { verifyLocalConnectionKeys } from './app/utils/appSettings/connectionKeys';
 import {
   callWithTelemetryAndErrorHandling,
   createAzExtOutputChannel,
@@ -46,7 +47,6 @@ export async function activate(context: vscode.ExtensionContext) {
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
-
   registerUIExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
 
@@ -56,11 +56,21 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
-    await downloadExtensionBundle(activateContext);
-    promptParameterizeConnections(activateContext);
+    try {
+      await downloadExtensionBundle(activateContext);
+    } catch (error) {
+      // log the error message to telemetry.
+      const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
+      activateContext.telemetry.properties.errorMessage = errorMessage;
+    }
+    promptParameterizeConnections(activateContext, true);
+    verifyLocalConnectionKeys(activateContext, true);
     await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
+    ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+    ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+
     ext.rgApi = await getResourceGroupsApi();
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;

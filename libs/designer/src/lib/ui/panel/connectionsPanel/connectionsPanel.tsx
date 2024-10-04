@@ -1,5 +1,5 @@
 import { XLargeText } from '@microsoft/designer-ui';
-import { useSelectedNodeId } from '../../../core';
+import { useOperationPanelSelectedNodeId } from '../../../core';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
 import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
@@ -18,7 +18,7 @@ const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const ConnectionPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
-  const selectedNodeId = useSelectedNodeId();
+  const selectedNodeId = useOperationPanelSelectedNodeId();
   const connector = useConnectorByNodeId(selectedNodeId);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
@@ -46,14 +46,19 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     description: 'Header for the connections panel',
   });
   const selectConnectionPanelHeader = intl.formatMessage({
-    defaultMessage: 'Change Connection',
-    id: 'cZXqqf',
+    defaultMessage: 'Change connection',
+    id: 'eb91v1',
     description: 'Header for the change connection panel',
   });
   const createConnectionPanelHeader = intl.formatMessage({
-    defaultMessage: 'Create Connection',
-    id: 'NdOhXD',
+    defaultMessage: 'Create connection',
+    id: 'NHqCeQ',
     description: 'Header for the create connection panel',
+  });
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    id: 'uzj2d3',
+    description: 'Aria label for the close button in the connections panel',
   });
 
   const panelHeaderText = useMemo(() => {
@@ -82,7 +87,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     <>
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
-        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
     </>

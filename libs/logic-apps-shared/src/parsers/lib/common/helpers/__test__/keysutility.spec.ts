@@ -1,25 +1,27 @@
+import { OutputSource } from '../../constants';
 import * as ParameterKeyUtility from '../keysutility';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { Segment, isBodySegment } from '../keysutility';
 describe('Parameter Key Utility Tests', () => {
   describe('isAncestorKey', () => {
     it('should return correct result different cases', () => {
-      expect(ParameterKeyUtility.isAncestorKey('body.$.attachements.[*].test', 'body.$.attachements')).toBeTruthy();
-      expect(ParameterKeyUtility.isAncestorKey('body.$.attachements.[*].any.[*].test', 'body.$.attachements')).toBeTruthy();
-      expect(ParameterKeyUtility.isAncestorKey('body.$.attachements123', 'body.$.attachements')).toBeFalsy();
-      expect(ParameterKeyUtility.isAncestorKey('body.$.attachement.[*].test', 'body.$.attachements')).toBeFalsy();
-      expect(ParameterKeyUtility.isAncestorKey('body.$.attachement.[*].test', undefined)).toBeFalsy();
+      expect(ParameterKeyUtility.isAncestorKey('body.$.attachments.[*].test', 'body.$.attachments')).toBeTruthy();
+      expect(ParameterKeyUtility.isAncestorKey('body.$.attachments.[*].any.[*].test', 'body.$.attachments')).toBeTruthy();
+      expect(ParameterKeyUtility.isAncestorKey('body.$.attachments123', 'body.$.attachments')).toBeFalsy();
+      expect(ParameterKeyUtility.isAncestorKey('body.$.attachment.[*].test', 'body.$.attachments')).toBeFalsy();
+      expect(ParameterKeyUtility.isAncestorKey('body.$.attachment.[*].test', undefined)).toBeFalsy();
     });
   });
 
   describe('isChildKey', () => {
     it('should return correct result different cases', () => {
-      expect(ParameterKeyUtility.isChildKey('body.$.attachements', 'body.$.attachements.[*]')).toBeTruthy();
-      expect(ParameterKeyUtility.isChildKey('body.$.attachements.[*]', 'body.$.attachements.[*].test')).toBeTruthy();
+      expect(ParameterKeyUtility.isChildKey('body.$.attachments', 'body.$.attachments.[*]')).toBeTruthy();
+      expect(ParameterKeyUtility.isChildKey('body.$.attachments.[*]', 'body.$.attachments.[*].test')).toBeTruthy();
       expect(ParameterKeyUtility.isChildKey('body.$.[*].test.[*]', 'body.$.[*].test.[*].id')).toBeTruthy();
-      expect(ParameterKeyUtility.isChildKey('body.$', 'body.$.attachements')).toBeTruthy();
-      expect(ParameterKeyUtility.isChildKey('body.$.attachements123', 'body.$.attachements')).toBeFalsy();
-      expect(ParameterKeyUtility.isChildKey('body.$.attachement2222', 'body.$.attachements.test')).toBeFalsy();
-      expect(ParameterKeyUtility.isChildKey('body.$.attachement.[*].test', undefined)).toBeFalsy();
+      expect(ParameterKeyUtility.isChildKey('body.$', 'body.$.attachments')).toBeTruthy();
+      expect(ParameterKeyUtility.isChildKey('body.$.attachments123', 'body.$.attachments')).toBeFalsy();
+      expect(ParameterKeyUtility.isChildKey('body.$.attachment2222', 'body.$.attachments.test')).toBeFalsy();
+      expect(ParameterKeyUtility.isChildKey('body.$.attachment.[*].test', undefined)).toBeFalsy();
     });
   });
 
@@ -88,8 +90,30 @@ describe('Parameter Key Utility Tests', () => {
       ['body.foo', 'body~1foo'],
       ['body/foo', 'body.body/foo'],
       ['body/foo/Bar', 'body.body/foo.body/foo/Bar'],
-    ])('%p evaluates to %p', (input, expected) => {
+    ])('"%s" evaluates to "%s"', (input, expected) => {
       expect(ParameterKeyUtility.expandAndEncodePropertySegment(input)).toBe(expected);
+    });
+  });
+
+  describe('isBodySegment', () => {
+    it('should return true when segment value is Body', () => {
+      const segment: Segment = {
+        value: OutputSource.Body,
+        type: 1,
+      };
+      expect(isBodySegment(segment)).toBe(true);
+    });
+
+    it('should return false when segment value is not Body', () => {
+      const segment: Segment = {
+        value: 'NotBody',
+        type: 0,
+      };
+      expect(isBodySegment(segment)).toBe(false);
+    });
+
+    it('should return false when segment is undefined', () => {
+      expect(isBodySegment(undefined)).toBe(false);
     });
   });
 });

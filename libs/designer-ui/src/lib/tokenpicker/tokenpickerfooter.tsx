@@ -5,7 +5,6 @@ import type { TokenNodeProps } from '../editor/base/nodes/tokenNode';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../expressioneditor';
-import type { TokenGroup, Token as TokenGroupToken } from './models/token';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { getExpressionOutput, getExpressionTokenTitle } from './util';
@@ -18,8 +17,9 @@ import {
   ExpressionParser,
   ScannerException,
   guid,
+  isCopilotServiceEnabled,
 } from '@microsoft/logic-apps-shared';
-import type { Expression } from '@microsoft/logic-apps-shared';
+import type { Expression, TokenGroup, Token as TokenGroupToken } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -77,6 +77,11 @@ export function TokenPickerFooter({
     id: 't9RwOi',
     description: 'Invalid expression alert',
   });
+  const invalidExpressionFixWithCopilot = intl.formatMessage({
+    defaultMessage: 'This expression has a problem. You can fix it manually or with Copilot.',
+    id: 'QbVD0F',
+    description: 'Invalid expression alert with option to fix with copilot.',
+  });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
     id: 'H9CZTr',
@@ -114,7 +119,7 @@ export function TokenPickerFooter({
         // if the expression contains misused double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
-        setExpressionEditorError(invalidExpression);
+        setExpressionEditorError(isCopilotServiceEnabled() ? invalidExpressionFixWithCopilot : invalidExpression);
       }
     }
 

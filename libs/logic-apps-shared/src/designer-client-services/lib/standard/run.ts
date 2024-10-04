@@ -2,7 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
-import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2, BoundParameters } from '../../../utils/src';
+import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
   ArgumentException,
   isCallbackInfoWithRelativePath,
@@ -11,10 +11,10 @@ import {
   getRecordEntry,
   UnsupportedException,
   isNullOrUndefined,
-  isString,
-  isBoolean,
 } from '../../../utils/src';
-import { isNumber } from '../../../parsers';
+import { isHybridLogicApp } from './hybrid';
+import { LogEntryLevel } from '../logging/logEntry';
+import { LoggerService } from '../logger';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -44,14 +44,16 @@ export class StandardRunService implements IRunService {
     const { uri, contentSize } = contentLink;
     const { httpClient } = this.options;
 
-    // 2^18
-    if (contentSize > 262144) {
-      return undefined;
-    }
-
     if (!uri) {
       throw new Error();
     }
+
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'getContent standard run service',
+      message: `Content size: ${contentSize}`,
+      args: [`size: ${contentSize}`],
+    });
 
     try {
       const response = await httpClient.get<any>({
@@ -93,6 +95,15 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  public static getProxyUrl(uri: string): { uri: string; headerPath: string } {
+    const appName = uri.split('hostruntime')[0].split('/');
+    appName.pop();
+    return {
+      uri: `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      headerPath: uri.split('hostruntime')[1],
+    };
+  }
+
   /**
    * Gets run details.
    * @param {string} runId - Run id.
@@ -101,9 +112,22 @@ export class StandardRunService implements IRunService {
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
+      if (isHybridLogicApp(uri)) {
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`;
+
+        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+        const response = await httpClient.post<Run, undefined>({
+          uri: newUri,
+          headers: {
+            'X-Ms-Logicapps-Proxy-Path': headerPath,
+            'X-Ms-Logicapps-Proxy-Method': 'GET',
+          },
+        });
+        return response;
+      }
       const response = await httpClient.get<Run>({
         uri,
       });
@@ -227,7 +251,7 @@ export class StandardRunService implements IRunService {
     if (this._isDev) {
       inputs = getRecordEntry(inputsResponse, nodeId) ?? {};
       outputs = getRecordEntry(outputsResponse, nodeId) ?? {};
-      return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
+      return Promise.resolve({ inputs, outputs });
     }
 
     try {
@@ -245,29 +269,7 @@ export class StandardRunService implements IRunService {
       }
     }
 
-    return { inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) };
-  }
-
-  /**
-   * Parse inputs and outputs into dictionary.
-   * @param {Record<string, any>} response - Api call raw response.
-   * @param {boolean} isInput - Boolean to determine if it is an input/output response.
-   * @returns {BoundParameters} List of parametes.
-   */
-  parseActionLink(response: Record<string, any>, isInput: boolean): BoundParameters {
-    if (isNullOrUndefined(response)) {
-      return response;
-    }
-
-    const dictionaryResponse =
-      isString(response) || isNumber(response as any) || Array.isArray(response) || isBoolean(response)
-        ? { [isInput ? 'Inputs' : 'Outputs']: response }
-        : response;
-
-    return Object.keys(dictionaryResponse).reduce((prev: any, current) => {
-      prev[current] = { displayName: current, value: dictionaryResponse[current]?.content ?? dictionaryResponse[current] };
-      return prev;
-    }, {});
+    return { inputs, outputs };
   }
 
   /**

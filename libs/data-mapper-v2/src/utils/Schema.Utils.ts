@@ -1,9 +1,5 @@
-// import type { FilteredDataTypesDict } from '../components/tree/SchemaTreeSearchbar';
-// import { arrayType } from '../components/tree/SchemaTreeSearchbar';
-// import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-//import { getLoopTargetNodeWithJson } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
 import type {
@@ -14,7 +10,12 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { guid, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { addReactFlowPrefix } from './ReactFlow.Util';
+import type { Node } from '@xyflow/react';
+
+export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
+  addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
 
 export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -111,6 +112,15 @@ export const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExt
   return result.concat(childArray);
 };
 
+export const flattenSchemaNodeMap = (schemaNode: SchemaNodeExtended): Record<string, SchemaNodeExtended> => {
+  const flattenedSchema = flattenSchemaNode(schemaNode);
+  const result: Record<string, SchemaNodeExtended> = {};
+  for (const node of flattenedSchema) {
+    result[node.key] = node;
+  }
+  return result;
+};
+
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 /**
@@ -181,58 +191,8 @@ const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): 
   return result;
 };
 
-// Search key will be the node's key
-// Returns nodes that include the search key in their node.key (while maintaining the tree/schema's structure)
-// export const searchSchemaTreeFromRoot = (
-//   schemaTreeRoot: ITreeNode<SchemaNodeExtended>,
-//   flattenedSchema: SchemaNodeDictionary,
-//   nodeKeySearchTerm: string,
-//   filteredDataTypes: FilteredDataTypesDict
-// ): ITreeNode<SchemaNodeExtended> => {
-//   const fuseSchemaTreeSearchOptions = {
-//     includeScore: true,
-//     minMatchCharLength: 2,
-//     includeMatches: true,
-//     threshold: 0.4,
-//     keys: ['qName'],
-//   };
-
-//   // Fuzzy search against flattened schema tree to build a dictionary of matches
-//   const fuse = new Fuse(Object.values(flattenedSchema), fuseSchemaTreeSearchOptions);
-//   const matchedSchemaNodesDict: { [key: string]: true } = {};
-
-//   fuse.search(nodeKeySearchTerm).forEach((result) => {
-//     matchedSchemaNodesDict[result.item.key] = true;
-//   });
-
-//   // Recurse through schema tree, adding children that match the criteria
-//   const searchChildren = (result: ITreeNode<SchemaNodeExtended>[], node: ITreeNode<SchemaNodeExtended>) => {
-//     // NOTE: Type-cast (safely) node for second condition so Typescript sees all properties
-//     if (
-//       (nodeKeySearchTerm.length >= fuseSchemaTreeSearchOptions.minMatchCharLength ? matchedSchemaNodesDict[node.key] : true) &&
-//       (filteredDataTypes[(node as SchemaNodeExtended).type] ||
-//         ((node as SchemaNodeExtended).nodeProperties.includes(SchemaNodeProperty.Repeating) && filteredDataTypes[arrayType]))
-//     ) {
-//       result.push({ ...node });
-//     } else if (node.children && node.children.length > 0) {
-//       const childNodes = node.children.reduce(searchChildren, []);
-
-//       if (childNodes.length) {
-//         result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<SchemaNodeExtended>);
-//       }
-//     }
-
-//     return result;
-//   };
-
-//   return {
-//     ...schemaTreeRoot,
-//     isExpanded: true,
-//     children: schemaTreeRoot.children ? schemaTreeRoot.children.reduce<ITreeNode<SchemaNodeExtended>[]>(searchChildren, []) : [],
-//   };
-// };
-
-export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
+export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended =>
+  Object.keys(node ?? {}).includes('pathToRoot');
 
 export const isObjectType = (nodeType: NormalizedDataType): boolean =>
   nodeType === NormalizedDataType.Complex || nodeType === NormalizedDataType.Object;
@@ -264,4 +224,39 @@ const nodeCount = (schemaNode: SchemaNodeExtended): number => {
   });
 
   return result;
+};
+
+export const removePrefixFromNodeID = (nodeID: string): string => {
+  const splitID = nodeID.split('-');
+  return splitID[1];
+};
+
+export const nodeScrollDirections = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const;
+export type NodeScrollDirectionType = (typeof nodeScrollDirections)[number];
+
+/**
+ *
+ * @returns Need to return 4 nodes, one each for top-left, top-right, bottom-left, bottom-right
+ */
+export const getNodesForScroll = (): Record<string, Node> => {
+  const map: Record<string, Node> = {};
+  const ids = [`top-left-${guid()}`, `top-right-${guid()}`, `bottom-left-${guid()}`, `bottom-right-${guid()}`];
+  for (const id of ids) {
+    map[id] = {
+      id,
+      hidden: false,
+      selectable: false,
+      draggable: false,
+      position: { x: 0, y: 0 },
+      data: {
+        isTemporary: true,
+      },
+      type: 'canvasNode',
+    };
+  }
+  return map;
+};
+
+export const getNodeIdForScroll = (ids: string[], direction: NodeScrollDirectionType) => {
+  return ids.find((id) => id.startsWith(direction));
 };

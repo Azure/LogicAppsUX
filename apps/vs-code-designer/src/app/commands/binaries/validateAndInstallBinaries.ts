@@ -89,12 +89,13 @@ export async function validateAndInstallBinaries(context: IActionContext) {
         context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
           progress.report({ increment: 20, message: '.NET SDK' });
+          const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
           await timeout(
             validateDotNetIsLatest,
             '.NET SDK',
             dependencyTimeout,
-            'https://dotnet.microsoft.com/en-us/download/dotnet/6.0',
-            dependenciesVersions?.dotnet
+            'https://dotnet.microsoft.com/en-us/download/dotnet',
+            dotnetDependencies
           );
           await setDotNetCommand(context);
         });

@@ -6,6 +6,7 @@ import {
   InitConnectionService,
   InitConnectorService,
   InitGatewayService,
+  InitTenantService,
   InitOperationManifestService,
   InitSearchService,
   InitOAuthService,
@@ -19,11 +20,17 @@ import {
   InitConnectionParameterEditorService,
   InitChatbotService,
   InitCustomCodeService,
+  InitCopilotService,
+  InitUiInteractionsService,
+  InitUserPreferenceService,
+  InitExperimentationServiceService,
+  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import CONSTANTS from '../../../common/constants';
 
-const initialState: DesignerOptionsState = {
+export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isDarkMode: false,
@@ -37,6 +44,8 @@ const initialState: DesignerOptionsState = {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
     recurrenceInterval: undefined,
+    maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
+    hideContentTransferSettings: false,
   },
 };
 
@@ -49,6 +58,7 @@ export const initializeServices = createAsyncThunk(
     connectorService,
     oAuthService,
     gatewayService,
+    tenantService,
     loggerService,
     functionService,
     appServiceService,
@@ -60,6 +70,10 @@ export const initializeServices = createAsyncThunk(
     connectionParameterEditorService,
     chatbotService,
     customCodeService,
+    copilotService,
+    uiInteractionsService,
+    userPreferenceService,
+    experimentationService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -81,6 +95,9 @@ export const initializeServices = createAsyncThunk(
     if (gatewayService) {
       InitGatewayService(gatewayService);
     }
+    if (tenantService) {
+      InitTenantService(tenantService);
+    }
     if (apimService) {
       InitApiManagementService(apimService);
     }
@@ -92,6 +109,9 @@ export const initializeServices = createAsyncThunk(
     }
     if (chatbotService) {
       InitChatbotService(chatbotService);
+    }
+    if (copilotService) {
+      InitCopilotService(copilotService);
     }
     if (customCodeService) {
       InitCustomCodeService(customCodeService);
@@ -105,6 +125,17 @@ export const initializeServices = createAsyncThunk(
       InitRunService(runService);
     }
 
+    if (uiInteractionsService) {
+      InitUiInteractionsService(uiInteractionsService);
+    }
+
+    if (userPreferenceService) {
+      InitUserPreferenceService(userPreferenceService);
+    }
+
+    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+    // we are always defaulting to the false implementation of the experimentation service.
+    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
 
@@ -114,7 +145,7 @@ export const initializeServices = createAsyncThunk(
 
 export const designerOptionsSlice = createSlice({
   name: 'designerOptions',
-  initialState,
+  initialState: initialDesignerOptionsState,
   reducers: {
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;

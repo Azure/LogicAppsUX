@@ -16,20 +16,21 @@ import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
-import type { PickerCallbackHandlers } from '../../picker/filepickereditor';
-import { FilePickerEditor } from '../../picker/filepickereditor';
+import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
+import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
 import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder';
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
-import type { TokenGroup } from '../../tokenpicker/models/token';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -116,6 +117,7 @@ export const TokenField = ({
         <ArrayEditor
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
+          initialMode={editorOptions?.initialMode}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
@@ -127,14 +129,7 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={
-            dropdownOptions.length > 0
-              ? dropdownOptions.map((option: any, index: number) => ({
-                  key: index.toString(),
-                  ...option,
-                }))
-              : undefined
-          }
+          options={dropdownOptions.length > 0 ? dropdownOptions : undefined}
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -192,11 +187,7 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions?.map((option: any, index: number) => ({
-            key: index.toString(),
-            ...option,
-            displayName: typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName),
-          }))}
+          options={dropdownOptions}
           useOption={true}
           isLoading={isLoading}
           errorDetails={errorDetails}
@@ -285,6 +276,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
           hideValidationErrors={hideValidationErrors}
+          includeOutputDescription={editorOptions?.includeOutputDescription}
         />
       ) : (
         <FloatingActionMenuInputs
@@ -373,6 +365,18 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
         />
       );
+
+    case constants.PARAMETER.EDITOR.MIXEDINPUTEDITOR: {
+      return (
+        <MixedInputEditor
+          supportedTypes={editorOptions?.supportedTypes}
+          useStaticInputs={editorOptions?.useStaticInputs}
+          initialValue={value}
+          isRequestApiConnectionTrigger={editorOptions?.isRequestApiConnectionTrigger}
+          onChange={onValueChange ?? (() => {})}
+        />
+      );
+    }
 
     default:
       return (

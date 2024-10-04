@@ -10492,7 +10492,7 @@ export const Outlook = {
             in: 'path',
             description: 'Id of the attachment to download.',
             required: true,
-            'x-ms-summary': 'Attachement Id',
+            'x-ms-summary': 'Attachment Id',
             type: 'string',
           },
           {

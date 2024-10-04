@@ -2,19 +2,20 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
+import type { HostingPlanTypes } from '../../designer/state/workflowLoadingSlice';
 
 export interface WorkflowLoadingState {
   resourcePath?: string;
   appId?: string;
   workflowName?: string;
   runId?: string;
-  isConsumption: boolean;
+  hostingPlan: HostingPlanTypes;
   theme: ThemeType;
 }
 
 const initialState: WorkflowLoadingState = {
   appId: undefined,
-  isConsumption: false,
+  hostingPlan: 'standard',
   theme: ThemeType.Light,
 };
 
@@ -40,8 +41,8 @@ export const workflowLoaderSlice = createSlice({
       state.runId = undefined;
       state.resourcePath = '';
     },
-    setConsumption: (state, action: PayloadAction<boolean>) => {
-      state.isConsumption = action.payload;
+    setHostingPlan: (state, action: PayloadAction<HostingPlanTypes>) => {
+      state.hostingPlan = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
       state.resourcePath = '';
@@ -52,7 +53,7 @@ export const workflowLoaderSlice = createSlice({
   },
 });
 
-export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setConsumption, changeRunId } =
+export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId } =
   workflowLoaderSlice.actions;
 
 export default workflowLoaderSlice.reducer;

@@ -1,7 +1,8 @@
 import { LogCategory, LogService } from './Logging.Utils';
 import * as PF from 'pathfinding';
-import type { Node as ReactFlowNode, XYPosition } from 'reactflow';
-import { Position } from 'reactflow';
+import type { Node as ReactFlowNode, XYPosition } from '@xyflow/react';
+import { Position } from '@xyflow/react';
+import { guid } from '@microsoft/logic-apps-shared';
 
 interface BoundingBox {
   width: number;
@@ -64,6 +65,11 @@ const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRa
   return `L ${midX},${midY + bendSize * yDir}Q ${midX},${midY} ${midX + bendSize * xDir},${midY}`;
 };
 
+export const createEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}`;
+export const createTemporaryEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}__edge__${guid()}`; //When scrolled out or parent collapsed
+
+export const splitEdgeId = (edgeId: string) => edgeId.split('__edge__');
+
 const getNextPointFromPosition = (curPoint: XYPosition, position: Position): XYPosition => {
   switch (position) {
     case Position.Top:
@@ -98,8 +104,8 @@ const generateBoundingBoxes = (nodes: ReactFlowNode[], nodePadding = 2, roundTo 
     const height = Math.max(node.height || 0, 1);
 
     const position: XYPosition = {
-      x: node.positionAbsolute?.x || 0,
-      y: node.positionAbsolute?.y || 0,
+      x: node.position?.x || 0,
+      y: node.position?.y || 0,
     };
 
     const topLeft: XYPosition = {

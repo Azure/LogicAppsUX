@@ -2,7 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { azureWebJobsStorageKey, localSettingsFileName } from '../../../constants';
+import {
+  azureWebJobsStorageKey,
+  localSettingsFileName,
+  ProjectDirectoryPath,
+  appKindSetting,
+  azureWebJobsSecretStorageTypeKey,
+  localEmulatorConnectionString,
+  logicAppKind,
+  workerRuntimeKey,
+  azureStorageTypeSetting,
+} from '../../../constants';
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
 import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSettings';
@@ -11,11 +21,10 @@ import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type { MessageItem } from 'vscode';
 import { Uri } from 'vscode';
 
 /**
@@ -23,14 +32,16 @@ import { Uri } from 'vscode';
  * @param {IActionContext} context - Command context.
  * @param {string} projectPath - Project path with local.settings.json file.
  * @param {boolean} settingsToAdd - Settings data to updata.
+ * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
  */
 export async function addOrUpdateLocalAppSettings(
   context: IActionContext,
   projectPath: string,
-  settingsToAdd: Record<string, string>
+  settingsToAdd: Record<string, string>,
+  isDesignTime = false
 ): Promise<void> {
   const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
-  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath, isDesignTime);
 
   settings.Values = settings.Values || {};
   settings.Values = {
@@ -49,7 +60,7 @@ export async function addOrUpdateLocalAppSettings(
  * @param {string} localSettingsPath - File path.
  * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
  */
-async function getDecriptedLocalSettings(
+async function getDecryptedLocalSettings(
   context: IActionContext,
   localSettings: ILocalSettingsJson,
   localSettingsUri: Uri,
@@ -70,13 +81,13 @@ async function getDecriptedLocalSettings(
  * Gets local.settings.json file.
  * @param {IActionContext} context - Command context.
  * @param {string} localSettingsPath - File path.
- * @param {boolean} allowOverwrite - Allow overwrite on file.
+ * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
  * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
  */
 export async function getLocalSettingsJson(
   context: IActionContext,
   localSettingsPath: string,
-  allowOverwrite = false
+  isDesignTime = false
 ): Promise<ILocalSettingsJson> {
   if (fse.existsSync(localSettingsPath)) {
     const data: string = (await fse.readFile(localSettingsPath)).toString();
@@ -85,42 +96,20 @@ export async function getLocalSettingsJson(
     if (/[^\s]/.test(data)) {
       try {
         const localSettings = parseJson(data) as ILocalSettingsJson;
-        return getDecriptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
-      } catch (error) {
-        if (allowOverwrite) {
-          const message: string = localize(
-            'failedToParseWithOverwrite',
-            'Failed to parse "{0}": {1}. Overwrite?',
-            localSettingsFileName,
-            parseError(error).message
-          );
-          const overwriteButton: MessageItem = { title: localize('overwrite', 'Overwrite') };
-          // Overwrite is the only button and cancel automatically throws, so no need to check result
-          await context.ui.showWarningMessage(
-            message,
-            { modal: true, stepName: 'overwriteLocalSettings' },
-            overwriteButton,
-            DialogResponses.cancel
-          );
-        } else {
-          const message: string = localize(
-            'failedToParse',
-            'Failed to parse "{0}": {1}.',
-            localSettingsFileName,
-            parseError(error).message
-          );
-          throw new Error(message);
+        const decryptedlocalSettings = await getDecryptedLocalSettings(context, localSettings, localSettingsUri, localSettingsPath);
+        if (isDesignTime) {
+          decryptedlocalSettings.Values[azureWebJobsSecretStorageTypeKey] = azureStorageTypeSetting;
+          delete decryptedlocalSettings.Values[azureWebJobsStorageKey];
         }
+        return decryptedlocalSettings;
+      } catch (error) {
+        const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', localSettingsFileName, parseError(error).message);
+        throw new Error(message);
       }
     }
   }
 
-  return {
-    IsEncrypted: false,
-    Values: {
-      AzureWebJobsStorage: '',
-    },
-  };
+  return getLocalSettingsSchema(isDesignTime);
 }
 
 /**
@@ -176,3 +165,23 @@ export async function getAzureWebJobsStorage(context: IActionContext, projectPat
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
   return settings.Values && settings.Values[azureWebJobsStorageKey];
 }
+
+/**
+ * Retrieves the local settings schema based on the project path and design time flag.
+ * @param {boolean} isDesignTime - A flag indicating whether it is design time or not.
+ * @param {string} projectPath - The path of the project.
+ * @returns The local settings schema.
+ */
+export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: string) => {
+  return {
+    IsEncrypted: false,
+    Values: {
+      [appKindSetting]: logicAppKind,
+      [workerRuntimeKey]: WorkerRuntime.Node,
+      ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
+      ...(isDesignTime
+        ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
+        : { [azureWebJobsStorageKey]: localEmulatorConnectionString }),
+    },
+  };
+};

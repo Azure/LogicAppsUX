@@ -1,21 +1,24 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
 import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
 import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../../../../core';
+import { initializeInputsOutputsBinding } from '../../../../../core/actions/bjsworkflow/monitoring';
 
-export const MonitoringPanel: React.FC = () => {
-  const selectedNodeId = useSelectedNodeId();
+export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
+  const { nodeId: selectedNodeId } = props;
   const brandColor = useBrandColor(selectedNodeId);
   const runMetaData = useRunData(selectedNodeId);
+  const dispatch = useDispatch<AppDispatch>();
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
@@ -38,8 +41,14 @@ export const MonitoringPanel: React.FC = () => {
     refetch();
   }, [runMetaData, refetch]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(initializeInputsOutputsBinding({ nodeId: selectedNodeId, inputsOutputs: inputOutputs }));
+    }
+  }, [dispatch, inputOutputs, selectedNodeId, isLoading]);
+
   return isNullOrUndefined(runMetaData) ? null : (
-    <div>
+    <>
       <ErrorSection error={error} />
       <InputsPanel
         runMetaData={runMetaData}
@@ -47,7 +56,6 @@ export const MonitoringPanel: React.FC = () => {
         isLoading={isFetching || isLoading}
         isError={isError}
         nodeId={selectedNodeId}
-        values={inputOutputs.inputs}
       />
       <OutputsPanel
         runMetaData={runMetaData}
@@ -55,14 +63,13 @@ export const MonitoringPanel: React.FC = () => {
         isLoading={isFetching || isLoading}
         isError={isError}
         nodeId={selectedNodeId}
-        values={inputOutputs.outputs}
       />
       <PropertiesPanel properties={runMetaData} brandColor={brandColor} nodeId={selectedNodeId} />
-    </div>
+    </>
   );
 };
 
-export const monitoringTab: PanelTabFn = (intl) => ({
+export const monitoringTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.MONITORING,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -70,12 +77,12 @@ export const monitoringTab: PanelTabFn = (intl) => ({
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   description: intl.formatMessage({
-    defaultMessage: 'Monitoring Tab',
-    id: 'l536iI',
-    description: 'An accessability label that describes the monitoring tab',
+    defaultMessage: 'Monitoring tab',
+    id: 'OkGMwC',
+    description: 'An accessibility label that describes the monitoring tab',
   }),
   visible: true,
-  content: <MonitoringPanel />,
+  content: <MonitoringPanel {...props} />,
   order: 0,
   icon: 'Info',
 });

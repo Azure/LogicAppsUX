@@ -12,6 +12,7 @@ exports[`ui/workflowparameters/workflowparameters > should construct. 1`] = `
     />
     <Button
       appearance="subtle"
+      aria-label="Close panel"
       icon={<CompoundIcon />}
       onClick={[Function]}
     />

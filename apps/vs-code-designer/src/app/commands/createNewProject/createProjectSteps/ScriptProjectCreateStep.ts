@@ -2,7 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitignoreFileName, hostFileName, localSettingsFileName, logicAppKind, workerRuntimeKey } from '../../../../constants';
+import {
+  ProjectDirectoryPath,
+  appKindSetting,
+  azureWebJobsStorageKey,
+  funcIgnoreFileName,
+  gitignoreFileName,
+  hostFileName,
+  localSettingsFileName,
+  logicAppKind,
+  workerRuntimeKey,
+} from '../../../../constants';
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
 import { getFunctionsWorkerRuntime } from '../../../utils/vsCodeConfig/settings';
@@ -15,6 +25,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import type { Progress } from 'vscode';
+import { getGitIgnoreContent } from '../../../utils/git';
 
 export class ScriptProjectCreateStep extends ProjectCreateStepBase {
   protected funcignore: string[] = [
@@ -23,7 +34,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     '__azurite_db*__.json',
     '.git*',
     '.vscode',
-    'local.settings.json',
+    localSettingsFileName,
     'test',
     '.debug',
   ];
@@ -47,9 +58,9 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
         Values: {
-          AzureWebJobsStorage: '',
-          APP_KIND: logicAppKind,
-          ProjectDirectoryPath: path.join(context.projectPath),
+          [azureWebJobsStorageKey]: '',
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPath]: path.join(context.projectPath),
         },
       };
 
@@ -63,34 +74,19 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     }
 
     // Determine the base directory for the .gitignore file.
-    // If 'isCustomCodeLogicApp' is explicitly false (neither true nor null),
+    // If 'isWorkspaceWithFunctions' is explicitly false (neither true nor null),
     // use the parent directory of 'workspacePath'. Otherwise, use 'projectPath'.
     const baseDirectory =
-      !context.isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null ? path.dirname(context.workspacePath) : context.projectPath;
+      !context.isWorkspaceWithFunctions && context.isWorkspaceWithFunctions !== null
+        ? path.dirname(context.workspacePath)
+        : context.projectPath;
     const gitignorePath = path.join(baseDirectory, gitignoreFileName);
 
     if (await confirmOverwriteFile(context, gitignorePath)) {
-      await fse.writeFile(
-        gitignorePath,
-        this.gitignore.concat(`
-# Azure Functions artifacts
-bin
-obj
-appsettings.json
-local.settings.json
-__blobstorage__
-.debug
-__queuestorage__
-__azurite_db*__.json
-
-# Added folders and file patterns
-workflow-designtime/
-.vscode/
-*.code-workspace`)
-      );
+      await fse.writeFile(gitignorePath, this.gitignore.concat(getGitIgnoreContent()));
     }
 
-    const funcIgnorePath: string = path.join(context.projectPath, '.funcignore');
+    const funcIgnorePath: string = path.join(context.projectPath, funcIgnoreFileName);
     if (await confirmOverwriteFile(context, funcIgnorePath)) {
       await fse.writeFile(funcIgnorePath, this.funcignore.sort().join(os.EOL));
     }

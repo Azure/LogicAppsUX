@@ -14,7 +14,7 @@ import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import type { Edge, Node } from 'reactflow';
+import type { Edge, Node } from '@xyflow/react';
 
 export const layerSpacing = {
   default: '64',
@@ -69,10 +69,14 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
   let flowWidth: number = graph?.width ?? 0;
   let flowHeight: number = graph?.height ?? 0;
 
+  let nodeIndex = 1;
+
   const processChildren = (node: ElkNode) => {
+    const edgesBySource: Record<string, Edge[]> = {};
     if (node.edges) {
+      // Put edge objects into a record by sourceId
       for (const edge of node.edges as ElkExtendedEdge[]) {
-        edges.push({
+        const tempEdge: Edge = {
           id: edge.id,
           target: edge.targets[0],
           source: edge.sources[0],
@@ -80,20 +84,38 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
           data: {
             elkEdge: edge,
           },
-        });
+        };
+        if (!edgesBySource[edge.sources[0]]) {
+          edgesBySource[edge.sources[0]] = [];
+        }
+        edgesBySource[edge.sources[0]].push(tempEdge);
       }
     }
 
     if (node.children) {
+      // Sort node.children by y position then x position
+      node.children.sort((a, b) => (a.y === b.y ? (a?.x ?? 0) - (b?.x ?? 0) : (a?.y ?? 0) - (b?.y ?? 0)));
+
       for (const n of node.children as ElkNode[]) {
-        nodes.push({
+        const nodeObject: Node = {
           id: n.id,
           position: { x: n.x ?? 0, y: n.y ?? 0 },
-          data: { label: n.id },
-          parentNode: node.id !== 'root' ? node.id : undefined,
+          data: {
+            label: n.id,
+            nodeIndex: nodeIndex++,
+          },
+          parentId: node.id !== 'root' ? node.id : undefined,
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
-          style: n?.children && n?.height ? { height: n?.height, width: n?.width } : undefined,
-        });
+        };
+
+        if (n?.children && n.width && n.height) {
+          nodeObject.data.size = {
+            width: n.width,
+            height: n.height,
+          };
+        }
+
+        const nodeArrayIndex = nodes.push(nodeObject);
 
         const farWidth = (n?.x ?? 0) + (n?.width ?? 0);
         const farHeight = (n?.y ?? 0) + (n?.height ?? 0);
@@ -104,11 +126,28 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
           flowHeight = farHeight;
         }
 
-        processChildren(n);
+        if (n?.children) {
+          processChildren(n);
+        }
+
+        // Add edges to the edges array
+        if (edgesBySource[n.id]) {
+          for (const edge of edgesBySource[n.id]) {
+            if (edge.data) {
+              edge.data['edgeIndex'] = nodeIndex++;
+            }
+            edges.push(edge);
+          }
+        }
+
+        // Add leaf index to the node data
+        nodes[nodeArrayIndex - 1].data['nodeLeafIndex'] = nodeIndex++;
       }
     }
   };
+
   processChildren(graph);
+
   return [nodes, edges, [flowWidth, flowHeight]];
 };
 

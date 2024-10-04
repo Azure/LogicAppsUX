@@ -3,7 +3,7 @@ import { getReactQueryClient } from '../../ReactQueryProvider';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { OutputMapKey, SchemaProcessor, toInputParameter, map, RecurrenceType } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-shared';
+import type { InputParameter, OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 
 export interface Recurrence {
   frequency: string | undefined;
@@ -35,9 +35,12 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
   };
 };
 
-export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): ParameterInfo[] => {
+export const getRecurrenceParameters = (
+  recurrence: RecurrenceSetting | undefined,
+  operationDefinition: any
+): { parameters: ParameterInfo[]; rawParameters: InputParameter[] } => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
-    return [];
+    return { parameters: [], rawParameters: [] };
   }
 
   const schema = getRecurrenceSchema(recurrence.type);
@@ -49,7 +52,7 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     expandArrayOutputs: false,
   })
     .getSchemaProperties(schema)
-    .map((item) => toInputParameter(item, true /* suppressCasting */));
+    .map((item) => toInputParameter(item, /* suppressCasting */ true));
 
   const queryClient = getReactQueryClient();
   const recurrenceInterval = queryClient.getQueryData(['recurrenceInterval']);
@@ -69,5 +72,5 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     loadParameterValuesFromDefault(map(recurrenceParameters, OutputMapKey));
   }
 
-  return toParameterInfoMap(recurrenceParameters, operationDefinition);
+  return { parameters: toParameterInfoMap(recurrenceParameters, operationDefinition), rawParameters: recurrenceParameters };
 };

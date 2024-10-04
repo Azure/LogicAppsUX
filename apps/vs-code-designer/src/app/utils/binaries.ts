@@ -33,7 +33,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
-import request = require('request');
+import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Download and Extracts dependency zip.
@@ -45,6 +45,7 @@ import request = require('request');
  */
 
 export async function downloadAndExtractDependency(
+  context: IActionContext,
   downloadUrl: string,
   targetFolder: string,
   dependencyName: string,
@@ -62,60 +63,60 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  try {
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
+  const downloadPromise = axios({
+    method: HTTP_METHODS.GET,
+    url: downloadUrl,
+    responseType: 'stream',
+  });
+
+  executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+
+  downloadPromise.then((response) => {
+    executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
-    // Download the compressed dependency
-    await new Promise<void>((resolve, reject) => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-      const downloadStream = request(downloadUrl).pipe(fs.createWriteStream(dependencyFilePath));
-      downloadStream.on('finish', async () => {
-        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
+    const writer = fs.createWriteStream(dependencyFilePath);
+    response.data.pipe(writer);
 
-        fs.chmodSync(dependencyFilePath, 0o777);
+    writer.on('finish', async () => {
+      executeCommand(ext.outputChannel, undefined, 'echo', `Successfully downloaded ${dependencyName} dependency.`);
+      fs.chmodSync(dependencyFilePath, 0o777);
 
-        // Extract to targetFolder
-        if (dependencyName === dotnetDependencyName) {
-          const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-          process.platform === Platform.windows
-            ? await executeCommand(
-                ext.outputChannel,
-                undefined,
-                'powershell -ExecutionPolicy Bypass -File',
-                dependencyFilePath,
-                '-InstallDir',
-                targetFolder,
-                '-Channel',
-                `${version}.0`
-              )
-            : await executeCommand(
-                ext.outputChannel,
-                undefined,
-                dependencyFilePath,
-                '-InstallDir',
-                targetFolder,
-                '-Channel',
-                `${version}.0`
-              );
-        } else {
-          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
-          vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
-        }
-        resolve();
-      });
-      downloadStream.on('error', reject);
+      // Extract to targetFolder
+      if (dependencyName === dotnetDependencyName) {
+        const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
+        process.platform === Platform.windows
+          ? await executeCommand(
+              ext.outputChannel,
+              undefined,
+              'powershell -ExecutionPolicy Bypass -File',
+              dependencyFilePath,
+              '-InstallDir',
+              targetFolder,
+              '-Channel',
+              `${version}.0`
+            )
+          : await executeCommand(ext.outputChannel, undefined, dependencyFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+      } else {
+        await extractDependency(dependencyFilePath, targetFolder, dependencyName);
+        vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+      }
+      // remove the temp folder.
+      fs.rmSync(tempFolderPath, { recursive: true });
+      executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
     });
-  } catch (error) {
-    vscode.window.showErrorMessage(`Error downloading and extracting the ${dependencyName} zip file: ${error.message}`);
-    await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Remove ${targetFolder}`);
-    fs.rmSync(targetFolder, { recursive: true });
-    throw error;
-  } finally {
-    fs.rmSync(tempFolderPath, { recursive: true });
-    await executeCommand(ext.outputChannel, undefined, 'echo', `Removed ${tempFolderPath}`);
-  }
+    writer.on('error', async (error) => {
+      // log the error message the VSCode window and to telemetry.
+      const errorMessage = `Error downloading and extracting the ${dependencyName} zip file: ${error.message}`;
+      vscode.window.showErrorMessage(errorMessage);
+      context.telemetry.properties.error = errorMessage;
+
+      // remove the target folder.
+      fs.rmSync(targetFolder, { recursive: true });
+      await executeCommand(ext.outputChannel, undefined, 'echo', `[ExtractError]: Removed ${targetFolder}`);
+    });
+  });
 }
 
 export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion: string): Promise<string> {
@@ -154,20 +155,32 @@ export async function getLatestFunctionCoreToolsVersion(context: IActionContext,
   return DependencyVersion.funcCoreTools;
 }
 
+/**
+ * Retrieves the latest version of .NET SDK.
+ * @param {IActionContext} context - The action context.
+ * @param {string} majorVersion - The major version of .NET SDK to retrieve. (optional)
+ * @returns A promise that resolves to the latest version of .NET SDK.
+ * @throws An error if there is an issue retrieving the latest .NET SDK version.
+ */
 export async function getLatestDotNetVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.dotNetMajorVersion = majorVersion;
 
   if (majorVersion) {
-    await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
+    return await readJsonFromUrl('https://api.github.com/repos/dotnet/sdk/releases')
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
-        response.forEach((releaseInfo: IGitHubReleaseInfo) => {
+        let latestVersion: string | null;
+        for (const releaseInfo of response) {
           const releaseVersion: string | null = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
-          if (checkMajorVersion(releaseVersion, majorVersion)) {
-            return releaseVersion;
+          if (
+            checkMajorVersion(releaseVersion, majorVersion) &&
+            (isNullOrUndefined(latestVersion) || semver.gt(releaseVersion, latestVersion))
+          ) {
+            latestVersion = releaseVersion;
           }
-        });
+        }
+        return latestVersion;
       })
       .catch((error) => {
         throw Error(localize('errorNewestDotNetVersion', `Error getting latest .NET SDK version: ${error}`));
@@ -299,6 +312,12 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
   }
 }
 
+/**
+ * Checks if the major version of a given version string matches the specified major version.
+ * @param {string} version - The version string to check.
+ * @param {string} majorVersion - The major version to compare against.
+ * @returns A boolean indicating whether the major version matches.
+ */
 function checkMajorVersion(version: string, majorVersion: string): boolean {
   return semver.major(version) === Number(majorVersion);
 }

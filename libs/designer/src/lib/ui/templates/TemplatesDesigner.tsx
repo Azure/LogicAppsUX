@@ -1,17 +1,32 @@
 import type { RootState } from '../../core/state/templates/store';
 import { useSelector } from 'react-redux';
-import { TemplateCard } from './cards/templateCard';
-import { TemplatePanel } from '../panel/templatePanel/templatePanel';
+import { TemplatesList } from './templateslist';
+import type { LogicAppsV2, Template } from '@microsoft/logic-apps-shared';
+import type { TemplateDetailFilterType } from './filters/templateFilters';
+import type { ConnectionMapping } from '../../core/state/templates/workflowSlice';
+import { isMultiWorkflowTemplate } from '../../core/actions/bjsworkflow/templates';
+import { TemplateOverview } from './templateoverview';
 
-export const TemplatesDesigner = () => {
-  const availableTemplatesNames = useSelector((state: RootState) => state.manifest.availableTemplateNames);
+export type CreateWorkflowHandler = (
+  workflows: {
+    name: string | undefined;
+    kind: string | undefined;
+    definition: LogicAppsV2.WorkflowDefinition;
+  }[],
+  connectionsMapping: ConnectionMapping,
+  parametersData: Record<string, Template.ParameterDefinition>
+) => Promise<void>;
+export interface TemplatesDesignerProps {
+  detailFilters: TemplateDetailFilterType;
+  createWorkflowCall: CreateWorkflowHandler;
+}
 
-  return (
-    <>
-      <TemplatePanel />
-      {availableTemplatesNames?.map((templateName: string) => (
-        <TemplateCard key={templateName} templateName={templateName} />
-      ))}
-    </>
+export const TemplatesDesigner = (props: TemplatesDesignerProps) => {
+  const { manifest } = useSelector((state: RootState) => state.template);
+
+  return manifest && isMultiWorkflowTemplate(manifest) ? (
+    <TemplateOverview createWorkflow={props.createWorkflowCall} />
+  ) : (
+    <TemplatesList {...props} />
   );
 };

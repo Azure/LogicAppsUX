@@ -1,9 +1,10 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import { ConnectionService, SwaggerParser, equals } from '@microsoft/logic-apps-shared';
+import { ConnectionService, SwaggerParser, equals, cleanResourceId } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getConnector, getSwagger } from './operation';
 
 const connectionKey = 'connections';
 export interface ConnectorWithParsedSwagger {
@@ -12,13 +13,9 @@ export interface ConnectorWithParsedSwagger {
 }
 
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
-  const { connector, swagger } = await getReactQueryClient().fetchQuery(['apiWithSwaggers', connectorId.toLowerCase()], async () => {
-    const { connector, swagger } = await ConnectionService().getConnectorAndSwagger(connectorId);
-    const parsedSwagger = await SwaggerParser.parse(swagger);
-    return { connector, swagger: parsedSwagger };
-  });
-
-  return { connector, parsedSwagger: new SwaggerParser(swagger) };
+  const [connector, swagger] = await Promise.all([await getConnector(connectorId), await getSwagger(connectorId)]);
+  const parsedSwagger = await SwaggerParser.parse(swagger);
+  return { connector, parsedSwagger: new SwaggerParser(parsedSwagger) };
 };
 
 export const getSwaggerFromEndpoint = async (uri: string): Promise<SwaggerParser> => {
@@ -68,10 +65,11 @@ export const useAllConnections = (): UseQueryResult<Connection[], unknown> => {
   });
 };
 
-export const useConnectionsForConnector = (connectorId: string) => {
-  return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
+export const useConnectionsForConnector = (connectorId: string, shouldNotRefetch?: boolean) => {
+  const queryClient = useQueryClient();
+  return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId, queryClient), {
     enabled: !!connectorId,
-    refetchOnMount: true,
+    refetchOnMount: !shouldNotRefetch && true,
     cacheTime: 0,
     staleTime: 0,
   });
@@ -80,11 +78,13 @@ export const useConnectionsForConnector = (connectorId: string) => {
 export const getConnectionsForConnector = async (connectorId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], async () => {
-    return await ConnectionService().getConnections(connectorId);
+    return await ConnectionService().getConnections(connectorId, queryClient);
   });
 };
 
-export const getConnection = async (connectionId: string, connectorId: string, fetchResourceIfNeeded = false) => {
+export const getConnection = async (_connectionId: string, _connectorId: string, fetchResourceIfNeeded = false) => {
+  const connectionId = cleanResourceId(_connectionId);
+  const connectorId = cleanResourceId(_connectorId);
   const connections = await getConnectionsForConnector(connectorId);
   const connection = connections?.find((connection) => equals(connection.id, connectionId));
   return (!connection && fetchResourceIfNeeded ? getConnectionFromResource(connectionId) : connection) ?? null;
@@ -96,9 +96,10 @@ export const getUniqueConnectionName = async (connectorId: string, existingKeys:
   return ConnectionService().getUniqueConnectionName(connectorId, [...connectionNames, ...existingKeys], connectorName as string);
 };
 
-export const useConnectionResource = (connectionId: string) => {
-  return useQuery(['connection', connectionId?.toLowerCase()], () => ConnectionService().getConnection(connectionId) ?? null, {
-    enabled: !!connectionId,
+export const useConnectionResource = (_connectionId: string) => {
+  const connectionId = cleanResourceId(_connectionId)?.toLowerCase();
+  return useQuery(['connection', connectionId], () => ConnectionService().getConnection(connectionId) ?? null, {
+    enabled: !!_connectionId,
     refetchOnMount: false,
   });
 };

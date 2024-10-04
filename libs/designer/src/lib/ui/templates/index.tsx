@@ -1,4 +1,3 @@
-import './styles.less';
-
 export * from './TemplatesDesigner';
-export * from './connections/displayConnections';
+export * from './filters/templateFilters';
+export * from './connections/workflowconnections';

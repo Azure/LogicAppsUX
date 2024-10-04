@@ -3,6 +3,7 @@ import {
   decodeStringSegmentTokensInLexicalContext,
   encodeStringSegmentTokensInDomContext,
   encodeStringSegmentTokensInLexicalContext,
+  processStringSegmentTokensInDomAndLexicalContext,
 } from '../parsesegments';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -12,7 +13,7 @@ describe('lib/editor/base/utils/parseSegments', () => {
       ['plain text', 'plain text'],
       [`text @{concat('%3C')} text`, `text @{concat('<')} text`],
       [`text @{concat('<')} text`, `text @{concat('<')} text`],
-    ])('should properly decode DOM-safe in: %p', (input, expected) => {
+    ])('should properly decode DOM-safe in: "%s"', (input, expected) => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`concat('<')`, {} as unknown as ValueSegment);
 
@@ -25,7 +26,7 @@ describe('lib/editor/base/utils/parseSegments', () => {
       ['plain text', 'plain text'],
       [`text @{concat('<')} text`, `text @{concat('%3C')} text`],
       [`text @{concat('%3C')} text`, `text @{concat('%3C')} text`],
-    ])('should properly encode segments to be DOM-safe in: %p', (input, expected) => {
+    ])('should properly encode segments to be DOM-safe in: "%s"', (input, expected) => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`concat('<')`, {} as unknown as ValueSegment);
 
@@ -46,7 +47,7 @@ describe('lib/editor/base/utils/parseSegments', () => {
         `@{replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')}`,
         `@{replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')}`,
       ],
-    ])('should properly decode Lexical-safe segments in: %p', (input, expected) => {
+    ])('should properly decode Lexical-safe segments in: "%s"', (input, expected) => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`concat('&lt;')`, {} as unknown as ValueSegment);
       nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
@@ -68,12 +69,34 @@ describe('lib/editor/base/utils/parseSegments', () => {
         `@{replace(replace(replace('abc','%26lt;','<'),'%26gt;','>'),'%26quot;','%22')}`,
         `@{replace(replace(replace('abc','%26lt;','<'),'%26gt;','>'),'%26quot;','%22')}`,
       ],
-    ])('should properly encode segments to be Lexical-safe in: %p', (input, expected) => {
+    ])('should properly encode segments to be Lexical-safe in: "%s"', (input, expected) => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`concat('&lt;')`, {} as unknown as ValueSegment);
       nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
 
       expect(encodeStringSegmentTokensInLexicalContext(input, nodeMap)).toBe(expected);
+    });
+  });
+
+  describe('processStringSegmentTokensInDomAndLexicalContext - encode', () => {
+    it.each([
+      ['plain text', 'plain text'],
+      [`text @{concat('&', '"', '<', '>')} text`, `text @{concat('%26', '%22', '%3C', '%3E')} text`],
+      [`text @{concat('%26', '%22', '%3C', '%3E')} text`, `text @{concat('%26', '%22', '%3C', '%3E')} text`],
+      [
+        `@{replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')}`,
+        `@{replace(replace(replace('abc','%26lt;','%3C'),'%26gt;','%3E'),'%26quot;','%22')}`,
+      ],
+      [
+        `@{replace(replace(replace('abc','%26lt;','%3C'),'%26gt;','%3E'),'%26quot;','%22')}`,
+        `@{replace(replace(replace('abc','%26lt;','%3C'),'%26gt;','%3E'),'%26quot;','%22')}`,
+      ],
+    ])('should properly encode segments to be Lexical-safe and Dom-safe in: "%s"', (input, expected) => {
+      const nodeMap = new Map<string, ValueSegment>();
+      nodeMap.set(`concat('&', '"', '<', '>')`, {} as unknown as ValueSegment);
+      nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
+
+      expect(processStringSegmentTokensInDomAndLexicalContext(input, nodeMap, true)).toBe(expected);
     });
   });
 });

@@ -4,10 +4,10 @@ import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
+import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -20,15 +20,13 @@ import {
 import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { Handle, Position } from 'reactflow';
-import type { NodeProps } from 'reactflow';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -39,7 +37,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
 
-  const selected = useIsNodeSelected(subgraphId);
+  const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
+  const selected = useIsNodeSelectedInOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
@@ -48,7 +47,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
 
-  const label = useNodeDisplayName(subgraphId);
+  const title = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -95,17 +94,23 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   );
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-    dispatch(setShowDeleteModal(true));
+    dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
 
-  const contextMenuItems: JSX.Element[] = useMemo(
-    () => [
-      ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']
-        ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
-        : []),
-    ],
-    [deleteClick, metadata?.subgraphType]
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: subgraphId,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, subgraphId]
   );
 
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
@@ -122,6 +127,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     return { errorMessage: undefined, errorLevel: undefined };
   }, [parameterValidationErrors?.length, parameterValidationErrorText]);
 
+  const nodeIndex = useNodeIndex(subgraphId);
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -133,15 +140,17 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 id={subgraphId}
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
-                title={label}
-                selected={selected}
+                title={title}
+                selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
                 readOnly={readOnly}
                 onClick={subgraphClick}
+                onContextMenu={onContextMenu}
+                onDeleteClick={deleteClick}
                 collapsed={graphCollapsed}
                 handleCollapse={handleGraphCollapse}
-                contextMenuItems={contextMenuItems}
                 errorLevel={errorLevel}
                 errorMessage={errorMessage}
+                nodeIndex={nodeIndex}
               />
               {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
                 <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
@@ -157,7 +166,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
           <p className="no-actions-text">No Actions</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} />
+            <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
           </div>
         )
       ) : null}

@@ -8,7 +8,7 @@ import type {
   DiscoveryWorkflowTrigger,
   BuiltInOperation,
 } from '../../../utils/src';
-import { ArgumentException, equals } from '../../../utils/src';
+import { ArgumentException, equals, normalizeConnectorIds } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -30,19 +30,28 @@ export interface BaseSearchServiceOptions {
   httpClient: IHttpClient;
   isDev?: boolean;
   locale?: string;
+  unsupportedConnectorIds?: string[];
 }
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
 export abstract class BaseSearchService implements ISearchService {
   _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
+  _isHybridLogicApp = false;
+  _unsupportedConnectorIds: string[] = [];
 
   constructor(public readonly options: BaseSearchServiceOptions) {
-    const { apiHubServiceDetails, isDev } = options;
+    const { apiHubServiceDetails, isDev, unsupportedConnectorIds } = options;
     if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
     this._isDev = isDev || false;
+    this._unsupportedConnectorIds = normalizeConnectorIds(
+      unsupportedConnectorIds ?? [],
+      apiHubServiceDetails.subscriptionId,
+      apiHubServiceDetails.location,
+      true
+    );
   }
 
   public abstract getAllOperations(): Promise<DiscoveryOpArray>;
@@ -59,7 +68,7 @@ export abstract class BaseSearchService implements ISearchService {
     uri: string,
     queryParams?: any,
     pageNumber = 0,
-    pageSize = 2500
+    pageSize = 5000
   ): Promise<{ value: any[]; hasMore: boolean }> {
     if (this._isDev) {
       return { value: [], hasMore: false };
@@ -127,7 +136,7 @@ export abstract class BaseSearchService implements ISearchService {
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
-    return operations;
+    return this.removeUnsupportedOperations(operations);
   }
 
   async getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray> {
@@ -149,7 +158,7 @@ export abstract class BaseSearchService implements ISearchService {
 
     // const values = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters);
     const { value } = await this.getAzureResourceByPage(uri, queryParameters, page);
-    return value;
+    return this.removeUnsupportedOperations(value);
   }
 
   abstract getAllConnectors(): Promise<Connector[]>;
@@ -167,7 +176,8 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.batchAzureResourceRequests(uri);
     const responseArray = await this.getAzureResourceRecursive(uri, undefined);
-    return this.moveGeneralInformation(responseArray);
+    const supportedResponseArray = this.removeUnsupportedConnectors(responseArray);
+    return this.moveGeneralInformation(supportedResponseArray);
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
@@ -186,8 +196,8 @@ export abstract class BaseSearchService implements ISearchService {
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
     // const responseArray = await this.pagedBatchAzureResourceRequests(page, uri, undefined, 5);
     const { value } = await this.getAzureResourceByPage(uri, { 'api-version': openApiVersion ?? apiVersion }, page);
-
-    return this.moveGeneralInformation(value);
+    const supportedValue = this.removeUnsupportedConnectors(value);
+    return this.moveGeneralInformation(supportedValue);
   }
 
   async getAllCustomApiOperations(): Promise<DiscoveryOpArray> {
@@ -201,9 +211,7 @@ export abstract class BaseSearchService implements ISearchService {
         $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
-      const response = await this.getAzureResourceRecursive(uri, queryParameters);
-
-      return response;
+      return this.getAzureResourceRecursive(uri, queryParameters);
     } catch (error) {
       return [];
     }
@@ -221,7 +229,6 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
-
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
     } catch (error) {
@@ -239,6 +246,14 @@ export abstract class BaseSearchService implements ISearchService {
       }
     });
     return connectors;
+  }
+
+  private removeUnsupportedOperations(operations: DiscoveryOpArray): DiscoveryOpArray {
+    return operations.filter((operation) => !this._unsupportedConnectorIds.includes(operation?.properties?.api?.id?.toLowerCase()));
+  }
+
+  private removeUnsupportedConnectors(connectors: Connector[]): Connector[] {
+    return connectors.filter((connector) => !this._unsupportedConnectorIds.includes(connector?.id?.toLowerCase()));
   }
 
   private async getWorkflows($filter: string): Promise<any[]> {
@@ -310,7 +325,7 @@ export abstract class BaseSearchService implements ISearchService {
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });
-    return operations;
+    return this.removeUnsupportedOperations(operations);
   }
 }
 

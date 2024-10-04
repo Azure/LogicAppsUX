@@ -4,6 +4,8 @@ import {
   DataMapperDesigner as DataMapperDesignerV2,
   DataMapDataProvider as DataMapDataProviderV2,
   DataMapperDesignerProvider as DataMapperDesignerProviderV2,
+  type IDataMapperFileService,
+  type SchemaFile,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
@@ -11,17 +13,17 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
-import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFunctions } from '@microsoft/logic-apps-data-mapper';
+import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFunctions } from '@microsoft/logic-apps-data-mapper-v2';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { IFileSysTreeItem } from '@microsoft/logic-apps-data-mapper-v2/src/models/Tree';
+import type { IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
     name: 'Child1.xsd',
     type: 'file',
-    fullPath: '/Artifacts/Schemas/Child1.xsd',
+    fullPath: 'Child1.xsd',
   },
   {
     name: 'Folder',
@@ -30,16 +32,51 @@ const mockFileItems: IFileSysTreeItem[] = [
       {
         name: 'Abc.json',
         type: 'file',
-        fullPath: '/Artifacts/Schemas/Folder/Abc.json',
+        fullPath: 'Folder/Abc.json',
       },
     ],
   },
   {
     name: 'sourceSchema.json',
     type: 'file',
-    fullPath: '/Artifacts/Schemas/sourceSchema.json',
+    fullPath: 'sourceSchema.json',
   },
 ];
+
+class DataMapperFileService implements IDataMapperFileService {
+  private verbose: boolean;
+
+  constructor(verbose: boolean) {
+    this.verbose = verbose;
+  }
+
+  public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
+    if (this.verbose) {
+      console.log('Saved definition: ', dataMapDefinition);
+      console.log('Saved metadata: ', mapMetadata);
+    }
+  };
+
+  public saveDraftStateCall(_dataMapDefinition: string): void {
+    return;
+  }
+
+  public readCurrentSchemaOptions = () => {
+    return;
+  };
+
+  public saveXsltCall = (_xslt: string) => {
+    return;
+  };
+
+  public readCurrentCustomXsltPathOptions = () => {
+    return;
+  };
+
+  public addSchemaFromFile = (_selectedSchemaFile: SchemaFile) => {
+    return;
+  };
+}
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 
@@ -62,18 +99,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
     accessToken: armToken,
   });
 
-  const saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
-    console.log('Map Definition\n===============');
-    console.log(dataMapDefinition);
-
-    console.log('Map Metadata\n===============');
-    console.log(mapMetadata);
-  };
-
-  const saveXsltCall = (dataMapXslt: string) => {
-    console.log('\nXSLT\n===============');
-    console.log(dataMapXslt);
-  };
+  const dataMapperFileService = new DataMapperFileService(true);
 
   useEffect(() => {
     const fetchFunctionList = async () => {
@@ -90,8 +116,15 @@ export const DataMapperStandaloneDesignerV2 = () => {
   const isLightMode = theme === ThemeType.Light;
 
   return (
-    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ flex: '0 1 1px' }}>
+    <div
+      style={{
+        flex: '1 1 1px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+      }}
+    >
+      <div style={{ flex: '0 1 1px', height: '30vh%' }}>
         <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
           <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
             {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
@@ -103,13 +136,21 @@ export const DataMapperStandaloneDesignerV2 = () => {
         </ThemeProvider>
       </div>
 
-      <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          flex: '1 1 1px',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '70vh',
+          overflow: 'hidden',
+        }}
+      >
         <DataMapperDesignerProviderV2 locale="en-US" theme={theme} options={{}}>
           <DataMapDataProviderV2
             xsltFilename={xsltFilename}
             xsltContent={xsltContent}
             mapDefinition={mapDefinition}
-            dataMapMetadata={mapMetadata}
+            dataMapMetadata={mapMetadata as MapMetadataV2}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}
             availableSchemas={mockFileItems}
@@ -117,11 +158,7 @@ export const DataMapperStandaloneDesignerV2 = () => {
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesignerV2
-              saveMapDefinitionCall={saveMapDefinitionCall}
-              saveXsltCall={saveXsltCall}
-              readCurrentSchemaOptions={() => null}
-            />
+            <DataMapperDesignerV2 fileService={dataMapperFileService} />
           </DataMapDataProviderV2>
         </DataMapperDesignerProviderV2>
       </div>

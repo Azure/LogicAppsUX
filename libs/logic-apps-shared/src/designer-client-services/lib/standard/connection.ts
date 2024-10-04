@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/react-query';
 import { getIntl } from '../../../intl/src';
 import type { ManagedIdentity, Connector, Connection, ConnectionParameter } from '../../../utils/src';
 import {
@@ -24,6 +25,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
+import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 
 interface ConnectionAcl {
   id: string;
@@ -135,9 +137,21 @@ export class StandardConnectionService extends BaseConnectionService implements 
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this._options;
-      const response = await httpClient.get<Connector>({
-        uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
-      });
+
+      let response = null;
+      if (isHybridLogicApp(baseUrl)) {
+        response = await httpClient.post<any, null>({
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+          headers: {
+            'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId.split('/').at(-1)}/`,
+            'x-ms-logicapps-proxy-method': 'GET',
+          },
+        });
+      } else {
+        response = await httpClient.get<Connector>({
+          uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
+        });
+      }
 
       return response;
     }
@@ -145,9 +159,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
     return this._getAzureConnector(connectorId);
   }
 
-  override async getConnections(connectorId?: string): Promise<Connection[]> {
+  override async getConnections(connectorId?: string, queryClient?: QueryClient): Promise<Connection[]> {
     if (connectorId) {
-      return this.getConnectionsForConnector(connectorId);
+      return this.getConnectionsForConnector(connectorId, queryClient);
     }
 
     const [localConnections, apiHubConnections] = await Promise.all([this._options.readConnections(), this.getConnectionsInApiHub()]);
@@ -259,11 +273,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
     connectionInfo: ConnectionCreationInfo,
     shouldTestConnection: boolean
   ): Promise<Connection> {
-    const { workflowAppDetails } = this._options;
+    const { workflowAppDetails, baseUrl } = this._options;
     const intl = getIntl();
 
     // NOTE: Block connection creation if identity does not exist on Logic App.
-    if (workflowAppDetails && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
+    if (workflowAppDetails && !isHybridLogicApp(baseUrl) && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
       throw new Error(
         intl.formatMessage({
           defaultMessage: 'To create and use an API connection, you must have a managed identity configured on this logic app.',
@@ -283,8 +297,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
       this.deleteConnection(connectionId);
       const error = new Error(
         intl.formatMessage({
-          defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
-          id: 'fDisLL',
+          defaultMessage: 'ACL creation failed for connection. Deleting the connection.',
+          id: 'm4qt/b',
           description: 'Error while creating acl',
         })
       );
@@ -307,26 +321,23 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const {
       apiHubServiceDetails: { tenantId },
       workflowAppDetails,
+      baseUrl,
     } = this._options;
     if (!isArmResourceId(connection.id) || !workflowAppDetails) {
       return;
     }
 
-    const intl = getIntl();
-
-    if (!isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'A managed identity is not configured on the logic app.',
-          id: 'WnU9v0',
-          description: 'Error message when no identity is associated',
-        })
-      );
-    }
+    this.validateLogicAppIdentity(baseUrl, workflowAppDetails.identity);
 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
-    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
+    let identityDetailsForApiHubAuth: { principalId: string; tenantId: string };
+
+    if (isHybridLogicApp(baseUrl) && identity?.principalId && identity?.tenantId) {
+      identityDetailsForApiHubAuth = { principalId: identity?.principalId, tenantId: identity?.tenantId };
+    } else {
+      identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
+    }
 
     try {
       if (
@@ -394,6 +405,29 @@ export class StandardConnectionService extends BaseConnectionService implements 
         },
       },
     });
+  }
+
+  private validateLogicAppIdentity(baseUrl: string, identity: ManagedIdentity | undefined) {
+    const intl = getIntl();
+    if (isHybridLogicApp(baseUrl)) {
+      if (!identity?.principalId || !identity?.tenantId) {
+        throw new Error(
+          intl.formatMessage({
+            defaultMessage: 'App identity is not configured on the logic app environment variables.',
+            id: 'zPRSM9',
+            description: 'Error message when no app identity is added in environment variables',
+          })
+        );
+      }
+    } else if (!isIdentityAssociatedWithLogicApp(identity)) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'A managed identity is not configured on the logic app.',
+          id: 'WnU9v0',
+          description: 'Error message when no identity is associated',
+        })
+      );
+    }
   }
 
   // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity if identity is not specified.
@@ -731,7 +765,8 @@ function createLocalConnectionsData(
       const rawValue = parameterValue;
       if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
         const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
-        result.settings[appSettingName] = parameterValues[parameterKey];
+        result.settings[appSettingName] =
+          typeof parameterValues[parameterKey] !== 'string' ? JSON.stringify(parameterValues[parameterKey]) : parameterValues[parameterKey];
 
         parameterValue = `@appsetting('${appSettingName}')`;
       }
@@ -752,7 +787,7 @@ function createLocalConnectionsData(
   return result;
 }
 
-function escapeSpecialChars(value: string): string {
+export function escapeSpecialChars(value: string): string {
   const escapedUnderscore = value.replace(/_/g, '__');
   return escapedUnderscore.replace(/-/g, '_1');
 }

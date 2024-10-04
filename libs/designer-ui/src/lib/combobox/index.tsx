@@ -8,11 +8,12 @@ import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles
 import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getIntl } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
+import { isComboboxItemMatch } from './helpers/isComboboxItemMatch';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -68,6 +69,7 @@ export interface ComboboxProps extends BaseEditorProps {
   errorDetails?: { message: string };
   useOption?: boolean;
   onMenuOpen?: CallbackHandler;
+  isCaseSensitive?: boolean;
   shouldSort?: boolean;
   multiSelect?: boolean;
   serialization?: SerializationOptions;
@@ -87,12 +89,13 @@ export const Combobox = ({
   serialization,
   label,
   shouldSort = true,
+  isCaseSensitive,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
-  const optionKey = getSelectedKey(options, initialValue, isLoading);
-  const optionKeys = getSelectedKeys(options, initialValue, serialization);
+  const optionKey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
+  const optionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
   const [mode, setMode] = useState<Mode>(getMode(optionKey, optionKeys, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
@@ -104,20 +107,30 @@ export const Combobox = ({
   useEffect(() => {
     if ((firstLoad.current || !errorDetails) && !isLoading) {
       firstLoad.current = false;
-      const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
-      const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization);
+      const updatedOptionkey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
+      const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
       setSelectedKey(updatedOptionkey);
       setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [isLoading, options]);
 
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
-    if (shouldSort) {
-      options.sort((currentItem, nextItem) => currentItem.displayName?.localeCompare(nextItem.displayName));
+    if (shouldSort && !isLoading) {
+      options.sort((currentItem, nextItem) => {
+        const currentName = currentItem?.displayName;
+        const nextName = nextItem?.displayName;
+        if (typeof currentName === 'number' && typeof nextName === 'number') {
+          return currentName - nextName;
+        }
+        if (typeof currentName === 'string' && typeof nextName === 'string') {
+          return currentName?.localeCompare(nextName);
+        }
+        return String(currentName).localeCompare(String(nextName));
+      });
     }
-  }, [options, shouldSort]);
+  }, [isLoading, options, shouldSort]);
 
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
@@ -138,12 +151,12 @@ export const Combobox = ({
       displayName: errorDetails?.message ?? '',
       type: 'errorrender',
     };
-    if (searchValue) {
+    if (searchValue && typeof searchValue === 'string') {
       const newOptions = isLoading
         ? [loadingOption]
         : errorDetails
           ? [errorOption]
-          : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.displayName.toLowerCase()));
+          : options.filter((option) => isComboboxItemMatch(option, searchValue));
 
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
@@ -210,15 +223,15 @@ export const Combobox = ({
 
   const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
+      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : String(option.key))]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else if (setSelectedKey && option) {
-      const currSelectedKey = option.key.toString();
+      const currSelectedKey = String(option.key);
       setSelectedKey(currSelectedKey);
       setMode(Mode.Default);
       const selectedValue = getSelectedValue(options, currSelectedKey);
-      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
+      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : String(selectedValue);
       onChange?.({
         value: [createLiteralValueSegment(currSelectedKey ? value : '')],
       });
@@ -334,8 +347,8 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   });
 
   const noOptionsExists = intl.formatMessage({
-    defaultMessage: 'No Items',
-    id: 'AiceEQ',
+    defaultMessage: 'No items',
+    id: 'tbl/ar',
     description: 'Label for when no items exist for combobox options',
   });
 
@@ -372,21 +385,26 @@ const getMode = (selectedKey: string, selectedKeys: string[], initialValue: Valu
   return isEmptySegments(initialValue) ? Mode.Default : selectedKey ? Mode.Default : Mode.Custom;
 };
 
-const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean): string => {
+const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean, isCaseSensitive = false): string => {
   if (isLoading) {
     return '';
   }
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return normalizeValue(option.value) === normalizeValue(initialValue[0].value);
+        return equals(normalizeValue(option.value), normalizeValue(initialValue[0].value), !isCaseSensitive);
       })?.key ?? ''
     );
   }
   return '';
 };
 
-const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+const getSelectedKeys = (
+  options: ComboboxItem[],
+  initialValue?: ValueSegment[],
+  serialization?: SerializationOptions,
+  isCaseSensitive = false
+): string[] => {
   const returnVal: string[] = [];
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     const value = initialValue[0].value;
@@ -399,7 +417,7 @@ const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[],
 
     for (const selectedValue of selectedValues) {
       const option = options.find((option) => {
-        return option.value === selectedValue;
+        return equals(normalizeValue(option.value), normalizeValue(selectedValue), !isCaseSensitive);
       });
 
       if (option) {

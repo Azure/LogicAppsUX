@@ -14,16 +14,18 @@ import {
   useCurrentTenantId,
   useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
+  validateWorkflowConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { Chatbot } from '@microsoft/logic-apps-chatbot';
+import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
+  BaseTenantService,
   ConsumptionConnectionService,
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
@@ -33,8 +35,9 @@ import {
   guid,
   startsWith,
   StandardCustomCodeService,
+  BaseUserPreferenceService,
 } from '@microsoft/logic-apps-shared';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -43,10 +46,12 @@ import {
   getReactQueryClient,
   serializeBJSWorkflow,
   store as DesignerStore,
+  getSKUDefaultHostOptions,
   Constants,
 } from '@microsoft/logic-apps-designer';
-import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -84,15 +89,15 @@ const DesignerEditorConsumption = () => {
   } = useWorkflowAndArtifactsConsumption(workflowId);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const [designerID, setDesignerID] = React.useState(guid());
+  const [designerID, setDesignerID] = useState(guid());
 
   const {
     workflow: baseWorkflow,
     connectionReferences,
     parameters,
-  } = React.useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
-  const [runWorkflow, setRunWorkflow] = React.useState<any>();
+  const [runWorkflow, setRunWorkflow] = useState<any>();
 
   const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
     if (isMonitoringView) {
@@ -107,34 +112,36 @@ const DesignerEditorConsumption = () => {
 
   const workflow = runWorkflow ?? baseWorkflow;
 
-  const { definition } = workflow;
+  const [definition, setDefinition] = useState(workflow.definition);
+  const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
+  const [designerView, setDesignerView] = useState(true);
+  const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
 
   const discardAllChanges = () => {
     setDesignerID(guid());
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
-  const services = React.useMemo(
+  const services = useMemo(
     () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
   );
 
-  const [parsedDefinition, setParsedDefinition] = React.useState<any>(undefined);
-
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (!services) {
         return;
       }
-      if (!(definition as any)?.actions) {
+      if (!(workflow.definition as any)?.actions) {
         return;
       }
-      setParsedDefinition(definition);
+      setDefinition(workflow.definition);
+      setDesignerView(true);
     })();
-  }, [definition, services]);
+  }, [services, workflow.definition]);
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
-  React.useEffect(() => {
+  useEffect(() => {
     const root = document.getElementById('root');
     if (root) {
       root.style.padding = '0px';
@@ -142,7 +149,7 @@ const DesignerEditorConsumption = () => {
     }
   }, []);
 
-  if (!parsedDefinition || isWorkflowAndArtifactsLoading) {
+  if (!definition || isWorkflowAndArtifactsLoading) {
     return <></>;
   }
 
@@ -150,7 +157,11 @@ const DesignerEditorConsumption = () => {
     throw workflowAndArtifactsError;
   }
 
-  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow): Promise<void> => {
+  const saveWorkflowFromDesigner = async (
+    workflowFromDesigner: Workflow,
+    _customCode: CustomCodeFileNameMapping | undefined,
+    clearDirtyState: () => void
+  ): Promise<void> => {
     if (!workflowAndArtifactsData) {
       return;
     }
@@ -181,13 +192,25 @@ const DesignerEditorConsumption = () => {
       }
       workflowToSave.connections = newConnectionsObj;
 
-      const response = await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave);
+      const response = await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState);
       alert('Workflow saved successfully!');
       return response;
     } catch (e: any) {
       console.error(e);
       alert('Error saving workflow, check console for error object');
       return;
+    }
+  };
+
+  const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
+    try {
+      const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+      await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
+      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState);
+    } catch (error: any) {
+      if (error.status !== 404) {
+        alert(`Error converting code to workflow ${error}`);
+      }
     }
   };
 
@@ -208,6 +231,24 @@ const DesignerEditorConsumption = () => {
     return `Bearer ${environment.armToken}` ?? '';
   };
 
+  const handleSwitchView = async () => {
+    if (designerView) {
+      setDesignerView(false);
+    } else {
+      try {
+        const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+        await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
+        setDefinition(codeToConvert.definition);
+        setWorkflowDefinitionId(guid());
+        setDesignerView(true);
+      } catch (error: any) {
+        if (error.status !== 404) {
+          alert(`Error converting code to workflow ${error}`);
+        }
+      }
+    }
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -223,7 +264,7 @@ const DesignerEditorConsumption = () => {
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
-            recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
+            ...getSKUDefaultHostOptions(Constants.SKU.CONSUMPTION),
           },
           showPerformanceDebug,
         }}
@@ -231,13 +272,14 @@ const DesignerEditorConsumption = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: parsedDefinition,
+              definition,
               connectionReferences,
               parameters,
             }}
+            workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
           >
-            <div style={{ height: 'inherit', width: 'inherit' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
                 saveWorkflow={saveWorkflowFromDesigner}
@@ -245,14 +287,15 @@ const DesignerEditorConsumption = () => {
                 location={canonicalLocation}
                 isReadOnly={readOnly}
                 isDarkMode={isDarkMode}
-                isConsumption
+                isDesignerView={designerView}
                 showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
+                switchViews={handleSwitchView}
+                saveWorkflowFromCode={saveWorkflowFromCode}
               />
-              <Designer />
+              {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
               {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
@@ -296,6 +339,7 @@ const getDesignerServices = (
     tenantId,
     httpClient,
   });
+
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,
     apiVersion: '2019-12-01',
@@ -303,17 +347,25 @@ const getDesignerServices = (
     includeBasePathInTemplate: true,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl, siteResourceId: workflowId, httpClient, workflowName });
+
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl,
+    siteResourceId: workflowId,
+    httpClient,
+    workflowName,
+  });
 
   const appServiceService = new BaseAppServiceService({
     ...defaultServiceParams,
     apiVersion: '2022-03-01',
     subscriptionId,
   });
+
   const connectorService = new ConsumptionConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
-      ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
+      ['/connectionProviders/workflow', 'invokeWorkflow'],
       ['connectionProviders/xmlOperations', 'xmlValidation'],
       ['connectionProviders/xmlOperations', 'xmlTransform'],
       ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
@@ -382,6 +434,7 @@ const getDesignerServices = (
     apiVersion: '2018-07-01-preview',
     workflowReferenceId: workflowId,
   });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -391,12 +444,18 @@ const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    ...defaultServiceParams,
+    apiVersion: '2017-08-01',
+  });
+
   const operationManifestService = new ConsumptionOperationManifestService({
     ...defaultServiceParams,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
     location: location || 'location',
   });
+
   const searchService = new ConsumptionSearchService({
     ...defaultServiceParams,
     openApiConnectionMode: false, // This should be turned on for Open Api testing.
@@ -466,13 +525,17 @@ const getDesignerServices = (
     httpClient,
   });
 
-  const hostService = {};
+  const hostService = {
+    fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
+    openMonitorView: (resourceId: string, runName: string) => console.log('openMonitorView:', resourceId, runName),
+  };
 
   return {
     appServiceService,
     connectionService,
     connectorService,
     gatewayService,
+    tenantService,
     operationManifestService,
     searchService,
     loggerService,
@@ -484,6 +547,7 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    userPreferenceService: new BaseUserPreferenceService(),
   };
 };
 

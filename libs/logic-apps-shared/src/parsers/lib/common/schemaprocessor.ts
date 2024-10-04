@@ -6,6 +6,7 @@ import * as ParameterKeyUtility from './helpers/keysutility';
 import {
   dereferenceRefSchema,
   getEditorForParameter,
+  getEditorOptionsForParameter,
   getEnum,
   getKnownTitles,
   getKnownTitlesFromKey,
@@ -88,39 +89,46 @@ export class SchemaProcessor {
     schema = this._dereferenceRefSchema(schema) as SchemaObject;
 
     let properties: SchemaProperty[];
-    switch (schema.type) {
-      case SwaggerConstants.Types.Array: {
-        properties = this._getArrayProperties(schema);
-        break;
+    if (Array.isArray(schema.type)) {
+      properties = [];
+      for (const type of schema.type) {
+        properties = properties.concat(this.getSchemaProperties({ ...schema, type }));
       }
-
-      case SwaggerConstants.Types.Boolean:
-      case SwaggerConstants.Types.Integer:
-      case SwaggerConstants.Types.Null:
-      case SwaggerConstants.Types.Number:
-      case SwaggerConstants.Types.String:
-      case undefined: {
-        properties = this._getScalarProperties(schema);
-        break;
-      }
-
-      case SwaggerConstants.Types.Object: {
-        // TODO: this condition will go away once Button trigger can fupport Object in the UI
-        if (
-          this.options.fileParameterAware &&
-          schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.CONTENT] &&
-          schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.FILENAME]
-        ) {
-          properties = this._getFileProperties(schema);
-        } else {
-          properties = this._getObjectProperties(schema, this.options.keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
+    } else {
+      switch (schema.type) {
+        case SwaggerConstants.Types.Array: {
+          properties = this._getArrayProperties(schema);
+          break;
         }
-        break;
-      }
 
-      default: {
-        properties = [];
-        break;
+        case SwaggerConstants.Types.Boolean:
+        case SwaggerConstants.Types.Integer:
+        case SwaggerConstants.Types.Null:
+        case SwaggerConstants.Types.Number:
+        case SwaggerConstants.Types.String:
+        case undefined: {
+          properties = this._getScalarProperties(schema);
+          break;
+        }
+
+        case SwaggerConstants.Types.Object: {
+          // TODO: this condition will go away once Button trigger can support Object in the UI
+          if (
+            this.options.fileParameterAware &&
+            schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.CONTENT] &&
+            schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.FILENAME]
+          ) {
+            properties = this._getFileProperties(schema);
+          } else {
+            properties = this._getObjectProperties(schema, this.options.keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
+          }
+          break;
+        }
+
+        default: {
+          properties = [];
+          break;
+        }
       }
     }
 
@@ -318,14 +326,17 @@ export class SchemaProcessor {
       const name = this._getName() as string;
       const dynamicValues = getParameterDynamicValues(schema);
       const key = keyPrefix || this.options.keyPrefix || '$';
+      const description = schema.description;
+      const $enum = getEnum(schema, this.options.required);
       schemaProperties.push({
-        alias: schema[SwaggerConstants.ExtensionProperties.Alias],
+        alias: this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined,
         default: schema.default,
-        description: schema.description,
+        description,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
-        editor: getEditorForParameter(schema, dynamicValues),
-        editorOptions: dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions],
+        enum: $enum,
+        editor: getEditorForParameter(schema, dynamicValues, $enum),
+        editorOptions: getEditorOptionsForParameter(schema, dynamicValues, $enum),
         format: schema.format,
         isInsideArray: this.options.parentProperty && this.options.parentProperty.isArray,
         isNested: this.options.isNested,
@@ -343,7 +354,8 @@ export class SchemaProcessor {
           schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
           this.options.currentKey as string,
           key,
-          name
+          name,
+          description
         ),
         type: SwaggerConstants.Types.Object,
         visibility: this._getVisibility(schema),
@@ -475,10 +487,10 @@ export class SchemaProcessor {
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
     const dynamicSchema = getParameterDynamicSchema(schema);
     const dynamicValues = getParameterDynamicValues(schema);
-    const editor = getEditorForParameter(schema, dynamicValues);
-    const editorOptions = dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
-    const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const $enum = getEnum(schema, $required);
+    const editor = getEditorForParameter(schema, dynamicValues, $enum);
+    const editorOptions = getEditorOptionsForParameter(schema, dynamicValues, $enum);
+    const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const format = schema.format;
     const itemSchema = this._dereferenceRefSchema(schema.items as OpenApiSchema);
     const isInsideArray = parentProperty && parentProperty.isArray;
@@ -493,13 +505,14 @@ export class SchemaProcessor {
       schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
       this.options.currentKey as string,
       keyPrefix,
-      name as string
+      name as string,
+      schema.description
     );
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);
     const groupName = this._getGroupName(schema);
-    const alias = schema[SwaggerConstants.ExtensionProperties.Alias];
+    const alias = this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined;
 
     // Exclude read-only parameters from input schema, i.e., objects in Swagger body parameters.
     if (isInputSchema && this._isReadOnlyParameter(schema)) {
@@ -557,7 +570,7 @@ export class SchemaProcessor {
     return summaryPrefix && summaryText ? `${summaryPrefix} ${summaryText}` : summaryText;
   }
 
-  private _getTitle(title: string, key: string, keyPrefix: string, name: string): string {
+  private _getTitle(title: string, key: string, keyPrefix: string, name: string, description?: string): string {
     const intl = getIntl();
     const defaultItemTitle = intl.formatMessage({
       defaultMessage: 'Item',
@@ -568,7 +581,7 @@ export class SchemaProcessor {
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
         ? defaultItemTitle
-        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
+        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name, description) ?? key;
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

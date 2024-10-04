@@ -1,62 +1,25 @@
-import { getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@microsoft/logic-apps-shared';
+import { getIntl, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { templatesPathFromState, type RootState } from './store';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
-import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
+import { createSlice } from '@reduxjs/toolkit';
+import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
+import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
+import { initializeTemplateServices, loadTemplate, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
-export interface TemplateState {
+export interface TemplateState extends TemplatePayload {
   templateName?: string;
-  workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
-  manifest: Template.Manifest | undefined;
-  parameters: {
-    definitions: Record<string, Template.ParameterDefinition>;
-    validationErrors: Record<string, string | undefined>;
-  };
-  connections: Template.Connection[];
+  servicesInitialized: boolean;
 }
 
 const initialState: TemplateState = {
-  workflowDefinition: undefined,
   manifest: undefined,
-  parameters: {
-    definitions: {},
-    validationErrors: {},
+  workflows: {},
+  parameterDefinitions: {},
+  connections: {},
+  servicesInitialized: false,
+  errors: {
+    parameters: {},
+    connections: undefined,
   },
-  connections: [],
-};
-
-export const loadTemplate = createAsyncThunk(
-  'template/loadTemplate',
-  async (preLoadedManifest: Template.Manifest | undefined, thunkAPI) => {
-    const currentState: RootState = thunkAPI.getState() as RootState;
-    const currentTemplateResourcePath = currentState.template.templateName;
-
-    if (currentTemplateResourcePath) {
-      return loadTemplateFromGithub(currentTemplateResourcePath, preLoadedManifest);
-    }
-
-    return undefined;
-  }
-);
-
-export const validateParameterValue = (data: { type: string; value?: string }, required = true): string | undefined => {
-  const intl = getIntl();
-
-  const { value: valueToValidate, type } = data;
-
-  if (valueToValidate === '' || valueToValidate === undefined) {
-    if (!required) {
-      return undefined;
-    }
-    return intl.formatMessage({
-      defaultMessage: 'Must provide value for parameter.',
-      id: 'VL9wOu',
-      description: 'Error message when the workflow parameter value is empty.',
-    });
-  }
-
-  return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
 export const templateSlice = createSlice({
@@ -66,76 +29,159 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+    updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string | undefined }>) => {
+      const { id, name } = action.payload;
+      if (state.workflows[id]) {
+        state.workflows[id].workflowName = name;
+      }
+    },
+    validateWorkflowsBasicInfo: (state, action: PayloadAction<{ validateName: boolean; existingNames: string[] }>) => {
+      const { validateName, existingNames } = action.payload;
+      const workflows = Object.keys(state.workflows);
+      if (workflows.length) {
+        const intl = getIntl();
+        for (const id of workflows) {
+          if (!state.workflows[id].kind) {
+            state.workflows[id].errors.kind = intl.formatMessage({
+              defaultMessage: 'The value must not be empty.',
+              id: 'JzvOUc',
+              description: 'Error message when the stage progressed without selecting kind.',
+            });
+          }
+
+          if (validateName) {
+            state.workflows[id].errors.workflow = _validateWorkflowName(state.workflows[id].workflowName, existingNames);
+          }
+        }
+      }
+    },
+    validateWorkflowName: (state, action: PayloadAction<{ id: string; existingNames: string[] }>) => {
+      const { id, existingNames } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+      const validationError = _validateWorkflowName(state.workflows[id].workflowName, existingNames);
+      state.workflows[id].errors.workflow = validationError;
+    },
+    updateKind: (state, action: PayloadAction<{ id: string; kind: string }>) => {
+      const { id, kind } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+      state.workflows[id].kind = kind;
+      state.workflows[id].errors.kind = undefined;
+    },
+    updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
       const {
-        id,
-        newDefinition: { type, value, required },
+        newDefinition: { name, type, value, required },
       } = action.payload;
 
-      const validationError = validateParameterValue({ type, value }, required);
+      const validationError = validateParameterValue({ type, value: value }, required);
 
-      state.parameters.definitions[id] = {
-        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+      state.parameterDefinitions[name] = {
+        ...(getRecordEntry(state.parameterDefinitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[id] = validationError;
+      state.errors.parameters[name] = validationError;
+    },
+    validateParameters: (state) => {
+      const parametersDefinition = { ...state.parameterDefinitions };
+      const parametersValidationErrors = { ...state.errors.parameters };
+      Object.keys(parametersDefinition).forEach((parameterName) => {
+        const thisParameter = parametersDefinition[parameterName];
+        parametersValidationErrors[parameterName] = validateParameterValue(
+          { type: thisParameter.type, value: thisParameter.value },
+          thisParameter.required
+        );
+      });
+      state.errors.parameters = parametersValidationErrors;
+    },
+    validateConnections: (state, action: PayloadAction<Record<string, string>>) => {
+      if (state.connections) {
+        state.errors.connections = validateConnectionsValue(state.connections, action.payload);
+      }
+    },
+    clearTemplateDetails: (state) => {
+      state.workflows = {};
+      state.parameterDefinitions = {};
+      state.connections = {};
+      state.errors = {
+        parameters: {},
+        connections: undefined,
+      };
+      state.templateName = undefined;
+      state.manifest = undefined;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadTemplate.fulfilled, (state, action) => {
+    builder.addCase(loadTemplate.fulfilled, (state, action: PayloadAction<TemplatePayload | undefined>) => {
       if (action.payload) {
-        state.workflowDefinition = action.payload.workflowDefinition;
-        state.manifest = action.payload.manifest;
-        state.parameters = action.payload.parameters;
-        state.connections = action.payload.connections;
+        const { workflows, parameterDefinitions, connections, errors, manifest } = action.payload;
+        state.workflows = workflows;
+        state.parameterDefinitions = parameterDefinitions;
+        state.connections = connections;
+        state.errors = errors;
+        state.manifest = manifest;
       }
     });
 
     builder.addCase(loadTemplate.rejected, (state) => {
       // TODO change to null for error handling case
-      state.workflowDefinition = undefined;
-      state.manifest = undefined;
-      state.parameters = {
-        definitions: {},
-        validationErrors: {},
+      state.workflows = {};
+      state.parameterDefinitions = {};
+      state.connections = {};
+      state.errors = {
+        parameters: {},
+        connections: undefined,
       };
-      state.connections = [];
+    });
+
+    builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
+      state.servicesInitialized = action.payload;
     });
   },
 });
 
-export const { changeCurrentTemplateName, updateTemplateParameterValue } = templateSlice.actions;
+export const {
+  changeCurrentTemplateName,
+  updateWorkflowName,
+  updateKind,
+  validateWorkflowsBasicInfo,
+  updateTemplateParameterValue,
+  validateParameters,
+  validateConnections,
+  clearTemplateDetails,
+  validateWorkflowName,
+} = templateSlice.actions;
+export default templateSlice.reducer;
 
-const loadTemplateFromGithub = async (
-  templateName: string,
-  manifest: Template.Manifest | undefined
-): Promise<TemplateState | undefined> => {
-  try {
-    const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
-      `${templatesPathFromState}/${templateName}/workflow.json`
-    );
+const _validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
+  const intl = getIntl();
 
-    const templateManifest: Template.Manifest =
-      manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
-    const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
-      result[parameter.name] = {
-        ...parameter,
-        value: parameter.default,
-      };
-      return result;
-    }, {});
-
-    return {
-      workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
-      manifest: templateManifest,
-      parameters: {
-        definitions: parametersDefinitions,
-        validationErrors: {},
-      },
-      connections: templateManifest.connections,
-    };
-  } catch (ex) {
-    console.error(ex);
-    return undefined;
+  if (!workflowName) {
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for workflow name.',
+      id: 'sKy720',
+      description: 'Error message when the workflow name is empty.',
+    });
   }
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Name does not match the given pattern.',
+      id: 'zMKxg9',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  if (existingWorkflowNames.includes(workflowName)) {
+    return intl.formatMessage(
+      {
+        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+        id: '7F4Bzv',
+        description: 'Error message when the workflow name already exists.',
+      },
+      { workflowName }
+    );
+  }
+  return undefined;
 };

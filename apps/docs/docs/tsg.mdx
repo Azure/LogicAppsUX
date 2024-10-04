@@ -1,4 +1,5 @@
 ---
+sidebar_position: 5
 # Working with h2 to h5 Headings
 toc_min_heading_level: 2
 toc_max_heading_level: 5
@@ -7,22 +8,6 @@ toc_max_heading_level: 5
 # Troubleshooting Guide
 
 If you're experiencing any issues with Logic Apps Designer, please follow the steps below to help us investigate the issue as well as mitigate the issue for you.
-
-## General mitigation steps
-
-### Fallback to legacy designer
-
-Our current main method of mitigation is to fall back to the now legacy version of Designer. This can be done by using the following URL to navigate to your Logic App. This will hopefully allow you to continue working while we investigate your issue.
-
-**[Link to access legacy designer](https://aka.ms/lafallback)**
-
-:::note
-
-The fallback URL is not a permanent feature, and will be removed once we reach a point of higher stability.
-
-:::
-
-**If the issue persists even when using the legacy designer**, please make note of this when reporting the issue as it may be a backend issue that we will need to handle differently.
 
 ## Submitting an issue
 
@@ -64,6 +49,10 @@ If you are experiencing issues with the designer loading, or with any network re
 3. Refresh the page and reproduce the issue
 4. Once you have reproduced the issue, right-click anywhere in the grid of network requests, select **Save as HAR with Content**, and save the file to your computer
 5. Your HAR file is now ready to be sent
+6. If you want to sanitize the HAR file before sending, follow these steps: 
+    1. Upload the HAR file to the [sanitizer tool](https://aka.ms/sanitizer) to remove any sensitive information
+    2. Download the sanitized zip file
+    3. Upload the *.sanitized.zip file to the incident/issue as an attachment
 
 :::caution Warning on sensitive information
 

@@ -17,6 +17,9 @@ import {
   ConsumptionConnectionService,
   StandardCustomCodeService,
   ResourceIdentityType,
+  // Uncomment to use dummy version of copilot expression assistant
+  // BaseCopilotService,
+  BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -56,6 +59,9 @@ const operationManifestServiceStandard = new StandardOperationManifestService({
   baseUrl: '/url',
   httpClient,
 });
+
+// Uncomment to use dummy version of copilot expression assistant
+// const baseCopilotService = new BaseCopilotService({isDev: true});
 
 const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
   apiVersion: '2018-11-01',
@@ -105,6 +111,17 @@ const gatewayService = new BaseGatewayService({
     gateway: '2016-06-01',
   },
 });
+
+const tenantService = new BaseTenantService({
+  baseUrl: '/url',
+  apiVersion: '2017-08-01',
+  httpClient,
+});
+
+const uiInteractionsService = {
+  getAddButtonMenuItems: () => [],
+  getNodeContextMenuItems: () => [],
+};
 
 const functionService = new BaseFunctionService({
   baseUrl: '/url',
@@ -158,7 +175,7 @@ export const LocalDesigner = () => {
     isReadOnly,
     isMonitoringView,
     isDarkMode,
-    isConsumption,
+    hostingPlan,
     connections,
     runInstance,
     workflowKind,
@@ -170,13 +187,17 @@ export const LocalDesigner = () => {
   } = useSelector((state: RootState) => state.workflowLoader);
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
+  const isConsumption = hostingPlan === 'consumption';
   const designerProviderProps = {
     services: {
       connectionService: isConsumption ? connectionServiceConsumption : connectionServiceStandard,
       operationManifestService: isConsumption ? operationManifestServiceConsumption : operationManifestServiceStandard,
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
+      // Uncomment to use dummy version of copilot expression assistant
+      // copilotService: baseCopilotService,
       oAuthService,
       gatewayService,
+      tenantService,
       functionService,
       appServiceService,
       workflowService,
@@ -185,6 +206,7 @@ export const LocalDesigner = () => {
       editorService,
       connectionParameterEditorService,
       customCodeService,
+      uiInteractionsService,
     },
     readOnly: isReadOnly,
     isMonitoringView,

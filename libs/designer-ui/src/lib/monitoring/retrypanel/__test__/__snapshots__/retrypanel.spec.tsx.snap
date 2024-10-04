@@ -315,7 +315,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -420,7 +420,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local Time)
+                    2/8/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -458,7 +458,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -563,7 +563,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="token plain"
                   >
-                    2/10/2022, 2:52:00 PM (Local Time)
+                    2/10/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -1115,7 +1115,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -1220,7 +1220,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local Time)
+                    2/8/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -1258,7 +1258,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -1363,7 +1363,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="token plain"
                   >
-                    2/10/2022, 2:52:00 PM (Local Time)
+                    2/10/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -2027,7 +2027,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2132,7 +2132,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local Time)
+                    2/8/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -2170,7 +2170,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2275,7 +2275,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 3:10:00 PM (Local Time)
+                    2/8/2022, 3:10:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -2857,7 +2857,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'Start time' to the local time"
+                  title="Switch 'Start time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -2962,7 +2962,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="token plain"
                   >
-                    2/8/2022, 2:52:00 PM (Local Time)
+                    2/8/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>
@@ -3000,7 +3000,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   onKeyUp={[Function]}
                   onMouseDown={[Function]}
                   onMouseUp={[Function]}
-                  title="Switch 'End time' to the local time"
+                  title="Switch 'End time' to the UTC time format"
                   type="button"
                 >
                   <span
@@ -3105,7 +3105,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="token plain"
                   >
-                    2/10/2022, 2:52:00 PM (Local Time)
+                    2/10/2022, 2:52:00 PM (Local time)
                   </span>
                 </div>
               </pre>

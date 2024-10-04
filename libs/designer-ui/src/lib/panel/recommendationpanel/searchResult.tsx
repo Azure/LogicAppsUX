@@ -1,6 +1,6 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
-import { isBuiltInConnector } from '../../connectors';
+import { isBuiltInConnector, isPremiumConnector } from '../../connectors';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -104,6 +104,18 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     description: 'Message to show when loading search results',
   });
 
+  const connectorText = intl.formatMessage({
+    defaultMessage: 'connector',
+    id: 'lk/Qic',
+    description: 'Connector text',
+  });
+
+  const actionText = intl.formatMessage({
+    defaultMessage: 'action',
+    id: 'D89UXR',
+    description: 'Action text',
+  });
+
   if (isLoadingSearch) {
     return (
       <div>
@@ -130,12 +142,12 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       )}
       {groupByConnector ? (
         <>
-          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={'Connector'} />
+          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={connectorText} />
           <List items={apiIds} onRenderCell={onRenderOperationGroup} />
         </>
       ) : (
         <>
-          <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={'action'} />
+          <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={actionText} />
           <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
         </>
       )}
@@ -153,6 +165,7 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   category: getConnectorCategoryString(operation.properties.api),
   isTrigger: !!operation.properties?.trigger,
   isBuiltIn: isBuiltInConnector(operation.properties.api),
+  isPremium: isPremiumConnector(operation.properties.api),
   apiId: operation.properties.api.id,
   releaseStatus: operation.properties.annotation?.status,
 });

@@ -14,6 +14,7 @@ import {
   BaseAppServiceService,
   HTTP_METHODS,
   clone,
+  BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -48,6 +49,7 @@ export const getDesignerServices = (
   searchService: StandardSearchService;
   oAuthService: BaseOAuthService;
   gatewayService: BaseGatewayService;
+  tenantService: BaseTenantService;
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
@@ -83,7 +85,12 @@ export const getDesignerServices = (
     });
   };
 
-  const httpClient = new HttpClient({ accessToken: authToken, baseUrl, apiHubBaseUrl: apiHubDetails.baseUrl, hostVersion });
+  const httpClient = new HttpClient({
+    accessToken: authToken,
+    baseUrl,
+    apiHubBaseUrl: apiHubDetails.baseUrl,
+    hostVersion,
+  });
   const apiHubServiceDetails = {
     ...apiHubDetails,
     httpClient,
@@ -124,8 +131,16 @@ export const getDesignerServices = (
     mapArtifacts: panelMetadata?.mapArtifacts,
   });
 
-  const manualWorkflows = Object.keys(workflowDetails).map((name) => ({ value: name, displayName: name }));
-  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
+  const manualWorkflows = Object.keys(workflowDetails).map((name) => ({
+    value: name,
+    displayName: name,
+  }));
+  const appService = new BaseAppServiceService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
 
   const connectorService = new StandardConnectorService({
     apiVersion,
@@ -138,7 +153,10 @@ export const getDesignerServices = (
       }
 
       const connectionName = connectionId.split('/').splice(-1)[0];
-      const connnectionsInfo = { ...connectionsData?.serviceProviderConnections, ...connectionsData?.apiManagementConnections };
+      const connnectionsInfo = {
+        ...connectionsData?.serviceProviderConnections,
+        ...connectionsData?.apiManagementConnections,
+      };
       const connectionInfo = connnectionsInfo[connectionName];
 
       if (connectionInfo) {
@@ -241,6 +259,12 @@ export const getDesignerServices = (
     },
   });
 
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2017-08-01',
+  });
+
   // Workflow service needs to be implemented to get the callback url for azure resources
   const workflowService: IWorkflowService = {
     getCallbackUrl: async () => {
@@ -302,6 +326,7 @@ export const getDesignerServices = (
     searchService,
     oAuthService,
     gatewayService,
+    tenantService,
     workflowService,
     hostService,
     runService,

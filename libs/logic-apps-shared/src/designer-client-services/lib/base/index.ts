@@ -1,8 +1,18 @@
 // Search
-export { BaseSearchService, getClientBuiltInOperations, getClientBuiltInConnectors } from './search';
+export {
+  BaseSearchService,
+  getClientBuiltInOperations,
+  getClientBuiltInConnectors,
+} from './search';
 export type { BaseSearchServiceOptions } from './search';
 // Manifests
-export { BaseOperationManifestService, foreachOperationInfo, supportedBaseManifestObjects } from './operationmanifest';
+export {
+  BaseOperationManifestService,
+  foreachOperationInfo,
+  supportedBaseManifestObjects,
+  isBuiltInOperation,
+  getBuiltInOperationInfo,
+} from './operationmanifest';
 export type { BaseOperationManifestServiceOptions } from './operationmanifest';
 export { frequencyValues } from './manifests/schedule';
 // Connector
@@ -30,3 +40,16 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
+// Copilot
+export { BaseCopilotService } from './copilot';
+export type { CopilotServiceOptions } from './copilot';
+// Template
+export { BaseTemplateService } from './template';
+export type { BaseTemplateServiceOptions } from './template';
+// Tenant
+export { BaseTenantService } from './tenant';
+export type { BaseTenantServiceOptions } from './tenant';
+
+export { BaseUserPreferenceService } from './userpreference';
+
+export { BaseExperimentationService } from './experimentation';

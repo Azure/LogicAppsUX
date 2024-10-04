@@ -3,8 +3,8 @@ import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
-import type { Token, TokenGroup } from '../models/token';
-import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
+import type { TokenGroup, Token } from '@microsoft/logic-apps-shared';
+import { getReducedTokenList } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon, useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -27,7 +27,7 @@ interface TokenPickerOptionsProps extends TokenPickerBaseProps {
 const maxTokensPerSection = 6;
 
 export const TokenPickerOptions = ({
-  selectedKey,
+  selectedMode,
   section,
   searchQuery,
   index,
@@ -67,16 +67,16 @@ export const TokenPickerOptions = ({
 
   const buttonTextMore = intl.formatMessage(
     {
-      defaultMessage: 'See More ({count})',
-      id: 'uTnqzQ',
+      defaultMessage: 'See more ({count})',
+      id: '6SQuYg',
       description: 'Click to view more token options. {count} indicates the number of total tokens.',
     },
     { count: section.tokens.length }
   );
 
   const buttonTextLess = intl.formatMessage({
-    defaultMessage: 'See Less',
-    id: 'oWGaw9',
+    defaultMessage: 'See less',
+    id: 'WGq3Fo',
     description: 'Click to view less token options.',
   });
 
@@ -85,11 +85,11 @@ export const TokenPickerOptions = ({
   };
 
   const handleTokenClicked = (token: OutputToken) => {
-    if (selectedKey === TokenPickerMode.TOKEN) {
+    if (selectedMode === TokenPickerMode.TOKEN) {
       handleCreateToken(token);
-    } else if (selectedKey === TokenPickerMode.EXPRESSION) {
+    } else if (selectedMode === TokenPickerMode.EXPRESSION) {
       handleExpressionClicked(token);
-    } else if (selectedKey === TokenPickerMode.TOKEN_EXPRESSION) {
+    } else if (selectedMode === TokenPickerMode.TOKEN_EXPRESSION) {
       handleTokenExpressionClicked(token);
     }
   };
@@ -172,8 +172,8 @@ export const TokenPickerOptions = ({
   const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
   const sectionHeaderColorCssDark = `rgb(${sectionHeaderColorRgbDark.red}, ${sectionHeaderColorRgbDark.green}, ${sectionHeaderColorRgbDark.blue})`;
 
-  const maxRowsShown = selectedKey === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
-  const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
+  const maxRowsShown = selectedMode === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
+  const showSeeMoreOrLessButton = !searchQuery && section.tokens.length > maxRowsShown;
 
   return (
     <>

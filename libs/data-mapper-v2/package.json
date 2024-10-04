@@ -1,12 +1,13 @@
 {
   "name": "@microsoft/logic-apps-data-mapper-v2",
-  "version": "4.1.1",
+  "version": "4.103.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.50.0",
     "@fluentui/react-hooks": "8.6.20",
     "@fluentui/react-icons": "2.0.224",
+    "@fluentui/react-list-preview": "^0.3.2",
     "@fluentui/react-migration-v8-v9": "^9.2.16",
     "@fluentui/react-portal-compat": "^9.0.60",
     "@fluentui/react-search": "^9.0.3",
@@ -16,21 +17,28 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
+    "@xyflow/react": "^12.0.3",
+    "elkjs": "0.9.1",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
     "js-yaml": "4.1.0",
+    "lodash": "^4.17.21",
     "pathfinding": "0.4.18",
+    "react-arborist": "^3.4.0",
     "react-dnd": "16.0.1",
     "react-dnd-html5-backend": "16.0.1",
+    "react-draggable-list": "^4.2.1",
     "react-icons": "4.8.0",
     "react-intl": "6.3.0",
     "react-redux": "8.0.2",
-    "reactflow": "11.11.1",
+    "react-virtualized-tree": "^3.4.1",
     "redux-thunk": "2.4.2",
-    "redux-undo": "1.1.0"
+    "redux-undo": "1.1.0",
+    "use-resize-observer": "^9.1.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
+    "@types/lodash": "^4.17.7",
     "@types/pathfinding": "^0.0.9"
   },
   "engines": {

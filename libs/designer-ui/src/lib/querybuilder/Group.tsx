@@ -115,8 +115,8 @@ export const Group = ({
   // });
 
   const makeGroupButton = intl.formatMessage({
-    defaultMessage: 'Make Group',
-    id: 'ERVorY',
+    defaultMessage: 'Make group',
+    id: 'J7PN35',
     description: 'Make group button',
   });
 
@@ -183,7 +183,7 @@ export const Group = ({
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
-    const newItems = { ...groupProps };
+    const newItems = { ...groupProps, items: [...groupProps.items] };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
   };

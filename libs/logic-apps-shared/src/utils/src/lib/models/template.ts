@@ -1,16 +1,29 @@
 export type SkuType = 'standard' | 'consumption';
-export type Kind = 'stateful' | 'stateless';
+export type WorkflowKindType = 'stateful' | 'stateless';
+export type ConnectorRuntimeType = 'inapp' | 'shared';
 
 export interface Manifest {
   title: string;
   description: string;
-  thumbnail?: string;
   skus: SkuType[];
-  kinds: Kind[];
+  kinds?: WorkflowKindType[];
+  details: Record<string, string>;
+
+  /* This is a markdown to show features for multi-workflow and details in case of single workflow */
+  detailsDescription?: string;
+
+  tags?: string[];
   artifacts: Artifact[];
-  images?: string[];
+
+  /* This consists of list of workflows listed in the multi-workflow template.
+  The key is the folder name, followed by metadata where name is default name to be used for creation */
+  workflows?: Record<string, { name: string }>;
+
+  images: Record<string, string>;
+  prerequisites?: string;
   parameters: Parameter[];
-  connections: Connection[];
+  connections: Record<string, Connection>;
+  featuredOperations?: { type: string; kind?: string }[];
 }
 
 export interface Artifact {
@@ -24,6 +37,8 @@ export interface Parameter {
   default?: string;
   description: string;
   required?: boolean;
+  displayName: string;
+  allowedValues?: { value: any; displayName: string }[];
 }
 
 export interface ParameterDefinition extends Parameter {
@@ -31,5 +46,11 @@ export interface ParameterDefinition extends Parameter {
 }
 
 export interface Connection {
-  id: string;
+  connectorId: string;
+  kind?: ConnectorRuntimeType;
+}
+
+export interface TemplateContext {
+  templateId: string;
+  workflowAppName: string;
 }

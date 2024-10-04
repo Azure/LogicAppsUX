@@ -46,6 +46,7 @@ import {
   unmap,
   FindPreviousAndNextPage,
   sortRecord,
+  splitAtIndex,
 } from './../functions';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/helpers/functions', () => {
@@ -73,7 +74,7 @@ describe('lib/helpers/functions', () => {
       ['foo', 'FOO', true],
       ['ßß', 'SSSS', true],
       ['ς', 'Σ', true],
-    ])('returns the correct result for %p=%p, case-insensitive true/default', (a, b, expected) => {
+    ])('returns the correct result for "%s"="%s", case-insensitive true/default', (a, b, expected) => {
       expect(equals(a, b)).toBe(expected);
       expect(equals(a, b, true)).toBe(expected);
     });
@@ -86,7 +87,7 @@ describe('lib/helpers/functions', () => {
       ['foo', 'FOO', false],
       ['ßß', 'SSSS', false],
       ['ς', 'Σ', false],
-    ])('returns the correct result for %p=%p, case-insensitive false', (a, b, expected) => {
+    ])('returns the correct result for "%s"="%s", case-insensitive false', (a, b, expected) => {
       expect(equals(a, b, false)).toBe(expected);
     });
   });
@@ -1428,6 +1429,50 @@ describe('lib/helpers/functions', () => {
       const sortedRecord = { dog: 1, cat: 2 };
       const sortFunc = (_k1, v1, _k2, v2) => v1 - v2;
       expect(sortRecord(record, sortFunc)).toEqual(sortedRecord);
+    });
+  });
+
+  describe('splitAtIndex', () => {
+    it('splits a string at the given index', () => {
+      const str = 'hello';
+      const index = 2;
+      const result = splitAtIndex(str, index);
+      expect(result).toEqual(['he', 'lo']);
+    });
+
+    it('returns the whole string except the indexed element in the second part if index is 0', () => {
+      const str = 'hello';
+      const index = 0;
+      const result = splitAtIndex(str, index);
+      expect(result).toEqual(['', 'ello']);
+    });
+
+    it('returns the whole string in the second part except the indexed element if index is at the end', () => {
+      const str = 'hello';
+      const index = str.length - 1;
+      const result = splitAtIndex(str, index);
+      expect(result).toEqual(['hell', '']);
+    });
+
+    it('returns two empty strings if the input string is empty', () => {
+      const str = '';
+      const index = 0;
+      const result = splitAtIndex(str, index);
+      expect(result).toEqual(['', '']);
+    });
+
+    it('handles negative index  by returning the whole string in the second part', () => {
+      const str = 'hello';
+      const index = -1;
+      const result = splitAtIndex(str, index);
+      expect(result).toEqual(['', 'hello']);
+    });
+
+    it('handles index greater than string length by returning the whole string in the first part', () => {
+      const str = 'hello';
+      const index = str.length;
+      const result = splitAtIndex(str, index);
+      expect(result).toEqual(['hello', '']);
     });
   });
 });

@@ -38,6 +38,7 @@ export interface SegmentParserOptions {
   readonly?: boolean;
   tokensEnabled?: boolean;
   removeSingleTokenQuotesWrapping?: boolean;
+  convertSpaceToNewline?: boolean;
 }
 
 export const isEmptySegments = (segments: ValueSegment[]): boolean => {
@@ -59,10 +60,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = encodeStringSegmentTokensInDomContext(
-    encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap),
-    nodeMap
-  );
+  const encodedStringValue = processStringSegmentTokensInDomAndLexicalContext(stringValue, nodeMap, true);
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -132,9 +130,7 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    const decodedTextContent = tokensEnabled
-      ? decodeStringSegmentTokensInDomContext(decodeSegmentValueInLexicalContext(textContent), nodeMap)
-      : textContent;
+    const decodedTextContent = tokensEnabled ? processStringSegmentTokensInDomAndLexicalContext(textContent, nodeMap, false) : textContent;
 
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
@@ -296,6 +292,20 @@ export const decodeStringSegmentTokensInLexicalContext = (value: string, nodeMap
 
 export const encodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
   encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'encode');
+
+export const processStringSegmentTokensInDomAndLexicalContext = (
+  value: string,
+  nodeMap: Map<string, ValueSegment>,
+  encode: boolean
+): string => {
+  let newValue = value;
+  for (const [key] of nodeMap.entries()) {
+    const encodedValue = encodeSegmentValueInLexicalContext(encodeSegmentValueInDomContext(key));
+    const decodedValue = decodeSegmentValueInLexicalContext(decodeSegmentValueInDomContext(key));
+    newValue = newValue.replaceAll(encode ? decodedValue : encodedValue, encode ? encodedValue : decodedValue);
+  }
+  return newValue;
+};
 
 const encodeOrDecodeStringSegmentTokens = (
   value: string,

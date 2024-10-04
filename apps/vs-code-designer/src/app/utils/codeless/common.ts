@@ -25,11 +25,11 @@ import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
   StandardApp,
-  Artifacts,
   AzureConnectorDetails,
   ILocalSettingsJson,
   Parameter,
   WorkflowParameter,
+  Artifacts,
 } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
@@ -362,10 +362,4 @@ export async function verifyDeploymentResourceGroup(
     const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
     await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
   }
-}
-
-export function getTriggerName(definition: any): string | undefined {
-  const { triggers } = definition;
-  const triggerNames = Object.keys(triggers);
-  return triggerNames.length === 1 ? triggerNames[0] : undefined;
 }

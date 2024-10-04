@@ -2,7 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitignoreFileName, hostFileName, localSettingsFileName, logicAppKind } from '../../../../../constants';
+import {
+  azureWebJobsStorageKey,
+  funcIgnoreFileName,
+  gitignoreFileName,
+  hostFileName,
+  localEmulatorConnectionString,
+  localSettingsFileName,
+  logicAppKind,
+} from '../../../../../constants';
 import { addDefaultBundle } from '../../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../../utils/fs';
 import { ProjectCodeCreateStepBase } from '../../CodeProjectBase/ProjectCodeCreateStepBase';
@@ -14,6 +22,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import type { Progress } from 'vscode';
+import { getGitIgnoreContent } from '../../../../utils/git';
 
 /**
  * This class represents a step that creates the contents of a new script project.
@@ -26,7 +35,7 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
     '__azurite_db*__.json',
     '.git*',
     '.vscode',
-    'local.settings.json',
+    localSettingsFileName,
     'test',
     '.debug',
     'global.json',
@@ -59,7 +68,7 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
       const localSettingsJson: ILocalSettingsJson = {
         IsEncrypted: false,
         Values: {
-          AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+          [azureWebJobsStorageKey]: localEmulatorConnectionString,
           WORKFLOWS_SUBSCRIPTION_ID: '',
           FUNCTIONS_WORKER_RUNTIME: 'node',
           APP_KIND: logicAppKind,
@@ -72,28 +81,11 @@ export class ScriptProjectCreateStep extends ProjectCodeCreateStepBase {
     // Create the .gitignore file
     const gitignorePath: string = path.join(context.projectPath, gitignoreFileName);
     if (await confirmOverwriteFile(context, gitignorePath)) {
-      await fse.writeFile(
-        gitignorePath,
-        this.gitignore.concat(`
-# Azure Functions artifacts
-bin
-obj
-appsettings.json
-local.settings.json
-__blobstorage__
-.debug
-__queuestorage__
-__azurite_db*__.json
-
-# Added folders and file patterns
-workflow-designtime/
-.vscode/
-*.code-workspace`)
-      );
+      await fse.writeFile(gitignorePath, this.gitignore.concat(getGitIgnoreContent()));
     }
 
     // Create the .funcignore file
-    const funcIgnorePath: string = path.join(context.projectPath, '.funcignore');
+    const funcIgnorePath: string = path.join(context.projectPath, funcIgnoreFileName);
     if (await confirmOverwriteFile(context, funcIgnorePath)) {
       await fse.writeFile(funcIgnorePath, this.funcignore.sort().join(os.EOL));
     }

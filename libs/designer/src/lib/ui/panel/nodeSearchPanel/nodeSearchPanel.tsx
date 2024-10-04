@@ -1,8 +1,8 @@
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { clearPanel } from '../../../core/state/panel/panelSlice';
+import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
-import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
+import { setCollapsedGraphIds, setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { SearchBox, FocusTrapZone } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
@@ -35,8 +35,9 @@ const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRun
         operationActionData={{ id: node, title: displayName, isTrigger: false, brandColor, iconUri }}
         showImage={true}
         onClick={(_: string) => {
+          dispatch(setCollapsedGraphIds(node));
           dispatch(setFocusNode(node));
-          dispatch(clearPanel());
+          dispatch(changePanelNode(node));
         }}
         displayRuntimeInfo={displayRuntimeInfo}
       />
@@ -68,13 +69,19 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
 
   const goToOperationHeader = intl.formatMessage({
     description: 'Header for a search panel that searches for and allows direct navigation to a specific node',
-    defaultMessage: 'Go To Operation',
-    id: 'FBNevf',
+    defaultMessage: 'Go to operation',
+    id: 'Fx/6sv',
   });
   const searchOperation = intl.formatMessage({
     defaultMessage: 'Search for operation',
     id: 'i0XjL5',
     description: 'Placeholder for search box that searches operations',
+  });
+
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close panel',
+    id: 'sfTqHY',
+    description: 'Aria label for the close button in the node search panel',
   });
 
   const originalFocusElement = props.focusReturnElementId ? document.getElementById(props.focusReturnElementId) : undefined;
@@ -83,14 +90,16 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     <FocusTrapZone elementToFocusOnDismiss={originalFocusElement ? originalFocusElement : undefined}>
       <div className="msla-app-action-header">
         <XLargeText text={goToOperationHeader} />
-        <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div style={{ padding: 20 }}>
         <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
       </div>
-      {searchNodeNames.map((node) => (
-        <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
-      ))}
+      <div aria-description={'List of operation results'}>
+        {searchNodeNames.map((node) => (
+          <NodeSearchCard key={node} node={node} displayRuntimeInfo={displayRuntimeInfo} />
+        ))}
+      </div>
     </FocusTrapZone>
   );
 };

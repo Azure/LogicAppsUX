@@ -126,6 +126,10 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
         value: `~${tryGetMajorVersion(context.version)}`,
       },
       {
+        name: appKindSetting,
+        value: logicAppKindAppSetting,
+      },
+      {
         name: workerRuntimeKey,
         value: runtimeWithoutVersion,
       },
@@ -155,10 +159,6 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardCo
 
     if (context.customLocation) {
       appSettings.push(
-        {
-          name: appKindSetting,
-          value: logicAppKindAppSetting,
-        },
         {
           name: 'AzureFunctionsJobHost__extensionBundle__id',
           value: extensionBundleId,
