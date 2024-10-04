@@ -5,12 +5,12 @@ import { InitConnectionService, type Template } from '@microsoft/logic-apps-shar
 import { renderWithProviders } from '../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import type { TemplateState } from '../../../core/state/templates/templateSlice';
-import { DisplayConnections } from '../connections/displayConnections';
+import { WorkflowConnections } from '../connections/workflowconnections';
 import { ReactQueryProvider } from '../../../core/ReactQueryProvider';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
 
-describe('ui/templates/displayConnections', () => {
+describe('ui/templates/workflowconnections', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
   let template1Manifest: Template.Manifest;
@@ -41,20 +41,30 @@ describe('ui/templates/displayConnections', () => {
     };
 
     templateSliceData = {
-      workflowName: undefined,
-      kind: undefined,
-      templateName: template1Manifest.title,
-      manifest: template1Manifest,
-      workflowDefinition: {
-        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-        contentVersion: '',
+      workflows: {
+        default: {
+          id: 'default',
+          workflowName: undefined,
+          kind: undefined,
+          manifest: template1Manifest,
+          workflowDefinition: {
+            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+            contentVersion: '',
+          },
+          connectionKeys: Object.keys(template1Manifest.connections),
+          parameterKeys: [],
+          errors: {
+            workflow: undefined,
+            kind: undefined,
+          },
+        },
       },
+      manifest: template1Manifest,
+      templateName: template1Manifest.title,
       parameterDefinitions: {},
       connections: template1Manifest.connections,
       servicesInitialized: false,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },
@@ -72,7 +82,7 @@ describe('ui/templates/displayConnections', () => {
   beforeEach(() => {
     renderWithProviders(
       <ReactQueryProvider>
-        <DisplayConnections connections={template1Manifest.connections} />
+        <WorkflowConnections connections={template1Manifest.connections} />
       </ReactQueryProvider>,
       { store }
     );

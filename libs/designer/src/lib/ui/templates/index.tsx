@@ -1,3 +1,3 @@
 export * from './TemplatesDesigner';
 export * from './filters/templateFilters';
-export * from './connections/displayConnections';
+export * from './connections/workflowconnections';

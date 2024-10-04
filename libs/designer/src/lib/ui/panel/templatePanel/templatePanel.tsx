@@ -32,6 +32,7 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
     workflows: state.template.workflows,
   }));
   const isMultiWorkflowTemplate = useMemo(() => Object.keys(workflows).length > 1, [workflows]);
+  const isCreatePanelView = useMemo(() => currentPanelView === 'createWorkflow', [currentPanelView]);
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
 
@@ -59,13 +60,13 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
   });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () =>
-      currentPanelView === 'createWorkflow'
+      isCreatePanelView
         ? createWorkflowPanelTabs
         : getQuickViewTabs(intl, dispatch, workflowId as string, showCreate, {
             templateId: templateName ?? 'Unknown',
             workflowAppName,
           }),
-    [currentPanelView, createWorkflowPanelTabs, intl, dispatch, workflowId, showCreate, templateName, workflowAppName]
+    [isCreatePanelView, createWorkflowPanelTabs, intl, dispatch, workflowId, showCreate, templateName, workflowAppName]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -76,16 +77,16 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
 
   const onRenderHeaderContent = useCallback(
     () =>
-      currentPanelView === 'quickView' ? (
-        <QuickViewPanelHeader title={templateTitle} description={templateDescription} details={manifest?.details ?? {}} />
-      ) : (
+      isCreatePanelView ? (
         <CreateWorkflowPanelHeader
           headerTitle={isMultiWorkflowTemplate ? resources.multiWorkflowCreateTitle : undefined}
           title={templateTitle}
           description={templateDescription}
         />
+      ) : (
+        <QuickViewPanelHeader title={templateTitle} description={templateDescription} details={manifest?.details ?? {}} />
       ),
-    [currentPanelView, templateTitle, templateDescription, manifest?.details, isMultiWorkflowTemplate, resources.multiWorkflowCreateTitle]
+    [isCreatePanelView, isMultiWorkflowTemplate, resources.multiWorkflowCreateTitle, templateTitle, templateDescription, manifest?.details]
   );
   const onRenderFooterContent = useCallback(
     () =>
@@ -94,16 +95,17 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
   );
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
   useEffect(() => {
-    if (isOpen && currentPanelView === 'createWorkflow') {
+    if (isOpen && isCreatePanelView) {
       refetchWorkflowNames();
     }
-  }, [isOpen, currentPanelView, refetchWorkflowNames]);
+  }, [isOpen, currentPanelView, refetchWorkflowNames, isCreatePanelView]);
 
   return (
     <Panel
       styles={{ main: { padding: '0 20px' }, content: { paddingLeft: '0px' } }}
       isLightDismiss
-      type={PanelType.medium}
+      type={isCreatePanelView ? PanelType.custom : PanelType.medium}
+      customWidth={'50%'}
       isOpen={isOpen}
       onDismiss={dismissPanel}
       hasCloseButton={true}
@@ -112,7 +114,7 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      {currentPanelView === 'createWorkflow' ? (
+      {isCreatePanelView ? (
         <CreateWorkflowPanel panelTabs={createWorkflowPanelTabs} />
       ) : currentPanelView === 'quickView' ? (
         <QuickViewPanel workflowId={workflowId as string} clearDetailsOnClose={clearDetailsOnClose} />
