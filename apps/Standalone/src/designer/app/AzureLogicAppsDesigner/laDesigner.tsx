@@ -756,7 +756,7 @@ const getDesignerServices = (
 
   const chatbotService = new BaseChatbotService({
     baseUrl: armUrl,
-    apiVersion: '2022-09-01-preview',
+    apiVersion: '2024-06-01-preview',
     subscriptionId,
     location,
   });
