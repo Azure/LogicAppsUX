@@ -1,4 +1,5 @@
 export * from './armresource';
+export * from './chatbot';
 export * from './connection';
 export * from './connector';
 export * from './managedidentity';
