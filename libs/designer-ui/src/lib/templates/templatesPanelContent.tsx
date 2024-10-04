@@ -21,7 +21,7 @@ export const TemplatesPanelContent = ({ tabs = [], selectedTab, selectTab, class
     }
   };
 
-  const tabClass = className ?? 'msla-template-panel-tabs';
+  const tabClass = className ?? 'msla-templates-panel-tabs';
   return (
     <div className="msla-templates-panel">
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
