@@ -455,8 +455,10 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
 
 export const saveWorkflowStandard = async (
   siteResourceId: string,
-  workflowName: string,
-  workflow: any,
+  workflows: {
+    workflowName: string,
+    workflow: any,
+  }[],
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
@@ -468,10 +470,12 @@ export const saveWorkflowStandard = async (
   }
 ): Promise<any> => {
   const data: any = {
-    files: {
-      [`${workflowName}/workflow.json`]: workflow,
-    },
+    files: {},
   };
+
+  for (const { workflowName, workflow } of workflows) {
+    data.files[`${workflowName}/workflow.json`] = workflow;
+  }
 
   if (connectionsData) {
     data.files['connections.json'] = connectionsData;
@@ -560,8 +564,10 @@ export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workfl
 
 export const validateWorkflowStandard = async (
   siteResourceId: string,
-  workflowName: string,
-  workflow: any,
+  workflows: {
+    workflowName: string,
+    workflow: any,
+  }[],
   connectionsData?: ConnectionsData,
   parametersData?: ParametersData,
   settings?: Record<string, string>
