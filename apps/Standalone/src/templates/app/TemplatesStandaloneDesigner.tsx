@@ -17,6 +17,7 @@ import {
   optional,
   StandardOperationManifestService,
   ConsumptionConnectionService,
+  guid,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -39,6 +40,12 @@ import axios from 'axios';
 import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
+
+interface StringifiedWorkflow {
+  name: string;
+  kind: string;
+  definition: string;
+}
 
 const workflowIdentifier = '#workflowname#';
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
@@ -67,25 +74,29 @@ export const TemplatesStandaloneDesigner = () => {
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
-    const { definition: workflowDefinition, name: workflowName, kind: workflowKind } = workflows[0];
-    const workflowNameToUse = existingWorkflowName ?? workflowName;
     if (appId) {
-      if (hostingPlan !== 'standard' || !workflowNameToUse || !workflowName || !workflowKind) {
+      if (hostingPlan !== 'standard') {
         console.log('Hosting plan is not ready yet!');
       } else {
-        let sanitizedWorkflowDefinitionString = JSON.stringify(workflowDefinition);
+        let sanitizedWorkflowDefinitions = workflows.map((workflow) => ({
+          name: workflow.name as string,
+          kind: workflow.kind as string,
+          definition: JSON.stringify(workflow.definition),
+        }));
         const sanitizedParameterData: ParametersData = {};
+        const uniqueIdentifier = getUniqueName(workflows.map((workflow) => workflow.name as string));
 
         // Sanitizing parameter name & body
         Object.keys(parametersData).forEach((key) => {
           const parameter = parametersData[key];
-          const sanitizedParameterName = replaceWithWorkflowName(parameter.name, workflowName);
+          const sanitizedParameterName = replaceWithWorkflowName(parameter.name, uniqueIdentifier);
           sanitizedParameterData[sanitizedParameterName] = {
             type: parameter.type,
             description: parameter?.description,
             value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
           };
-          sanitizedWorkflowDefinitionString = sanitizedWorkflowDefinitionString.replaceAll(
+          sanitizedWorkflowDefinitions = replaceAllStringInAllWorkflows(
+            sanitizedWorkflowDefinitions,
             `parameters('${parameter.name}')`,
             `parameters('${sanitizedParameterName}')`
           );
@@ -94,24 +105,27 @@ export const TemplatesStandaloneDesigner = () => {
         const {
           connectionsData: updatedConnectionsData,
           settingProperties: updatedSettingProperties,
-          workflowJsonString: updatedWorkflowJsonString,
+          workflowsJsonString: updatedWorkflowsJsonString,
         } = await updateConnectionsDataWithNewConnections(
           connectionsData,
           settingsData?.properties,
           connectionsMapping,
-          sanitizedWorkflowDefinitionString,
-          workflowName
+          sanitizedWorkflowDefinitions,
+          uniqueIdentifier
         );
-        sanitizedWorkflowDefinitionString = updatedWorkflowJsonString;
+        sanitizedWorkflowDefinitions = updatedWorkflowsJsonString;
 
         const templateName = templateStore.getState().template.templateName;
-        const workflow = {
-          definition: JSON.parse(sanitizedWorkflowDefinitionString),
-          kind: workflowKind,
-          metadata: {
-            templates: { name: templateName },
+        const workflowsToSave = sanitizedWorkflowDefinitions.map((workflow) => ({
+          name: workflow.name,
+          workflow: {
+            definition: JSON.parse(workflow.definition),
+            kind: workflow.kind,
+            metadata: {
+              templates: { name: templateName },
+            },
           },
-        };
+        }));
 
         const getExistingParametersData = async () => {
           try {
@@ -143,8 +157,7 @@ export const TemplatesStandaloneDesigner = () => {
         };
         await saveWorkflowStandard(
           appId,
-          workflowNameToUse,
-          workflow,
+          workflowsToSave,
           updatedConnectionsData,
           updatedParametersData,
           updatedSettingProperties,
@@ -357,19 +370,30 @@ const getServices = (
   };
 };
 
+const getUniqueName = (names: string[]): string => (names.length === 1 ? names[0] : guid().replaceAll('-', '').substring(0, 8));
+
 const replaceWithWorkflowName = (content: string, workflowName: string) => content.replaceAll(workflowIdentifier, workflowName);
+
+const replaceAllStringInAllWorkflows = (workflows: StringifiedWorkflow[], oldString: string, newString: string) => {
+  return workflows.map((workflow) => {
+    return {
+      ...workflow,
+      definition: workflow.definition.replaceAll(oldString, newString),
+    };
+  });
+};
 
 const updateConnectionsDataWithNewConnections = async (
   originalConnectionsData: ConnectionsData,
   settingProperties: Record<string, string>,
   connections: ConnectionMapping,
-  workflowJsonString: string,
+  workflowsJsonString: StringifiedWorkflow[],
   workflowName: string
-): Promise<{ connectionsData: ConnectionsData; settingProperties: Record<string, string>; workflowJsonString: string }> => {
+): Promise<{ connectionsData: ConnectionsData; settingProperties: Record<string, string>; workflowsJsonString: StringifiedWorkflow[] }> => {
   const { references, mapping } = connections;
   let updatedSettings = { ...settingProperties };
   const updatedConnectionsData = { ...originalConnectionsData };
-  let updatedWorkflowJsonString = workflowJsonString;
+  let updatedWorkflowsJsonString = workflowsJsonString;
   let updatedConnectionsJsonString = JSON.stringify(updatedConnectionsData);
   const referencesToProcess: string[] = [];
 
@@ -378,7 +402,7 @@ const updateConnectionsDataWithNewConnections = async (
     if (connectionKey === referenceKey) {
       referencesToProcess.push(referenceKey);
     } else {
-      updatedWorkflowJsonString = updatedWorkflowJsonString.replaceAll(connectionKey, referenceKey);
+      updatedWorkflowsJsonString = replaceAllStringInAllWorkflows(updatedWorkflowsJsonString, connectionKey, referenceKey);
     }
   }
 
@@ -414,7 +438,7 @@ const updateConnectionsDataWithNewConnections = async (
           referencesToNormalize.push(referenceKey);
         }
 
-        updatedWorkflowJsonString = updatedWorkflowJsonString.replaceAll(referenceKey, normalizedReferenceKey);
+        updatedWorkflowsJsonString = replaceAllStringInAllWorkflows(updatedWorkflowsJsonString, referenceKey, normalizedReferenceKey);
       })
     );
     updatedConnectionsData.managedApiConnections = newManagedApiConnections;
@@ -441,7 +465,7 @@ const updateConnectionsDataWithNewConnections = async (
   return {
     connectionsData: JSON.parse(updatedConnectionsJsonString),
     settingProperties: updatedSettings,
-    workflowJsonString: updatedWorkflowJsonString,
+    workflowsJsonString: updatedWorkflowsJsonString,
   };
 };
 
