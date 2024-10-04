@@ -45,7 +45,7 @@ export class LogicAppResolver implements AppResourceResolver {
   private async getSubscriptionLogicApps(
     context: IActionContext,
     subContext: ISubscriptionContext
-  ): Promise<{ logicApps: Map<string, Site | ContainerApp>; hybridLogicApps: Map<string, ContainerApp> }> {
+  ): Promise<{ logicApps: Map<string, Site>; hybridLogicApps: Map<string, ContainerApp> }> {
     const client = await createWebSiteClient({ ...context, ...subContext });
     const resourceGraphClient = new ResourceGraphClient(subContext.credentials);
 
@@ -122,8 +122,7 @@ export class LogicAppResolver implements AppResourceResolver {
       return logicAppMap.get(workflowId);
     }
     const subscriptionSites = await this.getSubscriptionLogicApps(context, subContext);
-    const appResourceSite = subscriptionSites.logicApps.get(workflowId) ?? subscriptionSites.hybridLogicApps.get(workflowId);
-    return appResourceSite;
+    return subscriptionSites.logicApps.get(workflowId);
   }
 
   /**
