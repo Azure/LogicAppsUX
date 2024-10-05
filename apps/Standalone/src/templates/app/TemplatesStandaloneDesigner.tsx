@@ -1,4 +1,4 @@
-import { useMemo, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { TemplatesDataProvider, templateStore } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
@@ -40,6 +40,7 @@ import axios from 'axios';
 import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
+import { useFunctionalState } from '@react-hookz/web';
 
 interface StringifiedWorkflow {
   name: string;
@@ -60,14 +61,25 @@ export const TemplatesStandaloneDesigner = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
-  const { data: settingsData } = useAppSettings(appId as string);
+  const { data: originalSettingsData } = useAppSettings(appId as string);
   const isConsumption = hostingPlan === 'consumption';
 
-  const connectionsData = useMemo(() => {
-    return JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {})));
-  }, [originalConnectionsData]);
+  const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
+  const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
 
-  const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
+  useEffect(() => {
+    if (originalSettingsData) {
+      setSettingsData(originalSettingsData);
+    }
+  }, [originalSettingsData, setSettingsData]);
+
+  useEffect(() => {
+    if (originalConnectionsData) {
+      setConnectionsData(JSON.parse(JSON.stringify(clone(originalConnectionsData ?? {}))));
+    }
+  }, [originalConnectionsData, setConnectionsData]);
+
+  const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
 
   const createWorkflowCall = async (
     workflows: { name: string | undefined; kind: string | undefined; definition: LogicAppsV2.WorkflowDefinition }[],
@@ -107,8 +119,8 @@ export const TemplatesStandaloneDesigner = () => {
           settingProperties: updatedSettingProperties,
           workflowsJsonString: updatedWorkflowsJsonString,
         } = await updateConnectionsDataWithNewConnections(
-          connectionsData,
-          settingsData?.properties,
+          connectionsData(),
+          settingsData()?.properties,
           connectionsMapping,
           sanitizedWorkflowDefinitions,
           uniqueIdentifier
@@ -171,16 +183,19 @@ export const TemplatesStandaloneDesigner = () => {
     }
   };
 
-  const addConnectionDataInternal = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
-    addConnectionInJson(connectionAndSetting, connectionsData ?? {});
-    addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
-  };
+  const addConnectionDataInternal = useCallback(
+    async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
+      addConnectionInJson(connectionAndSetting, connectionsData() ?? {});
+      addOrUpdateAppSettings(connectionAndSetting.settings, settingsData()?.properties ?? {});
+    },
+    [connectionsData, settingsData]
+  );
 
   const services = useMemo(
     () =>
       getServices(
         isConsumption,
-        connectionsData ?? {},
+        connectionsData() ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
         tenantId,
