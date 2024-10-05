@@ -57,6 +57,7 @@ export const CreateConnectionInTemplate = (props: {
       connectorId={connectorId}
       createButtonText={createButtonText}
       description={description}
+      connectionName={isInAppConnector ? connectionKey : undefined}
       operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
       existingReferences={references}
       assistedConnectionProps={assistedConnectionProps}
