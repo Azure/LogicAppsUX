@@ -91,7 +91,7 @@ export const convertWholeDataMapToLayoutTree = (
         const labels = isFunctionData(connection.self.node)
           ? connection.self.node?.maxNumberOfInputs > UnboundedInput
             ? [connection.self.node.inputs[inputIndex].name]
-            : [generateInputHandleId(connection.self.node.inputs[0].name, inputIndex)] // // if unlimited inputs, the name is always the same
+            : [generateInputHandleId(connection.self.node.inputs[0].name, inputIndex)] // if unlimited inputs, the name is always the same
           : [];
 
         const nextEdge: LayoutEdge = {

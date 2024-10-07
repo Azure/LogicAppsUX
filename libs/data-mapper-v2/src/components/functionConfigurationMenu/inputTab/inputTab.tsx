@@ -2,7 +2,12 @@ import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
-import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
+import {
+  createInputSlotForUnboundedInput,
+  deleteConnectionFromFunctionMenu,
+  setConnectionInput,
+  updateFunctionConnectionInputs,
+} from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, NodeConnection, CustomValueConnection, InputConnection } from '../../../models/Connection';
@@ -74,11 +79,9 @@ export const InputTabContents = (props: {
       const removeConnection = (inputIndex: number) => {
         const targetNodeReactFlowKey = props.functionKey;
         dispatch(
-          setConnectionInput({
-            targetNode: props.func,
-            targetNodeReactFlowKey,
+          deleteConnectionFromFunctionMenu({
             inputIndex,
-            input: undefined,
+            targetId: targetNodeReactFlowKey,
           })
         );
       };

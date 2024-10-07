@@ -12,6 +12,7 @@ import {
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
   isCustomValue,
+  isEmptyConnection,
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
@@ -277,10 +278,11 @@ export const dataMapSlice = createSlice({
           },
         },
       };
-      newState.curDataMapOperation.dataMapConnections[action.payload].inputs.push(undefined); // danielle double check
+      newState.curDataMapOperation.dataMapConnections[action.payload].inputs.push(createNewEmptyConnection()); // danielle double check
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
+
     setConnectionInput: (state, action: PayloadAction<SetConnectionInputAction>) => {
       const newState: DataMapState = {
         ...state,
@@ -456,6 +458,20 @@ export const dataMapSlice = createSlice({
         position: action.payload.position,
       };
       state.curDataMapOperation = newOp;
+    },
+    deleteConnectionFromFunctionMenu: (state, action: PayloadAction<{ inputIndex: number; targetId: string }>) => {
+      const newConnections = { ...state.curDataMapOperation.dataMapConnections };
+      const inputValueToRemove = newConnections[action.payload.targetId].inputs[action.payload.inputIndex];
+      if (isEmptyConnection(inputValueToRemove)) {
+        return;
+      }
+      const sourceIdToRemove = isCustomValue(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
+      deleteConnectionFromConnections(state.curDataMapOperation.dataMapConnections, sourceIdToRemove, action.payload.targetId, undefined);
+      doDataMapOperation(
+        state,
+        { ...state, curDataMapOperation: { ...state.curDataMapOperation, dataMapConnections: newConnections } },
+        'Delete connection from function menu'
+      );
     },
     deleteFunction: (state, action: PayloadAction<string>) => {
       const reactFlowKey = action.payload;
@@ -635,6 +651,7 @@ export const {
   updateFunctionNodesPosition,
   updateEdgePopOverId,
   deleteEdge,
+  deleteConnectionFromFunctionMenu,
   toggleSourceEditState,
   toggleTargetEditState,
   setHoverState,
