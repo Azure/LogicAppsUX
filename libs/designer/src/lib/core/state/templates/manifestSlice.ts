@@ -4,11 +4,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
+export const templatesCountPerPage = 25;
+
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
+    pageNum: number;
     keyword?: string;
     sortKey: string;
     connectors: FilterObject[] | undefined;
@@ -21,6 +24,7 @@ type ManifestName = string;
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
   filters: {
+    pageNum: 0,
     sortKey: 'a-to-z',
     connectors: undefined,
     detailFilters: {},
@@ -65,6 +69,9 @@ export const manifestSlice = createSlice({
       if (action.payload) {
         state.filteredTemplateNames = action.payload;
       }
+    },
+    setPageNum: (state, action: PayloadAction<number>) => {
+      state.filters.pageNum = action.payload;
     },
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
       state.filters.keyword = action.payload;
@@ -116,6 +123,7 @@ export const {
   setavailableTemplatesNames,
   setavailableTemplates,
   setFilteredTemplateNames,
+  setPageNum,
   setKeywordFilter,
   setSortKey,
   setConnectorsFilters,

@@ -1,5 +1,35 @@
 @import (reference) '../variables.less';
 
+.msla-pager-v2-pagenumbers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .msla-pager-v2 {
+    > *:not(:last-child) {
+      margin-right: 4px;
+    }
+  }
+
+  .msla-pager-v2--inner {
+    > *:not(:last-child) {
+      margin-right: 24px;
+    }
+  }
+
+  .msla-pager-pageNum {
+    cursor: default;
+
+    &.toSelect {
+      color: rgb(0, 120, 212);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
 .msla-pager-v2 {
   display: flex;
   justify-content: center;
@@ -13,10 +43,6 @@
 
   > * {
     align-self: flex-start;
-  }
-
-  > *:not(:last-child) {
-    margin-right: 4px;
   }
 
   > .msla-pager-v2--inner {
