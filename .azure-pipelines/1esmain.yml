@@ -80,9 +80,9 @@ extends:
                   artifactName: Build ${{ parameters.publishVersion }}
             steps:
               - template: .azure-pipelines/templates/build.yml@LogicAppsUX
-              - template: .azure-pipelines/templates/templates/package.yml@LogicAppsUX
-              - template: .azure-pipelines/templates/templates/sign.yml@LogicAppsUX
-              - template: .azure-pipelines/templates/templates/stage-artifacts.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/package.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
       # - stage: Release      
       #   displayName: Publish extension
       #   extends:
