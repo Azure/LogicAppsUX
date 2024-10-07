@@ -37,6 +37,7 @@ parameters:
   # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
   - name: publishVersion
     type: string
+    default: 4.85.3
 
   # Customize the environment to associate the deployment with. 
   # Useful to control which group of people should be required to approve the deployment.
@@ -78,10 +79,10 @@ extends:
                   targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
                   artifactName: Build ${{ parameters.publishVersion }}
             steps:
-              - template: /templates/build.yml@LogicAppsUX
-              - template: /templates/package.yml@LogicAppsUX
-              - template: /templates/sign.yml@LogicAppsUX
-              - template: /templates/stage-artifacts.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/build.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/templates/package.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/templates/sign.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/templates/stage-artifacts.yml@LogicAppsUX
       # - stage: Release      
       #   displayName: Publish extension
       #   extends:
