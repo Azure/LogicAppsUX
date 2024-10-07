@@ -40,6 +40,10 @@ parameters:
     type: string
     default: AzCodeDeploy
 
+  - name: enableSigning
+    type: boolean
+    default: True
+
 variables:
   # Required by MicroBuild template
   - name: TeamName
