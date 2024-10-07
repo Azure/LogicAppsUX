@@ -21,6 +21,7 @@ resources:
     - repository: LogicAppsUX
       type: github
       name: Azure/LogicAppsUX
+      endpoint: LogicApps-VSCode-connection  # The service connection to use when accessing this repository
 
 parameters:
   # When true, skips the deployment job which actually publishes the extension
