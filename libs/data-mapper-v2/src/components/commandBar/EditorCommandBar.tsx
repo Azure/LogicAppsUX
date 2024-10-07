@@ -13,7 +13,7 @@ import {
   Toaster,
   ToastBody,
 } from '@fluentui/react-components';
-import { Dismiss20Regular, Play20Regular, Save20Regular } from '@fluentui/react-icons';
+import { Dismiss20Regular, OpenFilled, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -184,10 +184,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: 'Q4TUFX',
         description: 'Button text for discard the unsaved changes',
       }),
-      RUN_TEST: intl.formatMessage({
-        defaultMessage: 'Test',
-        id: 'iy8rNf',
-        description: 'Button text for running test',
+      OPEN_TEST_PANEL: intl.formatMessage({
+        defaultMessage: 'Open Test panel',
+        id: 'nr6bPd',
+        description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
         defaultMessage: 'View Code',
@@ -238,13 +238,13 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             {Resources.DISCARD}
           </ToolbarButton>
           <ToolbarButton
-            aria-label={Resources.RUN_TEST}
-            icon={<Play20Regular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            aria-label={Resources.OPEN_TEST_PANEL}
+            icon={<OpenFilled color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
             disabled={disabledState.test}
             title={disabledState.test ? Resources.DISABLED_TEST : ''}
             onClick={onTestClick}
           >
-            {Resources.RUN_TEST}
+            {Resources.OPEN_TEST_PANEL}
           </ToolbarButton>
         </ToolbarGroup>
         <ToolbarGroup>
