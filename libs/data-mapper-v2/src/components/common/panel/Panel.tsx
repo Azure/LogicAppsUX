@@ -54,7 +54,7 @@ export const Panel = (props: PanelProps) => {
         <DrawerHeader className={mergeClasses(defaultStyles.header, styles?.header)}>
           <DrawerHeaderTitle action={title?.rightAction} heading={{ as: 'div' }}>
             {title?.icon ? <title.icon className={mergeClasses(defaultStyles.titleIcon, styles?.titleIcon ?? '')} /> : null}
-            <Text size={title?.size ?? 500} className={styles?.title}>
+            <Text size={title?.size ?? 400} className={mergeClasses(defaultStyles.title, styles?.title)}>
               {title?.text}
             </Text>
             {title?.subTitleText ? (

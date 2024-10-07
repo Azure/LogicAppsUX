@@ -108,7 +108,14 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
           onClose={() => setSelectedWorkflow(undefined)}
         />
       ) : null}
-      {showCreatePanel ? <TemplatePanel showCreate={true} createWorkflow={createWorkflow} clearDetailsOnClose={false} /> : null}
+      {showCreatePanel ? (
+        <TemplatePanel
+          showCreate={true}
+          createWorkflow={createWorkflow}
+          clearDetailsOnClose={false}
+          onClose={() => setShowCreatePanel(false)}
+        />
+      ) : null}
       <div
         id={'msla-layer-host'}
         style={{
