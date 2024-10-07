@@ -2,12 +2,11 @@ import type { FunctionData } from './Function';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export type ConnectionDictionary = { [key: string]: Connection }; // key = "{(target)||(source)}-{nodeId}"
-export type InputConnections = InputConnection[]; // danielle fix this- confusing
 export type InputConnection = NodeConnection | CustomValueConnection | EmptyConnection;
 
 export interface Connection {
   self: NodeConnection;
-  inputs: InputConnections;
+  inputs: InputConnection[];
   outputs: NodeConnection[];
 }
 

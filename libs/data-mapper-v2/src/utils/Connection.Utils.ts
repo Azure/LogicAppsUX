@@ -134,7 +134,7 @@ export const applyConnectionValue = (
       // Check if an undefined input field exists first (created through PropPane)
       // - otherwise we can safely just append its value to the end
       if (connection.inputs && connection.inputs[0]) {
-        const indexOfFirstOpenInput = connection.inputs.findIndex((inputCon) => !inputCon);
+        const indexOfFirstOpenInput = connection.inputs.findIndex((inputCon) => !inputCon || isEmptyConnection(inputCon));
         confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : UnboundedInput;
       }
     } else if (isConnectionUnit(input)) {
@@ -271,15 +271,25 @@ export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtData
 };
 
 export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {
+  // danielle test
   // Make sure there's available inputs (unless it's an unbounded input)
-  if (tgtMaxNumInputs !== UnboundedInput && targetNodeConnection && flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
+  if (
+    tgtMaxNumInputs !== UnboundedInput &&
+    targetNodeConnection &&
+    areAllFunctionInputsFilled(targetNodeConnection.inputs, tgtMaxNumInputs)
+  ) {
     return false;
   }
 
   return true;
 };
 
-export const flattenInputs = (inputs: InputConnections): InputConnection[] => inputs.flatMap((value) => value);
+export const flattenInputs = (inputs: InputConnections): InputConnection[] => inputs.flatMap((value) => value); // danielle to remove
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const areAllFunctionInputsFilled = (inputs: InputConnection[], maxInputs: number): boolean => {
+  return inputs.every((input) => !isEmptyConnection(input));
+};
 
 export const createNewEmptyConnection = (): EmptyConnection => {
   return {

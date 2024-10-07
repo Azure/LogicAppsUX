@@ -5,6 +5,7 @@ import type { ConnectionDictionary } from '../models/Connection';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { nodeScrollDirections } from './Schema.Utils';
+import { UnboundedInput } from '../constants/FunctionConstants';
 
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
@@ -88,9 +89,9 @@ export const convertWholeDataMapToLayoutTree = (
       if (isConnectionUnit(input)) {
         const targetId = connection.self.reactFlowKey;
         const labels = isFunctionData(connection.self.node)
-          ? connection.self.node?.maxNumberOfInputs > -1
+          ? connection.self.node?.maxNumberOfInputs > UnboundedInput
             ? [connection.self.node.inputs[inputIndex].name]
-            : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputIndex)]
+            : [generateInputHandleId(connection.self.node.inputs[0].name, inputIndex)] // // if unlimited inputs, the name is always the same
           : [];
 
         const nextEdge: LayoutEdge = {

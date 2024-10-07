@@ -11,6 +11,7 @@ import {
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
+  isCustomValue,
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
@@ -725,10 +726,18 @@ export const deleteConnectionFromConnections = (
       }
     });
   } else {
-    outputNodeInputs = outputNodeInputs.filter((inputEntry) =>
-      isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
-    );
+    outputNodeInputs = outputNodeInputs.map((inputEntry) => {
+      // danielle test for custom inputs
+      if (
+        (isConnectionUnit(inputEntry) && inputEntry.reactFlowKey === inputKey) ||
+        (isCustomValue(inputEntry) && inputEntry.value === inputKey)
+      ) {
+        return createNewEmptyConnection();
+      }
+      return inputEntry;
+    });
   }
+  connections[outputKey].inputs = outputNodeInputs;
 };
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
