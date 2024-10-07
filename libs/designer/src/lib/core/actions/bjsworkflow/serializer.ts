@@ -156,8 +156,6 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     parameters,
   };
 
-  console.log('### serializedWorkflow', serializedWorkflow);
-
   const workflowService = WorkflowService();
   if (workflowService && workflowService.getDefinitionWithDynamicInputs) {
     serializedWorkflow.definition = workflowService.getDefinitionWithDynamicInputs(
