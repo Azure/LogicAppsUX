@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.96.1](https://github.com/Azure/LogicAppsUX/compare/v4.96.0...v4.96.1) (2024-10-07)
+
+
+### Bug Fixes
+
+* **designer:** Simple Query Builder not deserializing ([#5772](https://github.com/Azure/LogicAppsUX/issues/5772)) ([#5782](https://github.com/Azure/LogicAppsUX/issues/5782)) ([35e61f6](https://github.com/Azure/LogicAppsUX/commit/35e61f64c4eead4f43c25167c8912305c3bb84c5))
+
 ## [4.96.0](https://github.com/Azure/LogicAppsUX/compare/v4.95.0...v4.96.0) (2024-09-23)
 
 
