@@ -90,7 +90,7 @@ describe('lib/pager', () => {
   });
 
   it('should render the pager with clickable page numbers of less than max numbers', () => {
-    renderer.render(<Pager {...minimal} max={2} clickablePageNumbers={true} />);
+    renderer.render(<Pager {...minimal} max={2} clickablePageNumbers={5} />);
 
     const pagerWrapper = renderer.getRenderOutput();
     const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
@@ -107,7 +107,7 @@ describe('lib/pager', () => {
   });
 
   it('should render the pager with clickable page numbers with more than max numbers', () => {
-    renderer.render(<Pager {...minimal} max={6} clickablePageNumbers={true} />);
+    renderer.render(<Pager {...minimal} max={6} clickablePageNumbers={5} />);
 
     const pagerWrapper = renderer.getRenderOutput();
     const [pager] = React.Children.toArray(pagerWrapper.props.children) as React.ReactElement[];
