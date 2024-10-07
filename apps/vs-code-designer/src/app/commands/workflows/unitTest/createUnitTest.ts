@@ -88,10 +88,13 @@ async function generateCodefulUnitTest(
     }
 
     if (isNullOrUndefined(ext.workflowRuntimePort)) {
+      context.telemetry.properties.missingRuntimePort = 'true';
       throw new Error(
         localize('workflowRuntimeNotRunning', 'The workflow runtime is not running. Please start the workflow runtime and try again.')
       );
     }
+
+    context.telemetry.properties.runtimePort = ext.workflowRuntimePort?.toString();
 
     const baseUrl = `http://localhost:${ext.workflowRuntimePort}`;
 
@@ -113,6 +116,8 @@ async function generateCodefulUnitTest(
     );
 
     ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating Unit Test Generation API call...'));
+
+    context.telemetry.properties.processStage = 'API Call Initiated';
 
     const response = await axios.post(apiUrl, unitTestGenerationInput, {
       headers: {
@@ -148,6 +153,7 @@ async function generateCodefulUnitTest(
     await unzipLogicAppArtifacts(zipBuffer, unitTestFolderPath);
 
     ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
+    context.telemetry.properties.processStage = 'Files Unzipped';
     await createCsFile(unitTestFolderPath, unitTestName, workflowName);
 
     // Generate the .csproj file if it doesn't exist
@@ -163,6 +169,11 @@ async function generateCodefulUnitTest(
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
+
+    if (error.code) {
+      context.telemetry.properties.networkErrorCode = error.code;
+    }
+
     // Handle errors and parse error response if available
     let errorMessage: string;
     // eslint-disable-next-line import/no-named-as-default-member
@@ -180,6 +191,7 @@ async function generateCodefulUnitTest(
     } else {
       errorMessage = String(error);
     }
+    context.telemetry.properties.error = errorMessage;
     const errorDisplayMessage = localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage);
     vscode.window.showErrorMessage(errorDisplayMessage);
     ext.outputChannel.appendLog(errorDisplayMessage);
