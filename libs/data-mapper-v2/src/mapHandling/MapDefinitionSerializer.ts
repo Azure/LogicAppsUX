@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { mapDefinitionVersion, mapNodeParams, reservedMapDefinitionKeys } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary, NodeConnection, InputConnection } from '../models/Connection';
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { findLast } from '../utils/Array.Utils';
 import {
@@ -179,7 +179,7 @@ const getSrcPathRelativeToLoop = (newPath: OutputPathItem[]) => {
   return valueToTrim;
 };
 
-const getPathForSrcSchemaNode = (sourceNode: ConnectionUnit, formattedLmlSnippetForTarget: string) => {
+const getPathForSrcSchemaNode = (sourceNode: NodeConnection, formattedLmlSnippetForTarget: string) => {
   const res = findLast(
     (sourceNode.node as SchemaNodeExtended).pathToRoot,
     (pathItem) => pathItem.repeating && pathItem.key !== formattedLmlSnippetForTarget

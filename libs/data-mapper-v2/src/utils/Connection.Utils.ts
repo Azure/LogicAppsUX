@@ -2,11 +2,11 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, SetConnectionInputAction } from '../core/state/DataMapSlice';
 import type {
-  CustomInput,
+  CustomValueConnection,
   EmptyConnection,
   Connection,
   ConnectionDictionary,
-  ConnectionUnit,
+  NodeConnection,
   InputConnection,
   InputConnections,
 } from '../models/Connection';
@@ -101,7 +101,7 @@ export const applyConnectionValue = (
   if (!findInputSlot && inputIndex !== undefined) {
     // Verify if we're updating an old value that's a ConnectionUnit, and if so, remove it from source's outputs[]
     if (connection?.inputs) {
-      let inputConnection: InputConnection = undefined;
+      let inputConnection: InputConnection = createNewEmptyConnection();
 
       if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
         inputConnection = connection.inputs[inputIndex];
@@ -162,7 +162,7 @@ export const applyConnectionValue = (
     // danielle what is the intended effect? do we want to delete the connection?
     // Explicit undefined check to handle empty custom values ('') in the next block
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      connection.inputs[confirmedInputIndex] = undefined;
+      connection.inputs[confirmedInputIndex] = createNewEmptyConnection();
     } else {
       connection.inputs[confirmedInputIndex] = createNewEmptyConnection(); // danielle confirm
     }
@@ -192,7 +192,7 @@ export const applyConnectionValue = (
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
     if (isConnectionUnit(input)) {
-      const tgtConUnit: ConnectionUnit = {
+      const tgtConUnit: NodeConnection = {
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
         isRepeating: isRepeating,
@@ -279,7 +279,7 @@ export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | 
   return true;
 };
 
-export const flattenInputs = (inputs: InputConnections): InputConnection[] => Object.values(inputs).flatMap((value) => value);
+export const flattenInputs = (inputs: InputConnections): InputConnection[] => inputs.flatMap((value) => value);
 
 export const createNewEmptyConnection = (): EmptyConnection => {
   return {
@@ -288,15 +288,32 @@ export const createNewEmptyConnection = (): EmptyConnection => {
   };
 };
 
+export const createNodeConnection = (node: SchemaNodeExtended | FunctionData, reactFlowKey: string): NodeConnection => {
+  return {
+    isDefined: true,
+    isCustom: false,
+    node: node,
+    reactFlowKey: reactFlowKey,
+  };
+};
+
+export const createCustomInput = (value: string): CustomValueConnection => {
+  return {
+    isDefined: true,
+    isCustom: true,
+    value: value,
+  };
+};
+
 export const isEmptyConnection = (connectionInput: InputConnection): connectionInput is EmptyConnection =>
   connectionInput !== undefined && connectionInput.isDefined === false;
 
-export const isCustomValue = (connectionInput: InputConnection): connectionInput is CustomInput =>
+export const isCustomValue = (connectionInput: InputConnection): connectionInput is CustomValueConnection =>
   connectionInput !== undefined && connectionInput.isCustom === true;
-export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is ConnectionUnit =>
+export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is NodeConnection =>
   connectionInput !== undefined && connectionInput.isDefined === true && connectionInput.isCustom === false;
 
-const onlyUniqueConnections = (value: ConnectionUnit, index: number, self: ConnectionUnit[]) => {
+const onlyUniqueConnections = (value: NodeConnection, index: number, self: NodeConnection[]) => {
   return self.findIndex((selfValue) => selfValue.reactFlowKey === value.reactFlowKey) === index;
 };
 
@@ -308,7 +325,7 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   // Put 0 input, content enricher functions in the node bucket
   const flattenedInputs = flattenInputs(currentConnection.inputs);
   const customValueInputs = flattenedInputs.filter(isCustomValue);
-  const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
+  const definedNonCustomValueInputs: NodeConnection[] = flattenedInputs.filter(isConnectionUnit);
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node?.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node?.maxNumberOfInputs === 0);
 
@@ -344,7 +361,7 @@ export const nodeHasSpecificInputEventually = (
   }
 
   const flattenedInputs = flattenInputs(currentConnection.inputs);
-  const nonCustomInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
+  const nonCustomInputs: NodeConnection[] = flattenedInputs.filter(isConnectionUnit);
 
   return nonCustomInputs.some((input) =>
     nodeHasSpecificInputEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
@@ -368,15 +385,15 @@ export const nodeHasSpecificOutputEventually = (
     return true;
   }
 
-  const nonCustomOutputs: ConnectionUnit[] = currentConnection.outputs.filter(isConnectionUnit);
+  const nonCustomOutputs: NodeConnection[] = currentConnection.outputs.filter(isConnectionUnit);
 
   return nonCustomOutputs.some((output) =>
     nodeHasSpecificOutputEventually(sourceKey, connections[output.reactFlowKey], connections, exactMatch)
   );
 };
 
-export const collectSourceNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
-  const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+export const collectSourceNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): NodeConnection[] => {
+  const connectionUnits: NodeConnection[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
 
   if (connectionUnits.length > 0) {
     return [
@@ -414,7 +431,7 @@ export const getActiveNodes = (state: DataMapOperationState, selectedItemKey?: s
 };
 
 export const collectSourceNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
-  const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+  const connectionUnits: NodeConnection[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
   return [
     currentFunction.self.reactFlowKey,
     createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
@@ -424,7 +441,7 @@ export const collectSourceNodeIdsForConnectionChain = (previousNodeId: string, c
 };
 
 export const collectTargetNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
-  const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
+  const connectionUnits: NodeConnection[] = currentFunction.outputs;
   return [
     currentFunction.self.reactFlowKey,
     createEdgeId(previousNodeId, currentFunction.self.reactFlowKey),
@@ -433,8 +450,8 @@ export const collectTargetNodeIdsForConnectionChain = (previousNodeId: string, c
   ];
 };
 
-export const collectTargetNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
-  const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
+export const collectTargetNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): NodeConnection[] => {
+  const connectionUnits: NodeConnection[] = currentFunction.outputs;
 
   if (connectionUnits.length > 0) {
     return [
@@ -512,7 +529,7 @@ export const getConnectedTargetSchemaNodes = (
 export const getFunctionConnectionUnits = (
   targetSchemaNodeConnections: Connection[],
   connections: ConnectionDictionary
-): ConnectionUnit[] => {
+): NodeConnection[] => {
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectSourceNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));

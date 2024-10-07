@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
+import type { Connection, ConnectionDictionary, NodeConnection } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
   directAccessPseudoFunction,
@@ -45,7 +45,7 @@ export const getInputValues = (
           }
 
           if (!input.isDefined) {
-            return undefined
+            return undefined;
           }
 
           // Handle custom values, source schema node, and Function inputs for Function nodes
@@ -580,7 +580,7 @@ export const addParentConnectionForRepeatingElementsNested = (
         true
       );
 
-      let parentConn: ConnectionUnit | undefined;
+      let parentConn: NodeConnection | undefined;
       if (dataMapConnections[prefixedSourceKey]) {
         parentConn = dataMapConnections[prefixedSourceKey].outputs.find((output) => {
           if (output.isRepeating && isParentTargetNode(flattenedTargetSchema, firstRepeatingTargetNode, output.node.key)) {

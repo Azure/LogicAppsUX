@@ -3,15 +3,15 @@ import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export type ConnectionDictionary = { [key: string]: Connection }; // key = "{(target)||(source)}-{nodeId}"
 export type InputConnections = InputConnection[]; // danielle fix this- confusing
-export type InputConnection = ConnectionUnit | CustomInput | EmptyConnection | undefined; // undefined for unbounded input value arrays
+export type InputConnection = NodeConnection | CustomValueConnection | EmptyConnection;
 
 export interface Connection {
-  self: ConnectionUnit;
+  self: NodeConnection;
   inputs: InputConnections;
-  outputs: ConnectionUnit[];
+  outputs: NodeConnection[];
 }
 
-export interface ConnectionUnit {
+export interface NodeConnection {
   isDefined: true;
   isCustom: false;
   node: SchemaNodeExtended | FunctionData;
@@ -19,7 +19,7 @@ export interface ConnectionUnit {
   isRepeating?: boolean;
 }
 
-export interface CustomInput {
+export interface CustomValueConnection {
   isDefined: true;
   isCustom: true;
   value: string;

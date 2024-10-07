@@ -5,7 +5,7 @@ import { UnboundedInput } from '../../../constants/FunctionConstants';
 import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
-import type { ConnectionDictionary, ConnectionUnit, CustomInput, InputConnection } from '../../../models/Connection';
+import type { ConnectionDictionary, NodeConnection, CustomValueConnection, InputConnection } from '../../../models/Connection';
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
@@ -244,7 +244,7 @@ export const validateAndCreateConnectionInput = (
 
       // Create connection
       const source = isSelectedInputFunction ? functionNodeDictionary[selectedInputKey] : sourceSchemaDictionary[selectedInputKey];
-      const srcConUnit: ConnectionUnit = {
+      const srcConUnit: NodeConnection = {
         node: source,
         reactFlowKey: selectedInputKey,
         isCustom: false,
@@ -254,7 +254,7 @@ export const validateAndCreateConnectionInput = (
       return srcConUnit;
     }
     // Create custom value connection
-    const srcConUnit: CustomInput = { isCustom: true, value:optionValue, isDefined: true };
+    const srcConUnit: CustomValueConnection = { isCustom: true, value: optionValue, isDefined: true };
 
     return srcConUnit;
   }
