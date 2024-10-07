@@ -306,7 +306,13 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
   const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
-  const inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
+  let inputs = hostInfo !== undefined ? mergeHostWithInputs(hostInfo, inputPathValue) : inputPathValue;
+  const retryPolicy = getRetryPolicy(nodeSettings);
+  if (retryPolicy) {
+    inputs.retryPolicy = retryPolicy;
+  }
+  inputs = swapInputsLocationIfNeeded(inputs, manifest.properties.inputsLocationSwapMap);
+
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
   const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata)
     ? undefined
@@ -318,14 +324,6 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const childOperations = manifest.properties.allowChildOperations
     ? await serializeNestedOperations(operationId, manifest, rootState)
     : undefined;
-
-  const retryPolicy = getRetryPolicy(nodeSettings);
-  if (retryPolicy) {
-    if (!inputs.inputs) {
-      inputs.inputs = {};
-    }
-    inputs.inputs.retryPolicy = retryPolicy;
-  }
 
   const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
 
@@ -411,7 +409,7 @@ const serializeParametersFromManifest = (inputs: SerializedParameter[], manifest
     parametersValue = property === '[*]' ? [parametersValue] : { [property]: parametersValue };
   }
 
-  return swapInputsLocationIfNeeded(parametersValue, manifest.properties.inputsLocationSwapMap);
+  return parametersValue;
 };
 
 export const constructInputValues = (key: string, inputs: SerializedParameter[], encodePathComponents: boolean): any => {

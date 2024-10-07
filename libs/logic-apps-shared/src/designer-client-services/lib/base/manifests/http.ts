@@ -286,7 +286,10 @@ export const httpWithSwaggerManifest = {
       },
       required: ['inputs', 'metadata'],
     },
-    inputsLocationSwapMap: [{ source: ['inputs', 'operationDetails'], target: ['inputs'] }],
+    inputsLocationSwapMap: [
+      { source: ['inputs', 'operationDetails'], target: ['inputs'] },
+      { source: ['retryPolicy'], target: ['inputs', 'retryPolicy'] },
+    ],
     inputsLocation: [],
     isInputsOptional: false,
     autoCast: true,
