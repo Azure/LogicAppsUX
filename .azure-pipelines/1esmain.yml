@@ -18,10 +18,9 @@ resources:
       name: microsoft/vscode-azuretools
       ref: main
       endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
-    - repository: MicroBuildTemplate
-      type: git
-      name: MicroBuildTemplates/MicroBuildTemplates
-      ref: refs/heads/release 
+    - repository: LogicAppsUX
+      type: github
+      name: Azure/LogicAppsUX
 
 parameters:
   # When true, skips the deployment job which actually publishes the extension
@@ -78,10 +77,10 @@ extends:
                   targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
                   artifactName: Build ${{ parameters.publishVersion }}
             steps:
-              - template: /templates/build.yml
-              - template: /templates/package.yml
-              - template: /templates/sign.yml
-              - template: /templates/stage-artifacts.yml
+              - template: /templates/build.yml@LogicAppsUX
+              - template: /templates/package.yml@LogicAppsUX
+              - template: /templates/sign.yml@LogicAppsUX
+              - template: /templates/stage-artifacts.yml@LogicAppsUX
       # - stage: Release      
       #   displayName: Publish extension
       #   extends:
