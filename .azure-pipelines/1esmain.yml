@@ -29,6 +29,10 @@ parameters:
     type: boolean
     default: true
 
+  - name: enableSigning
+    type: boolean
+    default: True
+
   # The intended extension version to publish. 
   # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
   - name: publishVersion
@@ -40,9 +44,11 @@ parameters:
     type: string
     default: AzCodeDeploy
 
-  - name: enableSigning
-    type: boolean
-    default: True
+  - name: job
+    type: object
+    default:
+      - name: Root # TODO: would like this to be repository name but can't use build variables here
+        working_directory: .
 
 variables:
   # Required by MicroBuild template
@@ -91,4 +97,4 @@ extends:
             runID: $(resources.pipeline.build.runID)
             publishVersion: ${{ parameters.publishVersion }}
             dryRun: ${{ parameters.dryRun }}
-            environmentName: AzCodeDeploy
+            environmentName: ${{ parameters.environmentName }}
