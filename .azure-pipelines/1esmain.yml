@@ -50,7 +50,7 @@ variables:
     value: "Azure Logic Apps for VS Code"
 
 extends:
-  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  # template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
   parameters:
     sdl:
       credscan:
