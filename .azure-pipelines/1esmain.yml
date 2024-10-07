@@ -50,7 +50,7 @@ variables:
     value: "Azure Logic Apps for VS Code"
 
 extends:
-  # template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
   parameters:
     sdl:
       credscan:
@@ -78,10 +78,10 @@ extends:
                   targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
                   artifactName: Build ${{ parameters.publishVersion }}
             steps:
-              - template: ./templates/build.yml
-              - template: ./templates/package.yml
-              - template: ./templates/sign.yml
-              - template: ./templates/stage-artifacts.yml
+              - template: /templates/build.yml
+              - template: /templates/package.yml
+              - template: /templates/sign.yml
+              - template: /templates/stage-artifacts.yml
       # - stage: Release      
       #   displayName: Publish extension
       #   extends:
