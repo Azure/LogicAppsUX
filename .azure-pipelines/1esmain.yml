@@ -73,22 +73,22 @@ extends:
                   enabled: ${{ parameters.enableSigning }}
                   signType: real # options are 'real' & 'test'
                   zipSources: false
-            outputs:
-              - output: pipelineArtifact
-                targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
-                artifactName: Build ${{ parameters.publishVersion }}
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
+                  artifactName: Build ${{ parameters.publishVersion }}
             steps:
               - template: ./templates/build.yml
               - template: ./templates/package.yml
               - template: ./templates/sign.yml
               - template: ./templates/stage-artifacts.yml
-      - stage: Release      
-        displayName: Publish extension
-        extends:
-          template: azure-pipelines/release-extension.yml@azExtTemplates
-          parameters:
-            pipelineID: $(resources.pipeline.build.pipelineID)
-            runID: $(resources.pipeline.build.runID)
-            publishVersion: ${{ parameters.publishVersion }}
-            dryRun: ${{ parameters.dryRun }}
-            environmentName: ${{ parameters.environmentName }}
+      # - stage: Release      
+      #   displayName: Publish extension
+      #   extends:
+      #     template: azure-pipelines/release-extension.yml@azExtTemplates
+      #     parameters:
+      #       pipelineID: $(resources.pipeline.build.pipelineID)
+      #       runID: $(resources.pipeline.build.runID)
+      #       publishVersion: ${{ parameters.publishVersion }}
+      #       dryRun: ${{ parameters.dryRun }}
+      #       environmentName: ${{ parameters.environmentName }}
