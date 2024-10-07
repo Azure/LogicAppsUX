@@ -56,7 +56,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
             max={lastPage}
             min={1}
             readonlyPagerInput={true}
-            clickablePageNumbers={true}
+            clickablePageNumbers={5}
             countToDisplay={{
               countPerPage: templatesCountPerPage,
               totalCount: filteredTemplateNames.length,

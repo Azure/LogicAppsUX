@@ -27,9 +27,10 @@ export interface PagerProps {
   min: number;
   pagerTitleText?: string;
   readonlyPagerInput?: boolean;
-  clickablePageNumbers?: boolean; // If true, the pager will show clickable page numbers instead of a text field.
+  // If given a number, the pager will show clickable page numbers of amount instead of a text field.
+  clickablePageNumbers?: number; // Has to be a odd number
+  // If provided, the pager will show the count of items displayed on the left
   countToDisplay?: {
-    // If provided, the pager will show the count of items displayed on the left
     countPerPage: number;
     totalCount: number;
   };
@@ -75,7 +76,7 @@ export const Pager: React.FC<PagerProps> = ({
   maxLength,
   min,
   readonlyPagerInput,
-  clickablePageNumbers: showPageNumbers = false,
+  clickablePageNumbers,
   countToDisplay: countInfo,
   onChange,
 }) => {
@@ -219,33 +220,34 @@ export const Pager: React.FC<PagerProps> = ({
   const pageNumbers = useMemo(() => {
     const result = [];
 
-    // Calculate initial range around the current number
-    let rangeStart = Math.max(current - 2, min);
-    let rangeEnd = Math.min(current + 2, max);
+    if (clickablePageNumbers) {
+      // Calculate initial range around the current number
+      let rangeStart = Math.max(current - Math.floor(clickablePageNumbers / 2), min);
+      let rangeEnd = Math.min(current + Math.floor(clickablePageNumbers / 2), max);
 
-    // Adjust the range if it's less than 5 numbers
-    while (rangeEnd - rangeStart + 1 < 5) {
-      // Try to expand the range to the left if possible
-      if (rangeStart > min) {
-        rangeStart--;
+      // Adjust the range if it's less than 5 numbers
+      while (rangeEnd - rangeStart + 1 < clickablePageNumbers) {
+        // Try to expand the range to the left if possible
+        if (rangeStart > min) {
+          rangeStart--;
+        }
+        // If no more room on the left, try to expand to the right
+        else if (rangeEnd < max) {
+          rangeEnd++;
+        }
+        // If both are at their limits, stop
+        else {
+          break;
+        }
       }
-      // If no more room on the left, try to expand to the right
-      else if (rangeEnd < max) {
-        rangeEnd++;
-      }
-      // If both are at their limits, stop
-      else {
-        break;
+
+      // Fill the result array
+      for (let i = rangeStart; i <= rangeEnd; i++) {
+        result.push(i);
       }
     }
-
-    // Fill the result array
-    for (let i = rangeStart; i <= rangeEnd; i++) {
-      result.push(i);
-    }
-
     return result;
-  }, [current, max, min]);
+  }, [current, clickablePageNumbers, max, min]);
 
   return (
     <div className={countInfo && 'msla-pager-v2-pagenumbers'}>
@@ -267,7 +269,7 @@ export const Pager: React.FC<PagerProps> = ({
             onClick={handlePreviousFailedClick}
           />
         )}
-        {showPageNumbers ? (
+        {clickablePageNumbers ? (
           <div className="msla-pager-v2--inner">
             {pageNumbers.map((pageNum) => (
               <Text
@@ -298,7 +300,7 @@ export const Pager: React.FC<PagerProps> = ({
                 onChange={handleChange as any}
               />
             )}
-            {showPageNumbers ? (
+            {clickablePageNumbers ? (
               <Text>{current}</Text>
             ) : readonlyPagerInput ? (
               <Text>{pagerOfStringAria}</Text>
