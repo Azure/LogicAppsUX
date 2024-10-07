@@ -10,7 +10,7 @@ import { getTestsDirectory, validateUnitTestName } from '../../../utils/unitTest
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import type { IAzureQuickPickItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
@@ -50,7 +50,15 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
 
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
-    await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, validatedRunId);
+    // Set telemetry properties for unit test creation
+    context.telemetry.properties.workflowName = workflowName;
+    context.telemetry.properties.unitTestName = unitTestName;
+    context.telemetry.properties.runId = validatedRunId;
+
+    await callWithTelemetryAndErrorHandling('logicApp.createUnitTest', async (telemetryContext: IActionContext) => {
+      Object.assign(telemetryContext, context);
+      await generateCodefulUnitTest(context, projectPath, workflowName, unitTestName, validatedRunId);
+    });
   } else {
     const message = localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.');
     vscode.window.showInformationMessage(message);
@@ -151,7 +159,10 @@ async function generateCodefulUnitTest(
     vscode.window.showInformationMessage(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
     );
+
+    context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error) {
+    context.telemetry.properties.unitTestGenerationStatus = 'Failed';
     // Handle errors and parse error response if available
     let errorMessage: string;
     // eslint-disable-next-line import/no-named-as-default-member
