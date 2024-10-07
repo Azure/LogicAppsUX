@@ -44,12 +44,6 @@ parameters:
     type: string
     default: AzCodeDeploy
 
-  - name: job
-    type: object
-    default:
-      - name: Root # TODO: would like this to be repository name but can't use build variables here
-        working_directory: .
-
 variables:
   # Required by MicroBuild template
   - name: TeamName
@@ -81,8 +75,8 @@ extends:
                   zipSources: false
             outputs:
               - output: pipelineArtifact
-                targetPath: $(build.artifactstagingdirectory)/build/${{ job.name }}
-                artifactName: Build ${{ job.name }}
+                targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
+                artifactName: Build ${{ parameters.publishVersion }}
             steps:
               - template: ./templates/build.yml
               - template: ./templates/package.yml
