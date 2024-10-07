@@ -1,4 +1,25 @@
 # Logic Apps Designer
+## [4.103.0](https://github.com/Azure/LogicAppsUX/compare/v4.102.0...v4.103.0) (2024-10-03)
+
+## [4.102.0](https://github.com/Azure/LogicAppsUX/compare/v4.101.0...v4.102.0) (2024-10-03)
+
+
+### Features
+
+* **Designer:** Introduce experimentation to enable A/B testing of features ([#5800](https://github.com/Azure/LogicAppsUX/issues/5800)) ([ae51ec0](https://github.com/Azure/LogicAppsUX/commit/ae51ec07204cbe76c2f14bddd51fe85a68ba37f3))
+* **Templates:** Add Services for Consumption to Support Different Exit Points ([#5754](https://github.com/Azure/LogicAppsUX/issues/5754)) ([764dff0](https://github.com/Azure/LogicAppsUX/commit/764dff054549db1983c01f30d011712bc4bf7d50))
+* **templates:** Adjusting panel code to be reused for single and multi workflow creation ([#5797](https://github.com/Azure/LogicAppsUX/issues/5797)) ([96aeec0](https://github.com/Azure/LogicAppsUX/commit/96aeec075dbd4ef04955b8655142f5077e58b33d))
+* **templates:** Overview for multi workflow templates ([#5792](https://github.com/Azure/LogicAppsUX/issues/5792)) ([03ea98f](https://github.com/Azure/LogicAppsUX/commit/03ea98f84c63f9e233016378160e917fb6a6c14a))
+* **Templates:** Templates Card V2 ([#5715](https://github.com/Azure/LogicAppsUX/issues/5715)) ([0506ba3](https://github.com/Azure/LogicAppsUX/commit/0506ba313310c69a72deaf37d3f9b6d83ee44e8c))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Disable pointer events on the handle icon ([#5806](https://github.com/Azure/LogicAppsUX/issues/5806)) ([c4731be](https://github.com/Azure/LogicAppsUX/commit/c4731be49288c57fec4ba1f46e954f790b6a23c5))
+* **Data Mapper:** Show looping icon always for repeating nodes ([#5805](https://github.com/Azure/LogicAppsUX/issues/5805)) ([aedb4cf](https://github.com/Azure/LogicAppsUX/commit/aedb4cf5d26175fd2a29b94a3ce34f05afe08f46))
+* **designer:** Parameters panel re-rendering on undo/redo should be after setting root state on undo/redo click ([#5795](https://github.com/Azure/LogicAppsUX/issues/5795)) ([3f6da97](https://github.com/Azure/LogicAppsUX/commit/3f6da9747c27f3c56fab804fe667f3201a10075b))
+* **Designer:** Update types for experimentation and add a new for value ([#5801](https://github.com/Azure/LogicAppsUX/issues/5801)) ([83945a6](https://github.com/Azure/LogicAppsUX/commit/83945a69fbb3cfc6a22d1b871e928456108e06fc))
+
 ## [4.101.0](https://github.com/Azure/LogicAppsUX/compare/v4.100.0...v4.101.0) (2024-10-01)
 
 

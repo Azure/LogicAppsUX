@@ -54,10 +54,10 @@ export const CreateConnectionInTemplate = (props: {
   return (
     <CreateConnectionInternal
       classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
-      connectionName={isInAppConnector ? connectionKey : undefined}
       connectorId={connectorId}
       createButtonText={createButtonText}
       description={description}
+      connectionName={isInAppConnector ? connectionKey : undefined}
       operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
       existingReferences={references}
       assistedConnectionProps={assistedConnectionProps}

@@ -2,7 +2,7 @@ import { type SchemaNodeExtended, type SchemaExtended, SchemaNodeProperty, equal
 import type { NodeRendererProps } from 'react-arborist';
 import { useTreeNodeStyles, useStyles, useHandleStyles } from './styles';
 import { Caption2, mergeClasses } from '@fluentui/react-components';
-import { ChevronRightRegular, ChevronDownRegular, ArrowClockwiseFilled } from '@fluentui/react-icons';
+import { ChevronRightRegular, ChevronDownRegular, ArrowRepeatAllFilled } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import useSchema from '../useSchema';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,7 +55,8 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   );
 
   const isRepeatingConnection = useMemo(
-    () => edges.some((edge) => edge.data?.sourceHandleId === handle.id && edge.data?.isRepeating),
+    () =>
+      edges.some((edge) => (edge.data?.sourceHandleId === handle.id || edge.data?.targetHandleId === handle.id) && edge.data?.isRepeating),
     [edges, handle.id]
   );
 
@@ -126,18 +127,26 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         className={mergeClasses(
           handleStyles.wrapper,
           handle.className,
-          isRepeatingConnection ? handleStyles.repeatingConnection : '',
+          isRepeatingNode ? handleStyles.repeating : '',
           isConnected ? handleStyles.connected : '',
           isSelected || isHover ? handleStyles.selected : '',
-          (isSelected || isHover) && isRepeatingNode ? handleStyles.repeatingNode : '',
           (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
         )}
         position={handle.position}
         type={handle.type}
         isConnectable={true}
       >
-        {(isRepeatingConnection || ((isHover || isSelected) && isRepeatingNode)) && (
-          <ArrowClockwiseFilled className={isRepeatingConnection ? handleStyles.repeatingConnectionIcon : handleStyles.repeatingNodeIcon} />
+        {isRepeatingNode && (
+          <ArrowRepeatAllFilled
+            className={mergeClasses(
+              handleStyles.repeatingIcon,
+              isRepeatingConnection
+                ? handleStyles.repeatingConnectionIcon
+                : isSelected || isHover
+                  ? handleStyles.repeatingAndActiveNodeIcon
+                  : ''
+            )}
+          />
         )}
       </Handle>
     ),
@@ -147,18 +156,18 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handle.position,
       handle.type,
       handleStyles.wrapper,
-      handleStyles.repeatingConnection,
+      handleStyles.repeating,
       handleStyles.connected,
       handleStyles.selected,
-      handleStyles.repeatingNode,
       handleStyles.connectedAndSelected,
+      handleStyles.repeatingIcon,
       handleStyles.repeatingConnectionIcon,
-      handleStyles.repeatingNodeIcon,
+      handleStyles.repeatingAndActiveNodeIcon,
+      isRepeatingNode,
       isRepeatingConnection,
       isConnected,
       isSelected,
       isHover,
-      isRepeatingNode,
     ]
   );
 
