@@ -156,6 +156,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     parameters,
   };
 
+  console.log('### serializedWorkflow', serializedWorkflow);
+
   const workflowService = WorkflowService();
   if (workflowService && workflowService.getDefinitionWithDynamicInputs) {
     serializedWorkflow.definition = workflowService.getDefinitionWithDynamicInputs(
@@ -321,7 +323,10 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
 
   const retryPolicy = getRetryPolicy(nodeSettings);
   if (retryPolicy) {
-    inputs.retryPolicy = retryPolicy;
+    if (!inputs.inputs) {
+      inputs.inputs = {};
+    }
+    inputs.inputs.retryPolicy = retryPolicy;
   }
 
   const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
