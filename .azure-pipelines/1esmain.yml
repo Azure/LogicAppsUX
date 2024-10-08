@@ -49,6 +49,8 @@ variables:
   # Required by MicroBuild template
   - name: TeamName
     value: "Azure Logic Apps for VS Code"
+  - name: working_directory
+    value: '.'
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
