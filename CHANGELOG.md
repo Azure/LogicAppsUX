@@ -1,4 +1,23 @@
 # Logic Apps Designer
+## [4.105.0](https://github.com/Azure/LogicAppsUX/compare/v4.104.0...v4.105.0) (2024-10-07)
+
+## [4.104.0](https://github.com/Azure/LogicAppsUX/compare/v4.103.0...v4.104.0) (2024-10-07)
+
+
+### Features
+
+* **Copilot:** Download Documentation ([#5799](https://github.com/Azure/LogicAppsUX/issues/5799)) ([0dbb57c](https://github.com/Azure/LogicAppsUX/commit/0dbb57c284ede6809121dee05b760b2014a02d64))
+* **templates:** Adding grid view for Basic tab in multi workflow templates ([#5816](https://github.com/Azure/LogicAppsUX/issues/5816)) ([786eec0](https://github.com/Azure/LogicAppsUX/commit/786eec0f5f5eee32fd8592ec1bd9b2aea9a5e853))
+* **templates:** Adding grouped connections for accelerators ([#5815](https://github.com/Azure/LogicAppsUX/issues/5815)) ([4f7c541](https://github.com/Azure/LogicAppsUX/commit/4f7c541f77261f143806cb6b2b319eed58a8f054))
+* **Templates:** Support Pagination + Pager UI ([#5779](https://github.com/Azure/LogicAppsUX/issues/5779)) ([9924e7e](https://github.com/Azure/LogicAppsUX/commit/9924e7e00d42d9abe39183d76cefb33b2bf3a0cc))
+* **templates:** Updating workflow creation to contain multiple workflows ([#5822](https://github.com/Azure/LogicAppsUX/issues/5822)) ([f6a4dec](https://github.com/Azure/LogicAppsUX/commit/f6a4dec57941e76eafc832e3366c917f363389a0))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update looping styles from Private preview sessions ([#5813](https://github.com/Azure/LogicAppsUX/issues/5813)) ([302ca3a](https://github.com/Azure/LogicAppsUX/commit/302ca3ab889c9fc7da521dded0ef0a4526cdd935))
+* **Data Mapper:** Update redux selector for position and test panel text ([#5825](https://github.com/Azure/LogicAppsUX/issues/5825)) ([8ab22f8](https://github.com/Azure/LogicAppsUX/commit/8ab22f853ea6f88734679edcad5008ec70d40116))
+
 ## [4.103.0](https://github.com/Azure/LogicAppsUX/compare/v4.102.0...v4.103.0) (2024-10-03)
 
 ## [4.102.0](https://github.com/Azure/LogicAppsUX/compare/v4.101.0...v4.102.0) (2024-10-03)

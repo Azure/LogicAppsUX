@@ -249,6 +249,9 @@ importers:
       '@monaco-editor/react':
         specifier: 4.6.0
         version: 4.6.0(monaco-editor@0.44.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@react-hookz/web':
+        specifier: 22.0.0
+        version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
         version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)

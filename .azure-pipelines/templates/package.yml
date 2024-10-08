@@ -1,9 +1,6 @@
 steps:
-  - task: Npm@1
-    displayName: "Package"
-    inputs:
-      command: custom
-      customCommand: run vscode:designer:pack
-      workingDir: $(working_directory)
+  - script: pnpm run vscode:designer:pack
+    displayName: "Package with pnpm"
+    workingDirectory: $(working_directory)
     condition: succeeded()
     
