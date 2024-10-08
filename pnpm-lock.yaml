@@ -19,7 +19,7 @@ importers:
         version: 11.2.0
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@types/node@20.16.10)(typescript@5.4.5)
+        version: 10.9.2(@types/node@20.16.11)(typescript@5.4.5)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.6.4
@@ -50,7 +50,7 @@ importers:
         version: 8.0.1(@types/react@18.3.0)(react-test-renderer@18.3.1)
       '@types/node':
         specifier: ^20.12.7
-        version: 20.16.10
+        version: 20.16.11
       '@types/react':
         specifier: 18.3.0
         version: 18.3.0
@@ -65,7 +65,7 @@ importers:
         version: 7.18.0(@typescript-eslint/parser@7.7.0(eslint@8.56.0)(typescript@5.4.5))(eslint@8.56.0)(typescript@5.4.5)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.3.2(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1))
+        version: 4.3.2(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1))
       '@vitest/coverage-istanbul':
         specifier: ^1.5.0
         version: 1.6.0(vitest@1.6.0)
@@ -182,13 +182,13 @@ importers:
         version: 7.7.0(eslint@8.56.0)(typescript@5.4.5)
       vite-plugin-mkcert:
         specifier: ^1.17.5
-        version: 1.17.6(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1))
+        version: 1.17.6(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1))
       vite-plugin-node-polyfills:
         specifier: ^0.21.0
-        version: 0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1))
+        version: 0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1))
       vitest:
         specifier: ^1.5.0
-        version: 1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1)
+        version: 1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1)
 
   apps/Standalone:
     dependencies:
@@ -312,10 +312,10 @@ importers:
         version: 0.13.0(rollup@4.24.0)
       vite:
         specifier: ^5.2.8
-        version: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+        version: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
       vite-plugin-node-polyfills:
         specifier: ^0.21.0
-        version: 0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1))
+        version: 0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1))
 
   apps/docs:
     dependencies:
@@ -548,10 +548,10 @@ importers:
         version: 0.13.0(rollup@4.24.0)
       vite:
         specifier: ^5.2.0
-        version: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+        version: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
       vite-plugin-node-polyfills:
         specifier: ^0.21.0
-        version: 0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1))
+        version: 0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1))
 
   libs/chatbot:
     dependencies:
@@ -633,7 +633,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -657,7 +657,7 @@ importers:
         version: 18.2.0
       react-dnd:
         specifier: 16.0.1
-        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
+        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0)
       react-dnd-html5-backend:
         specifier: 16.0.1
         version: 16.0.1
@@ -672,13 +672,13 @@ importers:
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
       reactflow:
         specifier: ^11.11.4
         version: 11.11.4(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@5.0.1)
+        version: 2.4.2(redux@4.2.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -736,7 +736,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -767,12 +767,9 @@ importers:
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
-      react-arborist:
-        specifier: ^3.4.0
-        version: 3.4.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dnd:
         specifier: 16.0.1
-        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
+        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0)
       react-dnd-html5-backend:
         specifier: 16.0.1
         version: 16.0.1
@@ -790,10 +787,10 @@ importers:
         version: 6.3.0(react@18.2.0)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@5.0.1)
+        version: 2.4.2(redux@4.2.1)
       redux-undo:
         specifier: 1.1.0
         version: 1.1.0
@@ -845,7 +842,7 @@ importers:
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -884,16 +881,16 @@ importers:
         version: 18.2.0
       react-dnd:
         specifier: 16.0.1
-        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
+        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0)
       react-dnd-accessible-backend:
         specifier: 1.0.1
-        version: 1.0.1(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0)
+        version: 1.0.1(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0)
       react-dnd-html5-backend:
         specifier: 16.0.1
         version: 16.0.1
       react-dnd-multi-backend:
         specifier: 8.0.0
-        version: 8.0.0(dnd-core@16.0.1)(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 8.0.0(dnd-core@16.0.1)(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dom:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0(react@18.2.0)
@@ -908,10 +905,10 @@ importers:
         version: 8.0.5(@types/react@18.3.0)(react@18.2.0)
       react-redux:
         specifier: 8.0.2
-        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
       redux-thunk:
         specifier: 2.4.2
-        version: 2.4.2(redux@5.0.1)
+        version: 2.4.2(redux@4.2.1)
       reselect:
         specifier: 4.1.8
         version: 4.1.8
@@ -1026,7 +1023,7 @@ importers:
         version: 18.2.0
       react-dnd:
         specifier: 16.0.1
-        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
+        version: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0)
       react-dom:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0(react@18.2.0)
@@ -3686,20 +3683,11 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha1-1F4BxKVvFD7mnFTdaxLq3p4nCnM=}
 
-  '@react-dnd/asap@4.0.1':
-    resolution: {integrity: sha1-UpGFCmtYzm8tolNSpk8bBnSHGqs=}
-
   '@react-dnd/asap@5.0.2':
     resolution: {integrity: sha1-H4HxJMHNbzlRHBGogc+w9xU0NIg=}
 
-  '@react-dnd/invariant@2.0.0':
-    resolution: {integrity: sha1-CdLoHNOeDnZ9faYt+TJYYPJOUX4=}
-
   '@react-dnd/invariant@4.0.2':
     resolution: {integrity: sha1-uS7f/KEKJkZmQzSfrHzfuHmXad8=}
-
-  '@react-dnd/shallowequal@2.0.0':
-    resolution: {integrity: sha1-owMetUEp8sZrJ1P4QEJm7Hv2fwo=}
 
   '@react-dnd/shallowequal@4.0.2':
     resolution: {integrity: sha1-0bS++kI/aS+kq/HHkglwLn2K5LQ=}
@@ -4375,8 +4363,8 @@ packages:
   '@types/node@17.0.45':
     resolution: {integrity: sha1-LA+v14cF56GLeQa1IBpSJxncUZA=}
 
-  '@types/node@20.16.10':
-    resolution: {integrity: sha1-DMP909rxFKR3b1S6GXJqAckH73E=}
+  '@types/node@20.16.11':
+    resolution: {integrity: sha1-m1RMPnFrFXesEucPkUUZPzJ1CzM=}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha1-VuLMJsOXwDj6sOOpF6EtXFkJ6QE=}
@@ -6013,9 +6001,6 @@ packages:
   discontinuous-range@1.0.0:
     resolution: {integrity: sha1-44Mx8IRLukm5qctxx3FYWqsbxlo=}
 
-  dnd-core@14.0.1:
-    resolution: {integrity: sha1-dtAA5BxJSYMhD7IKSLg1+BogPC4=}
-
   dnd-core@16.0.1:
     resolution: {integrity: sha1-ocIT7QiWH2vRlZoou3bxqGg2DRk=}
 
@@ -6115,8 +6100,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=}
 
-  electron-to-chromium@1.5.32:
-    resolution: {integrity: sha1-SgXueOKeJAqrr3OmfOn+c/UuG8c=}
+  electron-to-chromium@1.5.33:
+    resolution: {integrity: sha1-j2RphmEkDnD9vEsDLmCF45HwXgk=}
 
   elkjs@0.8.2:
     resolution: {integrity: sha1-w3djxaPiTgQuMYRV4BR8kSp8JI4=, tarball: https://msazure.pkgs.visualstudio.com/One/_packaging/microsoft-logic-apps/npm/registry/elkjs/-/elkjs-0.8.2.tgz}
@@ -8029,9 +8014,6 @@ packages:
     resolution: {integrity: sha1-16IRD4b3ndlQqLbfbVe8mEqhhfY=}
     engines: {node: '>= 4.0.0'}
 
-  memoize-one@5.2.1:
-    resolution: {integrity: sha1-gzeqPEM1WBg57AHD1ZQJDOvo8A4=}
-
   meow@8.1.2:
     resolution: {integrity: sha1-vL5FvaDuFynTUMA8/8g5WjbE6Jc=}
     engines: {node: '>=10'}
@@ -9253,12 +9235,6 @@ packages:
     resolution: {integrity: sha1-zZJL9SAKB1uDwYjNa54hG3/A0+0=}
     hasBin: true
 
-  react-arborist@3.4.0:
-    resolution: {integrity: sha1-jvPeLIHTuM6g9PRXXBlxvYDFVsU=}
-    peerDependencies:
-      react: '>= 16.14'
-      react-dom: '>= 16.14'
-
   react-dev-utils@12.0.1:
     resolution: {integrity: sha1-upLttKHzeb1GzNa81Oe8OY3zPnM=}
     engines: {node: '>=14'}
@@ -9275,9 +9251,6 @@ packages:
       react: ^16.8.0 || ^17.0.0
       react-dnd: 14.0.0
 
-  react-dnd-html5-backend@14.1.0:
-    resolution: {integrity: sha1-s1o6DBbdOiv7XrfsYs8MLKzoti8=}
-
   react-dnd-html5-backend@16.0.1:
     resolution: {integrity: sha1-h/rvFYRdUSojs8CNKez9NIcWiLY=}
 
@@ -9292,21 +9265,6 @@ packages:
     peerDependencies:
       react: ^16.14.0 || ^17.0.2 || ^18.0.0
       react-dnd: ^16.0.1
-
-  react-dnd@14.0.5:
-    resolution: {integrity: sha1-7PJk4iCuYuNWNNm5QVAvP8oBhe0=}
-    peerDependencies:
-      '@types/hoist-non-react-statics': '>= 3.3.1'
-      '@types/node': '>= 12'
-      '@types/react': '>= 16'
-      react: '>= 16.14'
-    peerDependenciesMeta:
-      '@types/hoist-non-react-statics':
-        optional: true
-      '@types/node':
-        optional: true
-      '@types/react':
-        optional: true
 
   react-dnd@16.0.1:
     resolution: {integrity: sha1-JEKj7GeJLGDUChVZ7vRUmLom+jc=}
@@ -9499,13 +9457,6 @@ packages:
       react: ^16.8.0  || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0  || ^17.0.0 || ^18.0.0
 
-  react-window@1.8.10:
-    resolution: {integrity: sha1-nmsIVIMWgUtEP3ACsc+P06G93gM=}
-    engines: {node: '>8.0.0'}
-    peerDependencies:
-      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-
   react@18.2.0:
     resolution: {integrity: sha1-VVvZhZKIMlX6AN4U8RUakXtdd9U=}
     engines: {node: '>=0.10.0'}
@@ -9582,9 +9533,6 @@ packages:
 
   redux@4.2.1:
     resolution: {integrity: sha1-wI9DBoJsSbXp3JAd7gRS6o/OYZc=}
-
-  redux@5.0.1:
-    resolution: {integrity: sha1-l/omiBzldGUAElWF1WQsd7bpRHs=}
 
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha1-OrBMMqg5C3cHEreoYzlycC0niFk=}
@@ -15216,7 +15164,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       '@types/yargs': 17.0.33
       chalk: 4.1.2
 
@@ -15723,15 +15671,9 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
-  '@react-dnd/asap@4.0.1': {}
-
   '@react-dnd/asap@5.0.2': {}
 
-  '@react-dnd/invariant@2.0.0': {}
-
   '@react-dnd/invariant@4.0.2': {}
-
-  '@react-dnd/shallowequal@2.0.0': {}
 
   '@react-dnd/shallowequal@4.0.2': {}
 
@@ -15830,16 +15772,6 @@ snapshots:
     optionalDependencies:
       react: 18.2.0
       react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1)
-
-  '@reduxjs/toolkit@1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)':
-    dependencies:
-      immer: 9.0.15
-      redux: 4.2.1
-      redux-thunk: 2.4.2(redux@4.2.1)
-      reselect: 4.1.8
-    optionalDependencies:
-      react: 18.2.0
-      react-redux: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
 
   '@remix-run/router@1.19.2': {}
 
@@ -16171,7 +16103,7 @@ snapshots:
 
   '@types/adm-zip@0.5.5':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/aria-query@5.0.4': {}
 
@@ -16199,20 +16131,20 @@ snapshots:
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/bonjour@3.5.13':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 5.0.0
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/d3-array@3.2.1': {}
 
@@ -16352,14 +16284,14 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.6':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       '@types/qs': 6.9.16
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
 
   '@types/express-serve-static-core@5.0.0':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       '@types/qs': 6.9.16
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -16374,7 +16306,7 @@ snapshots:
   '@types/fs-extra@11.0.4':
     dependencies:
       '@types/jsonfile': 6.1.4
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/geojson@7946.0.14': {}
 
@@ -16403,7 +16335,7 @@ snapshots:
 
   '@types/http-proxy@1.17.15':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 
@@ -16427,7 +16359,7 @@ snapshots:
 
   '@types/jsonfile@6.1.4':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/less@3.0.6': {}
 
@@ -16463,11 +16395,11 @@ snapshots:
 
   '@types/node-forge@1.3.11':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/node@17.0.45': {}
 
-  '@types/node@20.16.10':
+  '@types/node@20.16.11':
     dependencies:
       undici-types: 6.19.8
 
@@ -16523,14 +16455,14 @@ snapshots:
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/semver@7.5.8': {}
 
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/serve-index@1.9.4':
     dependencies:
@@ -16539,12 +16471,12 @@ snapshots:
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.4
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       '@types/send': 0.17.4
 
   '@types/sockjs@0.3.36':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/to-title-case@1.0.2': {}
 
@@ -16562,7 +16494,7 @@ snapshots:
 
   '@types/ws@8.5.12':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -16572,7 +16504,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
     optional: true
 
   '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.7.0(eslint@8.56.0)(typescript@5.4.5))(eslint@8.56.0)(typescript@5.4.5)':
@@ -16813,14 +16745,14 @@ snapshots:
     dependencies:
       react: 18.2.0
 
-  '@vitejs/plugin-react@4.3.2(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1))':
+  '@vitejs/plugin-react@4.3.2(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1))':
     dependencies:
       '@babel/core': 7.25.7
       '@babel/plugin-transform-react-jsx-self': 7.25.7(@babel/core@7.25.7)
       '@babel/plugin-transform-react-jsx-source': 7.25.7(@babel/core@7.25.7)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+      vite: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -16835,7 +16767,7 @@ snapshots:
       magicast: 0.3.5
       picocolors: 1.1.0
       test-exclude: 6.0.0
-      vitest: 1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1)
+      vitest: 1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -16870,7 +16802,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.1.0
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1)
+      vitest: 1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1)
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -17531,7 +17463,7 @@ snapshots:
   browserslist@4.24.0:
     dependencies:
       caniuse-lite: 1.0.30001667
-      electron-to-chromium: 1.5.32
+      electron-to-chromium: 1.5.33
       node-releases: 2.0.18
       update-browserslist-db: 1.1.1(browserslist@4.24.0)
 
@@ -18461,12 +18393,6 @@ snapshots:
 
   discontinuous-range@1.0.0: {}
 
-  dnd-core@14.0.1:
-    dependencies:
-      '@react-dnd/asap': 4.0.1
-      '@react-dnd/invariant': 2.0.0
-      redux: 4.2.1
-
   dnd-core@16.0.1:
     dependencies:
       '@react-dnd/asap': 5.0.2
@@ -18581,7 +18507,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  electron-to-chromium@1.5.32: {}
+  electron-to-chromium@1.5.33: {}
 
   elkjs@0.8.2: {}
 
@@ -19102,7 +19028,7 @@ snapshots:
 
   eval@0.1.8:
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       require-like: 0.1.2
 
   event-stream@3.3.4:
@@ -20350,7 +20276,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -20358,13 +20284,13 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -20999,8 +20925,6 @@ snapshots:
   memfs@3.6.0:
     dependencies:
       fs-monkey: 1.0.6
-
-  memoize-one@5.2.1: {}
 
   meow@8.1.2:
     dependencies:
@@ -22443,20 +22367,6 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  react-arborist@3.4.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-      react-dnd: 14.0.5(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
-      react-dnd-html5-backend: 14.1.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-window: 1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      redux: 5.0.1
-      use-sync-external-store: 1.2.2(react@18.2.0)
-    transitivePeerDependencies:
-      - '@types/hoist-non-react-statics'
-      - '@types/node'
-      - '@types/react'
-
   react-dev-utils@12.0.1(eslint@8.56.0)(typescript@5.4.5)(webpack@5.95.0(esbuild@0.23.1)):
     dependencies:
       '@babel/code-frame': 7.25.7
@@ -22491,49 +22401,32 @@ snapshots:
       - supports-color
       - vue-template-compiler
 
-  react-dnd-accessible-backend@1.0.1(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0):
+  react-dnd-accessible-backend@1.0.1(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0):
     dependencies:
       immutability-helper: 3.1.1
       react: 18.2.0
-      react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
-
-  react-dnd-html5-backend@14.1.0:
-    dependencies:
-      dnd-core: 14.0.1
+      react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0)
 
   react-dnd-html5-backend@16.0.1:
     dependencies:
       dnd-core: 16.0.1
 
-  react-dnd-multi-backend@8.0.0(dnd-core@16.0.1)(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-dnd-multi-backend@8.0.0(dnd-core@16.0.1)(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       dnd-multi-backend: 8.0.3(dnd-core@16.0.1)
       react: 18.2.0
-      react-dnd-preview: 8.0.3(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0)
+      react-dnd-preview: 8.0.3(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0)
       react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
       - dnd-core
       - react-dnd
 
-  react-dnd-preview@8.0.3(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0):
+  react-dnd-preview@8.0.3(react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
-      react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0)
+      react-dnd: 16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0)
 
-  react-dnd@14.0.5(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0):
-    dependencies:
-      '@react-dnd/invariant': 2.0.0
-      '@react-dnd/shallowequal': 2.0.0
-      dnd-core: 14.0.1
-      fast-deep-equal: 3.1.3
-      hoist-non-react-statics: 3.3.2
-      react: 18.2.0
-    optionalDependencies:
-      '@types/hoist-non-react-statics': 3.3.5
-      '@types/node': 20.16.10
-      '@types/react': 18.3.0
-
-  react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.10)(@types/react@18.3.0)(react@18.2.0):
+  react-dnd@16.0.1(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react@18.2.0):
     dependencies:
       '@react-dnd/invariant': 4.0.2
       '@react-dnd/shallowequal': 4.0.2
@@ -22543,7 +22436,7 @@ snapshots:
       react: 18.2.0
     optionalDependencies:
       '@types/hoist-non-react-statics': 3.3.5
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       '@types/react': 18.3.0
 
   react-dom@18.2.0(react@18.2.0):
@@ -22682,21 +22575,6 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       redux: 4.2.1
 
-  react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1):
-    dependencies:
-      '@babel/runtime': 7.25.7
-      '@types/hoist-non-react-statics': 3.3.5
-      '@types/use-sync-external-store': 0.0.3
-      hoist-non-react-statics: 3.3.2
-      react: 18.2.0
-      react-is: 18.3.1
-      use-sync-external-store: 1.2.2(react@18.2.0)
-    optionalDependencies:
-      '@types/react': 18.3.0
-      '@types/react-dom': 18.3.0
-      react-dom: 18.2.0(react@18.2.0)
-      redux: 5.0.1
-
   react-refresh@0.14.2: {}
 
   react-router-config@5.1.1(react-router@5.3.4(react@18.2.0))(react@18.2.0):
@@ -22784,13 +22662,6 @@ snapshots:
       throttle-debounce: 3.0.1
       ts-easing: 0.2.0
       tslib: 2.4.0
-
-  react-window@1.8.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.25.7
-      memoize-one: 5.2.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
 
   react@18.2.0:
     dependencies:
@@ -22901,17 +22772,11 @@ snapshots:
     dependencies:
       redux: 4.2.1
 
-  redux-thunk@2.4.2(redux@5.0.1):
-    dependencies:
-      redux: 5.0.1
-
   redux-undo@1.1.0: {}
 
   redux@4.2.1:
     dependencies:
       '@babel/runtime': 7.25.7
-
-  redux@5.0.1: {}
 
   reflect.getprototypeof@1.0.6:
     dependencies:
@@ -24014,14 +23879,14 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@types/node@20.16.10)(typescript@5.4.5):
+  ts-node@10.9.2(@types/node@20.16.11)(typescript@5.4.5):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       acorn: 8.12.1
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -24456,13 +24321,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@1.6.0(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1):
+  vite-node@1.6.0(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1):
     dependencies:
       cac: 6.7.14
       debug: 4.3.7
       pathe: 1.1.2
       picocolors: 1.1.0
-      vite: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+      vite: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -24474,36 +24339,36 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-mkcert@1.17.6(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)):
+  vite-plugin-mkcert@1.17.6(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)):
     dependencies:
       '@octokit/rest': 20.1.1
       axios: 1.7.7(debug@4.3.7)
       debug: 4.3.7
       picocolors: 1.1.0
-      vite: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+      vite: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-node-polyfills@0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)):
+  vite-plugin-node-polyfills@0.21.0(rollup@4.24.0)(vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.24.0)
       node-stdlib-browser: 1.2.1
-      vite: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+      vite: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
     transitivePeerDependencies:
       - rollup
 
-  vite@5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1):
+  vite@5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
       rollup: 4.24.0
     optionalDependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       fsevents: 2.3.3
       less: 4.2.0
       terser: 5.34.1
 
-  vitest@1.6.0(@types/node@20.16.10)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1):
+  vitest@1.6.0(@types/node@20.16.11)(@vitest/ui@1.6.0)(jsdom@24.1.3)(less@4.2.0)(terser@5.34.1):
     dependencies:
       '@vitest/expect': 1.6.0
       '@vitest/runner': 1.6.0
@@ -24522,11 +24387,11 @@ snapshots:
       strip-literal: 2.1.0
       tinybench: 2.9.0
       tinypool: 0.8.4
-      vite: 5.4.8(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
-      vite-node: 1.6.0(@types/node@20.16.10)(less@4.2.0)(terser@5.34.1)
+      vite: 5.4.8(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
+      vite-node: 1.6.0(@types/node@20.16.11)(less@4.2.0)(terser@5.34.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 20.16.10
+      '@types/node': 20.16.11
       '@vitest/ui': 1.6.0(vitest@1.6.0)
       jsdom: 24.1.3
     transitivePeerDependencies:

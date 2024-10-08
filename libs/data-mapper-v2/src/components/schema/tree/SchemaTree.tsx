@@ -5,7 +5,7 @@ import { Handle, Position, useUpdateNodeInternals } from '@xyflow/react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import useSchema from '../useSchema';
-import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
+// import { Tree, type TreeApi, type NodeRendererProps } from 'react-arborist';
 import SchemaTreeNode from './SchemaTreeNode';
 import { toggleNodeExpandCollapse, updateTreeData } from '../../../core/state/DataMapSlice';
 import { mergeClasses } from '@fluentui/react-components';
@@ -21,7 +21,7 @@ export type SchemaTreeProps = {
 export const SchemaTree = (props: SchemaTreeProps) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const dndManager = useDragDropManager();
-  const treeRef = useRef<TreeApi<SchemaNodeExtended> | null>(null);
+  const treeRef = useRef<any>(null);
   const styles = useStyles();
   const treeStyles = useTreeStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -153,7 +153,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
               )}
             </>
           )}
-          <Tree
+          {/* <Tree
             ref={treeRef}
             data={schemaTreeRoot ? [schemaTreeRoot] : []}
             idAccessor={'key'}
@@ -182,7 +182,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                 {...treeProps}
               />
             )}
-          </Tree>
+          </Tree> */}
         </>
       ) : null}
     </div>
