@@ -2,8 +2,7 @@ steps:
   - task: NodeTool@0
     displayName: "👉 Using Node.js"
     inputs:
-      versionSource: fromFile
-      versionFilePath: .nvmrc
+      versionSpec: '20.x'
     condition: succeeded()
 
   - script: npm install -g pnpm
