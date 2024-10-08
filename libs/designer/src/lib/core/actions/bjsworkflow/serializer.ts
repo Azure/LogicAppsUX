@@ -319,18 +319,16 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ? await serializeNestedOperations(operationId, manifest, rootState)
     : undefined;
 
-  const retryPolicy = getRetryPolicy(nodeSettings);
-  if (retryPolicy) {
-    inputs.retryPolicy = retryPolicy;
-  }
-
   const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
+  const inputsObject = inputsLocation.length ? optional(inputsLocation[0], inputs) : inputs;
+
+  setRetryPolicy(inputsObject, nodeSettings);
 
   return {
     type: operation.type,
     ...optional('description', operationFromWorkflow?.description),
     ...optional('kind', operation.kind),
-    ...(inputsLocation.length ? optional(inputsLocation[0], inputs) : inputs),
+    ...inputsObject,
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
@@ -1058,6 +1056,18 @@ const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined
 
     default:
       throw new Error(`Unable to serialize retry policy with type ${retryPolicyType}`);
+  }
+};
+
+const setRetryPolicy = (inputs: any, nodeSettings: Settings): void => {
+  // Retry policy should always be in `inputs.retryPolicy`
+  // This should happen after the location swap to avoid moving it to a different location
+  const retryPolicy = getRetryPolicy(nodeSettings);
+  if (retryPolicy) {
+    if (!inputs?.inputs) {
+      inputs.inputs = {};
+    }
+    inputs.inputs.retryPolicy = retryPolicy;
   }
 };
 
