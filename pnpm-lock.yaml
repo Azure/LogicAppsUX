@@ -768,7 +768,7 @@ importers:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
       react-arborist:
-        specifier: 3.2.0
+        specifier: ~3.2.0
         version: 3.2.0(@types/hoist-non-react-statics@3.3.5)(@types/node@20.16.11)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dnd:
         specifier: 16.0.1
