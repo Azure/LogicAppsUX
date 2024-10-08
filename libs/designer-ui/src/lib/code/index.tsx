@@ -2,7 +2,7 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
-import { createLiteralValueSegment } from '../editor/base/utils/helper';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import { useId } from '../useId';
@@ -73,18 +73,24 @@ export function CodeEditor({
       setShowTokenPickerButton(false);
     }
     if (customCodeEditor) {
-      onChange?.({
-        value: [createLiteralValueSegment(getFileName())],
-        viewModel: {
-          customCodeData: {
-            fileData: getCurrentValue(),
-            fileExtension: getFileExtensionName(language),
-            fileName: getFileName(),
+      const newValue = [createLiteralValueSegment(getFileName())];
+      if (notEqual(newValue, initialValue)) {
+        onChange?.({
+          value: newValue,
+          viewModel: {
+            customCodeData: {
+              fileData: getCurrentValue(),
+              fileExtension: getFileExtensionName(language),
+              fileName: getFileName(),
+            },
           },
-        },
-      });
+        });
+      }
     } else {
-      onChange?.({ value: [createLiteralValueSegment(getCurrentValue())] });
+      const newValue = [createLiteralValueSegment(getCurrentValue())];
+      if (notEqual(newValue, initialValue)) {
+        onChange?.({ value: newValue });
+      }
     }
   };
 

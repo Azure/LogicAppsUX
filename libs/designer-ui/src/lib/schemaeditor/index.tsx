@@ -1,7 +1,7 @@
 import { formatValue, getEditorHeight, getInitialValue } from '../code/util';
 import type { ValueSegment } from '../editor';
 import type { ChangeHandler } from '../editor/base';
-import { createLiteralValueSegment } from '../editor/base/utils/helper';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import { ModalDialog } from '../modaldialog';
@@ -82,7 +82,10 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
   };
 
   const handleBlur = (): void => {
-    onChange?.({ value: [createLiteralValueSegment(getCurrentValue())] });
+    const newValue = [createLiteralValueSegment(getCurrentValue())];
+    if (notEqual(newValue, initialValue)) {
+      onChange?.({ value: [createLiteralValueSegment(getCurrentValue())] });
+    }
   };
 
   const handleFocus = (): void => {
