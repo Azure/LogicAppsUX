@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.1](https://github.com/Azure/LogicAppsUX/compare/v4.105.0...v4.105.1) (2024-10-08)
+
+
+### Bug Fixes
+
+* **designer:** Calling on change only when editor value has changed ([#5829](https://github.com/Azure/LogicAppsUX/issues/5829)) ([948d2fd](https://github.com/Azure/LogicAppsUX/commit/948d2fda484a9c91384b04ea2fb35670ef23ed42))
+
 ## [4.105.0](https://github.com/Azure/LogicAppsUX/compare/v4.104.0...v4.105.0) (2024-10-07)
 
 ## [4.104.0](https://github.com/Azure/LogicAppsUX/compare/v4.103.0...v4.104.0) (2024-10-07)
