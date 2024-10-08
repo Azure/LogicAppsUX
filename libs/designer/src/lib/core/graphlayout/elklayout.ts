@@ -77,7 +77,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
       // Put edge objects into a record by sourceId
       for (const edge of node.edges as ElkExtendedEdge[]) {
         const tempEdge: Edge = {
-          id: edge.id,
+          id: edge.layoutOptions?.['initialId'] ?? edge.id,
           target: edge.targets[0],
           source: edge.sources[0],
           type: edge.layoutOptions?.['edgeType'] ?? defaultEdgeType,
@@ -98,7 +98,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
 
       for (const n of node.children as ElkNode[]) {
         const nodeObject: Node = {
-          id: n.id,
+          id: n.layoutOptions?.['initialId'] ?? n.id,
           position: { x: n.x ?? 0, y: n.y ?? 0 },
           data: {
             label: n.id,
@@ -154,29 +154,31 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
 const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   if (isWorkflowNode(node)) {
     return {
-      id: node.id,
+      id: node.id.toLowerCase(),
       height: node.height,
       width: node.width,
       edges: undefined, // node has no edges
       children: node.children?.map(convertWorkflowGraphToElkGraph),
       layoutOptions: {
         nodeType: node?.type ?? defaultNodeType,
+        initialId: node.id,
       },
     };
   }
   const children = node.children?.map(convertWorkflowGraphToElkGraph);
   return {
-    id: node.id,
+    id: node.id.toLowerCase(),
     height: node.height,
     width: node.width,
     children,
     edges:
       node.edges?.map((edge) => ({
-        id: edge.id,
+        id: edge.id.toLowerCase(),
         sources: [edge.source],
         targets: [edge.target],
         layoutOptions: {
           edgeType: edge?.type ?? defaultEdgeType,
+          initialId: edge.id,
         },
       })) ?? [],
     layoutOptions: {
@@ -192,6 +194,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
       ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
         'elk.padding': '[top=0,left=16,bottom=0,right=16]',
       }),
+      initialId: node.id,
     },
   };
 };
