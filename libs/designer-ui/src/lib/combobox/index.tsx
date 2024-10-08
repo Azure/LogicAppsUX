@@ -3,7 +3,7 @@ import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
-import { createLiteralValueSegment } from '../editor/base/utils/helper';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
@@ -276,7 +276,9 @@ export const Combobox = ({
   };
 
   const handleBlur = () => {
-    onChange?.({ value });
+    if (notEqual(value, initialValue)) {
+      onChange?.({ value });
+    }
   };
 
   const handleComboBoxBlur = () => {
