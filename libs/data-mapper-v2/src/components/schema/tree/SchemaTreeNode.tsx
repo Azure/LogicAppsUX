@@ -1,5 +1,5 @@
 import { type SchemaNodeExtended, type SchemaExtended, SchemaNodeProperty, equals } from '@microsoft/logic-apps-shared';
-// import type { NodeRendererProps } from 'react-arborist';
+import type { NodeRendererProps } from 'react-arborist';
 import { useTreeNodeStyles, useStyles, useHandleStyles } from './styles';
 import { Caption2, mergeClasses } from '@fluentui/react-components';
 import { ChevronRightRegular, ChevronDownRegular, ArrowRepeatAllFilled } from '@fluentui/react-icons';
@@ -17,7 +17,7 @@ type SchemaTreeNodeProps = {
   flattenedSchemaMap: Record<string, SchemaNodeExtended>;
   containerTop?: number;
   containerBottom?: number;
-} & any;
+} & NodeRendererProps<SchemaNodeExtended>;
 
 const TypeAnnotation = (props: { schemaNode: SchemaNodeExtended }) => {
   const styles = useStyles();
