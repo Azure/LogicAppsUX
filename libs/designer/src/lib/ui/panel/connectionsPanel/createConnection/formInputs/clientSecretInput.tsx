@@ -1,6 +1,7 @@
 import { TextField } from '@fluentui/react';
 import { Label } from '@microsoft/designer-ui';
 import type React from 'react';
+import { useIntl } from 'react-intl';
 
 export interface ClientSecretInputProps {
   isLoading: boolean | undefined;
@@ -30,6 +31,7 @@ async function getBase64String(file: File): Promise<string> {
 
 const ClientSecretInput = (props: ClientSecretInputProps) => {
   const { parameterKey, setValue, value } = props;
+  const intl = useIntl();
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -37,8 +39,8 @@ const ClientSecretInput = (props: ClientSecretInputProps) => {
 
       getBase64String(file).then((fileContent: string) => {
         const newValue = {
-            ...value,
-            pfx: fileContent
+          ...value,
+          pfx: fileContent,
         };
 
         setValue(newValue);
@@ -48,18 +50,36 @@ const ClientSecretInput = (props: ClientSecretInputProps) => {
 
   const onPasswordChange = (newPassword: string) => {
     const newValue = {
-        ...value,
-        password: newPassword,
+      ...value,
+      password: newPassword,
     };
 
     setValue(newValue);
-  }
+  };
+
+  const uploadFileLabelText = intl.formatMessage({
+    defaultMessage: 'Upload PFX File',
+    id: 'eNp9V6',
+    description: 'Label for uploading certificate file for authentication',
+  });
+
+  const passwordLabelText = intl.formatMessage({
+    defaultMessage: 'Password',
+    id: 'ioUq6Q',
+    description: 'Label for the password field for the selected certificate file',
+  });
+
+  const passwordPlaceholderText = intl.formatMessage({
+    defaultMessage: '(Optional) Password for PFX file',
+    id: 'UJho0j',
+    description: 'Placeholder for the optional password field for the selected certificate file',
+  });
 
   return (
     <div style={{ width: 'inherit' }}>
-      <Label text={'Upload PFX File'} htmlFor={`${parameterKey}-pfxFileInput`} isRequiredField={true} requiredMarkerSide={'right'} />
+      <Label text={uploadFileLabelText} htmlFor={`${parameterKey}-pfxFileInput`} isRequiredField={true} requiredMarkerSide={'right'} />
       <input className="connection-parameter-input" type="file" id={`${parameterKey}-pfxFileInput`} accept=".pfx" onChange={onFileChange} />
-      <Label text={'Password'} htmlFor={`${parameterKey}-pfxPasswordInput`} isRequiredField={false} />
+      <Label text={passwordLabelText} htmlFor={`${parameterKey}-pfxPasswordInput`} isRequiredField={false} />
       <TextField
         type="password"
         id={`${parameterKey}-pfxPasswordInput`}
@@ -67,8 +87,8 @@ const ClientSecretInput = (props: ClientSecretInputProps) => {
         autoComplete="off"
         rows={1}
         multiline={false}
-        placeholder="(Optional) Password for PFX file"
-        onBlur={e => onPasswordChange(e.target.value)}
+        placeholder={passwordPlaceholderText}
+        onBlur={(e) => onPasswordChange(e.target.value)}
       />
     </div>
   );
