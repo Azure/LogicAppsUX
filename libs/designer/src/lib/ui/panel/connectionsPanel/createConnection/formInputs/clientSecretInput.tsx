@@ -29,21 +29,31 @@ async function getBase64String(file: File): Promise<string> {
 }
 
 const ClientSecretInput = (props: ClientSecretInputProps) => {
-  const { parameterKey, setValue } = props;
+  const { parameterKey, setValue, value } = props;
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
 
       getBase64String(file).then((fileContent: string) => {
-        // setValue((value: IClientCertificateMetadata) => {
-        //     value.pfx = fileContent;
-        //     return value;
-        // });
-        setValue({ pfx: fileContent });
+        const newValue = {
+            ...value,
+            pfx: fileContent
+        };
+
+        setValue(newValue);
       });
     }
   };
+
+  const onPasswordChange = (newPassword: string) => {
+    const newValue = {
+        ...value,
+        password: newPassword,
+    };
+
+    setValue(newValue);
+  }
 
   return (
     <div style={{ width: 'inherit' }}>
@@ -58,6 +68,7 @@ const ClientSecretInput = (props: ClientSecretInputProps) => {
         rows={1}
         multiline={false}
         placeholder="(Optional) Password for PFX file"
+        onBlur={e => onPasswordChange(e.target.value)}
       />
     </div>
   );
