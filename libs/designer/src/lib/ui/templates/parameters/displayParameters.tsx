@@ -2,7 +2,7 @@ import { DetailsList, type IColumn, Label, SelectionMode, Text, TextField } from
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { getObjectPropertyValue, type Template } from '@microsoft/logic-apps-shared';
+import { getPropertyValue, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
 import { Flyout } from '@microsoft/designer-ui';
@@ -173,7 +173,7 @@ export const DisplayParameters = () => {
   return (
     <div className="msla-templates-parameters-tab">
       <DetailsList
-        setKey="id"
+        setKey="name"
         items={parametersList()}
         columns={columns()}
         compact={true}
@@ -184,14 +184,12 @@ export const DisplayParameters = () => {
   );
 };
 
-const copyAndSort = (items: Template.Parameter[], columnKey: string, isSortedDescending?: boolean): Template.Parameter[] => {
-  const keyPath =
-    columnKey === '$name' ? ['connectorDisplayName'] : columnKey === '$status' ? ['hasConnection'] : ['connection', 'displayName'];
-  return items.slice(0).sort((a: Template.Parameter, b: Template.Parameter) => {
+const copyAndSort = (items: Template.ParameterDefinition[], columnKey: string, isSortedDescending?: boolean): Template.Parameter[] => {
+  return items.slice(0).sort((a: Template.ParameterDefinition, b: Template.ParameterDefinition) => {
     return (
       isSortedDescending
-        ? getObjectPropertyValue(a, keyPath) < getObjectPropertyValue(b, keyPath)
-        : getObjectPropertyValue(a, keyPath) > getObjectPropertyValue(b, keyPath)
+        ? getPropertyValue(a, columnKey) < getPropertyValue(b, columnKey)
+        : getPropertyValue(a, columnKey) > getPropertyValue(b, columnKey)
     )
       ? 1
       : -1;
