@@ -2,14 +2,15 @@ import type { IColumn } from '@fluentui/react';
 import { DetailsList, Dropdown, Link, SelectionMode, Text, TextField } from '@fluentui/react';
 import { equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
-import type { WorkflowTemplateData } from '../../../core/actions/bjsworkflow/templates';
+import { validateWorkflowName, type WorkflowTemplateData } from '../../../core/actions/bjsworkflow/templates';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { updateKind, updateWorkflowName, validateWorkflowName } from '../../../core/state/templates/templateSlice';
+import { updateKind, updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { getCurrentWorkflowNames } from '../../../core/templates/utils/helper';
 
 interface WorkflowItem {
   id: string;
@@ -20,6 +21,10 @@ interface WorkflowItem {
     text: string;
   }[];
   description: string;
+  errors: {
+    workflow: string | undefined;
+    kind: string | undefined;
+  };
 }
 
 export const MultiWorkflowBasics = () => {
@@ -82,6 +87,7 @@ export const MultiWorkflowBasics = () => {
           }))
         : defaultKindOptions,
       description: workflow.manifest.description,
+      errors: workflow.errors,
     }))
   );
   const workflowErrors = useMemo(
@@ -163,11 +169,20 @@ export const MultiWorkflowBasics = () => {
 
   const handleWorkflowNameChange = (item: WorkflowItem, name: string | undefined) => {
     updateItemInList({ ...item, name });
-    dispatch(updateWorkflowName({ id: item.id, name: item.name }));
+    dispatch(updateWorkflowName({ id: item.id, name }));
   };
 
   const handleWorkflowNameBlur = (item: WorkflowItem) => {
-    dispatch(validateWorkflowName({ id: item.id, existingNames: existingWorkflowNames ?? [] }));
+    const existingNames = [
+      ...(existingWorkflowNames ?? []),
+      ...getCurrentWorkflowNames(
+        workflowsList().map((w) => ({ id: w.id, name: w.name ?? '' })),
+        item.id
+      ),
+    ];
+    const validationError = validateWorkflowName(item.name, existingNames);
+    updateItemInList({ ...item, errors: { ...item.errors, workflow: validationError } });
+    dispatch(updateWorkflowNameValidationError({ id: item.id, error: validationError }));
   };
 
   const handleWorkflowKindChange = (item: WorkflowItem, kind: string) => {

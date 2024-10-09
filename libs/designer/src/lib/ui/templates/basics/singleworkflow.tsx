@@ -2,12 +2,14 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
-import { updateKind, updateWorkflowName, validateWorkflowName } from '../../../core/state/templates/templateSlice';
+import { updateKind, updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
 import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { Open16Regular } from '@fluentui/react-icons';
 import { useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
+import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
+import { useFunctionalState } from '@react-hookz/web';
 
 export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +21,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
   } = useWorkflowTemplate(workflowId);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
+  const [name, setName] = useFunctionalState(existingWorkflowName ?? workflowName);
   const intl = useIntl();
 
   const intlText = useMemo(
@@ -120,13 +123,15 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         data-testid={'workflowName'}
         id={'workflowName'}
         ariaLabel={intlText.WORKFLOW_NAME}
-        value={existingWorkflowName ?? workflowName}
-        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName({ id: workflowId, name: newValue }))
-        }
+        value={name()}
+        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+          setName(newValue);
+          dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
+        }}
         disabled={!!existingWorkflowName}
         onBlur={() => {
-          dispatch(validateWorkflowName({ id: workflowId, existingNames: existingWorkflowNames ?? [] }));
+          const validationError = validateWorkflowName(name(), existingWorkflowNames ?? []);
+          dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
         }}
         errorMessage={workflowError}
       />
