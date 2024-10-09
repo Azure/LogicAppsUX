@@ -38,6 +38,7 @@ import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
+import FlowErrorNode from './CustomNodes/FlowErrorNode';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -57,6 +58,7 @@ const nodeTypes: NodeTypesObj = {
   SUBGRAPH_CARD_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
   PLACEHOLDER_NODE: PlaceholderNode,
+  FLOW_ERROR_NODE: FlowErrorNode,
 };
 
 const edgeTypes = {
