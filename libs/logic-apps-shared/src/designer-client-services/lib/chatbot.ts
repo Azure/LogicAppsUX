@@ -1,8 +1,9 @@
 import type { AxiosResponse } from 'axios';
-import { AssertionErrorCode, AssertionException } from '../../utils/src';
+import { AssertionErrorCode, AssertionException, type DocumentationMetadataState } from '../../utils/src';
 
 export interface IChatbotService {
   getCopilotResponse: (query: string, workflow: any, signal: AbortSignal, armToken: string) => Promise<AxiosResponse<any>>;
+  getCopilotDocumentation: (operationsData: DocumentationMetadataState, workflow: any, armToken: string) => Promise<AxiosResponse<any>>;
 }
 
 let service: IChatbotService;
