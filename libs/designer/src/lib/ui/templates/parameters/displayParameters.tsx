@@ -6,13 +6,16 @@ import { getObjectPropertyValue, type Template } from '@microsoft/logic-apps-sha
 import { useFunctionalState } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
 import { Flyout } from '@microsoft/designer-ui';
+import { useMemo } from 'react';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {
+    workflows,
     parameterDefinitions,
     errors: { parameters: parameterErrors },
   } = useSelector((state: RootState) => state.template);
+  const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
 
   const intl = useIntl();
   const resources = {
@@ -64,53 +67,60 @@ export const DisplayParameters = () => {
     );
   };
 
-  const [columns, setColumns] = useFunctionalState<IColumn[]>([
-    {
-      ariaLabel: resources.parameter_name,
-      fieldName: 'displayName',
-      key: '$displayName',
-      isResizable: true,
-      minWidth: 150,
-      isMultiline: true,
-      name: resources.parameter_name,
-      maxWidth: 250,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
-    },
-    {
-      ariaLabel: resources.parameter_type,
-      fieldName: 'type',
-      key: '$type',
-      isResizable: true,
-      minWidth: 70,
-      maxWidth: 70,
-      name: resources.parameter_type,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
-    },
-    {
-      ariaLabel: resources.parameter_value,
-      fieldName: 'value',
-      key: '$value',
-      isResizable: true,
-      minWidth: 200,
-      isMultiline: true,
-      name: resources.parameter_value,
-      showSortIconWhenUnsorted: false,
-      onColumnClick: _onColumnClick,
-    },
-    {
-      ariaLabel: resources.associated_workflows,
-      fieldName: 'associatedWorkflows',
-      key: '$associatedWorkflows',
-      isResizable: true,
-      minWidth: 180,
-      isMultiline: true,
-      name: resources.associated_workflows,
-      showSortIconWhenUnsorted: false,
-      onColumnClick: _onColumnClick,
-    },
-  ]);
+  const [columns, setColumns] = useFunctionalState<IColumn[]>(() => {
+    const baseColumns = [
+      {
+        ariaLabel: resources.parameter_name,
+        fieldName: 'displayName',
+        key: '$displayName',
+        isResizable: true,
+        minWidth: 150,
+        isMultiline: true,
+        name: resources.parameter_name,
+        maxWidth: 250,
+        showSortIconWhenUnsorted: true,
+        onColumnClick: _onColumnClick,
+      },
+      {
+        ariaLabel: resources.parameter_type,
+        fieldName: 'type',
+        key: '$type',
+        isResizable: true,
+        minWidth: 70,
+        maxWidth: 70,
+        name: resources.parameter_type,
+        showSortIconWhenUnsorted: true,
+        onColumnClick: _onColumnClick,
+      },
+      {
+        ariaLabel: resources.parameter_value,
+        fieldName: 'value',
+        key: '$value',
+        isResizable: true,
+        minWidth: 200,
+        isMultiline: true,
+        name: resources.parameter_value,
+        showSortIconWhenUnsorted: false,
+        onColumnClick: _onColumnClick,
+      },
+    ];
+
+    if (!isSingleWorkflow) {
+      baseColumns.push({
+        ariaLabel: resources.associated_workflows,
+        fieldName: 'associatedWorkflows',
+        key: '$associatedWorkflows',
+        isResizable: true,
+        minWidth: 180,
+        isMultiline: true,
+        name: resources.associated_workflows,
+        showSortIconWhenUnsorted: false,
+        onColumnClick: _onColumnClick,
+      });
+    }
+
+    return baseColumns;
+  });
 
   const updateItemInList = (item: Template.ParameterDefinition) => {
     const newList = parametersList().map((parameter: Template.ParameterDefinition) => (parameter.name === item.name ? item : parameter));
@@ -131,12 +141,10 @@ export const DisplayParameters = () => {
     switch (column?.key) {
       case '$displayName':
         return (
-          <div className="msla-templates-parameters-name">
-            <Label className="msla-templates-parameters-values" required={item.required}>
-              {item.displayName}
-            </Label>
+          <Label className="msla-templates-parameters-values" required={item.required}>
+            <Text>{item.displayName}</Text>
             <Flyout text={item.description} iconSize={'sm'} />
-          </div>
+          </Label>
         );
 
       case '$type':
