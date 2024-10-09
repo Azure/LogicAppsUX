@@ -7,6 +7,10 @@ import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
+export const getCurrentWorkflowNames = (workflows: { id: string; name: string }[], idToSkip: string): string[] => {
+  return workflows.filter((w) => w.id !== idToSkip).map((w) => w.name) as string[];
+};
+
 export const getQuickViewTabs = (
   intl: IntlShape,
   dispatch: AppDispatch,
