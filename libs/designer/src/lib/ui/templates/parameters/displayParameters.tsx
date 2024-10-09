@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const {
     workflows,
     parameterDefinitions,
@@ -17,7 +18,6 @@ export const DisplayParameters = () => {
   } = useSelector((state: RootState) => state.template);
   const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
 
-  const intl = useIntl();
   const resources = {
     parameter_value: intl.formatMessage({
       defaultMessage: 'Value',
