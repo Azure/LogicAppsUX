@@ -1,8 +1,8 @@
 import { getIntl, getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
-import { initializeTemplateServices, loadTemplate, type TemplatePayload } from '../../actions/bjsworkflow/templates';
+import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
+import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
@@ -49,18 +49,25 @@ export const templateSlice = createSlice({
           }
 
           if (validateName) {
-            state.workflows[id].errors.workflow = _validateWorkflowName(state.workflows[id].workflowName, existingNames);
+            const currentWorkflowNames = getCurrentWorkflowNames(
+              workflows.map((id) => ({ id, name: state.workflows[id].workflowName ?? '' })),
+              id
+            );
+            state.workflows[id].errors.workflow = validateWorkflowName(state.workflows[id].workflowName, [
+              ...existingNames,
+              ...currentWorkflowNames,
+            ]);
           }
         }
       }
     },
-    validateWorkflowName: (state, action: PayloadAction<{ id: string; existingNames: string[] }>) => {
-      const { id, existingNames } = action.payload;
+    updateWorkflowNameValidationError: (state, action: PayloadAction<{ id: string; error: string | undefined }>) => {
+      const { id, error } = action.payload;
       if (!state.workflows[id]) {
         return;
       }
-      const validationError = _validateWorkflowName(state.workflows[id].workflowName, existingNames);
-      state.workflows[id].errors.workflow = validationError;
+
+      state.workflows[id].errors.workflow = error;
     },
     updateKind: (state, action: PayloadAction<{ id: string; kind: string }>) => {
       const { id, kind } = action.payload;
@@ -148,37 +155,6 @@ export const {
   validateParameters,
   validateConnections,
   clearTemplateDetails,
-  validateWorkflowName,
+  updateWorkflowNameValidationError,
 } = templateSlice.actions;
 export default templateSlice.reducer;
-
-const _validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
-  const intl = getIntl();
-
-  if (!workflowName) {
-    return intl.formatMessage({
-      defaultMessage: 'Must provide value for workflow name.',
-      id: 'sKy720',
-      description: 'Error message when the workflow name is empty.',
-    });
-  }
-  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
-  if (!regex.test(workflowName)) {
-    return intl.formatMessage({
-      defaultMessage: 'Name does not match the given pattern.',
-      id: 'zMKxg9',
-      description: 'Error message when the workflow name is invalid regex.',
-    });
-  }
-  if (existingWorkflowNames.includes(workflowName)) {
-    return intl.formatMessage(
-      {
-        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-        id: '7F4Bzv',
-        description: 'Error message when the workflow name already exists.',
-      },
-      { workflowName }
-    );
-  }
-  return undefined;
-};

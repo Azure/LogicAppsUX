@@ -1,6 +1,7 @@
 import {
   BaseExperimentationService,
   DevLogger,
+  getIntl,
   guid,
   type ILoggerService,
   InitApiManagementService,
@@ -132,6 +133,37 @@ export const loadTemplate = createAsyncThunk('loadTemplate', async (preLoadedMan
 
   return undefined;
 });
+
+export const validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
+  const intl = getIntl();
+
+  if (!workflowName) {
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for workflow name.',
+      id: 'sKy720',
+      description: 'Error message when the workflow name is empty.',
+    });
+  }
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Name does not match the given pattern.',
+      id: 'zMKxg9',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  if (existingWorkflowNames.includes(workflowName)) {
+    return intl.formatMessage(
+      {
+        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+        id: '7F4Bzv',
+        description: 'Error message when the workflow name already exists.',
+      },
+      { workflowName }
+    );
+  }
+  return undefined;
+};
 
 const loadTemplateFromResourcePath = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =

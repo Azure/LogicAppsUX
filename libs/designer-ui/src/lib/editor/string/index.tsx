@@ -1,6 +1,7 @@
 import type { BaseEditorProps, ChangeHandler } from '../base';
 import { EditorWrapper } from '../base/EditorWrapper';
 import { EditorChangePlugin } from '../base/plugins/EditorChange';
+import { notEqual } from '../base/utils/helper';
 import type { ValueSegment } from '../models/parameter';
 import { useState } from 'react';
 
@@ -23,8 +24,11 @@ export const StringEditor = ({
     onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
   };
   const handleBlur = () => {
-    editorBlur?.({ value: value });
-    onChange?.({ value: value, viewModel: { hideErrorMessage: false } });
+    if (notEqual(value, initialValue)) {
+      editorBlur?.({ value: value });
+    }
+
+    onChange?.({ value, viewModel: { hideErrorMessage: false } });
   };
 
   return (
