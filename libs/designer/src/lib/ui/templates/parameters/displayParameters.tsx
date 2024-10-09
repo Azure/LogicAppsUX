@@ -1,21 +1,18 @@
 import { DetailsList, type IColumn, Label, SelectionMode, Text, TextField } from '@fluentui/react';
-// import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
-// import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
-import type { RootState } from '../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { getObjectPropertyValue, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
 import { Flyout } from '@microsoft/designer-ui';
 
 export const DisplayParameters = () => {
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const {
     parameterDefinitions,
-    // errors: { parameters: parameterErrors },
+    errors: { parameters: parameterErrors },
   } = useSelector((state: RootState) => state.template);
-
-  // const onUpdateParameterValue = (event: TemplatesParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
 
   const intl = useIntl();
   const resources = {
@@ -41,11 +38,7 @@ export const DisplayParameters = () => {
     }),
   };
 
-  const [parametersList, setParametersList] = useFunctionalState<Template.ParameterDefinition[]>(
-    Object.values(parameterDefinitions).map((parameter) => ({
-      ...parameter,
-    }))
-  );
+  const [parametersList, setParametersList] = useFunctionalState<Template.ParameterDefinition[]>(Object.values(parameterDefinitions));
 
   const _onColumnClick = (_event: React.MouseEvent<HTMLElement>, column: IColumn): void => {
     let isSortedDescending = column.isSortedDescending;
@@ -119,6 +112,21 @@ export const DisplayParameters = () => {
     },
   ]);
 
+  const updateItemInList = (item: Template.ParameterDefinition) => {
+    const newList = parametersList().map((parameter: Template.ParameterDefinition) => (parameter.name === item.name ? item : parameter));
+    setParametersList(newList);
+  };
+
+  const handleParameterValueChange = (item: Template.ParameterDefinition, newValue: string) => {
+    updateItemInList({ ...item, value: newValue });
+    dispatch(
+      updateTemplateParameterValue({
+        ...item,
+        value: newValue,
+      })
+    );
+  };
+
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
@@ -139,11 +147,10 @@ export const DisplayParameters = () => {
           <TextField
             className="msla-templates-parameters-values"
             value={item.value}
-            onChange={(_event, _newValue) => {
-              // handleWorkflowNameChange(item, newValue)
+            onChange={(_event, newValue) => {
+              handleParameterValueChange(item, newValue ?? '');
             }}
-            // onBlur={() => handleWorkflowNameBlur(item)}
-            // errorMessage={workflowErrors[item.id]?.workflow}
+            errorMessage={parameterErrors[item.name]}
           />
         );
 
