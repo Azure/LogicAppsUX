@@ -213,6 +213,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+    const logicAppMap = ext.subscriptionLogicAppMap.get(subscription.subscription.subscriptionId);
+    if (logicAppMap) {
+      logicAppMap.set(wizardContext.site.id.toLowerCase(), wizardContext.site);
+    }
     await ext.rgApi.appResourceTree.refresh(context);
     return new SlotTreeItem(subscription, resolved);
   }
