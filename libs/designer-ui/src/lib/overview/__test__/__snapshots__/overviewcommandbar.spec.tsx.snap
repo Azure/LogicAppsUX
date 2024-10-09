@@ -2,7 +2,7 @@
 
 exports[`lib/overview/overviewcommandbar > renders 1`] = `
 <div
-  className="fui-Toolbar ___1876dvf_lf22la0 f22iagw f122n59 f10ra9hq f19lj068 f1y2xyjm f177v4lu"
+  className="fui-Toolbar ___56tqxz0_es7w5s0 f22iagw f122n59 f1yqiaad"
   data-tabster="{"mover":{"cyclic":true,"direction":0,"memorizeCurrent":true}}"
   data-testid="msla-overview-command-bar"
   role="toolbar"
@@ -72,7 +72,7 @@ exports[`lib/overview/overviewcommandbar > renders 1`] = `
 
 exports[`lib/overview/overviewcommandbar > renders with Run trigger button 1`] = `
 <div
-  className="fui-Toolbar ___1876dvf_lf22la0 f22iagw f122n59 f10ra9hq f19lj068 f1y2xyjm f177v4lu"
+  className="fui-Toolbar ___56tqxz0_es7w5s0 f22iagw f122n59 f1yqiaad"
   data-tabster="{"mover":{"cyclic":true,"direction":0,"memorizeCurrent":true}}"
   data-testid="msla-overview-command-bar"
   role="toolbar"

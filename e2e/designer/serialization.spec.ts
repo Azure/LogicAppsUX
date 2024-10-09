@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from './utils/designerFunctions';
+import panelData from '../../__mocks__/workflows/Panel.json' assert { type: 'json' };
+import switchData from '../../__mocks__/workflows/Switch.json' assert { type: 'json' };
+import unicodeKeysData from '../../__mocks__/workflows/UnicodeKeys.json' assert { type: 'json' };
+
 test.describe(
   'Serialization Tests',
   {
@@ -14,14 +18,10 @@ test.describe(
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
-      const mock = await import('../../__mocks__/workflows/Panel.json', {
-        assert: { type: 'json' },
-      });
-
       expect({
-        connectionReferences: mock.default.connectionReferences,
-        parameters: mock.default.parameters,
-        definition: mock.default.definition,
+        connectionReferences: panelData.connectionReferences,
+        parameters: panelData.parameters,
+        definition: panelData.definition,
       }).toEqual(serialized as any);
     });
 
@@ -31,11 +31,7 @@ test.describe(
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
-      const mock = await import('../../__mocks__/workflows/Switch.json', {
-        assert: { type: 'json' },
-      });
-
-      expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
+      expect({ connectionReferences: {}, parameters: {}, definition: switchData.definition }).toEqual(serialized as any);
     });
 
     test('Should serialize the workflow after deserializing it and match with some strings and keys containing unicode characters', async ({
@@ -47,11 +43,7 @@ test.describe(
 
       const serialized: any = await getSerializedWorkflowFromState(page);
 
-      const mock = await import('../../__mocks__/workflows/UnicodeKeys.json', {
-        assert: { type: 'json' },
-      });
-
-      expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
+      expect({ connectionReferences: {}, parameters: {}, definition: unicodeKeysData.definition }).toEqual(serialized as any);
     });
   }
 );
