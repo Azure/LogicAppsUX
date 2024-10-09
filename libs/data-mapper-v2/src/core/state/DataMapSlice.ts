@@ -11,7 +11,7 @@ import {
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
   isConnectionUnit,
-  isCustomValue,
+  isCustomValueConnection,
   isEmptyConnection,
 } from '../../utils/Connection.Utils';
 import type { UnknownNode } from '../../utils/DataMap.Utils';
@@ -465,7 +465,7 @@ export const dataMapSlice = createSlice({
       if (isEmptyConnection(inputValueToRemove)) {
         return;
       }
-      const sourceIdToRemove = isCustomValue(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
+      const sourceIdToRemove = isCustomValueConnection(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
       deleteConnectionFromConnections(state.curDataMapOperation.dataMapConnections, sourceIdToRemove, action.payload.targetId, undefined);
       doDataMapOperation(
         state,
@@ -747,7 +747,7 @@ export const deleteConnectionFromConnections = (
       // danielle test for custom inputs
       if (
         (isConnectionUnit(inputEntry) && inputEntry.reactFlowKey === inputKey) ||
-        (isCustomValue(inputEntry) && inputEntry.value === inputKey)
+        (isCustomValueConnection(inputEntry) && inputEntry.value === inputKey)
       ) {
         return createNewEmptyConnection();
       }

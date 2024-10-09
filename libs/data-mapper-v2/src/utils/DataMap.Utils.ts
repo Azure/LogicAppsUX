@@ -11,7 +11,7 @@ import {
   indexPseudoFunctionKey,
 } from '../models/Function';
 import { findLast } from './Array.Utils';
-import { applyConnectionValue, flattenInputs, isCustomValue, nodeHasSpecificInputEventually } from './Connection.Utils';
+import { applyConnectionValue, flattenInputs, isCustomValueConnection, nodeHasSpecificInputEventually } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -49,7 +49,7 @@ export const getInputValues = (
           }
 
           // Handle custom values, source schema node, and Function inputs for Function nodes
-          if (isCustomValue(input)) {
+          if (isCustomValueConnection(input)) {
             return input;
           }
           if (isSchemaNodeExtended(input.node)) {

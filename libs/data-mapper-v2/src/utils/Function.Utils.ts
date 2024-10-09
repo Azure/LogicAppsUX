@@ -14,7 +14,7 @@ import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } fr
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionDictionary, FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit, isCustomValue, isEmptyConnection } from './Connection.Utils';
+import { isConnectionUnit, isCustomValueConnection, isEmptyConnection } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
@@ -95,7 +95,7 @@ export const functionInputHasInputs = (fnInputReactFlowKey: string, connections:
 export const getIndexValueForCurrentConnection = (currentConnection: Connection, connections: ConnectionDictionary): string => {
   const firstInput = currentConnection.inputs[0];
 
-  if (isCustomValue(firstInput)) {
+  if (isCustomValueConnection(firstInput)) {
     return firstInput.value;
   }
   if (isConnectionUnit(firstInput)) {
@@ -218,7 +218,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
           return undefined;
         }
 
-        if (isCustomValue(input)) {
+        if (isCustomValueConnection(input)) {
           return input;
         }
 
@@ -263,7 +263,7 @@ export const getInputName = (
   connectionDictionary: ConnectionDictionary
 ): string | undefined => {
   if (inputConnection && !isEmptyConnection(inputConnection)) {
-    if (isCustomValue(inputConnection)) {
+    if (isCustomValueConnection(inputConnection)) {
       return inputConnection.value;
     }
     return isSchemaNodeExtended(inputConnection.node)
@@ -276,7 +276,7 @@ export const getInputName = (
 
 export const getInputValue = (inputConnection: InputConnection | undefined) => {
   if (inputConnection && !isEmptyConnection(inputConnection)) {
-    return isCustomValue(inputConnection) ? inputConnection.value : inputConnection.reactFlowKey;
+    return isCustomValueConnection(inputConnection) ? inputConnection.value : inputConnection.reactFlowKey;
   }
 
   return undefined;

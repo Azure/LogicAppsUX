@@ -8,7 +8,7 @@ import {
   collectTargetNodesForConnectionChain,
   flattenInputs,
   isConnectionUnit,
-  isCustomValue,
+  isCustomValueConnection,
   isEmptyConnection,
 } from '../utils/Connection.Utils';
 import {
@@ -144,7 +144,7 @@ const createSourcePath = (
     // Handle custom values, source schema nodes, or Functions applied to the current target schema node
     let value = '';
     if (input && !isEmptyConnection(input)) {
-      if (isCustomValue(input)) {
+      if (isCustomValueConnection(input)) {
         value = input.value;
       } else if (isSchemaNodeExtended(input.node)) {
         value = input.node.key;

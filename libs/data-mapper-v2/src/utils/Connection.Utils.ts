@@ -135,16 +135,16 @@ export const applyConnectionValue = (
       // - otherwise we can safely just append its value to the end
       if (connection.inputs && connection.inputs[0]) {
         const indexOfFirstOpenInput = connection.inputs.findIndex((inputCon) => !inputCon || isEmptyConnection(inputCon));
-        confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : UnboundedInput;
+        confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : connection.inputs.length;
       }
     } else if (isConnectionUnit(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
-      confirmedInputIndex = connection.inputs.findIndex((inputCon) => isEmptyConnection(inputCon)); // danielle this might not be right
-      // } else if (isCustomValue(input) && targetNode) {
-      //   // Add input to first available that allows custom values danielle revisit
-      //   confirmedInputIndex = values(connection.inputs.findIndex(
-      //     (inputCon, idx) => inputCon.length < 1 && targetNode.inputs[idx].allowCustomInput
-      //   );
+      confirmedInputIndex = connection.inputs.findIndex((inputCon) => isEmptyConnection(inputCon));
+    } else if (isCustomValueConnection(input) && targetNode) {
+      // Add input to first available that allows custom values
+      confirmedInputIndex = connection.inputs.findIndex(
+        (inputCon, idx) => isEmptyConnection(inputCon) && targetNode.inputs[idx].allowCustomInput
+      );
     }
   }
 
@@ -280,7 +280,6 @@ export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | 
   ) {
     return false;
   }
-
   return true;
 };
 
@@ -318,7 +317,7 @@ export const createCustomInput = (value: string): CustomValueConnection => {
 export const isEmptyConnection = (connectionInput: InputConnection): connectionInput is EmptyConnection =>
   connectionInput !== undefined && connectionInput.isDefined === false;
 
-export const isCustomValue = (connectionInput: InputConnection): connectionInput is CustomValueConnection =>
+export const isCustomValueConnection = (connectionInput: InputConnection): connectionInput is CustomValueConnection =>
   connectionInput !== undefined && connectionInput.isCustom === true;
 export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is NodeConnection =>
   connectionInput !== undefined && connectionInput.isDefined === true && connectionInput.isCustom === false;
@@ -334,7 +333,7 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
 
   // Put 0 input, content enricher functions in the node bucket
   const flattenedInputs = flattenInputs(currentConnection.inputs);
-  const customValueInputs = flattenedInputs.filter(isCustomValue);
+  const customValueInputs = flattenedInputs.filter(isCustomValueConnection);
   const definedNonCustomValueInputs: NodeConnection[] = flattenedInputs.filter(isConnectionUnit);
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node?.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node?.maxNumberOfInputs === 0);

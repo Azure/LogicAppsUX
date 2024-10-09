@@ -310,18 +310,6 @@ describe('utils/Connections', () => {
         expect(isConnectionUnit(unboundedMockConnections[currentNodeReactFlowKey].inputs[0])).toBeTruthy();
         expect(isConnectionUnit(unboundedMockConnections[currentNodeReactFlowKey].inputs[1])).toBeTruthy();
       });
-
-      it('Test delete unbounded input value', () => {
-        // danielle what is the intended scenario of this?
-        applyConnectionValue(mockConnections, {
-          targetNode: atypicallyMockFunctionNode,
-          targetNodeReactFlowKey: currentNodeReactFlowKey,
-          inputIndex: 0,
-          input: null,
-        });
-
-        expect(mockConnections[currentNodeReactFlowKey].inputs[0]).toEqual(1);
-      });
     });
   });
 
