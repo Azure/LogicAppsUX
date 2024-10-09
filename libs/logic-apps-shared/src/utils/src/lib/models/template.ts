@@ -43,6 +43,7 @@ export interface Parameter {
 
 export interface ParameterDefinition extends Parameter {
   value?: any;
+  associatedWorkflows?: string[];
 }
 
 export interface Connection {

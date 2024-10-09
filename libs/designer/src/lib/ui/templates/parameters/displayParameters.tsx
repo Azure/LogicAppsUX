@@ -1,4 +1,4 @@
-import { DetailsList, type IColumn, SelectionMode, TextField } from '@fluentui/react';
+import { DetailsList, type IColumn, SelectionMode, Text, TextField } from '@fluentui/react';
 // import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 // import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { RootState } from '../../../core/state/templates/store';
@@ -76,7 +76,8 @@ export const DisplayParameters = () => {
       fieldName: 'displayName',
       key: '$displayName',
       isResizable: true,
-      minWidth: 200,
+      minWidth: 150,
+      isMultiline: true,
       name: resources.parameter_name,
       maxWidth: 250,
       showSortIconWhenUnsorted: true,
@@ -101,7 +102,7 @@ export const DisplayParameters = () => {
       minWidth: 200,
       isMultiline: true,
       name: resources.parameter_value,
-      showSortIconWhenUnsorted: true,
+      showSortIconWhenUnsorted: false,
       onColumnClick: _onColumnClick,
     },
     {
@@ -109,10 +110,10 @@ export const DisplayParameters = () => {
       fieldName: 'associatedWorkflows',
       key: '$associatedWorkflows',
       isResizable: true,
-      minWidth: 100,
-      maxWidth: 100,
+      minWidth: 150,
+      isMultiline: true,
       name: resources.associated_workflows,
-      showSortIconWhenUnsorted: true,
+      showSortIconWhenUnsorted: false,
       onColumnClick: _onColumnClick,
     },
   ]);
@@ -139,7 +140,7 @@ export const DisplayParameters = () => {
         );
 
       case '$associatedWorkflows':
-        return <div>{'TODO'}</div>;
+        return <Text>{item.associatedWorkflows?.join(', ')}</Text>;
 
       default:
         return null;
@@ -152,9 +153,7 @@ export const DisplayParameters = () => {
         setKey="id"
         items={parametersList()}
         columns={columns()}
-        // groups={isSingleWorkflow ? undefined : groups()}
         compact={true}
-        // onRenderRow={onRenderRow}
         onRenderItemColumn={onRenderItemColumn}
         selectionMode={SelectionMode.none}
       />
