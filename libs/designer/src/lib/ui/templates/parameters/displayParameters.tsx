@@ -1,4 +1,4 @@
-import { DetailsList, type IColumn, SelectionMode, Text, TextField } from '@fluentui/react';
+import { DetailsList, type IColumn, Label, SelectionMode, Text, TextField } from '@fluentui/react';
 // import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 // import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { RootState } from '../../../core/state/templates/store';
@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { getObjectPropertyValue, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
+import { Flyout } from '@microsoft/designer-ui';
 
 export const DisplayParameters = () => {
   // const dispatch = useDispatch<AppDispatch>();
@@ -88,8 +89,8 @@ export const DisplayParameters = () => {
       fieldName: 'type',
       key: '$type',
       isResizable: true,
-      minWidth: 100,
-      maxWidth: 100,
+      minWidth: 70,
+      maxWidth: 70,
       name: resources.parameter_type,
       showSortIconWhenUnsorted: true,
       onColumnClick: _onColumnClick,
@@ -110,7 +111,7 @@ export const DisplayParameters = () => {
       fieldName: 'associatedWorkflows',
       key: '$associatedWorkflows',
       isResizable: true,
-      minWidth: 150,
+      minWidth: 180,
       isMultiline: true,
       name: resources.associated_workflows,
       showSortIconWhenUnsorted: false,
@@ -121,16 +122,23 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return <div>{item.displayName}</div>;
+        return (
+          <div className="msla-templates-parameters-name">
+            <Label className="msla-templates-parameters-values" required={item.required}>
+              {item.displayName}
+            </Label>
+            <Flyout text={item.description} iconSize={'sm'} />
+          </div>
+        );
 
       case '$type':
-        return <div>{item.type}</div>;
+        return <Text className="msla-templates-parameters-values">{item.type}</Text>;
 
       case '$value':
         return (
           <TextField
-            className="msla-templates-value-name"
-            value={item.name}
+            className="msla-templates-parameters-values"
+            value={item.value}
             onChange={(_event, _newValue) => {
               // handleWorkflowNameChange(item, newValue)
             }}
@@ -140,7 +148,7 @@ export const DisplayParameters = () => {
         );
 
       case '$associatedWorkflows':
-        return <Text>{item.associatedWorkflows?.join(', ')}</Text>;
+        return <Text className="msla-templates-parameters-values">{item.associatedWorkflows?.join(', ')}</Text>;
 
       default:
         return null;
@@ -148,7 +156,7 @@ export const DisplayParameters = () => {
   };
 
   return (
-    <div className="msla-template-create-tabs">
+    <div className="msla-templates-parameters-tab">
       <DetailsList
         setKey="id"
         items={parametersList()}

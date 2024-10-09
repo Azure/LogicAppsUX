@@ -6,10 +6,21 @@
   @arrow-size: 5px;
   @right-offset: 17px;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   .msla-flyout-icon {
-    width: 28px;
-    height: 28px;
-    margin: 8px;
+    &.sm {
+      width: 16px;
+      height: 16px;
+      display: inline;
+    }
+    &.lg {
+      width: 28px;
+      height: 28px;
+      margin: 8px;
+    }
   }
 }
 

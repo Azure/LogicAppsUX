@@ -57,6 +57,11 @@ export const Flyout2: React.FC<Flyout2Props> = ({
       title={title}
       onClick={handleClick}
       onKeyPress={handleEnterKeyPress}
+      style={{
+        width: 16,
+        height: 16,
+        background: 'red',
+      }}
     >
       <img
         alt=""
@@ -66,6 +71,11 @@ export const Flyout2: React.FC<Flyout2Props> = ({
         role="presentation"
         src={InformationImage}
         onDragStart={onDragStartWhenDisabled}
+        style={{
+          width: 16,
+          height: 16,
+          background: 'yellow',
+        }}
       />
       <FlyoutBalloon
         flyoutExpanded={flyoutExpanded}
