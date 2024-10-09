@@ -91,6 +91,7 @@
     "start:e2e": "turbo run e2e",
     "test:lib": "turbo run test:lib",
     "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack",
