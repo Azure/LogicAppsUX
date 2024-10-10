@@ -82,13 +82,13 @@ export const ReviewCreatePanel = () => {
         </>
       )}
 
-      {Object.keys(connections ?? {}).length > 0 && (
+      {Object.keys(connections).length > 0 && (
         <>
           <Label className="msla-templates-tab-label" htmlFor={'connectionsLabel'}>
             {intlText.CONNECTIONS}
           </Label>
           <div className="msla-templates-tab-review-section">
-            {Object.keys(connections ?? {}).map((connectionKey) => (
+            {Object.keys(connections).map((connectionKey) => (
               <ConnectorConnectionStatus
                 key={connectionKey}
                 connectionKey={connectionKey.replace('_#workflowname#', '')}
