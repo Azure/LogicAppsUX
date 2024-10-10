@@ -153,6 +153,6 @@ function isUrl(uri: string): boolean {
   return uri.startsWith('http://') || uri.startsWith('https://');
 }
 
-function isSuccessResponse(statusCode: number): boolean {
+export function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
 }

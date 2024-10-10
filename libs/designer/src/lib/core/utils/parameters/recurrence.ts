@@ -35,7 +35,10 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
   };
 };
 
-export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): { parameters: ParameterInfo[]; rawParameters: InputParameter[]; } => {
+export const getRecurrenceParameters = (
+  recurrence: RecurrenceSetting | undefined,
+  operationDefinition: any
+): { parameters: ParameterInfo[]; rawParameters: InputParameter[] } => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return { parameters: [], rawParameters: [] };
   }
