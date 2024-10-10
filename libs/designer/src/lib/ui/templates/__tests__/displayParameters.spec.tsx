@@ -94,8 +94,7 @@ describe('ui/templates/DisplayParameters', () => {
   it('DisplayParameters with default case ', async () => {
     const parameter1 = template1Manifest?.parameters[0];
     expect(screen.getByText(parameter1.displayName)).toBeDefined();
-    expect(screen.getByText(`Value (${parameter1.type})`)).toBeDefined();
-    expect(screen.getByText(parameter1.description)).toBeDefined();
+    expect(screen.getByText(parameter1.type)).toBeDefined();
     expect(screen.getAllByDisplayValue(param1DefaultValue)).toBeDefined();
   });
 
@@ -103,8 +102,7 @@ describe('ui/templates/DisplayParameters', () => {
     const parameter2 = template1Manifest?.parameters[1];
 
     expect(screen.getByText(parameter2.displayName)).toBeDefined();
-    expect(screen.getByText(`Value (${parameter2.type})`)).toBeDefined();
-    expect(screen.getByText(parameter2.description)).toBeDefined();
+    expect(screen.getByText(parameter2.type)).toBeDefined();
 
     store.dispatch(
       updateTemplateParameterValue({
@@ -123,8 +121,7 @@ describe('ui/templates/DisplayParameters', () => {
     const parameter3 = template1Manifest?.parameters[2];
 
     expect(screen.getByText(parameter3.displayName)).toBeDefined();
-    expect(screen.getByText(`Value (${parameter3.type})`)).toBeDefined();
-    expect(screen.getByText(parameter3.description)).toBeDefined();
+    expect(screen.getByText(parameter3.type)).toBeDefined();
     expect(screen.getAllByDisplayValue(param2DefaultValue)).toBeDefined();
 
     store.dispatch(

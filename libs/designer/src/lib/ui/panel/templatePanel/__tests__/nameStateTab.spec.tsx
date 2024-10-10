@@ -35,10 +35,6 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
                 type: 'workflow',
                 file: 'workflow.json',
               },
-              {
-                type: 'description',
-                file: 'description.md',
-              },
             ],
             connections: {},
             parameters: [],
