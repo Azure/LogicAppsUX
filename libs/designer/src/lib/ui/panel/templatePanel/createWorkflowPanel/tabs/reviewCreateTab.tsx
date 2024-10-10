@@ -13,8 +13,8 @@ import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { parameterDefinitions } = useSelector((state: RootState) => state.template);
-  const { workflowName, kind, manifest } = useDefaultWorkflowTemplate();
+  const { parameterDefinitions, workflows } = useSelector((state: RootState) => state.template);
+  const { manifest } = useDefaultWorkflowTemplate();
   const {
     existingWorkflowName,
     connections: { mapping },
@@ -24,10 +24,10 @@ export const ReviewCreatePanel = () => {
   } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
-    DETAILS: intl.formatMessage({
-      defaultMessage: 'Details',
-      id: 'idjOtt',
-      description: 'Accessibility label for the details section',
+    BASICS: intl.formatMessage({
+      defaultMessage: 'Basics',
+      id: '1LSKq8',
+      description: 'Accessibility label for the basics section',
     }),
     CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Connections',
@@ -39,14 +39,9 @@ export const ReviewCreatePanel = () => {
       id: 'oWAB0H',
       description: 'Accessibility label for the parameters section',
     }),
-    TEMPLATE_NAME: intl.formatMessage({
-      defaultMessage: 'Template name',
-      id: 'rNGm1D',
-      description: 'Accessibility label for template name',
-    }),
-    WORKFLOW_NAME: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'oqgNX3',
+    NAME: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'hB4zlY',
       description: 'Accessibility label for workflow name',
     }),
     STATE: intl.formatMessage({
@@ -63,28 +58,26 @@ export const ReviewCreatePanel = () => {
   return (
     <div className="msla-templates-tab">
       <Label className="msla-templates-tab-label" htmlFor={'detailsLabel'}>
-        {intlText.DETAILS}
+        {intlText.BASICS}
       </Label>
-      <div className="msla-templates-tab-review-section">
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.TEMPLATE_NAME}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{manifest?.title}</Text>
+      {!isConsumption && (
+        <div className="msla-templates-tab-review-section">
+          {Object.values(workflows).map((workflow) => (
+            <div key={workflow.id}>
+              <div className="msla-templates-tab-review-section-details">
+                <Text className="msla-templates-tab-review-section-details-title">{intlText.NAME}</Text>
+                <Text className="msla-templates-tab-review-section-details-value">
+                  {existingWorkflowName ?? workflow.workflowName ?? intlText.PLACEHOLDER}
+                </Text>
+              </div>
+              <div className="msla-templates-tab-review-section-details">
+                <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
+                <Text className="msla-templates-tab-review-section-details-value">{workflow.kind ?? intlText.PLACEHOLDER}</Text>
+              </div>
+            </div>
+          ))}
         </div>
-        {!isConsumption && (
-          <>
-            <div className="msla-templates-tab-review-section-details">
-              <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
-              <Text className="msla-templates-tab-review-section-details-value">
-                {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
-              </Text>
-            </div>
-            <div className="msla-templates-tab-review-section-details">
-              <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-              <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
-            </div>
-          </>
-        )}
-      </div>
+      )}
 
       {Object.keys(manifest?.connections ?? {}).length > 0 && (
         <>
