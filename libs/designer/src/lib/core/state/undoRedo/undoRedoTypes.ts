@@ -19,7 +19,8 @@ import {
 export interface StateHistory {
   past: StateHistoryItem[];
   future: StateHistoryItem[];
-  stateHistoryItemIndex: number;
+  // Toggle whenever undo/redo is clicked. This is needed to re-render parameter panel on undo/redo
+  undoRedoClickToggle: number;
   // On undo/redo, we don't want to lose track of what the edited panel was for past/future state when we change the current state
   currentEditedPanelTab?: string;
   currentEditedPanelNode?: string;
