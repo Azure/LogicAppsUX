@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.96.2](https://github.com/Azure/LogicAppsUX/compare/v4.96.1...v4.96.2) (2024-10-10)
+
+
+### Bug Fixes
+
+* **vscode:** Fix parameters panel and reload remote logic app structure  ([#5851](https://github.com/Azure/LogicAppsUX/issues/5851)) ([48f8c31](https://github.com/Azure/LogicAppsUX/commit/48f8c311c22432248299076d2f124c669b9ca9e7)), closes [#5834](https://github.com/Azure/LogicAppsUX/issues/5834) [#5837](https://github.com/Azure/LogicAppsUX/issues/5837) [#5836](https://github.com/Azure/LogicAppsUX/issues/5836)
+
 ### [4.96.1](https://github.com/Azure/LogicAppsUX/compare/v4.96.0...v4.96.1) (2024-10-07)
 
 
