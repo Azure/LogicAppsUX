@@ -153,9 +153,10 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
 
 export const ConnectorConnectionStatus = ({
   connectorId,
+  connectionKey,
   hasConnection,
   intl,
-}: { connectorId: string; hasConnection: boolean; intl: IntlShape }) => {
+}: { connectorId: string; connectionKey: string; hasConnection: boolean; intl: IntlShape }) => {
   const { data: connector, isLoading } = useConnector(connectorId);
   const texts = getConnectorResources(intl);
 
@@ -170,7 +171,9 @@ export const ConnectorConnectionStatus = ({
           />
         </div>
       ) : (
-        <Text className="msla-templates-tab-review-section-details-title">{connector?.properties.displayName}</Text>
+        <Text className="msla-templates-tab-review-section-details-title">
+          {connector?.properties.displayName} ({connectionKey})
+        </Text>
       )}
       <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
     </div>

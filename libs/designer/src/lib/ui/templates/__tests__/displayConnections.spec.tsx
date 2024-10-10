@@ -52,7 +52,6 @@ describe('ui/templates/workflowconnections', () => {
             contentVersion: '',
           },
           connectionKeys: Object.keys(template1Manifest.connections),
-          parameterKeys: [],
           errors: {
             workflow: undefined,
             kind: undefined,
