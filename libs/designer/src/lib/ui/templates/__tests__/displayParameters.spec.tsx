@@ -65,11 +65,8 @@ describe('ui/templates/DisplayParameters', () => {
 
     templateSliceData = {
       templateName: template1Manifest.title,
+      workflows: {},
       manifest: template1Manifest,
-      workflowDefinition: {
-        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-        contentVersion: '',
-      },
       parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
@@ -79,11 +76,7 @@ describe('ui/templates/DisplayParameters', () => {
       }, {}),
       connections: template1Manifest.connections,
       servicesInitialized: false,
-      workflowName: undefined,
-      kind: undefined,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },
@@ -115,14 +108,12 @@ describe('ui/templates/DisplayParameters', () => {
 
     store.dispatch(
       updateTemplateParameterValue({
-        newDefinition: {
-          ...parameter2,
-          name: parameter2.name,
-          description: parameter2.description,
-          displayName: parameter2.displayName,
-          type: parameter2.type,
-          value: 'non-object value',
-        },
+        ...parameter2,
+        name: parameter2.name,
+        description: parameter2.description,
+        displayName: parameter2.displayName,
+        type: parameter2.type,
+        value: 'non-object value',
       })
     );
     expect(store.getState().template.errors.parameters[parameter2.name]).toBe('Enter a valid JSON.');
@@ -138,13 +129,11 @@ describe('ui/templates/DisplayParameters', () => {
 
     store.dispatch(
       updateTemplateParameterValue({
-        newDefinition: {
-          ...parameter3,
-          name: parameter3.name,
-          description: parameter3.description,
-          displayName: parameter3.displayName,
-          value: '',
-        },
+        ...parameter3,
+        name: parameter3.name,
+        description: parameter3.description,
+        displayName: parameter3.displayName,
+        value: '',
       })
     );
     expect(store.getState().template.errors.parameters[parameter3.name]).toBe('Must provide value for parameter.');

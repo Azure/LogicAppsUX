@@ -22,10 +22,32 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
           workflowName: 'workflowName 1',
           kind: undefined,
           templateName: 'title',
-          manifest: undefined,
-          workflowDefinition: undefined,
+          manifest: {
+            title: 'Template 1',
+            description: 'Template 1 Description',
+            tags: [],
+            details: {},
+            images: {},
+            skus: [],
+            kinds: [],
+            artifacts: [
+              {
+                type: 'workflow',
+                file: 'workflow.json',
+              },
+              {
+                type: 'description',
+                file: 'description.md',
+              },
+            ],
+            connections: {},
+            parameters: [],
+          },
+          workflowDefinition: {
+            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+            contentVersion: '',
+          },
           connectionKeys: [],
-          parameterKeys: [],
           errors: {
             workflow: undefined,
             kind: undefined,
