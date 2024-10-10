@@ -162,7 +162,6 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
         if (onStringDropdownListToggle) {
           onStringDropdownListToggle(schemaKey);
         }
-        //toggle state here
         return true;
       },
     };
