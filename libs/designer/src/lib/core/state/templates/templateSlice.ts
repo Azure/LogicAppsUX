@@ -1,7 +1,6 @@
-import { getIntl, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { getIntl, getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
 import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
 import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
@@ -78,10 +77,8 @@ export const templateSlice = createSlice({
       state.workflows[id].kind = kind;
       state.workflows[id].errors.kind = undefined;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
-      const {
-        newDefinition: { name, type, value, required },
-      } = action.payload;
+    updateTemplateParameterValue: (state, action: PayloadAction<Template.ParameterDefinition>) => {
+      const { name, type, value, required } = action.payload;
 
       const validationError = validateParameterValue({ type, value: value }, required);
 

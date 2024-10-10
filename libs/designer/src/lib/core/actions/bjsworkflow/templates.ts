@@ -35,7 +35,6 @@ export interface WorkflowTemplateData {
   kind: string | undefined;
   images?: Record<string, string>;
   connectionKeys: string[];
-  parameterKeys: string[];
   errors: {
     workflow: string | undefined;
     kind: string | undefined;
@@ -193,7 +192,25 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
         data.workflows[workflowPath] = workflowData.workflow;
         data.parameterDefinitions = {
           ...data.parameterDefinitions,
-          ...workflowData.parameterDefinitions,
+          ...Object.keys(workflowData.parameterDefinitions).reduce((acc: Record<string, Template.ParameterDefinition>, key: string) => {
+            if (data.parameterDefinitions[key] && workflowData.parameterDefinitions[key]) {
+              // Combine associatedWorkflows arrays if both definitions exist
+              const combinedAssociatedWorkflows = [
+                ...(data.parameterDefinitions[key].associatedWorkflows || []),
+                ...(workflowData.parameterDefinitions[key].associatedWorkflows || []),
+              ];
+
+              acc[key] = {
+                ...data.parameterDefinitions[key],
+                ...workflowData.parameterDefinitions[key],
+                associatedWorkflows: combinedAssociatedWorkflows,
+              };
+            } else {
+              // If the key doesn't exist in data, just take from workflowData
+              acc[key] = workflowData.parameterDefinitions[key];
+            }
+            return acc;
+          }, {}),
         };
         data.connections = { ...data.connections, ...workflowData.connections };
       }
@@ -231,6 +248,7 @@ const loadWorkflowTemplateFromManifest = async (
       result[parameter.name] = {
         ...parameter,
         value: parameter.default,
+        associatedWorkflows: [templateManifest.title],
       };
       return result;
     }, {});
@@ -244,7 +262,6 @@ const loadWorkflowTemplateFromManifest = async (
         kind: templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful',
         images: templateManifest.images,
         connectionKeys: Object.keys(templateManifest.connections),
-        parameterKeys: Object.keys(parameterDefinitions),
         errors: {
           workflow: undefined,
           kind: undefined,

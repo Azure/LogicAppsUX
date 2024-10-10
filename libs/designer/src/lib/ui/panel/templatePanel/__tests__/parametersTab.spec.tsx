@@ -34,7 +34,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
       kind: undefined,
       templateName: 'title',
       manifest: undefined,
-      workflowDefinition: undefined,
+      workflows: {},
       parameterDefinitions: parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
@@ -72,10 +72,8 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
     expect(store.getState().template.parameterDefinitions['param1'].type).toBe('string');
     expect(store.getState().template.parameterDefinitions['param2'].type).toBe('object');
     expect(screen.getAllByText(param1.displayName)).toBeDefined();
-    expect(screen.getAllByText(`Value (${param1.type})`)).toBeDefined();
-    expect(screen.getAllByText(param1.description)).toBeDefined();
+    expect(screen.getAllByText(param1.type)).toBeDefined();
     expect(screen.getAllByText(param2.displayName)).toBeDefined();
-    expect(screen.getAllByText(`Value (${param2.type})`)).toBeDefined();
-    expect(screen.getAllByText(param2.description)).toBeDefined();
+    expect(screen.getAllByText(param2.type)).toBeDefined();
   });
 });

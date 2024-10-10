@@ -38,11 +38,12 @@ export interface Parameter {
   description: string;
   required?: boolean;
   displayName: string;
+  value?: any;
   allowedValues?: { value: any; displayName: string }[];
 }
 
 export interface ParameterDefinition extends Parameter {
-  value?: any;
+  associatedWorkflows?: string[];
 }
 
 export interface Connection {
