@@ -6,8 +6,6 @@ import {
   addEdgeFromRunAfter,
   addNode,
   addSwitchCase,
-  deleteNode,
-  deleteSwitchCase,
   moveNode,
   pasteNode,
   pasteScopeNode,
@@ -42,15 +40,16 @@ export type UndoRedoPartialRootState = Pick<
 export const undoableWorkflowActionTypes = [
   addNode,
   moveNode,
-  deleteNode,
   addSwitchCase,
-  deleteSwitchCase,
   addForeachToNode.pending,
   pasteNode,
   pasteScopeNode,
   updateRunAfter,
   removeEdgeFromRunAfter,
   addEdgeFromRunAfter,
+  /**
+   * Delete operations are tracked through DeleteModal since there are different delete actions for different node types
+   */
 ].map((action) => action.type);
 
 export const undoablePanelActionTypes = [
