@@ -55,29 +55,31 @@ export const ReviewCreatePanel = () => {
   };
   return (
     <div className="msla-templates-tab">
-      <Label className="msla-templates-tab-label" htmlFor={'detailsLabel'}>
-        {intlText.BASICS}
-      </Label>
       {!isConsumption && (
-        <div className="msla-templates-tab-review-section">
-          {Object.values(workflows).map((workflow) => {
-            const workflowNameToShow = existingWorkflowName ?? workflow.workflowName;
-            return (
-              <div key={workflow.id}>
-                <div className="msla-templates-tab-review-section-details">
-                  <Text className="msla-templates-tab-review-section-details-title">{intlText.NAME}</Text>
-                  <Text className="msla-templates-tab-review-section-details-value">
-                    {isUndefinedOrEmptyString(workflowNameToShow) ? intlText.PLACEHOLDER : workflowNameToShow}
-                  </Text>
+        <>
+          <Label className="msla-templates-tab-label" htmlFor={'detailsLabel'}>
+            {intlText.BASICS}
+          </Label>
+          <div className="msla-templates-tab-review-section">
+            {Object.values(workflows).map((workflow) => {
+              const workflowNameToShow = existingWorkflowName ?? workflow.workflowName;
+              return (
+                <div key={workflow.id}>
+                  <div className="msla-templates-tab-review-section-details">
+                    <Text className="msla-templates-tab-review-section-details-title">{intlText.NAME}</Text>
+                    <Text className="msla-templates-tab-review-section-details-value">
+                      {isUndefinedOrEmptyString(workflowNameToShow) ? intlText.PLACEHOLDER : workflowNameToShow}
+                    </Text>
+                  </div>
+                  <div className="msla-templates-tab-review-section-details">
+                    <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
+                    <Text className="msla-templates-tab-review-section-details-value">{workflow.kind ?? intlText.PLACEHOLDER}</Text>
+                  </div>
                 </div>
-                <div className="msla-templates-tab-review-section-details">
-                  <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-                  <Text className="msla-templates-tab-review-section-details-value">{workflow.kind ?? intlText.PLACEHOLDER}</Text>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {Object.keys(connections ?? {}).length > 0 && (
