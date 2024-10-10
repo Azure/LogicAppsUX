@@ -92,13 +92,24 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
 };
 
 const getSMBDetails = async (context: IActionContext, node: SlotTreeItem) => {
-  const volumeMount = node.hybridSite.template.containers[0]?.volumeMounts?.find((v) => v.mountPath === '/home/site/wwwroot');
-  const smbVolume = node.hybridSite.template.volumes.find((v) => v.name === volumeMount.volumeName);
+  const smbError = new Error(
+    localize('errorDeployingHybridLogicApp', `The logic app ${node.hybridSite.name} is not configured to use SMB`)
+  );
+  try {
+    const volumeMount = node.hybridSite.template.containers[0]?.volumeMounts?.find((v) => v.mountPath === '/home/site/wwwroot');
+    const smbVolume = node.hybridSite.template.volumes.find((v) => v.name === volumeMount.volumeName);
 
-  if (smbVolume.storageType !== 'Smb') {
-    throw new Error(localize('errorDeployingHybridLogicApp', `The logic app ${node.hybridSite.name} is not configured to use SMB`));
+    if (smbVolume.storageType !== 'Smb') {
+      context.telemetry.properties.smbConfig = 'false';
+      throw smbError;
+    }
+    context.telemetry.properties.smbConfig = 'true';
+    await getStorageInfoForConnectedEnv(node.hybridSite.environmentId, smbVolume.storageName, context, node);
+  } catch (error) {
+    context.telemetry.properties.smbError = error instanceof Error ? error.message : error;
+    context.telemetry.properties.smbConfig = 'false';
+    throw smbError;
   }
-  await getStorageInfoForConnectedEnv(node.hybridSite.environmentId, smbVolume.storageName, context, node);
 };
 
 const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName: string, context: IActionContext, node: SlotTreeItem) => {

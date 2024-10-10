@@ -135,7 +135,7 @@ export class LogicAppResolver implements AppResourceResolver {
   public async getAppResourceSiteBySubscription(
     context: IActionContext,
     subContext: ISubscriptionContext
-  ): Promise<{ logicApps: Map<string, Site | ContainerApp>; hybridLogicApps: Map<string, ContainerApp> }> {
+  ): Promise<{ logicApps: Map<string, Site>; hybridLogicApps: Map<string, ContainerApp> }> {
     const logicAppMap = ext.subscriptionLogicAppMap.get(subContext.subscriptionId);
     const hybridLogicAppMap = ext.subscriptionHybridLogicAppMap.get(subContext.subscriptionId);
 
