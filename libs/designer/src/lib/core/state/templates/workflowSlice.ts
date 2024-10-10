@@ -62,14 +62,22 @@ export const workflowSlice = createSlice({
       const references = action.payload;
       state.connections.references = references;
     },
-    changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload>) => {
-      const { nodeId: key, connectionId, connectorId, connectionProperties, connectionRuntimeUrl, authentication } = action.payload;
+    changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload & { connectionKey: string }>) => {
+      const {
+        nodeId: connectionKeyInManifest,
+        connectionKey,
+        connectionId,
+        connectorId,
+        connectionProperties,
+        connectionRuntimeUrl,
+        authentication,
+      } = action.payload;
       const existingReferenceKey = getExistingReferenceKey(state.connections.references, action.payload);
 
       if (existingReferenceKey) {
-        state.connections.mapping[key] = existingReferenceKey;
+        state.connections.mapping[connectionKeyInManifest] = existingReferenceKey;
       } else {
-        state.connections.references[key] = {
+        state.connections.references[connectionKey] = {
           api: { id: connectorId },
           connection: { id: connectionId },
           connectionName: connectionId.split('/').at(-1) as string,
@@ -77,7 +85,7 @@ export const workflowSlice = createSlice({
           connectionRuntimeUrl,
           authentication,
         };
-        state.connections.mapping[key] = key;
+        state.connections.mapping[connectionKeyInManifest] = connectionKey;
       }
     },
   },
