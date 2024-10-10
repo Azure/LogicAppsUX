@@ -6,15 +6,13 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
+import { isUndefinedOrEmptyString, normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
-import { useDefaultWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { parameterDefinitions, workflows } = useSelector((state: RootState) => state.template);
-  const { manifest } = useDefaultWorkflowTemplate();
+  const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const {
     existingWorkflowName,
     connections: { mapping },
@@ -62,33 +60,36 @@ export const ReviewCreatePanel = () => {
       </Label>
       {!isConsumption && (
         <div className="msla-templates-tab-review-section">
-          {Object.values(workflows).map((workflow) => (
-            <div key={workflow.id}>
-              <div className="msla-templates-tab-review-section-details">
-                <Text className="msla-templates-tab-review-section-details-title">{intlText.NAME}</Text>
-                <Text className="msla-templates-tab-review-section-details-value">
-                  {existingWorkflowName ?? workflow.workflowName ?? intlText.PLACEHOLDER}
-                </Text>
+          {Object.values(workflows).map((workflow) => {
+            const workflowNameToShow = existingWorkflowName ?? workflow.workflowName;
+            return (
+              <div key={workflow.id}>
+                <div className="msla-templates-tab-review-section-details">
+                  <Text className="msla-templates-tab-review-section-details-title">{intlText.NAME}</Text>
+                  <Text className="msla-templates-tab-review-section-details-value">
+                    {isUndefinedOrEmptyString(workflowNameToShow) ? intlText.PLACEHOLDER : workflowNameToShow}
+                  </Text>
+                </div>
+                <div className="msla-templates-tab-review-section-details">
+                  <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
+                  <Text className="msla-templates-tab-review-section-details-value">{workflow.kind ?? intlText.PLACEHOLDER}</Text>
+                </div>
               </div>
-              <div className="msla-templates-tab-review-section-details">
-                <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-                <Text className="msla-templates-tab-review-section-details-value">{workflow.kind ?? intlText.PLACEHOLDER}</Text>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {Object.keys(manifest?.connections ?? {}).length > 0 && (
+      {Object.keys(connections ?? {}).length > 0 && (
         <>
           <Label className="msla-templates-tab-label" htmlFor={'connectionsLabel'}>
             {intlText.CONNECTIONS}
           </Label>
           <div className="msla-templates-tab-review-section">
-            {Object.keys(manifest?.connections ?? {}).map((connectionKey) => (
+            {Object.keys(connections ?? {}).map((connectionKey) => (
               <ConnectorConnectionStatus
                 key={connectionKey}
-                connectorId={normalizeConnectorId(manifest?.connections[connectionKey].connectorId ?? '', subscriptionId, location)}
+                connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}
                 hasConnection={mapping[connectionKey] !== undefined}
                 intl={intl}
               />
