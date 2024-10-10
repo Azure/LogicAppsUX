@@ -15,11 +15,6 @@ export const DynamicallyAddedParameterType = {
 } as const;
 export type DynamicallyAddedParameterTypeType = (typeof DynamicallyAddedParameterType)[keyof typeof DynamicallyAddedParameterType];
 
-export interface DynamicallyAddedTextParameterListItemProps {
-  id: string;
-  value: string;
-}
-
 export interface DynamicallyAddedParameterProps {
   schemaKey: string;
   icon: string;
