@@ -65,11 +65,8 @@ describe('ui/templates/DisplayParameters', () => {
 
     templateSliceData = {
       templateName: template1Manifest.title,
+      workflows: {},
       manifest: template1Manifest,
-      workflowDefinition: {
-        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-        contentVersion: '',
-      },
       parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
@@ -79,11 +76,7 @@ describe('ui/templates/DisplayParameters', () => {
       }, {}),
       connections: template1Manifest.connections,
       servicesInitialized: false,
-      workflowName: undefined,
-      kind: undefined,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },
@@ -101,8 +94,7 @@ describe('ui/templates/DisplayParameters', () => {
   it('DisplayParameters with default case ', async () => {
     const parameter1 = template1Manifest?.parameters[0];
     expect(screen.getByText(parameter1.displayName)).toBeDefined();
-    expect(screen.getByText(`Value (${parameter1.type})`)).toBeDefined();
-    expect(screen.getByText(parameter1.description)).toBeDefined();
+    expect(screen.getByText(parameter1.type)).toBeDefined();
     expect(screen.getAllByDisplayValue(param1DefaultValue)).toBeDefined();
   });
 
@@ -110,19 +102,16 @@ describe('ui/templates/DisplayParameters', () => {
     const parameter2 = template1Manifest?.parameters[1];
 
     expect(screen.getByText(parameter2.displayName)).toBeDefined();
-    expect(screen.getByText(`Value (${parameter2.type})`)).toBeDefined();
-    expect(screen.getByText(parameter2.description)).toBeDefined();
+    expect(screen.getByText(parameter2.type)).toBeDefined();
 
     store.dispatch(
       updateTemplateParameterValue({
-        newDefinition: {
-          ...parameter2,
-          name: parameter2.name,
-          description: parameter2.description,
-          displayName: parameter2.displayName,
-          type: parameter2.type,
-          value: 'non-object value',
-        },
+        ...parameter2,
+        name: parameter2.name,
+        description: parameter2.description,
+        displayName: parameter2.displayName,
+        type: parameter2.type,
+        value: 'non-object value',
       })
     );
     expect(store.getState().template.errors.parameters[parameter2.name]).toBe('Enter a valid JSON.');
@@ -132,19 +121,16 @@ describe('ui/templates/DisplayParameters', () => {
     const parameter3 = template1Manifest?.parameters[2];
 
     expect(screen.getByText(parameter3.displayName)).toBeDefined();
-    expect(screen.getByText(`Value (${parameter3.type})`)).toBeDefined();
-    expect(screen.getByText(parameter3.description)).toBeDefined();
+    expect(screen.getByText(parameter3.type)).toBeDefined();
     expect(screen.getAllByDisplayValue(param2DefaultValue)).toBeDefined();
 
     store.dispatch(
       updateTemplateParameterValue({
-        newDefinition: {
-          ...parameter3,
-          name: parameter3.name,
-          description: parameter3.description,
-          displayName: parameter3.displayName,
-          value: '',
-        },
+        ...parameter3,
+        name: parameter3.name,
+        description: parameter3.description,
+        displayName: parameter3.displayName,
+        value: '',
       })
     );
     expect(store.getState().template.errors.parameters[parameter3.name]).toBe('Must provide value for parameter.');
