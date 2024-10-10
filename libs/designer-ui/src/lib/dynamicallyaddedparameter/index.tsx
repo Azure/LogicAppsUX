@@ -185,7 +185,7 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
         ...(parameterRequiredItem ? [parameterRequiredItem] : []),
         ...(shouldDisplayAddMultiSelectOption && !isDynamicParameterDropdown ? [addMultiSelectItem] : []),
         ...(shouldDisplayRemoveMultiSelectOption ? [removeMultiSelectItem] : []),
-        ...(shouldDisplayAddDropdownOption && !isDynamicParameterDropdown ? [addDropdownItem] : []),
+        ...(shouldDisplayAddDropdownOption && !isDynamicParameterMultiSelect ? [addDropdownItem] : []),
         ...(shouldDisplayRemoveDropdownOption ? [removeDropdownItem] : []),
         {
           iconProps: { iconName: 'Delete' },
