@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.106.0](https://github.com/Azure/LogicAppsUX/compare/v4.105.0...v4.106.0) (2024-10-10)
+
+
+### Features
+
+* **vscode:** Update build and release pipeline ([#5833](https://github.com/Azure/LogicAppsUX/issues/5833)) ([99a59c4](https://github.com/Azure/LogicAppsUX/commit/99a59c488b3468dff379e26f30f43f10494784ac))
+
+
+### Bug Fixes
+
+* **data-mapper:** Downgrading react-arborist to use redux v4 ([#5834](https://github.com/Azure/LogicAppsUX/issues/5834)) ([b53f60f](https://github.com/Azure/LogicAppsUX/commit/b53f60feba2af2b2eb9cde73fd694fd0230e6932))
+* **designer:** Calling on change only when editor value has changed ([#5829](https://github.com/Azure/LogicAppsUX/issues/5829)) ([f881ac9](https://github.com/Azure/LogicAppsUX/commit/f881ac93e2f9388fe169c445c5c39794646b8bf0))
+* **Designer:** Fixed retry policy serialization location issue ([#5831](https://github.com/Azure/LogicAppsUX/issues/5831)) ([f0ff4ae](https://github.com/Azure/LogicAppsUX/commit/f0ff4ae66cbf9cb9f951c053551ddb40e843e00c))
+* **templates:** Adding error information in basics tab for multi workflows ([#5839](https://github.com/Azure/LogicAppsUX/issues/5839)) ([65ceca3](https://github.com/Azure/LogicAppsUX/commit/65ceca308e7cf4b741b1ffea90ddbc3970302ce7))
+* **vscode:** Add site to cached site maps ([#5836](https://github.com/Azure/LogicAppsUX/issues/5836)) ([dcf978c](https://github.com/Azure/LogicAppsUX/commit/dcf978c93df0794957eaf1c057fd043837c68aa4))
+
 ## [4.105.0](https://github.com/Azure/LogicAppsUX/compare/v4.104.0...v4.105.0) (2024-10-07)
 
 ## [4.104.0](https://github.com/Azure/LogicAppsUX/compare/v4.103.0...v4.104.0) (2024-10-07)
