@@ -14,13 +14,14 @@ interface StringStackProps {
 
 const StringStack: React.FC<StringStackProps> = ({ advancedStringParameterTitle, initialStrings, schemaKey, onStringListUpdate }) => {
   const intl = useIntl();
-  const [newValueField, setNewValueField] = useState('');
-
-  const [strings, setStrings] = useState([...initialStrings(schemaKey)]);
+  const [strings, setStrings] = useState([...initialStrings(schemaKey), '']);
 
   const handleInputChange = (index: number, value: string) => {
     const newStrings = [...strings];
     newStrings[index] = value;
+    if (index === strings.length - 1) {
+      newStrings.push('');
+    }
     setStrings(newStrings);
   };
 
@@ -29,16 +30,7 @@ const StringStack: React.FC<StringStackProps> = ({ advancedStringParameterTitle,
     newStrings[index] = value;
 
     setStrings(newStrings);
-    onStringListUpdate(schemaKey, newStrings);
-  };
-
-  const handleNextInputBlur = (value: string) => {
-    if (value !== '') {
-      const newStrings = [...strings, value];
-      setStrings(newStrings);
-      onStringListUpdate(schemaKey, newStrings);
-      setNewValueField('');
-    }
+    onStringListUpdate(schemaKey, newStrings.slice(0, newStrings.length - 1));
   };
 
   const handleStringDelete = (index: number) => {
@@ -66,44 +58,25 @@ const StringStack: React.FC<StringStackProps> = ({ advancedStringParameterTitle,
                 type="text"
                 value={str}
                 placeholder="Enter another option"
-                onChange={(e, newValue?: string) => {
-                  if (newValue) {
-                    handleInputChange(index, newValue);
-                  }
-                }}
+                onChange={(e, newValue?: string) => handleInputChange(index, newValue || '')}
                 onBlur={(e) => handleInputBlur(index, e.target.value)}
                 className="msla-string-stack-input-textfield"
               />
             </div>
-            <div className="msla-string-stack-delete">
-              <TooltipHost content={deleteText}>
-                <IconButton
-                  iconProps={deleteIcon}
-                  ariaLabel={deleteText}
-                  onClick={() => handleStringDelete(index)}
-                  disabled={strings.length === 1}
-                />
-              </TooltipHost>
-            </div>
+            {index !== strings.length - 1 && (
+              <div className="msla-string-stack-delete">
+                <TooltipHost content={deleteText}>
+                  <IconButton
+                    iconProps={deleteIcon}
+                    ariaLabel={deleteText}
+                    onClick={() => handleStringDelete(index)}
+                    disabled={strings.length === 2}
+                  />
+                </TooltipHost>
+              </div>
+            )}
           </div>
         ))}
-        <div className="msla-string-stack-input-row">
-          <div className="msla-string-stack-input">
-            <TextField
-              key={'msla-string-stack-next-input'}
-              type="text"
-              placeholder="Enter another option"
-              value={newValueField}
-              onBlur={(e) => {
-                if (e.target.value !== '') {
-                  handleNextInputBlur(e.target.value);
-                }
-              }}
-              onChange={(e, newValue?: string) => setNewValueField(newValue || '')}
-              className="msla-string-stack-input-textfield"
-            />
-          </div>
-        </div>
       </div>
     </div>
   );
