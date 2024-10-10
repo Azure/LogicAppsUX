@@ -3,7 +3,7 @@ import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData } from '../models';
 import { indexPseudoFunction } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import { applyConnectionValue } from '../utils/Connection.Utils';
+import { applyConnectionValue, createCustomInputConnection, createNodeConnection } from '../utils/Connection.Utils';
 import type { FunctionCreationMetadata, ParseFunc, SingleValueMetadata } from '../utils/DataMap.Utils';
 import {
   getSourceNode,
@@ -208,12 +208,7 @@ export class MapDefinitionDeserializer {
           targetNode: targetNode,
           targetNodeReactFlowKey: this.getTargetKey(targetNode),
           findInputSlot: true,
-          input: {
-            reactFlowKey: funcKey,
-            node: func,
-            isCustom: false,
-            isDefined: true,
-          },
+          input: createNodeConnection(func, funcKey),
         });
 
         // connect inputs
@@ -225,18 +220,12 @@ export class MapDefinitionDeserializer {
     } else if (!sourceSchemaNode && functionMetadata.type !== 'Function') {
       // custom value or index
       this.handleSingleValue(key, targetNode, connections);
-    } else if (targetNode) {
-      //danielle temporary to unblock
+    } else if (targetNode && sourceSchemaNode) {
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: {
-          reactFlowKey: addSourceReactFlowPrefix((sourceSchemaNode as SchemaNodeExtended).key),
-          node: sourceSchemaNode as SchemaNodeExtended,
-          isCustom: false,
-          isDefined: true,
-        },
+        input: createNodeConnection(sourceSchemaNode, addSourceReactFlowPrefix(sourceSchemaNode.key)),
       });
     }
   };
@@ -263,17 +252,12 @@ export class MapDefinitionDeserializer {
             key = loop.indexFn;
           }
 
-          if (targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+          if (targetNode.nodeProperties.includes(SchemaNodeProperty.Repeating) && loop.needsConnection) {
             applyConnectionValue(connections, {
               targetNode: targetNode,
               targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
               findInputSlot: true,
-              input: {
-                reactFlowKey: key,
-                node: loopSrc,
-                isCustom: false,
-                isDefined: true,
-              },
+              input: createNodeConnection(loopSrc, key),
             });
             loop.needsConnection = false;
           }
@@ -297,12 +281,7 @@ export class MapDefinitionDeserializer {
         targetNode: targetNode,
         targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
         findInputSlot: true,
-        input: {
-          reactFlowKey: this._conditional.key,
-          node: ifFunction,
-          isCustom: false,
-          isDefined: true,
-        },
+        input: createNodeConnection(ifFunction, this._conditional.key),
       });
       if (isSchemaNodeExtended(targetNode) && targetNode.children.length !== 0) {
         this._conditional.needsObjectConnection = true;
@@ -403,12 +382,10 @@ export class MapDefinitionDeserializer {
           targetNode: this.getFunctionForKey(this._conditional.key) as FunctionData,
           targetNodeReactFlowKey: this._conditional.key,
           inputIndex: 1,
-          input: {
-            reactFlowKey: addSourceReactFlowPrefix(lowestCommonParent),
-            node: findNodeForKey(lowestCommonParent, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended,
-            isCustom: false,
-            isDefined: true,
-          },
+          input: createNodeConnection(
+            findNodeForKey(lowestCommonParent, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended,
+            addSourceReactFlowPrefix(lowestCommonParent)
+          ),
         });
       }
     }
@@ -451,12 +428,7 @@ export class MapDefinitionDeserializer {
         targetNode: indexPseudoFunction,
         targetNodeReactFlowKey: indexFullKey,
         findInputSlot: true,
-        input: {
-          reactFlowKey: addSourceReactFlowPrefix(loopSource.key),
-          node: loopSource,
-          isCustom: false,
-          isDefined: true,
-        },
+        input: createNodeConnection(loopSource, addSourceReactFlowPrefix(loopSource.key)),
       });
       loopSourceRef.indexFn = indexFullKey;
     }
@@ -544,19 +516,14 @@ export class MapDefinitionDeserializer {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: {
-          reactFlowKey: addSourceReactFlowPrefix(loopNode.key),
-          node: loopNode,
-          isCustom: false,
-          isDefined: true,
-        },
+        input: createNodeConnection(loopNode, addSourceReactFlowPrefix(loopNode.key)),
       });
     } else if (this.isCustomValue(key)) {
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: { isCustom: true, isDefined: true, value: key },
+        input: createCustomInputConnection(key),
       });
       // index
     } else if (key.startsWith('$')) {
@@ -567,12 +534,7 @@ export class MapDefinitionDeserializer {
           targetNode: targetNode,
           targetNodeReactFlowKey: this.getTargetKey(targetNode),
           findInputSlot: true,
-          input: {
-            reactFlowKey: indexFn.self.reactFlowKey,
-            node: indexFn.self.node,
-            isCustom: false,
-            isDefined: true,
-          },
+          input: createNodeConnection(indexFn.self.node, indexFn.self.reactFlowKey),
         });
       }
     } else if (key.includes('[')) {
@@ -591,7 +553,7 @@ export class MapDefinitionDeserializer {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: { value: key, isCustom: true, isDefined: true }, // danielle check
+        input: createCustomInputConnection(key),
       });
     }
   };

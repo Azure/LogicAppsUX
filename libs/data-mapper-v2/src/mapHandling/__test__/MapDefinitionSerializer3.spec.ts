@@ -390,6 +390,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
       });
 
       it('Generates body with loop', () => {
+        // expected map
+        //{
+        //   "ns0:Root": {
+        //     Looping: {
+        //       "$for(/ns0:Root/Looping/Employee)": {
+        //         Person: { Address: "TelephoneNumber", Name: "Name" },
+        //       },
+        //     },
+        //   },
+        // }
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const mapDefinition: MapDefinitionEntry = {};
@@ -399,29 +409,36 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(sourceNode).toBeDefined();
         expect(targetNode).toBeDefined();
 
-        const sourceChildNode = sourceNode.children[0];
-        const targetChildNode = targetNode.children[0];
+        const sourceRepeatingNodeEmployee = sourceNode.children[0];
+        const targetRepeatingNodePerson = targetNode.children[0];
 
         applyConnectionValue(connections, {
-          targetNode: targetChildNode.children[1],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target),
+          targetNode: targetRepeatingNodePerson.children[1], // Person/Address
+          targetNodeReactFlowKey: addReactFlowPrefix(targetRepeatingNodePerson.children[1].key, SchemaType.Target),
           findInputSlot: true,
-          input: createNodeConnection(sourceNode.children[0], addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source)),
+          input: createNodeConnection(
+            sourceRepeatingNodeEmployee.children[0], // Employee/TelephoneNumber
+            addReactFlowPrefix(sourceRepeatingNodeEmployee.children[0].key, SchemaType.Source)
+          ),
+        });
+
+        // Name is mapped to Name
+        applyConnectionValue(connections, {
+          targetNode: targetRepeatingNodePerson.children[0],
+          targetNodeReactFlowKey: addReactFlowPrefix(targetRepeatingNodePerson.children[0].key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(
+            sourceRepeatingNodeEmployee.children[1],
+            addReactFlowPrefix(sourceRepeatingNodeEmployee.children[1].key, SchemaType.Source)
+          ),
         });
 
         //Add parents
         applyConnectionValue(connections, {
-          targetNode: targetChildNode,
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
+          targetNode: targetRepeatingNodePerson,
+          targetNodeReactFlowKey: addReactFlowPrefix(targetRepeatingNodePerson.key, SchemaType.Target),
           findInputSlot: true,
-          input: createNodeConnection(sourceChildNode, addReactFlowPrefix(sourceChildNode.key, SchemaType.Source)),
-        });
-
-        applyConnectionValue(connections, {
-          targetNode: targetChildNode.children[0],
-          targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
-          findInputSlot: true,
-          input: createNodeConnection(sourceChildNode.children[0], addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source)),
+          input: createNodeConnection(sourceRepeatingNodeEmployee, addReactFlowPrefix(sourceRepeatingNodeEmployee.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -546,10 +563,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: outerTgtLoop,
           targetNodeReactFlowKey: addReactFlowPrefix(outerTgtLoop.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(outerSrcLoop.key, SchemaType.Source),
-            node: outerSrcLoop,
-          },
+          input: createNodeConnection(outerSrcLoop, addReactFlowPrefix(outerSrcLoop.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: innerTgtLoop1,
@@ -611,10 +625,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetChildNode.children[0].children[0].children[0],
           targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].children[0].children[0].key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0].children[0],
-          },
+          input: createNodeConnection(
+            sourceChildNode.children[0].children[0].children[0],
+            addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source)
+          ),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -837,10 +851,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetChildNode.children[0],
           targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0].children[0],
-          },
+          input: createNodeConnection(
+            sourceChildNode.children[0].children[0].children[0],
+            addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source)
+          ),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -1128,10 +1142,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetChildNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: sortFunctionId,
-            node: sortFunction,
-          },
+          input: createNodeConnection(sortFunction, sortFunctionId),
         });
         applyConnectionValue(connections, {
           targetNode: targetChildNode.children[0],
@@ -1200,10 +1211,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: sortFunctionId,
-            node: sortFunction,
-          },
+          input: createNodeConnection(sortFunction, sortFunctionId),
         });
 
         applyConnectionValue(connections, {
@@ -1496,10 +1504,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetChildNode.children[0],
           targetNodeReactFlowKey: addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
-            node: sourceChildNode.children[0].children[0].children[0],
-          },
+          input: createNodeConnection(
+            sourceChildNode.children[0].children[0].children[0],
+            addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source)
+          ),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -1671,10 +1679,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
 
         // Index to Greater than
@@ -1688,7 +1693,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           inputIndex: 1,
-          input: '10',
+          input: createCustomInputConnection('10'),
         });
 
         // Greater than and source parent to if
@@ -1702,10 +1707,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: ifPseudoFunction,
           targetNodeReactFlowKey: ifFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
 
         // If to parent target
@@ -1721,10 +1723,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: parentTargetNode.children[1],
           targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
-            node: parentSourceNode.children[0],
-          },
+          input: createNodeConnection(
+            parentSourceNode.children[0],
+            addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source)
+          ),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -1789,25 +1791,22 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           inputIndex: 0,
-          input: '1',
+          input: createCustomInputConnection('1'),
         });
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
-            node: parentSourceNode.children[0],
-          },
+          input: createNodeConnection(
+            parentSourceNode.children[0],
+            addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source)
+          ),
         });
 
         // Direct access to target
@@ -1874,10 +1873,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
 
         // Connect index to parent target
@@ -1899,19 +1895,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
-            node: parentSourceNode.children[0],
-          },
+          input: createNodeConnection(
+            parentSourceNode.children[0],
+            addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source)
+          ),
         });
 
         // Direct access to target
@@ -1946,10 +1939,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: ifPseudoFunction,
           targetNodeReactFlowKey: ifId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -1962,7 +1952,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '2',
+          input: createCustomInputConnection('2'),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -2030,10 +2020,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
 
         // Connect index to greater than
@@ -2047,7 +2034,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           inputIndex: 1,
-          input: '2',
+          input: createCustomInputConnection('2'),
         });
 
         // Greater than to if
@@ -2061,10 +2048,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: ifPseudoFunction,
           targetNodeReactFlowKey: ifFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
 
         // if to target node
@@ -2086,19 +2070,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
-            node: parentSourceNode,
-          },
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
-            node: parentSourceNode.children[0],
-          },
+          input: createNodeConnection(
+            parentSourceNode.children[0],
+            addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source)
+          ),
         });
 
         // Direct access to target
@@ -2198,10 +2179,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -2246,10 +2224,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: concatFunction,
           targetNodeReactFlowKey: concatFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: concatFunction,
@@ -2320,7 +2295,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '10',
+          input: createCustomInputConnection('10'),
         });
 
         // Inputs to conditional
@@ -2350,10 +2325,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -2390,13 +2362,13 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '20',
+          input: createCustomInputConnection('20'),
         });
         applyConnectionValue(connections, {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '10',
+          input: createCustomInputConnection('10'),
         });
 
         // Inputs to conditional
@@ -2429,10 +2401,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -2474,10 +2443,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2485,10 +2451,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -2553,10 +2516,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2646,10 +2606,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2728,10 +2685,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2808,10 +2762,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2819,10 +2770,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         //Add function
@@ -2850,10 +2798,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addFunctionId,
-            node: addFunction,
-          },
+          input: createNodeConnection(addFunction, addFunctionId),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -2895,10 +2840,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2906,10 +2848,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -2923,10 +2862,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -2969,10 +2905,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -2980,10 +2913,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -2997,10 +2927,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3050,10 +2977,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -3061,39 +2985,27 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: targetArrayItemNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: sortFunctionId,
-            node: sortFunction,
-          },
+          input: createNodeConnection(sortFunction, sortFunctionId),
         });
 
         applyConnectionValue(connections, {
           targetNode: targetArrayItemPropNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -3139,10 +3051,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -3150,29 +3059,20 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: sortFunctionId,
-            node: sortFunction,
-          },
+          input: createNodeConnection(sortFunction, sortFunctionId),
         });
 
         applyConnectionValue(connections, {
@@ -3186,10 +3086,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3244,10 +3141,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -3255,19 +3149,13 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId1,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
         applyConnectionValue(connections, {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId1,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3280,10 +3168,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: sortFunction,
           targetNodeReactFlowKey: sortFunctionId2,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3304,10 +3189,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3361,10 +3243,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -3372,10 +3251,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3389,20 +3265,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: addFunction,
           targetNodeReactFlowKey: addFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3416,10 +3286,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode2,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode2.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addFunctionId,
-            node: addFunction,
-          },
+          input: createNodeConnection(addFunction, addFunctionId),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -3464,10 +3331,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         //Add parents
@@ -3485,10 +3349,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: outerLoopIndexFunctionId,
-            node: indexPseudoFunction,
-          },
+          input: createNodeConnection(indexPseudoFunction, outerLoopIndexFunctionId),
         });
 
         applyConnectionValue(connections, {
@@ -3505,30 +3366,21 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: innerLoopIndexFunctionId,
-            node: indexPseudoFunction,
-          },
+          input: createNodeConnection(indexPseudoFunction, innerLoopIndexFunctionId),
         });
 
         applyConnectionValue(connections, {
           targetNode: targetArrayItemPropNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: innerLoopIndexFunctionId,
-            node: indexPseudoFunction,
-          },
+          input: createNodeConnection(indexPseudoFunction, innerLoopIndexFunctionId),
         });
 
         applyConnectionValue(connections, {
           targetNode: targetArrayItemPropNode2,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode2.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: outerLoopIndexFunctionId,
-            node: indexPseudoFunction,
-          },
+          input: createNodeConnection(indexPseudoFunction, outerLoopIndexFunctionId),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -3575,10 +3427,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         // Conditional
@@ -3586,17 +3435,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '10',
+          input: createCustomInputConnection('10'),
         });
 
         applyConnectionValue(connections, {
@@ -3611,10 +3457,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: ifPseudoFunction,
           targetNodeReactFlowKey: ifFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3629,10 +3472,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -3677,10 +3517,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         // Conditional
@@ -3688,10 +3525,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         // Conditional
@@ -3706,7 +3540,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '10',
+          input: createCustomInputConnection('10'),
         });
 
         applyConnectionValue(connections, {
@@ -3736,10 +3570,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetArrayItemPropNode,
           targetNodeReactFlowKey: addReactFlowPrefix(targetArrayItemPropNode.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         generateMapDefinitionBody(mapDefinition, connections);
@@ -3779,10 +3610,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         // Child prop
@@ -3790,27 +3618,21 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: '1',
+          input: createCustomInputConnection('1'),
         });
 
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3858,10 +3680,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         // Conditional
@@ -3869,10 +3688,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         // Conditional
@@ -3887,7 +3703,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: greaterThanFunction,
           targetNodeReactFlowKey: greaterThanId,
           findInputSlot: true,
-          input: '10',
+          input: createCustomInputConnection('10'),
         });
 
         applyConnectionValue(connections, {
@@ -3924,20 +3740,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -3991,10 +3801,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: targetNode1,
           targetNodeReactFlowKey: addReactFlowPrefix(targetNode1.key, SchemaType.Target),
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceNode1.key, SchemaType.Source),
-            node: sourceNode1,
-          },
+          input: createNodeConnection(sourceNode1, addReactFlowPrefix(sourceNode1.key, SchemaType.Source)),
         });
 
         // Index
@@ -4002,10 +3809,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: indexPseudoFunction,
           targetNodeReactFlowKey: indexFunctionId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
@@ -4027,20 +3831,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source),
-            node: sourceArrayItemNode,
-          },
+          input: createNodeConnection(sourceArrayItemNode, addReactFlowPrefix(sourceArrayItemNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {
           targetNode: directAccessPseudoFunction,
           targetNodeReactFlowKey: directAccessId,
           findInputSlot: true,
-          input: {
-            reactFlowKey: addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source),
-            node: sourceArrayItemPropNode,
-          },
+          input: createNodeConnection(sourceArrayItemPropNode, addReactFlowPrefix(sourceArrayItemPropNode.key, SchemaType.Source)),
         });
 
         applyConnectionValue(connections, {

@@ -466,7 +466,7 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   });
 };
 
-const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
+export const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
   const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
     if (node.endsWith(nameA)) {
       const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);

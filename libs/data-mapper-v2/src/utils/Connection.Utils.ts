@@ -306,7 +306,7 @@ export const createNodeConnection = (node: SchemaNodeExtended | FunctionData, re
   };
 };
 
-export const createCustomInput = (value: string): CustomValueConnection => {
+export const createCustomInputConnection = (value: string): CustomValueConnection => {
   return {
     isDefined: true,
     isCustom: true,
