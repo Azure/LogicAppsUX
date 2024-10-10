@@ -398,6 +398,24 @@ const replaceAllStringInAllWorkflows = (workflows: StringifiedWorkflow[], oldStr
   });
 };
 
+const removeUnusedConnections = (
+  connectionsData: ConnectionsData,
+  connections: ConnectionMapping
+): { connectionsData: ConnectionsData; connections: ConnectionMapping } => {
+  const { references, mapping } = connections;
+  const updatedConnectionsData = { ...connectionsData };
+  for (const connectionKey of Object.keys(mapping)) {
+    const referenceKey = mapping[connectionKey];
+    if (connectionKey !== referenceKey && referenceKey.startsWith(connectionKey) && !isArmResourceId(references[referenceKey].api.id)) {
+      references[connectionKey] = references[referenceKey];
+      delete references[referenceKey];
+      delete updatedConnectionsData.serviceProviderConnections?.[referenceKey];
+    }
+  }
+
+  return { connectionsData: updatedConnectionsData, connections: { references, mapping } };
+};
+
 const updateConnectionsDataWithNewConnections = async (
   originalConnectionsData: ConnectionsData,
   settingProperties: Record<string, string>,
@@ -405,9 +423,11 @@ const updateConnectionsDataWithNewConnections = async (
   workflowsJsonString: StringifiedWorkflow[],
   workflowName: string
 ): Promise<{ connectionsData: ConnectionsData; settingProperties: Record<string, string>; workflowsJsonString: StringifiedWorkflow[] }> => {
-  const { references, mapping } = connections;
+  const {
+    connectionsData: updatedConnectionsData,
+    connections: { references, mapping },
+  } = removeUnusedConnections(originalConnectionsData, connections);
   let updatedSettings = { ...settingProperties };
-  const updatedConnectionsData = { ...originalConnectionsData };
   let updatedWorkflowsJsonString = workflowsJsonString;
   let updatedConnectionsJsonString = JSON.stringify(updatedConnectionsData);
   const referencesToProcess: string[] = [];

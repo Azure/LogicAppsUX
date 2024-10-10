@@ -44,6 +44,7 @@ interface ConnectionItem {
   id: string;
   workflowId: string;
   connectionKey: string;
+  connectionKeyInManifest: string;
   connectorId: string;
   connectorDisplayName?: string;
   connection?: {
@@ -89,6 +90,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
             id: guid(),
             workflowId: workflow.id,
             connectionKey: key,
+            connectionKeyInManifest: key,
             connectorId: normalizeConnectorId(connectionItem.connectorId, subscriptionId, location),
             hasConnection: mapping[key] !== undefined ? true : undefined,
             connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
@@ -107,7 +109,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     }
 
     // Sort the items.
-    const sortedItems = _copyAndSort(connectionsList(), column.fieldName as string, isSortedDescending);
+    const sortedItems = copyAndSort(connectionsList(), column.fieldName as string, isSortedDescending);
     setConnectionsList(sortedItems);
     setColumns(
       columns().map((col) => {
@@ -197,7 +199,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     });
 
     if (!itemHasConnection && connectionToUse) {
-      setupTemplateConnection(item.connectionKey, item.connectorId, connectionToUse, dispatch);
+      setupTemplateConnection(item.connectionKeyInManifest, item.connectionKey, item.connectorId, connectionToUse, dispatch);
     }
   };
 
@@ -457,7 +459,7 @@ const ConnectionsList = ({
       connection: { id, displayName },
     });
 
-    setupTemplateConnection(item.connectionKey, item.connectorId, connection, dispatch);
+    setupTemplateConnection(item.connectionKeyInManifest, item.connectionKey, item.connectorId, connection, dispatch);
   };
 
   const menuProps: IContextualMenuProps = {
@@ -488,17 +490,23 @@ const ConnectionsList = ({
   return <IconButton menuIconProps={{ iconName: 'More' }} menuProps={menuProps} className="msla-template-connection-list" />;
 };
 
-const setupTemplateConnection = async (key: string, connectorId: string, connection: Connection, dispatch: AppDispatch): Promise<void> => {
+const setupTemplateConnection = async (
+  connectionKeyInManifest: string,
+  connectionKey: string,
+  connectorId: string,
+  connection: Connection,
+  dispatch: AppDispatch
+): Promise<void> => {
   await ConnectionService().setupConnectionIfNeeded(connection);
   const connector = await getConnector(connectorId);
-  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: key }));
+  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: connectionKeyInManifest, connectionKey }));
 };
 
 const getConnectionDisplayName = (connection: Connection): string => {
   return connection.properties.displayName ?? connection.id.split('/').slice(-1)[0];
 };
 
-function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] {
+const copyAndSort = (items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] => {
   const keyPath =
     columnKey === '$name' ? ['connectorDisplayName'] : columnKey === '$status' ? ['hasConnection'] : ['connection', 'displayName'];
   return items.slice(0).sort((a: ConnectionItem, b: ConnectionItem) => {
@@ -510,4 +518,4 @@ function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescen
       ? 1
       : -1;
   });
-}
+};
