@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { LogicAppResolver } from '../../../LogicAppResolver';
 import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -222,7 +221,10 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       }
 
       resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
-      await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
+      const logicAppMap = ext.subscriptionLogicAppMap.get(subscription.subscription.subscriptionId);
+      if (logicAppMap) {
+        logicAppMap.set(wizardContext.site.id.toLowerCase(), wizardContext.site);
+      }
       await ext.rgApi.appResourceTree.refresh(context);
     }
 
