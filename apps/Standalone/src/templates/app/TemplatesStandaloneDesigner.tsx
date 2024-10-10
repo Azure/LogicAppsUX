@@ -18,6 +18,7 @@ import {
   StandardOperationManifestService,
   ConsumptionConnectionService,
   guid,
+  setObjectPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -402,14 +403,39 @@ const removeUnusedConnections = (
   connectionsData: ConnectionsData,
   connections: ConnectionMapping
 ): { connectionsData: ConnectionsData; connections: ConnectionMapping } => {
-  const { references, mapping } = connections;
-  const updatedConnectionsData = { ...connectionsData };
+  const { references, mapping } = clone(connections);
+  const updatedConnectionsData = clone(connectionsData);
   for (const connectionKey of Object.keys(mapping)) {
     const referenceKey = mapping[connectionKey];
-    if (connectionKey !== referenceKey && referenceKey.startsWith(connectionKey) && !isArmResourceId(references[referenceKey].api.id)) {
-      references[connectionKey] = references[referenceKey];
+    const isArmResource = isArmResourceId(references[referenceKey]?.api.id);
+
+    if (connectionKey !== referenceKey && referenceKey.startsWith(connectionKey) && !isArmResource) {
+      setObjectPropertyValue(
+        updatedConnectionsData.serviceProviderConnections ?? {},
+        [connectionKey],
+        updatedConnectionsData.serviceProviderConnections?.[referenceKey]
+      );
+
       delete references[referenceKey];
       delete updatedConnectionsData.serviceProviderConnections?.[referenceKey];
+
+      mapping[connectionKey] = connectionKey;
+    }
+
+    if (!isArmResource) {
+      const serviceProviderConnections = { ...(updatedConnectionsData.serviceProviderConnections ?? {}) };
+      for (const key of Object.keys(serviceProviderConnections)) {
+        if (key !== connectionKey && key.startsWith(connectionKey)) {
+          delete updatedConnectionsData.serviceProviderConnections?.[key];
+        }
+      }
+
+      const currentReferences = { ...references };
+      for (const key of Object.keys(currentReferences)) {
+        if (key !== connectionKey && key.startsWith(connectionKey)) {
+          delete references[key];
+        }
+      }
     }
   }
 

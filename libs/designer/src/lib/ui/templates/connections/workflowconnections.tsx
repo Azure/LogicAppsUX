@@ -44,7 +44,6 @@ interface ConnectionItem {
   id: string;
   workflowId: string;
   connectionKey: string;
-  connectionKeyInManifest: string;
   connectorId: string;
   connectorDisplayName?: string;
   connection?: {
@@ -90,7 +89,6 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
             id: guid(),
             workflowId: workflow.id,
             connectionKey: key,
-            connectionKeyInManifest: key,
             connectorId: normalizeConnectorId(connectionItem.connectorId, subscriptionId, location),
             hasConnection: mapping[key] !== undefined ? true : undefined,
             connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
@@ -199,7 +197,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     });
 
     if (!itemHasConnection && connectionToUse) {
-      setupTemplateConnection(item.connectionKeyInManifest, item.connectionKey, item.connectorId, connectionToUse, dispatch);
+      setupTemplateConnection(item.connectionKey, item.connectorId, connectionToUse, dispatch);
     }
   };
 
@@ -459,7 +457,7 @@ const ConnectionsList = ({
       connection: { id, displayName },
     });
 
-    setupTemplateConnection(item.connectionKeyInManifest, item.connectionKey, item.connectorId, connection, dispatch);
+    setupTemplateConnection(item.connectionKey, item.connectorId, connection, dispatch);
   };
 
   const menuProps: IContextualMenuProps = {
@@ -491,7 +489,6 @@ const ConnectionsList = ({
 };
 
 const setupTemplateConnection = async (
-  connectionKeyInManifest: string,
   connectionKey: string,
   connectorId: string,
   connection: Connection,
@@ -499,7 +496,7 @@ const setupTemplateConnection = async (
 ): Promise<void> => {
   await ConnectionService().setupConnectionIfNeeded(connection);
   const connector = await getConnector(connectorId);
-  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: connectionKeyInManifest, connectionKey }));
+  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: connectionKey, connectionKey }));
 };
 
 const getConnectionDisplayName = (connection: Connection): string => {
