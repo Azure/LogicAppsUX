@@ -359,18 +359,27 @@ importers:
 
   apps/vs-code-designer:
     devDependencies:
+      '@azure/arm-appcontainers':
+        specifier: ^2.0.0-beta.3
+        version: 2.1.0
       '@azure/arm-appinsights':
         specifier: ^5.0.0-beta.7
         version: 5.0.0-beta.7
       '@azure/arm-appservice':
         specifier: ^13.0.3
         version: 13.0.3
+      '@azure/arm-resourcegraph':
+        specifier: ^4.2.1
+        version: 4.2.1
       '@azure/arm-storage':
         specifier: 17.2.1
         version: 17.2.1
       '@azure/ms-rest-js':
         specifier: ^2.6.4
         version: 2.7.0
+      '@azure/storage-file-share':
+        specifier: ^12.16.0
+        version: 12.25.0
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../../libs/logic-apps-shared
@@ -383,6 +392,9 @@ importers:
       '@microsoft/vscode-azext-utils':
         specifier: 0.4.6
         version: 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+      '@microsoft/vscode-azureresources-api':
+        specifier: ^2.0.2
+        version: 2.3.2(@azure/ms-rest-azure-env@2.0.0)
       '@microsoft/vscode-extension-logic-apps':
         specifier: workspace:*
         version: link:../../libs/vscode-extension
@@ -1085,6 +1097,9 @@ importers:
       '@apidevtools/swagger-parser':
         specifier: 10.0.3
         version: 10.0.3(openapi-types@12.1.3)
+      '@azure/arm-appcontainers':
+        specifier: ^2.0.0-beta.3
+        version: 2.1.0
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../logic-apps-shared
@@ -1220,6 +1235,10 @@ packages:
     resolution: {integrity: sha512-nBrLsEWm4J2u5LpAPjxADTlq3trDgVZZXHNKabeXZtpq3d3AbN/KGO82R87rdDz5/lYB024rtEf10/q0urNgsA==}
     engines: {node: '>=18.0.0'}
 
+  '@azure/arm-appcontainers@2.1.0':
+    resolution: {integrity: sha512-75mEbu/y8pCvoXKU32YRcSadWNpVl2gNt4ZJ3IFlmAv8PisZPtc5OgTU2QCDy3QzGp5EfMqAOC+HAcCEnPyGxQ==}
+    engines: {node: '>=18.0.0'}
+
   '@azure/arm-appinsights@5.0.0-beta.7':
     resolution: {integrity: sha512-HqSPXptE4kdWt6BbfHaVXWKpgGZ99PYEzL8O+ahHzSn83craNo1aw4yXdT579pqrbYj7ezj2wILWaph1lMEedQ==}
     engines: {node: '>=14.0.0'}
@@ -1310,6 +1329,10 @@ packages:
 
   '@azure/storage-blob@12.25.0':
     resolution: {integrity: sha512-oodouhA3nCCIh843tMMbxty3WqfNT+Vgzj3Xo5jqR9UPnzq3d7mzLjlHAYz7lW+b4km3SIgz+NAgztvhm7Z6kQ==}
+    engines: {node: '>=18.0.0'}
+
+  '@azure/storage-file-share@12.25.0':
+    resolution: {integrity: sha512-nEYY8/cnCXU0fIRwlyUpzoQpA9ZtHmpZZSTbWsWTTziSmzX9fINTs6rOnZklejJ1wdrJvTsxlJAlaXzrBsdEfw==}
     engines: {node: '>=18.0.0'}
 
   '@babel/code-frame@7.25.7':
@@ -11488,6 +11511,18 @@ snapshots:
     dependencies:
       tslib: 2.7.0
 
+  '@azure/arm-appcontainers@2.1.0':
+    dependencies:
+      '@azure/abort-controller': 1.1.0
+      '@azure/core-auth': 1.8.0
+      '@azure/core-client': 1.9.2
+      '@azure/core-lro': 2.7.2
+      '@azure/core-paging': 1.6.2
+      '@azure/core-rest-pipeline': 1.17.0
+      tslib: 2.4.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@azure/arm-appinsights@5.0.0-beta.7':
     dependencies:
       '@azure/core-auth': 1.8.0
@@ -11699,6 +11734,23 @@ snapshots:
       '@azure/core-client': 1.9.2
       '@azure/core-http-compat': 2.1.2
       '@azure/core-lro': 2.7.2
+      '@azure/core-paging': 1.6.2
+      '@azure/core-rest-pipeline': 1.17.0
+      '@azure/core-tracing': 1.2.0
+      '@azure/core-util': 1.10.0
+      '@azure/core-xml': 1.4.4
+      '@azure/logger': 1.1.4
+      events: 3.3.0
+      tslib: 2.4.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@azure/storage-file-share@12.25.0':
+    dependencies:
+      '@azure/abort-controller': 2.1.2
+      '@azure/core-auth': 1.8.0
+      '@azure/core-client': 1.9.2
+      '@azure/core-http-compat': 2.1.2
       '@azure/core-paging': 1.6.2
       '@azure/core-rest-pipeline': 1.17.0
       '@azure/core-tracing': 1.2.0

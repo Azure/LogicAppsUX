@@ -80,7 +80,11 @@ export class StandardSearchService extends BaseSearchService {
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
-    return [...filteredApiOperations, ...getClientBuiltInOperations(filterOperation), ...(showStatefulOperations ? [ClientOperationsData.slidingWindowOperation] : [])];
+    return [
+      ...filteredApiOperations,
+      ...getClientBuiltInOperations(filterOperation),
+      ...(showStatefulOperations ? [ClientOperationsData.slidingWindowOperation] : []),
+    ];
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {

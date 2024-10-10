@@ -6,6 +6,10 @@ import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
   managementApiPrefix,
+  workflowFileName,
+  artifactsDirectory,
+  mapsDirectory,
+  schemasDirectory,
   azurePublicBaseUrl,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -25,12 +29,18 @@ import type {
   ILocalSettingsJson,
   Parameter,
   WorkflowParameter,
+  Artifacts,
 } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import type { MessageItem, WebviewPanel } from 'vscode';
+
+export type File = {
+  path: string;
+  name: string;
+};
 
 export function tryGetWebviewPanel(category: string, name: string): WebviewPanel | undefined {
   const currentPanels = ext.openWebviewPanels[category];
@@ -99,6 +109,110 @@ export async function updateFuncIgnore(projectPath: string, variables: string[])
   await fse.writeFile(funcIgnorePath, funcIgnoreContents);
 }
 
+export async function getArtifactsPathInLocalProject(projectPath: string): Promise<{ maps: File[]; schemas: File[] }> {
+  const artifacts = {
+    maps: [],
+    schemas: [],
+  };
+  const artifactsPath = path.join(projectPath, artifactsDirectory);
+  const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
+  const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
+
+  if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
+    return artifacts;
+  }
+
+  if (await fse.pathExists(mapsPath)) {
+    const mapsFiles = [];
+    const subPaths: string[] = await fse.readdir(mapsPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(mapsPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        if (await fse.pathExists(fullPath)) {
+          mapsFiles.push({ path: fullPath, name: subPath });
+        }
+      }
+    }
+    artifacts.maps = mapsFiles;
+  }
+
+  if (await fse.pathExists(schemasPath)) {
+    const schemasFiles = [];
+    const subPaths: string[] = await fse.readdir(schemasPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(schemasPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        if (await fse.pathExists(fullPath)) {
+          schemasFiles.push({ path: fullPath, name: subPath });
+        }
+      }
+    }
+    artifacts.schemas = schemasFiles;
+  }
+
+  return artifacts;
+}
+
+export async function getArtifactsInLocalProject(projectPath: string): Promise<Artifacts> {
+  const artifacts: Artifacts = {
+    maps: {},
+    schemas: [],
+  };
+
+  const artifactsPath = path.join(projectPath, artifactsDirectory);
+  const mapsPath = path.join(projectPath, artifactsDirectory, mapsDirectory);
+  const schemasPath = path.join(projectPath, artifactsDirectory, schemasDirectory);
+
+  if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
+    return artifacts;
+  }
+
+  if (await fse.pathExists(mapsPath)) {
+    const subPaths: string[] = await fse.readdir(mapsPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(mapsPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        const extensionName = path.extname(subPath);
+        const name = path.basename(subPath, extensionName);
+        const normalizedExtensionName = extensionName.toLowerCase();
+
+        if (!artifacts.maps[normalizedExtensionName]) {
+          artifacts.maps[normalizedExtensionName] = [];
+        }
+
+        artifacts.maps[normalizedExtensionName].push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Maps', subPath) });
+      }
+    }
+  }
+
+  if (await fse.pathExists(schemasPath)) {
+    const subPaths: string[] = await fse.readdir(schemasPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(schemasPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        const extensionName = path.extname(subPath);
+        const name = path.basename(subPath, extensionName);
+
+        artifacts.schemas.push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Schemas', subPath) });
+      }
+    }
+  }
+
+  return artifacts;
+}
+
 export async function getAzureConnectorDetailsForLocalProject(
   context: IActionContext,
   projectPath: string
@@ -154,7 +268,7 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
 
     if (fileStats.isDirectory() && subPath !== workflowToExclude) {
       try {
-        const workflowFilePath = path.join(fullPath, 'workflow.json');
+        const workflowFilePath = path.join(fullPath, workflowFileName);
 
         if (await fse.pathExists(workflowFilePath)) {
           const schema = getRequestTriggerSchema(JSON.parse(readFileSync(workflowFilePath, 'utf8')));
@@ -171,6 +285,35 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
   }
 
   return workflowDetails;
+}
+
+export async function getWorkflowsPathInLocalProject(projectPath: string): Promise<File[]> {
+  if (!(await fse.pathExists(projectPath))) {
+    return [];
+  }
+
+  const worfklowFiles = [];
+  const subPaths: string[] = await fse.readdir(projectPath);
+
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+    const fileStats = await fse.lstat(fullPath);
+
+    if (fileStats.isDirectory()) {
+      try {
+        const workflowFilePath = path.join(fullPath, workflowFileName);
+
+        if (await fse.pathExists(workflowFilePath)) {
+          worfklowFiles.push({ path: workflowFilePath, name: subPath });
+        }
+      } catch {
+        // If unable to load the workflow or read the definition we skip the workflow
+        // in child workflow list.
+      }
+    }
+  }
+
+  return worfklowFiles;
 }
 
 export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): any {

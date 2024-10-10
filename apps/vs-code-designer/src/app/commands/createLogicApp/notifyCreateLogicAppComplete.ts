@@ -15,7 +15,11 @@ import { window } from 'vscode';
  * @param {SlotTreeItem} node - Logic app node structure.
  */
 export async function notifyCreateLogicAppComplete(node: SlotTreeItem): Promise<void> {
-  const deployComplete: string = localize('creationComplete', 'Creation of "{0}" completed.', node.site.fullName);
+  const deployComplete: string = localize(
+    'creationComplete',
+    'Creation of "{0}" completed.',
+    node.isHybridLogicApp ? node.hybridSite.name : node.site.fullName
+  );
   const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
 
   window.showInformationMessage(deployComplete, viewOutput).then(async (result) => {

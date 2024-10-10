@@ -37,7 +37,7 @@ export async function switchDebugMode(context: IActionContext): Promise<void> {
  * @param {IActionContext} context - Command context
  * @returns {Promise<string>} Workspace path.
  */
-async function getWorkspaceFolderPath(context: IActionContext): Promise<string> {
+export async function getWorkspaceFolderPath(context: IActionContext): Promise<string> {
   const folders = vscode.workspace.workspaceFolders || [];
   if (folders.length === 1) {
     return folders[0].uri.fsPath;
