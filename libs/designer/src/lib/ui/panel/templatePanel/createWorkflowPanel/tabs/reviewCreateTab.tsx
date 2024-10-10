@@ -89,6 +89,7 @@ export const ReviewCreatePanel = () => {
             {Object.keys(connections ?? {}).map((connectionKey) => (
               <ConnectorConnectionStatus
                 key={connectionKey}
+                connectionKey={connectionKey.replace('_#workflowname#', '')}
                 connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}
                 hasConnection={mapping[connectionKey] !== undefined}
                 intl={intl}
