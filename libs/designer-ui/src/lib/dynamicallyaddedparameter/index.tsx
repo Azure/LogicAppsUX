@@ -266,7 +266,7 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
             />
           </div>
         )}
-        {isAdvancedDynamicStringParameter && (
+        {isAdvancedDynamicStringParameter ? (
           <div className="msla-dynamic-added-param-token-picker">
             <StringStack
               advancedStringParameterTitle={advancedStringParameterTitle}
@@ -275,7 +275,7 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
               onStringListUpdate={onStringListUpdate}
             />
           </div>
-        )}
+        ) : undefined}
       </>
     );
   };
