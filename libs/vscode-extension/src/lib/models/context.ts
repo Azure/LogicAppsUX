@@ -1,5 +1,6 @@
 import type { StorageOptions } from './connection';
 import type { FuncVersion } from './functions';
+import type { ConnectedEnvironment, ContainerApp } from '@azure/arm-appcontainers';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import type { ExecuteActivityContext, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 
@@ -11,13 +12,26 @@ export interface IIdentityWizardContext extends IActionContext {
   useAdvancedIdentity?: boolean;
 }
 
-export interface IFunctionAppWizardContext extends IAppServiceWizardContext, ICreateChildImplContext, ExecuteActivityContext {
+export interface ILogicAppWizardContext extends IAppServiceWizardContext, ICreateChildImplContext, ExecuteActivityContext {
   version: FuncVersion;
   language: string | undefined;
   newSiteRuntime?: string;
   runtimeFilter?: string;
   storageType?: StorageOptions;
   sqlConnectionString?: string;
+  connectedEnvironment?: ConnectedEnvironment;
+  fileShare?: {
+    hostName?: string;
+    path?: string;
+    domain?: string;
+    userName?: string;
+    password?: string;
+  };
+  suppressCreate?: boolean;
+  fileShareName?: string;
+  useHybrid?: boolean;
+  hybridSite?: ContainerApp;
+  _location?: Record<string, any>;
 }
 
 export interface ICreateLogicAppContext extends ICreateChildImplContext {

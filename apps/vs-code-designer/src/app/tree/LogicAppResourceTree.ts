@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { ContainerApp } from '@azure/arm-appcontainers';
 import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
@@ -50,6 +51,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public static instance = 'logicAppResourceTree';
   public readonly instance = LogicAppResourceTree.instance;
 
+  public hybridSite: ContainerApp;
   public site: ParsedSite;
   public data: Site;
 
@@ -82,29 +84,33 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   commandArgs?: unknown[] | undefined;
 
   public constructor(subscription: ISubscriptionContext, site: Site) {
-    this.site = new ParsedSite(site, subscription);
-    this.data = this.site.rawSite;
-    this._subscription = subscription;
-    this.contextValuesToAdd = [this.site.isSlot ? LogicAppResourceTree.slotContextValue : LogicAppResourceTree.productionContextValue];
+    if (site.id.includes('Microsoft.Web')) {
+      this.site = new ParsedSite(site, subscription);
+      this.data = this.site.rawSite;
+      this._subscription = subscription;
+      this.contextValuesToAdd = [this.site.isSlot ? LogicAppResourceTree.slotContextValue : LogicAppResourceTree.productionContextValue];
 
-    const valuesToMask = [
-      this.site.siteName,
-      this.site.slotName,
-      this.site.defaultHostName,
-      this.site.resourceGroup,
-      this.site.planName,
-      this.site.planResourceGroup,
-      this.site.kuduHostName,
-      this.site.gitUrl,
-      this.site.rawSite.repositorySiteName,
-      ...(this.site.rawSite.hostNames || []),
-      ...(this.site.rawSite.enabledHostNames || []),
-    ];
+      const valuesToMask = [
+        this.site.siteName,
+        this.site.slotName,
+        this.site.defaultHostName,
+        this.site.resourceGroup,
+        this.site.planName,
+        this.site.planResourceGroup,
+        this.site.kuduHostName,
+        this.site.gitUrl,
+        this.site.rawSite.repositorySiteName,
+        ...(this.site.rawSite.hostNames || []),
+        ...(this.site.rawSite.enabledHostNames || []),
+      ];
 
-    for (const v of valuesToMask) {
-      if (v) {
-        this.maskedValuesToAdd.push(v);
+      for (const v of valuesToMask) {
+        if (v) {
+          this.maskedValuesToAdd.push(v);
+        }
       }
+    } else {
+      this.hybridSite = site as unknown as ContainerApp;
     }
   }
 
