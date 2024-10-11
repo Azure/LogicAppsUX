@@ -321,7 +321,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       const { location, apiVersion, httpClient } = this.options;
 
       return (
-        (await queryClient?.fetchQuery(['connections', connectorId], async () => {
+        (await queryClient?.fetchQuery(['connections', connectorId.toLowerCase()], async () => {
           const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
           const queryParameters: QueryParameters = {
             'api-version': apiVersion,
