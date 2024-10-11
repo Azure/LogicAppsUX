@@ -25,6 +25,7 @@ export const CustomTokenField = (props: CustomTokenFieldProps) => {
     onValueChange: props.onValueChange as CustomEditorChangeHandler,
     renderDefaultEditor,
     disabled: props.readOnly,
+    tokenMapping: props.tokenMapping,
   };
   return EditorComponent ? <EditorComponent {...customEditorProps} /> : <></>;
 };

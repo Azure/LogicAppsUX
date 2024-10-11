@@ -1,4 +1,4 @@
-import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
+import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -47,11 +47,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   constructor(context: IActionContext, node: Uri) {
     const workflowName = path.basename(path.dirname(node.fsPath));
-    const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, false, true, false);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, false, true, false);
 
     this.workflowFilePath = node.fsPath;
   }

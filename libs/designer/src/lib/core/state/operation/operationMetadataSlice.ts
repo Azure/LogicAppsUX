@@ -207,7 +207,7 @@ export interface InitializeNodesPayload {
 
 export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
-  initialState,
+  initialState: initialState,
   reducers: {
     initializeOperationInfo: (state, action: PayloadAction<AddNodeOperationPayload>) => {
       const { id, connectorId, operationId, type, kind } = action.payload;

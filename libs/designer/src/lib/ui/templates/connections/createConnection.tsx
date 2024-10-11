@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, getUniqueName } from '@microsoft/logic-apps-shared';
 import type { CreatedConnectionPayload } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
 import { CreateConnectionInternal } from '../../panel/connectionsPanel/createConnection/createConnectionWrapper';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -26,15 +26,16 @@ export const CreateConnectionInTemplate = (props: {
     connections: state.template.connections,
   }));
   const isInAppConnector = equals(connections?.[connectionKey]?.kind, 'inapp');
+  const uniqueConnectionKey = isInAppConnector ? getUniqueName(references, connectionKey).name : undefined;
 
   // TODO - Needs update to support azure resource selection for connections. Operation Manifest is required.
   const assistedConnectionProps = useMemo(() => (connector ? getAssistedConnectionProps(connector) : undefined), [connector]);
 
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
-      dispatch(updateTemplateConnection({ ...payload, nodeId: connectionKey }));
+      dispatch(updateTemplateConnection({ ...payload, nodeId: connectionKey, connectionKey: uniqueConnectionKey ?? connectionKey }));
     },
-    [connectionKey, dispatch]
+    [connectionKey, dispatch, uniqueConnectionKey]
   );
 
   const createButtonText = intl.formatMessage({
@@ -54,10 +55,10 @@ export const CreateConnectionInTemplate = (props: {
   return (
     <CreateConnectionInternal
       classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
-      connectionName={isInAppConnector ? connectionKey : undefined}
       connectorId={connectorId}
       createButtonText={createButtonText}
       description={description}
+      connectionName={uniqueConnectionKey}
       operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
       existingReferences={references}
       assistedConnectionProps={assistedConnectionProps}

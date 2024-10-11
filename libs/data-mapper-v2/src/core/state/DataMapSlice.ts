@@ -489,9 +489,8 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
     updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
-      state.curDataMapOperation.handlePosition = {
-        ...state.curDataMapOperation.handlePosition,
-        [action.payload.key]: action.payload,
+      state.curDataMapOperation.handlePosition[action.payload.key] = {
+        ...action.payload,
       };
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
@@ -607,9 +606,8 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Update function connection inputs');
     },
     updateTreeData: (state, action: PayloadAction<{ key: string; data: SchemaTreeDataProps }>) => {
-      state.curDataMapOperation.schemaTreeData = {
-        ...state.curDataMapOperation.schemaTreeData,
-        [action.payload.key]: action.payload.data,
+      state.curDataMapOperation.schemaTreeData[action.payload.key] = {
+        ...action.payload.data,
       };
     },
   },

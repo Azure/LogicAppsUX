@@ -1,11 +1,14 @@
 import {
+  BaseExperimentationService,
   DevLogger,
+  getIntl,
   guid,
   type ILoggerService,
   InitApiManagementService,
   InitAppServiceService,
   InitConnectionParameterEditorService,
   InitConnectionService,
+  InitExperimentationServiceService,
   InitFunctionService,
   InitGatewayService,
   InitLoggerService,
@@ -25,12 +28,13 @@ import type { RootState } from '../../state/templates/store';
 import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerContext';
 
 export interface WorkflowTemplateData {
-  name?: string;
-  workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
-  manifest: Template.Manifest | undefined;
+  id: string;
+  workflowDefinition: LogicAppsV2.WorkflowDefinition;
+  manifest: Template.Manifest;
   workflowName: string | undefined;
   kind: string | undefined;
   images?: Record<string, string>;
+  connectionKeys: string[];
   errors: {
     workflow: string | undefined;
     kind: string | undefined;
@@ -38,6 +42,7 @@ export interface WorkflowTemplateData {
 }
 
 export interface TemplatePayload {
+  manifest: Template.Manifest | undefined;
   workflows: Record<string, WorkflowTemplateData>;
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
@@ -46,6 +51,10 @@ export interface TemplatePayload {
     connections: string | undefined;
   };
 }
+
+export const isMultiWorkflowTemplate = (manifest: Template.Manifest): boolean => {
+  return !!manifest.workflows && Object.keys(manifest.workflows).length > 0;
+};
 
 export const initializeTemplateServices = createAsyncThunk(
   'initializeTemplateServices',
@@ -63,6 +72,7 @@ export const initializeTemplateServices = createAsyncThunk(
     templateService,
     loggerService,
     uiInteractionsService,
+    experimentationService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
@@ -104,6 +114,10 @@ export const initializeTemplateServices = createAsyncThunk(
       InitUiInteractionsService(uiInteractionsService);
     }
 
+    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+    // we are always defaulting to the false implementation of the experimentation service.
+    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
+
     return true;
   }
 );
@@ -119,12 +133,44 @@ export const loadTemplate = createAsyncThunk('loadTemplate', async (preLoadedMan
   return undefined;
 });
 
+export const validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
+  const intl = getIntl();
+
+  if (!workflowName) {
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for workflow name.',
+      id: 'sKy720',
+      description: 'Error message when the workflow name is empty.',
+    });
+  }
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Name does not match the given pattern.',
+      id: 'zMKxg9',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  if (existingWorkflowNames.includes(workflowName)) {
+    return intl.formatMessage(
+      {
+        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+        id: '7F4Bzv',
+        description: 'Error message when the workflow name already exists.',
+      },
+      { workflowName }
+    );
+  }
+  return undefined;
+};
+
 const loadTemplateFromResourcePath = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
   const workflows = templateManifest.workflows;
-  const isMultiWorkflowTemplate = workflows && Object.keys(workflows).length > 0;
+  const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const data: TemplatePayload = {
+    manifest: templateManifest,
     workflows: {},
     parameterDefinitions: {},
     connections: {},
@@ -134,22 +180,47 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
     },
   };
 
-  if (isMultiWorkflowTemplate) {
-    for (const workflowPath in Object.keys(workflows)) {
-      const workflowName = workflows[workflowPath].name;
-      const workflowData = await loadWorkflowTemplateFromManifest(`${templateName}/${workflowPath}`, /* manifest */ undefined);
+  if (isMultiWorkflow && workflows) {
+    for (const workflowPath of Object.keys(workflows)) {
+      const workflowData = await loadWorkflowTemplateFromManifest(
+        workflowPath,
+        `${templateName}/${workflowPath}`,
+        /* manifest */ undefined
+      );
       if (workflowData) {
-        workflowData.workflow.workflowName = workflowName;
-        data.workflows[workflowName] = workflowData.workflow;
-        data.parameterDefinitions = { ...data.parameterDefinitions, ...workflowData.parameterDefinitions };
+        workflowData.workflow.workflowName = workflows[workflowPath].name;
+        data.workflows[workflowPath] = workflowData.workflow;
+        data.parameterDefinitions = {
+          ...data.parameterDefinitions,
+          ...Object.keys(workflowData.parameterDefinitions).reduce((acc: Record<string, Template.ParameterDefinition>, key: string) => {
+            if (data.parameterDefinitions[key] && workflowData.parameterDefinitions[key]) {
+              // Combine associatedWorkflows arrays if both definitions exist
+              const combinedAssociatedWorkflows = [
+                ...(data.parameterDefinitions[key].associatedWorkflows || []),
+                ...(workflowData.parameterDefinitions[key].associatedWorkflows || []),
+              ];
+
+              acc[key] = {
+                ...data.parameterDefinitions[key],
+                ...workflowData.parameterDefinitions[key],
+                associatedWorkflows: combinedAssociatedWorkflows,
+              };
+            } else {
+              // If the key doesn't exist in data, just take from workflowData
+              acc[key] = workflowData.parameterDefinitions[key];
+            }
+            return acc;
+          }, {}),
+        };
         data.connections = { ...data.connections, ...workflowData.connections };
       }
     }
   } else {
-    const workflowData = await loadWorkflowTemplateFromManifest(templateName, manifest);
+    const workflowId = guid();
+    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest);
     if (workflowData) {
       data.workflows = {
-        [guid()]: workflowData.workflow,
+        [workflowId]: workflowData.workflow,
       };
       data.parameterDefinitions = workflowData.parameterDefinitions;
       data.connections = workflowData.connections;
@@ -160,6 +231,7 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
 };
 
 const loadWorkflowTemplateFromManifest = async (
+  workflowId: string,
   templatePath: string,
   manifest: Template.Manifest | undefined
 ): Promise<
@@ -171,28 +243,25 @@ const loadWorkflowTemplateFromManifest = async (
   | undefined
 > => {
   try {
-    const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
-      `./../../templates/templateFiles/${templatePath}/workflow.json`
-    );
-
-    const templateManifest: Template.Manifest =
-      manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default;
-
+    const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest);
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
         value: parameter.default,
+        associatedWorkflows: [templateManifest.title],
       };
       return result;
     }, {});
 
     return {
       workflow: {
+        id: workflowId,
         workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
         manifest: templateManifest,
         workflowName: '',
         kind: templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful',
         images: templateManifest.images,
+        connectionKeys: Object.keys(templateManifest.connections),
         errors: {
           workflow: undefined,
           kind: undefined,
@@ -211,4 +280,19 @@ const loadWorkflowTemplateFromManifest = async (
     });
     return undefined;
   }
+};
+
+const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined) => {
+  const paths = templatePath.split('/');
+  const templateManifest: Template.Manifest =
+    !manifest && paths.length === 2
+      ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
+      : manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default;
+
+  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition =
+    paths.length === 2
+      ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/workflow.json`)).default
+      : (await import(`./../../templates/templateFiles/${templatePath}/workflow.json`)).default;
+
+  return { templateManifest, templateWorkflowDefinition };
 };

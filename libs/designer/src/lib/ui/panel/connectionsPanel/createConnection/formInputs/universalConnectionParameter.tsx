@@ -6,6 +6,7 @@ import type { ConnectionParameter, ConnectionParameterAllowedValue, ManagedIdent
 import { ConnectionParameterTypes, equals } from '@microsoft/logic-apps-shared';
 import LegacyManagedIdentityDropdown from './legacyManagedIdentityPicker';
 import constants from '../../../../../common/constants';
+import ClientSecretInput from './clientSecretInput';
 
 export interface ConnectionParameterProps {
   parameterKey: string;
@@ -97,6 +98,11 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
         }))}
       />
     );
+  }
+
+  // Client Certificate Parameter
+  else if (parameter?.type === ConnectionParameterTypes.clientCertificate) {
+    inputComponent = <ClientSecretInput isLoading={isLoading} parameterKey={parameterKey} setValue={setValue} value={value} />;
   }
 
   // Text Input Parameter

@@ -1,9 +1,8 @@
-import { getIntl, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { getIntl, getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { TemplatesParameterUpdateEvent } from '@microsoft/designer-ui';
-import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
-import { initializeTemplateServices, loadTemplate, type TemplatePayload } from '../../actions/bjsworkflow/templates';
+import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
+import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
@@ -11,6 +10,7 @@ export interface TemplateState extends TemplatePayload {
 }
 
 const initialState: TemplateState = {
+  manifest: undefined,
   workflows: {},
   parameterDefinitions: {},
   connections: {},
@@ -34,23 +34,8 @@ export const templateSlice = createSlice({
         state.workflows[id].workflowName = name;
       }
     },
-    validateWorkflowName: (state, action: PayloadAction<{ id: string; existingNames: string[] }>) => {
-      const { id, existingNames } = action.payload;
-      if (!state.workflows[id]) {
-        return;
-      }
-      const validationError = _validateWorkflowName(state.workflows[id].workflowName, existingNames);
-      state.workflows[id].errors.workflow = validationError;
-    },
-    updateKind: (state, action: PayloadAction<{ id: string; kind: string }>) => {
-      const { id, kind } = action.payload;
-      if (!state.workflows[id]) {
-        return;
-      }
-      state.workflows[id].kind = kind;
-      state.workflows[id].errors.kind = undefined;
-    },
-    validateKind: (state) => {
+    validateWorkflowsBasicInfo: (state, action: PayloadAction<{ validateName: boolean; existingNames: string[] }>) => {
+      const { validateName, existingNames } = action.payload;
       const workflows = Object.keys(state.workflows);
       if (workflows.length) {
         const intl = getIntl();
@@ -62,13 +47,38 @@ export const templateSlice = createSlice({
               description: 'Error message when the stage progressed without selecting kind.',
             });
           }
+
+          if (validateName) {
+            const currentWorkflowNames = getCurrentWorkflowNames(
+              workflows.map((id) => ({ id, name: state.workflows[id].workflowName ?? '' })),
+              id
+            );
+            state.workflows[id].errors.workflow = validateWorkflowName(state.workflows[id].workflowName, [
+              ...existingNames,
+              ...currentWorkflowNames,
+            ]);
+          }
         }
       }
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<TemplatesParameterUpdateEvent>) => {
-      const {
-        newDefinition: { name, type, value, required },
-      } = action.payload;
+    updateWorkflowNameValidationError: (state, action: PayloadAction<{ id: string; error: string | undefined }>) => {
+      const { id, error } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+
+      state.workflows[id].errors.workflow = error;
+    },
+    updateKind: (state, action: PayloadAction<{ id: string; kind: string }>) => {
+      const { id, kind } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+      state.workflows[id].kind = kind;
+      state.workflows[id].errors.kind = undefined;
+    },
+    updateTemplateParameterValue: (state, action: PayloadAction<Template.ParameterDefinition>) => {
+      const { name, type, value, required } = action.payload;
 
       const validationError = validateParameterValue({ type, value: value }, required);
 
@@ -103,16 +113,19 @@ export const templateSlice = createSlice({
         parameters: {},
         connections: undefined,
       };
+      state.templateName = undefined;
+      state.manifest = undefined;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loadTemplate.fulfilled, (state, action: PayloadAction<TemplatePayload | undefined>) => {
       if (action.payload) {
-        const { workflows, parameterDefinitions, connections, errors } = action.payload;
+        const { workflows, parameterDefinitions, connections, errors, manifest } = action.payload;
         state.workflows = workflows;
         state.parameterDefinitions = parameterDefinitions;
         state.connections = connections;
         state.errors = errors;
+        state.manifest = manifest;
       }
     });
 
@@ -137,42 +150,11 @@ export const {
   changeCurrentTemplateName,
   updateWorkflowName,
   updateKind,
-  validateKind,
+  validateWorkflowsBasicInfo,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,
   clearTemplateDetails,
-  validateWorkflowName,
+  updateWorkflowNameValidationError,
 } = templateSlice.actions;
 export default templateSlice.reducer;
-
-const _validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
-  const intl = getIntl();
-
-  if (!workflowName) {
-    return intl.formatMessage({
-      defaultMessage: 'Must provide value for workflow name.',
-      id: 'sKy720',
-      description: 'Error message when the workflow name is empty.',
-    });
-  }
-  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
-  if (!regex.test(workflowName)) {
-    return intl.formatMessage({
-      defaultMessage: 'Name does not match the given pattern.',
-      id: 'zMKxg9',
-      description: 'Error message when the workflow name is invalid regex.',
-    });
-  }
-  if (existingWorkflowNames.includes(workflowName)) {
-    return intl.formatMessage(
-      {
-        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-        id: '7F4Bzv',
-        description: 'Error message when the workflow name already exists.',
-      },
-      { workflowName }
-    );
-  }
-  return undefined;
-};

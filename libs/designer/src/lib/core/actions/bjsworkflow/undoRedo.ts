@@ -61,15 +61,15 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
   const previousDecompressedState = getRootStateFromCompressedState(previousStateHistoryItem.compressedState);
   const currentCompressedRootState = getCompressedStateFromRootState(currentRootState);
 
+  // Change current state to previous state
+  dispatch(setStateAfterUndoRedo(previousDecompressedState));
+
   // Store current state to state history
   dispatch(
     updateStateHistoryOnUndoClick({
       compressedState: currentCompressedRootState,
     })
   );
-
-  // Change current state to previous state
-  dispatch(setStateAfterUndoRedo(previousDecompressedState));
 
   // If the updates were panel related, change panel node and tab to the changed ones
   const panelNode = previousStateHistoryItem.editedPanelNode;
@@ -99,15 +99,15 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
   const nextDecompressedState = getRootStateFromCompressedState(nextStateHistoryItem.compressedState);
   const currentCompressedRootState = getCompressedStateFromRootState(currentRootState);
 
+  // Change current state to next state
+  dispatch(setStateAfterUndoRedo(nextDecompressedState));
+
   // Store current state to state history
   dispatch(
     updateStateHistoryOnRedoClick({
       compressedState: currentCompressedRootState,
     })
   );
-
-  // Change current state to next state
-  dispatch(setStateAfterUndoRedo(nextDecompressedState));
 
   // If the updates were panel related, change panel node and tab to the changed ones
   const panelNode = undoRedoState.currentEditedPanelNode;

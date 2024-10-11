@@ -57,6 +57,8 @@ export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
 export {
   validateParameter,
+  parameterValueToString,
+  loadParameterValueFromString,
   getCustomCodeFilesWithData,
 } from './utils/parameters/helper';
 export {
@@ -69,6 +71,7 @@ export {
   getOutputTokenSections,
   getExpressionTokenSections,
 } from './utils/tokens';
+export { downloadDocumentAsFile, getDocumentationMetadata } from './utils/documentation';
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
