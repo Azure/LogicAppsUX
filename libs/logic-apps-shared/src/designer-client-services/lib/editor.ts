@@ -80,6 +80,10 @@ export interface IEditorProps {
    * Whether the editor is disabled.
    */
   disabled?: boolean;
+  /**
+   * Map a token string value to corresponding value segment.
+   */
+  tokenMapping?: Record<string, ValueSegment>;
 }
 
 export interface IEditorParameterInfo {
