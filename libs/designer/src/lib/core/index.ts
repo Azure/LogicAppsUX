@@ -57,6 +57,8 @@ export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
 export {
   validateParameter,
+  parameterValueToString,
+  loadParameterValueFromString,
   getCustomCodeFilesWithData,
 } from './utils/parameters/helper';
 export {
