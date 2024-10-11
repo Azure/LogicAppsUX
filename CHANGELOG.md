@@ -1,4 +1,22 @@
 # Logic Apps Designer
+## [4.107.0](https://github.com/Azure/LogicAppsUX/compare/v4.106.0...v4.107.0) (2024-10-11)
+
+
+### Features
+
+* **designer:** Adding support for Client Certificates in connection creation ([#5847](https://github.com/Azure/LogicAppsUX/issues/5847)) ([21af137](https://github.com/Azure/LogicAppsUX/commit/21af13751c5229edcb8eba71eed3f29f7c5212bf))
+* **Templates:** Updating Parameters Tab to Grid View to Align with Multi Workflow ([#5848](https://github.com/Azure/LogicAppsUX/issues/5848)) ([d06abd8](https://github.com/Azure/LogicAppsUX/commit/d06abd8ee4101ad60eea0104faa167224679054d))
+* **Templates:** Updating Review Tab to contain multiple workflows ([#5860](https://github.com/Azure/LogicAppsUX/issues/5860)) ([835f70f](https://github.com/Azure/LogicAppsUX/commit/835f70fa4efd2b201df52e12c91f76da1f7cf6d1))
+* **vscode:** Introduce hybrid logic apps ([#5821](https://github.com/Azure/LogicAppsUX/issues/5821)) ([6d1ac24](https://github.com/Azure/LogicAppsUX/commit/6d1ac24617f4ec3b81f08f14db7033fb9acdb99a)), closes [#4944](https://github.com/Azure/LogicAppsUX/issues/4944) [#4940](https://github.com/Azure/LogicAppsUX/issues/4940)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed connections query id issue ([#5873](https://github.com/Azure/LogicAppsUX/issues/5873)) ([4dcaf5d](https://github.com/Azure/LogicAppsUX/commit/4dcaf5da9d06534095f51f2665b84c12217adfd0))
+* Enable token mapping in custom editors ([#5826](https://github.com/Azure/LogicAppsUX/issues/5826)) ([836e719](https://github.com/Azure/LogicAppsUX/commit/836e719e863948ec1e4dbce31dfc066ad461bd03))
+* **templates:** Adding id to the workflows being created for telemetry ([#5866](https://github.com/Azure/LogicAppsUX/issues/5866)) ([176af26](https://github.com/Azure/LogicAppsUX/commit/176af26c1fc4eade2589809ddb38bbaab928cc81))
+* **templates:** Correctly adding multiple connections for in app connections during connection create in templates ([#5859](https://github.com/Azure/LogicAppsUX/issues/5859)) ([62b4129](https://github.com/Azure/LogicAppsUX/commit/62b4129e6cb59e5e0d0fd8a157b1dab5759991fb))
+
 ## [4.106.0](https://github.com/Azure/LogicAppsUX/compare/v4.105.0...v4.106.0) (2024-10-10)
 
 
