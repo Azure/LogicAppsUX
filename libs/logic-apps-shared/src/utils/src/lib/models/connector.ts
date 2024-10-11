@@ -15,6 +15,7 @@ export type Capabilities = (typeof Capabilities)[keyof typeof Capabilities];
 export const ConnectionParameterTypes = {
   array: 'array',
   bool: 'bool',
+  clientCertificate: 'clientCertificate',
   connection: 'connection',
   gatewaySetting: 'gatewaySetting',
   int: 'int',
