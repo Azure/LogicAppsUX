@@ -48,7 +48,9 @@ export const undoableWorkflowActionTypes = [
   removeEdgeFromRunAfter,
   addEdgeFromRunAfter,
   /**
-   * Delete operations are tracked through DeleteModal since there are different delete actions for different node types
+   * Following operations trigger state save outside of middleware:
+   * 1. Delete node operations are tracked through DeleteModal since there are different delete actions for different node types
+   * 2. updateParameterConditionalVisibility is tracked through settingsection to avoid storing multiple states on hide/show all
    */
 ].map((action) => action.type);
 
