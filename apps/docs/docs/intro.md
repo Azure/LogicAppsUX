@@ -68,6 +68,10 @@ To run unit tests, execute:
 pnpm turbo run test:lib
 ```
 
+#### Debug tests
+
+- You can watch tests in debug mode, and run tests individually using the [VSCode Extension](https://marketplace.visualstudio.com/items?itemName=vitest.explorer). The workspace for the extension is configured in 'vitest.workspace.ts'.
+
 ### End-to-End (E2E) Tests
 
 - Code Location: `/e2e`
