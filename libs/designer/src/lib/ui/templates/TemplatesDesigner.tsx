@@ -9,6 +9,7 @@ import { TemplateOverview } from './templateoverview';
 
 export type CreateWorkflowHandler = (
   workflows: {
+    id: string;
     name: string | undefined;
     kind: string | undefined;
     definition: LogicAppsV2.WorkflowDefinition;

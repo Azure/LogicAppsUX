@@ -92,6 +92,7 @@ export const useCreateWorkflowPanelTabs = ({
 
     await createWorkflow(
       Object.values(workflows).map((data) => ({
+        id: data.id,
         name: data.workflowName as string,
         kind: data.kind as string,
         definition: data.workflowDefinition as any,
