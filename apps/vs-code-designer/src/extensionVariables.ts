@@ -5,7 +5,7 @@
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { dotnet, func, node, npm } from './constants';
-import type { Site } from '@azure/arm-appservice';
+import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
@@ -40,6 +40,7 @@ export namespace ext {
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
+  export const subscriptionHybridLogicAppMap: Map<string, Map<string, ContainerApp>> = new Map();
   export const subscriptionLogicAppMap: SubscriptionMap = new Map();
 
   // Resource group API
