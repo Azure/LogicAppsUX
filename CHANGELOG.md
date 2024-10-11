@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.3](https://github.com/Azure/LogicAppsUX/compare/v4.105.2...v4.105.3) (2024-10-11)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed connections query id issue ([#5874](https://github.com/Azure/LogicAppsUX/issues/5874)) ([e59e733](https://github.com/Azure/LogicAppsUX/commit/e59e7338e6198980ee61a51d014fed481db18ee7))
+
 ### [4.105.2](https://github.com/Azure/LogicAppsUX/compare/v4.105.1...v4.105.2) (2024-10-11)
 
 ### [4.105.1](https://github.com/Azure/LogicAppsUX/compare/v4.105.0...v4.105.1) (2024-10-08)
