@@ -196,7 +196,12 @@ export const BlankWorkflowTemplateCard = () => {
   };
 
   return (
-    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onBlankWorkflowClick} aria-label={'blank'}>
+    <DocumentCard
+      className="msla-template-card-wrapper"
+      styles={cardStyles}
+      onClick={onBlankWorkflowClick}
+      aria-label={intlText.BLANK_WORKFLOW}
+    >
       <div className="msla-blank-template-card">
         <Add16Regular className="msla-blank-template-card-add-icon" />
         <Text size={400} weight="semibold" align="center" className="msla-template-card-title">
