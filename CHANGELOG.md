@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.108.0](https://github.com/Azure/LogicAppsUX/compare/v4.107.0...v4.108.0) (2024-10-14)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Use correct row index for scrolling logic in tree ([#5876](https://github.com/Azure/LogicAppsUX/issues/5876)) ([dc9cec9](https://github.com/Azure/LogicAppsUX/commit/dc9cec9b91380ed378bbc41624bae70818ecbeff))
+
 ## [4.107.0](https://github.com/Azure/LogicAppsUX/compare/v4.106.0...v4.107.0) (2024-10-11)
 
 
