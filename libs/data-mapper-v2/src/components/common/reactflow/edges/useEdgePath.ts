@@ -49,10 +49,9 @@ const getCoordinatesForHandle = (
       const nodeFromSchema = schema.find((node) => node.key === getTreeNodeId(handleId));
       if (nodeFromSchema?.pathToRoot) {
         for (const path of nodeFromSchema.pathToRoot) {
-          if (path.key === nodeFromSchema.key) {
-            continue;
-          }
+          // Node is collapsed and visible in the tree
           if (
+            path.key !== nodeFromSchema.key &&
             openKeys[path.key] !== undefined &&
             openKeys[path.key] === false &&
             treeData.visibleNodes.find((node) => node.key === path.key)
@@ -92,7 +91,7 @@ const getCoordinatesForHandle = (
       }
     }
 
-    if (x !== undefined && y !== undefined) {
+    if (x !== undefined && y !== undefined && scenario !== undefined) {
       return [x + 8, y + 8, scenario];
     }
   }
@@ -125,9 +124,8 @@ const useEdgePath = (props: EdgeProps) => {
   const sourceNode = useMemo(() => getInternalNode(NodeIds.source), [getInternalNode]);
   const targetNode = useMemo(() => getInternalNode(NodeIds.target), [getInternalNode]);
 
-  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition, schemaTreeData } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
+  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition, sourceSchemaTreeData, targetSchemaTreeData } =
+    useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const flattenendSourceSchema = useMemo(
     () => (sourceSchema?.schemaTreeRoot ? flattenSchemaNode(sourceSchema?.schemaTreeRoot) : []),
@@ -147,7 +145,7 @@ const useEdgePath = (props: EdgeProps) => {
       sourceOpenKeys,
       addSourceReactFlowPrefix,
       handlePosition,
-      schemaTreeData[source],
+      sourceSchemaTreeData,
       sourceNode,
       data?.sourceHandleId as string | undefined
     );
@@ -167,7 +165,7 @@ const useEdgePath = (props: EdgeProps) => {
     data?.sourceHandleId,
     flattenendSourceSchema,
     handlePosition,
-    schemaTreeData,
+    sourceSchemaTreeData,
     source,
     sourceNode,
     sourceOpenKeys,
@@ -187,7 +185,7 @@ const useEdgePath = (props: EdgeProps) => {
       targetOpenKeys,
       addTargetReactFlowPrefix,
       handlePosition,
-      schemaTreeData[target],
+      targetSchemaTreeData,
       targetNode,
       data?.targetHandleId as string | undefined
     );
@@ -222,7 +220,7 @@ const useEdgePath = (props: EdgeProps) => {
     updatedTargetCoordinates.targetX,
     updatedTargetCoordinates.targetY,
     updatedTargetCoordinates.targetScenario,
-    schemaTreeData,
+    targetSchemaTreeData,
   ]);
 
   return { ...updatedSourceCoordinates, ...updatedTargetCoordinates };
