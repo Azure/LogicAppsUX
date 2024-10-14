@@ -55,6 +55,8 @@ import {
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
+import { deployHybridLogicApp } from './hybridLogicApp';
+import { createContainerClient } from '../../utils/azureClients';
 
 export async function deployProductionSlot(
   context: IActionContext,
@@ -104,7 +106,9 @@ async function deploy(
     node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
   }
 
-  const nodeKind = node.site.kind && node.site.kind.toLowerCase();
+  const isHybridLogicApp = !!node.isHybridLogicApp;
+
+  const nodeKind = (isHybridLogicApp ? node.hybridSite.type : node.site.kind).toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
   const isDeployingToKubernetes = nodeKind && nodeKind.indexOf(kubernetesKind) !== -1;
   const [language, version]: [ProjectLanguage, FuncVersion] = await verifyInitForVSCode(context, effectiveDeployFsPath);
@@ -142,28 +146,31 @@ async function deploy(
 
   identityWizardContext?.useAdvancedIdentity ? await updateAppSettingsWithIdentityDetails(context, node, identityWizardContext) : undefined;
 
-  await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
+  let isZipDeploy = false;
 
-  const client = await node.site.createClient(actionContext);
-  const siteConfig: SiteConfigResource = await client.getSiteConfig();
-  const isZipDeploy: boolean = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
+  if (!isHybridLogicApp) {
+    await verifyAppSettings(context, node, version, language, originalDeployFsPath, !context.isNewApp);
+    const client = await node.site.createClient(actionContext);
+    const siteConfig: SiteConfigResource = await client.getSiteConfig();
+    isZipDeploy = siteConfig.scmType !== ScmType.LocalGit && siteConfig.scmType !== ScmType.GitHub;
 
-  if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
-    const warning: string = localize(
-      'confirmDeploy',
-      'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
-      client.fullName
-    );
-    context.telemetry.properties.cancelStep = 'confirmDestructiveDeployment';
-    const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
-    await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
-    context.telemetry.properties.cancelStep = '';
-  }
+    if (getWorkspaceSetting<boolean>(showDeployConfirmationSetting, workspaceFolder.uri.fsPath) && !context.isNewApp && isZipDeploy) {
+      const warning: string = localize(
+        'confirmDeploy',
+        'Are you sure you want to deploy to "{0}"? This will overwrite any previous deployment and cannot be undone.',
+        client.fullName
+      );
+      context.telemetry.properties.cancelStep = 'confirmDestructiveDeployment';
+      const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
+      await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
+      context.telemetry.properties.cancelStep = '';
+    }
 
-  await runPreDeployTask(context, effectiveDeployFsPath, siteConfig.scmType);
+    await runPreDeployTask(context, effectiveDeployFsPath, siteConfig.scmType);
 
-  if (isZipDeploy) {
-    validateGlobSettings(context, effectiveDeployFsPath);
+    if (isZipDeploy) {
+      validateGlobSettings(context, effectiveDeployFsPath);
+    }
   }
 
   await node.runWithTemporaryDescription(context, localize('deploying', 'Deploying...'), async () => {
@@ -188,30 +195,52 @@ async function deploy(
       : undefined;
 
     try {
-      await innerDeploy(node.site, deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath, context);
+      if (isHybridLogicApp) {
+        await deployHybridLogicApp(context, node);
+      } else {
+        await innerDeploy(
+          node.site,
+          deployProjectPathForWorkflowApp !== undefined ? deployProjectPathForWorkflowApp : deployFsPath,
+          context
+        );
+      }
     } finally {
-      if (deployProjectPathForWorkflowApp !== undefined) {
+      if (deployProjectPathForWorkflowApp !== undefined && !isHybridLogicApp) {
         await cleanAndRemoveDeployFolder(deployProjectPathForWorkflowApp);
       }
     }
   });
 
-  await node.loadAllChildren(context);
-  await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
+  if (!isHybridLogicApp) {
+    await node.loadAllChildren(context);
+  }
+  await notifyDeployComplete(node, context.workspaceFolder, isHybridLogicApp, settingsToExclude);
 }
 
+/**
+ * Shows tree item picker to select Logic App or create a new one.
+ * @param {IActionContext} context - Command context.
+ * @returns {Promise<SlotTreeItem>} Logic App slot tree item.
+ */
 async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeItem> {
   const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
   const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
 
-  const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
+  let [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
   if (!site) {
     if (isAdvance) {
       return await createLogicAppAdvanced(context, sub);
     }
     return await createLogicApp(context, sub);
   }
+
+  if (site.id.includes('Microsoft.App')) {
+    // NOTE(anandgmenon): Getting latest metadata for hybrid app as the one loaded from the cache can have outdateed definition and cause deployment to fail.
+    const clientContainer = await createContainerClient({ ...context, ...sub.subscription });
+    site = (await clientContainer.containerApps.get(site.id.split('/')[4], site.name)) as undefined as Site;
+  }
   const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+
   return new SlotTreeItem(sub, resourceTree);
 }
 
@@ -220,9 +249,15 @@ async function getLogicAppsPicks(
   subContext: ISubscriptionContext
 ): Promise<IAzureQuickPickItem<[Site | undefined, boolean]>[]> {
   const logicAppsResolver = new LogicAppResolver();
-  const listOfLogicApps = await logicAppsResolver.getAppResourceSiteBySubscription(context, subContext);
-  const picks: { label: string; data: [Site, boolean]; description?: string }[] = Array.from(listOfLogicApps).map(([_id, site]) => {
-    return { label: site.name, data: [site, false] };
+  const sites = await logicAppsResolver.getAppResourceSiteBySubscription(context, subContext);
+  const picks: { label: string; data: [Site, boolean]; description?: string }[] = [];
+
+  Array.from(sites.logicApps).forEach(([_id, site]) => {
+    picks.push({ label: site.name, data: [site, false] });
+  });
+
+  Array.from(sites.hybridLogicApps).forEach(([_id, site]) => {
+    picks.push({ label: `${site.name} (Hybrid)`, data: [site as unknown as Site, false] });
   });
 
   picks.sort((a, b) => a.label.localeCompare(b.label));
