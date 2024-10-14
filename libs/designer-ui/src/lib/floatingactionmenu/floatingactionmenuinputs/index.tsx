@@ -247,6 +247,8 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
   ).map((model) => {
     const isTextHint = model.properties['x-ms-content-hint'] === 'TEXT';
     const isArrayOrStringType = ['array', 'string'].includes(model.properties.type);
+    const isDropdownSchema = (model.properties as DynamicallyAddedParameterInputsTextProperties).enum;
+    const isMultiSelectSchema = (model.properties as DynamicallyAddedParameterInputsArrayProperties).items;
     return {
       ...model,
       onTitleChange: onDynamicallyAddedParameterTitleChange,
@@ -258,11 +260,10 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
       isDynamicParameterMultiSelect,
       isDynamicParameterDropdown,
       onStringListUpdate: getStringListUpdateHandler,
-      shouldDisplayAddDropdownOption: isTextHint && !(model.properties as DynamicallyAddedParameterInputsTextProperties).enum,
-      shouldDisplayAddMultiSelectOption: isTextHint && !(model.properties as DynamicallyAddedParameterInputsArrayProperties).items,
-      shouldDisplayRemoveDropdownOption: isTextHint && !!(model.properties as DynamicallyAddedParameterInputsTextProperties).enum,
-      shouldDisplayRemoveMultiSelectOption:
-        model.properties.type === 'array' && !!(model.properties as DynamicallyAddedParameterInputsArrayProperties).items,
+      shouldDisplayAddDropdownOption: isTextHint && !isDropdownSchema,
+      shouldDisplayAddMultiSelectOption: isTextHint && !isMultiSelectSchema,
+      shouldDisplayRemoveDropdownOption: isTextHint && !!isDropdownSchema,
+      shouldDisplayRemoveMultiSelectOption: model.properties.type === 'array' && !!isMultiSelectSchema,
       stringListValues: isArrayOrStringType ? stringListValues : undefined,
     };
   });
