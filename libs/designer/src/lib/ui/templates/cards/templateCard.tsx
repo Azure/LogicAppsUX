@@ -28,6 +28,10 @@ interface TemplateCardProps {
 
 const maxConnectorsToShow = 5;
 
+const cardStyles: IDocumentCardStyles = {
+  root: { display: 'inline-block', maxWidth: 1000 },
+};
+
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -103,10 +107,6 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
-  };
-
-  const cardStyles: IDocumentCardStyles = {
-    root: { display: 'inline-block', maxWidth: 1000 },
   };
 
   const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
@@ -189,10 +189,6 @@ export const BlankWorkflowTemplateCard = () => {
       description: 'Label text for Microsoft authored templates',
       id: 'rEQceE',
     }),
-  };
-
-  const cardStyles: IDocumentCardStyles = {
-    root: { display: 'inline-block', maxWidth: 1000 },
   };
 
   const onBlankWorkflowClick = () => {
