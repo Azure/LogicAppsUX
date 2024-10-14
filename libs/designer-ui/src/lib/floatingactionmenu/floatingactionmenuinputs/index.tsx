@@ -244,30 +244,28 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
   const dynamicParameterModels: DynamicallyAddedParameterInputsModel[] = deserialize(
     props.initialValue,
     props.isRequestApiConnectionTrigger
-  ).map((model) => ({
-    ...model,
-    onTitleChange: onDynamicallyAddedParameterTitleChange,
-    onRequiredToggle: onDynamicallyAddedParameterRequiredToggle,
-    onStringDropdownListToggle: model.properties.type === 'string' ? onStringDropdownListToggle : undefined,
-    onStringMultiSelectListToggle: ['array', 'string'].includes(model.properties.type) ? onStringMultiSelectListToggle : undefined,
-    onDelete: onDynamicallyAddedParameterDelete,
-    onRenderValueField,
-    isDynamicParameterMultiSelect,
-    isDynamicParameterDropdown,
-    onStringListUpdate: getStringListUpdateHandler,
-    shouldDisplayAddDropdownOption:
-      (model.properties['x-ms-content-hint'] === 'TEXT' && !(model.properties as DynamicallyAddedParameterInputsTextProperties).enum) ??
-      undefined,
-    shouldDisplayAddMultiSelectOption:
-      (model.properties['x-ms-content-hint'] === 'TEXT' && !(model.properties as DynamicallyAddedParameterInputsArrayProperties).items) ??
-      undefined,
-    shouldDisplayRemoveDropdownOption:
-      (model.properties['x-ms-content-hint'] === 'TEXT' && !!(model.properties as DynamicallyAddedParameterInputsTextProperties).enum) ??
-      undefined,
-    shouldDisplayRemoveMultiSelectOption:
-      (model.properties.type === 'array' && !!(model.properties as DynamicallyAddedParameterInputsArrayProperties).items) ?? undefined,
-    stringListValues: ['array', 'string'].includes(model.properties.type) ? stringListValues : undefined,
-  }));
+  ).map((model) => {
+    const isTextHint = model.properties['x-ms-content-hint'] === 'TEXT';
+    const isArrayOrStringType = ['array', 'string'].includes(model.properties.type);
+    return {
+      ...model,
+      onTitleChange: onDynamicallyAddedParameterTitleChange,
+      onRequiredToggle: onDynamicallyAddedParameterRequiredToggle,
+      onStringDropdownListToggle: model.properties.type === 'string' ? onStringDropdownListToggle : undefined,
+      onStringMultiSelectListToggle: isArrayOrStringType ? onStringMultiSelectListToggle : undefined,
+      onDelete: onDynamicallyAddedParameterDelete,
+      onRenderValueField,
+      isDynamicParameterMultiSelect,
+      isDynamicParameterDropdown,
+      onStringListUpdate: getStringListUpdateHandler,
+      shouldDisplayAddDropdownOption: isTextHint && !(model.properties as DynamicallyAddedParameterInputsTextProperties).enum,
+      shouldDisplayAddMultiSelectOption: isTextHint && !(model.properties as DynamicallyAddedParameterInputsArrayProperties).items,
+      shouldDisplayRemoveDropdownOption: isTextHint && !!(model.properties as DynamicallyAddedParameterInputsTextProperties).enum,
+      shouldDisplayRemoveMultiSelectOption:
+        model.properties.type === 'array' && !!(model.properties as DynamicallyAddedParameterInputsArrayProperties).items,
+      stringListValues: isArrayOrStringType ? stringListValues : undefined,
+    };
+  });
 
   const addNewDynamicallyAddedParameter = (item: FloatingActionMenuItem) => {
     const { icon, type: floatingActionMenuItemType } = item;
@@ -277,6 +275,8 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
       item.type
     );
     const properties = createDynamicallyAddedParameterProperties(floatingActionMenuItemType, schemaKey);
+    const isTextHint = properties['x-ms-content-hint'] === 'TEXT';
+    const isArrayOrStringType = ['array', 'string'].includes(properties.type);
 
     const newModel: DynamicallyAddedParameterInputsModel = {
       icon,
@@ -286,14 +286,14 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
       required: true,
       onRequiredToggle: onDynamicallyAddedParameterRequiredToggle,
       onStringDropdownListToggle: properties.type === 'string' ? onStringDropdownListToggle : undefined,
-      onStringMultiSelectListToggle: ['array', 'string'].includes(properties.type) ? onStringMultiSelectListToggle : undefined,
+      onStringMultiSelectListToggle: isArrayOrStringType ? onStringMultiSelectListToggle : undefined,
       onTitleChange: onDynamicallyAddedParameterTitleChange,
       onDelete: onDynamicallyAddedParameterDelete,
       onRenderValueField,
-      shouldDisplayAddDropdownOption: properties['x-ms-content-hint'] === 'TEXT',
-      shouldDisplayAddMultiSelectOption: properties['x-ms-content-hint'] === 'TEXT',
+      shouldDisplayAddDropdownOption: isTextHint,
+      shouldDisplayAddMultiSelectOption: isTextHint,
       onStringListUpdate: getStringListUpdateHandler,
-      stringListValues: properties['x-ms-content-hint'] === 'TEXT' ? stringListValues : undefined,
+      stringListValues: isTextHint ? stringListValues : undefined,
       isDynamicParameterMultiSelect: isDynamicParameterMultiSelect,
     };
 

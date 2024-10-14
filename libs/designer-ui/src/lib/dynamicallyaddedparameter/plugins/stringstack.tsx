@@ -44,6 +44,12 @@ const StringStack: React.FC<StringStackProps> = ({ advancedStringParameterTitle,
     description: 'Delete dynamic parameter corresponding to this row',
   });
 
+  const nextOptionText = intl.formatMessage({
+    defaultMessage: 'Enter another option',
+    id: 'xwB12G',
+    description: 'Enter another option',
+  });
+
   const deleteIcon: IIconProps = { iconName: 'Delete' };
 
   return (
@@ -57,7 +63,7 @@ const StringStack: React.FC<StringStackProps> = ({ advancedStringParameterTitle,
                 key={index}
                 type="text"
                 value={str}
-                placeholder="Enter another option"
+                placeholder={nextOptionText}
                 onChange={(e, newValue?: string) => handleInputChange(index, newValue || '')}
                 onBlur={(e) => handleInputBlur(index, e.target.value)}
                 className="msla-string-stack-input-textfield"
