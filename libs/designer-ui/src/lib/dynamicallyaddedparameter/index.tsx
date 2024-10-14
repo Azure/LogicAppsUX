@@ -2,6 +2,7 @@ import type { IContextualMenuProps } from '@fluentui/react';
 import { DirectionalHint, IconButton, TextField, TooltipHost } from '@fluentui/react';
 import type React from 'react';
 import { useIntl } from 'react-intl';
+import StringStack from './plugins/stringstack';
 
 export const DynamicallyAddedParameterType = {
   Text: 'TEXT',
@@ -10,6 +11,7 @@ export const DynamicallyAddedParameterType = {
   Boolean: 'BOOLEAN',
   Number: 'NUMBER',
   Date: 'DATE',
+  Array: 'ARRAY',
 } as const;
 export type DynamicallyAddedParameterTypeType = (typeof DynamicallyAddedParameterType)[keyof typeof DynamicallyAddedParameterType];
 
@@ -22,15 +24,42 @@ export interface DynamicallyAddedParameterProps {
   descriptionPlaceholder?: string;
   renderDescriptionField?: boolean;
   required?: boolean;
+  shouldDisplayAddDropdownOption?: boolean;
+  shouldDisplayAddMultiSelectOption?: boolean;
+  shouldDisplayRemoveDropdownOption?: boolean;
+  shouldDisplayRemoveMultiSelectOption?: boolean;
   onTitleChange: (schemaKey: string, newValue: string | undefined) => void;
   onRequiredToggle?: (schemaKey: string) => void;
   onDescriptionChange?: (schemaKey: string, newValue: string | undefined) => void;
   onDelete: (schemaKey: string) => void;
   onRenderValueField: (schemaKey: string) => JSX.Element;
+  onStringDropdownListToggle?: (schemaKey: string) => void;
+  onStringMultiSelectListToggle?: (schemaKey: string) => void;
+  onStringListUpdate?: (schemaKey: string, newValue: string[]) => void;
+  stringListValues?: (schemaKey: string) => string[];
+  isDynamicParameterMultiSelect?: (schemaKey: string) => boolean;
+  isDynamicParameterDropdown?: (schemaKey: string) => boolean;
 }
 
 export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps): JSX.Element => {
-  const { icon, required, schemaKey, title, titlePlaceholder, onDelete, onRenderValueField, onRequiredToggle } = props;
+  const {
+    icon,
+    required,
+    schemaKey,
+    title,
+    titlePlaceholder,
+    onDelete,
+    onRenderValueField,
+    onRequiredToggle,
+    onStringMultiSelectListToggle,
+    onStringDropdownListToggle,
+    shouldDisplayAddDropdownOption,
+    shouldDisplayAddMultiSelectOption,
+    shouldDisplayRemoveDropdownOption,
+    shouldDisplayRemoveMultiSelectOption,
+    onStringListUpdate = () => {},
+    stringListValues = () => [],
+  } = props;
   const intl = useIntl();
 
   const renderMenuButton = (): JSX.Element => {
@@ -58,6 +87,30 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
       description: 'Make the dynamic parameter corresponding to this row required',
     });
 
+    const addDropdownText = intl.formatMessage({
+      defaultMessage: 'Add a drop-down list of options',
+      id: 'VFnuA2',
+      description: 'Add a drop-down list of options to the text input dynamic parameter',
+    });
+
+    const removeDropdownText = intl.formatMessage({
+      defaultMessage: 'Remove list of options',
+      id: 'DbxZhS',
+      description: 'Remove the drop-down list of options for the text input dynamic parameter',
+    });
+
+    const addMultiSelectText = intl.formatMessage({
+      defaultMessage: 'Add a multi-select list of options',
+      id: 'dU0RgS',
+      description: 'Add a multi-select list of options to the text input dynamic parameter',
+    });
+
+    const removeMultiSelectText = intl.formatMessage({
+      defaultMessage: 'Remove list of multi options',
+      id: 'oxcHvs',
+      description: 'Remove multi-select list of options to the text input dynamic parameter',
+    });
+
     const baseParameterRequiredProps = {
       iconProps: { iconName: 'CheckboxComposite' },
       onClick: () => {
@@ -76,10 +129,58 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
         }
       : null;
 
+    const baseParameterMultiSelectProps = {
+      iconProps: { iconName: 'BulletedTreeList' },
+      onClick: () => {
+        if (onStringMultiSelectListToggle) {
+          onStringMultiSelectListToggle(schemaKey);
+        }
+        return true;
+      },
+    };
+
+    const addMultiSelectItem = {
+      ...baseParameterMultiSelectProps,
+      key: 'dynamicallyaddedparameter_menu_add_multiselect',
+      text: addMultiSelectText,
+    };
+
+    const removeMultiSelectItem = {
+      ...baseParameterMultiSelectProps,
+      key: 'dynamicallyaddedparameter_menu_remove_multiselect',
+      text: removeMultiSelectText,
+    };
+
+    const baseParameterDropdownProps = {
+      iconProps: { iconName: 'BulletedTreeList' },
+      onClick: () => {
+        if (onStringDropdownListToggle) {
+          onStringDropdownListToggle(schemaKey);
+        }
+        return true;
+      },
+    };
+
+    const addDropdownItem = {
+      ...baseParameterDropdownProps,
+      key: 'dynamicallyaddedparameter_menu_add_dropdown',
+      text: addDropdownText,
+    };
+
+    const removeDropdownItem = {
+      ...baseParameterDropdownProps,
+      key: 'dynamicallyaddedparameter_menu_remove_dropdown',
+      text: removeDropdownText,
+    };
+
     const menuProps: IContextualMenuProps | undefined = {
       shouldFocusOnMount: true,
       items: [
         ...(parameterRequiredItem ? [parameterRequiredItem] : []),
+        ...(shouldDisplayAddMultiSelectOption && !isDynamicParameterDropdown ? [addMultiSelectItem] : []),
+        ...(shouldDisplayRemoveMultiSelectOption ? [removeMultiSelectItem] : []),
+        ...(shouldDisplayAddDropdownOption && !isDynamicParameterMultiSelect ? [addDropdownItem] : []),
+        ...(shouldDisplayRemoveDropdownOption ? [removeDropdownItem] : []),
         {
           iconProps: { iconName: 'Delete' },
           key: 'dynamicallyaddedparameter_menu_delete',
@@ -107,6 +208,27 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
       </TooltipHost>
     );
   };
+
+  const multiSelectTitleText = intl.formatMessage({
+    defaultMessage: 'Multi-select list of options',
+    id: 'Ccbm2Y',
+    description: 'Multi-select list of options',
+  });
+
+  const dropdownTitleText = intl.formatMessage({
+    defaultMessage: 'Drop-down list of options',
+    id: 'B6BjCl',
+    description: 'Drop-down list of options',
+  });
+
+  const isDynamicParameterMultiSelect = props?.isDynamicParameterMultiSelect?.(schemaKey) || false;
+  const isDynamicParameterDropdown = props?.isDynamicParameterDropdown?.(schemaKey) || false;
+  const isAdvancedDynamicStringParameter = isDynamicParameterMultiSelect || isDynamicParameterDropdown;
+  const advancedStringParameterTitle = isAdvancedDynamicStringParameter
+    ? isDynamicParameterMultiSelect
+      ? multiSelectTitleText
+      : dropdownTitleText
+    : '';
 
   const renderDynamicParameterContainer = (): JSX.Element => {
     const iconStyle = {
@@ -144,6 +266,16 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
             />
           </div>
         )}
+        {isAdvancedDynamicStringParameter ? (
+          <div className="msla-dynamic-added-param-token-picker">
+            <StringStack
+              advancedStringParameterTitle={advancedStringParameterTitle}
+              initialStrings={stringListValues}
+              schemaKey={schemaKey}
+              onStringListUpdate={onStringListUpdate}
+            />
+          </div>
+        ) : undefined}
       </>
     );
   };
