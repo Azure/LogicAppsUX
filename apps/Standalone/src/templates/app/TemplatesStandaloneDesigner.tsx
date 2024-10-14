@@ -361,6 +361,9 @@ const getServices = (
         openBladeAfterCreate: (workflowName: string) => {
           console.log('Open blade after create, workflowName is: ', workflowName);
         },
+        onAddBlankWorkflow: () => {
+          console.log('On add blank workflow click');
+        },
       })
     : new StandardTemplateService({
         baseUrl: armUrl,
@@ -372,6 +375,9 @@ const getServices = (
         },
         openBladeAfterCreate: (workflowName: string) => {
           console.log('Open blade after create, workflowName is: ', workflowName);
+        },
+        onAddBlankWorkflow: () => {
+          console.log('On add blank workflow click');
         },
       });
 

@@ -10,9 +10,16 @@ import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/mo
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  getBuiltInOperationInfo,
+  isBuiltInOperation,
+  LogEntryLevel,
+  LoggerService,
+  TemplateService,
+} from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
-import { PeopleCommunity16Regular } from '@fluentui/react-icons';
+import { Add16Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 
 interface TemplateCardProps {
@@ -157,6 +164,48 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
             ) : null}
           </div>
         </div>
+      </div>
+    </DocumentCard>
+  );
+};
+
+export const BlankWorkflowTemplateCard = () => {
+  const intl = useIntl();
+
+  const intlText = {
+    TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
+    NO_CONNECTORS: intl.formatMessage({
+      defaultMessage: 'This template does not have connectors',
+      description: 'Accessibility text to inform user this template does not contain connectors',
+      id: 'aI9W5L',
+    }),
+    START_BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Start from a blank workflow',
+      description: 'Title text for the card that lets users start from a blank workflow',
+      id: 'aXDrna',
+    }),
+    MICROSOFT_AUTHORED: intl.formatMessage({
+      defaultMessage: 'Microsoft Authored',
+      description: 'Label text for Microsoft authored templates',
+      id: 'rEQceE',
+    }),
+  };
+
+  const cardStyles: IDocumentCardStyles = {
+    root: { display: 'inline-block', maxWidth: 1000 },
+  };
+
+  const onBlankWorkflowClick = () => {
+    TemplateService().onAddBlankWorkflow();
+  };
+
+  return (
+    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onBlankWorkflowClick} aria-label={'blank'}>
+      <div className="msla-blank-template-card">
+        <Add16Regular className="msla-blank-template-card-add-icon" />
+        <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
+          {intlText.START_BLANK_WORKFLOW}
+        </Text>
       </div>
     </DocumentCard>
   );
