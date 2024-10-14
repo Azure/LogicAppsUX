@@ -50,7 +50,7 @@ import type {
   ChangeState,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
-import { storeStateToUndoRedoHistory } from '../../core';
+import { type AppDispatch, storeStateToUndoRedoHistory } from '../../core';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -225,7 +225,7 @@ const Setting = ({
   isReadOnly,
 }: { id?: string; nodeId: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   const intl = useIntl();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
 
