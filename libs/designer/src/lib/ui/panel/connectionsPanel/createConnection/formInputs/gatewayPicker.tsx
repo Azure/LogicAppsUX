@@ -1,8 +1,29 @@
-import type { IDropdownOption } from '@fluentui/react';
-import { Dropdown } from '@fluentui/react';
+import { Dropdown, type DropdownProps, Option, makeStyles, shorthands } from '@fluentui/react-components';
 import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
-import { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+
+interface Options {
+  key: string;
+  text: string;
+}
+
+const useGatewayPickerStyles = makeStyles({
+  dropdownContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 'inherit',
+  },
+  dropdown: {
+    borderRadius: '0',
+    ...shorthands.borderColor('black'),
+    ...shorthands.borderWidth('1px'),
+    ':hover': {
+      ...shorthands.borderColor('black'),
+      ...shorthands.borderWidth('1px'),
+    },
+  },
+});
 
 const GatewayPicker = (props: any) => {
   const {
@@ -18,9 +39,12 @@ const GatewayPicker = (props: any) => {
   } = props;
 
   const intl = useIntl();
+  const styles = useGatewayPickerStyles();
+
+  const [selectedGatewayOptions, setSelectedGatewayOptions] = React.useState<string[]>(value ? [value] : []);
 
   const newGatewayUrl = 'http://aka.ms/logicapps-installgateway';
-  const newGatewayOption: IDropdownOption<any> = useMemo(
+  const newGatewayOption = useMemo(
     () => ({
       key: newGatewayUrl,
       text: intl.formatMessage(
@@ -35,7 +59,7 @@ const GatewayPicker = (props: any) => {
     [intl]
   );
 
-  const subscriptionOptions = useMemo(
+  const subscriptionOptions: Options[] = useMemo<Options[]>(
     () =>
       (availableSubscriptions ?? [])
         .map((subscription: Subscription) => ({
@@ -46,7 +70,7 @@ const GatewayPicker = (props: any) => {
     [availableSubscriptions]
   );
 
-  const gatewayOptions = useMemo(
+  const gatewayOptions: Options[] = useMemo<Options[]>(
     () => [
       ...(availableGateways ?? [])
         .map((gateway: Gateway) => ({
@@ -58,6 +82,13 @@ const GatewayPicker = (props: any) => {
     ],
     [availableGateways, newGatewayOption]
   );
+
+  useEffect(() => {
+    if (gatewayOptions && value) {
+      const gate = gatewayOptions.find((gt) => gt.text === value.id);
+      setSelectedGatewayOptions(gate ? [gate.key] : []);
+    }
+  }, [value, gatewayOptions]);
 
   const subscriptionDropdownLabel = intl.formatMessage({
     defaultMessage: 'Subscription',
@@ -71,40 +102,64 @@ const GatewayPicker = (props: any) => {
     description: 'Gateway dropdown label',
   });
 
+  const gatewayDropdownId = `connection-param-${parameterKey}-gateways`;
+  const subscriptionDropdownId = `connection-param-${parameterKey}-gateways`;
+
+  const onSubscriptionSelect: DropdownProps['onOptionSelect'] = (e, newVal) => {
+    selectSubscriptionCallback?.(newVal.optionValue as string);
+  };
+  const onGatewaySelect: DropdownProps['onOptionSelect'] = (e, newVal) => {
+    if (newVal?.optionValue === newGatewayUrl) {
+      window.open(newGatewayUrl, '_blank');
+      setSelectedGatewayOptions([newGatewayUrl]);
+    } else if (newVal?.optionText !== undefined) {
+      setValue({ id: newVal?.optionText.toString() });
+    }
+  };
+
   return (
     <div style={{ width: 'inherit' }}>
       {!isSubscriptionDropdownDisabled && (
-        <Dropdown
-          id={`connection-param-${parameterKey}-subscriptions`}
-          label={subscriptionDropdownLabel}
-          className="connection-parameter-input"
-          selectedKey={selectedSubscriptionId}
-          onChange={(e: any, newVal?: IDropdownOption) => selectSubscriptionCallback?.(newVal?.key as string)}
-          disabled={isLoading}
-          ariaLabel={subscriptionDropdownLabel}
-          placeholder={subscriptionDropdownLabel}
-          options={subscriptionOptions}
-          styles={{ callout: { maxHeight: '300px' } }}
-        />
+        <div className={styles.dropdownContainer}>
+          <label id={subscriptionDropdownId}>{subscriptionDropdownLabel}</label>
+          <Dropdown
+            className={styles.dropdown}
+            id={subscriptionDropdownId}
+            onOptionSelect={onSubscriptionSelect}
+            disabled={isLoading}
+            aria-label={subscriptionDropdownLabel}
+            placeholder={subscriptionDropdownLabel}
+            positioning={{ fallbackPositions: ['below', 'above'] }}
+            size="small"
+          >
+            {subscriptionOptions.map((option) => (
+              <Option key={option.text} value={option.key}>
+                {option.text}
+              </Option>
+            ))}
+          </Dropdown>
+        </div>
       )}
-      <Dropdown
-        id={`connection-param-${parameterKey}-gateways`}
-        label={gatewayDropdownLabel}
-        className="connection-parameter-input"
-        selectedKey={value?.id}
-        onChange={(e: any, newVal?: IDropdownOption) => {
-          if (newVal?.key === newGatewayUrl) {
-            window.open(newGatewayUrl, '_blank');
-          } else {
-            setValue({ id: newVal?.key.toString() });
-          }
-        }}
-        disabled={isLoading || !(selectedSubscriptionId || isSubscriptionDropdownDisabled)}
-        ariaLabel={gatewayDropdownLabel}
-        placeholder={gatewayDropdownLabel}
-        options={gatewayOptions}
-        styles={{ callout: { maxHeight: '300px' } }}
-      />
+      <div className={styles.dropdownContainer}>
+        <label id={gatewayDropdownId}>{gatewayDropdownLabel}</label>
+        <Dropdown
+          id={gatewayDropdownId}
+          className={styles.dropdown}
+          onOptionSelect={onGatewaySelect}
+          disabled={isLoading || !(selectedSubscriptionId || isSubscriptionDropdownDisabled)}
+          placeholder={gatewayDropdownLabel}
+          selectedOptions={selectedGatewayOptions}
+          positioning={{ fallbackPositions: ['below', 'above'] }}
+          aria-label={gatewayDropdownLabel}
+          size="small"
+        >
+          {gatewayOptions.map((option) => (
+            <Option key={option.key} value={option.key}>
+              {option.text}
+            </Option>
+          ))}
+        </Dropdown>
+      </div>
     </div>
   );
 };
