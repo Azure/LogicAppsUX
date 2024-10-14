@@ -179,15 +179,15 @@ export const BlankWorkflowTemplateCard = () => {
       description: 'Accessibility text to inform user this template does not contain connectors',
       id: 'aI9W5L',
     }),
-    START_BLANK_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Start from a blank workflow',
+    BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Blank workflow',
       description: 'Title text for the card that lets users start from a blank workflow',
-      id: 'aXDrna',
+      id: 'pykp8c',
     }),
-    MICROSOFT_AUTHORED: intl.formatMessage({
-      defaultMessage: 'Microsoft Authored',
-      description: 'Label text for Microsoft authored templates',
-      id: 'rEQceE',
+    BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
+      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
+      description: 'Label text for the card that lets users start from a blank workflow',
+      id: 'nN1ezT',
     }),
   };
 
@@ -199,8 +199,11 @@ export const BlankWorkflowTemplateCard = () => {
     <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onBlankWorkflowClick} aria-label={'blank'}>
       <div className="msla-blank-template-card">
         <Add16Regular className="msla-blank-template-card-add-icon" />
-        <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
-          {intlText.START_BLANK_WORKFLOW}
+        <Text size={400} weight="semibold" align="center" className="msla-template-card-title">
+          {intlText.BLANK_WORKFLOW}
+        </Text>
+        <Text size={400} align="center" className="msla-blank-template-card-description">
+          {intlText.BLANK_WORKFLOW_DESCRIPTION}
         </Text>
       </div>
     </DocumentCard>
