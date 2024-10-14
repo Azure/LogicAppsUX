@@ -11,8 +11,6 @@ export default defineProject({
   },
   test: {
     name: packageJson.name,
-    dir: './src',
-    watch: false,
     environment: 'node',
     setupFiles: ['test-setup.ts'],
     coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura'] },
