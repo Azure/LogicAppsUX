@@ -37,30 +37,21 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const { height: currentHeight } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
-  const { nodesForScroll, schemaTreeData } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { nodesForScroll, sourceSchemaTreeData, targetSchemaTreeData } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
   const updateNodeInternals = useUpdateNodeInternals();
 
-  const onScroll = useCallback(() => {
-    updateNodeInternals(panelNodeId);
-  }, [panelNodeId, updateNodeInternals]);
-
-  const onToggle = useCallback(
-    (id: string) => {
-      dispatch(
-        toggleNodeExpandCollapse({
-          isSourceSchema: isSourceSchema,
-          keys: [id],
-          isExpanded: !openKeys[id],
-        })
-      );
-    },
-    [openKeys, dispatch, isSourceSchema]
-  );
-
-  useEffect(() => {
-    const visibleNodes = treeRef?.current?.visibleNodes.map((node) => node.data) ?? [];
+  const updateVisibleNodes = useCallback(() => {
     const startIndex = treeRef?.current?.visibleStartIndex ?? -1;
     const endIndex = treeRef?.current?.visibleStopIndex ?? -1;
+    if (startIndex === -1 || endIndex === -1) {
+      return;
+    }
+    const visibleNodes =
+      treeRef?.current?.visibleNodes
+        .filter((data) => data.rowIndex !== null && data.rowIndex >= startIndex && data.rowIndex <= endIndex)
+        .map((node) => node.data) ?? [];
 
     const isVisibleNodesUpdated = (newNodes: SchemaNodeExtended[], currentNodes: SchemaNodeExtended[]) => {
       const nodeSet = new Set<string>();
@@ -76,11 +67,13 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       return false;
     };
 
+    const schemaTreeData = isSourceSchema ? sourceSchemaTreeData : targetSchemaTreeData;
+
     if (
-      isVisibleNodesUpdated(visibleNodes, schemaTreeData[id]?.visibleNodes ?? []) ||
-      isVisibleNodesUpdated(schemaTreeData[id]?.visibleNodes ?? [], visibleNodes) ||
-      schemaTreeData[id]?.startIndex !== startIndex ||
-      schemaTreeData[id]?.endIndex !== endIndex
+      (isSourceSchema && isVisibleNodesUpdated(visibleNodes, schemaTreeData.visibleNodes)) ||
+      isVisibleNodesUpdated(schemaTreeData.visibleNodes, visibleNodes) ||
+      schemaTreeData.startIndex !== startIndex ||
+      schemaTreeData.endIndex !== endIndex
     ) {
       dispatch(
         updateTreeData({
@@ -93,14 +86,41 @@ export const SchemaTree = (props: SchemaTreeProps) => {
         })
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     dispatch,
     id,
-    schemaTreeData,
+    sourceSchemaTreeData,
+    targetSchemaTreeData,
+    isSourceSchema,
+    treeRef,
+    treeRef?.current,
     treeRef?.current?.visibleNodes,
     treeRef?.current?.visibleStartIndex,
     treeRef?.current?.visibleStopIndex,
   ]);
+
+  const onScroll = useCallback(() => {
+    updateNodeInternals(panelNodeId);
+    updateVisibleNodes();
+  }, [panelNodeId, updateNodeInternals, updateVisibleNodes]);
+
+  const onToggle = useCallback(
+    (id: string) => {
+      dispatch(
+        toggleNodeExpandCollapse({
+          isSourceSchema: isSourceSchema,
+          keys: [id],
+          isExpanded: !openKeys[id],
+        })
+      );
+    },
+    [openKeys, dispatch, isSourceSchema]
+  );
+
+  useEffect(() => {
+    updateVisibleNodes();
+  }, [updateVisibleNodes]);
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
