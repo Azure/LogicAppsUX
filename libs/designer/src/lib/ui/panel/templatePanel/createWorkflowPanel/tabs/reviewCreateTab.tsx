@@ -6,9 +6,10 @@ import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { isUndefinedOrEmptyString, normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
+import { equals, isUndefinedOrEmptyString, normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
+import { WorkflowKind } from '../../../../../core/state/workflow/workflowInterfaces';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -37,14 +38,14 @@ export const ReviewCreatePanel = () => {
       id: 'oWAB0H',
       description: 'Accessibility label for the parameters section',
     }),
-    NAME: intl.formatMessage({
-      defaultMessage: 'Name',
-      id: 'hB4zlY',
+    WORKFLOW_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow name',
+      id: 'oqgNX3',
       description: 'Accessibility label for workflow name',
     }),
-    STATE: intl.formatMessage({
-      defaultMessage: 'State',
-      id: 'LVeWG7',
+    STATE_TYPE: intl.formatMessage({
+      defaultMessage: 'State type',
+      id: 'tzeDPE',
       description: 'Accessibility label for state kind',
     }),
     PLACEHOLDER: intl.formatMessage({
@@ -52,7 +53,18 @@ export const ReviewCreatePanel = () => {
       id: 'wPi8wS',
       description: 'Accessibility label indicating that the value is not set',
     }),
+    kind_stateful: intl.formatMessage({
+      defaultMessage: 'Stateful',
+      id: 'Qqmb+W',
+      description: 'Dropdown option for stateful type',
+    }),
+    kind_stateless: intl.formatMessage({
+      defaultMessage: 'Stateless',
+      id: 'cNXS5n',
+      description: 'Dropdown option for stateless type',
+    }),
   };
+
   return (
     <div className="msla-templates-tab">
       {!isConsumption && (
@@ -66,14 +78,18 @@ export const ReviewCreatePanel = () => {
               return (
                 <div key={workflow.id}>
                   <div className="msla-templates-tab-review-section-details">
-                    <Text className="msla-templates-tab-review-section-details-title">{intlText.NAME}</Text>
+                    <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
                     <Text className="msla-templates-tab-review-section-details-value">
                       {isUndefinedOrEmptyString(workflowNameToShow) ? intlText.PLACEHOLDER : workflowNameToShow}
                     </Text>
                   </div>
                   <div className="msla-templates-tab-review-section-details">
-                    <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-                    <Text className="msla-templates-tab-review-section-details-value">{workflow.kind ?? intlText.PLACEHOLDER}</Text>
+                    <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE_TYPE}</Text>
+                    <Text className="msla-templates-tab-review-section-details-value">
+                      {equals(workflow.kind, WorkflowKind.STATEFUL)
+                        ? intlText.kind_stateful
+                        : intlText.kind_stateless ?? intlText.PLACEHOLDER}
+                    </Text>
                   </div>
                 </div>
               );

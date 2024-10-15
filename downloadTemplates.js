@@ -40,6 +40,10 @@ const downloadTemplate = async (path) => {
     dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
   };
   writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2), () => {});
+  for (const workflowId of Object.keys(templateManifest.workflows ?? {})) {
+    createTemplatesFolder(`${path}/${workflowId}`);
+    await downloadTemplate(`${path}/${workflowId}`);
+  }
 };
 
 const run = async () => {
