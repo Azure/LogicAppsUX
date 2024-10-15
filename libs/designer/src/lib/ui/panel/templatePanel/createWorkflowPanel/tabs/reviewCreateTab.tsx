@@ -4,10 +4,9 @@ import { Label, Text } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
-import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { equals, isUndefinedOrEmptyString, normalizeConnectorId, TemplateService } from '@microsoft/logic-apps-shared';
-import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
 import { WorkflowKind } from '../../../../../core/state/workflow/workflowInterfaces';
 
@@ -139,19 +138,14 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  shouldClearDetails: boolean,
   onCreateClick: () => void,
   {
-    workflowName,
     isCreating,
-    isCreated,
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
   }: {
-    workflowName: string;
     isCreating: boolean;
-    isCreated: boolean;
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
     previousTabId: string;
@@ -163,22 +157,7 @@ export const reviewCreateTab = (
     id: 'JQBEOg',
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
-  description: isCreated ? (
-    <MessageBar messageBarType={MessageBarType.success}>
-      {intl.formatMessage({
-        defaultMessage: 'Your workflow has been created. ',
-        id: 'J+bMkk',
-        description: 'The message displayed when the workflow is successfully created',
-      })}
-      <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
-        {intl.formatMessage({
-          defaultMessage: 'Go to workflow.',
-          id: 'OqrmYm',
-          description: 'The link displayed to navigate to workflow when the workflow is successfully created',
-        })}
-      </Link>
-    </MessageBar>
-  ) : errorMessage ? (
+  description: errorMessage ? (
     <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
   ) : (
     intl.formatMessage({
@@ -190,13 +169,7 @@ export const reviewCreateTab = (
   hasError: false,
   content: <ReviewCreatePanel />,
   footerContent: {
-    primaryButtonText: isCreated ? (
-      intl.formatMessage({
-        defaultMessage: 'Go to my workflow',
-        id: 'P3OMN/',
-        description: 'The button text for navigating to the workflows page after creating the workflow',
-      })
-    ) : isCreating ? (
+    primaryButtonText: isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />
     ) : (
       intl.formatMessage({
@@ -205,29 +178,14 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated ? () => TemplateService()?.openBladeAfterCreate(workflowName) : onCreateClick,
+    primaryButtonOnClick: onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
-    secondaryButtonText: isCreated
-      ? intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        }),
-    secondaryButtonOnClick: isCreated
-      ? () => {
-          dispatch(closePanel());
-          if (shouldClearDetails) {
-            dispatch(clearTemplateDetails());
-          }
-        }
-      : () => {
-          dispatch(selectPanelTab(previousTabId));
-        },
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Previous',
+      id: 'Yua/4o',
+      description: 'Button text for moving to the previous tab in the create workflow panel',
+    }),
+    secondaryButtonOnClick: () => dispatch(selectPanelTab(previousTabId)),
     secondaryButtonDisabled: isCreating,
   },
 });
