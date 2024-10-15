@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.4](https://github.com/Azure/LogicAppsUX/compare/v4.105.3...v4.105.4) (2024-10-15)
+
+
+### Bug Fixes
+
+* **Designer:** Custom connector triggers now show in search ([#5885](https://github.com/Azure/LogicAppsUX/issues/5885)) ([#5887](https://github.com/Azure/LogicAppsUX/issues/5887)) ([eba25cb](https://github.com/Azure/LogicAppsUX/commit/eba25cb549983cd08b1dcb789d0b38addc43d97e))
+
 ### [4.105.3](https://github.com/Azure/LogicAppsUX/compare/v4.105.2...v4.105.3) (2024-10-11)
 
 
