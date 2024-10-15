@@ -164,6 +164,7 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
 
 export async function getConnectionParametersForAzureConnection(
   connectionType?: ConnectionType,
+  selectedResourceId?: string,
   selectedSubResource?: any,
   parameterValues?: Record<string, any>,
   isMultiAuthConnection?: boolean // TODO - Should remove when backend bits are ready for multi-auth in resource picker connections
@@ -188,12 +189,19 @@ export async function getConnectionParametersForAzureConnection(
     };
     // biome-ignore lint/style/noUselessElse: needed for future implementation
   } else if (connectionType === ConnectionType.ApiManagement) {
-    // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
     const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);
     const baseUrl = api.host ? (api.schemes?.length ? `${api.schemes.at(-1)}://${api.host}` : `http://${api.host}`) : 'NotFound';
     const fullUrl = api.basePath ? `${baseUrl}${api.basePath}` : baseUrl;
-    const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
+    let subscriptionKey = 'NotFound';
+
+    // TODO: Check with backend team on how to get the subscription key.
+    // There is no clear spec from backend on this, so this may or may nor work since we are using default master which the user can still remove
+    // in which case this will fail.
+    if (selectedResourceId) {
+      const keys = await ApiManagementService().fetchApiMKeys(selectedResourceId, 'master');
+      subscriptionKey = keys.primaryKey ?? keys.secondaryKey;
+    }
 
     return {
       ...parameterValues,
