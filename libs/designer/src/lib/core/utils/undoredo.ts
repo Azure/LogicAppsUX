@@ -76,12 +76,20 @@ export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLi
 };
 
 const haveInputParametersChangedValue = (actionPayload: UpdateParameterAndDependenciesPayload): boolean => {
-  const { groupId, parameterId, properties, nodeInputs } = actionPayload;
+  const { groupId, parameterId, properties, nodeInputs, skipStateSave = false } = actionPayload;
+
+  if (skipStateSave) {
+    return false;
+  }
+
   const parameterGroup = nodeInputs.parameterGroups[groupId];
   const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
   if (index > -1) {
     const parameter = parameterGroup.parameters[index];
     if (properties.value && !isEqual(parameter.value, properties.value)) {
+      return true;
+    }
+    if (properties.editorViewModel && !isEqual(parameter.editorViewModel, properties.editorViewModel)) {
       return true;
     }
   }
