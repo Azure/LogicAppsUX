@@ -472,6 +472,7 @@ export const workflowSlice = createSlice({
       state.graph = deserializedWorkflow.graph;
       state.operations = deserializedWorkflow.actionData;
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
+      state.idReplacements = {};
 
       // Only interested in behavior like centering canvas when it is the first load of the workflow
       state.focusedCanvasNodeId = isFirstLoad
