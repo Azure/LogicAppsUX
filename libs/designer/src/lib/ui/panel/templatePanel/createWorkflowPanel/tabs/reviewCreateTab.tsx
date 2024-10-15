@@ -138,17 +138,14 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  shouldClearDetails: boolean,
   onCreateClick: () => void,
   {
     isCreating,
-    isCreated,
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
   }: {
     isCreating: boolean;
-    isCreated: boolean;
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
     previousTabId: string;
@@ -182,18 +179,12 @@ export const reviewCreateTab = (
       })
     ),
     primaryButtonOnClick: onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating || isCreated,
-    secondaryButtonText: isCreated
-      ? intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        }),
+    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Previous',
+      id: 'Yua/4o',
+      description: 'Button text for moving to the previous tab in the create workflow panel',
+    }),
     secondaryButtonOnClick: () => dispatch(selectPanelTab(previousTabId)),
     secondaryButtonDisabled: isCreating,
   },

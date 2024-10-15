@@ -51,7 +51,6 @@ export const useCreateWorkflowPanelTabs = ({
     workflows: state.template.workflows,
   }));
 
-  const [isCreated, setIsCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const connectionsExist = useMemo(() => Object.keys(templateConnections).length > 0, [templateConnections]);
@@ -117,7 +116,6 @@ export const useCreateWorkflowPanelTabs = ({
     });
     try {
       await onCreateClick();
-      setIsCreated(true);
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Templates.createTab',
@@ -182,9 +180,8 @@ export const useCreateWorkflowPanelTabs = ({
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, dispatch, !isMultiWorkflowTemplate, createWorkflowFromTemplate, {
+      ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
         isCreating,
-        isCreated,
         errorMessage,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
@@ -197,10 +194,8 @@ export const useCreateWorkflowPanelTabs = ({
     [
       intl,
       dispatch,
-      isMultiWorkflowTemplate,
       createWorkflowFromTemplate,
       isCreating,
-      isCreated,
       errorMessage,
       nameStateTabItem.hasError,
       connectionsError,
