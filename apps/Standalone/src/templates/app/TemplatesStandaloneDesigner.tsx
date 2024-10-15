@@ -359,7 +359,7 @@ const getServices = (
   const templateService = isConsumption
     ? new BaseTemplateService({
         openBladeAfterCreate: (workflowName: string) => {
-          console.log('Open blade after create, workflowName is: ', workflowName);
+          window.alert(`Open blade after create, workflowName is: ${workflowName}`);
         },
       })
     : new StandardTemplateService({
@@ -371,7 +371,7 @@ const getServices = (
           gateway: '2018-11-01',
         },
         openBladeAfterCreate: (workflowName: string) => {
-          console.log('Open blade after create, workflowName is: ', workflowName);
+          window.alert(`Open blade after create, workflowName is: ${workflowName}`);
         },
       });
 

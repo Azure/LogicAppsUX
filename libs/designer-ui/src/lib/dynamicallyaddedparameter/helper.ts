@@ -20,6 +20,7 @@ const DynamicallyAddedParameterDateIcon =
 export function getIconForDynamicallyAddedParameterType(type: DynamicallyAddedParameterTypeType): DynamicallyAddedParameterIcon {
   switch (type) {
     case DynamicallyAddedParameterType.Text:
+    case DynamicallyAddedParameterType.Array:
       return DynamicallyAddedParameterTextIcon;
     case DynamicallyAddedParameterType.Boolean:
       return DynamicallyAddedParameterBooleanIcon;
@@ -38,6 +39,7 @@ export function getDefaultTitleForDynamicallyAddedParameterType(type: Dynamicall
   const intl = getIntl();
   switch (type) {
     case DynamicallyAddedParameterType.Text:
+    case DynamicallyAddedParameterType.Array:
       return intl.formatMessage({
         defaultMessage: 'Input',
         id: 'e+GuGo',
@@ -80,6 +82,7 @@ export function getDescriptionForDynamicallyAddedParameterType(type: Dynamically
   const intl = getIntl();
   switch (type) {
     case DynamicallyAddedParameterType.Text:
+    case DynamicallyAddedParameterType.Array:
       return intl.formatMessage({
         defaultMessage: 'Please enter your input',
         id: 'SgiTAh',
