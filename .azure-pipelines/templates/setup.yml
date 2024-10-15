@@ -9,7 +9,7 @@ steps:
     displayName: "Install pnpm"
     condition: succeeded()
 
-  - script: pnpm install --no-optional
+  - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
     displayName: "Install Dependencies with pnpm"
     workingDirectory: $(working_directory)
     condition: succeeded()
