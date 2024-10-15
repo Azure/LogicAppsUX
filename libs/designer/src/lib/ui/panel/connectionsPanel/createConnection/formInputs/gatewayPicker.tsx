@@ -42,6 +42,7 @@ const GatewayPicker = (props: any) => {
   const styles = useGatewayPickerStyles();
 
   const [selectedGatewayOptions, setSelectedGatewayOptions] = React.useState<string[]>(value ? [value] : []);
+  const [gatewayValue, setGatewayValue] = React.useState<string | undefined>(value?.text);
 
   const newGatewayUrl = 'http://aka.ms/logicapps-installgateway';
   const newGatewayOption = useMemo(
@@ -112,8 +113,10 @@ const GatewayPicker = (props: any) => {
     if (newVal?.optionValue === newGatewayUrl) {
       window.open(newGatewayUrl, '_blank');
       setSelectedGatewayOptions([newGatewayUrl]);
-    } else if (newVal?.optionText !== undefined) {
-      setValue({ id: newVal?.optionText.toString() });
+    } else if (newVal?.optionText !== undefined && newVal?.optionValue !== undefined) {
+      setSelectedGatewayOptions([newVal.optionValue]);
+      setValue({ id: newVal?.optionValue });
+      setGatewayValue(newVal.optionText);
     }
   };
 
@@ -147,6 +150,7 @@ const GatewayPicker = (props: any) => {
           className={styles.dropdown}
           onOptionSelect={onGatewaySelect}
           disabled={isLoading || !(selectedSubscriptionId || isSubscriptionDropdownDisabled)}
+          value={gatewayValue ?? gatewayDropdownLabel}
           placeholder={gatewayDropdownLabel}
           selectedOptions={selectedGatewayOptions}
           positioning={{ fallbackPositions: ['below', 'above'] }}
