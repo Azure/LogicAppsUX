@@ -127,7 +127,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(closePanel());
       dispatch(clearTemplateDetails());
 
-      TemplateService()?.openBladeAfterCreate(isMultiWorkflowTemplate ? '' : (Object.values(workflows)[0].workflowName as string));
+      TemplateService()?.openBladeAfterCreate(isMultiWorkflowTemplate ? undefined : (Object.values(workflows)[0].workflowName as string));
     } catch (e: any) {
       setErrorMessage(e.message);
       LoggerService().log({

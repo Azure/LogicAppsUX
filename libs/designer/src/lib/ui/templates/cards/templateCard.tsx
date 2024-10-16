@@ -10,9 +10,16 @@ import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/mo
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  getBuiltInOperationInfo,
+  isBuiltInOperation,
+  LogEntryLevel,
+  LoggerService,
+  TemplateService,
+} from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
-import { PeopleCommunity16Regular } from '@fluentui/react-icons';
+import { Add16Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 
 interface TemplateCardProps {
@@ -20,6 +27,10 @@ interface TemplateCardProps {
 }
 
 const maxConnectorsToShow = 5;
+
+const cardStyles: IDocumentCardStyles = {
+  root: { display: 'inline-block', maxWidth: 1000 },
+};
 
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -53,7 +64,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
 
   const onSelectTemplate = () => {
     LoggerService().log({
-      level: LogEntryLevel.Trace,
+      level: LogEntryLevel.Verbose,
       area: 'Templates.TemplateCard',
       message: 'Template is selected',
       args: [templateName, workflowAppName],
@@ -96,10 +107,6 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
-  };
-
-  const cardStyles: IDocumentCardStyles = {
-    root: { display: 'inline-block', maxWidth: 1000 },
   };
 
   const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
@@ -157,6 +164,54 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
             ) : null}
           </div>
         </div>
+      </div>
+    </DocumentCard>
+  );
+};
+
+export const BlankWorkflowTemplateCard = () => {
+  const intl = useIntl();
+
+  const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
+
+  const intlText = {
+    BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Blank workflow',
+      description: 'Title text for the card that lets users start from a blank workflow',
+      id: 'pykp8c',
+    }),
+    BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
+      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
+      description: 'Label text for the card that lets users start from a blank workflow',
+      id: 'nN1ezT',
+    }),
+  };
+
+  const onBlankWorkflowClick = () => {
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'Templates.TemplateCard',
+      message: 'Blank workflow is selected',
+      args: [workflowAppName],
+    });
+    TemplateService()?.onAddBlankWorkflow();
+  };
+
+  return (
+    <DocumentCard
+      className="msla-template-card-wrapper"
+      styles={cardStyles}
+      onClick={onBlankWorkflowClick}
+      aria-label={intlText.BLANK_WORKFLOW}
+    >
+      <div className="msla-blank-template-card">
+        <Add16Regular className="msla-blank-template-card-add-icon" />
+        <Text size={400} weight="semibold" align="center" className="msla-template-card-title">
+          {intlText.BLANK_WORKFLOW}
+        </Text>
+        <Text size={400} align="center" className="msla-blank-template-card-description">
+          {intlText.BLANK_WORKFLOW_DESCRIPTION}
+        </Text>
       </div>
     </DocumentCard>
   );
