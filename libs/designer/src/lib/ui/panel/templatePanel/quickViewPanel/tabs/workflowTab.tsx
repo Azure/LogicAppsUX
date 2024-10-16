@@ -45,7 +45,7 @@ export const workflowTab = (
     }),
     primaryButtonOnClick: () => {
       LoggerService().log({
-        level: LogEntryLevel.Trace,
+        level: LogEntryLevel.Verbose,
         area: 'Templates.overviewTab',
         message: 'Template create button clicked',
         args: [templateId, workflowAppName],
