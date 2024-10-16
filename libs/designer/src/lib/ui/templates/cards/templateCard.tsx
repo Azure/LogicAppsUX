@@ -194,7 +194,7 @@ export const BlankWorkflowTemplateCard = () => {
       message: 'Blank workflow is selected',
       args: [workflowAppName],
     });
-    TemplateService().onAddBlankWorkflow();
+    TemplateService()?.onAddBlankWorkflow();
   };
 
   return (
