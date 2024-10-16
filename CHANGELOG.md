@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.5](https://github.com/Azure/LogicAppsUX/compare/v4.105.4...v4.105.5) (2024-10-16)
+
+
+### Bug Fixes
+
+* **Designer:** Fixing issue with managed identity connection creation (4.105) ([#5898](https://github.com/Azure/LogicAppsUX/issues/5898)) ([0996899](https://github.com/Azure/LogicAppsUX/commit/09968992d11d6c3c38342f64a44b9fbb3ab9778a)), closes [#5897](https://github.com/Azure/LogicAppsUX/issues/5897)
+
 ### [4.105.4](https://github.com/Azure/LogicAppsUX/compare/v4.105.3...v4.105.4) (2024-10-15)
 
 
