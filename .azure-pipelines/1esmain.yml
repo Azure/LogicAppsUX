@@ -80,9 +80,9 @@ extends:
                 - output: pipelineArtifact
                   targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
                   artifactName: Build ${{ parameters.publishVersion }}
-            steps:
-              - checkout: self
-                ref: refs/heads/pipelineUpdate  # specify your branch here
+            steps:  
+              - script: git checkout pipelineUpdate  # Replace with your desired branch name
+                displayName: 'Checkout to specific branch'
               - task: NodeTool@0
                 displayName: "Using Node.js"
                 inputs:
