@@ -64,7 +64,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
 
   const onSelectTemplate = () => {
     LoggerService().log({
-      level: LogEntryLevel.Trace,
+      level: LogEntryLevel.Verbose,
       area: 'Templates.TemplateCard',
       message: 'Template is selected',
       args: [templateName, workflowAppName],
@@ -189,9 +189,9 @@ export const BlankWorkflowTemplateCard = () => {
 
   const onBlankWorkflowClick = () => {
     LoggerService().log({
-      level: LogEntryLevel.Trace,
+      level: LogEntryLevel.Verbose,
       area: 'Templates.TemplateCard',
-      message: 'Create new workflow is selected',
+      message: 'Blank workflow is selected',
       args: [workflowAppName],
     });
     TemplateService().onAddBlankWorkflow();
