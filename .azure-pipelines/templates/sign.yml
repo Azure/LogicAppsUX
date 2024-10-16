@@ -21,7 +21,7 @@ steps:
     name: package
     displayName: "\U0001F449 Get extension info from package.json"
 
-  - script: npx @vscode/vsce@latest generate-manifest -i $(package.name)-$(package.version).vsix -o $(Build.SourcesDirectory)/extension.manifest
+  - script: npx @vscode/vsce generate-manifest -i vscode-azurelogicapps-$(package.version).vsix -o $(Build.SourcesDirectory)/extension.manifest
     condition: eq(variables['signprojExists'], True)
     displayName: "\U0001F449 Generate extension manifest"
 

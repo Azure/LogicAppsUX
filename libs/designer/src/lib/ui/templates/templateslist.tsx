@@ -1,6 +1,6 @@
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { TemplateCard } from './cards/templateCard';
+import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
 import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
@@ -47,6 +47,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div>
           <div className="msla-templates-list">
+            <BlankWorkflowTemplateCard />
             {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
               <TemplateCard key={templateName} templateName={templateName} />
             ))}

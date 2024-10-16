@@ -69,6 +69,7 @@ describe('ui/settings/customTokenField', () => {
       tokenEditor: true,
       onCastParameter: vi.fn(),
       getTokenPicker: vi.fn(),
+      tokenMapping: {},
       editor: 'internal-custom-editor',
       editorOptions: {
         EditorComponent: MyCustomEditor,
@@ -90,6 +91,7 @@ describe('ui/settings/customTokenField', () => {
         value: props.value,
         onValueChange: props.onValueChange,
         renderDefaultEditor: expect.any(Function),
+        tokenMapping: props.tokenMapping,
       });
 
       const defaultEditorParams: IRenderDefaultEditorParams = {
@@ -129,6 +131,7 @@ describe('ui/settings/customTokenField', () => {
         onValueChange: props.onValueChange,
         renderDefaultEditor: expect.any(Function),
         disabled: props.readOnly,
+        tokenMapping: props.tokenMapping,
       });
     });
   });
