@@ -81,8 +81,8 @@ extends:
                   targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
                   artifactName: Build ${{ parameters.publishVersion }}
             steps:
-              - checkout: self
-                ref: refs/heads/pipelineUpdate  # specify your branch here
+              - script: git checkout pipelineUpdate  # Replace with your desired branch name
+                displayName: 'Checkout to specific branch'
               - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
               - template: .azure-pipelines/templates/build.yml@LogicAppsUX
               - template: .azure-pipelines/templates/package.yml@LogicAppsUX
