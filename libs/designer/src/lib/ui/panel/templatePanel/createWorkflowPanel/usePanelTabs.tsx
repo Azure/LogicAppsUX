@@ -9,10 +9,16 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
-import { validateConnections, validateWorkflowsBasicInfo, validateParameters } from '../../../../core/state/templates/templateSlice';
-import { LogEntryLevel, LoggerService, Status } from '@microsoft/logic-apps-shared';
+import {
+  validateConnections,
+  validateWorkflowsBasicInfo,
+  validateParameters,
+  clearTemplateDetails,
+} from '../../../../core/state/templates/templateSlice';
+import { LogEntryLevel, LoggerService, Status, TemplateService } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
 import type { CreateWorkflowHandler } from '../../../templates';
+import { closePanel } from '../../../../core/state/templates/panelSlice';
 
 export const useCreateWorkflowPanelTabs = ({
   isMultiWorkflowTemplate,
@@ -45,7 +51,6 @@ export const useCreateWorkflowPanelTabs = ({
     workflows: state.template.workflows,
   }));
 
-  const [isCreated, setIsCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const connectionsExist = useMemo(() => Object.keys(templateConnections).length > 0, [templateConnections]);
@@ -111,7 +116,6 @@ export const useCreateWorkflowPanelTabs = ({
     });
     try {
       await onCreateClick();
-      setIsCreated(true);
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Templates.createTab',
@@ -119,6 +123,11 @@ export const useCreateWorkflowPanelTabs = ({
         args: [`isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`, templateName, workflowAppName],
       });
       LoggerService().endTrace(logId, { status: Status.Success });
+
+      dispatch(closePanel());
+      dispatch(clearTemplateDetails());
+
+      TemplateService()?.openBladeAfterCreate(isMultiWorkflowTemplate ? undefined : (Object.values(workflows)[0].workflowName as string));
     } catch (e: any) {
       setErrorMessage(e.message);
       LoggerService().log({
@@ -171,10 +180,8 @@ export const useCreateWorkflowPanelTabs = ({
 
   const reviewCreateTabItem = useMemo(
     () => ({
-      ...reviewCreateTab(intl, dispatch, !isMultiWorkflowTemplate, createWorkflowFromTemplate, {
-        workflowName: existingWorkflowName ?? Object.values(workflows)?.[0]?.workflowName,
+      ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
         isCreating,
-        isCreated,
         errorMessage,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
@@ -187,12 +194,8 @@ export const useCreateWorkflowPanelTabs = ({
     [
       intl,
       dispatch,
-      isMultiWorkflowTemplate,
       createWorkflowFromTemplate,
-      existingWorkflowName,
-      workflows,
       isCreating,
-      isCreated,
       errorMessage,
       nameStateTabItem.hasError,
       connectionsError,
