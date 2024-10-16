@@ -172,13 +172,9 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
 export const BlankWorkflowTemplateCard = () => {
   const intl = useIntl();
 
+  const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
+
   const intlText = {
-    TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
-    NO_CONNECTORS: intl.formatMessage({
-      defaultMessage: 'This template does not have connectors',
-      description: 'Accessibility text to inform user this template does not contain connectors',
-      id: 'aI9W5L',
-    }),
     BLANK_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Blank workflow',
       description: 'Title text for the card that lets users start from a blank workflow',
@@ -192,6 +188,12 @@ export const BlankWorkflowTemplateCard = () => {
   };
 
   const onBlankWorkflowClick = () => {
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'Templates.TemplateCard',
+      message: 'Create new workflow is selected',
+      args: [workflowAppName],
+    });
     TemplateService().onAddBlankWorkflow();
   };
 
