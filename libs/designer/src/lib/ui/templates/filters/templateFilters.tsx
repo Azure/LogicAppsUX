@@ -92,22 +92,22 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         description: 'All templates tab',
       }),
     },
-    // {
-    //   value: 'Workflow',
-    //   displayName: intl.formatMessage({
-    //     defaultMessage: 'Workflows',
-    //     id: 'fxue5l',
-    //     description: 'Workflows only templates tab',
-    //   }),
-    // },
-    // {
-    //   value: 'Accelerator',
-    //   displayName: intl.formatMessage({
-    //     defaultMessage: 'Accelerators',
-    //     id: 'A5/UwX',
-    //     description: 'Accelerators only templates tab',
-    //   }),
-    // },
+    {
+      value: 'Workflow',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Workflows',
+        id: 'fxue5l',
+        description: 'Workflows only templates tab',
+      }),
+    },
+    {
+      value: 'Accelerator',
+      displayName: intl.formatMessage({
+        defaultMessage: 'Accelerators',
+        id: 'A5/UwX',
+        description: 'Accelerators only templates tab',
+      }),
+    },
   ];
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
