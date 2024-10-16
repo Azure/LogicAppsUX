@@ -7,6 +7,8 @@ import constants from '../../common/constants';
 import { updateStaticResults } from '../state/operation/operationMetadataSlice';
 import type { AnyAction } from '@reduxjs/toolkit';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { replaceId } from '../state/workflow/workflowSlice';
+import { transformOperationTitle } from './graph';
 
 export const getCompressedStateFromRootState = (rootState: RootState): Uint8Array => {
   const partialRootState: UndoRedoPartialRootState = {
@@ -69,6 +71,11 @@ export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLi
   // For parameter update, store state only when the value for parameter has changed.
   // Other parameter fields such as validation can change on non-user actions too resulting in extra stored states.
   if (action.type === updateParameterAndDependencies.pending.type && !haveInputParametersChangedValue(action.meta.arg)) {
+    return true;
+  }
+
+  // Skip saving state if action rename results in same name/id
+  if (action.type === replaceId.type && action.payload.originalId === transformOperationTitle(action.payload.newId)) {
     return true;
   }
 
