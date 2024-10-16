@@ -18,7 +18,7 @@ describe('undo redo slice reducers', () => {
     let mockInitialState: StateHistory = {
       past: [],
       future: [],
-      stateHistoryItemIndex: -1,
+      undoRedoClickToggle: 0,
     };
 
     const getMockPayload = (mockState: StateHistoryItem) => {
@@ -47,7 +47,7 @@ describe('undo redo slice reducers', () => {
     mockInitialState = {
       past: [mockCompressedState2, mockCompressedState3],
       future: [mockCompressedState4],
-      stateHistoryItemIndex: 2,
+      undoRedoClickToggle: 2,
     };
     state = reducer(mockInitialState, saveStateToHistory(getMockPayload(mockCompressedState5)));
     expect(state.past).toEqual([mockCompressedState3, mockCompressedState5]);
@@ -58,14 +58,14 @@ describe('undo redo slice reducers', () => {
     const mockInitialState = {
       past: [mockCompressedState1, mockCompressedState2],
       future: [mockCompressedState3],
-      stateHistoryItemIndex: -1,
+      undoRedoClickToggle: 0,
     };
 
     // Current state gets put into future and latest past state gets removed to be used for current state
     let state = reducer(mockInitialState, updateStateHistoryOnUndoClick({ compressedState: mockCompressedState4.compressedState }));
     expect(state.past).toEqual([mockCompressedState1]);
     expect(state.future).toEqual([mockCompressedState4, mockCompressedState3]);
-    expect(state.stateHistoryItemIndex).toEqual(1);
+    expect(state.undoRedoClickToggle).toEqual(1);
     expect(state.currentEditedPanelNode).toEqual('Initialize_Variable');
     expect(state.currentEditedPanelTab).toEqual(constants.PANEL_TAB_NAMES.PARAMETERS);
 
@@ -73,7 +73,7 @@ describe('undo redo slice reducers', () => {
     state = reducer(state, updateStateHistoryOnUndoClick({ compressedState: mockCompressedState2.compressedState }));
     expect(state.past).toEqual([]);
     expect(state.future).toEqual([mockCompressedState2, mockCompressedState4, mockCompressedState3]);
-    expect(state.stateHistoryItemIndex).toEqual(0);
+    expect(state.undoRedoClickToggle).toEqual(0);
     expect(state.currentEditedPanelNode).toEqual(undefined);
     expect(state.currentEditedPanelTab).toEqual(undefined);
   });
@@ -82,14 +82,14 @@ describe('undo redo slice reducers', () => {
     const mockInitialState = {
       past: [mockCompressedState1],
       future: [mockCompressedState2, mockCompressedState3],
-      stateHistoryItemIndex: 2,
+      undoRedoClickToggle: 0,
     };
 
     // Current state gets put into past and first future state gets removed to be used for current state
     let state = reducer(mockInitialState, updateStateHistoryOnRedoClick({ compressedState: mockCompressedState4.compressedState }));
     expect(state.past).toEqual([mockCompressedState1, mockCompressedState4]);
     expect(state.future).toEqual([mockCompressedState3]);
-    expect(state.stateHistoryItemIndex).toEqual(2);
+    expect(state.undoRedoClickToggle).toEqual(1);
     expect(state.currentEditedPanelNode).toEqual('Initialize_Variable');
     expect(state.currentEditedPanelTab).toEqual(constants.PANEL_TAB_NAMES.PARAMETERS);
 
@@ -97,7 +97,7 @@ describe('undo redo slice reducers', () => {
     state = reducer(state, updateStateHistoryOnRedoClick({ compressedState: mockCompressedState2.compressedState }));
     expect(state.past).toEqual([mockCompressedState1, mockCompressedState4, mockCompressedState2]);
     expect(state.future).toEqual([]);
-    expect(state.stateHistoryItemIndex).toEqual(3);
+    expect(state.undoRedoClickToggle).toEqual(0);
     expect(state.currentEditedPanelNode).toEqual(undefined);
     expect(state.currentEditedPanelTab).toEqual(undefined);
   });
