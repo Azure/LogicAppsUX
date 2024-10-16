@@ -172,7 +172,7 @@ export const useCreateWorkflowPanelTabs = ({
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, !isMultiWorkflowTemplate, createWorkflowFromTemplate, {
-        workflowName: existingWorkflowName ?? Object.values(workflows)?.[0]?.workflowName ?? '',
+        workflowName: existingWorkflowName ?? Object.values(workflows)?.[0]?.workflowName,
         isCreating,
         isCreated,
         errorMessage,

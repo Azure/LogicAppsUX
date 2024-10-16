@@ -133,7 +133,7 @@ export const reviewCreateTab = (
     isPrimaryButtonDisabled,
     previousTabId,
   }: {
-    workflowName: string;
+    workflowName: string | undefined;
     isCreating: boolean;
     isCreated: boolean;
     errorMessage: string | undefined;
