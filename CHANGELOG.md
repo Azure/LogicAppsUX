@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.109.0](https://github.com/Azure/LogicAppsUX/compare/v4.108.0...v4.109.0) (2024-10-16)
+
+
+### Features
+
+* **all:** Vitest upgrade and extension configuration ([#5862](https://github.com/Azure/LogicAppsUX/issues/5862)) ([ede5fad](https://github.com/Azure/LogicAppsUX/commit/ede5fad98abebeaddaabaf46e2ce0c11ded64649))
+* **Designer:** Add option for multiselect and dropdown for dynamic parameter ([#5863](https://github.com/Azure/LogicAppsUX/issues/5863)) ([7d743ec](https://github.com/Azure/LogicAppsUX/commit/7d743ec33d83802c53c37aa8894c82c838fff627))
+* **Templates:** Add from Blank Workflow Card + Updated TemplateService ([#5880](https://github.com/Azure/LogicAppsUX/issues/5880)) ([da462f4](https://github.com/Azure/LogicAppsUX/commit/da462f464f4b3ff23a7b1fa2d0e81604ae12cc74))
+
+
+### Bug Fixes
+
+* **Designer:** Custom connector triggers now show in search ([#5885](https://github.com/Azure/LogicAppsUX/issues/5885)) ([e6952ff](https://github.com/Azure/LogicAppsUX/commit/e6952ff24053b7acd0ac99c4ed35ce65c63983a3))
+* **Designer:** Remove type from experimentation ([#5881](https://github.com/Azure/LogicAppsUX/issues/5881)) ([0f8fc6c](https://github.com/Azure/LogicAppsUX/commit/0f8fc6ce065379f0c2877b5b22bdb7b7d9776fea))
+* **templates:** Auto close panel on workflow successful creation ([#5889](https://github.com/Azure/LogicAppsUX/issues/5889)) ([7864f5d](https://github.com/Azure/LogicAppsUX/commit/7864f5d4416966c76ef8958a9986c265a54db3de))
+
 ## [4.108.0](https://github.com/Azure/LogicAppsUX/compare/v4.107.0...v4.108.0) (2024-10-14)
 
 
