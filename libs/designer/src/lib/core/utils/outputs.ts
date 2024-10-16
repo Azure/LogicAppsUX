@@ -200,7 +200,12 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
     }
 
     const manifestItems: OpenAPIV2.SchemaObject | undefined = clone(manifestSection.items);
-    const updatedManifestItems = isAliasPathParsingEnabled ? getUpdatedAliasInItemProperties(manifestItems) : manifestItems;
+
+    let updatedManifestItems = manifestItems;
+    if (isAliasPathParsingEnabled && updatedManifestItems) {
+      updatedManifestItems =
+        OperationManifestService().getUpdatedOutputsForSplitOn?.(manifestItems) || getUpdatedAliasInItemProperties(manifestItems);
+    }
 
     updatedManifest.properties.outputs = {
       properties: {
