@@ -183,7 +183,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
-        await this.reloadWebviewPanel(this.getExistingPanel());
         break;
       }
       case ExtensionCommand.addConnection: {
