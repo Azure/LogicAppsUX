@@ -10,9 +10,9 @@ namespace <%= LogicAppName %>.Tests
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Unit test class for testing the <%= WorkflowName %> workflow.
-    /// This class is auto-generated when the user selects to create a unit test from a workflow run in VS Code.
-    /// The user can edit this class to modify the test, mock data, and assertions as necessary.
+    /// The unit test class for testing the workflow named <%= WorkflowName %>.
+    /// This class is automatically generated when you choose to create a unit test from a workflow run in Visual Studio Code.
+    /// You can edit this class to modify the test, mock data, and assertions as necessary.
     /// </summary>
     [TestClass]
     public class <%= UnitTestName %>
@@ -43,14 +43,14 @@ namespace <%= LogicAppName %>.Tests
         public TriggerMock triggerMock;
 
         /// <summary>
-        /// The mocked data for actions generated from a workflow run.
+        /// The mocked data for the actions generated from a workflow run.
         /// </summary>
         public Dictionary<string, ActionMock> actionMocks;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="<%= UnitTestName %>" /> class.
+        /// Initializes a new instance of the class named <see cref="<%= UnitTestName %>" />.
         /// This constructor loads the necessary paths for the workflow, connections, parameters, and local settings JSON files.
-        /// It also loads the mock data from the <%= UnitTestName %>-mock.json file.
+        /// The constructor also loads the mock data from the file named <%= UnitTestName %>-mock.json.
         /// </summary>
         public <%= UnitTestName %>()
         {
@@ -59,21 +59,21 @@ namespace <%= LogicAppName %>.Tests
             this.parametersPath = @"../<%= logicAppName %>/parameters.json";
             this.localSettingsPath = @"../<%= logicAppName %>/local.settings.json";
 
-            // Load the mock data from the <%= UnitTestName %>-mock.json file.
+            // Load the mock data from the file named <%= UnitTestName %>-mock.json.
             var mockData = JObject.Parse(File.ReadAllText(@"<%= UnitTestName %>-mock.json"));
             this.triggerMock = mockData["triggerMocks"].ToObject<Dictionary<string, TriggerMock>>().FirstOrDefault().Value;
             this.actionMocks = mockData["actionMocks"].ToObject<Dictionary<string, ActionMock>>();
         }
 
         /// <summary>
-        /// Sample unit test for executing the <%= WorkflowName %> workflow.
-        /// This method demonstrates how to set up mocks, execute the workflow, and assert the outcome.
+        /// A sample unit test for executing the workflow named <%= WorkflowName %>.
+        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
         public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS()
         {
             // PREPARE Mock
-            // Set up mock data for the action '<actionName>'.
+            // Set up mock data for the action named '<actionName>'.
             var actionMocks = this.actionMocks;
             actionMocks["<actionName>"] = new ActionMock(
                 "<actionName>", 
@@ -82,12 +82,12 @@ namespace <%= LogicAppName %>.Tests
             );
 
             // ACT 
-            // Create an instance of UnitTestExecutor and run the workflow with the mock data.
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
             var executor = new UnitTestExecutor(this.workflowDefinitionPath, this.connectionsPath, this.parametersPath, this.localSettingsPath);
             var testRun = await executor.RunWorkflowAsync(this.triggerMock, actionMocks).ConfigureAwait(false);
 
             // ASSERT
-            // Verify that the workflow executed successfully and that the status is 'Succeeded'.
+            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
             Assert.IsNotNull(testRun);
             Assert.AreEqual(TestWorkflowStatus.Succeeded, testRun.Status);
         }
@@ -95,24 +95,24 @@ namespace <%= LogicAppName %>.Tests
         #region Mock generator helpers
 
         /// <summary>
-        /// Callback method to dynamically generate mocked data for the action '<actionName>'.
-        /// This method can be modified to return different mock outputs based on the test scenario.
+        /// The callback method to dynamically generate mocked data for the action named '<actionName>'.
+        /// You can modify this method to return different mock outputs based on the test scenario.
         /// </summary>
         /// <param name="context">The test execution context that contains information about the current test run.</param>
         public JToken Mock<actionName>OutputCallback(TestExecutionContext context)
         {
-            // Sample mock data 1: Replace <Your Test JSON Value> with the appropriate mock data for the test.
+            // Sample mock data 1: Replace <your-test-JSON-value> with the appropriate mock data for the test.
             // return JObject.Parse(@"
             // {
             //     'statusCode': '200',
             //     'body': {
-            //         <Your Test JSON Value>
+            //         <your-test-JSON value>
             //     }
             // }");
 
-            // Sample mock data 2: Modify existing mocked data for <actionName> dynamically.
+            // Sample mock data 2: Modify the existing mocked data dynamically for <actionName>.
             // var mockDataToModify = this.actionMocks["<actionName>"];
-            // mockDataToModify.Outputs["body"]["<property1Name>"] = "<Your Test String Value>";
+            // mockDataToModify.Outputs["body"]["<property1Name>"] = "<your-test-string-value>";
             // return mockDataToModify.Outputs;
         }
 

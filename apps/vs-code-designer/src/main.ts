@@ -66,8 +66,8 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
-    // comment out test explorer and removed import for codeful approach
-    //await prepareTestExplorer(context, activateContext);
+    // Comment out Test Explorer and removed import for codeful approach
+    // await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();

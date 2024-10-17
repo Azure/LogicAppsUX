@@ -153,7 +153,7 @@ async function generateCodefulUnitTest(
     await unzipLogicAppArtifacts(zipBuffer, unitTestFolderPath);
 
     ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
-    context.telemetry.properties.processStage = 'Files Unzipped';
+    context.telemetry.properties.processStage = 'Files unzipped';
     await createCsFile(unitTestFolderPath, unitTestName, workflowName, logicAppName);
 
     // Generate the .csproj file if it doesn't exist
@@ -221,7 +221,7 @@ async function createCsprojFile(csprojFilePath: string, logicAppName: string): P
  * @param {string} unitTestFolderPath - The path to the unit test folder.
  * @param {string} unitTestName - The name of the unit test.
  * @param {string} workflowName - The name of the workflow.
- * @param {string} logicAppName - The name of the Logic App.
+ * @param {string} logicAppName - The name of the logic app.
  */
 async function createCsFile(unitTestFolderPath: string, unitTestName: string, workflowName: string, logicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
