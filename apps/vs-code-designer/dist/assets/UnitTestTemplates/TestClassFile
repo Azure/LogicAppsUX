@@ -38,7 +38,7 @@ namespace <%= LogicAppName %>.Tests
         private string localSettingsPath;
 
         /// <summary>
-        /// The mocked data for the trigger generated from a workflow run.
+        /// The mocked trigger outputs that are generated from a workflow run.
         /// </summary>
         public TriggerMock triggerMock;
 
