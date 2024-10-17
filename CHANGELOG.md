@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.110.0](https://github.com/Azure/LogicAppsUX/compare/v4.109.0...v4.110.0) (2024-10-17)
+
+
+### Bug Fixes
+
+* **Designer:** Fixing issue with managed identity connection creation ([#5897](https://github.com/Azure/LogicAppsUX/issues/5897)) ([4b92feb](https://github.com/Azure/LogicAppsUX/commit/4b92feb5c10b53440266a8f705ebf931dcb63189))
+* **vscode:** Remove extra reload webview when save ([#5888](https://github.com/Azure/LogicAppsUX/issues/5888)) ([9660af1](https://github.com/Azure/LogicAppsUX/commit/9660af1b741d7191ccd727fdc2954b85ce1a94f6))
+
 ## [4.109.0](https://github.com/Azure/LogicAppsUX/compare/v4.108.0...v4.109.0) (2024-10-16)
 
 
