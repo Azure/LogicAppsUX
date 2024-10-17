@@ -66,14 +66,15 @@ export const PanelHeaderTitle = ({
   };
 
   const onTitleBlur = (): void => {
-    handleTitleUpdate(newTitleValue || '');
     if (errorMessage) {
       onChange(validValue || '');
       setNewTitleValue(validValue);
       setErrorMessage('');
+      handleTitleUpdate(validValue || '');
     } else {
       onBlur?.(titleBeforeBlur);
       setTitleBeforeBlur(newTitleValue ?? '');
+      handleTitleUpdate(newTitleValue ?? '');
     }
   };
 

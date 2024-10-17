@@ -50,6 +50,7 @@ import type {
   ChangeState,
 } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
+import { type AppDispatch, storeStateToUndoRedoHistory } from '../../core';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -224,7 +225,7 @@ const Setting = ({
   isReadOnly,
 }: { id?: string; nodeId: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   const intl = useIntl();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
 
@@ -332,6 +333,7 @@ const Setting = ({
     };
 
     const removeParamCallback = () => {
+      dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
       dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
     };
 
@@ -391,7 +393,9 @@ const Setting = ({
             onItemSelectionChanged={(parameterId, value) => {
               dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value }));
             }}
-            onShowAllClick={() =>
+            onDismiss={() => dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }))}
+            onShowAllClick={() => {
+              dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
               conditionallyInvisibleSettings.forEach((setting) =>
                 dispatch(
                   updateParameterConditionalVisibility({
@@ -401,9 +405,10 @@ const Setting = ({
                     value: true,
                   })
                 )
-              )
-            }
-            onHideAllClick={() =>
+              );
+            }}
+            onHideAllClick={() => {
+              dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
               allConditionalSettings.forEach(
                 (setting) =>
                   (setting.settingProp as any).conditionalVisibility &&
@@ -415,8 +420,8 @@ const Setting = ({
                       value: false,
                     })
                   )
-              )
-            }
+              );
+            }}
             addAllButtonText={addAllButtonText}
             addAllButtonTooltip={addAllButtonTooltip}
             addAllButtonEnabled={conditionallyInvisibleSettings.length > 0}

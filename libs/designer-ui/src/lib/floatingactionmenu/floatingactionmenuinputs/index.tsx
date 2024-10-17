@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import constants from '../../constants';
 import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType } from '../../dynamicallyaddedparameter';
 import { DynamicallyAddedParameter } from '../../dynamicallyaddedparameter';
@@ -80,7 +81,8 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
     const { onChange } = props;
     if (onChange) {
       const value = getEmptySchemaValueSegmentForInitialization(!!props.useStaticInputs, props.isRequestApiConnectionTrigger);
-      onChange({ value });
+      // Update node parameters in root state but skip saving state for undo/redo since add action already saved a state
+      onChange({ value }, /* skipStateSave */ true);
     }
   }
 
@@ -209,15 +211,13 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
   };
 
   const onRenderValueField = (schemaKey: string) => {
-    const onDescriptionChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newPropertyValue?: string) => {
-      e.preventDefault();
-      onDynamicallyAddedParameterChange(schemaKey, 'description', newPropertyValue);
-    };
-
-    const modelIndex = dynamicParameterModels.findIndex((model) => model.schemaKey === schemaKey);
-    const description = dynamicParameterModels[modelIndex].properties.description;
-
-    return <TextField className="msla-dynamic-added-param-value-TextField" value={description} onChange={onDescriptionChange} />;
+    return (
+      <ValueField
+        schemaKey={schemaKey}
+        onDynamicallyAddedParameterChange={onDynamicallyAddedParameterChange}
+        dynamicParameterModels={dynamicParameterModels}
+      />
+    );
   };
 
   const stringListValues = (schemaKey: string): string[] => {
@@ -336,5 +336,34 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
         ) : null;
       })}
     </FloatingActionMenuBase>
+  );
+};
+
+const ValueField = (props: {
+  dynamicParameterModels: DynamicallyAddedParameterInputsModel[];
+  schemaKey: string;
+  onDynamicallyAddedParameterChange: (schemaKey: string, propertyName: string, newPropertyValue?: string) => void;
+}): JSX.Element => {
+  const { dynamicParameterModels, schemaKey, onDynamicallyAddedParameterChange } = props;
+  const modelIndex = dynamicParameterModels.findIndex((model) => model.schemaKey === schemaKey);
+  const description = dynamicParameterModels[modelIndex].properties.description;
+  const [valueField, setValueField] = useState(description);
+
+  const onDescriptionChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newPropertyValue?: string) => {
+    e.preventDefault();
+    setValueField(newPropertyValue ?? '');
+  };
+
+  const onDescriptionBlur = (): void => {
+    onDynamicallyAddedParameterChange(schemaKey, 'description', valueField);
+  };
+
+  return (
+    <TextField
+      className="msla-dynamic-added-param-value-TextField"
+      value={valueField}
+      onChange={onDescriptionChange}
+      onBlur={onDescriptionBlur}
+    />
   );
 };

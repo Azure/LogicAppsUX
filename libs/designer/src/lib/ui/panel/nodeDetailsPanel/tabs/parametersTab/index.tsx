@@ -245,7 +245,7 @@ const ParameterSection = ({
   );
 
   const onValueChange = useCallback(
-    (id: string, newState: ChangeState) => {
+    (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
@@ -284,6 +284,7 @@ const ParameterSection = ({
           nodeInputs,
           dependencies,
           operationDefinition,
+          skipStateSave,
         })
       );
     },
@@ -460,7 +461,7 @@ const ParameterSection = ({
           tokenMapping,
           nodeTitle,
           loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
-          onValueChange: (newState: ChangeState) => onValueChange(id, newState),
+          onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {

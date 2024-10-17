@@ -1,5 +1,5 @@
 import type { AppDispatch } from '../../../core';
-import { useNodeMetadata, useNodeDisplayName } from '../../../core';
+import { useNodeMetadata, useNodeDisplayName, storeStateToUndoRedoHistory } from '../../../core';
 import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
 import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
@@ -30,8 +30,10 @@ const DeleteModal = () => {
     const { type } = nodeData;
 
     if (type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {
+      dispatch(storeStateToUndoRedoHistory({ type: deleteOperation.pending }));
       dispatch(deleteOperation({ nodeId, isTrigger }));
     } else if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE) {
+      dispatch(storeStateToUndoRedoHistory({ type: deleteGraphNode.pending }));
       dispatch(
         deleteGraphNode({
           graphId: nodeId,
@@ -39,6 +41,7 @@ const DeleteModal = () => {
         })
       );
     } else if (type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
+      dispatch(storeStateToUndoRedoHistory({ type: deleteGraphNode.pending }));
       dispatch(
         deleteGraphNode({
           graphId: nodeId,

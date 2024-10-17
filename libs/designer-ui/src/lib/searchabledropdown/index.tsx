@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 export interface SearchableDropdownProps {
   dropdownProps: Pick<IDropdownProps, 'options'> & Partial<Omit<IDropdownProps, 'onChange' | 'onDismiss' | 'onRenderItem'>>;
   onItemSelectionChanged: (id: string, isSelected: boolean) => void;
+  onDismiss?: () => void;
   labelId?: string;
   searchPlaceholderText?: string;
   showSearchItemThreshold?: number;
@@ -16,6 +17,7 @@ export interface SearchableDropdownProps {
 export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   dropdownProps,
   onItemSelectionChanged,
+  onDismiss,
   searchPlaceholderText,
   showSearchItemThreshold: showFilterItemThreshold,
   className,
@@ -63,6 +65,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
         }
       }}
       onDismiss={() => {
+        onDismiss?.();
         conditionalVisibilityTempArray.forEach((parameterId) => {
           onItemSelectionChanged(parameterId, true);
         });

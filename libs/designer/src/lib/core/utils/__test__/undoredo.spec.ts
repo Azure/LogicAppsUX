@@ -11,6 +11,7 @@ import { updateParameterAndDependencies } from '../parameters/helper';
 import constants from '../../../common/constants';
 import { updateStaticResults } from '../../state/operation/operationMetadataSlice';
 import { undoablePanelActionTypes } from '../../state/undoRedo/undoRedoTypes';
+import { replaceId } from '../../state/workflow/workflowSlice';
 
 describe('undo redo utils', () => {
   it('should compress and decompress root state', () => {
@@ -75,17 +76,53 @@ describe('undo redo utils', () => {
     [0, true],
     [5, false],
   ])('should skip saving state to history based on limit', (input, expected) => {
-    expect(shouldSkipSavingStateToHistory({ type: 'mockActionType' }, input)).toBe(expected);
+    expect(shouldSkipSavingStateToHistory({ type: 'mockActionType' }, input, {})).toBe(expected);
+  });
+
+  it.each([
+    ['Send_email_1', 'Send email 1', true],
+    ['Send_email_1', 'Send_email_1', true],
+    ['Send email 1', 'Send email 2', false],
+  ])('should skip saving state if action title has not changed', (prevId, newId, expected) => {
+    expect(
+      shouldSkipSavingStateToHistory(
+        {
+          type: replaceId.type,
+          payload: { originalId: 'Send_email', newId },
+        },
+        5,
+        { Send_email: prevId }
+      )
+    ).toBe(expected);
   });
 
   it('should skip saving state if parameter values have not changed for parameter update action', () => {
-    expect(shouldSkipSavingStateToHistory(getAction(true), 5)).toBe(true);
-    expect(shouldSkipSavingStateToHistory(getAction(false), 5)).toBe(false);
-    expect(shouldSkipSavingStateToHistory({ type: 'addNode' }, 5)).toBe(false);
+    // Value changed
+    expect(shouldSkipSavingStateToHistory(getAction(true, false), 5, {})).toBe(false);
+
+    // Editor view model changed
+    expect(shouldSkipSavingStateToHistory(getAction(false, true), 5, {})).toBe(false);
+
+    // Value and editor view model didn't change
+    expect(shouldSkipSavingStateToHistory(getAction(false, false), 5, {})).toBe(true);
+
+    // Skip state save is specified in payload
+    expect(
+      shouldSkipSavingStateToHistory(
+        {
+          type: updateParameterAndDependencies.pending.type,
+          meta: { arg: { skipStateSave: true } },
+        },
+        5,
+        {}
+      )
+    ).toBe(true);
+
+    expect(shouldSkipSavingStateToHistory({ type: 'addNode' }, 5, {})).toBe(false);
   });
 });
 
-const getAction = (noChange: boolean) => {
+const getAction = (valueChange: boolean, editorViewModelChange: boolean) => {
   return {
     type: updateParameterAndDependencies.pending.type,
     meta: {
@@ -98,9 +135,10 @@ const getAction = (noChange: boolean) => {
             {
               id: '191111B9-4096-4829-A404-5ADB0B97F6E4',
               type: 'literal',
-              value: noChange ? 'Failed' : 'Succeeded',
+              value: valueChange ? 'Succeeded' : 'Failed',
             },
           ],
+          editorViewModel: editorViewModelChange ? 'mockEditorViewModel' : 'text',
         },
         isTrigger: false,
         operationInfo: {
@@ -139,6 +177,7 @@ const getAction = (noChange: boolean) => {
                       value: 'Failed',
                     },
                   ],
+                  editorViewModel: 'text',
                 },
               ],
             },

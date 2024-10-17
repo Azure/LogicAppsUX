@@ -220,6 +220,7 @@ export interface UpdateParameterAndDependenciesPayload {
   nodeInputs: NodeInputs;
   dependencies: NodeDependencies;
   operationDefinition?: any;
+  skipStateSave?: boolean;
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
