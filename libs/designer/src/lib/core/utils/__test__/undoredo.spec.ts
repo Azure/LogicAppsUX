@@ -76,34 +76,35 @@ describe('undo redo utils', () => {
     [0, true],
     [5, false],
   ])('should skip saving state to history based on limit', (input, expected) => {
-    expect(shouldSkipSavingStateToHistory({ type: 'mockActionType' }, input)).toBe(expected);
+    expect(shouldSkipSavingStateToHistory({ type: 'mockActionType' }, input, {})).toBe(expected);
   });
 
   it.each([
-    ['Send_email', 'Send email', true],
-    ['Send_email', 'Send_email', true],
-    ['Send email', 'Send email 2', false],
-  ])('should skip saving state if action title has not changed', (originalId, newId, expected) => {
+    ['Send_email_1', 'Send email 1', true],
+    ['Send_email_1', 'Send_email_1', true],
+    ['Send email 1', 'Send email 2', false],
+  ])('should skip saving state if action title has not changed', (prevId, newId, expected) => {
     expect(
       shouldSkipSavingStateToHistory(
         {
           type: replaceId.type,
-          payload: { originalId, newId },
+          payload: { originalId: 'Send_email', newId },
         },
-        5
+        5,
+        { Send_email: prevId }
       )
     ).toBe(expected);
   });
 
   it('should skip saving state if parameter values have not changed for parameter update action', () => {
     // Value changed
-    expect(shouldSkipSavingStateToHistory(getAction(true, false), 5)).toBe(false);
+    expect(shouldSkipSavingStateToHistory(getAction(true, false), 5, {})).toBe(false);
 
     // Editor view model changed
-    expect(shouldSkipSavingStateToHistory(getAction(false, true), 5)).toBe(false);
+    expect(shouldSkipSavingStateToHistory(getAction(false, true), 5, {})).toBe(false);
 
     // Value and editor view model didn't change
-    expect(shouldSkipSavingStateToHistory(getAction(false, false), 5)).toBe(true);
+    expect(shouldSkipSavingStateToHistory(getAction(false, false), 5, {})).toBe(true);
 
     // Skip state save is specified in payload
     expect(
@@ -112,11 +113,12 @@ describe('undo redo utils', () => {
           type: updateParameterAndDependencies.pending.type,
           meta: { arg: { skipStateSave: true } },
         },
-        5
+        5,
+        {}
       )
     ).toBe(true);
 
-    expect(shouldSkipSavingStateToHistory({ type: 'addNode' }, 5)).toBe(false);
+    expect(shouldSkipSavingStateToHistory({ type: 'addNode' }, 5, {})).toBe(false);
   });
 });
 

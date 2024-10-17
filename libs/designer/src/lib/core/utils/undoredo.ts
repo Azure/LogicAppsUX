@@ -62,7 +62,11 @@ export const getEditedPanelNode = (actionType: string, rootState: RootState): st
   return undefined;
 };
 
-export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLimit: number): boolean => {
+export const shouldSkipSavingStateToHistory = (
+  action: AnyAction,
+  stateHistoryLimit: number,
+  idReplacements: Record<string, string>
+): boolean => {
   // Skip saving state if state history limit is less than 1
   if (stateHistoryLimit < 1) {
     return true;
@@ -75,8 +79,10 @@ export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLi
   }
 
   // Skip saving state if action rename results in same name/id
-  if (action.type === replaceId.type && action.payload.originalId === transformOperationTitle(action.payload.newId)) {
-    return true;
+  if (action.type === replaceId.type) {
+    const previousId = idReplacements[action.payload.originalId];
+    const newId = transformOperationTitle(action.payload.newId);
+    return previousId === newId ? true : false;
   }
 
   return false;
