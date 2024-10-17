@@ -5,7 +5,6 @@ import { promptParameterizeConnections } from './app/commands/parameterizeConnec
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { prepareTestExplorer } from './app/tree/unitTestTree';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
@@ -67,7 +66,8 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext);
     verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
-    await prepareTestExplorer(context, activateContext);
+    // comment out test explorer and removed import for codeful approach
+    //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();

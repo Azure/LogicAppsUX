@@ -154,7 +154,7 @@ async function generateCodefulUnitTest(
 
     ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
     context.telemetry.properties.processStage = 'Files Unzipped';
-    await createCsFile(unitTestFolderPath, unitTestName, workflowName);
+    await createCsFile(unitTestFolderPath, unitTestName, workflowName, logicAppName);
 
     // Generate the .csproj file if it doesn't exist
     if (!(await fs.pathExists(csprojFilePath))) {
@@ -221,15 +221,19 @@ async function createCsprojFile(csprojFilePath: string, logicAppName: string): P
  * @param {string} unitTestFolderPath - The path to the unit test folder.
  * @param {string} unitTestName - The name of the unit test.
  * @param {string} workflowName - The name of the workflow.
- * @returns {Promise<void>} - A promise that resolves when the .cs file has been created.
+ * @param {string} logicAppName - The name of the Logic App.
  */
-async function createCsFile(unitTestFolderPath: string, unitTestName: string, workflowName: string): Promise<void> {
-  // Define the path to the template
+async function createCsFile(unitTestFolderPath: string, unitTestName: string, workflowName: string, logicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
   const csTemplateFileName = 'TestClassFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
+
   const templateContent = await fs.readFile(templatePath, 'utf-8');
-  const csContent = templateContent.replace(/<%= unitTestName %>/g, unitTestName).replace(/<%= workflowName %>/g, workflowName);
+  const csContent = templateContent
+    .replace(/<%= UnitTestName %>/g, unitTestName)
+    .replace(/<%= LogicAppName %>/g, logicAppName)
+    .replace(/<%= WorkflowName %>/g, workflowName);
+
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fs.writeFile(csFilePath, csContent);
 
