@@ -708,22 +708,22 @@
         },
         {
           "command": "azureLogicAppsStandard.createUnitTest",
-          "when": "resourceFilename==workflow.json",
+          "when": "false",
           "group": "navigation@4"
         },
         {
           "command": "azureLogicAppsStandard.openUnitTestResults",
-          "when": "resourceFilename=~/.unit-test.json/",
+          "when": "false",
           "group": "navigation@5"
         },
         {
           "command": "azureLogicAppsStandard.editUnitTest",
-          "when": "resourceFilename=~/.unit-test.json/",
+          "when": "false",
           "group": "navigation@4"
         },
         {
           "command": "azureLogicAppsStandard.runUnitTest",
-          "when": "resourceFilename=~/.unit-test.json/",
+          "when": "false",
           "group": "navigation@4"
         }
       ],
@@ -765,20 +765,20 @@
         {
           "command": "azureLogicAppsStandard.editUnitTest",
           "group": "inline@3",
-          "when": "testId=~/.unit-test.json/"
+          "when": "false"
         },
         {
           "command": "azureLogicAppsStandard.openUnitTestResults",
           "group": "inline@4",
-          "when": "testId=~/.unit-test.json/"
+          "when": "false"
         },
         {
           "command": "azureLogicAppsStandard.editUnitTest",
-          "when": "testId=~/.unit-test.json/"
+          "when": "false"
         },
         {
           "command": "azureLogicAppsStandard.openUnitTestResults",
-          "when": "testId=~/.unit-test.json/"
+          "when": "false"
         }
       ],
       "azureLogicAppsStandard.dataMapperMenu": [
