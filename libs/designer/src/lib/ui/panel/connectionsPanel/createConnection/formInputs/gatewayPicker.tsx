@@ -113,6 +113,7 @@ const GatewayPicker = (props: any) => {
     if (newVal?.optionValue === newGatewayUrl) {
       window.open(newGatewayUrl, '_blank');
       setSelectedGatewayOptions([newGatewayUrl]);
+      setGatewayValue(newVal.optionText);
     } else if (newVal?.optionText !== undefined && newVal?.optionValue !== undefined) {
       setSelectedGatewayOptions([newVal.optionValue]);
       setValue({ id: newVal?.optionValue });
