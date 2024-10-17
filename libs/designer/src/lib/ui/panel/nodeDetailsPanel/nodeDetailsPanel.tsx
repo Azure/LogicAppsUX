@@ -15,7 +15,12 @@ import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSel
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
-import { getCustomCodeFileName, getParameterFromName, ParameterGroupKeys } from '../../../core/utils/parameters/helper';
+import {
+  getCustomCodeFileName,
+  getParameterFromName,
+  ParameterGroupKeys,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
+} from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
@@ -48,10 +53,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
-  const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
+  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
     nodesMetadata: state.workflow.nodesMetadata,
     idReplacements: state.workflow.idReplacements,
+    operationInfo: state.operations.operationInfo[selectedNode],
   }));
 
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
@@ -268,7 +274,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         if (!collapsed) {
           Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
             inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
-              const validationErrors = validateParameter(parameter, parameter.value);
+              const validationErrors = validateParameter(
+                parameter,
+                parameter.value,
+                /* shouldValidateUnknownParameterAsError */ undefined,
+                shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+              );
               dispatch(
                 updateParameterValidation({
                   nodeId: selectedNode,
