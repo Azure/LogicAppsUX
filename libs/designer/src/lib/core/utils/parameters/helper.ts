@@ -164,6 +164,7 @@ import type {
   OpenAPIV2,
   OperationManifest,
   RecurrenceSetting,
+  OperationInfo,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
@@ -1735,7 +1736,11 @@ export const updateParameterAndDependencies = createAsyncThunk(
     } = actionPayload;
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
     const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
-    updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
+    updatedParameter.validationErrors = validateParameter(
+      updatedParameter,
+      updatedParameter.value,
+      shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+    );
     const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
 
     const parametersToUpdate = [
@@ -2458,7 +2463,8 @@ function fetchErrorWhenDependenciesNotReady(
 function getStringifiedValueFromEditorViewModel(
   parameter: ParameterInfo,
   isDefinitionValue: boolean,
-  idReplacements?: Record<string, string>
+  idReplacements?: Record<string, string>,
+  shouldEncodeBasedOnMetadata = true
 ): string | undefined {
   const { editor, editorOptions, editorViewModel } = parameter;
   switch (editor?.toLowerCase()) {
@@ -2473,12 +2479,14 @@ function getStringifiedValueFromEditorViewModel(
           const keyValue = parameterValueToString(
             { type: types[0], value: item.key, ...commonProperties } as any,
             isDefinitionValue,
-            idReplacements
+            idReplacements,
+            shouldEncodeBasedOnMetadata
           );
           const valueValue = parameterValueToString(
             { type: types[1], value: item.value, ...commonProperties } as any,
             isDefinitionValue,
-            idReplacements
+            idReplacements,
+            shouldEncodeBasedOnMetadata
           );
 
           if (keyValue || valueValue) {
@@ -2493,7 +2501,16 @@ function getStringifiedValueFromEditorViewModel(
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
         ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat, idReplacements)
-        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue, idReplacements));
+        : JSON.stringify(
+            recurseSerializeCondition(
+              parameter,
+              editorViewModel.items,
+              isDefinitionValue,
+              idReplacements,
+              /* errors */ undefined,
+              shouldEncodeBasedOnMetadata
+            )
+          );
     case constants.EDITOR.FLOATINGACTIONMENU: {
       if (!editorViewModel || editorOptions?.menuKind !== FloatingActionMenuKind.outputs) {
         return undefined;
@@ -2574,7 +2591,8 @@ export const recurseSerializeCondition = (
   editorViewModel: any,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>,
-  errors?: string[]
+  errors?: string[],
+  shouldEncodeBasedOnMetadata = true
 ): any => {
   const returnVal: any = {};
   const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
@@ -2593,12 +2611,14 @@ export const recurseSerializeCondition = (
     const operand1String = parameterValueToString(
       { type: 'any', value: operand1, ...commonProperties } as any,
       isDefinitionValue,
-      idReplacements
+      idReplacements,
+      shouldEncodeBasedOnMetadata
     );
     const operand2String = parameterValueToString(
       { type: 'any', value: operand2, ...commonProperties } as any,
       isDefinitionValue,
-      idReplacements
+      idReplacements,
+      shouldEncodeBasedOnMetadata
     );
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
@@ -2636,7 +2656,7 @@ export const recurseSerializeCondition = (
       ];
     }
     returnVal[condition] = items.map((item: any) => {
-      return recurseSerializeCondition(parameter, item, isDefinitionValue, idReplacements, errors);
+      return recurseSerializeCondition(parameter, item, isDefinitionValue, idReplacements, errors, shouldEncodeBasedOnMetadata);
     });
   }
   return returnVal;
@@ -3437,7 +3457,8 @@ export function getInterpolatedExpression(expression: string, parameterType: str
 export function parameterValueToString(
   parameterInfo: ParameterInfo,
   isDefinitionValue: boolean,
-  idReplacements?: Record<string, string>
+  idReplacements?: Record<string, string>,
+  shouldEncodeBasedOnMetadata = true
 ): string | undefined {
   const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
     ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements ?? {})
@@ -3464,13 +3485,20 @@ export function parameterValueToString(
     }
   }
 
-  const valueFromEditor = getStringifiedValueFromEditorViewModel(remappedParameterInfo, isDefinitionValue, idReplacements);
+  const valueFromEditor = getStringifiedValueFromEditorViewModel(
+    remappedParameterInfo,
+    isDefinitionValue,
+    idReplacements,
+    shouldEncodeBasedOnMetadata
+  );
   if (valueFromEditor !== undefined) {
     return valueFromEditor;
   }
 
   const parameter = { ...remappedParameterInfo };
-  const requiresUrlEncoding = parameter.info.in === ParameterLocations.Path || parameter.info.encode !== undefined;
+  const requiresUrlEncoding = shouldEncodeBasedOnMetadata
+    ? parameter.info.in === ParameterLocations.Path || parameter.info.encode !== undefined
+    : parameter.info.in === ParameterLocations.Path;
   const value = parameter.value.filter((segment) => segment.value !== '');
 
   if (!value || !value.length) {
@@ -3892,14 +3920,15 @@ export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
 export function validateParameter(
   parameter: ParameterInfo,
   parameterValue: ValueSegment[],
-  shouldValidateUnknownParameterAsError = false
+  shouldValidateUnknownParameterAsError = false,
+  shouldEncodeBasedOnMetadata = true
 ): string[] {
   const parameterType = getInferredParameterType(parameterValue, parameter.type);
   const parameterValueString = parameterValueToStringWithoutCasting(parameterValue, /* forValidation */ true);
   const isJsonObject = parameterType === constants.SWAGGER.TYPE.OBJECT;
 
   return isJsonObject
-    ? validateJSONParameter(parameter, parameterValue)
+    ? validateJSONParameter(parameter, parameterValue, shouldEncodeBasedOnMetadata)
     : validateStaticParameterInfo(parameter, parameterValueString, shouldValidateUnknownParameterAsError);
 }
 
@@ -3956,4 +3985,9 @@ export function validateUntilAction(
       })
     );
   }
+}
+
+export function shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo: OperationInfo): boolean {
+  const { connectorId } = operationInfo ?? {};
+  return !(connectorId?.toLowerCase().includes('commondataservice'));
 }
