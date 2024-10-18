@@ -77,7 +77,7 @@ export class WorkflowUtility {
       for (const settingName of Object.keys(appsettings)) {
         const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
         // Don't replace if the setting value is a KeyVault reference
-        if (!settingValue || typeof settingValue !== 'string' || settingValue.startsWith('@Microsoft.KeyVault(')) {
+        if (typeof settingValue !== 'string' || settingValue?.startsWith('@Microsoft.KeyVault(')) {
           continue;
         }
         result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
