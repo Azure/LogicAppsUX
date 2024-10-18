@@ -3980,6 +3980,6 @@ export function validateUntilAction(
 }
 
 export function shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo: OperationInfo): boolean {
-  const { connectorId } = operationInfo;
-  return !connectorId.toLowerCase().includes('commondataservice');
+  const { connectorId } = operationInfo ?? {};
+  return !(connectorId?.toLowerCase().includes('commondataservice'));
 }
