@@ -120,7 +120,7 @@ export const useCreateWorkflowPanelTabs = ({
         level: LogEntryLevel.Verbose,
         area: 'Templates.createTab',
         message: isMultiWorkflowTemplate ? 'Multi workflows template is created' : 'Template is created',
-        args: [`isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`, templateName, workflowAppName],
+        args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`],
       });
       LoggerService().endTrace(logId, { status: Status.Success });
 
@@ -135,7 +135,7 @@ export const useCreateWorkflowPanelTabs = ({
         area: 'Templates.createTab',
         message: e.message,
         error: e instanceof Error ? e : undefined,
-        args: [`isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`, templateName, workflowAppName],
+        args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`],
       });
       LoggerService().endTrace(logId, { status: Status.Failure });
     }
