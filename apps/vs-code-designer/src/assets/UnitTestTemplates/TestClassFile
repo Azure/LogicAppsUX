@@ -18,22 +18,22 @@ namespace <%= LogicAppName %>.Tests
     public class <%= UnitTestName %>
     {
         /// <summary>
-        /// The relative path to workflow JSON file.
+        /// The relative path to the workflow JSON file.
         /// </summary>
         private string workflowDefinitionPath;
 
         /// <summary>
-        /// The relative path to connections JSON file.
+        /// The relative path to the connections JSON file.
         /// </summary>
         private string connectionsPath;
 
         /// <summary>
-        /// The relative path to parameters JSON file.
+        /// The relative path to the parameters JSON file.
         /// </summary>
         private string parametersPath;
 
         /// <summary>
-        /// The relative path to local settings JSON file.
+        /// The relative path to the local settings JSON file.
         /// </summary>
         private string localSettingsPath;
 
@@ -43,7 +43,7 @@ namespace <%= LogicAppName %>.Tests
         public TriggerMock triggerMock;
 
         /// <summary>
-        /// The mocked data for the actions generated from a workflow run.
+        /// The mocked actions' outputs that are generated from a workflow run.
         /// </summary>
         public Dictionary<string, ActionMock> actionMocks;
 
