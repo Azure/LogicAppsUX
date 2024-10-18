@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.7](https://github.com/Azure/LogicAppsUX/compare/v4.105.6...v4.105.7) (2024-10-18)
+
+
+### Bug Fixes
+
+* **templates:** Moving isMultiworkflow log to the end ([#5922](https://github.com/Azure/LogicAppsUX/issues/5922)) ([#5923](https://github.com/Azure/LogicAppsUX/issues/5923)) ([177b0f8](https://github.com/Azure/LogicAppsUX/commit/177b0f863a7ec5bb4686d661e5a8241f08b01272))
+
 ### [4.105.6](https://github.com/Azure/LogicAppsUX/compare/v4.105.5...v4.105.6) (2024-10-18)
 
 
