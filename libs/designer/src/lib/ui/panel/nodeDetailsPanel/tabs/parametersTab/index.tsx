@@ -26,6 +26,7 @@ import {
   parameterValueToString,
   remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
 } from '../../../../../core/utils/parameters/helper';
@@ -464,7 +465,8 @@ const ParameterSection = ({
                 suppressCasting,
               } as ParameterInfo,
               false,
-              idReplacements
+              idReplacements,
+              shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
             ) ?? '',
           getTokenPicker: (
             editorId: string,
