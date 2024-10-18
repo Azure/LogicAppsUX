@@ -4,6 +4,8 @@ import { uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { AppResource, AppResourceResolver } from '@microsoft/vscode-azext-utils/hostapi';
+import type { ContainerApp } from '@azure/arm-appcontainers';
+import { ResourceGraphClient } from '@azure/arm-resourcegraph';
 import { LogicAppResourceTree } from './app/tree/LogicAppResourceTree';
 import { logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
@@ -11,6 +13,8 @@ import { ext } from './extensionVariables';
 export class LogicAppResolver implements AppResourceResolver {
   private siteCacheLastUpdated = 0;
   private subscriptionLogicApps: Map<string, Site> = new Map<string, Site>();
+  private subscriptionHybridLogicApps: Map<string, ContainerApp> = new Map<string, ContainerApp>();
+
   private listLogicAppsTask: Promise<void> | undefined;
 
   public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<LogicAppResourceTree | undefined> {
@@ -38,12 +42,17 @@ export class LogicAppResolver implements AppResourceResolver {
    * @param subContext - The subscription context.
    * @returns A Promise that resolves to a Map of subscription sites.
    */
-  private async getSubscriptionLogicApps(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
+  private async getSubscriptionLogicApps(
+    context: IActionContext,
+    subContext: ISubscriptionContext
+  ): Promise<{ logicApps: Map<string, Site>; hybridLogicApps: Map<string, ContainerApp> }> {
     const client = await createWebSiteClient({ ...context, ...subContext });
+    const resourceGraphClient = new ResourceGraphClient(subContext.credentials);
 
     if (this.siteCacheLastUpdated < Date.now() - 1000 * 3) {
       this.siteCacheLastUpdated = Date.now();
-      this.listLogicAppsTask = new Promise((resolve, reject) => {
+
+      const promiseLogicApp: Promise<void> = new Promise((resolve, reject) => {
         this.subscriptionLogicApps.clear();
         uiUtils
           .listAllIterator(client.webApps.list())
@@ -59,9 +68,42 @@ export class LogicAppResolver implements AppResourceResolver {
             reject(reason);
           });
       });
+
+      const promiseHybridLogicApp: Promise<void> = new Promise((resolve, reject) => {
+        this.subscriptionHybridLogicApps.clear();
+        resourceGraphClient
+          .resources({
+            query: 'resources | where type =~ "microsoft.app/containerApps"',
+            subscriptions: [subContext.subscriptionId],
+          })
+          .then((listOfContainerSites) => {
+            const listOfHybridSites = listOfContainerSites.data.filter(
+              (site) => site.properties.managedEnvironmentId === null && site.extendedLocation
+            );
+            listOfHybridSites.forEach((item: ContainerApp) => {
+              this.subscriptionHybridLogicApps.set(item.id, item);
+            });
+            ext.subscriptionHybridLogicAppMap.set(subContext.subscriptionId, this.subscriptionHybridLogicApps);
+
+            resolve();
+          })
+          .catch((reason) => {
+            reject(reason);
+          });
+      });
+
+      this.listLogicAppsTask = new Promise((resolve, reject) => {
+        Promise.all([promiseLogicApp, promiseHybridLogicApp])
+          .then(() => {
+            resolve();
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     }
     await this.listLogicAppsTask;
-    return this.subscriptionLogicApps;
+    return { logicApps: this.subscriptionLogicApps, hybridLogicApps: this.subscriptionHybridLogicApps };
   }
 
   /**
@@ -80,7 +122,7 @@ export class LogicAppResolver implements AppResourceResolver {
       return logicAppMap.get(workflowId);
     }
     const subscriptionSites = await this.getSubscriptionLogicApps(context, subContext);
-    return subscriptionSites.get(workflowId);
+    return subscriptionSites.logicApps.get(workflowId);
   }
 
   /**
@@ -90,12 +132,19 @@ export class LogicAppResolver implements AppResourceResolver {
    * @param subContext - The subscription context.
    * @returns A promise that resolves to a map of logic app IDs and their corresponding sites.
    */
-  public async getAppResourceSiteBySubscription(context: IActionContext, subContext: ISubscriptionContext): Promise<Map<string, Site>> {
+  public async getAppResourceSiteBySubscription(
+    context: IActionContext,
+    subContext: ISubscriptionContext
+  ): Promise<{ logicApps: Map<string, Site>; hybridLogicApps: Map<string, ContainerApp> }> {
     const logicAppMap = ext.subscriptionLogicAppMap.get(subContext.subscriptionId);
+    const hybridLogicAppMap = ext.subscriptionHybridLogicAppMap.get(subContext.subscriptionId);
 
-    if (logicAppMap) {
-      return logicAppMap;
+    if (!logicAppMap || !hybridLogicAppMap) {
+      return await this.getSubscriptionLogicApps(context, subContext);
     }
-    return await this.getSubscriptionLogicApps(context, subContext);
+    return {
+      logicApps: logicAppMap,
+      hybridLogicApps: hybridLogicAppMap,
+    };
   }
 }

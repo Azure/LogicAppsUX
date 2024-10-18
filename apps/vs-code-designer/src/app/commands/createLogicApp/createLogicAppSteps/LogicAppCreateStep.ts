@@ -11,28 +11,30 @@ import {
   functionAppKind,
   logicAppKind,
   logicAppKindAppSetting,
+  sqlStorageConnectionStringKey,
   webhookRedirectHostUri,
   workerRuntimeKey,
 } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getStorageConnectionString } from '../../../utils/azure';
+import { createWebSiteClient } from '../../../utils/azureClients';
 import { getRandomHexString } from '../../../utils/fs';
 import { tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
-import type { NameValuePair, Site, SiteConfig, WebSiteManagementClient } from '@azure/arm-appservice';
-import { Site as modelSite } from '@azure/arm-appservice/dist';
-import { createWebSiteClient, WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
+import type { NameValuePair, SiteConfig, WebSiteManagementClient } from '@azure/arm-appservice';
+import type { Site as modelSite } from '@azure/arm-appservice/dist';
+import { WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
 import type { CustomLocation } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullOrEmptyValue, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension-logic-apps';
+import type { ILogicAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension-logic-apps';
 import { StorageOptions, FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
 
-export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizardContext> {
+export class LogicAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
   public priority = 140;
 
-  public async execute(context: IFunctionAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
+  public async execute(context: ILogicAppWizardContext, progress: Progress<{ message?: string; increment?: number }>): Promise<void> {
     context.telemetry.properties.newSiteOS = context.newSiteOS;
     context.telemetry.properties.newSiteRuntime = context.newSiteRuntime;
     context.telemetry.properties.planSkuTier = context.plan?.sku?.tier;
@@ -48,17 +50,17 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     context.site = await client.webApps.beginCreateOrUpdateAndWait(rgName, siteName, await this.getNewSite(context));
   }
 
-  public shouldExecute(context: IFunctionAppWizardContext): boolean {
-    return !context.site;
+  public shouldExecute(wizardContext: ILogicAppWizardContext): boolean {
+    return !wizardContext.useHybrid && !wizardContext.site;
   }
 
-  private async getNewSite(context: IFunctionAppWizardContext): Promise<Site> {
+  private async getNewSite(context: ILogicAppWizardContext): Promise<modelSite> {
     const locationName: string = (await LocationListStep.getLocation(context))?.name;
-    const site: Site = {
+    const site: modelSite = {
       name: context.newSiteName,
       kind: getSiteKind(context),
       location: locationName,
-      serverFarmId: context.plan?.id,
+      serverFarmId: context?.plan ? context.plan?.id : null,
       clientAffinityEnabled: false,
       siteConfig: await this.getNewSiteConfig(context),
       reserved: context.newSiteOS === WebsiteOS.linux,
@@ -72,8 +74,8 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     return site;
   }
 
-  private addCustomLocationProperties(site: Site, customLocation: CustomLocation): void {
-    modelSite.type.modelProperties.extendedLocation = {
+  private addCustomLocationProperties(site: modelSite, customLocation: CustomLocation): void {
+    site.type.modelProperties.extendedLocation = {
       serializedName: 'extendedLocation',
       type: {
         name: 'Composite',
@@ -97,13 +99,9 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     (site as any).extendedLocation = { name: customLocation.id, type: 'customLocation' };
   }
 
-  private async getNewSiteConfig(context: IFunctionAppWizardContext): Promise<SiteConfig> {
+  private async getNewSiteConfig(context: ILogicAppWizardContext): Promise<SiteConfig> {
     const newSiteConfig: SiteConfig = {};
     if (context.newSiteOS === WebsiteOS.linux) {
-      if (context.useConsumptionPlan) {
-        newSiteConfig.use32BitWorkerProcess = false;
-      }
-
       if (context.customLocation) {
         newSiteConfig.alwaysOn = true;
       }
@@ -116,7 +114,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     return newSiteConfig;
   }
 
-  private async getAppSettings(context: IFunctionAppWizardContext): Promise<NameValuePair[]> {
+  private async getAppSettings(context: ILogicAppWizardContext): Promise<NameValuePair[]> {
     const runtime: string = nonNullProp(context, 'newSiteRuntime');
     const runtimeWithoutVersion: string = getRuntimeWithoutVersion(runtime);
 
@@ -144,7 +142,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     if (context.storageType === StorageOptions.SQL) {
       appSettings.push(
         {
-          name: 'Workflows.Sql.ConnectionString',
+          name: sqlStorageConnectionStringKey,
           value: storageConnectionString.sqlConnectionStringValue,
         },
         {
@@ -218,7 +216,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
   }
 }
 
-function getSiteKind(context: IFunctionAppWizardContext): string {
+function getSiteKind(context: ILogicAppWizardContext): string {
   const kinds = [logicAppKind, functionAppKind];
 
   if (context.newSiteOS === WebsiteOS.linux) {
@@ -240,13 +238,13 @@ function getRuntimeVersion(runtime: string): string {
   return nonNullOrEmptyValue(runtime.split('|')[1].trim(), 'runtimeVersion');
 }
 
-function getNewFileShareName(siteName: string): string {
+export function getNewFileShareName(siteName: string): string {
   const randomLetters = 6;
   const maxFileShareNameLength = 63;
   return siteName.toLowerCase().substr(0, maxFileShareNameLength - randomLetters) + getRandomHexString(randomLetters);
 }
 
-async function getStorageConnectionStrings(context: IFunctionAppWizardContext): Promise<ConnectionStrings> {
+async function getStorageConnectionStrings(context: ILogicAppWizardContext): Promise<ConnectionStrings> {
   const connectionStrings: ConnectionStrings = {
     sqlConnectionStringValue: '',
     azureWebJobsStorageKeyValue: '',

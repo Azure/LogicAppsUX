@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "4.100.0",
+  "version": "4.110.0",
   "devDependencies": {
     "@biomejs/biome": "1.6.4",
     "@eslint/eslintrc": "^3.0.2",
@@ -17,8 +17,8 @@
     "@types/react-test-renderer": "^18.0.7",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "@vitest/coverage-istanbul": "^1.5.0",
-    "@vitest/ui": "^1.5.0",
+    "@vitest/coverage-istanbul": "^2.1.2",
+    "@vitest/ui": "^2.1.2",
     "D": "^1.0.0",
     "archiver": "^7.0.1",
     "child_process": "^1.0.2",
@@ -57,7 +57,7 @@
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-node-polyfills": "^0.21.0",
-    "vitest": "^1.5.0"
+    "vitest": "^2.1.2"
   },
   "engines": {
     "node": ">=18",
@@ -91,6 +91,7 @@
     "start:e2e": "turbo run e2e",
     "test:lib": "turbo run test:lib",
     "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack",

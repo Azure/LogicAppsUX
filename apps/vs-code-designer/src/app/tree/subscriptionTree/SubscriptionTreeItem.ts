@@ -2,15 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { projectLanguageSetting, workflowappRuntime } from '../../../constants';
+import { projectLanguageSetting, webProvider, workflowappRuntime, storageProvider, insightsProvider } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { ConnectEnvironmentStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/ConnectEnvironmentStep';
+import { HybridAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/HybridLogicAppsSteps/HybridAppCreateStep';
 import { LogicAppCreateStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppCreateStep';
 import { LogicAppHostingPlanStep } from '../../commands/createLogicApp/createLogicAppSteps/LogicAppHostingPlanStep';
 import { AzureStorageAccountStep } from '../../commands/deploy/storageAccountSteps/AzureStorageAccountStep';
-import { CustomLocationStorageAccountStep } from '../../commands/deploy/storageAccountSteps/CustomLocationStorageAccountStep';
 import { enableFileLogging } from '../../commands/logstream/enableFileLogging';
 import { createActivityContext } from '../../utils/activityUtils';
+import { createWebSiteClient } from '../../utils/azureClients';
 import { verifyDeploymentResourceGroup } from '../../utils/codeless/common';
 import { getRandomHexString } from '../../utils/fs';
 import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -24,12 +26,11 @@ import {
   AppInsightsCreateStep,
   AppInsightsListStep,
   AppKind,
-  AppServicePlanCreateStep,
-  createWebSiteClient,
   CustomLocationListStep,
   ParsedSite,
   SiteNameStep,
   WebsiteOS,
+  getWebLocations,
 } from '@microsoft/vscode-azext-azureappservice';
 import type { IAppServiceWizardContext, SiteClient } from '@microsoft/vscode-azext-azureappservice';
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
@@ -47,7 +48,7 @@ import {
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import type { ILogicAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
@@ -101,7 +102,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     context.telemetry.properties.projectRuntime = version;
     context.telemetry.properties.projectLanguage = language;
 
-    const wizardContext: IFunctionAppWizardContext = Object.assign(context, subscription.subscription, {
+    const wizardContext: ILogicAppWizardContext = Object.assign(context, subscription.subscription, {
       newSiteKind: AppKind.workflowapp,
       resourceGroupDeferLocationStep: true,
       version,
@@ -121,9 +122,11 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     const executeSteps: AzureWizardExecuteStep<IAppServiceWizardContext>[] = [];
 
     promptSteps.push(new SiteNameStep());
+
+    const locations = await getWebLocations(wizardContext);
+    CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
-    promptSteps.push(new ResourceGroupListStep());
 
     const storageAccountCreateOptions: INewStorageAccountDefaults = {
       kind: StorageAccountKind.Storage,
@@ -131,13 +134,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       replication: StorageAccountReplication.LRS,
     };
 
-    if (!context.advancedCreation) {
-      wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
-      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
-      executeSteps.push(new AppInsightsCreateStep());
-    } else if (wizardContext.customLocation) {
-      promptSteps.push(new CustomLocationStorageAccountStep(context));
-    } else {
+    if (context.advancedCreation) {
       promptSteps.push(
         new StorageAccountListStep(storageAccountCreateOptions, {
           kind: [StorageAccountKind.BlobStorage],
@@ -148,19 +145,28 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       );
       promptSteps.push(new AzureStorageAccountStep());
       promptSteps.push(new AppInsightsListStep());
+    } else {
+      wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
     }
-
-    executeSteps.push(new VerifyProvidersStep(['Microsoft.Web', 'Microsoft.Storage', 'Microsoft.Insights']));
-    executeSteps.push(new LogicAppCreateStep());
 
     const title: string = localize('functionAppCreatingTitle', 'Create new Logic App (Standard) in Azure');
     const wizard: AzureWizard<IAppServiceWizardContext> = new AzureWizard(wizardContext, { promptSteps, executeSteps, title });
 
     await wizard.prompt();
 
-    if (wizardContext.customLocation) {
+    if (wizardContext.useHybrid) {
+      executeSteps.push(new ConnectEnvironmentStep());
+      executeSteps.push(new HybridAppCreateStep());
+    } else {
+      executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
+      executeSteps.push(new AppInsightsCreateStep());
+      executeSteps.push(new VerifyProvidersStep([webProvider, storageProvider, insightsProvider]));
+      executeSteps.push(new LogicAppCreateStep());
+    }
+
+    if (wizardContext.customLocation && !wizardContext.useHybrid) {
       setSiteOS(wizardContext);
-      executeSteps.unshift(new AppServicePlanCreateStep());
+      executeSteps.pop();
     }
 
     wizardContext.activityTitle = localize(
@@ -200,21 +206,40 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     await wizard.execute();
+    let resolved: LogicAppResourceTree | null = null;
 
-    const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
-    const client: SiteClient = await site.createClient(context);
+    if (!wizardContext.useHybrid) {
+      const site = new ParsedSite(nonNullProp(wizardContext, 'site'), subscription.subscription);
+      const client: SiteClient = await site.createClient(context);
 
-    if (!client.isLinux) {
-      try {
-        await enableFileLogging(client);
-      } catch (error) {
-        context.telemetry.properties.fileLoggingError = parseError(error).message;
+      if (!client.isLinux) {
+        try {
+          await enableFileLogging(client);
+        } catch (error) {
+          context.telemetry.properties.fileLoggingError = parseError(error).message;
+        }
       }
+
+      resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+      const logicAppMap = ext.subscriptionLogicAppMap.get(subscription.subscription.subscriptionId);
+      if (logicAppMap) {
+        logicAppMap.set(wizardContext.site.id.toLowerCase(), wizardContext.site);
+      }
+      await ext.rgApi.appResourceTree.refresh(context);
     }
 
-    const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
-    await ext.rgApi.appResourceTree.refresh(context);
-    return new SlotTreeItem(subscription, resolved);
+    const slotTreeItem = new SlotTreeItem(subscription, resolved, {
+      isHybridLogiApp: wizardContext.useHybrid,
+      hybridSite: wizardContext.hybridSite,
+      location: wizardContext.customLocation
+        ? wizardContext.customLocation.kubeEnvironment.location.replace(/[()]/g, '')
+        : wizardContext._location.name,
+      fileShare: wizardContext.fileShare,
+      connectedEnvironment: wizardContext.connectedEnvironment,
+      resourceGroupName: wizardContext.resourceGroup.name,
+      sqlConnectionString: wizardContext.sqlConnectionString,
+    });
+    return slotTreeItem;
   }
 
   public isAncestorOfImpl(contextValue: string | RegExp): boolean {
@@ -222,7 +247,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   }
 }
 
-async function setRegionsTask(context: IFunctionAppWizardContext): Promise<void> {
+async function setRegionsTask(context: ILogicAppWizardContext): Promise<void> {
   /* To filter out georegions which only support WorkflowStandard we have to use 'ElasticPremium' as orgDomain
   since no new orgDomain is added for WorkflowStandard we will overwrite here so it filters region correctly. */
   const originalPlan = context.newPlanSku ? { ...context.newPlanSku } : undefined;
@@ -239,7 +264,7 @@ export function setSiteOS(context: IAppServiceWizardContext): void {
   }
 }
 
-const generateRelatedName = async (wizardContext: IFunctionAppWizardContext, name: string): Promise<string | undefined> => {
+const generateRelatedName = async (wizardContext: ILogicAppWizardContext, name: string): Promise<string | undefined> => {
   const namingRules = [storageAccountNamingRules];
 
   let preferredName: string = namingRules.some((n: any) => !!n.lowercaseOnly) ? name.toLowerCase() : name;
@@ -271,7 +296,7 @@ const generateRelatedName = async (wizardContext: IFunctionAppWizardContext, nam
   return undefined;
 };
 
-const isRelatedNameAvailable = async (wizardContext: IFunctionAppWizardContext, name: string): Promise<boolean> => {
+const isRelatedNameAvailable = async (wizardContext: ILogicAppWizardContext, name: string): Promise<boolean> => {
   return await ResourceGroupListStep.isNameAvailable(wizardContext, name);
 };
 

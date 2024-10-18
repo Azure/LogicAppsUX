@@ -1,32 +1,27 @@
-import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { useIntl, type IntlShape } from 'react-intl';
-import constants from '../../../../../common/constants';
+import { useIntl } from 'react-intl';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
-import {
-  updateKind,
-  updateWorkflowName,
-  clearTemplateDetails,
-  validateWorkflowName,
-} from '../../../../../core/state/templates/templateSlice';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import { updateKind, updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
 import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
-import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { useExistingWorkflowNames } from '../../../../../core/queries/template';
-import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
+import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { Open16Regular } from '@fluentui/react-icons';
+import { useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
+import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
+import { useFunctionalState } from '@react-hookz/web';
 
-export const NameStatePanel = () => {
+export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const {
     workflowName,
     errors: { workflow: workflowError, kind: kindError },
     kind,
     manifest,
-  } = useSelector((state: RootState) => state.template);
+  } = useWorkflowTemplate(workflowId);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
+  const [name, setName] = useFunctionalState(existingWorkflowName ?? workflowName);
   const intl = useIntl();
 
   const intlText = useMemo(
@@ -128,13 +123,15 @@ export const NameStatePanel = () => {
         data-testid={'workflowName'}
         id={'workflowName'}
         ariaLabel={intlText.WORKFLOW_NAME}
-        value={existingWorkflowName ?? workflowName}
-        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) =>
-          dispatch(updateWorkflowName(newValue))
-        }
+        value={name()}
+        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+          setName(newValue);
+          dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
+        }}
         disabled={!!existingWorkflowName}
         onBlur={() => {
-          dispatch(validateWorkflowName(existingWorkflowNames ?? []));
+          const validationError = validateWorkflowName(name(), existingWorkflowNames ?? []);
+          dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
         }}
         errorMessage={workflowError}
       />
@@ -166,7 +163,7 @@ export const NameStatePanel = () => {
           ]}
           onChange={(_, option) => {
             if (option?.key) {
-              dispatch(updateKind(option?.key));
+              dispatch(updateKind({ id: workflowId, kind: option?.key }));
             }
           }}
           selectedKey={kind}
@@ -177,38 +174,3 @@ export const NameStatePanel = () => {
     </div>
   );
 };
-
-export const nameStateTab = (
-  intl: IntlShape,
-  dispatch: AppDispatch,
-  { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
-): TemplatePanelTab => ({
-  id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
-  title: intl.formatMessage({
-    defaultMessage: 'Basic',
-    id: '8vPuBZ',
-    description: 'The tab label for the monitoring name and state tab on the create workflow panel',
-  }),
-  hasError: hasError,
-  content: <NameStatePanel />,
-  footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '0UfxUM',
-      description: 'Button text for moving to the next tab in the create workflow panel',
-    }),
-    primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(nextTabId));
-    },
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Close',
-      id: 'FTrMxN',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-      dispatch(clearTemplateDetails());
-    },
-    secondaryButtonDisabled: isCreating,
-  },
-});

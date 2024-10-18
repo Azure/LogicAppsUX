@@ -2,15 +2,15 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { DisplayConnections } from '../../../../templates/connections/displayConnections';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
+import { WorkflowConnections } from '../../../../templates/connections/workflowconnections';
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections } = useSelector((state: RootState) => state.template);
 
-  return <DisplayConnections connections={connections} />;
+  return <WorkflowConnections connections={connections} />;
 };
 
 export const connectionsTab = (
