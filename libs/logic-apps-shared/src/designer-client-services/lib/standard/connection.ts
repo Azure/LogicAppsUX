@@ -788,6 +788,5 @@ function createLocalConnectionsData(
 }
 
 export function escapeSpecialChars(value: string): string {
-  const escapedUnderscore = value.replace(/_/g, '__');
-  return escapedUnderscore.replace(/-/g, '_1');
+  return value.replace(/-/g, '_1');
 }
