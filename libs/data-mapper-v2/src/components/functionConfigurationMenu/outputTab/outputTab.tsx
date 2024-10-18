@@ -3,13 +3,13 @@ import { AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
-import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
+import type { ConnectionDictionary, NodeConnection, InputConnection } from '../../../models/Connection';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { useStyles } from '../styles';
 import { List } from '@fluentui/react-list-preview';
 import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { flattenInputs, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { flattenInputs, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
 import { isSchemaNodeExtended } from '../../../utils';
@@ -24,9 +24,9 @@ export const OutputTabContents = (props: {
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const styles = useStyles();
-  const outputs: (ConnectionUnit | undefined)[] = [...connections[props.functionId].outputs];
+  const outputs: (NodeConnection | undefined)[] = [...connections[props.functionId].outputs];
   const dispatch = useDispatch();
-  const [additionalOutput, setAdditionalOutput] = useState<(ConnectionUnit | undefined)[]>([]);
+  const [additionalOutput, setAdditionalOutput] = useState<(NodeConnection | undefined)[]>([]);
 
   if (outputs.length === 0) {
     outputs[0] = undefined;
@@ -37,11 +37,8 @@ export const OutputTabContents = (props: {
   };
 
   const getIDForTargetConnection = (connection: InputConnection) => {
-    if (connection === undefined) {
+    if (connection === undefined || !isConnectionUnit(connection)) {
       return '';
-    }
-    if (typeof connection === 'string') {
-      return connection;
     }
     return connection.reactFlowKey;
   };
@@ -163,15 +160,17 @@ const validateAndCreateConnectionOutput = (
 
       // Create connection
       const output = isSelectedOutputFunction ? functionNodeDictionary[selectedOutputKey] : sourceSchemaDictionary[selectedOutputKey];
-      const srcConUnit: ConnectionUnit = {
+      const srcConUnit: NodeConnection = {
         node: output,
         reactFlowKey: selectedOutputKey,
+        isCustom: false,
+        isDefined: true,
       };
 
       return srcConUnit;
     }
     // Create custom value connection
-    const srcConUnit: InputConnection = optionValue;
+    const srcConUnit: InputConnection = { isCustom: true, isDefined: true, value: optionValue };
 
     return srcConUnit;
   }
