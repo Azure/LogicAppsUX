@@ -54,21 +54,12 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [hover?.id, hover?.isSourceSchema, hover?.type, isSourceSchema, key]
   );
 
-  const isRepeatingConnection = useMemo(
-    () =>
-      edges.some((edge) => (edge.data?.sourceHandleId === handle.id || edge.data?.targetHandleId === handle.id) && edge.data?.isRepeating),
+  const isConnected = useMemo(
+    () => edges.some((edge) => edge.data?.sourceHandleId === handle.id || edge.data?.targetHandleId === handle.id),
     [edges, handle.id]
   );
 
   const isRepeatingNode = useMemo(() => data.nodeProperties.includes(SchemaNodeProperty.Repeating), [data]);
-
-  const isConnected = useMemo(
-    () =>
-      edges.some(
-        (edge) => (edge.data?.sourceHandleId === handle.id || edge.data?.targetHandleId === handle.id) && !edge.data?.isIntermediate
-      ),
-    [edges, handle.id]
-  );
 
   const onClick = useCallback(
     (e?: any) => {
@@ -140,11 +131,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
           <ArrowRepeatAllFilled
             className={mergeClasses(
               handleStyles.repeatingIcon,
-              isRepeatingConnection
-                ? handleStyles.repeatingConnectionIcon
-                : isSelected || isHover
-                  ? handleStyles.repeatingAndActiveNodeIcon
-                  : ''
+              isConnected ? handleStyles.repeatingConnectionIcon : isSelected || isHover ? handleStyles.repeatingAndActiveNodeIcon : ''
             )}
           />
         )}
@@ -164,7 +151,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
       handleStyles.repeatingConnectionIcon,
       handleStyles.repeatingAndActiveNodeIcon,
       isRepeatingNode,
-      isRepeatingConnection,
       isConnected,
       isSelected,
       isHover,
