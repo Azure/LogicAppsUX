@@ -1,4 +1,15 @@
 # Logic Apps Designer
+## [4.111.0](https://github.com/Azure/LogicAppsUX/compare/v4.110.0...v4.111.0) (2024-10-19)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Revert version upgrade ([#5913](https://github.com/Azure/LogicAppsUX/issues/5913)) ([a139ece](https://github.com/Azure/LogicAppsUX/commit/a139ecec23c0886799547e5ca7e65038d58b7733))
+* **Designer:** Fixed panel maxwidth issue ([#5918](https://github.com/Azure/LogicAppsUX/issues/5918)) ([0c82197](https://github.com/Azure/LogicAppsUX/commit/0c82197dacbd94280631bed91306073caa20862e))
+* **designer:** Fixed various bugs in undo/redo ([#5899](https://github.com/Azure/LogicAppsUX/issues/5899)) ([16d4c9b](https://github.com/Azure/LogicAppsUX/commit/16d4c9bdaafb76a25524d8ae29c32e7dabfc0c4a))
+* **templates:** Do not escape _ with __ in local connection names ([#5914](https://github.com/Azure/LogicAppsUX/issues/5914)) ([a0cba9a](https://github.com/Azure/LogicAppsUX/commit/a0cba9a6b452a4130a1f1c28b0a29687254f2ff5))
+* **templates:** Moving isMultiworkflow log to the end ([#5922](https://github.com/Azure/LogicAppsUX/issues/5922)) ([bdcfcd8](https://github.com/Azure/LogicAppsUX/commit/bdcfcd82ca77f5cc8ae8c41ef533e458b95f195f))
+
 ## [4.110.0](https://github.com/Azure/LogicAppsUX/compare/v4.109.0...v4.110.0) (2024-10-17)
 
 
