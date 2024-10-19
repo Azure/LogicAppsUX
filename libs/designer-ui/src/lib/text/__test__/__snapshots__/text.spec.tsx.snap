@@ -1,0 +1,63 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`libs/designer-ui/text > Should render a LargeText component 1`] = `
+<span
+  className="fui-Text text-classname-test ___dlwtst0_1248o16 fk6fouc fod5ikn faaz57k figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+>
+  Hello Logic Apps
+</span>
+`;
+
+exports[`libs/designer-ui/text > Should render a MediumText component 1`] = `
+<span
+  className="fui-Text text-classname-test ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+>
+  Hello Logic Apps
+</span>
+`;
+
+exports[`libs/designer-ui/text > Should render a MediumText component with a specific style display block and a border of 1px red solid 1`] = `
+<span
+  className="fui-Text text-classname-test ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+  style={
+    {
+      "border": "1px red solid",
+      "display": "block",
+    }
+  }
+>
+  Hello Logic Apps
+</span>
+`;
+
+exports[`libs/designer-ui/text > Should render a MediumText component without styles and classnames 1`] = `
+<span
+  className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+>
+  Hello Logic Apps
+</span>
+`;
+
+exports[`libs/designer-ui/text > Should render a SmallText component 1`] = `
+<span
+  className="fui-Text text-classname-test ___13vod6f_typzub0 fk6fouc fy9rknc fwrc4pm figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+>
+  Hello Logic Apps
+</span>
+`;
+
+exports[`libs/designer-ui/text > Should render a XLargeText component 1`] = `
+<span
+  className="fui-Text text-classname-test ___1h0ahxa_1ted2ie fk6fouc f1pp30po f106mvju fdj6btp fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+>
+  Hello Logic Apps
+</span>
+`;
+
+exports[`libs/designer-ui/text > Should render a XXLargeText component 1`] = `
+<span
+  className="fui-Text text-classname-test ___15xadyy_u14g5c0 fk6fouc fojgt09 fcen8rp fl43uef fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+>
+  Hello Logic Apps
+</span>
+`;
