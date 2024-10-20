@@ -260,6 +260,7 @@ export const CreateConnectionInternal = (props: {
         if (assistedConnectionProps) {
           outputParameterValues = await getConnectionParametersForAzureConnection(
             connectionMetadata?.type,
+            selectedResourceId,
             selectedSubResource,
             outputParameterValues,
             !!selectedParameterSet // TODO: Should remove this when backend updates all connection parameters for functions and apim
@@ -326,6 +327,7 @@ export const CreateConnectionInternal = (props: {
       connectionName,
       connector,
       existingReferences,
+      selectedResourceId,
       selectedSubResource,
       updateNewConnectionInCache,
     ]
