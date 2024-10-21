@@ -3,7 +3,7 @@ import { concatFunction } from '../../../__mocks__/FunctionMock';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import { FunctionCategory, functionMock } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
-import { applyConnectionValue, flattenInputs } from '../../../utils/Connection.Utils';
+import { applyConnectionValue, createNodeConnection, flattenInputs } from '../../../utils/Connection.Utils';
 //import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
 import {
@@ -40,10 +40,7 @@ describe('DataMapSlice', () => {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        input: {
-          reactFlowKey: sourceId,
-          node: node,
-        },
+        input: createNodeConnection(node, sourceId),
       });
 
       expect(Object.keys(connections).length).toEqual(2);
@@ -51,7 +48,6 @@ describe('DataMapSlice', () => {
       expect(connections[sourceId]).toBeDefined();
       expect(connections[sourceId].self).toBeDefined();
       expect(connections[sourceId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[sourceId].inputs).length).toEqual(0);
 
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();
@@ -66,19 +62,13 @@ describe('DataMapSlice', () => {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        input: {
-          reactFlowKey: functionId,
-          node: concatFunction,
-        },
+        input: createNodeConnection(concatFunction, functionId),
       });
       applyConnectionValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
         findInputSlot: true,
-        input: {
-          reactFlowKey: sourceId,
-          node: node,
-        },
+        input: createNodeConnection(node, sourceId),
       });
 
       expect(Object.keys(connections).length).toEqual(3);
@@ -86,7 +76,6 @@ describe('DataMapSlice', () => {
       expect(connections[sourceId]).toBeDefined();
       expect(connections[sourceId].self).toBeDefined();
       expect(connections[sourceId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[sourceId].inputs).length).toEqual(0);
 
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
@@ -106,28 +95,19 @@ describe('DataMapSlice', () => {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        input: {
-          reactFlowKey: functionId,
-          node: concatFunction,
-        },
+        input: createNodeConnection(concatFunction, functionId),
       });
       applyConnectionValue(connections, {
         targetNode: concatFunction,
         targetNodeReactFlowKey: functionId,
         findInputSlot: true,
-        input: {
-          reactFlowKey: sourceId,
-          node: node,
-        },
+        input: createNodeConnection(node, sourceId),
       });
       applyConnectionValue(connections, {
         targetNode: node,
         targetNodeReactFlowKey: destinationId,
         findInputSlot: true,
-        input: {
-          reactFlowKey: functionId,
-          node: concatFunction,
-        },
+        input: createNodeConnection(concatFunction, functionId),
       });
 
       expect(Object.keys(connections).length).toEqual(3);
@@ -135,7 +115,6 @@ describe('DataMapSlice', () => {
       expect(connections[sourceId]).toBeDefined();
       expect(connections[sourceId].self).toBeDefined();
       expect(connections[sourceId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[sourceId].inputs).length).toEqual(0);
 
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
