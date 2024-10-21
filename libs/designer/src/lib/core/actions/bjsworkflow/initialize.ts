@@ -100,6 +100,7 @@ import {
   AssertionException,
   AssertionErrorCode,
   getIntl,
+  isObject,
 } from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -489,7 +490,7 @@ export const updateCallbackUrlInInputs = async (
         level: LogEntryLevel.Error,
         area: 'CallbackUrl_Update',
         message: 'Unable to initialize callback url for manual trigger.',
-        error: error instanceof Error ? error : undefined,
+        error: error instanceof Error ? error : isObject(error) ? new Error(JSON.stringify(error)) : undefined,
       });
     }
   }
