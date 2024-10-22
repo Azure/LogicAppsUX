@@ -1,4 +1,4 @@
-import { Callout, DetailsList, type IColumn, Label, Link, SelectionMode, Text, TextField } from '@fluentui/react';
+import { Callout, css, DetailsList, type IColumn, Label, Link, SelectionMode, Text, TextField } from '@fluentui/react';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -67,60 +67,42 @@ export const DisplayParameters = () => {
     );
   };
 
-  const [columns, setColumns] = useFunctionalState<IColumn[]>(() => {
-    const baseColumns = [
-      {
-        ariaLabel: resources.parameter_name,
-        fieldName: 'displayName',
-        key: '$displayName',
-        isResizable: true,
-        minWidth: 150,
-        isMultiline: true,
-        name: resources.parameter_name,
-        maxWidth: 250,
-        showSortIconWhenUnsorted: true,
-        onColumnClick: _onColumnClick,
-      },
-      {
-        ariaLabel: resources.parameter_type,
-        fieldName: 'type',
-        key: '$type',
-        isResizable: true,
-        minWidth: 70,
-        maxWidth: 70,
-        name: resources.parameter_type,
-        showSortIconWhenUnsorted: true,
-        onColumnClick: _onColumnClick,
-      },
-      {
-        ariaLabel: resources.parameter_value,
-        fieldName: 'value',
-        key: '$value',
-        isResizable: true,
-        minWidth: 200,
-        isMultiline: true,
-        name: resources.parameter_value,
-        showSortIconWhenUnsorted: false,
-        onColumnClick: _onColumnClick,
-      },
-    ];
-
-    if (!isSingleWorkflow) {
-      baseColumns.push({
-        ariaLabel: resources.associated_workflows,
-        fieldName: 'associatedWorkflows',
-        key: '$associatedWorkflows',
-        isResizable: true,
-        minWidth: 180,
-        isMultiline: true,
-        name: resources.associated_workflows,
-        showSortIconWhenUnsorted: false,
-        onColumnClick: _onColumnClick,
-      });
-    }
-
-    return baseColumns;
-  });
+  const [columns, setColumns] = useFunctionalState<IColumn[]>([
+    {
+      ariaLabel: resources.parameter_name,
+      fieldName: 'displayName',
+      key: '$displayName',
+      isResizable: true,
+      minWidth: 150,
+      isMultiline: true,
+      name: resources.parameter_name,
+      maxWidth: 250,
+      showSortIconWhenUnsorted: true,
+      onColumnClick: _onColumnClick,
+    },
+    {
+      ariaLabel: resources.parameter_type,
+      fieldName: 'type',
+      key: '$type',
+      isResizable: true,
+      minWidth: 70,
+      maxWidth: 70,
+      name: resources.parameter_type,
+      showSortIconWhenUnsorted: true,
+      onColumnClick: _onColumnClick,
+    },
+    {
+      ariaLabel: resources.parameter_value,
+      fieldName: 'value',
+      key: '$value',
+      isResizable: true,
+      minWidth: 200,
+      isMultiline: true,
+      name: resources.parameter_value,
+      showSortIconWhenUnsorted: false,
+      onColumnClick: _onColumnClick,
+    },
+  ]);
 
   const updateItemInList = (item: Template.ParameterDefinition) => {
     const newList = parametersList().map((parameter: Template.ParameterDefinition) => (parameter.name === item.name ? item : parameter));
@@ -140,7 +122,7 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return <ParameterName item={item} intl={intl} />;
+        return <ParameterName item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
 
       case '$type':
         return <Text className="msla-templates-parameters-values">{item.type}</Text>;
@@ -156,9 +138,6 @@ export const DisplayParameters = () => {
             errorMessage={parameterErrors[item.name]}
           />
         );
-
-      case '$associatedWorkflows':
-        return <Text className="msla-templates-parameters-values">{item.associatedWorkflows?.join(', ')}</Text>;
 
       default:
         return null;
@@ -179,39 +158,58 @@ export const DisplayParameters = () => {
   );
 };
 
-const ParameterName = ({ item, intl }: { item: Template.ParameterDefinition; intl: IntlShape }): JSX.Element => {
+const ParameterName = ({
+  item,
+  intl,
+  isSingleWorkflow,
+}: { item: Template.ParameterDefinition; intl: IntlShape; isSingleWorkflow: boolean }): JSX.Element => {
   const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const buttonId = useId('callout-button');
 
   return (
-    <>
+    <div className="msla-template-parameters-tab-name">
       <Label className="msla-templates-parameters-values" required={item.required}>
         <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
           {item.displayName}
         </Link>
       </Label>
       {isCalloutVisible && (
-        <Callout role="dialog" gapSpace={0} target={`#${buttonId}`} onDismiss={toggleIsCalloutVisible} setInitialFocus>
-          <Text as="h1" block variant="xLarge">
+        <Callout
+          className="msla-templates-parameters-callout"
+          role="dialog"
+          gapSpace={0}
+          target={`#${buttonId}`}
+          onDismiss={toggleIsCalloutVisible}
+          setInitialFocus
+        >
+          <Text className="msla-templates-parameter-callout-title" block>
             {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
           </Text>
-          <Text
-            block
-            variant="small"
-            // id={descriptionId}
-          >
-            Message body is optional. If help documentation is available, consider adding a link to learn more at the bottom.
+          <Text className="msla-templates-parameter-callout-subtitle" block>
+            {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
           </Text>
-          <Link
-            href="http://microsoft.com"
-            target="_blank"
-            // className={styles.link}
-          >
-            Sample link
-          </Link>
+          <Text className="msla-templates-parameter-callout-body" block>
+            {item.description}
+          </Text>
+          {isSingleWorkflow ? null : (
+            <div className="msla-templates-parameter-callout-associatedWorkflow">
+              <Text className="msla-templates-parameter-callout-subtitle" block>
+                {intl.formatMessage({
+                  defaultMessage: 'Associated workflows',
+                  description: 'Subtitle text for Associated workflows',
+                  id: 'Xz88HV',
+                })}
+              </Text>
+              {item?.associatedWorkflows?.map((workflow) => (
+                <li key={workflow} className={css('msla-templates-parameter-callout-body', 'list')}>
+                  {workflow}
+                </li>
+              ))}
+            </div>
+          )}
         </Callout>
       )}
-    </>
+    </div>
   );
 };
 
