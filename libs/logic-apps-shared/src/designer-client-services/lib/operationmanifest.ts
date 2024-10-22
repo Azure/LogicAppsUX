@@ -1,4 +1,4 @@
-import type { OperationInfo, OperationManifest } from '../../utils/src';
+import type { OpenAPIV2, OperationInfo, OperationManifest } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 /**
@@ -36,6 +36,13 @@ export interface IOperationManifestService {
    * @return {Promise<any>}
    */
   getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest>;
+
+  /**
+   * Gets the transformed output property body items with aliases
+   * @arg {OpenAPIV2.SchemaObject | undefined} schemaItem - The output property body items.
+   * @return {OpenAPIV2.SchemaObject | undefined}
+   */
+  getUpdatedOutputsForSplitOn?(schemaItem: OpenAPIV2.SchemaObject | undefined): OpenAPIV2.SchemaObject | undefined;
 }
 
 let service: IOperationManifestService;
