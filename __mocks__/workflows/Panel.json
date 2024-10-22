@@ -71,7 +71,7 @@
           "where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
         },
         "runAfter": {
-          "Parse_JSON": [
+          "Parse_jsON": [
             "SUCCEEDED"
           ]
         }
