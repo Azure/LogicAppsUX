@@ -71,7 +71,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const nodeMetadata = useNodeMetadata(source);
   const sourceId = containsIdTag(source) ? removeIdTag(source) : source;
   const targetId = containsIdTag(target) ? removeIdTag(target) : target;
-  const graphId = sourceId ?? nodeMetadata?.graphId ?? '';
+  const graphId = (containsIdTag(source) ? removeIdTag(source) : undefined) ?? nodeMetadata?.graphId ?? '';
   const [centerX, centerY] = getEdgeCenter({
     sourceX,
     sourceY,
