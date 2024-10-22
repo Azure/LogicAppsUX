@@ -4,6 +4,10 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 > Sign up today for your free Azure account and receive 12 months of free popular services, $200 free credit and 25+ always free services 👉 [Start Free](https://azure.microsoft.com/free/open-source).
 
+## Azure Logic Apps - Introducing the Logic Apps Hybrid Deployment Model (preview)
+
+Starting with version 4.107.2, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces Logic Apps Hybrid Deployment Model, a new feature that empowers our customers with additional flexibility and control. This new offering allows you to build and deploy workflows that run on customer-managed infrastructure, providing you with the option to run Logic Apps on-premises, in a private cloud, or even in a third-party public cloud. For more information, see [Introducing the Logic Apps Hybrid Deployment Model (Public Preview)](https://go.microsoft.com/fwlink/?linkid=2293544).
+
 ## Azure Logic Apps - Automatic Regeneration of Connection ACL keys
 
 Starting with version 4.57.0, the Azure Logic Apps (Standard) extension for Visual Studio Code will automatically regenerate  the keys required to allow the extension to access Azure Managed Connections. This will allow the same Azure Managed Connection to be used for projects for longer than 7 days without any user intervention. For more information, see [Regeneration Azure Managed Connection ACL for Local Development](https://go.microsoft.com/fwlink/?linkid=2283427).
