@@ -1,12 +1,12 @@
-import { DetailsList, type IColumn, Label, SelectionMode, Text, TextField } from '@fluentui/react';
+import { Callout, DetailsList, type IColumn, Label, Link, SelectionMode, Text, TextField } from '@fluentui/react';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPropertyValue, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
-import { useIntl } from 'react-intl';
-import { Flyout } from '@microsoft/designer-ui';
+import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
+import { useBoolean, useId } from '@fluentui/react-hooks';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -140,12 +140,7 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return (
-          <Label className="msla-templates-parameters-values" required={item.required}>
-            <Text>{item.displayName}</Text>
-            <Flyout text={item.description} iconSize={'sm'} />
-          </Label>
-        );
+        return <ParameterName item={item} intl={intl} />;
 
       case '$type':
         return <Text className="msla-templates-parameters-values">{item.type}</Text>;
@@ -181,6 +176,42 @@ export const DisplayParameters = () => {
         selectionMode={SelectionMode.none}
       />
     </div>
+  );
+};
+
+const ParameterName = ({ item, intl }: { item: Template.ParameterDefinition; intl: IntlShape }): JSX.Element => {
+  const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+  const buttonId = useId('callout-button');
+
+  return (
+    <>
+      <Label className="msla-templates-parameters-values" required={item.required}>
+        <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
+          {item.displayName}
+        </Link>
+      </Label>
+      {isCalloutVisible && (
+        <Callout role="dialog" gapSpace={0} target={`#${buttonId}`} onDismiss={toggleIsCalloutVisible} setInitialFocus>
+          <Text as="h1" block variant="xLarge">
+            {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
+          </Text>
+          <Text
+            block
+            variant="small"
+            // id={descriptionId}
+          >
+            Message body is optional. If help documentation is available, consider adding a link to learn more at the bottom.
+          </Text>
+          <Link
+            href="http://microsoft.com"
+            target="_blank"
+            // className={styles.link}
+          >
+            Sample link
+          </Link>
+        </Callout>
+      )}
+    </>
   );
 };
 
