@@ -69,7 +69,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const nodeMetadata = useNodeMetadata(source);
   const sourceId = containsIdTag(source) ? removeIdTag(source) : undefined;
   const graphId = sourceId ?? nodeMetadata?.graphId ?? '';
-  const [edgeCenterX, edgeCenterY] = getEdgeCenter({
+  const [centerX, centerY] = getEdgeCenter({
     sourceX,
     sourceY,
     targetX,
@@ -109,13 +109,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
 
-  let dynamicMidEdgeY =
-    multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
-
-  if (numRunAfters !== 0) {
-    dynamicMidEdgeY -= 7;
-  }
-
   const [d] = useMemo(() => {
     return getSmoothStepPath({
       sourceX,
@@ -125,8 +118,9 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
       borderRadius: 8,
+      centerY,
     });
-  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
+  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY]);
 
   const tabIndex = useEdgeIndex(id);
 
@@ -165,8 +159,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {/* MIDDLE BUTTON */}
           {(onlyEdge || (multipleTargets && multipleSources)) && (
             <EdgeContent
-              x={edgeCenterX - foreignObjectWidth / 2}
-              y={dynamicMidEdgeY - foreignObjectHeight / 2} // Make a little more room for run after
+              x={centerX - foreignObjectWidth / 2}
+              y={centerY - foreignObjectHeight / 2}
               graphId={graphId}
               parentId={source}
               childId={target}
