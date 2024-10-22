@@ -9,6 +9,8 @@ import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import type React from 'react';
 import { memo, useMemo } from 'react';
 import { getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { css } from '@fluentui/utilities';
 
 interface EdgeContentProps {
   x: number;
@@ -67,7 +69,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const edgeSources = Object.keys(operationData?.runAfter ?? {});
   const edgeTargets = useNodeEdgeTargets(source);
   const nodeMetadata = useNodeMetadata(source);
-  const sourceId = containsIdTag(source) ? removeIdTag(source) : undefined;
+  const sourceId = containsIdTag(source) ? removeIdTag(source) : source;
+  const targetId = containsIdTag(target) ? removeIdTag(target) : target;
   const graphId = sourceId ?? nodeMetadata?.graphId ?? '';
   const [centerX, centerY] = getEdgeCenter({
     sourceX,
@@ -75,6 +78,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetX,
     targetY,
   });
+
+  const selectedNode = useOperationPanelSelectedNodeId();
 
   const filteredRunAfters: Record<string, string[]> = useMemo(
     () =>
@@ -109,12 +114,22 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
 
+  const runAfterX = targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
+  const runAfterY = targetY - runAfterHeight;
+
+  const targetXWithRunAfter = useMemo(() => {
+    if (showRunAfter) {
+      return targetX + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
+    }
+    return targetX;
+  }, [numRunAfters, raIndex, showRunAfter, targetX]);
+
   const [d] = useMemo(() => {
     return getSmoothStepPath({
       sourceX,
       sourceY,
       sourcePosition,
-      targetX,
+      targetX: targetXWithRunAfter,
       targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
       borderRadius: 8,
@@ -124,10 +139,22 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const tabIndex = useEdgeIndex(id);
 
+  const highlighted = useMemo(() => {
+    return sourceId === selectedNode || targetId === selectedNode;
+  }, [sourceId, targetId, selectedNode]);
+
   return (
     <>
       <defs>
-        <marker id="arrow-end" viewBox="0 0 20 20" refX="6" refY="4" markerWidth="10" markerHeight="10">
+        <marker
+          id={`arrow-end-${id}`}
+          className={css(highlighted ? 'highlighted' : '')}
+          viewBox="0 0 20 20"
+          refX="6"
+          refY="4"
+          markerWidth="10"
+          markerHeight="10"
+        >
           <ArrowCap />
         </marker>
       </defs>
@@ -135,12 +162,11 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       <path
         id={id}
         style={style}
-        className="react-flow__edge-path"
+        className={css('react-flow__edge-path', highlighted ? 'highlighted' : '')}
         d={d}
         strokeDasharray={showRunAfter ? '4' : '0'}
-        markerEnd="url(#arrow-end)"
+        markerEnd={`url(#arrow-end-${id})`}
       />
-
       {/* ADD ACTION / BRANCH BUTTONS */}
       {readOnly ? null : (
         <>
@@ -185,13 +211,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
       {/* RUN AFTER INDICATOR */}
       {showRunAfter ? (
-        <foreignObject
-          id="msla-run-after-traffic-light"
-          width={runAfterWidth}
-          height={runAfterHeight}
-          x={targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4)}
-          y={targetY - runAfterHeight}
-        >
+        <foreignObject id="msla-run-after-traffic-light" width={runAfterWidth} height={runAfterHeight} x={runAfterX} y={runAfterY}>
           <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
         </foreignObject>
       ) : null}
