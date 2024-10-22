@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.107.1](https://github.com/Azure/LogicAppsUX/compare/v4.107.0...v4.107.1) (2024-10-22)
+
+
+### Bug Fixes
+
+* **vscode:** Fix custom connectors, managed identity creation and dataverse connector swagger ([#5932](https://github.com/Azure/LogicAppsUX/issues/5932)) ([d627d1d](https://github.com/Azure/LogicAppsUX/commit/d627d1d1b23f64b1cbc69b2f322a4776c98b6a5a)), closes [#5885](https://github.com/Azure/LogicAppsUX/issues/5885) [#5897](https://github.com/Azure/LogicAppsUX/issues/5897) [#5911](https://github.com/Azure/LogicAppsUX/issues/5911)
+
 ## [4.107.0](https://github.com/Azure/LogicAppsUX/compare/v4.106.0...v4.107.0) (2024-10-11)
 
 
