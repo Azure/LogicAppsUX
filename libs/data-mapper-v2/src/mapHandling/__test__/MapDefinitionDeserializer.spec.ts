@@ -716,6 +716,37 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][1]).toBeTruthy();
       });
 
+      it('creates a loop connection with two functions below it', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:Root/Looping/Employee)': {
+              Person: {
+                Name: 'is-null(TelephoneNumber)',
+                Address: 'is-null(TelephoneNumber)',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(6);
+
+        expect(resultEntries[0][0]).toContain('IsNull');
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person/Name');
+        expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person/Address');
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:Root/Looping/Employee/TelephoneNumber'
+        );
+
+        // loop connection
+        expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
+      });
+
       it.skip('creates a loop connection with two connections to loop', () => {
         simpleMap['ns0:Root'] = {
           Looping: {

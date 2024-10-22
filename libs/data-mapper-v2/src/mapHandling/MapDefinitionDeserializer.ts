@@ -141,6 +141,7 @@ export class MapDefinitionDeserializer {
       srcNode = this.getSourceNodeWithBackout(key);
     } else {
       const lastLoop = this.getLowestLoop().key;
+      // danielle handle namespace here
       srcNode = findNodeForKey(`${lastLoop}/${key}`, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
     }
     return srcNode;
@@ -162,16 +163,18 @@ export class MapDefinitionDeserializer {
     }
 
     if (this._loop.length > 0 && !sourceSchemaNode) {
-      sourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
-    }
-    if (sourceSchemaNode && this._loop.length > 0) {
-      addParentConnectionForRepeatingElementsNested(
-        sourceSchemaNode,
-        targetNode as SchemaNodeExtended,
-        this._sourceSchemaFlattened,
-        this._targetSchemaFlattened,
-        connections
-      );
+      if (!sourceSchemaNode) {
+        sourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
+      }
+      if (isSchemaNodeExtended(targetNode)) {
+        addParentConnectionForRepeatingElementsNested(
+          sourceSchemaNode,
+          targetNode as SchemaNodeExtended,
+          this._sourceSchemaFlattened,
+          this._targetSchemaFlattened,
+          connections
+        );
+      }
     }
 
     if (sourceSchemaNode && this._conditional) {
@@ -568,7 +571,6 @@ export class MapDefinitionDeserializer {
 
       this.handleSingleValueOrFunction('', idk.term, targetNode, connections);
     } else if (targetNode) {
-      //danielle temporary to unblock
       this._conditional.children.push(key);
 
       applyConnectionValue(connections, {
