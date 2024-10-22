@@ -5,12 +5,13 @@ import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../ac
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
+import { setCollapsedGraphIds } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
 import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
-import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import { LoggerService, Status, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -28,7 +29,7 @@ export const initializeGraphState = createAsyncThunk<
   'parser/deserialize',
   async (graphState: { workflowDefinition: Workflow; runInstance: any }, { getState, dispatch }): Promise<InitWorkflowPayload> => {
     const { workflowDefinition, runInstance } = graphState;
-    const { workflow } = getState() as RootState;
+    const { workflow, designerOptions } = getState() as RootState;
     const spec = workflow.workflowSpec;
 
     if (spec === undefined) {
@@ -51,6 +52,20 @@ export const initializeGraphState = createAsyncThunk<
       dispatch(initializeConnectionReferences(connectionReferences ?? {}));
       dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
       updateWorkflowParameters(parameters ?? {}, dispatch);
+
+      // If host option has 'collapseGraphsByDefault' set to true, collapse all graphs
+      const collapseGraphsByDefaultFlag = designerOptions?.hostOptions?.collapseGraphsByDefault;
+      if (collapseGraphsByDefaultFlag) {
+        const allGraphIds: string[] = [];
+        const collapseGraphs = (graph: WorkflowNode) => {
+          if (graph.children && graph.type !== WORKFLOW_NODE_TYPES.HIDDEN_NODE) {
+            allGraphIds.push(graph.id);
+            graph.children.forEach(collapseGraphs);
+          }
+        };
+        collapseGraphs(deserializedWorkflow.graph);
+        dispatch(setCollapsedGraphIds(allGraphIds));
+      }
 
       const { connections, customCode } = getState();
       const customCodeWithData = getCustomCodeFilesWithData(customCode);

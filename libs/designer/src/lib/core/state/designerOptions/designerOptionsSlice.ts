@@ -46,6 +46,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     recurrenceInterval: undefined,
     maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
     hideContentTransferSettings: false,
+    collapseGraphsByDefault: false,
   },
 };
 

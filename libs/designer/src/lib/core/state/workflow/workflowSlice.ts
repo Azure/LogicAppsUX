@@ -288,7 +288,18 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string>) => {
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string[]>) => {
+      const idArray = action.payload;
+      const idRecord = idArray.reduce(
+        (acc, id) => {
+          acc[id] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      );
+      state.collapsedGraphIds = idRecord;
+    },
+    collapseGraphsToShowNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
@@ -547,6 +558,7 @@ export const {
   clearFocusNode,
   setFocusNode,
   setCollapsedGraphIds,
+  collapseGraphsToShowNode,
   replaceId,
   setRunIndex,
   setRepetitionRunData,

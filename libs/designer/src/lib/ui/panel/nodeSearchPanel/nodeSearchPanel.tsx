@@ -2,7 +2,7 @@ import { useHostOptions } from '../../../core/state/designerOptions/designerOpti
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
 import { changePanelNode } from '../../../core/state/panel/panelSlice';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
-import { setCollapsedGraphIds, setFocusNode } from '../../../core/state/workflow/workflowSlice';
+import { collapseGraphsToShowNode, setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { SearchBox, FocusTrapZone } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
@@ -35,7 +35,7 @@ const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRun
         operationActionData={{ id: node, title: displayName, isTrigger: false, brandColor, iconUri }}
         showImage={true}
         onClick={(_: string) => {
-          dispatch(setCollapsedGraphIds(node));
+          dispatch(collapseGraphsToShowNode(node));
           dispatch(setFocusNode(node));
           dispatch(changePanelNode(node));
         }}
