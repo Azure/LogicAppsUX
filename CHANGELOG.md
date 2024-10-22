@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.112.0](https://github.com/Azure/LogicAppsUX/compare/v4.111.0...v4.112.0) (2024-10-22)
+
+
+### Features
+
+* **Designer:** Added host option to collapse all graph nodes by default ([#5928](https://github.com/Azure/LogicAppsUX/issues/5928)) ([b5987e7](https://github.com/Azure/LogicAppsUX/commit/b5987e706562d74b7164c765f73d4712503953d2))
+
+
+### Bug Fixes
+
+* **designer:** Log error object in callback url ([#5927](https://github.com/Azure/LogicAppsUX/issues/5927)) ([80f89aa](https://github.com/Azure/LogicAppsUX/commit/80f89aa9c2266ff5e05b4311a5282be355bf17d3))
+
 ## [4.111.0](https://github.com/Azure/LogicAppsUX/compare/v4.110.0...v4.111.0) (2024-10-19)
 
 
