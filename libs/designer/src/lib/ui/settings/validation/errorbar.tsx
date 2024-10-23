@@ -1,22 +1,31 @@
-import { MessageBar, type MessageBarType, type IMessageBarStyles } from '@fluentui/react/lib/MessageBar';
-import { isHighContrastBlack } from '@microsoft/designer-ui';
+import { Button, MessageBar, MessageBarActions, MessageBarBody, type MessageBarIntent } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
+import { DismissRegular } from '@fluentui/react-icons';
 
 export interface MessageBarProps {
-  type: MessageBarType;
+  type: MessageBarIntent;
   message: string;
   onWarningDismiss?: () => void;
 }
 
-const messageBarStyles: IMessageBarStyles = isHighContrastBlack()
-  ? { content: { background: '#442726' }, innerText: { color: '#f3f2f1' } }
-  : {};
-
 export function CustomizableMessageBar({ type, message, onWarningDismiss }: MessageBarProps): JSX.Element {
+  const intl = useIntl();
+  const dismissText = intl.formatMessage({
+    defaultMessage: 'Dismiss',
+    id: 'NkjtG/',
+    description: 'Dismiss button text',
+  });
+
   return (
-    <div className="msla-setting-section-message-bar">
-      <MessageBar styles={messageBarStyles} messageBarType={type} onDismiss={onWarningDismiss ?? undefined}>
-        {message}
-      </MessageBar>
-    </div>
+    <MessageBar intent={type} className="msla-setting-section-message-bar">
+      <MessageBarBody>{message}</MessageBarBody>
+      {onWarningDismiss && (
+        <MessageBarActions
+          containerAction={
+            <Button aria-label={dismissText} appearance="transparent" icon={<DismissRegular />} onClick={onWarningDismiss} />
+          }
+        />
+      )}
+    </MessageBar>
   );
 }
