@@ -38,7 +38,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
     });
 
     describe('convertFromMapDefinition', () => {
-      it('processes schemas with an sName', () => {
+      it('processes schemas with a specific namespace', () => {
         const customerTarget = convertSchemaToSchemaExtended(customerSchema as any as DataMapSchema);
         const customerSource = customerTarget;
         simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
@@ -52,6 +52,48 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
         resultEntries.sort();
+      });
+
+      it('processes schemas with a specific namespace with a loop', () => {
+        const customerTarget = convertSchemaToSchemaExtended(customerSchema as any as DataMapSchema);
+        const customerSource = customerTarget;
+        simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
+          'tns:PROJECT_REQUEST': {
+            'tns:PROJINTRF': {
+              '$for(tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
+                'tns:PROJECT': {
+                  'tns:PM_PROJECT_REFERENCE': 'tns:PM_PROJECT_REFERENCE',
+                },
+              },
+            },
+          },
+        };
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, customerSource, customerTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+        expect(resultEntries.length).toEqual(4);
+      });
+
+      it('processes schemas with a specific namespace with a loop', () => {
+        const customerTarget = convertSchemaToSchemaExtended(customerSchema as any as DataMapSchema);
+        const customerSource = customerTarget;
+        simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
+          'tns:PROJECT_REQUEST': {
+            'tns:PROJINTRF': {
+              '$for(tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
+                'tns:PROJECT': {
+                  'tns:PM_PROJECT_REFERENCE': 'tns:PM_PROJECT_REFERENCE',
+                },
+              },
+            },
+          },
+        };
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, customerSource, customerTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+        expect(resultEntries.length).toEqual(4);
       });
 
       it('creates a simple connection between one source and target node', () => {
@@ -1535,6 +1577,39 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
               Person: {
                 Name: 'Name',
                 Other: 'TelephoneNumber',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries[0][0].startsWith('Reverse')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+
+        expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person');
+        expect(getFirstInputReactFlowKey(resultEntries[4][1]).startsWith('Reverse')).toBeTruthy();
+
+        expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+        expect(getFirstInputReactFlowKey(resultEntries[5][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+        expect(resultEntries[6][0]).toEqual('target-/ns0:Root/Looping/Person/Other');
+        expect(getFirstInputReactFlowKey(resultEntries[6][1])).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      });
+
+      it.skip('creates a simple sequence function with mapped children with functions', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(reverse(/ns0:Root/Looping/Employee))': {
+              Person: {
+                Name: 'Name',
               },
             },
           },
