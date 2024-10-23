@@ -2,17 +2,29 @@ import type { FunctionData } from './Function';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export type ConnectionDictionary = { [key: string]: Connection }; // key = "{(target)||(source)}-{nodeId}"
-export type InputConnectionDictionary = { [inputNumber: string]: InputConnection[] }; // danielle fix this- confusing
-export type InputConnection = ConnectionUnit | string | undefined; // undefined for unbounded input value arrays
+export type InputConnection = NodeConnection | CustomValueConnection | EmptyConnection;
 
 export interface Connection {
-  self: ConnectionUnit;
-  inputs: InputConnectionDictionary;
-  outputs: ConnectionUnit[];
+  self: NodeConnection;
+  inputs: InputConnection[];
+  outputs: NodeConnection[];
 }
 
-export interface ConnectionUnit {
+export interface NodeConnection {
+  isDefined: true;
+  isCustom: false;
   node: SchemaNodeExtended | FunctionData;
   reactFlowKey: string;
   isRepeating?: boolean;
+}
+
+export interface CustomValueConnection {
+  isDefined: true;
+  isCustom: true;
+  value: string;
+}
+
+export interface EmptyConnection {
+  isDefined: false;
+  isCustom: false;
 }

@@ -42,6 +42,8 @@ describe('utils/DataMap', () => {
         input: {
           reactFlowKey: sourceChildNodeId,
           node: sourceChildNode,
+          isDefined: true,
+          isCustom: false,
         },
       });
 
@@ -53,8 +55,8 @@ describe('utils/DataMap', () => {
       expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
       expect(connections[sourceParentKey].outputs[0].isRepeating).toEqual(true);
 
-      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
-      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).isRepeating).toEqual(true);
+      expect((connections[targetParentKey]?.inputs[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
+      expect((connections[targetParentKey]?.inputs[0] as ConnectionUnit).isRepeating).toEqual(true);
     });
 
     it('does not add extra connection if repeating element is connected', () => {
@@ -85,6 +87,8 @@ describe('utils/DataMap', () => {
         input: {
           reactFlowKey: sourceParentKey,
           node: sourceParentNode,
+          isDefined: true,
+          isCustom: false,
         },
       });
 
@@ -95,6 +99,8 @@ describe('utils/DataMap', () => {
         input: {
           reactFlowKey: sourceChildNodeId,
           node: sourceChildNode,
+          isDefined: true,
+          isCustom: false,
         },
       });
 
@@ -102,7 +108,7 @@ describe('utils/DataMap', () => {
 
       expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
 
-      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
+      expect((connections[targetParentKey]?.inputs[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
     });
 
     it('adds parent connection for repeating elements when parent is already connected', () => {
@@ -133,6 +139,8 @@ describe('utils/DataMap', () => {
         input: {
           reactFlowKey: sourceParentKey,
           node: sourceParentNode,
+          isDefined: true,
+          isCustom: false,
         },
       });
 
@@ -143,6 +151,8 @@ describe('utils/DataMap', () => {
         input: {
           reactFlowKey: sourceChildNodeId,
           node: sourceChildNode,
+          isDefined: true,
+          isCustom: false,
         },
       });
 
@@ -150,7 +160,7 @@ describe('utils/DataMap', () => {
 
       expect(connections[sourceParentKey].outputs[0].reactFlowKey).toEqual(targetParentKey);
 
-      expect((connections[targetParentKey]?.inputs[0]?.[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
+      expect((connections[targetParentKey]?.inputs[0] as ConnectionUnit).reactFlowKey).toEqual(sourceParentKey);
     });
   });
 
