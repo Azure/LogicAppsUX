@@ -63,6 +63,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     {
       templateId: templateName ?? '',
       workflowAppName,
+      isMultiWorkflow: true,
     }
   ).footerContent;
   return (
