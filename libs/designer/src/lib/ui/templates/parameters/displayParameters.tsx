@@ -168,11 +168,11 @@ const ParameterName = ({
 
   return (
     <div className="msla-template-parameters-tab-name">
-      <Label className="msla-templates-parameters-values" required={item.required}>
-        <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
+      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
+        <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
           {item.displayName}
-        </Link>
-      </Label>
+        </Label>
+      </Link>
       {isCalloutVisible && (
         <Callout
           className="msla-templates-parameters-callout"
