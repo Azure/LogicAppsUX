@@ -182,9 +182,10 @@ const ParameterName = ({
           onDismiss={toggleIsCalloutVisible}
           setInitialFocus
         >
+          {!isSingleWorkflow && (
           <Text className="msla-templates-parameter-callout-title" block>
             {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
-          </Text>
+          </Text>)}
           <Text className="msla-templates-parameter-callout-subtitle" block>
             {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
           </Text>

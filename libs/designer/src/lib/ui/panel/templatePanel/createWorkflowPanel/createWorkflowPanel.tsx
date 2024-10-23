@@ -46,8 +46,8 @@ export const CreateWorkflowPanelHeader = ({
       description: 'Panel header title for creating the workflow',
     }),
     TEMPLATE_DETAILS: intl.formatMessage({
-      defaultMessage: 'Template Details',
-      id: 'ZD8dme',
+      defaultMessage: 'Template details',
+      id: 'WdO1cs',
       description: 'Panel description title for template details, allowing to click to read more',
     }),
     NAME: intl.formatMessage({
