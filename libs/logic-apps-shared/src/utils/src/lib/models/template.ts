@@ -54,4 +54,5 @@ export interface Connection {
 export interface TemplateContext {
   templateId: string;
   workflowAppName: string;
+  isMultiWorkflow: boolean;
 }

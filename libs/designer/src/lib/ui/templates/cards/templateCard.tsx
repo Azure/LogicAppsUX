@@ -20,7 +20,8 @@ import {
 } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
 import { Add16Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
-import { loadTemplate } from '../../../core/actions/bjsworkflow/templates';
+import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
+import { useMemo } from 'react';
 
 interface TemplateCardProps {
   templateName: string;
@@ -42,6 +43,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     location: state.workflow.location,
   }));
   const templateManifest = templates?.[templateName];
+  const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
 
   const intlText = {
     TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
@@ -67,7 +69,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       level: LogEntryLevel.Verbose,
       area: 'Templates.TemplateCard',
       message: 'Template is selected',
-      args: [templateName, workflowAppName],
+      args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
@@ -190,7 +192,7 @@ export const BlankWorkflowTemplateCard = () => {
   const onBlankWorkflowClick = () => {
     LoggerService().log({
       level: LogEntryLevel.Verbose,
-      area: 'Templates.TemplateCard',
+      area: 'Templates.TemplateCard.Blank',
       message: 'Blank workflow is selected',
       args: [workflowAppName],
     });

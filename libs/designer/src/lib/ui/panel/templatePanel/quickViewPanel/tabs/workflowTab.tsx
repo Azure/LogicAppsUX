@@ -27,7 +27,7 @@ export const workflowTab = (
   workflowId: string,
   clearDetailsOnClose: boolean,
   onPrimaryButtonClick: (() => void) | undefined,
-  { templateId, workflowAppName }: Template.TemplateContext
+  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
@@ -48,7 +48,7 @@ export const workflowTab = (
         level: LogEntryLevel.Verbose,
         area: 'Templates.overviewTab',
         message: 'Template create button clicked',
-        args: [templateId, workflowAppName],
+        args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
       });
       dispatch(openCreateWorkflowPanelView());
       onPrimaryButtonClick?.();

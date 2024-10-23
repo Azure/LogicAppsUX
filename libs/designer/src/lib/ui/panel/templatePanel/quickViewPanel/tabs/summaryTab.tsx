@@ -113,7 +113,7 @@ export const summaryTab = (
   dispatch: AppDispatch,
   workflowId: string,
   clearDetailsOnClose: boolean,
-  { templateId, workflowAppName }: Template.TemplateContext
+  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
@@ -134,7 +134,7 @@ export const summaryTab = (
         level: LogEntryLevel.Verbose,
         area: 'Templates.overviewTab',
         message: 'Template create button clicked',
-        args: [templateId, workflowAppName],
+        args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
       });
       dispatch(openCreateWorkflowPanelView());
     },
