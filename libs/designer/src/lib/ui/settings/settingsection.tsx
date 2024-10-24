@@ -8,7 +8,7 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { Button, Divider, Tooltip } from '@fluentui/react-components';
+import { Button, Divider, type MessageBarIntent, Tooltip, Badge } from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDown24Filled,
@@ -18,7 +18,6 @@ import {
   Dismiss24Filled,
   Dismiss24Regular,
 } from '@fluentui/react-icons';
-import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
   MultiSelectSetting,
   MultiAddExpressionEditor,
@@ -211,6 +210,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
           aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
         >
           {title}
+          {(validationErrors?.length ?? 0) > 0 && <Badge className="error-dot" size="extra-small" color="danger" />}
         </Button>
         {internalSettings}
       </div>
@@ -438,15 +438,15 @@ const Setting = ({
   );
 };
 
-const matchErrorTypeToMessageBar = (errorType: ValidationErrorType): MessageBarType => {
+const matchErrorTypeToMessageBar = (errorType: ValidationErrorType): MessageBarIntent => {
   switch (errorType) {
     case ValidationErrorType.ERROR:
-      return MessageBarType.error;
+      return 'error';
     case ValidationErrorType.WARNING:
-      return MessageBarType.warning;
+      return 'warning';
     case ValidationErrorType.INFO:
-      return MessageBarType.info;
+      return 'info';
     default:
-      return MessageBarType.info;
+      return 'info';
   }
 };
