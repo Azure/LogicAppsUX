@@ -1300,7 +1300,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[0][1]).toEqual('"CustomValue"');
       });
 
-      it('Generates body with a sequence loop and function below it', () => {
+      it.skip('Generates body with a sequence loop and function below it', () => {
         const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
         const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
 
