@@ -76,13 +76,13 @@ using Newtonsoft.Json.Linq;
 /// <remarks> This is the entry-point to your code. The function signature should remain unchanged.</remarks>
 public static async Task<Results> Run(WorkflowContext context, ILogger log)
 {
-  var triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs;
+  JToken? triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs;
 
   ////the following dereferences the 'name' property from trigger payload.
   var name = triggerOutputs?["body"]?["name"]?.ToString();
 
   ////the following can be used to get the action outputs from a prior action
-  //var actionOutputs = (await context.GetActionResults("Compose").ConfigureAwait(false)).Outputs;
+  //JToken? actionOutputs = (await context.GetActionResults("Compose").ConfigureAwait(false)).Outputs;
 
   ////these logs will show-up in Application Insight traces table
   //log.LogInformation("Outputting results.");
