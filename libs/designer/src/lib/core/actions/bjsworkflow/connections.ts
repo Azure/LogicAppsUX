@@ -36,6 +36,7 @@ import {
   ConnectionReferenceKeyFormat,
   getRecordEntry,
   UserPreferenceService,
+  includes,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -142,7 +143,7 @@ const getConnectionPropertiesIfRequired = (connection: Connection, connector: Co
 
   const identity = WorkflowService().getAppIdentity?.();
   const userAssignedIdentity =
-    equals(identity?.type, ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
+    includes(identity?.type ?? '', ResourceIdentityType.USER_ASSIGNED) && identity?.userAssignedIdentities
       ? Object.keys(identity?.userAssignedIdentities)[0]
       : undefined;
 

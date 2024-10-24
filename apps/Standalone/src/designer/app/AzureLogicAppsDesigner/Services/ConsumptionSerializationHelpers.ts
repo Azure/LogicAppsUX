@@ -71,6 +71,7 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
           connectionId: connection.connection.id,
           connectionName: connection.connectionName,
           id: connection.api.id,
+          connectionProperties: connection.connectionProperties,
         };
       });
       delete workflow.connectionReferences;
