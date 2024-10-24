@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.107.3](https://github.com/Azure/LogicAppsUX/compare/v4.107.2...v4.107.3) (2024-10-24)
+
+
+### Features
+
+* **VSCode:** Updated apim api version for vscode and standalone ([#5952](https://github.com/Azure/LogicAppsUX/issues/5952)) ([df1667e](https://github.com/Azure/LogicAppsUX/commit/df1667e5f71520ad9660f3ece01c989637cf25ba)), closes [#5941](https://github.com/Azure/LogicAppsUX/issues/5941)
+
 ### [4.107.2](https://github.com/Azure/LogicAppsUX/compare/v4.107.1...v4.107.2) (2024-10-22)
 
 ### [4.107.1](https://github.com/Azure/LogicAppsUX/compare/v4.107.0...v4.107.1) (2024-10-22)
