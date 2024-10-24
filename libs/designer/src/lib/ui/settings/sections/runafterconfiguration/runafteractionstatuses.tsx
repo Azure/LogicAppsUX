@@ -59,7 +59,7 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
         <Checkbox
           key={status.id}
           checked={normalizedStatuses.includes(status.id)}
-          disabled={isReadOnly}
+          disabled={isReadOnly || (normalizedStatuses.length === 1 && normalizedStatuses.includes(status.id))}
           label={
             <div className="status-label">
               {status.icon}

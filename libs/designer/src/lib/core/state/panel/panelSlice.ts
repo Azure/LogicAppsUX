@@ -35,6 +35,7 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
 });
 
 const getInitialErrorContentState = (): ErrorPanelContentState => ({
+  selectedTabId: 'ERRORS',
   panelMode: 'Error',
 });
 
@@ -234,7 +235,6 @@ export const panelSlice = createSlice({
       });
     },
     setSelectedPanelActiveTab: (state, action: PayloadAction<string | undefined>) => {
-      state.errorContent.selectedTabId = action.payload;
       state.operationContent.selectedNodeActiveTabId = action.payload;
 
       LoggerService().log({

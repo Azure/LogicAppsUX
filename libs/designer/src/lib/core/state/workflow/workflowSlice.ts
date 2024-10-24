@@ -398,6 +398,16 @@ export const workflowSlice = createSlice({
       }
       delete childOperation.runAfter?.[parentOperationId];
 
+      // If there is only the trigger node left, set to empty object
+      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+        const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
+          ([_, node]) => node.graphId === 'root' && node.isRoot === true
+        )?.[0];
+        if (Object.keys(childOperation.runAfter ?? {})[0] === rootTriggerNodeId) {
+          childOperation.runAfter = {};
+        }
+      }
+
       const graphPath: string[] = [];
       let operationGraph = getRecordEntry(state.nodesMetadata, childOperationId);
 
@@ -421,6 +431,15 @@ export const workflowSlice = createSlice({
       if (!parentOperation || !childOperation) {
         return;
       }
+
+      // If there is no existing run after, it was running after the trigger
+      // We need to add a dummy trigger node to populate the settings object and flag validation
+      if (Object.keys(childOperation.runAfter ?? {}).length === 0) {
+        const rootTriggerNodeId =
+          Object.entries(state.nodesMetadata).find(([_, node]) => node.graphId === 'root' && node.isRoot === true)?.[0] ?? '';
+        childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+      }
+
       childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 
       const graphPath: string[] = [];

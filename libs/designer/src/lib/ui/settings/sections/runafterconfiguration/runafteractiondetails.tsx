@@ -2,7 +2,7 @@ import { useOperationVisuals } from '../../../../core/state/operation/operationS
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
-import { Button, Divider } from '@fluentui/react-components';
+import { Button, Divider, Tooltip } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   bundleIcon,
@@ -13,7 +13,7 @@ import {
   Delete24Filled,
   Delete24Regular,
 } from '@fluentui/react-icons';
-import type { MouseEvent } from 'react';
+import { useCallback, useMemo, type MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
 
@@ -32,7 +32,8 @@ export interface RunAfterActionDetailsProps {
   collapsible?: boolean;
   expanded: boolean;
   id: string;
-  isDeleteVisible: boolean;
+  disableDelete: boolean;
+  disableStatusChange: boolean;
   readOnly: boolean;
   statuses: string[];
   visible?: boolean;
@@ -44,7 +45,8 @@ export interface RunAfterActionDetailsProps {
 export const RunAfterActionDetails = ({
   id,
   collapsible = true,
-  isDeleteVisible,
+  disableDelete,
+  disableStatusChange,
   readOnly,
   statuses,
   onDelete,
@@ -81,21 +83,24 @@ export const RunAfterActionDetails = ({
           <img alt="" className="msla-run-after-node-image" role="presentation" src={iconUri} />
           <span className="msla-run-after-node-title">{title}</span>
           <RunAfterTrafficLights statuses={statuses} />
-          <DeleteButton visible={isDeleteVisible && !readOnly} onDelete={onDelete} />
         </Button>
+        <DeleteButton disabled={disableDelete} visible={!readOnly} onDelete={onDelete} />
       </div>
 
-      {(!collapsible || expanded) && <RunAfterActionStatuses isReadOnly={readOnly} statuses={statuses} onStatusChange={onStatusChange} />}
+      {(!collapsible || expanded) && (
+        <RunAfterActionStatuses isReadOnly={readOnly || disableStatusChange} statuses={statuses} onStatusChange={onStatusChange} />
+      )}
       {expanded && <Divider className="msla-run-after-divider" />}
     </>
   );
 };
 
 interface DeleteButtonProps extends Pick<RunAfterActionDetailsProps, 'onDelete'> {
-  visible: boolean;
+  visible?: boolean;
+  disabled?: boolean;
 }
 
-const DeleteButton = ({ visible, onDelete }: DeleteButtonProps): JSX.Element | null => {
+const DeleteButton = ({ visible, disabled, onDelete }: DeleteButtonProps): JSX.Element | null => {
   const intl = useIntl();
 
   const MENU_DELETE = intl.formatMessage({
@@ -103,23 +108,45 @@ const DeleteButton = ({ visible, onDelete }: DeleteButtonProps): JSX.Element | n
     id: 's7nGyC',
     description: 'Delete Button',
   });
-  function handleDelete(e: MouseEvent<unknown>): void {
-    e.preventDefault();
-    e.stopPropagation();
-    onDelete?.();
-  }
+
+  const preventDeleteText = intl.formatMessage({
+    defaultMessage: 'Actions must have one or more run after configurations',
+    id: 'hCrg+6',
+    description: 'Cannot delete the last run after edge',
+  });
+
+  const handleDelete = useCallback(
+    (e: MouseEvent<unknown>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onDelete?.();
+    },
+    [onDelete]
+  );
+
+  const content = useMemo(
+    () => (
+      <Button
+        appearance="subtle"
+        icon={<DeleteIcon />}
+        aria-label={MENU_DELETE}
+        onClick={handleDelete}
+        disabled={disabled}
+        style={{ color: 'var(--colorBrandForeground1)' }}
+      />
+    ),
+    [disabled, handleDelete]
+  );
 
   if (!visible) {
     return null;
   }
 
-  return (
-    <Button
-      appearance="subtle"
-      icon={<DeleteIcon />}
-      aria-label={MENU_DELETE}
-      onClick={handleDelete}
-      style={{ color: 'var(--colorBrandForeground1)' }}
-    />
+  return disabled ? (
+    <Tooltip content={preventDeleteText} relationship={'description'}>
+      {content}
+    </Tooltip>
+  ) : (
+    content
   );
 };
