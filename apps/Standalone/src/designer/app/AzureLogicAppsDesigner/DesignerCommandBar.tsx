@@ -18,6 +18,7 @@ import {
   openPanel,
   useNodesInitialized,
   serializeUnitTestDefinition,
+  getNodeOutputOperations,
   useAssertionsValidationErrors,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
@@ -126,21 +127,12 @@ export const DesignerCommandBar = ({
     alert('Check console for unit test serialization');
   });
 
-  const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
+  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
-    const workflow = await serializeWorkflow(designerState);
-    const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
-    const response = await ChatbotService().getCopilotDocumentation(
-      docMetaData,
-      workflow,
-      environment?.armToken ? `Bearer ${environment.armToken}` : ''
-    );
-    if (!isSuccessResponse(response.status)) {
-      alert('Failed to download document');
-      return;
-    }
-    const queryResponse: string = response.data.properties.response;
-    downloadDocumentAsFile(queryResponse);
+    const operationContents = await getNodeOutputOperations(designerState);
+
+    console.log(operationContents);
+    alert('Check console for blank unit test operationContents');
   });
 
   const designerIsDirty = useIsDesignerDirty();
@@ -170,8 +162,7 @@ export const DesignerCommandBar = ({
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
 
   const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
-  const isUndoDisabled = !useCanUndo();
-  const isRedoDisabled = !useCanRedo();
+  const saveBlankUnitTestIsDisabled = !isUnitTest || isSavingBlankUnitTest || haveAssertionErrors;
 
   const items: ICommandBarItemProps[] = useMemo(
     () => [
@@ -203,6 +194,25 @@ export const DesignerCommandBar = ({
         },
         onClick: () => {
           saveUnitTestMutate();
+        },
+      },
+      {
+        key: 'saveBlankUnitTest',
+        text: 'Save Blank Unit Test',
+        disabled: saveBlankUnitTestIsDisabled,
+        onRenderIcon: () => {
+          return isSavingBlankUnitTest ? (
+            <Spinner size={SpinnerSize.small} />
+          ) : (
+            <FontIcon
+              aria-label="Save"
+              iconName="Save"
+              className={saveBlankUnitTestIsDisabled ? classNames.azureGrey : classNames.azureBlue}
+            />
+          );
+        },
+        onClick: () => {
+          saveBlankUnitTestMutate();
         },
       },
       {
@@ -340,7 +350,9 @@ export const DesignerCommandBar = ({
       isUnitTest,
       saveUnitTestMutate,
       isSavingUnitTest,
+      isSavingBlankUnitTest,
       saveUnitTestIsDisabled,
+      saveBlankUnitTestIsDisabled,
       haveAssertionErrors,
       isDownloadingDocument,
       downloadDocument,

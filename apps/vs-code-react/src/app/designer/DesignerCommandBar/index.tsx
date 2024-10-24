@@ -6,6 +6,7 @@ import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
   serializeUnitTestDefinition,
+  getNodeOutputOperations,
   useIsDesignerDirty,
   validateParameter,
   updateParameterValidation,
@@ -94,6 +95,16 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     });
   });
 
+  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const definition = await getNodeOutputOperations(designerState);
+
+    await vscode.postMessage({
+      command: ExtensionCommand.saveBlankUnitTest,
+      definition,
+    });
+  });
+
   const onResubmit = async () => {
     vscode.postMessage({
       command: ExtensionCommand.resubmitRun,
@@ -148,6 +159,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       id: 'LxRzQm',
       description: 'Button text for unit test asssertions',
     }),
+    UNIT_TEST_SAVE_BLANK: intl.formatMessage({
+      defaultMessage: 'Save blank unit test',
+      id: '+SHn9P',
+      description: 'Button test for save blank unit test',
+    }),
   };
 
   const iconClass = mergeStyles({
@@ -179,6 +195,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
+  const isSaveBlankUnitTestDisabled = isSavingBlankUnitTest || haveAssertionErrors;
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
     [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
@@ -292,6 +309,26 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       },
       onClick: () => {
         saveUnitTestMutate();
+      },
+    },
+    {
+      key: 'SaveBlank',
+      disabled: isSaveBlankUnitTestDisabled,
+      text: Resources.UNIT_TEST_SAVE_BLANK,
+      ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
+      onRenderIcon: () => {
+        return isSavingBlankUnitTest ? (
+          <Spinner size={SpinnerSize.small} />
+        ) : (
+          <FontIcon
+            aria-label={Resources.DESIGNER_SAVE}
+            iconName="Save"
+            className={isSaveBlankUnitTestDisabled ? classNames.disableGrey : classNames.azureBlue}
+          />
+        );
+      },
+      onClick: () => {
+        saveBlankUnitTestMutate();
       },
     },
     {
