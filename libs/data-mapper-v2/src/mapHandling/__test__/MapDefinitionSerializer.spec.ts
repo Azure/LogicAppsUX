@@ -1,6 +1,6 @@
 import { addFunction, concatFunction, greaterThanFunction, sortFunction } from '../../__mocks__/FunctionMock';
 import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstants';
-import { directAccessPseudoFunction, ifPseudoFunction, indexPseudoFunction } from '../../models';
+import { directAccessPseudoFunction, FunctionData, functionMock, ifPseudoFunction, indexPseudoFunction } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { applyConnectionValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
@@ -19,6 +19,7 @@ import {
   overlappingLoopsSchema,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { AddRegular } from '@fluentui/react-icons';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {
@@ -1287,6 +1288,96 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(loopingEntries[0][1]).not.toBe('string');
 
         const employeeForObject = loopObject['$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber))'] as MapDefinitionEntry;
+        const employeeForLoopEntries = Object.entries(employeeForObject);
+        expect(employeeForLoopEntries.length).toEqual(1);
+        expect(employeeForLoopEntries[0][0]).toEqual('Person');
+        expect(employeeForLoopEntries[0][1]).not.toBe('string');
+
+        const employeeObject = employeeForObject['Person'] as MapDefinitionEntry;
+        const employeeObjectEntries = Object.entries(employeeObject);
+        expect(employeeObjectEntries.length).toEqual(1);
+        expect(employeeObjectEntries[0][0]).toEqual('Name');
+        expect(employeeObjectEntries[0][1]).toEqual('"CustomValue"');
+      });
+
+      it.skip('Generates body with a sequence loop and function below it', () => {
+        const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+        const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+
+        const reverseFunction = functionMock.find((fn) => fn.key === 'Reverse') as FunctionData;
+        const reverseFunctionKey = createReactFlowFunctionKey(reverseFunction);
+
+        const toLowerFunction = functionMock.find((fn) => fn.key === 'ToLower') as FunctionData;
+        const toLowerFunctionKey = createReactFlowFunctionKey(toLowerFunction);
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // Just confirm the mock hasn't changed
+        expect(sourceNode).toBeDefined();
+        expect(targetNode).toBeDefined();
+
+        const repeatingSourceNode = sourceNode.children[0];
+        const repeatingTargetNode = targetNode.children[0];
+
+        const nameSourceNode = repeatingSourceNode.children[1];
+        const nameTargetNode = repeatingTargetNode.children[0];
+
+        //Add parents
+        applyConnectionValue(connections, {
+          targetNode: reverseFunction,
+          targetNodeReactFlowKey: reverseFunctionKey,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(repeatingSourceNode.key, SchemaType.Source),
+            node: repeatingSourceNode,
+          },
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: repeatingTargetNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(repeatingTargetNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: reverseFunctionKey,
+            node: reverseFunction,
+          },
+        });
+
+        // add children
+        applyConnectionValue(connections, {
+          targetNode: toLowerFunction,
+          targetNodeReactFlowKey: toLowerFunctionKey,
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(nameSourceNode.key, SchemaType.Source),
+            node: nameSourceNode,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: nameTargetNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(nameTargetNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: toLowerFunctionKey,
+            node: toLowerFunction,
+          },
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(Object.keys(mapDefinition).length).toEqual(1);
+        const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+        expect(rootChildren.length).toEqual(1);
+        expect(rootChildren[0][0]).toEqual('Looping');
+        expect(rootChildren[0][1]).not.toBe('string');
+
+        const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+        const loopingEntries = Object.entries(loopObject);
+        expect(loopingEntries.length).toEqual(1);
+        expect(loopingEntries[0][0]).toEqual('$for(reverse(/ns0:Root/Looping/Employee))');
+
+        const employeeForObject = loopObject['$for(reverse(/ns0:Root/Looping/Employee))'] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
