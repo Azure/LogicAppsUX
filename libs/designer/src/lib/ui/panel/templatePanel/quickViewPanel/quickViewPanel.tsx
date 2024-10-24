@@ -20,6 +20,7 @@ export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId
   const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
     templateId: templateName ?? '',
     workflowAppName,
+    isMultiWorkflow: false,
   });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 

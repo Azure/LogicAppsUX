@@ -63,6 +63,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     {
       templateId: templateName ?? '',
       workflowAppName,
+      isMultiWorkflow: true,
     }
   ).footerContent;
   return (
@@ -204,7 +205,7 @@ const WorkflowList = ({
     switch (column?.key) {
       case 'name':
         return (
-          <Link href="#" onClick={() => showDetails(item.id)}>
+          <Link href="#" as="button" onClick={() => showDetails(item.id)}>
             {item.name}
           </Link>
         );

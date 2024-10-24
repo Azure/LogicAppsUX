@@ -9,6 +9,6 @@ export const useCanRedo = () => {
   return useSelector((state: RootState) => state.undoRedo.future.length > 0);
 };
 
-export const useStateHistoryItemIndex = () => {
-  return useSelector((state: RootState) => state.undoRedo.stateHistoryItemIndex);
+export const useUndoRedoClickToggle = () => {
+  return useSelector((state: RootState) => state.undoRedo.undoRedoClickToggle);
 };

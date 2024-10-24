@@ -36,7 +36,7 @@
     "semver": "^6.3.1",
     "tslib": "2.4.0",
     "uuid": "^10.0.0",
-    "vsce": "^2.11.0",
+    "@vscode/vsce": "^3.1.1",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
     "yargs-parser": "21.1.1"

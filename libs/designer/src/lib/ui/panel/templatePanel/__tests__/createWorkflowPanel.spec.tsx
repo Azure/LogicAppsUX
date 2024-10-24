@@ -32,8 +32,11 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         subscription: '2018-07-01-preview',
         gateway: '2018-11-01',
       },
-      openBladeAfterCreate: (workflowName: string) => {
+      openBladeAfterCreate: (workflowName: string | undefined) => {
         console.log('Open blade after create', workflowName);
+      },
+      onAddBlankWorkflow: () => {
+        console.log('Add blank workflow');
       },
     })
   );
@@ -125,6 +128,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
             workflow: undefined,
             kind: undefined,
           },
+          connectionKeys: [],
         },
       },
       templateName: template1Manifest.title,
@@ -204,6 +208,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
             workflow: undefined,
             kind: undefined,
           },
+          connectionKeys: [],
         },
       },
       templateName: template2Manifest.title,

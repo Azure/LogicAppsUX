@@ -488,7 +488,7 @@ const getDesignerServices = (
     },
   });
   const apiManagementService = new BaseApiManagementService({
-    apiVersion: '2019-12-01',
+    apiVersion: '2021-08-01',
     baseUrl,
     subscriptionId,
     httpClient,
