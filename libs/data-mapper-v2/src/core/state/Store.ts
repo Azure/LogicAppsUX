@@ -29,7 +29,7 @@ export const store = configureStore({
     }),
     app: appReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }), // useful for debugging larger schemas
+  //middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }), // useful for debugging larger schemas, will break gated build
 });
 
 export type RootState = ReturnType<typeof store.getState>;
