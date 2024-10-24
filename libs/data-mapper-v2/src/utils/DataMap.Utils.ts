@@ -49,7 +49,6 @@ export const getInputValues = (
             return input;
           }
           if (isSchemaNodeExtended(input.node)) {
-            // danielle use relative path here
             return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
           }
           if (input.node.key === indexPseudoFunctionKey) {
@@ -75,7 +74,6 @@ export const collectFunctionValue = (
   connections: ConnectionDictionary,
   shouldLocalizePaths: boolean
 ): string => {
-  // danielle this might be the source of the issue
   // Special case where the index is used directly
   if (currentConnection.self.node.key === indexPseudoFunctionKey) {
     return getIndexValueForCurrentConnection(currentConnection, connections);
