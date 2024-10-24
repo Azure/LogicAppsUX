@@ -95,6 +95,7 @@ const DesignerEditorConsumption = () => {
     workflow: baseWorkflow,
     connectionReferences,
     parameters,
+    identity,
   } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
   const [runWorkflow, setRunWorkflow] = useState<any>();
@@ -122,9 +123,9 @@ const DesignerEditorConsumption = () => {
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = useMemo(
-    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
+    () => getDesignerServices(workflowId, identity, tenantId, objectId, canonicalLocation, language, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, designerID, language]
+    [workflowId, identity, tenantId, canonicalLocation, designerID, language]
   );
 
   useEffect(() => {
@@ -228,7 +229,7 @@ const DesignerEditorConsumption = () => {
   };
 
   const getAuthToken = async () => {
-    return `Bearer ${environment.armToken}` ?? '';
+    return `Bearer ${environment.armToken}`;
   };
 
   const handleSwitchView = async () => {
@@ -316,7 +317,7 @@ const DesignerEditorConsumption = () => {
 
 const getDesignerServices = (
   workflowId: string,
-  workflow: any,
+  identity: any,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
@@ -481,7 +482,7 @@ const getDesignerServices = (
 
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
-    getAppIdentity: () => workflow?.identity,
+    getAppIdentity: () => identity,
     isExplicitAuthRequiredForManagedIdentity: () => false,
     getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
       return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
@@ -562,7 +563,7 @@ const getDataForConsumption = (data: any) => {
   const connectionReferences = formatConnectionReferencesForConsumption(connections);
   const parameters: ParametersData = formatWorkflowParametersForConsumption(properties);
 
-  return { workflow, connectionReferences, parameters };
+  return { workflow, connectionReferences, parameters, identity: data?.identity };
 };
 
 const removeProperties = (obj: any = {}, props: string[] = []): Object => {
