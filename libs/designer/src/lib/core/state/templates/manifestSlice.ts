@@ -4,8 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
-// export const templatesCountPerPage = 24;
-export const templatesCountPerPage = 1;
+export const templatesCountPerPage = 24;
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];

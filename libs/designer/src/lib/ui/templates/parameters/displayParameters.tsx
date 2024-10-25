@@ -125,12 +125,17 @@ export const DisplayParameters = () => {
         return <ParameterName item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
 
       case '$type':
-        return <Text className="msla-templates-parameters-values">{item.type}</Text>;
+        return (
+          <Text className="msla-templates-parameters-values" aria-label={item.type}>
+            {item.type}
+          </Text>
+        );
 
       case '$value':
         return (
           <TextField
             className="msla-templates-parameters-values"
+            aria-label={item.value}
             value={item.value}
             onChange={(_event, newValue) => {
               handleParameterValueChange(item, newValue ?? '');
@@ -167,7 +172,7 @@ const ParameterName = ({
   const buttonId = useId('callout-button');
 
   return (
-    <div className="msla-template-parameters-tab-name">
+    <div className="msla-template-parameters-tab-name" aria-label={item.displayName}>
       <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
         <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
           {item.displayName}
@@ -183,9 +188,10 @@ const ParameterName = ({
           setInitialFocus
         >
           {!isSingleWorkflow && (
-          <Text className="msla-templates-parameter-callout-title" block>
-            {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
-          </Text>)}
+            <Text className="msla-templates-parameter-callout-title" block>
+              {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
+            </Text>
+          )}
           <Text className="msla-templates-parameter-callout-subtitle" block>
             {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
           </Text>
