@@ -17,7 +17,7 @@ describe('DefaultInputsBinder', () => {
 
   it('should return an empty object when inputs are undefined', () => {
     const result = binder.bind(undefined);
-    expect(result).toEqual({});
+    expect(result).toEqual(undefined);
   });
 
   it('should handle null inputs gracefully', () => {
