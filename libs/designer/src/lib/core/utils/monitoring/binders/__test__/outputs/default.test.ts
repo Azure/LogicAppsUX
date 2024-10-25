@@ -13,7 +13,7 @@ describe('DefaultOutputsBinder', () => {
   afterEach(() => {
     spy?.mockRestore();
   });
-  it('should return an empty object when outputs is undefined', () => {
+  it('should return undefined when outputs is undefined', () => {
     const result = binder.bind(undefined);
     expect(result).toEqual(undefined);
   });

@@ -15,7 +15,7 @@ describe('DefaultInputsBinder', () => {
     spy?.mockRestore();
   });
 
-  it('should return an empty object when inputs are undefined', () => {
+  it('should return undefined when inputs are undefined', () => {
     const result = binder.bind(undefined);
     expect(result).toEqual(undefined);
   });
