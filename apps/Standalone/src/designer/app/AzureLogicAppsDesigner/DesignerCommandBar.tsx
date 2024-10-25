@@ -27,6 +27,7 @@ import {
   onRedoClick,
   serializeWorkflow,
   getDocumentationMetadata,
+  resetDesignerView,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -197,6 +198,7 @@ export const DesignerCommandBar = ({
         onClick: () => {
           switchViews();
           dispatch(collapsePanel());
+          dispatch(resetDesignerView());
         },
       },
       ...(showConnectionsPanel

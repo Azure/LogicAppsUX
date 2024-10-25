@@ -30,13 +30,20 @@ export const designerViewSlice = createSlice({
     setEdgeContextMenuData: (state, action: PayloadAction<EdgeContextMenuObject>) => {
       state.edgeContextMenuData = action.payload;
     },
+    resetDesignerView: () => initialState,
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
-export const { toggleMinimap, toggleClampPan, setShowDeleteModalNodeId, setNodeContextMenuData, setEdgeContextMenuData } =
-  designerViewSlice.actions;
+export const {
+  toggleMinimap,
+  toggleClampPan,
+  setShowDeleteModalNodeId,
+  setNodeContextMenuData,
+  setEdgeContextMenuData,
+  resetDesignerView,
+} = designerViewSlice.actions;
 
 export default designerViewSlice.reducer;
