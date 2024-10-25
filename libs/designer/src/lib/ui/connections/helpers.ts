@@ -14,7 +14,6 @@ export const canDropItem = (
   childId: string | undefined,
   parentId: string | undefined
 ): boolean => {
-  console.log(item.loopSources);
   // This supports preventing moving a node with a dependency above its upstream node
   for (const dec of item.dependencies ?? []) {
     if (!upstreamNodes.has(dec)) {
