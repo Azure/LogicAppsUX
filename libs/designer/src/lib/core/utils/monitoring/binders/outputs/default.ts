@@ -5,7 +5,7 @@ import { parseOutputs } from '../../../monitoring';
 export default class DefaultOutputsBinder extends Binder {
   bind(outputs: any): BoundParameters {
     if (outputs === undefined) {
-      return {};
+      return outputs;
     }
 
     return parseOutputs(outputs);

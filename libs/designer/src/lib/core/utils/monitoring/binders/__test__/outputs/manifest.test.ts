@@ -66,9 +66,9 @@ describe('ManifestOutputsBinder', () => {
     binder = new ManifestOutputsBinder(manifest, nodeParameters, metadata);
   });
 
-  it('should return empty object when outputs are undefined', async () => {
+  it('should return undefined when outputs are undefined', async () => {
     const result = await binder.bind(undefined, {});
-    expect(result).toEqual({});
+    expect(result).toEqual(undefined);
   });
 
   it('should bind outputs correctly', async () => {

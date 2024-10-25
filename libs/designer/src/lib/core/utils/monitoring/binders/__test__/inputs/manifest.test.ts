@@ -31,9 +31,9 @@ describe('ManifestInputsBinder', () => {
     binder = new ManifestInputsBinder(manifest, nodeParameters, metadata);
   });
 
-  it('should return empty object when inputs are undefined', async () => {
+  it('should return undefined when inputs are undefined', async () => {
     const result = await binder.bind(undefined, {}, undefined);
-    expect(result).toEqual({});
+    expect(result).toEqual(undefined);
   });
 
   it('should bind inputs correctly', async () => {

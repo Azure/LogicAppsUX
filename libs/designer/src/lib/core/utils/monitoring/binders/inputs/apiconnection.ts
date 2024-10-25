@@ -26,6 +26,9 @@ export default class ApiConnectionInputsBinder extends Binder {
   }
 
   async bind(inputs: any, inputParameters: Record<string, InputParameter>): Promise<BoundParameters> {
+    if (inputs === undefined) {
+      return inputs;
+    }
     if (!inputParameters || !this._operation) {
       return this._makeUntypedInputsParameters(inputs);
     }

@@ -19,7 +19,7 @@ export class ManifestOutputsBinder extends Binder {
 
   async bind(outputs: any, outputsParameters: Record<string, OutputParameter>): Promise<BoundParameters> {
     if (outputs === undefined) {
-      return {};
+      return outputs;
     }
 
     return unmap(outputsParameters).reduce(this.makeReducer(outputs, this.bindData), {} as BoundParameters);

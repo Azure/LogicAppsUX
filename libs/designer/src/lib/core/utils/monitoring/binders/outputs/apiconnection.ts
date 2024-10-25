@@ -17,6 +17,9 @@ import constants from '../constants';
 
 export default class ApiConnectionOutputsBinder extends Binder {
   bind(outputs: any, parameters?: OutputParameters): BoundParameters {
+    if (outputs === undefined) {
+      return outputs;
+    }
     if (this.shouldShowUntypedOutputs(parameters)) {
       return isObject(outputs) ? this.makeUntypedOutputsParameters(outputs) : {};
     }
