@@ -1,4 +1,4 @@
-import { HostService, ContentType, isNullOrUndefined, isNullOrEmpty } from '@microsoft/logic-apps-shared';
+import { HostService, ContentType, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { SecureDataSection, ValuesPanel } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
@@ -73,7 +73,7 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
           showMore={showMore}
           onMoreClick={onMoreClick}
           onLinkClick={onSeeRawInputsClick}
-          isDownload={isNullOrEmpty(inputs)}
+          isDownload={isNullOrUndefined(inputs)}
           link={uri}
         />
       ) : null}
