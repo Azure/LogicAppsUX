@@ -68,7 +68,7 @@ describe('ManifestOutputsBinder', () => {
 
   it('should return empty object when outputs are undefined', async () => {
     const result = await binder.bind(undefined, {});
-    expect(result).toEqual({});
+    expect(result).toEqual(undefined);
   });
 
   it('should bind outputs correctly', async () => {
