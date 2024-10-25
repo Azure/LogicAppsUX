@@ -114,7 +114,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
   }, [dispatch, id, repetitionData, runInstance?.id]);
 
-  const dependencies = useTokenDependencies(id);
+  const { dependencies, loopSources } = useTokenDependencies(id);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -139,6 +139,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       item: {
         id: id,
         dependencies,
+        loopSources,
         graphId: metadata?.graphId,
       },
       canDrag: !readOnly && !isTrigger,

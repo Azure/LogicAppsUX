@@ -111,23 +111,31 @@ const mockDeps: NodeDependencies = { inputs: {}, outputs: {} };
 export const useDependencies = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.dependencies, nodeId) ?? mockDeps));
 
-export const useTokenDependencies = (nodeId: string) => {
+interface TokenDependencies {
+  dependencies: Set<string>;
+  loopSources: Set<string>;
+}
+export const useTokenDependencies = (nodeId: string): TokenDependencies => {
   const operationInputParameters = useRawInputParameters(nodeId);
   return useMemo(() => {
     if (!operationInputParameters) {
-      return new Set();
+      return { dependencies: new Set(), loopSources: new Set() };
     }
-    const dependencies = new Set();
+    const dependencies = new Set<string>();
+    const loopSources = new Set<string>();
     for (const group of Object.values(operationInputParameters.parameterGroups)) {
       for (const parameter of group.parameters) {
         for (const value of parameter.value) {
+          if (value.token?.arrayDetails?.loopSource) {
+            loopSources.add(value.token.arrayDetails.loopSource);
+          }
           if (value.token?.actionName) {
             dependencies.add(value.token.actionName);
           }
         }
       }
     }
-    return dependencies;
+    return { dependencies, loopSources };
   }, [operationInputParameters]);
 };
 

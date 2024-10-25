@@ -4,6 +4,7 @@ export const canDropItem = (
   item: {
     id: string;
     dependencies?: string[];
+    loopSources?: string[];
     graphId?: string;
     isScope?: boolean;
   },
@@ -16,6 +17,13 @@ export const canDropItem = (
   // This supports preventing moving a node with a dependency above its upstream node
   for (const dec of item.dependencies ?? []) {
     if (!upstreamNodes.has(dec)) {
+      return false;
+    }
+  }
+
+  // This supports preventing moving a node with a loop source outside of the loop
+  for (const loopSource of item.loopSources ?? []) {
+    if (!upstreamScopes.has(loopSource)) {
       return false;
     }
   }

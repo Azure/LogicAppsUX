@@ -113,6 +113,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
       canDrop: (item: {
         id: string;
         dependencies?: string[];
+        loopSources?: string[];
         graphId?: string;
         isScope?: boolean;
       }) => canDropItem(item, upstreamNodes, upstreamNodesDependencies, upstreamScopes, childId, parentId),
