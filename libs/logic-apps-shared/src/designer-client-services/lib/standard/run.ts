@@ -55,6 +55,11 @@ export class StandardRunService implements IRunService {
       args: [`size: ${contentSize}`],
     });
 
+    // 2MB
+    if (contentSize > 2097152) {
+      return undefined;
+    }
+
     try {
       const response = await httpClient.get<any>({
         uri,
