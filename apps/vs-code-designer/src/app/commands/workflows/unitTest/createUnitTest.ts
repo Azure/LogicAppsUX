@@ -228,14 +228,15 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
   const csTemplateFileName = 'TestClassFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
-  const templateContent = await fs.readFile(templatePath, 'utf-8');
-  const csContent = templateContent
+  let templateContent = await fs.readFile(templatePath, 'utf-8');
+
+  templateContent = templateContent
     .replace(/<%= UnitTestName %>/g, unitTestName)
     .replace(/<%= LogicAppName %>/g, logicAppName)
     .replace(/<%= WorkflowName %>/g, workflowName);
 
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
-  await fs.writeFile(csFilePath, csContent);
+  await fs.writeFile(csFilePath, templateContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
 }

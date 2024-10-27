@@ -54,10 +54,10 @@ namespace <%= LogicAppName %>.Tests
         /// </summary>
         public <%= UnitTestName %>()
         {
-            this.workflowDefinitionPath = @"../<%= logicAppName %>/<%= workflowName %>/workflow.json";
-            this.connectionsPath = @"../<%= logicAppName %>/connections.json";
-            this.parametersPath = @"../<%= logicAppName %>/parameters.json";
-            this.localSettingsPath = @"../<%= logicAppName %>/local.settings.json";
+            this.workflowDefinitionPath = @"../<%= LogicAppName %>/<%= WorkflowName %>/workflow.json";
+            this.connectionsPath = @"../<%= LogicAppName %>/connections.json";
+            this.parametersPath = @"../<%= LogicAppName %>/parameters.json";
+            this.localSettingsPath = @"../<%= LogicAppName %>/local.settings.json";
 
             // Load the mock data from the file named <%= UnitTestName %>-mock.json.
             var mockData = JObject.Parse(File.ReadAllText(@"<%= UnitTestName %>-mock.json"));
@@ -74,12 +74,12 @@ namespace <%= LogicAppName %>.Tests
         {
             // PREPARE Mock
             // Set up mock data for the action named '<actionName>'.
-            var actionMocks = this.actionMocks;
-            actionMocks["<actionName>"] = new ActionMock(
-                "<actionName>", 
-                TestWorkflowStatus.Succeeded, 
-                onGetActionOutputsCallback: this.Mock<actionName>OutputCallback
-            );
+            // var actionMocks = this.actionMocks;
+            // actionMocks["<actionName>"] = new ActionMock(
+            //     "<actionName>", 
+            //     TestWorkflowStatus.Succeeded, 
+            //     onGetActionOutputsCallback: this.MockActionOutputCallback
+            // );
 
             // ACT 
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -99,7 +99,7 @@ namespace <%= LogicAppName %>.Tests
         /// You can modify this method to return different mock outputs based on the test scenario.
         /// </summary>
         /// <param name="context">The test execution context that contains information about the current test run.</param>
-        public JToken Mock<actionName>OutputCallback(TestExecutionContext context)
+        public JToken MockActionOutputCallback(TestExecutionContext context)
         {
             // Sample mock data 1: Replace <your-test-JSON-value> with the appropriate mock data for the test.
             // return JObject.Parse(@"
