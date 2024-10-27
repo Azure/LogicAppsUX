@@ -2,7 +2,7 @@ import { titleCase } from '../../../common/utilities/Utils';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
-import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
+import { useConnector, useNodeConnectionId, useSwagger } from '../connection/connectionSelector';
 import type { NodeOperation, OperationMetadataState } from '../operation/operationMetadataSlice';
 import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
+import { getOperationManifest } from '../../queries/operation';
 
 interface QueryResult {
   isLoading?: boolean;
@@ -82,7 +83,7 @@ export const useOperationManifest = (
         return null;
       }
       return operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
-        ? operationManifestService.getOperationManifest(connectorId, operationId)
+        ? getOperationManifest({ connectorId, operationId })
         : null;
     },
     {
@@ -206,10 +207,8 @@ const useNodeAttributeOrSwagger = (
   propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
-  const res = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
-  const { data: connectorData } = res;
+  const { data: swagger } = useSwagger(operationInfo?.connectorId, !options.useManifest);
   const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
-  const { swagger } = connectorData ?? {};
   if (swagger) {
     const swaggerParsed = new SwaggerParser(swagger);
     const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.[propertyInSwagger];

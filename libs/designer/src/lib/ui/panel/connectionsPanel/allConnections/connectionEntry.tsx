@@ -10,7 +10,7 @@ import {
   ErrorCircle24Filled,
   PlugDisconnected24Filled,
 } from '@fluentui/react-icons';
-import { HostService, getConnectionErrors } from '@microsoft/logic-apps-shared';
+import { HostService, cleanResourceId, getConnectionErrors } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -26,8 +26,8 @@ interface ConnectionEntryProps {
 
 export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri, disconnectedNodeIds = [] }: ConnectionEntryProps) => {
   const dispatch = useDispatch();
-
-  const connection = useConnectionById(connectionReference?.connection?.id, connectorId);
+  const connectionId = cleanResourceId(connectionReference?.connection?.id);
+  const connection = useConnectionById(connectionId, connectorId);
   const nodeIds = useMemo(() => connectionReference?.nodes || disconnectedNodeIds, [connectionReference?.nodes, disconnectedNodeIds]);
 
   const disconnected = useMemo(() => disconnectedNodeIds.length > 0, [disconnectedNodeIds.length]);

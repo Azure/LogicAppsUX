@@ -5,8 +5,7 @@ import { useHostOptions, useReadOnly } from '../../../../../core/state/designerO
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
-import { usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
-import { useIsPanelInPinnedViewMode } from '../../../../../core/state/panelV2/panelSelectors';
+import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -15,11 +14,17 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import {
+  useGetSwitchParentId,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useReplacedIds,
+} from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
+  getTypeForTokenFiltering,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
@@ -89,6 +94,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
+  const parentIdOfSwitch = useGetSwitchParentId(selectedNodeId);
 
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
@@ -135,7 +141,13 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     );
   }
 
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const tokenGroup = getOutputTokenSections(
+    parentIdOfSwitch ?? selectedNodeId,
+    parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
+    tokenState,
+    workflowParametersState,
+    replacedIds
+  );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
@@ -233,7 +245,7 @@ const ParameterSection = ({
   );
 
   const onValueChange = useCallback(
-    (id: string, newState: ChangeState) => {
+    (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
@@ -272,6 +284,7 @@ const ParameterSection = ({
           nodeInputs,
           dependencies,
           operationDefinition,
+          skipStateSave,
         })
       );
     },
@@ -349,10 +362,8 @@ const ParameterSection = ({
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
-      editorType ??
-      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
-      constants.SWAGGER.TYPE.ANY;
-    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+      editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(parameterType));
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
@@ -450,7 +461,7 @@ const ParameterSection = ({
           tokenMapping,
           nodeTitle,
           loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
-          onValueChange: (newState: ChangeState) => onValueChange(id, newState),
+          onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {

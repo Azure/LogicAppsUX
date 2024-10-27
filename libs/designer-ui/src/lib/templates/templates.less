@@ -7,69 +7,27 @@
         font-weight: 600;
         line-height: 32px;
     }
-
-    .msla-templates-panel-header-description {
-        font-size: 12px;
-        color: #605E5C;
-    }
 }
 
 .msla-templates-panel {
     .msla-templates-panel-tabs {
-        margin: '0px -12px';
+        margin: 0px -12px;
     }
-
+    
     .msla-templates-panel-tabName {
-        padding: 0 5px 10px 0;
-        margin: 0 20px 0 0;
-
-        .msla-templates-panel-tabName-index {
+        .msla-templates-panel-error-icon {
             display: inline-flex;
             width: 16px;
             height: 16px;
             justify-content: center;
             align-items: center;
             border-radius: 100%;
-            border: 1px solid #424242;
+            background-color: red;
+            border-color: red;
+            color: white;
             font-size: 10px;
             font-weight: 600;
-            color: #424242;
             margin-right: 8px;
-        }
-
-        .msla-templates-panel-tabName-title {
-            display: flex-inline;
-            align-items: center;
-        }
-
-        &.selected {
-            box-shadow: 0px -2px 0px 0px #0078D4 inset;
-
-            .msla-templates-panel-tabName-index {
-                border-color: #0078D4;
-                background-color: #0078D4;
-                color: white;
-            }
-            
-            .msla-templates-panel-tabName-title {
-                font-weight: 600;
-            }
-        }
-
-        &.error {
-            .msla-templates-panel-tabName-index {
-                background-color: red;
-                border-color: red;
-                color: white;
-            }
-        }
-
-        &.completed {
-            .msla-templates-panel-tabName-index {
-                background-color: #57A300;
-                border-color: #57A300;
-                color: white;
-            }
         }
     }
 
@@ -158,14 +116,8 @@
         }
     }
 
-    .msla-template-connection-list {
-        margin-top: 7px;
-        height: 10px;
-    }
-
     .msla-template-connection-text {
         margin-top: 3px;
-        vertical-align: middle;
     }
 
     .msla-template-create-progress-connector {

@@ -4,28 +4,28 @@ import { Label, Text } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
-import { Link, MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
-import { TemplateService } from '@microsoft/logic-apps-shared';
-import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
-import { normalizeConnectorId } from '../../../../../core/templates/utils/helper';
+import { WorkflowKind } from '../../../../../core/state/workflow/workflowInterfaces';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
-  const { workflowName, kind, manifest, parameterDefinitions } = useSelector((state: RootState) => state.template);
+  const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const {
     existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
+    isConsumption,
   } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
-    DETAILS: intl.formatMessage({
-      defaultMessage: 'Details',
-      id: 'idjOtt',
-      description: 'Accessibility label for the details section',
+    BASICS: intl.formatMessage({
+      defaultMessage: 'Basics',
+      id: '1LSKq8',
+      description: 'Accessibility label for the basics section',
     }),
     CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Connections',
@@ -37,19 +37,14 @@ export const ReviewCreatePanel = () => {
       id: 'oWAB0H',
       description: 'Accessibility label for the parameters section',
     }),
-    TEMPLATE_NAME: intl.formatMessage({
-      defaultMessage: 'Template name',
-      id: 'rNGm1D',
-      description: 'Accessibility label for template name',
-    }),
     WORKFLOW_NAME: intl.formatMessage({
       defaultMessage: 'Workflow name',
       id: 'oqgNX3',
       description: 'Accessibility label for workflow name',
     }),
-    STATE: intl.formatMessage({
-      defaultMessage: 'State',
-      id: 'LVeWG7',
+    STATE_TYPE: intl.formatMessage({
+      defaultMessage: 'State type',
+      id: 'tzeDPE',
       description: 'Accessibility label for state kind',
     }),
     PLACEHOLDER: intl.formatMessage({
@@ -57,39 +52,62 @@ export const ReviewCreatePanel = () => {
       id: 'wPi8wS',
       description: 'Accessibility label indicating that the value is not set',
     }),
+    kind_stateful: intl.formatMessage({
+      defaultMessage: 'Stateful',
+      id: 'Qqmb+W',
+      description: 'Dropdown option for stateful type',
+    }),
+    kind_stateless: intl.formatMessage({
+      defaultMessage: 'Stateless',
+      id: 'cNXS5n',
+      description: 'Dropdown option for stateless type',
+    }),
   };
+
   return (
     <div className="msla-templates-tab">
-      <Label className="msla-templates-tab-label" htmlFor={'detailsLabel'}>
-        {intlText.DETAILS}
-      </Label>
-      <div className="msla-templates-tab-review-section">
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.TEMPLATE_NAME}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{manifest?.title}</Text>
-        </div>
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">
-            {existingWorkflowName ?? workflowName ?? intlText.PLACEHOLDER}
-          </Text>
-        </div>
-        <div className="msla-templates-tab-review-section-details">
-          <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE}</Text>
-          <Text className="msla-templates-tab-review-section-details-value">{kind ?? intlText.PLACEHOLDER}</Text>
-        </div>
-      </div>
+      {!isConsumption && (
+        <>
+          <Label className="msla-templates-tab-label" htmlFor={'detailsLabel'}>
+            {intlText.BASICS}
+          </Label>
+          <div className="msla-templates-tab-review-section">
+            {Object.values(workflows).map((workflow) => {
+              const workflowNameToShow = existingWorkflowName ?? workflow.workflowName;
+              return (
+                <div key={workflow.id}>
+                  <div className="msla-templates-tab-review-section-details">
+                    <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
+                    <Text className="msla-templates-tab-review-section-details-value">
+                      {isUndefinedOrEmptyString(workflowNameToShow) ? intlText.PLACEHOLDER : workflowNameToShow}
+                    </Text>
+                  </div>
+                  <div className="msla-templates-tab-review-section-details">
+                    <Text className="msla-templates-tab-review-section-details-title">{intlText.STATE_TYPE}</Text>
+                    <Text className="msla-templates-tab-review-section-details-value">
+                      {equals(workflow.kind, WorkflowKind.STATEFUL)
+                        ? intlText.kind_stateful
+                        : intlText.kind_stateless ?? intlText.PLACEHOLDER}
+                    </Text>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
 
-      {Object.keys(manifest?.connections ?? {}).length > 0 && (
+      {Object.keys(connections).length > 0 && (
         <>
           <Label className="msla-templates-tab-label" htmlFor={'connectionsLabel'}>
             {intlText.CONNECTIONS}
           </Label>
           <div className="msla-templates-tab-review-section">
-            {Object.keys(manifest?.connections ?? {}).map((connectionKey) => (
+            {Object.keys(connections).map((connectionKey) => (
               <ConnectorConnectionStatus
                 key={connectionKey}
-                connectorId={normalizeConnectorId(manifest?.connections[connectionKey].connectorId ?? '', subscriptionId, location)}
+                connectionKey={connectionKey.replace('_#workflowname#', '')}
+                connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}
                 hasConnection={mapping[connectionKey] !== undefined}
                 intl={intl}
               />
@@ -120,17 +138,17 @@ export const ReviewCreatePanel = () => {
 export const reviewCreateTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  onCreateClick: () => Promise<void>,
+  onCreateClick: () => void,
   {
-    workflowName,
-    isLoadingCreate,
-    isCreated,
+    isCreating,
+    errorMessage,
     isPrimaryButtonDisabled,
+    previousTabId,
   }: {
-    workflowName: string;
-    isLoadingCreate: boolean;
-    isCreated: boolean;
+    isCreating: boolean;
+    errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
+    previousTabId: string;
   }
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
@@ -139,21 +157,8 @@ export const reviewCreateTab = (
     id: 'JQBEOg',
     description: 'The tab label for the monitoring review and create tab on the create workflow panel',
   }),
-  description: isCreated ? (
-    <MessageBar messageBarType={MessageBarType.success}>
-      {intl.formatMessage({
-        defaultMessage: 'Your workflow has been created. ',
-        id: 'J+bMkk',
-        description: 'The message displayed when the workflow is successfully created',
-      })}
-      <Link onClick={() => TemplateService()?.openBladeAfterCreate(workflowName)}>
-        {intl.formatMessage({
-          defaultMessage: 'Go to workflow.',
-          id: 'OqrmYm',
-          description: 'The link displayed to navigate to workflow when the workflow is successfully created',
-        })}
-      </Link>
-    </MessageBar>
+  description: errorMessage ? (
+    <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
   ) : (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
@@ -162,16 +167,9 @@ export const reviewCreateTab = (
     })
   ),
   hasError: false,
-  order: 3,
   content: <ReviewCreatePanel />,
   footerContent: {
-    primaryButtonText: isCreated ? (
-      intl.formatMessage({
-        defaultMessage: 'Go to my workflow',
-        id: 'P3OMN/',
-        description: 'The button text for navigating to the workflows page after creating the workflow',
-      })
-    ) : isLoadingCreate ? (
+    primaryButtonText: isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />
     ) : (
       intl.formatMessage({
@@ -180,31 +178,14 @@ export const reviewCreateTab = (
         description: 'Button text for creating the workflow',
       })
     ),
-    primaryButtonOnClick: isCreated
-      ? () => TemplateService()?.openBladeAfterCreate(workflowName)
-      : isLoadingCreate
-        ? () => {}
-        : onCreateClick,
-    primaryButtonDisabled: isPrimaryButtonDisabled || isLoadingCreate,
-    secondaryButtonText: isCreated
-      ? intl.formatMessage({
-          defaultMessage: 'Close',
-          id: 'FTrMxN',
-          description: 'Button text for closing the panel',
-        })
-      : intl.formatMessage({
-          defaultMessage: 'Previous',
-          id: 'Yua/4o',
-          description: 'Button text for moving to the previous tab in the create workflow panel',
-        }),
-    secondaryButtonOnClick: isCreated
-      ? () => {
-          dispatch(closePanel());
-          dispatch(clearTemplateDetails());
-        }
-      : () => {
-          dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE));
-        },
-    secondaryButtonDisabled: isLoadingCreate,
+    primaryButtonOnClick: onCreateClick,
+    primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Previous',
+      id: 'Yua/4o',
+      description: 'Button text for moving to the previous tab in the create workflow panel',
+    }),
+    secondaryButtonOnClick: () => dispatch(selectPanelTab(previousTabId)),
+    secondaryButtonDisabled: isCreating,
   },
 });

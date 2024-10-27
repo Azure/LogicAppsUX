@@ -5,7 +5,6 @@ import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
-import { UnboundedDropdownListItem } from '../inputTab/inputTab';
 import { useStyles } from '../styles';
 import { List } from '@fluentui/react-list-preview';
 import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
@@ -13,6 +12,8 @@ import { SchemaType } from '@microsoft/logic-apps-shared';
 import { flattenInputs, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
+import { isSchemaNodeExtended } from '../../../utils';
+import { CustomListItem } from '../inputTab/InputList';
 
 export const OutputTabContents = (props: {
   func: FunctionData;
@@ -45,7 +46,7 @@ export const OutputTabContents = (props: {
     return connection.reactFlowKey;
   };
 
-  const removeConnection = (_inputIndex: number, newOutput: InputConnection) => {
+  const removeConnection = (newOutput: InputConnection) => {
     if (newOutput === undefined) {
       return;
     }
@@ -76,9 +77,14 @@ export const OutputTabContents = (props: {
     );
   };
 
-  const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
+  const validateAndCreateConnection = (
+    optionValue: string | undefined,
+    option: InputOptionProps | undefined,
+    oldOutput: InputConnection
+  ) => {
+    removeConnection(oldOutput);
     if (optionValue) {
-      const output = validateAndCreateConnectionOutput(
+      const newOutput = validateAndCreateConnectionOutput(
         optionValue,
         option,
         connectionDictionary,
@@ -86,48 +92,53 @@ export const OutputTabContents = (props: {
         functionNodeDictionary,
         targetSchemaDictionary
       );
-      if (output) {
-        updateConnection(output);
+      if (newOutput) {
+        updateConnection(newOutput);
       }
     }
   };
 
-  const table = (
-    <List>
-      {outputs.concat(additionalOutput).map((output, index) => {
-        const listItem = (
-          <UnboundedDropdownListItem
-            key={`output-list-item-${index}`}
-            schemaListType={SchemaType.Target}
-            inputName={output?.node.key}
-            inputValue={undefined}
-            inputType={undefined}
-            validateAndCreateConnection={validateAndCreateConnection}
-            functionKey={props.functionId}
-            func={props.func}
-            draggable={false}
-            removeItem={() => {
-              removeConnection(index, output);
-            }}
-          />
-        );
-        return listItem;
-      })}
-    </List>
-  );
-  const addOutput = (
-    <Button
-      icon={<AddRegular className={styles.addIcon} />}
-      onClick={() => addOutputClick()}
-      className={styles.addButton}
-      appearance="transparent"
-    >
-      <Caption1>Add Output</Caption1>
-    </Button>
-  );
   return (
     <>
-      <div>{table}</div> {addOutput}
+      <div>
+        <List>
+          {outputs.concat(additionalOutput).map((output, index) => {
+            let outputValue = undefined;
+            if (output) {
+              outputValue = isSchemaNodeExtended(output?.node) ? output?.node.name : '';
+            }
+            const listItem = (
+              <CustomListItem
+                customValueAllowed={false}
+                key={`output-list-item-${index}`}
+                schemaType={SchemaType.Target}
+                name={outputValue}
+                value={outputValue}
+                type={undefined}
+                validateAndCreateConnection={(optionValue: string | undefined, option: InputOptionProps | undefined) =>
+                  validateAndCreateConnection(optionValue, option, output)
+                }
+                functionKey={props.functionId}
+                functionData={props.func}
+                draggable={false}
+                remove={() => {
+                  removeConnection(output);
+                }}
+                index={index}
+              />
+            );
+            return listItem;
+          })}
+        </List>
+      </div>
+      <Button
+        icon={<AddRegular className={styles.addIcon} />}
+        onClick={() => addOutputClick()}
+        className={styles.addButton}
+        appearance="transparent"
+      >
+        <Caption1>Add Output</Caption1>
+      </Button>
     </>
   );
 };
@@ -147,7 +158,6 @@ const validateAndCreateConnectionOutput = (
 
       // ensure that new connection won't create loop/circular logic
       if (newConnectionWillHaveCircularLogic(selectedOutputKey, func.key, connectionDictionary)) {
-        //dispatch(showNotification({ type: NotificationTypes.CircularLogicError, autoHideDurationMs: errorNotificationAutoHideDuration }));
         return;
       }
 

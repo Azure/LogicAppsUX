@@ -17,6 +17,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
+  // used to force a workflow rerender when switching from code view
+  workflowId?: string;
   workflow: Workflow;
   customCode?: Record<string, string>;
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
@@ -26,6 +28,7 @@ export interface BJSWorkflowProviderProps {
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
+  workflowId,
   workflow,
   children,
   runInstance,
@@ -42,7 +45,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
     dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
-  }, [runInstance, workflow, customCode, unitTestDefinition]);
+  }, [workflowId, runInstance, workflow, customCode, unitTestDefinition]);
 
   // Store app settings in query to access outside of functional components
   useQuery({

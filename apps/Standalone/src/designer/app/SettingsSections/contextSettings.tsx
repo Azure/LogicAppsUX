@@ -25,7 +25,7 @@ import {
   setSuppressDefaultNodeSelect,
   setStringOverrides,
 } from '../../state/workflowLoadingSlice';
-import { Checkbox } from '@fluentui/react';
+import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -46,8 +46,8 @@ const ContextSettings = () => {
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun());
-        dispatch(loadWorkflow());
+        dispatch(loadRun(_));
+        dispatch(loadWorkflow(_));
       }
     },
     [dispatch]
@@ -91,9 +91,9 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
       <Checkbox
-        label="Force Enable Split-On"
-        checked={hostOptions.forceEnableSplitOn}
-        onChange={(_, checked) => dispatch(setHostOptions({ forceEnableSplitOn: !!checked }))}
+        label="Collapse Graphs"
+        checked={hostOptions.collapseGraphsByDefault}
+        onChange={(_, checked) => dispatch(setHostOptions({ collapseGraphsByDefault: !!checked }))}
       />
       <Checkbox
         label="Suppress default node click"
@@ -120,6 +120,10 @@ const ContextSettings = () => {
             )
           );
         }}
+      />
+      <TextField
+        label="Max State History Size"
+        onChange={(_, newValue) => dispatch(setHostOptions({ maxStateHistorySize: Number.parseInt(newValue || '0') }))}
       />
     </div>
   );

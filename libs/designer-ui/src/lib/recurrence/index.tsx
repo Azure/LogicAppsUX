@@ -46,11 +46,14 @@ export const ScheduleEditor = ({
   onChange,
 }: ScheduleEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [recurrence, setRecurrence] = useState<Recurrence>(getRecurrenceValue(initialValue));
+  const initialRecurrenceValue = getRecurrenceValue(initialValue);
+  const [recurrence, setRecurrence] = useState<Recurrence>(initialRecurrenceValue);
 
   const updateRecurrence = (newRecurrence: Recurrence) => {
-    setRecurrence(newRecurrence);
-    onChange?.({ value: [createLiteralValueSegment(JSON.stringify(newRecurrence))] });
+    if (!equals(JSON.stringify(newRecurrence), JSON.stringify(recurrence))) {
+      setRecurrence(newRecurrence);
+      onChange?.({ value: [createLiteralValueSegment(JSON.stringify(newRecurrence))] });
+    }
   };
 
   const renderScheduleSection = (): JSX.Element | null => {

@@ -3,7 +3,7 @@ import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
-import { useIsNodePinnedToOperationPanel } from '../../../core/state/panelV2/panelSelectors';
+import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
 import { useHasSchema } from '../../../core/state/staticresultschema/staitcresultsSelector';
 import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors';

@@ -1,7 +1,7 @@
 import type { IChatbotService } from '../chatbot';
 import type { AxiosResponse } from 'axios';
 import axios from 'axios';
-import { ArgumentException } from '../../../utils/src';
+import { ArgumentException, type DocumentationMetadataState } from '../../../utils/src';
 
 export interface ChatbotServiceOptions {
   baseUrl: string;
@@ -25,11 +25,32 @@ export class BaseChatbotService implements IChatbotService {
   }
 
   async getCopilotResponse(query: string, workflow: any, signal: AbortSignal, armToken: string): Promise<AxiosResponse<any>> {
+    const queryData = {
+      prompt: query,
+      workflow,
+    };
+    return this._getCopilotResponseV2('chatbot', queryData, signal, armToken);
+  }
+
+  async getCopilotDocumentation(operationsData: DocumentationMetadataState, workflow: any, armToken: string): Promise<AxiosResponse<any>> {
+    const queryData = {
+      workflow,
+      operationsData,
+    };
+    return this._getCopilotResponseV2('documentation', queryData, undefined, armToken);
+  }
+
+  async _getCopilotResponseV2(
+    queryType: 'chatbot' | 'documentation',
+    query: any,
+    signal: AbortSignal | undefined,
+    armToken: string
+  ): Promise<AxiosResponse<any>> {
     const { baseUrl, subscriptionId, apiVersion, location } = this.options;
     const requestData = {
       properties: {
+        queryType,
         query,
-        workflow,
       },
     };
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.Logic/locations/${location}/generateCopilotResponse`;

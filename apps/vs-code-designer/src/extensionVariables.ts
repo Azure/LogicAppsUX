@@ -6,7 +6,7 @@ import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import type { TestData } from './app/tree/unitTestTree';
 import { dotnet, func, node, npm } from './constants';
-import type { Site } from '@azure/arm-appservice';
+import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
@@ -26,12 +26,15 @@ import {
  */
 
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
+type LogicAppMap = Map<string, Site>;
+type SubscriptionMap = Map<string, LogicAppMap>;
 
 // biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
   export let designTimePort: number;
   export let designChildProcess: cp.ChildProcess | undefined;
+  export let designChildFuncProcessId: string | undefined;
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
   export let logicAppWorkspace: string;
@@ -40,12 +43,16 @@ export namespace ext {
   export let extensionVersion: string;
   export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
+  export let currentBundleVersion: string;
+  export let pinnedBundleVersion: boolean;
+  export let latestBundleVersion: string;
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export const treeViewName = 'azLogicApps';
   export let deploymentFolderPath: string;
-  export const logicAppSitesMap: Map<string, Map<string, Site>> = new Map();
+  export const subscriptionHybridLogicAppMap: Map<string, Map<string, ContainerApp>> = new Map();
+  export const subscriptionLogicAppMap: SubscriptionMap = new Map();
 
   // Resource group API
   export let rgApi: AzureHostExtensionApi;

@@ -5,13 +5,13 @@ import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
-import { expandPanel, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import {
   useIsPanelCollapsed,
   useOperationPanelPinnedNodeId,
   useOperationPanelSelectedNodeId,
-} from '../../../core/state/panelV2/panelSelectors';
-import { setPinnedNode } from '../../../core/state/panelV2/panelSlice';
+} from '../../../core/state/panel/panelSelectors';
+import { expandPanel, setPinnedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
@@ -130,9 +130,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
     const isValid = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements);
-    dispatch(replaceId({ originalId, newId }));
-
     return { valid: isValid, oldValue: isValid ? newId : originalId };
+  };
+
+  const handleTitleUpdate = (originalId: string, newId: string) => {
+    dispatch(replaceId({ originalId, newId }));
   };
 
   // if is customcode file, on blur title,
@@ -216,11 +218,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return undefined;
   };
 
-  const getChildWorkflowIdFromInputs = (inputs: any): string | undefined => {
-    if (!isNullOrEmpty(inputs)) {
-      const workflow = getObjectPropertyValue(inputs, ['host', 'value', 'workflow']);
+  const getChildWorkflowIdFromInputs = (childWorkflowInputs: any): string | undefined => {
+    if (!isNullOrEmpty(childWorkflowInputs)) {
+      const workflow = getObjectPropertyValue(childWorkflowInputs, ['host.workflow.id']);
       if (!isNullOrEmpty(workflow)) {
-        return workflow.id;
+        return workflow.value;
       }
     }
     return undefined;
@@ -241,8 +243,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     }
   }, [runData?.inputs, runName]);
 
+  // Re-render panel when undo/redo is performed to update panel parameter values, title etc.
+  const undoRedoClickToggle = useUndoRedoClickToggle();
+
   return (
     <PanelContainer
+      key={undoRedoClickToggle}
       {...commonPanelProps}
       noNodeSelected={!selectedNode}
       panelScope={PanelScope.CardLevel}
@@ -280,6 +286,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}
       onTitleBlur={onTitleBlur}
+      handleTitleUpdate={handleTitleUpdate}
       setOverrideWidth={setOverrideWidth}
     />
   );

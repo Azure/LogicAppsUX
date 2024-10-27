@@ -1,20 +1,18 @@
-import { type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import { LogEntryLevel, LoggerService, type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import type { AppDispatch } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { Text } from '@fluentui/react-components';
-import { getUniqueConnectors } from '../../../../../core/templates/utils/helper';
-import { List } from '@fluentui/react';
-import { ConnectorWithDetails } from '../../../../templates/connections/connector';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
+import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import { ConnectionsList } from '../../../../templates/connections/connections';
 
-export const SummaryPanel: React.FC = () => {
+export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
-  const { manifest } = useSelector((state: RootState) => state.template);
+  const { manifest } = useWorkflowTemplate(workflowId);
   const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
@@ -50,7 +48,7 @@ export const SummaryPanel: React.FC = () => {
                 description: 'Text to show no connections present in the template.',
               })}
         </Text>
-        {templateHasConnections ? <Connections connections={manifest.connections} /> : null}
+        {templateHasConnections ? <ConnectionsList connections={manifest.connections} /> : null}
       </div>
       {manifest.prerequisites ? (
         <div className="msla-template-overview-section">
@@ -110,7 +108,13 @@ export const SummaryPanel: React.FC = () => {
   );
 };
 
-export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePanelTab => ({
+export const summaryTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  workflowId: string,
+  clearDetailsOnClose: boolean,
+  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext
+): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
@@ -118,8 +122,7 @@ export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePane
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
-  content: <SummaryPanel />,
-  order: 1,
+  content: <SummaryPanel workflowId={workflowId} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',
@@ -127,6 +130,12 @@ export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePane
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Templates.overviewTab',
+        message: 'Template create button clicked',
+        args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
+      });
       dispatch(openCreateWorkflowPanelView());
     },
     secondaryButtonText: intl.formatMessage({
@@ -136,30 +145,9 @@ export const summaryTab = (intl: IntlShape, dispatch: AppDispatch): TemplatePane
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      dispatch(clearTemplateDetails());
+      if (clearDetailsOnClose) {
+        dispatch(clearTemplateDetails());
+      }
     },
   },
 });
-
-const Connections = (props: { connections: Record<string, Template.Connection> }): JSX.Element => {
-  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
-  const connectors = getUniqueConnectors(props.connections, subscriptionId, location);
-
-  const onRenderCell = (item: Template.Connection | undefined): JSX.Element => {
-    if (!item) {
-      return <div>No data</div>;
-    }
-
-    return (
-      <div className="msla-template-overview-connection">
-        <ConnectorWithDetails connectorId={item.connectorId} kind={item.kind} />
-      </div>
-    );
-  };
-
-  return (
-    <div className="msla-template-overview-connections">
-      <List items={connectors} onRenderCell={onRenderCell} />
-    </div>
-  );
-};

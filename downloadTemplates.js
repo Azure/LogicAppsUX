@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-import { existsSync, createWriteStream } from 'fs';
+import { existsSync, writeFile, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const releaseBranch = 'release/20240812';
+const releaseBranch = 'release/20241028';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
@@ -31,12 +31,19 @@ const createTemplatesFolder = async (path) => {
 };
 
 const downloadTemplate = async (path) => {
-  const templateManifest = await (await downloadFetchFile(`${path}/manifest.json`)).json();
+  const templateManifest = await (await fetch(`${baseURL}/${path}/manifest.json`)).json();
   for (const artifact of templateManifest.artifacts) {
     await downloadFile(`${path}/${artifact.file}`);
   }
-  await downloadFile(`${path}/${templateManifest.images.light}.png`);
-  await downloadFile(`${path}/${templateManifest.images.dark}.png`);
+  templateManifest.images = {
+    light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
+    dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
+  };
+  writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2), () => {});
+  for (const workflowId of Object.keys(templateManifest.workflows ?? {})) {
+    createTemplatesFolder(`${path}/${workflowId}`);
+    await downloadTemplate(`${path}/${workflowId}`);
+  }
 };
 
 const run = async () => {

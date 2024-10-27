@@ -35,7 +35,7 @@ export {
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
-export { serializeWorkflow, serializeUnitTestDefinition, parseWorkflowParameterValue } from './actions/bjsworkflow/serializer';
+export { serializeWorkflow, parseWorkflowParameterValue, serializeUnitTestDefinition } from './actions/bjsworkflow/serializer';
 export {
   setSelectedNodeId,
   changePanelNode,
@@ -46,8 +46,10 @@ export {
 export { useOperationInfo } from './state/selectors/actionMetadataSelector';
 export { useReplacedIds } from './state/workflow/workflowSelectors';
 export {
-  useSelectedNodeId,
-  useSelectedNodeIds,
+  useConnectionPanelSelectedNodeIds,
+  useDiscoveryPanelSelectedNodeIds,
+  useOperationPanelPinnedNodeId,
+  useOperationPanelSelectedNodeId,
 } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
@@ -55,6 +57,8 @@ export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
 export {
   validateParameter,
+  parameterValueToString,
+  loadParameterValueFromString,
   getCustomCodeFilesWithData,
 } from './utils/parameters/helper';
 export {
@@ -67,6 +71,7 @@ export {
   getOutputTokenSections,
   getExpressionTokenSections,
 } from './utils/tokens';
+export { downloadDocumentAsFile, getDocumentationMetadata } from './utils/documentation';
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
@@ -77,3 +82,7 @@ export {
   getIconUriFromManifest,
 } from './utils/card';
 export { addOperation } from './actions/bjsworkflow/add';
+export { updateNodeConnection } from './actions/bjsworkflow/connections';
+export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
+export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
+export { resetDesignerView } from './state/designerView/designerViewSlice';

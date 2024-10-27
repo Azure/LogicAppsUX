@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import type { QueryClient } from '@tanstack/react-query';
 import { SwaggerParser } from '../../../parsers';
 import type { Connection, OpenAPIV2, Connector, TestConnectionObject } from '../../../utils/src';
 import {
@@ -12,14 +13,9 @@ import {
   getUniqueName,
 } from '../../../utils/src';
 import type { HttpResponse } from '../common/exceptions/service';
-import type {
-  ConnectionCreationInfo,
-  ConnectionParametersMetadata,
-  ConnectorWithSwagger,
-  CreateConnectionResult,
-  IConnectionService,
-} from '../connection';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
+import { getAzureResourceRecursive } from '../common/azure';
 
 export interface ApiHubServiceDetails {
   apiVersion: string;
@@ -67,19 +63,14 @@ export abstract class BaseConnectionService implements IConnectionService {
     this._subscriptionResourceGroupWebUrl = `/subscriptions/${options.subscriptionId}/resourceGroups/${options.resourceGroup}/providers/Microsoft.Web`;
   }
 
-  async getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger> {
+  async getSwaggerFromConnector(connectorId: string): Promise<OpenAPIV2.Document> {
+    if (!isArmResourceId(connectorId)) {
+      return null as any;
+    }
+
     try {
-      if (!isArmResourceId(connectorId)) {
-        return { connector: await this.getConnector(connectorId), swagger: null as any };
-      }
-
       const { apiVersion, httpClient } = this.options;
-      const [connector, swagger] = await Promise.all([
-        this.getConnector(connectorId),
-        httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } }),
-      ]);
-
-      return { connector, swagger };
+      return httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } });
     } catch (error: any) {
       throw error?.response?.data?.error?.message ?? error;
     }
@@ -112,7 +103,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     return connection;
   }
 
-  abstract getConnections(connectorId?: string): Promise<Connection[]>;
+  abstract getConnections(connectorId?: string, queryClient?: QueryClient): Promise<Connection[]>;
 
   abstract createConnection(
     connectionId: string,
@@ -311,34 +302,36 @@ export abstract class BaseConnectionService implements IConnectionService {
     );
   }
 
-  protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
+  protected async getConnectionsForConnector(connectorId: string, queryClient?: QueryClient): Promise<Connection[]> {
     if (isArmResourceId(connectorId)) {
       // Right now there isn't a name $filter for custom connections, so we need to filter them manually
       if (isCustomConnectorId(connectorId)) {
-        const { location, apiVersion, httpClient } = this.options;
-        const response = await httpClient.get<ConnectionsResponse>({
-          uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
-          queryParameters: {
-            'api-version': apiVersion,
-            $filter: `Location eq '${location}' and Kind eq '${this._vVersion}'`,
-          },
-        });
-        const filteredConnections = response.value.filter((connection) => {
+        const connectionsCall = queryClient
+          ? queryClient.fetchQuery(['allConnections'], async () => {
+              return await this.getAllConnectionsInLocation();
+            })
+          : this.getAllConnectionsInLocation();
+        const allConnections = await connectionsCall;
+        const filteredConnections = allConnections.filter((connection) => {
           return equals(connection.properties.api.id, connectorId);
         });
         return filteredConnections;
       }
 
       const { location, apiVersion, httpClient } = this.options;
-      const response = await httpClient.get<ConnectionsResponse>({
-        uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
-        queryParameters: {
-          'api-version': apiVersion,
-          $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq '${this._vVersion}'`,
-        },
-      });
-      return response.value;
+
+      return (
+        (await queryClient?.fetchQuery(['connections', connectorId?.toLowerCase()], async () => {
+          const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
+          const queryParameters: QueryParameters = {
+            'api-version': apiVersion,
+            $filter: `Location eq '${location}' and ManagedApiName eq '${connectorId.split('/').at(-1)}' and Kind eq '${this._vVersion}'`,
+          };
+          return await getAzureResourceRecursive(httpClient, uri, queryParameters);
+        })) ?? []
+      );
     }
+
     if (!this._allConnectionsInitialized) {
       await this.getConnections();
     }
@@ -430,8 +423,18 @@ export abstract class BaseConnectionService implements IConnectionService {
       .then(() => false)
       .catch(() => true);
   }
+
+  private async getAllConnectionsInLocation(): Promise<Connection[]> {
+    const { location, httpClient, apiVersion } = this.options;
+    return getAzureResourceRecursive(httpClient, `${this._subscriptionResourceGroupWebUrl}/connections`, {
+      'api-version': apiVersion,
+      $filter: `Location eq '${location}' and Kind eq '${this._vVersion}'`,
+      $top: 200,
+    });
+  }
 }
 
 type ConnectionsResponse = {
+  nextLink?: string;
   value: Connection[];
 };

@@ -1,4 +1,4 @@
-import { type Template, isArmResourceId, getIntl } from '@microsoft/logic-apps-shared';
+import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -7,8 +7,29 @@ import type { FilterObject } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
-export const getQuickViewTabs = (intl: IntlShape, dispatch: AppDispatch) => {
-  return [workflowTab(intl, dispatch), summaryTab(intl, dispatch)];
+export const getCurrentWorkflowNames = (workflows: { id: string; name: string }[], idToSkip: string): string[] => {
+  return workflows.filter((w) => w.id !== idToSkip).map((w) => w.name) as string[];
+};
+
+export const getQuickViewTabs = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  workflowId: string,
+  showCreate: boolean,
+  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext
+) => {
+  return [
+    workflowTab(intl, dispatch, workflowId, showCreate, undefined, {
+      templateId,
+      workflowAppName,
+      isMultiWorkflow,
+    }),
+    summaryTab(intl, dispatch, workflowId, showCreate, {
+      templateId,
+      workflowAppName,
+      isMultiWorkflow,
+    }),
+  ];
 };
 
 export const getUniqueConnectors = (
@@ -37,15 +58,6 @@ export const getUniqueConnectorsFromConnections = (
   }
 
   return result;
-};
-
-export const normalizeConnectorId = (connectorId: string, subscriptionId: string, location: string) => {
-  if (!isArmResourceId(connectorId)) {
-    return connectorId;
-  }
-
-  const result = connectorId.replaceAll('#subscription#', subscriptionId);
-  return result.replaceAll('#location#', location);
 };
 
 const templateSearchOptions = {

@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
 import { useStyles } from './styles';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
-import { Button, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
+import { Button, Caption2, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { DropdownTree } from '../DropdownTree';
 
@@ -15,6 +15,7 @@ export type FileSelectorProps<T> = {
   selectedKey: FileSelectorOption;
   onOptionChange: (selection: FileSelectorOption) => void;
   options?: Record<string, T>;
+  errorMessage?: string;
   upload: {
     onUpload: (files?: FileList) => void;
     uploadButtonText: string;
@@ -25,7 +26,6 @@ export type FileSelectorProps<T> = {
   existing: {
     fileList?: IFileSysTreeItem[];
     onSelect: (item: IFileSysTreeItem) => void;
-    onOpenClose: () => void;
   };
   cancel?: {
     onCancel: () => void;
@@ -40,7 +40,8 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     onOptionChange,
     upload: { onUpload, acceptedExtensions, uploadButtonText, inputPlaceholder, fileName },
     cancel,
-    existing: { fileList = [], onSelect, onOpenClose },
+    existing: { onSelect },
+    errorMessage,
   } = props;
   const uploadFileRef = useRef<HTMLInputElement>(null);
   const styles = useStyles();
@@ -87,12 +88,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     </div>
                   ) : null}
                   {selectedKey === key && key === 'select-existing' ? (
-                    <DropdownTree
-                      items={fileList}
-                      onItemSelect={onSelect}
-                      onDropdownOpenClose={onOpenClose}
-                      className={styles.selectorDropdownRoot}
-                    />
+                    <DropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} />
                   ) : null}
                 </div>
               }
@@ -100,6 +96,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
           );
         })}
       </RadioGroup>
+      <Caption2 className={styles.errorMessage}>{errorMessage}</Caption2>
       {cancel && (
         <div className={styles.cancelButton}>
           <Button size="small" shape="square" appearance="secondary" onClick={cancel.onCancel}>

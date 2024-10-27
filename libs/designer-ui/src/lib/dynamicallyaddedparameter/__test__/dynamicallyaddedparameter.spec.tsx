@@ -77,6 +77,8 @@ describe('ui/dynamicallyaddedparameter', () => {
     const { getByPlaceholderText } = render(<DynamicallyAddedParameter {...minimal} onTitleChange={onTitleChange} />);
     const newText = 'New text';
     fireEvent.change(getByPlaceholderText(minimal.titlePlaceholder!), { target: { value: newText } });
+    expect(onTitleChange).not.toHaveBeenCalled();
+    fireEvent.blur(getByPlaceholderText(minimal.titlePlaceholder!));
     expect(onTitleChange).toHaveBeenCalledWith(minimal.schemaKey, newText);
   });
 
@@ -88,6 +90,8 @@ describe('ui/dynamicallyaddedparameter', () => {
     );
     const newText = 'New text';
     fireEvent.change(getByPlaceholderText(minimal.descriptionPlaceholder!), { target: { value: newText } });
+    expect(onDescriptionChange).not.toHaveBeenCalled();
+    fireEvent.blur(getByPlaceholderText(minimal.descriptionPlaceholder!));
     expect(onDescriptionChange).toHaveBeenCalledWith(minimal.schemaKey, newText);
   });
 });

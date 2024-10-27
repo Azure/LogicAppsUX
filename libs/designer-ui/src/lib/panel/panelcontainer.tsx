@@ -34,6 +34,7 @@ export type PanelContainerProps = {
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
+  handleTitleUpdate: (originalId: string, newId: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
@@ -58,6 +59,7 @@ export const PanelContainer = ({
   onCommentChange,
   onTitleChange,
   onTitleBlur,
+  handleTitleUpdate,
   setOverrideWidth,
   overrideWidth,
   isResizeable,
@@ -113,6 +115,7 @@ export const PanelContainer = ({
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
+          handleTitleUpdate={handleTitleUpdate}
           onTitleBlur={onTitleBlur}
         />
       );
@@ -135,6 +138,7 @@ export const PanelContainer = ({
       toggleCollapse,
       onTitleChange,
       onTitleBlur,
+      handleTitleUpdate,
       resubmitOperation,
       onCommentChange,
     ]
@@ -183,6 +187,11 @@ export const PanelContainer = ({
 
   const minWidth = pinnedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
 
+  if (suppressDefaultNodeSelectFunctionality) {
+    // Used in cases like BPT where we do not want to show the panel during node selection
+    return null;
+  }
+
   return (
     <OverlayDrawer
       aria-label={panelLabel}
@@ -194,7 +203,7 @@ export const PanelContainer = ({
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', width: drawerWidth }}
+      style={{ position: 'absolute', maxWidth: '100%', width: drawerWidth }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button
@@ -203,6 +212,7 @@ export const PanelContainer = ({
           className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
+          data-automation-id="msla-panel-header-collapse-nav"
         />
       ) : null}
       {isCollapsed ? null : (

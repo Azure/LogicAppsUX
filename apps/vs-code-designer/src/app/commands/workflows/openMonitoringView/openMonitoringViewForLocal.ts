@@ -61,11 +61,6 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
     };
 
-    this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
-    };
-
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);

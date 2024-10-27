@@ -23,6 +23,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       setOverrideWidth: vi.fn(),
       toggleCollapse: vi.fn(),
       onTitleChange: vi.fn(),
+      handleTitleUpdate: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
@@ -41,6 +42,6 @@ describe('ui/workflowparameters/workflowparameter', () => {
     const panel = renderer.getRenderOutput();
 
     expect(panel.props.className).toBe('msla-panel-container');
-    expect(panel.props.style).toEqual({ position: 'absolute', width: minimal.overrideWidth });
+    expect(panel.props.style).toEqual({ position: 'absolute', maxWidth: '100%', width: minimal.overrideWidth });
   });
 });

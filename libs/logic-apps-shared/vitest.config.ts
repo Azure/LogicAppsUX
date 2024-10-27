@@ -6,8 +6,6 @@ export default defineProject({
   plugins: [react()],
   test: {
     name: packageJson.name,
-    dir: './src',
-    watch: false,
     globals: true,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
