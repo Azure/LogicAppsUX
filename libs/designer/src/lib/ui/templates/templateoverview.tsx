@@ -205,7 +205,7 @@ const WorkflowList = ({
     switch (column?.key) {
       case 'name':
         return (
-          <Link aria-label={item.name} href="#" as="button" onClick={() => showDetails(item.id)}>
+          <Link aria-label={item.name} as="button" onClick={() => showDetails(item.id)}>
             {item.name}
           </Link>
         );
