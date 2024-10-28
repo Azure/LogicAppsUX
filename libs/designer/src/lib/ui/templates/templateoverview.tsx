@@ -205,13 +205,17 @@ const WorkflowList = ({
     switch (column?.key) {
       case 'name':
         return (
-          <Link as="button" onClick={() => showDetails(item.id)}>
+          <Link aria-label={item.name} as="button" onClick={() => showDetails(item.id)}>
             {item.name}
           </Link>
         );
 
       case 'trigger':
-        return <Text className="msla-template-overview-text">{item.trigger}</Text>;
+        return (
+          <Text aria-label={item.trigger} className="msla-template-overview-text">
+            {item.trigger}
+          </Text>
+        );
 
       default:
         return null;

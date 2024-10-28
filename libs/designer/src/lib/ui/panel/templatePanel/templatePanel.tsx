@@ -113,7 +113,7 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px' }, content: { paddingLeft: '0px' } }}
+      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
       isLightDismiss
       type={isCreatePanelView ? PanelType.custom : PanelType.medium}
       customWidth={'50%'}
