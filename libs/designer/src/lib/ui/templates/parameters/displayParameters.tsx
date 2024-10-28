@@ -122,7 +122,7 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return <ParameterName item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
+        return <ParameterName aria-label={item.displayName} item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
 
       case '$type':
         return (
@@ -172,7 +172,7 @@ const ParameterName = ({
   const buttonId = useId('callout-button');
 
   return (
-    <div className="msla-template-parameters-tab-name" aria-label={item.displayName}>
+    <div className="msla-template-parameters-tab-name">
       <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
         <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
           {item.displayName}
