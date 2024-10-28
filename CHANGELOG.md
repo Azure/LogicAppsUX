@@ -1,4 +1,30 @@
 # Logic Apps Designer
+## [4.116.0](https://github.com/Azure/LogicAppsUX/compare/v4.115.0...v4.116.0) (2024-10-28)
+
+
+### Bug Fixes
+
+* **designer:** Properly paring Negatory Simple Query Builder  ([#5980](https://github.com/Azure/LogicAppsUX/issues/5980)) ([4705476](https://github.com/Azure/LogicAppsUX/commit/4705476f67823d34e8064ab61765fa5bf584e051))
+* **hybrid:**  Adding support for test connections in Hybrid ([#5979](https://github.com/Azure/LogicAppsUX/issues/5979)) ([9c19e64](https://github.com/Azure/LogicAppsUX/commit/9c19e64a70d1d15ebc0e77e172e845d4a693adf9))
+
+## [4.115.0](https://github.com/Azure/LogicAppsUX/compare/v4.114.0...v4.115.0) (2024-10-28)
+
+
+### Features
+
+* **designer:** Prevent Drag and Drop on loop source tokens out of loop ([#5957](https://github.com/Azure/LogicAppsUX/issues/5957)) ([f823f33](https://github.com/Azure/LogicAppsUX/commit/f823f3361ee8955038ccd375761822baddadf52c))
+* **Templates:** Enable Tabs for Accelerators ([#5966](https://github.com/Azure/LogicAppsUX/issues/5966)) ([a100781](https://github.com/Azure/LogicAppsUX/commit/a10078130ef0c8fbfb7c5e1878b10629c866b8a4))
+* **Templates:** Page Number Showing Through Panel + Add Aria Label ([#5971](https://github.com/Azure/LogicAppsUX/issues/5971)) ([8e52fc1](https://github.com/Azure/LogicAppsUX/commit/8e52fc1e297fa4e7f20228f8ef9a93b2143c495a))
+* **Templates:** Parameter Name Grid to Link and Callout ([#5931](https://github.com/Azure/LogicAppsUX/issues/5931)) ([5cce113](https://github.com/Azure/LogicAppsUX/commit/5cce11327e7a1298c592c55233273fc650415f74))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed run after trigger issues + fixed setting validations/errors ([#5943](https://github.com/Azure/LogicAppsUX/issues/5943)) ([85fc8a4](https://github.com/Azure/LogicAppsUX/commit/85fc8a4c446c20593529e1686f3b9b9d18f5d087))
+* **designer:** Limit inputs/outputs content size to 2MB ([#5956](https://github.com/Azure/LogicAppsUX/issues/5956)) ([f46ee87](https://github.com/Azure/LogicAppsUX/commit/f46ee87fd66b1e8d88113ae29dea0b9f9d7ffe00))
+* **designer:** Remove Persisting Action Menu Showing When Switching Views ([#5958](https://github.com/Azure/LogicAppsUX/issues/5958)) ([124ed88](https://github.com/Azure/LogicAppsUX/commit/124ed88a63bcdc3bce99e25ca0303b1e6844c76e))
+* **designer:** Update C# customcode boilerplate to use JToken ([#5953](https://github.com/Azure/LogicAppsUX/issues/5953)) ([72b7e6b](https://github.com/Azure/LogicAppsUX/commit/72b7e6b3d61d14b21914f551e8af52e4044a497f))
+
 ## [4.114.0](https://github.com/Azure/LogicAppsUX/compare/v4.113.0...v4.114.0) (2024-10-24)
 
 ## [4.113.0](https://github.com/Azure/LogicAppsUX/compare/v4.112.0...v4.113.0) (2024-10-24)
