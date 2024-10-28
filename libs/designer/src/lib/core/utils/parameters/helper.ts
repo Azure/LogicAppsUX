@@ -563,7 +563,7 @@ const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toL
 };
 
 // Create SimpleQueryBuilder Editor View Model
-const toSimpleQueryBuilderViewModel = (
+export const toSimpleQueryBuilderViewModel = (
   input: any
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
@@ -584,8 +584,8 @@ const toSimpleQueryBuilderViewModel = (
       operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
     }
 
-    const operationLiteral = createLiteralValueSegment(`@${negatory ? `not(${operator}` : operator}(`);
-    const endingLiteral = createLiteralValueSegment(negatory ? '))' : ')');
+    const operationLiteral = createLiteralValueSegment(`@${operator}(`);
+    const endingLiteral = createLiteralValueSegment(')');
 
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return advancedModeResult;
