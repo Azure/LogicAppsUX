@@ -101,11 +101,12 @@ export class StandardRunService implements IRunService {
   }
 
   public static getProxyUrl(uri: string): { uri: string; headerPath: string } {
-    const appName = uri.split('hostruntime')[0].split('/');
+    const [baseUri, path] = uri.split('hostruntime');
+    const appName = baseUri.split('/');
     appName.pop();
     return {
-      uri: `${uri.split('hostruntime')[0]}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
-      headerPath: uri.split('hostruntime')[1],
+      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      headerPath: path,
     };
   }
 
