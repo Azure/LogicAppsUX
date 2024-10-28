@@ -584,7 +584,7 @@ const toSimpleQueryBuilderViewModel = (
       operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
     }
 
-    const operationLiteral = createLiteralValueSegment(`@${operator}(`);
+    const operationLiteral = createLiteralValueSegment(`@${negatory ? `not(${operator}` : operator}(`);
     const endingLiteral = createLiteralValueSegment(negatory ? '))' : ')');
 
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
@@ -597,7 +597,6 @@ const toSimpleQueryBuilderViewModel = (
     );
     const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
 
-    console.log(operand1String, operand2String);
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -609,8 +608,7 @@ const toSimpleQueryBuilderViewModel = (
         endingLiteral,
       ],
     };
-  } catch (e) {
-    console.log(e);
+  } catch {
     return advancedModeResult;
   }
 };
