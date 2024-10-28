@@ -56,18 +56,24 @@ export const convertToMapDefinition = (
     generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
-    const map = yaml
-      .dump(mapDefinition, {
-        replacer: yamlReplacer,
-        noRefs: true,
-        sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
-      })
-      .replaceAll(/'"|"'/g, '"');
+    const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
 
     return { isSuccess: true, definition: map };
   }
 
   return { isSuccess: false, errorNodes: [] };
+};
+
+const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
+  // Custom values directly on target nodes need to have extra single quotes stripped out
+  const map = yaml
+    .dump(mapDefinition, {
+      replacer: yamlReplacer,
+      noRefs: true,
+      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
+    })
+    .replaceAll(/'"|"'/g, '"');
+  return map;
 };
 
 const yamlReplacer = (key: string, value: any) => {

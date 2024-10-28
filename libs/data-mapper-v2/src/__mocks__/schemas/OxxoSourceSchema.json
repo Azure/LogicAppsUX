@@ -1,0 +1,800 @@
+{
+    "name": "RawOxxoPromotionDataV3WithPromotions.xsd",
+    "type": "XML",
+    "targetNamespace": "oxxo.promotions.rawxml",
+    "namespaces": {
+        "mstns": "oxxo.promotions.rawxml",
+        "xs": "http://www.w3.org/2001/XMLSchema",
+        "msdata": "urn:schemas-microsoft-com:xml-msdata"
+    },
+    "schemaTreeRoot": {
+        "key": "/mstns:PromotionBatch",
+        "name": "PromotionBatch",
+        "type": "Complex",
+        "properties": "None",
+        "children": [
+            {
+                "key": "/mstns:PromotionBatch/mstns:organizationCountry",
+                "name": "organizationCountry",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:organizationCountry"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:organizationName",
+                "name": "organizationName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:organizationName"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:businessName",
+                "name": "businessName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:businessName"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:departmentId",
+                "name": "departmentId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:departmentId"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:storeId",
+                "name": "storeId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:storeId"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:numberOfRecords",
+                "name": "numberOfRecords",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:numberOfRecords"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:searchId",
+                "name": "searchId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:searchId"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:searchDate",
+                "name": "searchDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:searchDate"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_CR",
+                "name": "ORACLE_CR",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_CR"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_CR_DESC",
+                "name": "ORACLE_CR_DESC",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_CR_DESC"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_CR_SUPERIOR",
+                "name": "ORACLE_CR_SUPERIOR",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_CR_SUPERIOR"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_CR_TYPE",
+                "name": "ORACLE_CR_TYPE",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_CR_TYPE"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ESTADO",
+                "name": "ESTADO",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ESTADO"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:RETEK_CR",
+                "name": "RETEK_CR",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:RETEK_CR"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:RETEK_ASESOR",
+                "name": "RETEK_ASESOR",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:RETEK_ASESOR"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:RETEK_ASESOR_NOMBRE",
+                "name": "RETEK_ASESOR_NOMBRE",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:RETEK_ASESOR_NOMBRE"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:RETEK_DISTRITO",
+                "name": "RETEK_DISTRITO",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:RETEK_DISTRITO"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:RETEK_PLAZA",
+                "name": "RETEK_PLAZA",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:RETEK_PLAZA"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:RETEK_STATUS",
+                "name": "RETEK_STATUS",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:RETEK_STATUS"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:SURH_CR",
+                "name": "SURH_CR",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:SURH_CR"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:SURH_FLAG",
+                "name": "SURH_FLAG",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:SURH_FLAG"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:CR_FLEX_VALUE_ID",
+                "name": "CR_FLEX_VALUE_ID",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:CR_FLEX_VALUE_ID"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_EF",
+                "name": "ORACLE_EF",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_EF"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_EF_DESC",
+                "name": "ORACLE_EF_DESC",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_EF_DESC"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:EF_FLEX_VALUE_ID",
+                "name": "EF_FLEX_VALUE_ID",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:EF_FLEX_VALUE_ID"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_CIA",
+                "name": "ORACLE_CIA",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_CIA"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ORACLE_CIA_DESC",
+                "name": "ORACLE_CIA_DESC",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ORACLE_CIA_DESC"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:CIA_FLEX_VALUE_ID",
+                "name": "CIA_FLEX_VALUE_ID",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:CIA_FLEX_VALUE_ID"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ID_ESTADO_FINANCIERO",
+                "name": "ID_ESTADO_FINANCIERO",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ID_ESTADO_FINANCIERO"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ID_CENTRO_RESPONSABILIDAD",
+                "name": "ID_CENTRO_RESPONSABILIDAD",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ID_CENTRO_RESPONSABILIDAD"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:ID_COMPANIA",
+                "name": "ID_COMPANIA",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:ID_COMPANIA"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:LEGACY_EF",
+                "name": "LEGACY_EF",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:LEGACY_EF"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:LEGACY_CR",
+                "name": "LEGACY_CR",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mstns:LEGACY_CR"
+            },
+            {
+                "key": "/mstns:PromotionBatch/mstns:Promotions",
+                "name": "Promotions",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                    {
+                        "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData",
+                        "name": "PromotionData",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:lineNumber",
+                                "name": "lineNumber",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:lineNumber"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:BATCH_ID",
+                                "name": "BATCH_ID",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:BATCH_ID"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LOCATION",
+                                "name": "LOCATION",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LOCATION"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:ARCHIVO",
+                                "name": "ARCHIVO",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:ARCHIVO"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LOAD_DATE",
+                                "name": "LOAD_DATE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LOAD_DATE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LOAD_WEEK",
+                                "name": "LOAD_WEEK",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LOAD_WEEK"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LOAD_BATCH_ID",
+                                "name": "LOAD_BATCH_ID",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LOAD_BATCH_ID"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:WM_PRM_STATUS",
+                                "name": "WM_PRM_STATUS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:WM_PRM_STATUS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:WM_TARGET_PRM",
+                                "name": "WM_TARGET_PRM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:WM_TARGET_PRM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:STORE",
+                                "name": "STORE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:STORE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:UPDATE_TYPE",
+                                "name": "UPDATE_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:UPDATE_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:START_DATE",
+                                "name": "START_DATE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:START_DATE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:END_DATE",
+                                "name": "END_DATE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:END_DATE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:TIME",
+                                "name": "TIME",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:TIME"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:END_TIME",
+                                "name": "END_TIME",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:END_TIME"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:TRAN_TYPE",
+                                "name": "TRAN_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:TRAN_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:ITEM",
+                                "name": "ITEM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:ITEM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:ITEM_NUMBER_TYPE",
+                                "name": "ITEM_NUMBER_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:ITEM_NUMBER_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:FORMAT_ID",
+                                "name": "FORMAT_ID",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:FORMAT_ID"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:PREFIX",
+                                "name": "PREFIX",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:PREFIX"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:REF_ITEM",
+                                "name": "REF_ITEM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:REF_ITEM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:REF_ITEM_NUMBER_TYPE",
+                                "name": "REF_ITEM_NUMBER_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:REF_ITEM_NUMBER_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:REF_FORMAT_ID",
+                                "name": "REF_FORMAT_ID",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:REF_FORMAT_ID"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:REF_PREFIX",
+                                "name": "REF_PREFIX",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:REF_PREFIX"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:ITEM_SHORT_DESC",
+                                "name": "ITEM_SHORT_DESC",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:ITEM_SHORT_DESC"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:ITEM_LONG_DESC",
+                                "name": "ITEM_LONG_DESC",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:ITEM_LONG_DESC"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:DEPT",
+                                "name": "DEPT",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:DEPT"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:CLASS",
+                                "name": "CLASS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:CLASS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:SUBCLASS",
+                                "name": "SUBCLASS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:SUBCLASS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:NEW_PRICE",
+                                "name": "NEW_PRICE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:NEW_PRICE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:NEW_SELLING_UOM",
+                                "name": "NEW_SELLING_UOM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:NEW_SELLING_UOM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:NEW_MULTI_UNITS",
+                                "name": "NEW_MULTI_UNITS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:NEW_MULTI_UNITS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:NEW_MULTI_UNIT_RETAIL",
+                                "name": "NEW_MULTI_UNIT_RETAIL",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:NEW_MULTI_UNIT_RETAIL"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:NEW_MULTI_SELLING_UOM",
+                                "name": "NEW_MULTI_SELLING_UOM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:NEW_MULTI_SELLING_UOM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:STATUS",
+                                "name": "STATUS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:STATUS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:TAXABLE_IND",
+                                "name": "TAXABLE_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:TAXABLE_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:PROMOTION",
+                                "name": "PROMOTION",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:PROMOTION"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:MIX_MATCH_NO",
+                                "name": "MIX_MATCH_NO",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:MIX_MATCH_NO"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:MIX_MATCH_TYPE",
+                                "name": "MIX_MATCH_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:MIX_MATCH_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:THRESHOLD_NO",
+                                "name": "THRESHOLD_NO",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:THRESHOLD_NO"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LAUNCH_DATE",
+                                "name": "LAUNCH_DATE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LAUNCH_DATE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:QTY_KEY_OPTIONS",
+                                "name": "QTY_KEY_OPTIONS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:QTY_KEY_OPTIONS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:MANUAL_PRICE_ENTRY",
+                                "name": "MANUAL_PRICE_ENTRY",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:MANUAL_PRICE_ENTRY"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:DEPOSIT_CODE",
+                                "name": "DEPOSIT_CODE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:DEPOSIT_CODE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:FOOD_STAMP_IND",
+                                "name": "FOOD_STAMP_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:FOOD_STAMP_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:WIC_IND",
+                                "name": "WIC_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:WIC_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:PROPORTIONAL_TARE_PCT",
+                                "name": "PROPORTIONAL_TARE_PCT",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:PROPORTIONAL_TARE_PCT"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:FIXED_TARE_VALUE",
+                                "name": "FIXED_TARE_VALUE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:FIXED_TARE_VALUE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:FIXED_TARE_UOM",
+                                "name": "FIXED_TARE_UOM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:FIXED_TARE_UOM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:REWARD_ELIGIBLE_IND",
+                                "name": "REWARD_ELIGIBLE_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:REWARD_ELIGIBLE_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:ELECT_MTK_CLUBS",
+                                "name": "ELECT_MTK_CLUBS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:ELECT_MTK_CLUBS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:RETURN_POLICY",
+                                "name": "RETURN_POLICY",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:RETURN_POLICY"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:STOP_SALE_IND",
+                                "name": "STOP_SALE_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:STOP_SALE_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:RETURNABLE_IND",
+                                "name": "RETURNABLE_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:RETURNABLE_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:REFUNDABLE_IND",
+                                "name": "REFUNDABLE_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:REFUNDABLE_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:BACK_ORDER_IND",
+                                "name": "BACK_ORDER_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:BACK_ORDER_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:VAT_CODE",
+                                "name": "VAT_CODE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:VAT_CODE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:VAT_RATE",
+                                "name": "VAT_RATE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:VAT_RATE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:CLASS_VAT_IND",
+                                "name": "CLASS_VAT_IND",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:CLASS_VAT_IND"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LINE_ID",
+                                "name": "LINE_ID",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LINE_ID"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:LOAD_TIMESTAMP",
+                                "name": "LOAD_TIMESTAMP",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:LOAD_TIMESTAMP"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:MSG_POS",
+                                "name": "MSG_POS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:MSG_POS"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:PROM_BIN_CODE",
+                                "name": "PROM_BIN_CODE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:PROM_BIN_CODE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:PROM_NAME",
+                                "name": "PROM_NAME",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:PROM_NAME"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:PROM_TRAN_TYPE",
+                                "name": "PROM_TRAN_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:PROM_TRAN_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:START_TIME",
+                                "name": "START_TIME",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:START_TIME"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:APPLY_TO",
+                                "name": "APPLY_TO",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:APPLY_TO"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:BUY_TYPE",
+                                "name": "BUY_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:BUY_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:BUY_AMT",
+                                "name": "BUY_AMT",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:BUY_AMT"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:GET_TYPE",
+                                "name": "GET_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:GET_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:GET_AMT",
+                                "name": "GET_AMT",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:GET_AMT"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:SELLING_UOM",
+                                "name": "SELLING_UOM",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:SELLING_UOM"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:THRESHOLD_AMT",
+                                "name": "THRESHOLD_AMT",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:THRESHOLD_AMT"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:DISCOUNT_AMT",
+                                "name": "DISCOUNT_AMT",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:DISCOUNT_AMT"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:DISCOUNT_TYPE",
+                                "name": "DISCOUNT_TYPE",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:DISCOUNT_TYPE"
+                            },
+                            {
+                                "key": "/mstns:PromotionBatch/mstns:Promotions/mstns:PromotionData/mstns:RETEK_STATUS",
+                                "name": "RETEK_STATUS",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "mstns:RETEK_STATUS"
+                            }
+                        ],
+                        "qName": "mstns:PromotionData"
+                    }
+                ],
+                "qName": "mstns:Promotions"
+            }
+        ],
+        "qName": "mstns:PromotionBatch"
+    }
+}

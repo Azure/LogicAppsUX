@@ -17,9 +17,12 @@ import {
   targetMockJsonSchema,
   targetMockSchema,
   overlappingLoopsSchema,
+  oxxoSourceSchema,
+  oxxoTargetSchema,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { AddRegular } from '@fluentui/react-icons';
+import { SchemaDefinition } from 'js-yaml';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {
@@ -1151,6 +1154,70 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries[0][1]).toEqual('TelephoneNumber');
         expect(employeeObjectEntries[1][0]).toEqual('Name');
         expect(employeeObjectEntries[1][1]).toEqual('Name');
+      });
+
+      it('Generates body with items in order with loop', () => {
+        const extendedOxxoSource = convertSchemaToSchemaExtended(oxxoSourceSchema as Schema);
+        const extendedOxxoTarget = convertSchemaToSchemaExtended(oxxoTargetSchema as Schema);
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        const rootSourceNode = extendedOxxoSource.schemaTreeRoot;
+        const rootTargetNode = extendedOxxoTarget.schemaTreeRoot;
+
+        // connect non-looping nodes
+        const orgSrcNode = rootSourceNode.children.find((child) => child.name === 'organizationCountry') as SchemaNodeExtended;
+        const orgTgtNode = rootTargetNode.children.find((child) => child.name === 'organizationCountry') as SchemaNodeExtended;
+
+        applyConnectionValue(connections, {
+          targetNode: orgTgtNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(orgTgtNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(orgSrcNode.key, SchemaType.Source),
+            node: orgSrcNode,
+          },
+        });
+
+        // connect looping nodes
+        const srcOuterLoop = rootSourceNode.children.find((child) => child.name === 'Promotions') as SchemaNodeExtended;
+        const tgtLoop = rootTargetNode.children.find((child) => child.name === 'promotions') as SchemaNodeExtended;
+        const srcInnerLoop = srcOuterLoop.children.find((child) => child.name === 'PromotionData') as SchemaNodeExtended;
+        applyConnectionValue(connections, {
+          targetNode: tgtLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(tgtLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(srcOuterLoop.key, SchemaType.Source),
+            node: srcOuterLoop,
+          },
+        });
+        applyConnectionValue(connections, {
+          targetNode: tgtLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(tgtLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(srcInnerLoop.key, SchemaType.Source),
+            node: srcInnerLoop,
+          },
+        });
+
+        // connect node inside of loops
+        const srcLineNumber = srcInnerLoop.children.find((child) => child.name === 'lineNumber') as SchemaNodeExtended;
+        const tgtLineNumber = tgtLoop.children.find((child) => child.name === 'lineNumber') as SchemaNodeExtended;
+        applyConnectionValue(connections, {
+          targetNode: tgtLineNumber,
+          targetNodeReactFlowKey: addReactFlowPrefix(tgtLineNumber.key, SchemaType.Target),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: addReactFlowPrefix(srcLineNumber.key, SchemaType.Source),
+            node: srcLineNumber,
+          },
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        console.log(mapDefinition);
       });
 
       it('Generates body with index and passthrough loop', () => {
