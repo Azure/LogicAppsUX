@@ -122,15 +122,20 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return <ParameterName item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
+        return <ParameterName aria-label={item.displayName} item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
 
       case '$type':
-        return <Text className="msla-templates-parameters-values">{item.type}</Text>;
+        return (
+          <Text className="msla-templates-parameters-values" aria-label={item.type}>
+            {item.type}
+          </Text>
+        );
 
       case '$value':
         return (
           <TextField
             className="msla-templates-parameters-values"
+            aria-label={item.value}
             value={item.value}
             onChange={(_event, newValue) => {
               handleParameterValueChange(item, newValue ?? '');
@@ -183,9 +188,10 @@ const ParameterName = ({
           setInitialFocus
         >
           {!isSingleWorkflow && (
-          <Text className="msla-templates-parameter-callout-title" block>
-            {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
-          </Text>)}
+            <Text className="msla-templates-parameter-callout-title" block>
+              {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
+            </Text>
+          )}
           <Text className="msla-templates-parameter-callout-subtitle" block>
             {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
           </Text>
