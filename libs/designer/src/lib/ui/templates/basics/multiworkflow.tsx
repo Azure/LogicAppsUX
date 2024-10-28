@@ -195,6 +195,7 @@ export const MultiWorkflowBasics = () => {
       case '$name':
         return (
           <TextField
+            aria-label={item.name}
             className="msla-templates-basics-name"
             value={item.name}
             onChange={(_event, newValue) => handleWorkflowNameChange(item, newValue)}
@@ -206,6 +207,7 @@ export const MultiWorkflowBasics = () => {
       case '$kind':
         return (
           <Dropdown
+            aria-label={item.kind}
             className="msla-templates-basics-state"
             disabled={item.allowedKinds.length === 1}
             options={item.allowedKinds}
@@ -216,7 +218,7 @@ export const MultiWorkflowBasics = () => {
         );
 
       case '$description':
-        return <TextWithShowMore text={item.description} />;
+        return <TextWithShowMore aria-label={item.description} text={item.description} />;
 
       default:
         return null;
