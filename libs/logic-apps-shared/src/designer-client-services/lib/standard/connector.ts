@@ -135,7 +135,7 @@ export class StandardConnectorService extends BaseConnectorService {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
             .split('/')
             .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
-          'x-ms-logicapps-proxy-method': 'GET',
+          'x-ms-logicapps-proxy-method': 'POST',
         },
         content: { parameters: invokeParameters, configuration },
       });
