@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.116.0](https://github.com/Azure/LogicAppsUX/compare/v4.115.0...v4.116.0) (2024-10-28)
+
+
+### Bug Fixes
+
+* **designer:** Properly paring Negatory Simple Query Builder  ([#5980](https://github.com/Azure/LogicAppsUX/issues/5980)) ([4705476](https://github.com/Azure/LogicAppsUX/commit/4705476f67823d34e8064ab61765fa5bf584e051))
+* **hybrid:**  Adding support for test connections in Hybrid ([#5979](https://github.com/Azure/LogicAppsUX/issues/5979)) ([9c19e64](https://github.com/Azure/LogicAppsUX/commit/9c19e64a70d1d15ebc0e77e172e845d4a693adf9))
+
 ## [4.115.0](https://github.com/Azure/LogicAppsUX/compare/v4.114.0...v4.115.0) (2024-10-28)
 
 
