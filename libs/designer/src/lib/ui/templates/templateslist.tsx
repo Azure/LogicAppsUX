@@ -19,8 +19,9 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
     filteredTemplateNames,
-    filters: { pageNum },
+    filters: { pageNum, detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
+  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
 
   const intlText = {
     NO_RESULTS: intl.formatMessage({
@@ -47,7 +48,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div>
           <div className="msla-templates-list">
-            <BlankWorkflowTemplateCard />
+            {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard />}
             {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
               <TemplateCard key={templateName} templateName={templateName} />
             ))}

@@ -205,7 +205,7 @@ const WorkflowList = ({
     switch (column?.key) {
       case 'name':
         return (
-          <Link href="#" as="button" onClick={() => showDetails(item.id)}>
+          <Link as="button" onClick={() => showDetails(item.id)}>
             {item.name}
           </Link>
         );
