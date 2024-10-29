@@ -183,7 +183,7 @@ export const Group = ({
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
-    const newItems = { ...groupProps, items: [...groupProps.items] };
+    const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
   };
