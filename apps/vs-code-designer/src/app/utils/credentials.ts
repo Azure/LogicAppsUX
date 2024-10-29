@@ -22,7 +22,7 @@ export const getAccountCredentials = async (tenantId?: string): Promise<any | un
     currentLoggedInSessions = azureAccount.sessions;
   }
 
-  if (currentLoggedInSessions.length > 1) {
+  if (currentLoggedInSessions.length > 0) {
     return getCredentialsForSessions(currentLoggedInSessions, tenantId);
   }
 
