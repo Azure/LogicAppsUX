@@ -15,6 +15,7 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
   position="end"
   style={
     {
+      "maxWidth": "100%",
       "position": "absolute",
       "width": "630px",
     }

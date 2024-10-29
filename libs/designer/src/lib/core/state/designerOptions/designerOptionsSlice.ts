@@ -23,6 +23,8 @@ import {
   InitCopilotService,
   InitUiInteractionsService,
   InitUserPreferenceService,
+  InitExperimentationServiceService,
+  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -44,6 +46,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     recurrenceInterval: undefined,
     maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
     hideContentTransferSettings: false,
+    collapseGraphsByDefault: false,
   },
 };
 
@@ -71,6 +74,7 @@ export const initializeServices = createAsyncThunk(
     copilotService,
     uiInteractionsService,
     userPreferenceService,
+    experimentationService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -130,6 +134,9 @@ export const initializeServices = createAsyncThunk(
       InitUserPreferenceService(userPreferenceService);
     }
 
+    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+    // we are always defaulting to the false implementation of the experimentation service.
+    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
 

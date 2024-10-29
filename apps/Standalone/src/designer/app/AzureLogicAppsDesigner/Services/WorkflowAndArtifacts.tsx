@@ -3,7 +3,7 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { getReactQueryClient, type AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
 import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -252,46 +252,50 @@ export const listCallbackUrl = async (
   triggerName: string | undefined,
   isConsumption = false
 ): Promise<CallbackInfo> => {
-  let callbackInfo: any;
-  if (triggerName) {
-    const authToken = {
-      Authorization: `Bearer ${environment.armToken}`,
-    };
-    if (HybridAppUtility.isHybridLogicApp(workflowId)) {
-      callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+  return getReactQueryClient().fetchQuery(['callbackUrl', { triggerName }], async () => {
+    let callbackInfo: any;
+    if (triggerName) {
+      const authToken = {
+        Authorization: `Bearer ${environment.armToken}`,
+      };
+      if (HybridAppUtility.isHybridLogicApp(workflowId)) {
+        callbackInfo = HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+      } else {
+        const result = await axios.post(
+          `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
+            isConsumption ? '2016-10-01' : standardApiVersion
+          }`,
+          null,
+          {
+            headers: {
+              ...authToken,
+            },
+          }
+        );
+        callbackInfo = result.data;
+      }
     } else {
-      const result = await axios.post(
-        `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${isConsumption ? '2016-10-01' : standardApiVersion}`,
-        null,
-        {
-          headers: {
-            ...authToken,
-          },
-        }
-      );
-      callbackInfo = result.data;
+      callbackInfo = {
+        basePath: '',
+        method: '',
+        queries: {},
+        value: '',
+      };
     }
-  } else {
-    callbackInfo = {
-      basePath: '',
-      method: '',
-      queries: {},
-      value: '',
+
+    let callbackUri: URL;
+    if (callbackInfo.relativePath) {
+      callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
+      Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
+    } else {
+      callbackUri = callbackInfo.value;
+    }
+
+    return {
+      method: callbackInfo.method,
+      value: callbackUri.toString(),
     };
-  }
-
-  let callbackUri: URL;
-  if (callbackInfo.relativePath) {
-    callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
-    Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
-  } else {
-    callbackUri = callbackInfo.value;
-  }
-
-  return {
-    method: callbackInfo.method,
-    value: callbackUri.toString(),
-  };
+  });
 };
 
 export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
@@ -451,8 +455,10 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
 
 export const saveWorkflowStandard = async (
   siteResourceId: string,
-  workflowName: string,
-  workflow: any,
+  workflows: {
+    name: string;
+    workflow: any;
+  }[],
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
@@ -464,10 +470,12 @@ export const saveWorkflowStandard = async (
   }
 ): Promise<any> => {
   const data: any = {
-    files: {
-      [`${workflowName}/workflow.json`]: workflow,
-    },
+    files: {},
   };
+
+  for (const { name, workflow } of workflows) {
+    data.files[`${name}/workflow.json`] = workflow;
+  }
 
   if (connectionsData) {
     data.files['connections.json'] = connectionsData;
@@ -483,11 +491,13 @@ export const saveWorkflowStandard = async (
 
   try {
     if (!options?.skipValidation) {
-      try {
-        await validateWorkflowStandard(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
-      } catch (error: any) {
-        if (error.status !== 404) {
-          return;
+      for (const { name, workflow } of workflows) {
+        try {
+          await validateWorkflowStandard(siteResourceId, name, workflow, connectionsData, parametersData, settings);
+        } catch (error: any) {
+          if (error.status !== 404) {
+            return;
+          }
         }
       }
     }

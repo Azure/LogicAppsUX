@@ -3,10 +3,11 @@
 
 .msla-templates-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 373px);
+    grid-template-columns: repeat(auto-fill, 343px);
 
     gap: 24px;
     justify-content: center;
+    margin-bottom: 40px;
 }
 
 .msla-templates-empty-list {
@@ -58,5 +59,73 @@
     .msla-templates-filters-sort-dropdown {
         width: 200px;
         margin-left: 6px;
+    }
+}
+
+.msla-template-connection-name {
+    display: flex;
+
+    .msla-template-connection-key {
+        padding: 0 4px;
+        margin-top: 2px;
+    }
+}
+
+.msla-templates-basics-tab {
+    display: flex;
+    flex-direction: column;
+    padding-top: 24px;
+
+    .msla-templates-basics-list {
+        width: 100%;
+    }
+
+    .msla-templates-basics-description {
+        padding-top: 6px;
+        vertical-align: middle;
+    }
+
+    .msla-templates-basics-name, .msla-templates-basics-state {
+        padding: 8px 0;
+    }
+}
+
+.msla-templates-parameters-tab {
+    .msla-templates-parameters-values {
+        font-size: 14px;
+
+        &.link {
+            color: #0078D4;
+            cursor: pointer;
+        }
+    }
+}
+
+.msla-templates-parameters-callout {
+    width: 343px;
+    padding: 20px 24px;
+
+    .msla-templates-parameter-callout-title {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+
+    .msla-templates-parameter-callout-subtitle {
+        color: #424242;
+        height: 32px;
+    }
+
+    .msla-templates-parameter-callout-associatedWorkflow {
+        margin-top: 24px;
+    }
+
+    .msla-templates-parameter-callout-body {
+        font-weight: bold;
+
+        &.list {
+            text-indent: 10px;
+            list-style-type: circle;
+
+        }
     }
 }

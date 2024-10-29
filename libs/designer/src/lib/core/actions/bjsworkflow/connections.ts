@@ -59,16 +59,19 @@ export interface UpdateConnectionPayload {
 
 export const updateTemplateConnection = createAsyncThunk(
   'updateTemplateConnection',
-  async (payload: ConnectionPayload, { dispatch, getState }): Promise<void> => {
-    const { nodeId, connector, connection, connectionProperties, authentication } = payload;
+  async (payload: ConnectionPayload & { connectionKey: string }, { dispatch, getState }): Promise<void> => {
+    const { nodeId, connectionKey, connector, connection, connectionProperties, authentication } = payload;
+    const workflows = (getState() as TemplateRootState).template.workflows;
+    const defaultWorkflow = Object.values(workflows).length > 0 ? Object.values(workflows)[0] : undefined;
     dispatch(
       changeTemplateConnectionMapping({
         nodeId,
+        connectionKey,
         connectorId: connector.id,
         connectionId: connection.id,
         authentication: authentication ?? getApiHubAuthenticationIfRequired(),
         connectionProperties: connectionProperties ?? getConnectionPropertiesIfRequired(connection, connector),
-        connectionRuntimeUrl: isOpenApiSchemaVersion((getState() as TemplateRootState).template.workflowDefinition)
+        connectionRuntimeUrl: isOpenApiSchemaVersion(defaultWorkflow?.workflowDefinition)
           ? connection.properties.connectionRuntimeUrl
           : undefined,
       })

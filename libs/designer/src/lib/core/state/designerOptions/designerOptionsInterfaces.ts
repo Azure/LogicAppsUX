@@ -22,6 +22,7 @@ import type {
   ICopilotService,
   IDesignerUiInteractionsService,
   IUserPreferenceService,
+  IExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -45,6 +46,7 @@ export interface DesignerOptionsState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
+    collapseGraphsByDefault?: boolean; // collapse scope by default
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
@@ -74,4 +76,5 @@ export interface ServiceOptions {
   copilotService?: ICopilotService;
   uiInteractionsService?: IDesignerUiInteractionsService;
   userPreferenceService?: IUserPreferenceService;
+  experimentationService?: IExperimentationService;
 }

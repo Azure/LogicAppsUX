@@ -2,7 +2,7 @@ import InformationImage from '../card/images/information_tiny.svg';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { FlyoutCallout } from './flyoutcallout';
 import type { ITooltipHostStyles } from '@fluentui/react';
-import { mergeStyleSets, TooltipHost } from '@fluentui/react';
+import { css, mergeStyleSets, TooltipHost } from '@fluentui/react';
 import React, { useRef, useState } from 'react';
 
 export interface FlyoutProps {
@@ -13,6 +13,7 @@ export interface FlyoutProps {
   text: string;
   title?: string;
   tooltipHostStyles?: ITooltipHostStyles;
+  iconSize?: 'sm' | 'lg';
   onClick?(): void;
 }
 
@@ -25,7 +26,7 @@ const defaultTooltipHostStyles: ITooltipHostStyles = {
 };
 
 export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
-  ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick, title }, ref) => {
+  ({ ariaLabel, iconStyle, style, tabIndex = 0, text, tooltipHostStyles, onClick, title, iconSize = 'lg' }, ref) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const [flyoutExpanded, setFlyoutExpanded] = useState(false);
 
@@ -61,7 +62,7 @@ export const Flyout = React.forwardRef<{ collapseFlyout(): void }, FlyoutProps>(
         >
           <img
             alt=""
-            className="msla-flyout-icon"
+            className={css('msla-flyout-icon', iconSize)}
             draggable={false}
             role="presentation"
             style={iconStyle}

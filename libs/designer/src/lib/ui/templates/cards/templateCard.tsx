@@ -1,22 +1,37 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { changeCurrentTemplateName, loadTemplate } from '../../../core/state/templates/templateSlice';
+import { changeCurrentTemplateName } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
-import { DocumentCard, IconButton } from '@fluentui/react';
+import { DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import {
+  equals,
+  getBuiltInOperationInfo,
+  isBuiltInOperation,
+  LogEntryLevel,
+  LoggerService,
+  TemplateService,
+} from '@microsoft/logic-apps-shared';
+import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
+import { Add16Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
+import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
+import { useMemo } from 'react';
 
 interface TemplateCardProps {
   templateName: string;
 }
 
 const maxConnectorsToShow = 5;
+
+const cardStyles: IDocumentCardStyles = {
+  root: { display: 'inline-block', maxWidth: 1000 },
+};
 
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,25 +43,44 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     location: state.workflow.location,
   }));
   const templateManifest = templates?.[templateName];
+  const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
+
+  const intlText = {
+    TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
+    NO_CONNECTORS: intl.formatMessage({
+      defaultMessage: 'This template does not have connectors',
+      description: 'Accessibility text to inform user this template does not contain connectors',
+      id: 'aI9W5L',
+    }),
+    COMMUNITY_AUTHORED: intl.formatMessage({
+      defaultMessage: 'Community Authored',
+      description: 'Label text for community authored templates',
+      id: 'F+cOLr',
+    }),
+    MICROSOFT_AUTHORED: intl.formatMessage({
+      defaultMessage: 'Microsoft Authored',
+      description: 'Label text for Microsoft authored templates',
+      id: 'rEQceE',
+    }),
+  };
 
   const onSelectTemplate = () => {
     LoggerService().log({
-      level: LogEntryLevel.Trace,
+      level: LogEntryLevel.Verbose,
       area: 'Templates.TemplateCard',
       message: 'Template is selected',
-      args: [templateName, workflowAppName],
+      args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
-    dispatch(openQuickViewPanelView());
+
+    if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
+      dispatch(openQuickViewPanelView());
+    }
   };
 
   if (!templateManifest) {
-    return (
-      <DocumentCard className="msla-template-card-wrapper">
-        {intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' })}
-      </DocumentCard>
-    );
+    return <DocumentCard className="msla-template-card-wrapper">{intlText.TEMPLATE_LOADING}</DocumentCard>;
   }
 
   const { title, details, featuredOperations, connections } = templateManifest as Manifest;
@@ -77,37 +111,43 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     className: 'msla-template-card-connector-menu-box',
   };
 
-  const cardStyles: IDocumentCardStyles = {
-    root: { display: 'inline-block', maxWidth: 1000 },
-  };
+  const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
 
   return (
     <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onSelectTemplate} aria-label={title}>
-      <div className="msla-template-card-data">
-        <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
-          {title}
-        </Text>
-        <div className="msla-template-card-tags">
-          {['By', 'Type', 'Trigger'].map((key: string) => {
-            if (!details[key]) {
-              return null;
-            }
-            return (
-              <Text key={key} size={300} className="msla-template-card-tag">
-                {key}: {details[key]}
-              </Text>
-            );
-          })}
+      <div className="msla-template-card-authored-wrapper">
+        <div className="msla-template-card-authored">
+          {isMicrosoftAuthored ? (
+            <Image src={MicrosoftIcon} aria-label={intlText.MICROSOFT_AUTHORED} width={16} />
+          ) : (
+            <PeopleCommunity16Regular aria-label={intlText.COMMUNITY_AUTHORED} />
+          )}
+          <Text size={200} weight="semibold" align="start" className="msla-template-card-authored-label">
+            {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : intlText.COMMUNITY_AUTHORED}
+          </Text>
         </div>
       </div>
 
-      <hr className="msla-templates-break" />
-
-      <div className="msla-template-card-connectors-wrapper">
-        <div className="msla-template-card-connectors">
-          <Text size={300} weight="medium" align="start" className="msla-template-card-connectors-title">
-            {intl.formatMessage({ defaultMessage: 'Connectors', description: 'Connectors section title', id: '0OC7ag' })}
+      <div className="msla-template-card-body">
+        <div className="msla-template-card-title-wrapper">
+          <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
+            {title}
           </Text>
+        </div>
+
+        <div className="msla-template-card-footer">
+          <div className="msla-template-card-tags">
+            {['Type', 'Trigger'].map((key: string) => {
+              if (!details[key]) {
+                return null;
+              }
+              return (
+                <Text key={key} size={300} className="msla-template-card-tag">
+                  {details[key]}
+                </Text>
+              );
+            })}
+          </div>
           <div className="msla-template-card-connectors-list">
             {connectorsToShow.length > 0 ? (
               connectorsToShow.map((info) => (
@@ -119,19 +159,61 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
                 />
               ))
             ) : (
-              <Text className="msla-template-card-connectors-emptyText">
-                {intl.formatMessage({
-                  defaultMessage: 'This template does not have connectors',
-                  description: 'Accessibility text to inform user this template does not contain connectors',
-                  id: 'aI9W5L',
-                })}
-              </Text>
+              <Text className="msla-template-card-connectors-emptyText">{intlText.NO_CONNECTORS}</Text>
             )}
             {showOverflow ? (
               <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
             ) : null}
           </div>
         </div>
+      </div>
+    </DocumentCard>
+  );
+};
+
+export const BlankWorkflowTemplateCard = () => {
+  const intl = useIntl();
+
+  const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
+
+  const intlText = {
+    BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Blank workflow',
+      description: 'Title text for the card that lets users start from a blank workflow',
+      id: 'pykp8c',
+    }),
+    BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
+      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
+      description: 'Label text for the card that lets users start from a blank workflow',
+      id: 'nN1ezT',
+    }),
+  };
+
+  const onBlankWorkflowClick = () => {
+    LoggerService().log({
+      level: LogEntryLevel.Verbose,
+      area: 'Templates.TemplateCard.Blank',
+      message: 'Blank workflow is selected',
+      args: [workflowAppName],
+    });
+    TemplateService()?.onAddBlankWorkflow();
+  };
+
+  return (
+    <DocumentCard
+      className="msla-template-card-wrapper"
+      styles={cardStyles}
+      onClick={onBlankWorkflowClick}
+      aria-label={intlText.BLANK_WORKFLOW}
+    >
+      <div className="msla-blank-template-card">
+        <Add16Regular className="msla-blank-template-card-add-icon" />
+        <Text size={400} weight="semibold" align="center" className="msla-template-card-title">
+          {intlText.BLANK_WORKFLOW}
+        </Text>
+        <Text size={400} align="center" className="msla-blank-template-card-description">
+          {intlText.BLANK_WORKFLOW_DESCRIPTION}
+        </Text>
       </div>
     </DocumentCard>
   );

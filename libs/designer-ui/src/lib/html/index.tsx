@@ -1,3 +1,4 @@
+import { notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
@@ -22,7 +23,9 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
   };
 
   const handleBlur = () => {
-    onChange?.({ value: value });
+    if (notEqual(value, initialValue)) {
+      onChange?.({ value: value });
+    }
   };
 
   const handleSetIsValuePlaintext = (newIsPlaintext: boolean) => {

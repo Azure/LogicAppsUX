@@ -7,7 +7,7 @@ import { commands, extensions } from 'vscode';
 
 export const getAccountCredentials = async (tenantId?: string): Promise<any | undefined> => {
   const extension = extensions.getExtension('ms-vscode.azure-account');
-  let currentLoggedInSessions: any;
+  let currentLoggedInSessions: any[];
 
   if (extension) {
     if (!extension.isActive) {
@@ -22,14 +22,14 @@ export const getAccountCredentials = async (tenantId?: string): Promise<any | un
     currentLoggedInSessions = azureAccount.sessions;
   }
 
-  if (currentLoggedInSessions) {
+  if (currentLoggedInSessions.length > 1) {
     return getCredentialsForSessions(currentLoggedInSessions, tenantId);
   }
 
   return undefined;
 };
 
-const getCredentialsForSessions = (sessions: any, tenantId?: string): ServiceClientCredentials => {
+const getCredentialsForSessions = (sessions: any[], tenantId?: string): ServiceClientCredentials => {
   if (tenantId) {
     const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() === tenantId);
     return tenantDetails.length ? tenantDetails[0].credentials2 : sessions[0].credentials2;

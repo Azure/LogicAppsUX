@@ -6,6 +6,9 @@ import { updateParameterAndDependencies, type UpdateParameterAndDependenciesPayl
 import constants from '../../common/constants';
 import { updateStaticResults } from '../state/operation/operationMetadataSlice';
 import type { AnyAction } from '@reduxjs/toolkit';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { replaceId } from '../state/workflow/workflowSlice';
+import { transformOperationTitle } from './graph';
 
 export const getCompressedStateFromRootState = (rootState: RootState): Uint8Array => {
   const partialRootState: UndoRedoPartialRootState = {
@@ -19,7 +22,23 @@ export const getCompressedStateFromRootState = (rootState: RootState): Uint8Arra
     workflow: rootState.workflow,
     workflowParameters: rootState.workflowParameters,
   };
-  return deflate(JSON.stringify(partialRootState));
+
+  const stringifiedPartialRootState = JSON.stringify(partialRootState);
+  const compressedState = deflate(stringifiedPartialRootState);
+
+  LoggerService().log({
+    level: LogEntryLevel.Verbose,
+    area: 'getCompressedStateFromRootState',
+    message: 'Compression size',
+    args: [
+      {
+        partialRootStateSize: Buffer.from(stringifiedPartialRootState).byteLength,
+        compressedStateSize: Buffer.from(compressedState).byteLength,
+      },
+    ],
+  });
+
+  return compressedState;
 };
 
 export const getRootStateFromCompressedState = (compressedState: Uint8Array): UndoRedoPartialRootState =>
@@ -43,7 +62,11 @@ export const getEditedPanelNode = (actionType: string, rootState: RootState): st
   return undefined;
 };
 
-export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLimit: number): boolean => {
+export const shouldSkipSavingStateToHistory = (
+  action: AnyAction,
+  stateHistoryLimit: number,
+  idReplacements: Record<string, string>
+): boolean => {
   // Skip saving state if state history limit is less than 1
   if (stateHistoryLimit < 1) {
     return true;
@@ -55,16 +78,31 @@ export const shouldSkipSavingStateToHistory = (action: AnyAction, stateHistoryLi
     return true;
   }
 
+  // Skip saving state if action rename results in same name/id
+  if (action.type === replaceId.type) {
+    const previousId = idReplacements[action.payload.originalId];
+    const newId = transformOperationTitle(action.payload.newId);
+    return previousId === newId ? true : false;
+  }
+
   return false;
 };
 
 const haveInputParametersChangedValue = (actionPayload: UpdateParameterAndDependenciesPayload): boolean => {
-  const { groupId, parameterId, properties, nodeInputs } = actionPayload;
+  const { groupId, parameterId, properties, nodeInputs, skipStateSave = false } = actionPayload;
+
+  if (skipStateSave) {
+    return false;
+  }
+
   const parameterGroup = nodeInputs.parameterGroups[groupId];
   const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
   if (index > -1) {
     const parameter = parameterGroup.parameters[index];
     if (properties.value && !isEqual(parameter.value, properties.value)) {
+      return true;
+    }
+    if (properties.editorViewModel && !isEqual(parameter.editorViewModel, properties.editorViewModel)) {
       return true;
     }
   }

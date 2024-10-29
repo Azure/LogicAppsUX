@@ -5,7 +5,7 @@ import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
-import { NameStatePanel } from '../createWorkflowPanel/tabs/nameStateTab';
+import { WorkflowBasics } from '../createWorkflowPanel/tabs/basicsTab';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
@@ -16,17 +16,45 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
 
   beforeAll(() => {
     const templateSliceData = {
-      workflowName: 'workflowName 1',
-      kind: undefined,
-      templateName: 'title',
+      workflows: {
+        default: {
+          id: 'default',
+          workflowName: 'workflowName 1',
+          kind: undefined,
+          templateName: 'title',
+          manifest: {
+            title: 'Template 1',
+            description: 'Template 1 Description',
+            tags: [],
+            details: {},
+            images: {},
+            skus: [],
+            kinds: [],
+            artifacts: [
+              {
+                type: 'workflow',
+                file: 'workflow.json',
+              },
+            ],
+            connections: {},
+            parameters: [],
+          },
+          workflowDefinition: {
+            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+            contentVersion: '',
+          },
+          connectionKeys: [],
+          errors: {
+            workflow: undefined,
+            kind: undefined,
+          },
+        },
+      },
       manifest: undefined,
-      workflowDefinition: undefined,
       parameterDefinitions: {},
       connections: {},
       servicesInitialized: false,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },
@@ -36,7 +64,7 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
       panel: {
         isOpen: true,
         currentPanelView: TemplatePanelView.CreateWorkflow,
-        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE,
+        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
       },
     };
     store = setupStore(minimalStoreData);
@@ -47,7 +75,7 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
 
     renderWithProviders(
       <QueryClientProvider client={queryClient}>
-        <NameStatePanel />
+        <WorkflowBasics />
       </QueryClientProvider>,
 
       { store }
@@ -55,9 +83,9 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
   });
 
   it('Shows Name and State Tab values displayed', async () => {
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.NAME_AND_STATE);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC);
     expect(screen.getAllByText('Workflow name')).toBeDefined();
-    expect(screen.getAllByDisplayValue(store.getState().template.workflowName ?? 'n/a')).toBeDefined;
+    expect(screen.getAllByDisplayValue(store.getState().template.workflows['default'].workflowName ?? 'n/a')).toBeDefined;
     expect(screen.getAllByText('State type')).toBeDefined();
     expect(screen.getAllByText('Stateful')).toBeDefined();
     expect(screen.getAllByText('Optimized for high reliability')).toBeDefined();

@@ -143,9 +143,6 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
-    if (this._isHybridLogicApp) {
-      return Promise.resolve([]);
-    }
     if (this._isDev) {
       if (page === 0) {
         return Promise.resolve(azureOperationsResponse);
@@ -184,9 +181,6 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
-    if (this._isHybridLogicApp) {
-      return Promise.resolve([]);
-    }
     if (this._isDev) {
       if (page === 0) {
         const connectors = AzureConnectorMock.value as Connector[];
@@ -214,7 +208,7 @@ export abstract class BaseSearchService implements ISearchService {
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
-        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
+        $filter: `type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       return this.getAzureResourceRecursive(uri, queryParameters);

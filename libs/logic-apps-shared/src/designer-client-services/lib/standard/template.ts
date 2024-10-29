@@ -1,9 +1,20 @@
 import { ArgumentException } from '../../../utils/src';
-import type { TemplateServiceOptions } from '../base/template';
-import type { ITemplateService } from '../template';
+import { BaseTemplateService, type BaseTemplateServiceOptions } from '../base/template';
+import type { IHttpClient } from '../httpClient';
 
-export class StandardTemplateService implements ITemplateService {
-  constructor(private readonly options: TemplateServiceOptions) {
+interface StandardTemplateServiceOptions extends BaseTemplateServiceOptions {
+  baseUrl: string;
+  appId?: string;
+  httpClient: IHttpClient;
+  apiVersions: {
+    subscription: string;
+    gateway: string;
+  };
+}
+
+export class StandardTemplateService extends BaseTemplateService {
+  constructor(override readonly options: StandardTemplateServiceOptions) {
+    super(options);
     const { baseUrl, apiVersions } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
@@ -14,11 +25,7 @@ export class StandardTemplateService implements ITemplateService {
     }
   }
 
-  dispose(): void {
-    return;
-  }
-
-  public async getExistingWorkflowNames(): Promise<string[]> {
+  async getExistingWorkflowNames(): Promise<string[]> {
     try {
       const { baseUrl, appId, apiVersions, httpClient } = this.options;
       const uri = `${baseUrl}${appId}/workflows`;
@@ -36,6 +43,4 @@ export class StandardTemplateService implements ITemplateService {
       return [];
     }
   }
-
-  public openBladeAfterCreate = (workflowName: string): void => this.options.openBladeAfterCreate(workflowName);
 }

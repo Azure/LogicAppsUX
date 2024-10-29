@@ -273,11 +273,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
     connectionInfo: ConnectionCreationInfo,
     shouldTestConnection: boolean
   ): Promise<Connection> {
-    const { workflowAppDetails } = this._options;
+    const { workflowAppDetails, baseUrl } = this._options;
     const intl = getIntl();
 
     // NOTE: Block connection creation if identity does not exist on Logic App.
-    if (workflowAppDetails && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
+    if (workflowAppDetails && !isHybridLogicApp(baseUrl) && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
       throw new Error(
         intl.formatMessage({
           defaultMessage: 'To create and use an API connection, you must have a managed identity configured on this logic app.',
@@ -321,26 +321,23 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const {
       apiHubServiceDetails: { tenantId },
       workflowAppDetails,
+      baseUrl,
     } = this._options;
     if (!isArmResourceId(connection.id) || !workflowAppDetails) {
       return;
     }
 
-    const intl = getIntl();
-
-    if (!isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'A managed identity is not configured on the logic app.',
-          id: 'WnU9v0',
-          description: 'Error message when no identity is associated',
-        })
-      );
-    }
+    this.validateLogicAppIdentity(baseUrl, workflowAppDetails.identity);
 
     const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
     const { identity, appName } = workflowAppDetails;
-    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
+    let identityDetailsForApiHubAuth: { principalId: string; tenantId: string };
+
+    if (isHybridLogicApp(baseUrl) && identity?.principalId && identity?.tenantId) {
+      identityDetailsForApiHubAuth = { principalId: identity?.principalId, tenantId: identity?.tenantId };
+    } else {
+      identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string, identityId);
+    }
 
     try {
       if (
@@ -408,6 +405,29 @@ export class StandardConnectionService extends BaseConnectionService implements 
         },
       },
     });
+  }
+
+  private validateLogicAppIdentity(baseUrl: string, identity: ManagedIdentity | undefined) {
+    const intl = getIntl();
+    if (isHybridLogicApp(baseUrl)) {
+      if (!identity?.principalId || !identity?.tenantId) {
+        throw new Error(
+          intl.formatMessage({
+            defaultMessage: 'App identity is not configured on the logic app environment variables.',
+            id: 'zPRSM9',
+            description: 'Error message when no app identity is added in environment variables',
+          })
+        );
+      }
+    } else if (!isIdentityAssociatedWithLogicApp(identity)) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'A managed identity is not configured on the logic app.',
+          id: 'WnU9v0',
+          description: 'Error message when no identity is associated',
+        })
+      );
+    }
   }
 
   // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity if identity is not specified.
@@ -536,10 +556,25 @@ export class StandardConnectionService extends BaseConnectionService implements 
   ): Promise<HttpResponse<any>> {
     try {
       const { httpClient, baseUrl, apiVersion } = this._options;
+      let uri = `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`;
+      let queryParameters: Record<string, string> = { 'api-version': apiVersion };
+      let headers: Record<string, string> = {};
+
+      if (isHybridLogicApp(uri)) {
+        const [baseUri, proxyPath] = uri.split('/hostruntime');
+        uri = `${getHybridAppBaseRelativeUrl(baseUri)}/invoke?api-version=2024-02-02-preview`;
+        queryParameters = {};
+        headers = {
+          'x-ms-logicapps-proxy-path': proxyPath || '',
+          'x-ms-logicapps-proxy-method': 'POST',
+        };
+      }
+
       const response = await httpClient.post<any, any>({
-        uri: `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`,
-        queryParameters: { 'api-version': apiVersion },
+        uri,
+        queryParameters,
         content: connectionData,
+        headers,
       });
 
       if (!response || response.status < 200 || response.status >= 300) {
@@ -768,6 +803,5 @@ function createLocalConnectionsData(
 }
 
 export function escapeSpecialChars(value: string): string {
-  const escapedUnderscore = value.replace(/_/g, '__');
-  return escapedUnderscore.replace(/-/g, '_1');
+  return value.replace(/-/g, '_1');
 }

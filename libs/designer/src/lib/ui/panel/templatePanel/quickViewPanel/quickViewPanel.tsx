@@ -4,21 +4,23 @@ import { Text } from '@fluentui/react-components';
 import { Icon } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useState } from 'react';
-import { TemplatesPanelContent } from '@microsoft/designer-ui';
+import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
+import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 
-export const QuickViewPanel = () => {
+export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId: string; clearDetailsOnClose: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { manifest, templateName, workflowAppName } = useSelector((state: RootState) => ({
-    manifest: state.template.manifest,
+  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
   }));
-  const panelTabs = getQuickViewTabs(intl, dispatch, {
+  const { manifest } = useWorkflowTemplate(workflowId);
+  const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
     templateId: templateName ?? '',
     workflowAppName,
+    isMultiWorkflow: false,
   });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
@@ -44,15 +46,16 @@ export const QuickViewPanelHeader = ({
   title,
   description,
   details,
-}: { title: string; description: string; details: Record<string, string> }) => {
+  features,
+}: { title: string; description: string; details: Record<string, string>; features?: string }) => {
+  const intl = useIntl();
   return (
-    <div className="msla-template-quickview-header">
-      <Text className="msla-template-panel-header">{title}</Text>
+    <TemplatesPanelHeader title={title}>
       <div className="msla-template-quickview-tags">
         {Object.keys(details).map((key: string, index: number, array: any[]) => {
           return (
             <div key={key}>
-              <Text className="msla-template-card-tag">
+              <Text className={index === array.length - 1 ? 'msla-template-last-tag' : ''}>
                 {key}: {details[key]}
               </Text>
               {index !== array.length - 1 ? (
@@ -63,6 +66,19 @@ export const QuickViewPanelHeader = ({
         })}
       </div>
       <Markdown linkTarget="_blank">{description}</Markdown>
-    </div>
+      {features && (
+        <div className="msla-template-quickview-features">
+          <Text>
+            {intl.formatMessage({
+              defaultMessage: 'Features',
+              id: 'SZ78Xp',
+              description: 'Title for the features section in the template overview',
+            })}
+            :
+          </Text>
+          <Markdown linkTarget="_blank">{features}</Markdown>
+        </div>
+      )}
+    </TemplatesPanelHeader>
   );
 };

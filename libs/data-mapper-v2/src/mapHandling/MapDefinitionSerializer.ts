@@ -194,7 +194,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
     // Probably used for direct index access
     if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
       // Looping schema node
-      addLoopingToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
+      addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
     } else {
       if (connectionsIntoCurrentTargetPath) {
         // Conditionals
@@ -294,7 +294,7 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
 };
 
-const addLoopingToNewPathItems = (
+const addLoopingForToNewPathItems = (
   pathItem: PathItem,
   rootTargetConnection: Connection,
   connections: ConnectionDictionary,

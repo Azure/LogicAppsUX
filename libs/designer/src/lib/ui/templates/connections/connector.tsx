@@ -1,6 +1,6 @@
 import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fluentui/react';
 import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, Text, css } from '@fluentui/react';
-import { useConnectorOnly } from '../../../core/state/connection/connectionSelector';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
 import type { Template } from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
@@ -90,7 +90,7 @@ const textStyles = {
 };
 
 export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection) => {
-  const { data: connector, isLoading, isError } = useConnectorOnly(connectorId);
+  const { data: connector, isLoading, isError } = useConnector(connectorId);
   const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
   const intl = useIntl();
 
@@ -153,10 +153,11 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
 
 export const ConnectorConnectionStatus = ({
   connectorId,
+  connectionKey,
   hasConnection,
   intl,
-}: { connectorId: string; hasConnection: boolean; intl: IntlShape }) => {
-  const { data: connector, isLoading } = useConnectorOnly(connectorId);
+}: { connectorId: string; connectionKey: string; hasConnection: boolean; intl: IntlShape }) => {
+  const { data: connector, isLoading } = useConnector(connectorId);
   const texts = getConnectorResources(intl);
 
   return (
@@ -170,7 +171,9 @@ export const ConnectorConnectionStatus = ({
           />
         </div>
       ) : (
-        <Text className="msla-templates-tab-review-section-details-title">{connector?.properties.displayName}</Text>
+        <Text className="msla-templates-tab-review-section-details-title">
+          {connector?.properties.displayName} ({connectionKey})
+        </Text>
       )}
       <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
     </div>
