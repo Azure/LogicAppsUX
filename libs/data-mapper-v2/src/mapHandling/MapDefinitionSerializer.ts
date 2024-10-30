@@ -475,11 +475,11 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
   }
 
   const keys = Object.keys(mapDefinition);
-  for (const key of keys) {
-    if (typeof mapDefinition[key] === 'object') {
-      const foundKey = findKeyInMap(mapDefinition[key] as MapDefinitionEntry, key);
+  for (const currentKey of keys) {
+    if (typeof mapDefinition[currentKey] === 'object') {
+      const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
       if (foundKey) {
-        const childKey = Object.keys((mapDefinition[key] as MapDefinitionEntry)[foundKey])[0];
+        const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
         return childKey;
       }
     }
