@@ -65,8 +65,19 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
         : getQuickViewTabs(intl, dispatch, workflowId as string, showCreate, {
             templateId: templateName ?? 'Unknown',
             workflowAppName,
+            isMultiWorkflow: isMultiWorkflowTemplate,
           }),
-    [isCreatePanelView, createWorkflowPanelTabs, intl, dispatch, workflowId, showCreate, templateName, workflowAppName]
+    [
+      isCreatePanelView,
+      createWorkflowPanelTabs,
+      intl,
+      dispatch,
+      workflowId,
+      showCreate,
+      templateName,
+      workflowAppName,
+      isMultiWorkflowTemplate,
+    ]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -102,7 +113,7 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px' }, content: { paddingLeft: '0px' } }}
+      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
       isLightDismiss
       type={isCreatePanelView ? PanelType.custom : PanelType.medium}
       customWidth={'50%'}

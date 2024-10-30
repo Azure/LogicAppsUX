@@ -5,7 +5,7 @@ import type { StateHistory, StateHistoryItem } from './undoRedoTypes';
 export const initialState: StateHistory = {
   past: [],
   future: [],
-  stateHistoryItemIndex: -1,
+  undoRedoClickToggle: 0,
 };
 
 export const undoRedoSlice = createSlice({
@@ -35,7 +35,7 @@ export const undoRedoSlice = createSlice({
       state.currentEditedPanelNode = state.past[state.past.length - 1].editedPanelNode;
       state.past = state.past.slice(0, state.past.length - 1);
       state.future = [newStateItem, ...state.future];
-      state.stateHistoryItemIndex = state.past.length;
+      state.undoRedoClickToggle = state.undoRedoClickToggle === 0 ? 1 : 0;
     },
     updateStateHistoryOnRedoClick: (state, action: PayloadAction<StateHistoryItem>) => {
       // Add current edited panel details to state being added to history
@@ -51,7 +51,7 @@ export const undoRedoSlice = createSlice({
       state.currentEditedPanelNode = state.future[0].editedPanelNode;
       state.future = state.future.slice(1);
       state.past = [...state.past, newStateItem];
-      state.stateHistoryItemIndex = state.past.length;
+      state.undoRedoClickToggle = state.undoRedoClickToggle === 0 ? 1 : 0;
     },
   },
   extraReducers: (builder) => {

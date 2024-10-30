@@ -16,16 +16,18 @@ export const getQuickViewTabs = (
   dispatch: AppDispatch,
   workflowId: string,
   showCreate: boolean,
-  { templateId, workflowAppName }: Template.TemplateContext
+  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext
 ) => {
   return [
     workflowTab(intl, dispatch, workflowId, showCreate, undefined, {
       templateId,
       workflowAppName,
+      isMultiWorkflow,
     }),
     summaryTab(intl, dispatch, workflowId, showCreate, {
       templateId,
       workflowAppName,
+      isMultiWorkflow,
     }),
   ];
 };

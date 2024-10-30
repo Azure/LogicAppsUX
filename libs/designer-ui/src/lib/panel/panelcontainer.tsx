@@ -203,7 +203,7 @@ export const PanelContainer = ({
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', width: drawerWidth }}
+      style={{ position: 'absolute', maxWidth: '100%', width: drawerWidth }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button

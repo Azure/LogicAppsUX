@@ -1,4 +1,86 @@
 # Logic Apps Designer
+## [4.117.0](https://github.com/Azure/LogicAppsUX/compare/v4.116.0...v4.117.0) (2024-10-30)
+
+
+### Bug Fixes
+
+* **designer:** Reverting a Condition Editor Performance Change ([#5986](https://github.com/Azure/LogicAppsUX/issues/5986)) ([6185658](https://github.com/Azure/LogicAppsUX/commit/618565878b3b867963efe99e4d4a5ae4102e4ab2))
+* **Designer:** Select connection error propagation ([#5992](https://github.com/Azure/LogicAppsUX/issues/5992)) ([31ab131](https://github.com/Azure/LogicAppsUX/commit/31ab1318d320ae53efbe006185ed96c4d1c5b2bd))
+* **vscode:** Add new xml actions to clientSupportedOperations ([#5981](https://github.com/Azure/LogicAppsUX/issues/5981)) ([86c4133](https://github.com/Azure/LogicAppsUX/commit/86c4133112f96f33906efc030309c20428ba3ef0))
+* **vscode:** Fix decision on amount of sessions ([#5988](https://github.com/Azure/LogicAppsUX/issues/5988)) ([efd99de](https://github.com/Azure/LogicAppsUX/commit/efd99de53fc18c9f39b3b8e2eacebf8b7e66b9c1))
+
+## [4.116.0](https://github.com/Azure/LogicAppsUX/compare/v4.115.0...v4.116.0) (2024-10-28)
+
+
+### Bug Fixes
+
+* **designer:** Properly paring Negatory Simple Query Builder  ([#5980](https://github.com/Azure/LogicAppsUX/issues/5980)) ([4705476](https://github.com/Azure/LogicAppsUX/commit/4705476f67823d34e8064ab61765fa5bf584e051))
+* **hybrid:**  Adding support for test connections in Hybrid ([#5979](https://github.com/Azure/LogicAppsUX/issues/5979)) ([9c19e64](https://github.com/Azure/LogicAppsUX/commit/9c19e64a70d1d15ebc0e77e172e845d4a693adf9))
+
+## [4.115.0](https://github.com/Azure/LogicAppsUX/compare/v4.114.0...v4.115.0) (2024-10-28)
+
+
+### Features
+
+* **designer:** Prevent Drag and Drop on loop source tokens out of loop ([#5957](https://github.com/Azure/LogicAppsUX/issues/5957)) ([f823f33](https://github.com/Azure/LogicAppsUX/commit/f823f3361ee8955038ccd375761822baddadf52c))
+* **Templates:** Enable Tabs for Accelerators ([#5966](https://github.com/Azure/LogicAppsUX/issues/5966)) ([a100781](https://github.com/Azure/LogicAppsUX/commit/a10078130ef0c8fbfb7c5e1878b10629c866b8a4))
+* **Templates:** Page Number Showing Through Panel + Add Aria Label ([#5971](https://github.com/Azure/LogicAppsUX/issues/5971)) ([8e52fc1](https://github.com/Azure/LogicAppsUX/commit/8e52fc1e297fa4e7f20228f8ef9a93b2143c495a))
+* **Templates:** Parameter Name Grid to Link and Callout ([#5931](https://github.com/Azure/LogicAppsUX/issues/5931)) ([5cce113](https://github.com/Azure/LogicAppsUX/commit/5cce11327e7a1298c592c55233273fc650415f74))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed run after trigger issues + fixed setting validations/errors ([#5943](https://github.com/Azure/LogicAppsUX/issues/5943)) ([85fc8a4](https://github.com/Azure/LogicAppsUX/commit/85fc8a4c446c20593529e1686f3b9b9d18f5d087))
+* **designer:** Limit inputs/outputs content size to 2MB ([#5956](https://github.com/Azure/LogicAppsUX/issues/5956)) ([f46ee87](https://github.com/Azure/LogicAppsUX/commit/f46ee87fd66b1e8d88113ae29dea0b9f9d7ffe00))
+* **designer:** Remove Persisting Action Menu Showing When Switching Views ([#5958](https://github.com/Azure/LogicAppsUX/issues/5958)) ([124ed88](https://github.com/Azure/LogicAppsUX/commit/124ed88a63bcdc3bce99e25ca0303b1e6844c76e))
+* **designer:** Update C# customcode boilerplate to use JToken ([#5953](https://github.com/Azure/LogicAppsUX/issues/5953)) ([72b7e6b](https://github.com/Azure/LogicAppsUX/commit/72b7e6b3d61d14b21914f551e8af52e4044a497f))
+
+## [4.114.0](https://github.com/Azure/LogicAppsUX/compare/v4.113.0...v4.114.0) (2024-10-24)
+
+## [4.113.0](https://github.com/Azure/LogicAppsUX/compare/v4.112.0...v4.113.0) (2024-10-24)
+
+
+### Features
+
+* **VSCode:** Updated apim api version for vscode and standalone ([#5941](https://github.com/Azure/LogicAppsUX/issues/5941)) ([32cf602](https://github.com/Azure/LogicAppsUX/commit/32cf602fb1387e18343112c278560ed67e23a8ee))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Serialization/Deserialization fixes ([#5946](https://github.com/Azure/LogicAppsUX/issues/5946)) ([f87d602](https://github.com/Azure/LogicAppsUX/commit/f87d602d4a162fe95e5c14f60dfbf352c8a87bd0))
+* **vscode:** Add validation for sessions in azure account ([#5930](https://github.com/Azure/LogicAppsUX/issues/5930)) ([f82205d](https://github.com/Azure/LogicAppsUX/commit/f82205d838245dff12fd795a6ee316a7e4be9916))
+
+## [4.112.0](https://github.com/Azure/LogicAppsUX/compare/v4.111.0...v4.112.0) (2024-10-22)
+
+
+### Features
+
+* **Designer:** Added host option to collapse all graph nodes by default ([#5928](https://github.com/Azure/LogicAppsUX/issues/5928)) ([b5987e7](https://github.com/Azure/LogicAppsUX/commit/b5987e706562d74b7164c765f73d4712503953d2))
+
+
+### Bug Fixes
+
+* **designer:** Log error object in callback url ([#5927](https://github.com/Azure/LogicAppsUX/issues/5927)) ([80f89aa](https://github.com/Azure/LogicAppsUX/commit/80f89aa9c2266ff5e05b4311a5282be355bf17d3))
+
+## [4.111.0](https://github.com/Azure/LogicAppsUX/compare/v4.110.0...v4.111.0) (2024-10-19)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Revert version upgrade ([#5913](https://github.com/Azure/LogicAppsUX/issues/5913)) ([a139ece](https://github.com/Azure/LogicAppsUX/commit/a139ecec23c0886799547e5ca7e65038d58b7733))
+* **Designer:** Fixed panel maxwidth issue ([#5918](https://github.com/Azure/LogicAppsUX/issues/5918)) ([0c82197](https://github.com/Azure/LogicAppsUX/commit/0c82197dacbd94280631bed91306073caa20862e))
+* **designer:** Fixed various bugs in undo/redo ([#5899](https://github.com/Azure/LogicAppsUX/issues/5899)) ([16d4c9b](https://github.com/Azure/LogicAppsUX/commit/16d4c9bdaafb76a25524d8ae29c32e7dabfc0c4a))
+* **templates:** Do not escape _ with __ in local connection names ([#5914](https://github.com/Azure/LogicAppsUX/issues/5914)) ([a0cba9a](https://github.com/Azure/LogicAppsUX/commit/a0cba9a6b452a4130a1f1c28b0a29687254f2ff5))
+* **templates:** Moving isMultiworkflow log to the end ([#5922](https://github.com/Azure/LogicAppsUX/issues/5922)) ([bdcfcd8](https://github.com/Azure/LogicAppsUX/commit/bdcfcd82ca77f5cc8ae8c41ef533e458b95f195f))
+
+## [4.110.0](https://github.com/Azure/LogicAppsUX/compare/v4.109.0...v4.110.0) (2024-10-17)
+
+
+### Bug Fixes
+
+* **Designer:** Fixing issue with managed identity connection creation ([#5897](https://github.com/Azure/LogicAppsUX/issues/5897)) ([4b92feb](https://github.com/Azure/LogicAppsUX/commit/4b92feb5c10b53440266a8f705ebf931dcb63189))
+* **vscode:** Remove extra reload webview when save ([#5888](https://github.com/Azure/LogicAppsUX/issues/5888)) ([9660af1](https://github.com/Azure/LogicAppsUX/commit/9660af1b741d7191ccd727fdc2954b85ce1a94f6))
+
 ## [4.109.0](https://github.com/Azure/LogicAppsUX/compare/v4.108.0...v4.109.0) (2024-10-16)
 
 

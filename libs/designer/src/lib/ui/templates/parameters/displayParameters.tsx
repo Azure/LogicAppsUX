@@ -1,12 +1,12 @@
-import { DetailsList, type IColumn, Label, SelectionMode, Text, TextField } from '@fluentui/react';
+import { Callout, css, DetailsList, type IColumn, Label, Link, SelectionMode, Text, TextField } from '@fluentui/react';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPropertyValue, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
-import { useIntl } from 'react-intl';
-import { Flyout } from '@microsoft/designer-ui';
+import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
+import { useBoolean, useId } from '@fluentui/react-hooks';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,60 +67,42 @@ export const DisplayParameters = () => {
     );
   };
 
-  const [columns, setColumns] = useFunctionalState<IColumn[]>(() => {
-    const baseColumns = [
-      {
-        ariaLabel: resources.parameter_name,
-        fieldName: 'displayName',
-        key: '$displayName',
-        isResizable: true,
-        minWidth: 150,
-        isMultiline: true,
-        name: resources.parameter_name,
-        maxWidth: 250,
-        showSortIconWhenUnsorted: true,
-        onColumnClick: _onColumnClick,
-      },
-      {
-        ariaLabel: resources.parameter_type,
-        fieldName: 'type',
-        key: '$type',
-        isResizable: true,
-        minWidth: 70,
-        maxWidth: 70,
-        name: resources.parameter_type,
-        showSortIconWhenUnsorted: true,
-        onColumnClick: _onColumnClick,
-      },
-      {
-        ariaLabel: resources.parameter_value,
-        fieldName: 'value',
-        key: '$value',
-        isResizable: true,
-        minWidth: 200,
-        isMultiline: true,
-        name: resources.parameter_value,
-        showSortIconWhenUnsorted: false,
-        onColumnClick: _onColumnClick,
-      },
-    ];
-
-    if (!isSingleWorkflow) {
-      baseColumns.push({
-        ariaLabel: resources.associated_workflows,
-        fieldName: 'associatedWorkflows',
-        key: '$associatedWorkflows',
-        isResizable: true,
-        minWidth: 180,
-        isMultiline: true,
-        name: resources.associated_workflows,
-        showSortIconWhenUnsorted: false,
-        onColumnClick: _onColumnClick,
-      });
-    }
-
-    return baseColumns;
-  });
+  const [columns, setColumns] = useFunctionalState<IColumn[]>([
+    {
+      ariaLabel: resources.parameter_name,
+      fieldName: 'displayName',
+      key: '$displayName',
+      isResizable: true,
+      minWidth: 150,
+      isMultiline: true,
+      name: resources.parameter_name,
+      maxWidth: 250,
+      showSortIconWhenUnsorted: true,
+      onColumnClick: _onColumnClick,
+    },
+    {
+      ariaLabel: resources.parameter_type,
+      fieldName: 'type',
+      key: '$type',
+      isResizable: true,
+      minWidth: 70,
+      maxWidth: 70,
+      name: resources.parameter_type,
+      showSortIconWhenUnsorted: true,
+      onColumnClick: _onColumnClick,
+    },
+    {
+      ariaLabel: resources.parameter_value,
+      fieldName: 'value',
+      key: '$value',
+      isResizable: true,
+      minWidth: 200,
+      isMultiline: true,
+      name: resources.parameter_value,
+      showSortIconWhenUnsorted: false,
+      onColumnClick: _onColumnClick,
+    },
+  ]);
 
   const updateItemInList = (item: Template.ParameterDefinition) => {
     const newList = parametersList().map((parameter: Template.ParameterDefinition) => (parameter.name === item.name ? item : parameter));
@@ -140,20 +122,20 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return (
-          <Label className="msla-templates-parameters-values" required={item.required}>
-            <Text>{item.displayName}</Text>
-            <Flyout text={item.description} iconSize={'sm'} />
-          </Label>
-        );
+        return <ParameterName aria-label={item.displayName} item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
 
       case '$type':
-        return <Text className="msla-templates-parameters-values">{item.type}</Text>;
+        return (
+          <Text className="msla-templates-parameters-values" aria-label={item.type}>
+            {item.type}
+          </Text>
+        );
 
       case '$value':
         return (
           <TextField
             className="msla-templates-parameters-values"
+            aria-label={item.value}
             value={item.value}
             onChange={(_event, newValue) => {
               handleParameterValueChange(item, newValue ?? '');
@@ -161,9 +143,6 @@ export const DisplayParameters = () => {
             errorMessage={parameterErrors[item.name]}
           />
         );
-
-      case '$associatedWorkflows':
-        return <Text className="msla-templates-parameters-values">{item.associatedWorkflows?.join(', ')}</Text>;
 
       default:
         return null;
@@ -180,6 +159,63 @@ export const DisplayParameters = () => {
         onRenderItemColumn={onRenderItemColumn}
         selectionMode={SelectionMode.none}
       />
+    </div>
+  );
+};
+
+const ParameterName = ({
+  item,
+  intl,
+  isSingleWorkflow,
+}: { item: Template.ParameterDefinition; intl: IntlShape; isSingleWorkflow: boolean }): JSX.Element => {
+  const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+  const buttonId = useId('callout-button');
+
+  return (
+    <div className="msla-template-parameters-tab-name">
+      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
+        <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
+          {item.displayName}
+        </Label>
+      </Link>
+      {isCalloutVisible && (
+        <Callout
+          className="msla-templates-parameters-callout"
+          role="dialog"
+          gapSpace={0}
+          target={`#${buttonId}`}
+          onDismiss={toggleIsCalloutVisible}
+          setInitialFocus
+        >
+          {!isSingleWorkflow && (
+            <Text className="msla-templates-parameter-callout-title" block>
+              {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
+            </Text>
+          )}
+          <Text className="msla-templates-parameter-callout-subtitle" block>
+            {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'eTW4SD' })}
+          </Text>
+          <Text className="msla-templates-parameter-callout-body" block>
+            {item.description}
+          </Text>
+          {isSingleWorkflow ? null : (
+            <div className="msla-templates-parameter-callout-associatedWorkflow">
+              <Text className="msla-templates-parameter-callout-subtitle" block>
+                {intl.formatMessage({
+                  defaultMessage: 'Associated workflows',
+                  description: 'Subtitle text for Associated workflows',
+                  id: 'Xz88HV',
+                })}
+              </Text>
+              {item?.associatedWorkflows?.map((workflow) => (
+                <li key={workflow} className={css('msla-templates-parameter-callout-body', 'list')}>
+                  {workflow}
+                </li>
+              ))}
+            </div>
+          )}
+        </Callout>
+      )}
     </div>
   );
 };

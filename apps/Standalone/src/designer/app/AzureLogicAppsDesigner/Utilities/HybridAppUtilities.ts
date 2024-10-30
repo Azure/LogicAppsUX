@@ -10,22 +10,19 @@ export class HybridAppUtility {
   }
 
   public static async getProxy<T>(uri: string, data: any, headers: Record<string, string>, params?: Record<string, any>): Promise<T> {
-    const appName = uri.split('hostruntime')[0].split('/');
+    const [baseUri, path] = uri.split('hostruntime');
+    const appName = baseUri.split('/');
     appName.pop();
 
     return (
-      await axios.post<T>(
-        `${uri.split('hostruntime')[0]}providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
-        data,
-        {
-          headers: {
-            ...headers,
-            'x-ms-logicapps-proxy-path': `${uri.split('hostruntime')[1]}`,
-            'x-ms-logicapps-proxy-method': 'GET',
-          },
-          params,
-        }
-      )
+      await axios.post<T>(`${baseUri}providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`, data, {
+        headers: {
+          ...headers,
+          'x-ms-logicapps-proxy-path': `${path}`,
+          'x-ms-logicapps-proxy-method': 'GET',
+        },
+        params,
+      })
     ).data;
   }
 
@@ -45,13 +42,13 @@ export class HybridAppUtility {
   }
 
   public static async postProxyResponse<T>(uri: string, data: any, headers: Record<string, string>, params?: Record<string, any>) {
-    const splitUri = uri.split('/hostruntime/');
-    const appName = splitUri[0].split('/').pop();
+    const [baseUri, path] = uri.split('/hostruntime/');
+    const appName = baseUri.split('/').pop();
 
-    return await axios.post<T>(`${splitUri[0]}/providers/Microsoft.App/logicapps/${appName}/invoke?api-version=2024-02-02-preview`, data, {
+    return await axios.post<T>(`${baseUri}/providers/Microsoft.App/logicapps/${appName}/invoke?api-version=2024-02-02-preview`, data, {
       headers: {
         ...headers,
-        'x-ms-logicapps-proxy-path': `${splitUri[1]}/`,
+        'x-ms-logicapps-proxy-path': `${path}/`,
         'x-ms-logicapps-proxy-method': 'POST',
       },
       params,
