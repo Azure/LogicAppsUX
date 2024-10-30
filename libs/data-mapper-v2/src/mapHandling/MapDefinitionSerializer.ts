@@ -54,7 +54,7 @@ export const convertToMapDefinition = (
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+    generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
     const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
