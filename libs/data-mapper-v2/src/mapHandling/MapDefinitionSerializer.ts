@@ -39,6 +39,7 @@ interface SuccessfulMapDefinition {
 }
 
 export const convertToMapDefinition = (
+  // danielle can you make the map definition an array instead of an object?
   connections: ConnectionDictionary,
   sourceSchema: SchemaExtended | undefined,
   targetSchema: SchemaExtended | undefined,
@@ -53,7 +54,7 @@ export const convertToMapDefinition = (
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections);
+    generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
     const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
@@ -64,13 +65,13 @@ export const convertToMapDefinition = (
   return { isSuccess: false, errorNodes: [] };
 };
 
-const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
+export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
   // Custom values directly on target nodes need to have extra single quotes stripped out
   const map = yaml
     .dump(mapDefinition, {
       replacer: yamlReplacer,
       noRefs: true,
-      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
+      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition), // danielle pass map definition here to sort
     })
     .replaceAll(/'"|"'/g, '"');
   return map;
@@ -432,7 +433,9 @@ const addLoopingForToNewPathItems = (
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
   path.every((pathItem, pathIndex) => {
     if (pathItem.arrayIndex !== undefined) {
+      // danielle when is this true?
       // When dealing with the map definition we need to access the previous path item, instead of the current
+      // this gives us the parent, to put the current node in its parent
       const curPathItem = path[pathIndex - 1];
       const curItem = mapDefinition[curPathItem.key];
       let newArray: (any | undefined)[] = curItem && Array.isArray(curItem) ? curItem : Array(pathItem.arrayIndex + 1).fill(undefined);
@@ -467,23 +470,55 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   });
 };
 
-const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
-  const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
-    if (node.endsWith(nameA)) {
-      const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);
-      const hasNodeB = origArray.find((nodeB) => nodeB === `${trimmedNode}/${nameB}`);
+const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | undefined => {
+  if (mapDefinition[key]) {
+    return key;
+  }
 
-      return !!hasNodeB;
+  const keys = Object.keys(mapDefinition);
+  for (const key of keys) {
+    if (typeof mapDefinition[key] === 'object') {
+      const foundKey = findKeyInMap(mapDefinition[key] as MapDefinitionEntry, key);
+      if (foundKey) {
+        const childKey = Object.keys((mapDefinition[key] as MapDefinitionEntry)[foundKey])[0];
+        return childKey;
+      }
     }
+  }
 
+  return undefined;
+};
+
+const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[], mapDefinition: MapDefinitionEntry): number => {
+  // danielle this won't work with 'for' or 'if' because we can't look at the child
+  let targetForA = nameA;
+  if (nameA.startsWith(mapNodeParams.for) || nameA.startsWith(mapNodeParams.if)) {
+    // find 'A' in the mapDefintion and find the first child
+    targetForA = findKeyInMap(mapDefinition, nameA) ?? '';
+  }
+  let targetForB = nameB;
+  if (nameB.startsWith(mapNodeParams.for) || nameB.startsWith(mapNodeParams.if)) {
+    // find 'B' in the mapDefintion and find the first child
+    targetForB = findKeyInMap(mapDefinition, nameB) ?? '';
+  }
+
+  const potentialKeyObjectsA = targetSchemaSortArray.findIndex((node, _index) => {
+    if (node.endsWith(targetForA)) {
+      const trimmedNode = node.substring(0, node.indexOf(targetForA) - 1);
+      return trimmedNode;
+    }
     return false;
   });
 
-  if (potentialKeyObjects.length === 0) {
-    return 0;
-  }
+  // danielle this does not work 100%, we need full path for loops
 
-  const keyA = potentialKeyObjects[0];
-  const trimmedNode = keyA.substring(0, keyA.indexOf(nameA) - 1);
-  return targetSchemaSortArray.indexOf(keyA) - targetSchemaSortArray.indexOf(`${trimmedNode}/${nameB}`);
+  const potentialKeyObjectsB = targetSchemaSortArray.findIndex((node, _index) => {
+    if (node.endsWith(targetForB)) {
+      const trimmedNode = node.substring(0, node.indexOf(targetForB) - 1);
+      return trimmedNode;
+    }
+    return false;
+  });
+
+  return potentialKeyObjectsA - potentialKeyObjectsB;
 };
