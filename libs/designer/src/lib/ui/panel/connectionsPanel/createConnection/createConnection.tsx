@@ -149,7 +149,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [connectionParameters]
   );
   const multiAuthParams = useMemo(
-    () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
+    () => connectionParameterSets?.values[selectedParamSetIndex]?.parameters ?? {},
     [connectionParameterSets, selectedParamSetIndex]
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
