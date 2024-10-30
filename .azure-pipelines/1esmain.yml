@@ -26,6 +26,7 @@ resources:
 parameters:
   # When true, skips the deployment job which actually publishes the extension
   - name: dryRun
+    displayName: Dry run
     type: boolean
     default: true
 
@@ -36,8 +37,8 @@ parameters:
   # The intended extension version to publish. 
   # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
   - name: publishVersion
+    displayName: Version to publish
     type: string
-    default: 4.85.3
 
   # Customize the environment to associate the deployment with. 
   # Useful to control which group of people should be required to approve the deployment.
@@ -81,47 +82,12 @@ extends:
                   targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
                   artifactName: Build ${{ parameters.publishVersion }}
             steps:
-              - script: git checkout pipelineUpdate # Replace with your desired version to release
+              - script: git checkout v${{ parameters.publishVersion }} # Replace with your desired version to release
                 displayName: 'Checkout to specific branch'
               - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
               - template: .azure-pipelines/templates/build.yml@LogicAppsUX
               - template: .azure-pipelines/templates/package.yml@LogicAppsUX
-              #- template: .azure-pipelines/templates/sign.yml@LogicAppsUX
-              # Check if the SignExtension.signproj file exists and set a variable using PowerShell
-              # All other steps in this template will only run if the file exists
-              - powershell: |
-                  $fileExists = Test-Path -Path "$(Build.SourcesDirectory)/.azure-pipelines/SignExtension.signproj"
-                  Write-Output "##vso[task.setvariable variable=signprojExists]$fileExists"
-                  
-                  if ($fileExists) {
-                      Write-Output "SignExtension.signproj file found. Signing extension."
-                  } else {
-                      Write-Output "SignExtension.signproj file not found. Skipping signing."
-                  }
-                displayName: "\U0001F449 Check for SignExtension.signproj File"
-                condition: ${{ parameters.enableSigning }}
-
-              # put the extension name and version from the package.json into variables to use later. Variables can be used in later steps as $(package.name) and $(package.version)
-              - pwsh: | 
-                  Write-Output "##vso[task.setvariable variable=name;isOutput=true]$((Get-Content -Raw -Path package.json | ConvertFrom-Json).name)"
-                  Write-Output "##vso[task.setvariable variable=version;isOutput=true]$((Get-Content -Raw -Path package.json | ConvertFrom-Json).version)"
-                condition: eq(variables['signprojExists'], True)
-                name: package
-                displayName: "\U0001F449 Get extension info from package.json"
-
-              - script: cd apps/vs-code-designer/dist && npx @vscode/vsce generate-manifest -i vscode-azurelogicapps-$(package.version).vsix -o $(Build.SourcesDirectory)/extension.manifest
-                condition: eq(variables['signprojExists'], True)
-                displayName: "\U0001F449 Generate extension manifest"
-
-              # this task will pass even if signing fails, so we follow it up with a check to see if the signature file was created
-              - task: DotNetCoreCLI@2
-                condition: eq(variables['signprojExists'], True)
-                displayName: "\U0001F449 Sign with MSBuild"
-                inputs:
-                  command: 'build'
-                  projects: $(Build.SourcesDirectory)/.azure-pipelines/SignExtension.signproj
-
-              - pwsh: |
+              - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
                   $filePath = "extension.signature.p7s"
 
                   if (-Not (Test-Path $filePath)) {
@@ -133,8 +99,7 @@ extends:
                   exit 0
                 displayName: "\U0001F449 Verify extension.signature.p7s file was created"
                 condition: eq(variables['signprojExists'], True)
-              #- template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
-              - task: CopyFiles@2
+              - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
                 displayName: "\U0001F449 Copy packages and vsix to staging directory"
                 inputs:
                   # Uploading the package.json so we can publish later without cloning the source
