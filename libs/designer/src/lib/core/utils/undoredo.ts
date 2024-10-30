@@ -95,10 +95,10 @@ const haveInputParametersChangedValue = (actionPayload: UpdateParameterAndDepend
     return false;
   }
 
-  const parameterGroup = nodeInputs.parameterGroups[groupId];
-  const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
+  const parameters = nodeInputs.parameterGroups?.[groupId]?.parameters ?? [];
+  const index = parameters.findIndex((parameter) => parameter.id === parameterId);
   if (index > -1) {
-    const parameter = parameterGroup.parameters[index];
+    const parameter = parameters?.[index];
     if (properties.value && !isEqual(parameter.value, properties.value)) {
       return true;
     }
