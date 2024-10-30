@@ -433,7 +433,6 @@ const addLoopingForToNewPathItems = (
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
   path.every((pathItem, pathIndex) => {
     if (pathItem.arrayIndex !== undefined) {
-      // danielle when is this true?
       // When dealing with the map definition we need to access the previous path item, instead of the current
       // this gives us the parent, to put the current node in its parent
       const curPathItem = path[pathIndex - 1];
@@ -490,7 +489,6 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
 };
 
 const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[], mapDefinition: MapDefinitionEntry): number => {
-  // danielle this won't work with 'for' or 'if' because we can't look at the child
   let targetForA = nameA;
   if (nameA.startsWith(mapNodeParams.for) || nameA.startsWith(mapNodeParams.if)) {
     // find 'A' in the mapDefintion and find the first child
@@ -510,7 +508,7 @@ const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string
     return false;
   });
 
-  // danielle this does not work 100%, we need full path for loops
+  // this does not work 100%, we need full path in next iteration
 
   const potentialKeyObjectsB = targetSchemaSortArray.findIndex((node, _index) => {
     if (node.endsWith(targetForB)) {

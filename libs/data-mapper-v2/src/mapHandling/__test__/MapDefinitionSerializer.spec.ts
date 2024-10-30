@@ -3,7 +3,7 @@ import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstant
 import { directAccessPseudoFunction, FunctionData, functionMock, ifPseudoFunction, indexPseudoFunction } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { applyConnectionValue } from '../../utils/Connection.Utils';
-import { addReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
@@ -330,7 +330,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           '/ns0:TargetPlaygroundRoot/ItsComplicated',
         ];
 
-        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections);
         const mapstr = createYamlFromMap(mapDefinition, targetSchemaSortArray);
 
         expect(mapstr).toEqual(
