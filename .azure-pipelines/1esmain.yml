@@ -31,6 +31,7 @@ parameters:
     default: true
 
   - name: enableSigning
+    displayName: Enable signing
     type: boolean
     default: True
 
