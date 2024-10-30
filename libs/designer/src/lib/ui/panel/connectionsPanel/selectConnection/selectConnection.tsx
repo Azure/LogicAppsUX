@@ -125,31 +125,31 @@ export const SelectConnection = () => {
     );
   }
 
-  if (connectionQuery.isError || connectionQuery.data) {
-    return (
-      <MessageBar intent={'error'}>
-        <MessageBarBody>
-          <MessageBarTitle>{connectionLoadErrorTitle}</MessageBarTitle>
-          <Text>{parseErrorMessage(connectionQuery.error)}</Text>
-        </MessageBarBody>
-      </MessageBar>
-    );
-  }
-
   return (
     <div className="msla-edit-connection-container">
       <ActionList nodeIds={selectedNodeIds} iconUri={connectorIconUri} />
       <Divider />
 
-      <Body1Strong>{componentDescription}</Body1Strong>
-      <ConnectionTable
-        connections={connections}
-        currentConnectionId={currentConnectionId}
-        saveSelectionCallback={saveSelectionCallback}
-        cancelSelectionCallback={closeConnectionsFlow}
-        createConnectionCallback={createConnectionCallback}
-        isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
-      />
+      {connectionQuery.isError ? (
+        <MessageBar intent={'error'}>
+          <MessageBarBody>
+            <MessageBarTitle>{connectionLoadErrorTitle}</MessageBarTitle>
+            <Text>{parseErrorMessage(connectionQuery.error)}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : (
+        <>
+          <Body1Strong>{componentDescription}</Body1Strong>
+          <ConnectionTable
+            connections={connections}
+            currentConnectionId={currentConnectionId}
+            saveSelectionCallback={saveSelectionCallback}
+            cancelSelectionCallback={closeConnectionsFlow}
+            createConnectionCallback={createConnectionCallback}
+            isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+          />
+        </>
+      )}
 
       <div className="msla-edit-connection-actions-container">
         <Button aria-label={buttonAddAria} onClick={createConnectionCallback}>
