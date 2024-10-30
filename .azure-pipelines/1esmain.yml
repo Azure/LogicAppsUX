@@ -150,8 +150,10 @@ extends:
                     **/*.tgz
                   TargetFolder: "$(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}"
                 condition: succeeded()
+      
       - stage: Release      
         displayName: Publish extension
+        dependsOn: Build
         extends:
           template: azure-pipelines/release-extension.yml@azExtTemplates
           parameters:
