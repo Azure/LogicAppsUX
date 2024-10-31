@@ -183,13 +183,13 @@ export const PanelContainer = ({
       return (
         <div className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
           {renderHeader(contentsNode)}
-          <div className="msla-panel-contents">
+          <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents '}`}>
             {isLoading ? (
               <div className="msla-loading-container">
                 <Spinner size={'large'} />
               </div>
             ) : isError ? (
-              <MessageBar className="msla-error-container" intent={'error'}>
+              <MessageBar intent={'error'}>
                 <MessageBarBody>
                   <MessageBarTitle>{panelErrorTitle}</MessageBarTitle>
                   <Text>{errorMessage ?? panelErrorMessage}</Text>
