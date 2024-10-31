@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.119.0](https://github.com/Azure/LogicAppsUX/compare/v4.118.0...v4.119.0) (2024-10-31)
+
+
+### Bug Fixes
+
+* **Danielle:** serialize in order for 'for' and 'if' ([#5997](https://github.com/Azure/LogicAppsUX/issues/5997)) ([d89302f](https://github.com/Azure/LogicAppsUX/commit/d89302f2422855d4127330f2e5cd5e484a7d6cc9))
+
 ## [4.118.0](https://github.com/Azure/LogicAppsUX/compare/v4.117.0...v4.118.0) (2024-10-30)
 
 
