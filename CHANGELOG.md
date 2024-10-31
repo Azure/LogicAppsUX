@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.8](https://github.com/Azure/LogicAppsUX/compare/v4.105.7...v4.105.8) (2024-10-31)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed workflow ID path for getting child workflow ([#6004](https://github.com/Azure/LogicAppsUX/issues/6004)) ([61df70e](https://github.com/Azure/LogicAppsUX/commit/61df70e40ec8ee6916e8a4ef8fc29a6424822e8a))
+
 ### [4.105.7](https://github.com/Azure/LogicAppsUX/compare/v4.105.6...v4.105.7) (2024-10-18)
 
 
