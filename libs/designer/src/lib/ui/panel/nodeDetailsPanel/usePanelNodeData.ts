@@ -40,14 +40,15 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
   const selectedTab = isPinnedNode ? pinnedNodeActiveTab : selectedNodeActiveTab;
   const selectTab = isPinnedNode ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
   const subgraphType = nodeMetadata?.subgraphType;
+  const isError = errorInfo?.level === ErrorLevel.Critical || opQuery?.isError;
 
   return {
     comment,
     displayName,
     errorMessage: errorInfo?.message,
     iconUri,
-    isError: errorInfo?.level === ErrorLevel.Critical || opQuery?.isError,
-    isLoading: subgraphType ? false : opQuery.isLoading,
+    isError,
+    isLoading: isError ? false : subgraphType ? false : opQuery.isLoading,
     nodeId,
     onSelectTab: (tabId) => {
       dispatch(selectTab(tabId));
