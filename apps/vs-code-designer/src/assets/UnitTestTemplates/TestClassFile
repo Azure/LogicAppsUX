@@ -1,14 +1,14 @@
+using Microsoft.Azure.Workflows.UnitTesting;
+using Microsoft.Azure.Workflows.UnitTesting.Definitions;
+using Newtonsoft.Json.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace <%= LogicAppName %>.Tests
 {
-    using Microsoft.Azure.Workflows.UnitTesting;
-    using Microsoft.Azure.Workflows.UnitTesting.Definitions;
-    using Newtonsoft.Json.Linq;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-
     /// <summary>
     /// The unit test class for testing the workflow named <%= WorkflowName %>.
     /// This class is automatically generated when you choose to create a unit test from a workflow run in Visual Studio Code.
@@ -20,22 +20,22 @@ namespace <%= LogicAppName %>.Tests
         /// <summary>
         /// The relative path to the workflow JSON file.
         /// </summary>
-        private string workflowDefinitionPath;
+        private readonly string workflowDefinitionPath;
 
         /// <summary>
         /// The relative path to the connections JSON file.
         /// </summary>
-        private string connectionsPath;
+        private readonly string connectionsPath;
 
         /// <summary>
         /// The relative path to the parameters JSON file.
         /// </summary>
-        private string parametersPath;
+        private readonly string parametersPath;
 
         /// <summary>
         /// The relative path to the local settings JSON file.
         /// </summary>
-        private string localSettingsPath;
+        private readonly string localSettingsPath;
 
         /// <summary>
         /// The mocked trigger outputs that are generated from a workflow run.
@@ -50,17 +50,17 @@ namespace <%= LogicAppName %>.Tests
         /// <summary>
         /// Initializes a new instance of the class named <see cref="<%= UnitTestName %>" />.
         /// This constructor loads the necessary paths for the workflow, connections, parameters, and local settings JSON files.
-        /// The constructor also loads the mock data from the file named <%= UnitTestName %>-mock.json.
+        /// The constructor also loads the mock data from the file named <%= UnitTestName %>_mock.json.
         /// </summary>
         public <%= UnitTestName %>()
         {
-            this.workflowDefinitionPath = @"../<%= LogicAppName %>/<%= WorkflowName %>/workflow.json";
-            this.connectionsPath = @"../<%= LogicAppName %>/connections.json";
-            this.parametersPath = @"../<%= LogicAppName %>/parameters.json";
-            this.localSettingsPath = @"../<%= LogicAppName %>/local.settings.json";
+            this.workflowDefinitionPath = @"../../../../../<%= LogicAppName %>/<%= WorkflowName %>/workflow.json";
+            this.connectionsPath = @"../../../../../<%= LogicAppName %>/connections.json";
+            this.parametersPath = @"../../../../../<%= LogicAppName %>/parameters.json";
+            this.localSettingsPath = @"../../../../../<%= LogicAppName %>/local.settings.json";
 
-            // Load the mock data from the file named <%= UnitTestName %>-mock.json.
-            var mockData = JObject.Parse(File.ReadAllText(@"<%= UnitTestName %>-mock.json"));
+            // Load the mock data from the file named <%= UnitTestName %>_mock.json.
+            var mockData = JObject.Parse(File.ReadAllText(@"../../../../../<%= LogicAppName %>/<%= WorkflowName %>/<%= UnitTestName %>-mock.json"));
             this.triggerMock = mockData["triggerMocks"].ToObject<Dictionary<string, TriggerMock>>().FirstOrDefault().Value;
             this.actionMocks = mockData["actionMocks"].ToObject<Dictionary<string, ActionMock>>();
         }
@@ -106,7 +106,7 @@ namespace <%= LogicAppName %>.Tests
             // {
             //     'statusCode': '200',
             //     'body': {
-            //         <your-test-JSON value>
+            //         <your-test-JSON-value>
             //     }
             // }");
 
@@ -114,6 +114,8 @@ namespace <%= LogicAppName %>.Tests
             // var mockDataToModify = this.actionMocks["<actionName>"];
             // mockDataToModify.Outputs["body"]["<property1Name>"] = "<your-test-string-value>";
             // return mockDataToModify.Outputs;
+
+            return new JObject();
         }
 
         #endregion

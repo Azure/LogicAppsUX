@@ -18,6 +18,7 @@ import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { FileManagement } from '../../generateDeploymentScripts/iacGestureHelperFunctions';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
@@ -165,6 +166,16 @@ async function generateCodefulUnitTest(
     vscode.window.showInformationMessage(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
     );
+
+    // Check if testsDirectory is already part of the workspace
+    const workspaceFolders = vscode.workspace.workspaceFolders || [];
+    const isTestsDirectoryInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === testsDirectory);
+
+    if (!isTestsDirectoryInWorkspace) {
+      // Add testsDirectory to workspace if not already included
+      ext.outputChannel.appendLog(localize('addingTestsDirectory', 'Adding tests directory to workspace: {0}', testsDirectory));
+      FileManagement.addFolderToWorkspace(testsDirectory);
+    }
 
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error) {
