@@ -224,11 +224,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return undefined;
   };
 
-  const getChildWorkflowIdFromInputs = (inputs: any): string | undefined => {
-    if (!isNullOrEmpty(inputs)) {
-      const workflow = getObjectPropertyValue(inputs, ['host', 'value', 'workflow']);
+  const getChildWorkflowIdFromInputs = (childWorkflowInputs: any): string | undefined => {
+    if (!isNullOrEmpty(childWorkflowInputs)) {
+      const workflow = getObjectPropertyValue(childWorkflowInputs, ['host.workflow.id']);
       if (!isNullOrEmpty(workflow)) {
-        return workflow.id;
+        return workflow.value;
       }
     }
     return undefined;
