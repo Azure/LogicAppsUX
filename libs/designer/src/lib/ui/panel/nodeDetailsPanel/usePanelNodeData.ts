@@ -48,7 +48,7 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
     errorMessage: errorInfo?.message,
     iconUri,
     isError,
-    isLoading: isError ? false : subgraphType ? false : opQuery.isLoading,
+    isLoading: !isError && !subgraphType ? opQuery.isLoading : false,
     nodeId,
     onSelectTab: (tabId) => {
       dispatch(selectTab(tabId));
