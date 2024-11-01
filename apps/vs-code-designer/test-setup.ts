@@ -9,6 +9,10 @@ vi.mock('@microsoft/vscode-azext-azureutils', () => ({
   // mock implementation or empty object
 }));
 
+vi.mock('@microsoft/vscode-azext-azureauth', () => ({
+  // mock implementation or empty object
+}));
+
 vi.mock('@microsoft/vscode-azext-utils', () => {
   return {
     AzureWizardExecuteStep: vi.fn().mockImplementation(() => {
