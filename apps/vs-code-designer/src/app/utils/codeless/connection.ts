@@ -217,7 +217,7 @@ export async function getConnectionsAndSettingsToUpdate(
 
     context.telemetry.properties.checkingConnectionKey = `Checking ${referenceKey}-connectionKey validity`;
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
-      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         context,
         referenceKey,
@@ -236,7 +236,7 @@ export async function getConnectionsAndSettingsToUpdate(
     ) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
-      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         context,
         referenceKey,
@@ -373,7 +373,7 @@ async function createAccessPolicyInConnection(
   site: ParsedSite,
   identity: any
 ): Promise<void> {
-  const accessToken = await getAuthorizationToken(undefined, undefined);
+  const accessToken = await getAuthorizationToken();
   const getUrl = `${connectionId}?api-version=2018-07-01-preview`;
   let connection: any;
 

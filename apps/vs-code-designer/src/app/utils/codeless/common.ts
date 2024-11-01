@@ -19,7 +19,6 @@ import type { IAzureConnectorsContext } from '../../commands/workflows/azureConn
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
@@ -224,7 +223,6 @@ export async function getAzureConnectorDetailsForLocalProject(
   let subscriptionId = localSettings.Values[workflowSubscriptionIdKey];
   let resourceGroupName = localSettings.Values[workflowResourceGroupNameKey];
   let location = localSettings.Values[workflowLocationKey];
-  let credentials: ServiceClientCredentials;
 
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
   let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
@@ -238,7 +236,6 @@ export async function getAzureConnectorDetailsForLocalProject(
     subscriptionId = connectorsContext.subscriptionId;
     resourceGroupName = connectorsContext.resourceGroup?.name || '';
     location = connectorsContext.resourceGroup?.location || '';
-    credentials = connectorsContext.credentials;
     workflowManagementBaseUrl = connectorsContext.environment?.resourceManagerEndpointUrl;
   }
 
@@ -246,7 +243,7 @@ export async function getAzureConnectorDetailsForLocalProject(
 
   return {
     enabled,
-    accessToken: enabled ? await getAuthorizationToken(credentials, tenantId) : undefined,
+    accessToken: enabled ? await getAuthorizationToken(tenantId) : undefined,
     subscriptionId: enabled ? subscriptionId : undefined,
     resourceGroupName: enabled ? resourceGroupName : undefined,
     location: enabled ? location : undefined,

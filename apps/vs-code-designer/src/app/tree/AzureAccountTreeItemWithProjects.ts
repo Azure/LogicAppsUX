@@ -7,14 +7,12 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from '../utils/tree/projectContextValues';
 import { SubscriptionTreeItem } from './subscriptionTree/SubscriptionTreeItem';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { AzureAccountTreeItemBase } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import { commands, Disposable, extensions, workspace } from 'vscode';
+import { Disposable, workspace } from 'vscode';
 
 export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
-  private currentLoggedInSessions: any;
   private projectDisposables: Disposable[] = [];
 
   public constructor(testAccount?: Record<string, any>) {
@@ -59,28 +57,6 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     return new SubscriptionTreeItem(this, root);
   }
 
-  public async getAccountCredentials(tenantId?: string): Promise<any | undefined> {
-    const extension = extensions.getExtension('ms-vscode.azure-account');
-    if (extension) {
-      if (!extension.isActive) {
-        await extension.activate();
-      }
-      const azureAccount = extension.exports;
-      if (!(await azureAccount.waitForLogin())) {
-        await commands.executeCommand('azure-account.askForLogin');
-      }
-
-      await azureAccount.waitForFilters();
-      this.currentLoggedInSessions = azureAccount.sessions;
-    }
-
-    if (this.currentLoggedInSessions) {
-      return this.getCredentialsForSessions(this.currentLoggedInSessions, tenantId);
-    }
-
-    return undefined;
-  }
-
   public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {
     const children: AzExtTreeItem[] = await super.loadMoreChildrenImpl(clearCache, context);
     return children;
@@ -106,13 +82,5 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     }
 
     return super.pickTreeItemImpl(expectedContextValues);
-  }
-
-  private getCredentialsForSessions(sessions: any, tenantId?: string): ServiceClientCredentials {
-    if (tenantId) {
-      const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() === tenantId);
-      return tenantDetails.length ? tenantDetails[0].credentials2 : sessions[0].credentials2;
-    }
-    return sessions[0].credentials2;
   }
 }

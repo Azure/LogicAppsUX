@@ -9,9 +9,7 @@ import type { Progress } from 'vscode';
 import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
 import { updateSMBConnectedEnvironment } from '../../../../utils/codeless/hybridLogicApp/connectedEnvironment';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
-import { getAccountCredentials } from '../../../../utils/credentials';
 
 /**
  * Represents a step in the hybrid logic app creation process that connects the SMB to a connected environment.
@@ -29,8 +27,7 @@ export class ConnectEnvironmentStep extends AzureWizardExecuteStep<ILogicAppWiza
       const message: string = localize('linkingSMBEnvironment', 'Linking SMB to connected environment  "{0}"...', context.newSiteName);
       ext.outputChannel.appendLog(message);
       progress.report({ message });
-      const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-      const accessToken = await getAuthorizationToken(credentials);
+      const accessToken = await getAuthorizationToken();
 
       await updateSMBConnectedEnvironment(
         accessToken,

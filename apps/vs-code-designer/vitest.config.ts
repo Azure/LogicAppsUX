@@ -7,6 +7,7 @@ export default defineProject({
   resolve: {
     alias: {
       vscode: path.resolve(path.join(__dirname, 'node_modules', '@types', 'vscode', 'index.d.ts')),
+      '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode': '/__mocks__/vscode-azext-azureauth.ts',
     },
   },
   test: {

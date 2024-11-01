@@ -18,7 +18,6 @@ import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { isConnectionsParameterized } from '../../utils/codeless/parameterizer';
-import { getAccountCredentials } from '../../utils/credentials';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
@@ -27,7 +26,6 @@ import { parameterizeConnections } from '../parameterizeConnections';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type ConnectionsData, getBaseGraphApi, type ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
@@ -373,9 +371,8 @@ async function callManagedConnectionsApi(
 ): Promise<Buffer> {
   try {
     const apiVersion = '2018-07-01-preview';
-    const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-    const accessToken = await getAuthorizationToken(credentials);
-    const cloudHost = await getCloudHost(credentials);
+    const accessToken = await getAuthorizationToken();
+    const cloudHost = await getCloudHost();
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
     // Build the URL for the API call
