@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.116.3](https://github.com/Azure/LogicAppsUX/compare/v4.116.2...v4.116.3) (2024-11-01)
+
+
+### Bug Fixes
+
+* **designer:** Cherry pick PRs ([#6017](https://github.com/Azure/LogicAppsUX/issues/6017)) ([ff646be](https://github.com/Azure/LogicAppsUX/commit/ff646bee02fc315f28995d57c79e8598192afbb9)), closes [#5986](https://github.com/Azure/LogicAppsUX/issues/5986) [#6009](https://github.com/Azure/LogicAppsUX/issues/6009) [#6011](https://github.com/Azure/LogicAppsUX/issues/6011)
+
 ### [4.116.2](https://github.com/Azure/LogicAppsUX/compare/v4.116.1...v4.116.2) (2024-11-01)
 
 ### [4.116.1](https://github.com/Azure/LogicAppsUX/compare/v4.116.0...v4.116.1) (2024-11-01)
