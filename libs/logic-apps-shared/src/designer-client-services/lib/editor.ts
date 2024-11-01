@@ -108,6 +108,10 @@ export interface ICustomEditorOptions {
    * The original editor options.
    */
   editorOptions?: Record<string, any>;
+  /**
+   * The visibility of the editor
+   */
+  visibility?: string;
 }
 
 export interface IEditorService {
