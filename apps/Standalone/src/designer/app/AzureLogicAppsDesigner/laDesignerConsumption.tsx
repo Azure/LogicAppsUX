@@ -205,7 +205,7 @@ const DesignerEditorConsumption = () => {
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
     try {
       const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-      await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
+      await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
       saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState, /*shouldConvertToConsumption*/ false);
     } catch (error: any) {
       if (error.status !== 404) {
@@ -237,10 +237,12 @@ const DesignerEditorConsumption = () => {
     } else {
       try {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-        await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
-        setDefinition(codeToConvert.definition);
-        setWorkflowDefinitionId(guid());
-        setDesignerView(true);
+        if (workflowAndArtifactsData) {
+          await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
+          setDefinition(codeToConvert.definition);
+          setWorkflowDefinitionId(guid());
+          setDesignerView(true);
+        }
       } catch (error: any) {
         if (error.status !== 404) {
           alert(`Error converting code to workflow ${error}`);

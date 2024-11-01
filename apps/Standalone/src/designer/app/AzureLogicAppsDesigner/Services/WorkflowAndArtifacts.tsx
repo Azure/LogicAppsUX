@@ -618,10 +618,21 @@ export const validateWorkflowStandard = async (
   }
 };
 
-export const validateWorkflowConsumption = async (siteResourceId: string, location: string, workflow: any): Promise<any> => {
+export const validateWorkflowConsumption = async (
+  siteResourceId: string,
+  location: string,
+  outdatedWorkflow: any,
+  workflow: any
+): Promise<any> => {
   const { subscriptionId, resourceGroup, topResourceName } = new ArmParser(siteResourceId);
   const logicApp = {
-    properties: { definition: workflow.definition, parameters: workflow.parameters, connectionReferences: workflow.connectionReferences },
+    ...outdatedWorkflow,
+    properties: {
+      ...outdatedWorkflow?.properties,
+      definition: workflow.definition,
+      parameters: workflow.parameters,
+      connectionReferences: workflow.connectionReferences,
+    },
   };
   const response = await axios.post(
     `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
