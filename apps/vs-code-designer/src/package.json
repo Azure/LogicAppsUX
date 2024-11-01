@@ -961,7 +961,6 @@
     ]
   },
   "extensionDependencies": [
-    "ms-vscode.azure-account",
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
