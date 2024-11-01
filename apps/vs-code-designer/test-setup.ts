@@ -10,7 +10,8 @@ vi.mock('@microsoft/vscode-azext-azureutils', () => ({
 }));
 
 vi.mock('@microsoft/vscode-azext-azureauth', () => ({
-  // mock implementation or empty object
+  // Mock any methods or exports used by your code from `@microsoft/vscode-azext-azureauth`
+  getSessionFromVSCode: vi.fn(() => Promise.resolve({})), // example of a mocked function
 }));
 
 vi.mock('@microsoft/vscode-azext-utils', () => {
