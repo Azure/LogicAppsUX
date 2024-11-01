@@ -16,10 +16,8 @@ import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
-import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -322,10 +320,9 @@ const exportDialogOptions: vscode.OpenDialogOptions = {
 export async function exportLogicApp(context: IActionContext): Promise<void> {
   const panelName: string = localize('export', 'Export');
   const panelGroupKey = ext.webViewKey.export;
-  const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
   const apiVersion = '2021-03-01';
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
-  const cloudHost = await getCloudHost(credentials);
+  const cloudHost = await getCloudHost();
   let accessToken: string;
   accessToken = await getAuthorizationToken();
 
