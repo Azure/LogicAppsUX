@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.116.1](https://github.com/Azure/LogicAppsUX/compare/v4.116.0...v4.116.1) (2024-11-01)
+
+
+### Bug Fixes
+
+* **Designer:** Added a null catch in the createConnection component ([#5995](https://github.com/Azure/LogicAppsUX/issues/5995)) ([002f3a9](https://github.com/Azure/LogicAppsUX/commit/002f3a90cece49a3452aa1f28033754d42d97896))
+* **Designer:** Select connection error propagation ([#5992](https://github.com/Azure/LogicAppsUX/issues/5992)) ([682c5f8](https://github.com/Azure/LogicAppsUX/commit/682c5f8064a3fa6d382b8987bed295ad8eb63091))
+
 ## [4.116.0](https://github.com/Azure/LogicAppsUX/compare/v4.115.0...v4.116.0) (2024-10-28)
 
 
