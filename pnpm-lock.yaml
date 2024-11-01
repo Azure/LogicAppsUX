@@ -374,6 +374,9 @@ importers:
       '@azure/arm-storage':
         specifier: 17.2.1
         version: 17.2.1
+      '@azure/identity':
+        specifier: ^4.5.0
+        version: 4.5.0
       '@azure/ms-rest-js':
         specifier: ^2.6.4
         version: 2.7.0
@@ -1354,10 +1357,6 @@ packages:
   '@azure/core-tracing@1.0.0-preview.13':
     resolution: {integrity: sha512-KxDlhXyMlh2Jhj2ykX6vNEU0Vou4nHr025KoSEiz7cS3BNiHNaZcdECk/DmLkEB0as5T7b/TpRcehJ5yV6NeXQ==}
     engines: {node: '>=12.0.0'}
-
-  '@azure/core-tracing@1.1.1':
-    resolution: {integrity: sha512-qPbYhN1pE5XQ2jPKIHP33x8l3oBu1UqIWnYqZZ3OYnYjzY0xqIHjn49C+ptsPD9yC7uyWI9Zm7iZUZLs2R4DhQ==}
-    engines: {node: '>=18.0.0'}
 
   '@azure/core-tracing@1.2.0':
     resolution: {integrity: sha512-UKTiEJPkWcESPYJz3X5uKRYyOcJD+4nYph+KpfdPRnQJVrZfk0KJgdnaAWKfhsBBtAf/D58Az4AvCJEmWgIBAg==}
@@ -12875,10 +12874,6 @@ snapshots:
       '@opentelemetry/api': 1.8.0
       tslib: 2.4.0
 
-  '@azure/core-tracing@1.1.1':
-    dependencies:
-      tslib: 2.7.0
-
   '@azure/core-tracing@1.2.0':
     dependencies:
       tslib: 2.7.0
@@ -12900,11 +12895,11 @@ snapshots:
 
   '@azure/identity@4.5.0':
     dependencies:
-      '@azure/abort-controller': 2.1.1
+      '@azure/abort-controller': 2.1.2
       '@azure/core-auth': 1.9.0
       '@azure/core-client': 1.9.2
       '@azure/core-rest-pipeline': 1.17.0
-      '@azure/core-tracing': 1.1.1
+      '@azure/core-tracing': 1.2.0
       '@azure/core-util': 1.11.0
       '@azure/logger': 1.1.1
       '@azure/msal-browser': 3.26.1
