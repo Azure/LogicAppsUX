@@ -1,14 +1,9 @@
 import { getAccountCredentials } from '../credentials';
-import { WebResource } from '@azure/ms-rest-js';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { getSessionFromVSCode } from '@microsoft/vscode-azext-azureauth/out/src/getSessionFromVSCode';
 
-export async function getAuthorizationToken(credentials?: ServiceClientCredentials, tenantId?: string): Promise<string> {
-  const webResource: WebResource = new WebResource();
-
-  credentials = await getAccountCredentials(tenantId);
-  await credentials?.signRequest(webResource);
-
-  return webResource.headers.get('authorization') ?? webResource.headers['authorization'];
+export async function getAuthorizationToken(tenantId?: string): Promise<string> {
+  const session = await getSessionFromVSCode(undefined, tenantId, { createIfNone: true });
+  return `Bearer ${session?.accessToken}`;
 }
 
 export async function getCloudHost(credentials?: any, tenantId?: string): Promise<string> {

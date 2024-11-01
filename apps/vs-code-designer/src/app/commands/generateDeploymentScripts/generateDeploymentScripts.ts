@@ -374,7 +374,7 @@ async function callManagedConnectionsApi(
   try {
     const apiVersion = '2018-07-01-preview';
     const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-    const accessToken = await getAuthorizationToken(credentials);
+    const accessToken = await getAuthorizationToken();
     const cloudHost = await getCloudHost(credentials);
     const baseGraphUri = getBaseGraphApi(cloudHost);
 

@@ -327,7 +327,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
   const cloudHost = await getCloudHost(credentials);
   let accessToken: string;
-  accessToken = await getAuthorizationToken(credentials);
+  accessToken = await getAuthorizationToken();
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -365,7 +365,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
           },
         });
         interval = setInterval(async () => {
-          const updatedAccessToken = await getAuthorizationToken(credentials);
+          const updatedAccessToken = await getAuthorizationToken();
           if (updatedAccessToken !== accessToken) {
             accessToken = updatedAccessToken;
             panel.webview.postMessage({
