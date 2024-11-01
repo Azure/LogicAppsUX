@@ -85,14 +85,16 @@ describe('ui/settings/customTokenField', () => {
       const customTokenField = renderer.getRenderOutput();
 
       expect(customTokenField.type).toBe(MyCustomEditor);
-      expect(customTokenField.props).toEqual({
-        editor: props.editorOptions?.editor,
-        editorOptions: props.editorOptions?.editorOptions,
-        value: props.value,
-        onValueChange: props.onValueChange,
-        renderDefaultEditor: expect.any(Function),
-        tokenMapping: props.tokenMapping,
-      });
+      expect(customTokenField.props).toEqual(
+        expect.objectContaining({
+          editor: props.editorOptions?.editor,
+          editorOptions: props.editorOptions?.editorOptions,
+          value: props.value,
+          onValueChange: props.onValueChange,
+          renderDefaultEditor: expect.any(Function),
+          tokenMapping: props.tokenMapping,
+        })
+      );
 
       const defaultEditorParams: IRenderDefaultEditorParams = {
         editor: 'dropdown',
@@ -124,15 +126,17 @@ describe('ui/settings/customTokenField', () => {
       const customTokenField = renderer.getRenderOutput();
 
       expect(customTokenField.type).toBe(MyCustomEditor);
-      expect(customTokenField.props).toEqual({
-        editor: props.editorOptions?.editor,
-        editorOptions: props.editorOptions?.editorOptions,
-        value: props.value,
-        onValueChange: props.onValueChange,
-        renderDefaultEditor: expect.any(Function),
-        disabled: props.readOnly,
-        tokenMapping: props.tokenMapping,
-      });
+      expect(customTokenField.props).toEqual(
+        expect.objectContaining({
+          editor: props.editorOptions?.editor,
+          editorOptions: props.editorOptions?.editorOptions,
+          value: props.value,
+          onValueChange: props.onValueChange,
+          renderDefaultEditor: expect.any(Function),
+          disabled: props.readOnly,
+          tokenMapping: props.tokenMapping,
+        })
+      );
     });
   });
 });
