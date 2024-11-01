@@ -206,7 +206,7 @@ const DesignerEditorConsumption = () => {
     try {
       const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
       await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
-      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState);
+      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState, /*shouldConvertToConsumption*/ false);
     } catch (error: any) {
       if (error.status !== 404) {
         alert(`Error converting code to workflow ${error}`);
@@ -228,7 +228,7 @@ const DesignerEditorConsumption = () => {
   };
 
   const getAuthToken = async () => {
-    return `Bearer ${environment.armToken}` ?? '';
+    return `Bearer ${environment.armToken}`;
   };
 
   const handleSwitchView = async () => {
