@@ -10,9 +10,8 @@ import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } fr
 import { showPreviewWarning } from '../../utils/taskUtils';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
-import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
-import { ZipFileStep } from '../createNewProject/createProjectSteps/ZipFileStep';
+import { SelectPackageStep } from '../createNewProject/createProjectSteps/SelectPackageStep';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
@@ -20,8 +19,9 @@ import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
-import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
-import { ProcessZipProjectStep } from './CodeProjectBase/ProcessZipProjectStep';
+import { ProcessPackageStep } from './CodeProjectBase/ProcessPackageStep';
+import { SelectFolderForNewWorkspaceStep } from '../createNewProject/createProjectSteps/SelectFolderForNewWorkspaceStep';
+import { ExtractPackageStep } from './CodeProjectBase/ExtractPackageStep';
 
 const openFolder = true;
 
@@ -58,17 +58,17 @@ export async function cloudToLocalCommand(
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('importZipToWorkspace', 'Import zip into new workspace'),
+    title: localize('createLogicAppWorkspaceFromPackage', 'Create New Logic App Workspace from Package'),
     promptSteps: [
-      new FolderListStep(),
+      new SelectPackageStep(),
+      new SelectFolderForNewWorkspaceStep(),
       new setWorkspaceName(),
-      new SetLogicAppType(),
       new SetLogicAppName(),
-      new ZipFileStep(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings, true),
+      new ExtractPackageStep(),
       new OpenBehaviorStep(),
     ],
-    executeSteps: [new ProcessZipProjectStep(), new OpenFolderStepCodeProject()],
+    executeSteps: [new ProcessPackageStep(), new OpenFolderStepCodeProject()],
     hideStepCount: true,
   });
   try {

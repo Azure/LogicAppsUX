@@ -260,32 +260,21 @@ export async function cleanLocalSettings(context: IFunctionWizardContext): Promi
   const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8'));
 
   if (localSettings.Values) {
-    const localSettingKeys = Object.keys(localSettings.Values);
-    if (localSettingKeys.includes('WEBSITE_SITE_NAME')) {
-      context.telemetry.properties.removedSetting = `Removing ${localSettings['WEBSITE_SITE_NAME']} from local settings`;
-      delete localSettings.Values['WEBSITE_SITE_NAME'];
-    }
-    if (localSettingKeys.includes('WEBSITE_AUTH_ENABLED')) {
-      context.telemetry.properties.removedSetting = `Removing ${localSettings['WEBSITE_AUTH_ENABLED']} from local settings`;
-      delete localSettings.Values['WEBSITE_AUTH_ENABLED'];
-    }
-    if (localSettingKeys.includes('WEBSITE_SLOT_NAME')) {
-      context.telemetry.properties.removedSetting = `Removing ${localSettings['WEBSITE_SLOT_NAME']} from local settings`;
-      delete localSettings.Values['WEBSITE_SLOT_NAME'];
-    }
-    if (localSettingKeys.includes('ScmType')) {
-      context.telemetry.properties.removedSetting = `Removing ${localSettings['ScmType']} from local settings`;
-      delete localSettings.Values['ScmType'];
-    }
-    if (localSettingKeys.includes('FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED')) {
-      context.telemetry.properties.removedSetting = `Removing ${localSettings['FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED']} from local settings`;
-      delete localSettings.Values['FUNCTIONS_RUNTIME_SCALE_MONITORING_ENABLED'];
-    }
-    if (localSettingKeys.includes('AzureWebJobsStorage')) {
-      context.telemetry.properties.removedSetting = `Removing ${localSettings['AzureWebJobsStorage']} from local settings`;
-      localSettings.Values['AzureWebJobsStorage'] = 'UseDevelopmentStorage=true';
-    }
+    Object.keys(localSettings.Values).forEach((key) => {
+      if (key.startsWith('WEBSITE_') || key === 'ScmType' || key.startsWith('FUNCTIONS_RUNTIME')) {
+        delete localSettings.Values[key];
+        context.telemetry.properties.removedSetting = `Removing ${key} from local settings`;
+      } else if (key === 'AzureWebJobsStorage') {
+        localSettings.Values['AzureWebJobsStorage'] = 'UseDevelopmentStorage=true';
+        context.telemetry.properties.removedSetting = 'Changed AzureWebJobsStorage to UseDevelopmentStorage=true';
+      }
+    });
 
     await writeFormattedJson(localSettingsPath, localSettings);
   }
+}
+
+export function mergeAppSettings(targetSettings: Record<string, any>, sourceSettings: Record<string, any>): Record<string, any> {
+  const newValues = Object.assign({}, targetSettings.Values, sourceSettings.Values);
+  return { IsEncrypted: targetSettings.IsEncrypted, Values: newValues };
 }

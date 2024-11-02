@@ -6,6 +6,7 @@ import {
   changeAuthTypeToRaw,
   cleanLocalSettings,
   extractConnectionSettings,
+  mergeAppSettings,
   parameterizeConnectionsDuringImport,
   updateConnectionKeys,
 } from '../cloudToLocalHelper';
@@ -18,7 +19,7 @@ import { extend, isEmptyString } from '@microsoft/logic-apps-shared';
 import { window } from 'vscode';
 import { localize } from 'vscode-nls';
 
-export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizardContext> {
+export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 200;
 
   /**
@@ -27,8 +28,7 @@ export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizard
    * @returns A Promise that resolves to void.
    */
   public async execute(context: IProjectWizardContext): Promise<void> {
-    const newLogicAppFolderPath = context.projectPath;
-    const localSettingsPath = path.join(newLogicAppFolderPath, 'local.settings.json');
+    const localSettingsPath = path.join(context.projectPath, 'local.settings.json');
     const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
     let appSettings: ILocalSettingsJson = {};
@@ -36,14 +36,14 @@ export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizard
     let connectionsData: any = {};
 
     try {
-      const connectionsString = await getConnectionsJson(newLogicAppFolderPath);
+      const connectionsString = await getConnectionsJson(context.projectPath);
       appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
-      const zipEntries = this.getZipEntries(context.zipFilePath);
+      const zipEntries = await this.getPackageEntries(context.packagePath);
       const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === 'local.settings.json');
       if (zipSettingsBuffer) {
         context.telemetry.properties.localSettingsInZip = 'Local settings found in the zip file';
         zipSettings = JSON.parse(zipSettingsBuffer.getData().toString('utf8'));
-        await writeFormattedJson(localSettingsPath, extend(appSettings, zipSettings));
+        await writeFormattedJson(localSettingsPath, mergeAppSettings(appSettings, zipSettings));
       }
 
       if (isEmptyString(connectionsString)) {
@@ -53,6 +53,7 @@ export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizard
 
       connectionsData = JSON.parse(connectionsString);
       if (Object.keys(connectionsData).length && connectionsData.managedApiConnections) {
+        appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
         await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
         if (parameterizeConnectionsSetting) {
@@ -77,10 +78,10 @@ export class ProcessZipProjectStep extends AzureWizardExecuteStep<IProjectWizard
    * @returns A boolean value indicating whether this step should be executed.
    */
   public shouldExecute(context: IFunctionWizardContext): boolean {
-    return context.zipFilePath !== undefined;
+    return context.packagePath !== undefined;
   }
 
-  private getZipEntries(zipFilePath: string) {
+  private async getPackageEntries(zipFilePath: string) {
     const zip = new AdmZip(zipFilePath);
     return zip.getEntries();
   }
