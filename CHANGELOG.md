@@ -1,4 +1,30 @@
 # Logic Apps Designer
+## [4.120.0](https://github.com/Azure/LogicAppsUX/compare/v4.119.0...v4.120.0) (2024-10-31)
+
+## [4.119.0](https://github.com/Azure/LogicAppsUX/compare/v4.118.0...v4.119.0) (2024-10-31)
+
+
+### Bug Fixes
+
+* **Danielle:** serialize in order for 'for' and 'if' ([#5997](https://github.com/Azure/LogicAppsUX/issues/5997)) ([d89302f](https://github.com/Azure/LogicAppsUX/commit/d89302f2422855d4127330f2e5cd5e484a7d6cc9))
+
+## [4.118.0](https://github.com/Azure/LogicAppsUX/compare/v4.117.0...v4.118.0) (2024-10-30)
+
+
+### Bug Fixes
+
+* **Designer:** Added a null catch in the createConnection component ([#5995](https://github.com/Azure/LogicAppsUX/issues/5995)) ([764c8dc](https://github.com/Azure/LogicAppsUX/commit/764c8dcf81cee0ed766afbf5f566c07bf14d4362))
+
+## [4.117.0](https://github.com/Azure/LogicAppsUX/compare/v4.116.0...v4.117.0) (2024-10-30)
+
+
+### Bug Fixes
+
+* **designer:** Reverting a Condition Editor Performance Change ([#5986](https://github.com/Azure/LogicAppsUX/issues/5986)) ([6185658](https://github.com/Azure/LogicAppsUX/commit/618565878b3b867963efe99e4d4a5ae4102e4ab2))
+* **Designer:** Select connection error propagation ([#5992](https://github.com/Azure/LogicAppsUX/issues/5992)) ([31ab131](https://github.com/Azure/LogicAppsUX/commit/31ab1318d320ae53efbe006185ed96c4d1c5b2bd))
+* **vscode:** Add new xml actions to clientSupportedOperations ([#5981](https://github.com/Azure/LogicAppsUX/issues/5981)) ([86c4133](https://github.com/Azure/LogicAppsUX/commit/86c4133112f96f33906efc030309c20428ba3ef0))
+* **vscode:** Fix decision on amount of sessions ([#5988](https://github.com/Azure/LogicAppsUX/issues/5988)) ([efd99de](https://github.com/Azure/LogicAppsUX/commit/efd99de53fc18c9f39b3b8e2eacebf8b7e66b9c1))
+
 ## [4.116.0](https://github.com/Azure/LogicAppsUX/compare/v4.115.0...v4.116.0) (2024-10-28)
 
 
