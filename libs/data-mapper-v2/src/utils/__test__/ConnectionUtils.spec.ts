@@ -1,9 +1,9 @@
 import { mock } from 'node:test';
-import { concatFunction } from '../../__mocks__/FunctionMock';
+import { concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { DataMapOperationState } from '../../core/state/DataMapSlice';
 import type { Connection, ConnectionDictionary, NodeConnection, InputConnection, CustomValueConnection } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
-import { FunctionCategory, functionMock } from '../../models/Function';
+import { FunctionCategory, functionMock, ifPseudoFunction, indexPseudoFunction } from '../../models/Function';
 import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
@@ -22,12 +22,12 @@ import {
 } from '../Connection.Utils';
 import { convertSchemaToSchemaExtended, isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-import type { DataMapSchema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, MapDefinitionEntry, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { current } from 'immer';
-import { deepNestedSequenceAndObject, targetMockSchema } from '../../__mocks__/schemas';
-import { addReactFlowPrefix } from '../ReactFlow.Util';
+import { deepNestedSequenceAndObject, sourceMockSchema, targetMockSchema } from '../../__mocks__/schemas';
+import { addReactFlowPrefix, createReactFlowFunctionKey } from '../ReactFlow.Util';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -240,6 +240,89 @@ describe('utils/Connections', () => {
         ).toEqual('source-/ns0:bookstore/ns0:book/ns0:book2');
 
         expect(connections);
+      });
+
+      it('connects index conditionals', () => {
+        const sourceSchema: Schema = sourceMockSchema;
+        const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
+
+        const targetSchema: Schema = targetMockSchema;
+        const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
+        const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
+          (child) => child.name === 'LoopingWithIndex'
+        ) as SchemaNodeExtended;
+        const targetNode = extendedTargetSchema.schemaTreeRoot.children.find(
+          (child) => child.name === 'LoopingWithIndex'
+        ) as SchemaNodeExtended;
+        const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
+        const greaterThanId = createReactFlowFunctionKey(greaterThanFunction);
+        const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // Just confirm the mock hasn't changed
+        expect(sourceNode).toBeDefined();
+        expect(targetNode).toBeDefined();
+
+        const parentSourceNode = sourceNode.children[0];
+        const parentTargetNode = targetNode.children[0].children[2];
+
+        // Parent source to index
+        applyConnectionValue(connections, {
+          targetNode: indexPseudoFunction,
+          targetNodeReactFlowKey: indexFunctionId,
+          findInputSlot: true,
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
+        });
+
+        // Index to Greater than
+        applyConnectionValue(connections, {
+          targetNode: greaterThanFunction,
+          targetNodeReactFlowKey: greaterThanId,
+          findInputSlot: true,
+          input: createNodeConnection(indexPseudoFunction, indexFunctionId),
+        });
+        applyConnectionValue(connections, {
+          targetNode: greaterThanFunction,
+          targetNodeReactFlowKey: greaterThanId,
+          inputIndex: 1,
+          input: createCustomInputConnection('10'),
+        });
+
+        // Greater than and source parent to if
+        applyConnectionValue(connections, {
+          targetNode: ifPseudoFunction,
+          targetNodeReactFlowKey: ifFunctionId,
+          findInputSlot: true,
+          input: createNodeConnection(greaterThanFunction, greaterThanId),
+        });
+        applyConnectionValue(connections, {
+          targetNode: ifPseudoFunction,
+          targetNodeReactFlowKey: ifFunctionId,
+          findInputSlot: true,
+          input: createNodeConnection(parentSourceNode, addReactFlowPrefix(parentSourceNode.key, SchemaType.Source)),
+        });
+
+        // If to parent target
+        applyConnectionValue(connections, {
+          targetNode: parentTargetNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(ifPseudoFunction, ifFunctionId),
+        });
+
+        // Property source to target
+        applyConnectionValue(connections, {
+          targetNode: parentTargetNode.children[1],
+          targetNodeReactFlowKey: addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(
+            parentSourceNode.children[0],
+            addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source)
+          ),
+        });
+
+        expect(true);
       });
     });
 

@@ -50,7 +50,7 @@ export const getInputValues = (
 
           // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValueConnection(input)) {
-            return input;
+            return input.value;
           }
           if (isSchemaNodeExtended(input.node)) {
             return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;

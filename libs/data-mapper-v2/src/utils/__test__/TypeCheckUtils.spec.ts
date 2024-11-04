@@ -1,7 +1,14 @@
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
-import { createCustomInput, createNewEmptyConnection, createNodeConnection, isConnectionUnit, isCustomValue } from '../Connection.Utils';
+import {
+  createCustomInput,
+  createCustomInputConnection,
+  createNewEmptyConnection,
+  createNodeConnection,
+  isConnectionUnit,
+  isCustomValueConnection,
+} from '../Connection.Utils';
 import { isFunctionData } from '../Function.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
@@ -44,13 +51,13 @@ describe('utils/type-checker-utils', () => {
   });
 
   it('isCustomValue', () => {
-    expect(isCustomValue({} as InputConnection)).toEqual(false);
-    expect(isCustomValue(createCustomInput('custom'))).toEqual(true);
+    expect(isCustomValueConnection({} as InputConnection)).toEqual(false);
+    expect(isCustomValueConnection(createCustomInputConnection('custom'))).toEqual(true);
   });
 
   it('isConnectionUnit', () => {
     expect(isConnectionUnit(createNewEmptyConnection())).toEqual(false);
-    expect(isConnectionUnit(createCustomInput('custom'))).toEqual(false);
+    expect(isConnectionUnit(createCustomInputConnection('custom'))).toEqual(false);
     expect(isConnectionUnit(createNodeConnection({} as SchemaNodeExtended, 'nodeId'))).toEqual(true);
   });
 });
