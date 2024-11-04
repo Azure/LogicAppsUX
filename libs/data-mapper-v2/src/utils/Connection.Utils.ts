@@ -174,7 +174,7 @@ export const applyConnectionValue = (
         if (typeof input !== 'string') {
           input.isRepeating = isRepeating;
         }
-        connection.inputs[0] = input; // danielle should this always be 0?
+        addRepeatingInputConnection(connection, input);
       } else {
         // Function unbounded input
         const inputCopy: InputConnection[] = [...connection.inputs]; // created to prevent issues with immutable state
@@ -268,6 +268,14 @@ export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtData
   }
 
   return false;
+};
+
+const addRepeatingInputConnection = (connection: Connection, input: NodeConnection) => {
+  if (isEmptyConnection(connection.inputs[0])) {
+    connection.inputs[0] = input;
+  } else {
+    connection.inputs.push(input);
+  }
 };
 
 export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | undefined, tgtMaxNumInputs: number) => {

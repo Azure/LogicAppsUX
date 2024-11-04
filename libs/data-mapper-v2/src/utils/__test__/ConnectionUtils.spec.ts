@@ -6,14 +6,12 @@ import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
 import {
   applyConnectionValue,
-  bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
-  createCustomInput,
+  createCustomInputConnection,
   createNewEmptyConnection,
   createNodeConnection,
   inputFromHandleId,
   isConnectionUnit,
-  isCustomValue,
   isEmptyConnection,
   isFunctionInputSlotAvailable,
   isValidConnectionByType,
@@ -22,12 +20,14 @@ import {
   nodeHasSpecificInputEventually,
   nodeHasSpecificOutputEventually,
 } from '../Connection.Utils';
-import { isSchemaNodeExtended } from '../Schema.Utils';
+import { convertSchemaToSchemaExtended, isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import type { DataMapSchema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { current } from 'immer';
+import { deepNestedSequenceAndObject, targetMockSchema } from '../../__mocks__/schemas';
+import { addReactFlowPrefix } from '../ReactFlow.Util';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -202,6 +202,45 @@ describe('utils/Connections', () => {
         expect(isEmptyConnection(mockConnections[mockSelfReactFlowKey].inputs[0])).toBeTruthy();
         expect(isConnectionUnit(mockConnections[mockSelfReactFlowKey].inputs[1])).toBeTruthy();
       });
+
+      it('connects second repeating connection', () => {
+        const connections: ConnectionDictionary = {};
+        const mockNestedTestSchema: DataMapSchema = deepNestedSequenceAndObject as any as DataMapSchema;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: DataMapSchema = targetMockSchema as any as DataMapSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+        const personLoop = extendedComprehensiveTargetSchema.schemaTreeRoot.children[5].children[0]; // root/looping/employee/person
+
+        const book1Seq = extendedComprehensiveSourceSchema.schemaTreeRoot.children[0];
+        const book2Seq = book1Seq.children[0];
+
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(book1Seq, addReactFlowPrefix(book1Seq.key, SchemaType.Source)),
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: personLoop,
+          targetNodeReactFlowKey: addReactFlowPrefix(personLoop.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(book2Seq, addReactFlowPrefix(book2Seq.key, SchemaType.Source)),
+        });
+
+        expect(connections['source-/ns0:bookstore/ns0:book'].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
+        expect(connections['source-/ns0:bookstore/ns0:book/ns0:book2'].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
+        expect(
+          isConnectionUnit(connections['target-/ns0:Root/Looping/Person'].inputs[0]) &&
+            connections['target-/ns0:Root/Looping/Person'].inputs[0].reactFlowKey
+        ).toEqual('source-/ns0:bookstore/ns0:book');
+        expect(
+          isConnectionUnit(connections['target-/ns0:Root/Looping/Person'].inputs[1]) &&
+            connections['target-/ns0:Root/Looping/Person'].inputs[1].reactFlowKey
+        ).toEqual('source-/ns0:bookstore/ns0:book/ns0:book2');
+
+        expect(connections);
+      });
     });
 
     describe('Test InputDropdown-made connections', () => {
@@ -250,7 +289,7 @@ describe('utils/Connections', () => {
           targetNode: atypicallyMockFunctionNode,
           targetNodeReactFlowKey: currentNodeReactFlowKey,
           inputIndex: 1,
-          input: createCustomInput('Test custom value'),
+          input: createCustomInputConnection('Test custom value'),
         });
 
         expect((mockConnections[currentNodeReactFlowKey].inputs[1] as CustomValueConnection).value).toEqual('Test custom value');

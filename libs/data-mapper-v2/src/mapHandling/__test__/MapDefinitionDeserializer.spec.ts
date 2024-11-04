@@ -765,11 +765,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[0][0]).toContain('IsNull');
         expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person/Name');
         expect(resultEntries[0][1].outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person/Address');
-        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/ns0:Root/Looping/Employee/TelephoneNumber'
-        );
+        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
 
-        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).node).toBeDefined();
+        expect((resultEntries[4][1].inputs[0] as ConnectionUnit).node).toBeDefined();
 
         // loop connection
         expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
