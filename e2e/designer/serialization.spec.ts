@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from './utils/designerFunctions';
-import panelData from '../../__mocks__/workflows/Panel.json' assert { type: 'json' };
-import switchData from '../../__mocks__/workflows/Switch.json' assert { type: 'json' };
-import unicodeKeysData from '../../__mocks__/workflows/UnicodeKeys.json' assert { type: 'json' };
+import panelData from '../../__mocks__/workflows/Panel.json';
+import switchData from '../../__mocks__/workflows/Switch.json';
+import unicodeKeysData from '../../__mocks__/workflows/UnicodeKeys.json';
 
 test.describe(
   'Serialization Tests',

@@ -1,5 +1,5 @@
 import { test } from '../../fixtures/real-api';
-import workflow from './workflow.json' assert { type: 'json' };
+import workflow from './workflow.json';
 test.describe(
   'Custom Code',
   {
