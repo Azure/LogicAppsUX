@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.121.0](https://github.com/Azure/LogicAppsUX/compare/v4.120.0...v4.121.0) (2024-11-04)
+
+
+### Features
+
+* **designer:** Add ability to handle and gracefully show error in action initialization ([#6005](https://github.com/Azure/LogicAppsUX/issues/6005)) ([a7d0bee](https://github.com/Azure/LogicAppsUX/commit/a7d0bee08b4ae6dd7f5ab915d9871dd4d4da33a5))
+* **vscode:** Update Auth method ([#6014](https://github.com/Azure/LogicAppsUX/issues/6014)) ([230c776](https://github.com/Azure/LogicAppsUX/commit/230c77623a510402140de16f6c182e0c5e8d55cc))
+
+
+### Bug Fixes
+
+* **designer:** Don't use shouldConvertToConsumption in Code View save ([#6011](https://github.com/Azure/LogicAppsUX/issues/6011)) ([4fa1eef](https://github.com/Azure/LogicAppsUX/commit/4fa1eefabd69b9b16d3ec7439d35f0ba36dddbc0))
+* **Designer:** Manually set playwright test env node version to 20 ([#6024](https://github.com/Azure/LogicAppsUX/issues/6024)) ([f226e40](https://github.com/Azure/LogicAppsUX/commit/f226e40c00706a181710ec1c0786f22e8128e75e))
+* **Designer:** Null catch on connection query ([#6023](https://github.com/Azure/LogicAppsUX/issues/6023)) ([71dabd2](https://github.com/Azure/LogicAppsUX/commit/71dabd2e56349d4c68accb67f10cccfa144796cd))
+* **designer:** Standalone Consumption Code view to pass in rest of workflow data ([#6009](https://github.com/Azure/LogicAppsUX/issues/6009)) ([ed53bb4](https://github.com/Azure/LogicAppsUX/commit/ed53bb40f3419f094c6d4f0bf09e31dae9b3d374))
+
 ## [4.120.0](https://github.com/Azure/LogicAppsUX/compare/v4.119.0...v4.120.0) (2024-10-31)
 
 ## [4.119.0](https://github.com/Azure/LogicAppsUX/compare/v4.118.0...v4.119.0) (2024-10-31)
