@@ -3,7 +3,7 @@ import { existsSync, writeFile, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const releaseBranch = 'release/20240909';
+const releaseBranch = 'release/20241028';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
@@ -40,6 +40,10 @@ const downloadTemplate = async (path) => {
     dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
   };
   writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2), () => {});
+  for (const workflowId of Object.keys(templateManifest.workflows ?? {})) {
+    createTemplatesFolder(`${path}/${workflowId}`);
+    await downloadTemplate(`${path}/${workflowId}`);
+  }
 };
 
 const run = async () => {

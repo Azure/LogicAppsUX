@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "4.100.0",
+  "version": "4.120.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -950,13 +950,17 @@
             "type": "boolean",
             "default": null,
             "description": "Parameterize connections when your project loads."
+          },
+          "azureLogicAppsStandard.driveLetterSMB": {
+            "type": "string",
+            "description": "Default drive letter to mount the smb for hybrid logic apps",
+            "default": "X:"
           }
         }
       }
     ]
   },
   "extensionDependencies": [
-    "ms-vscode.azure-account",
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",

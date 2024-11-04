@@ -45,6 +45,7 @@ interface SuccessfulMapDefinition {
 }
 
 export const convertToMapDefinition = (
+  // danielle can you make the map definition an array instead of an object?
   connections: ConnectionDictionary,
   sourceSchema: SchemaExtended | undefined,
   targetSchema: SchemaExtended | undefined,
@@ -62,18 +63,24 @@ export const convertToMapDefinition = (
     generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
-    const map = yaml
-      .dump(mapDefinition, {
-        replacer: yamlReplacer,
-        noRefs: true,
-        sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
-      })
-      .replaceAll(/'"|"'/g, '"');
+    const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
 
     return { isSuccess: true, definition: map };
   }
 
   return { isSuccess: false, errorNodes: [] };
+};
+
+export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
+  // Custom values directly on target nodes need to have extra single quotes stripped out
+  const map = yaml
+    .dump(mapDefinition, {
+      replacer: yamlReplacer,
+      noRefs: true,
+      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition), // danielle pass map definition here to sort
+    })
+    .replaceAll(/'"|"'/g, '"');
+  return map;
 };
 
 const yamlReplacer = (key: string, value: any) => {
@@ -200,7 +207,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
     // Probably used for direct index access
     if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
       // Looping schema node
-      addLoopingToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
+      addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
     } else {
       if (connectionsIntoCurrentTargetPath) {
         // Conditionals
@@ -299,7 +306,7 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
 };
 
-const addLoopingToNewPathItems = (
+const addLoopingForToNewPathItems = (
   pathItem: PathItem,
   rootTargetConnection: Connection,
   connections: ConnectionDictionary,
@@ -432,6 +439,7 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   path.every((pathItem, pathIndex) => {
     if (pathItem.arrayIndex !== undefined) {
       // When dealing with the map definition we need to access the previous path item, instead of the current
+      // this gives us the parent, to put the current node in its parent
       const curPathItem = path[pathIndex - 1];
       const curItem = mapDefinition[curPathItem.key];
       let newArray: (any | undefined)[] = curItem && Array.isArray(curItem) ? curItem : Array(pathItem.arrayIndex + 1).fill(undefined);
@@ -466,23 +474,60 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   });
 };
 
-export const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
-  const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
-    if (node.endsWith(nameA)) {
-      const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);
-      const hasNodeB = origArray.find((nodeB) => nodeB === `${trimmedNode}/${nameB}`);
+// export const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
+//   const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
+//     if (node.endsWith(nameA)) {
+//       const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);
+//       const hasNodeB = origArray.find((nodeB) => nodeB === `${trimmedNode}/${nameB}`);
 
-      return !!hasNodeB;
+const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | undefined => {
+  if (mapDefinition[key]) {
+    return key;
+  }
+
+  const keys = Object.keys(mapDefinition);
+  for (const currentKey of keys) {
+    if (typeof mapDefinition[currentKey] === 'object') {
+      const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
+      if (foundKey) {
+        const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
+        return childKey;
+      }
     }
+  }
 
+  return undefined;
+};
+
+const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[], mapDefinition: MapDefinitionEntry): number => {
+  let targetForA = nameA;
+  if (nameA.startsWith(mapNodeParams.for) || nameA.startsWith(mapNodeParams.if)) {
+    // find 'A' in the mapDefintion and find the first child
+    targetForA = findKeyInMap(mapDefinition, nameA) ?? '';
+  }
+  let targetForB = nameB;
+  if (nameB.startsWith(mapNodeParams.for) || nameB.startsWith(mapNodeParams.if)) {
+    // find 'B' in the mapDefintion and find the first child
+    targetForB = findKeyInMap(mapDefinition, nameB) ?? '';
+  }
+
+  const potentialKeyObjectsA = targetSchemaSortArray.findIndex((node, _index) => {
+    if (node.endsWith(targetForA)) {
+      const trimmedNode = node.substring(0, node.indexOf(targetForA) - 1);
+      return trimmedNode;
+    }
     return false;
   });
 
-  if (potentialKeyObjects.length === 0) {
-    return 0;
-  }
+  // this does not work 100%, we need full path in next iteration
 
-  const keyA = potentialKeyObjects[0];
-  const trimmedNode = keyA.substring(0, keyA.indexOf(nameA) - 1);
-  return targetSchemaSortArray.indexOf(keyA) - targetSchemaSortArray.indexOf(`${trimmedNode}/${nameB}`);
+  const potentialKeyObjectsB = targetSchemaSortArray.findIndex((node, _index) => {
+    if (node.endsWith(targetForB)) {
+      const trimmedNode = node.substring(0, node.indexOf(targetForB) - 1);
+      return trimmedNode;
+    }
+    return false;
+  });
+
+  return potentialKeyObjectsA - potentialKeyObjectsB;
 };

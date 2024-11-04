@@ -117,6 +117,7 @@ import {
   isBodySegment,
   canStringBeConverted,
   isStringLiteral,
+  splitAtIndex,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -219,6 +220,7 @@ export interface UpdateParameterAndDependenciesPayload {
   nodeInputs: NodeInputs;
   dependencies: NodeDependencies;
   operationDefinition?: any;
+  skipStateSave?: boolean;
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
@@ -561,7 +563,7 @@ const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toL
 };
 
 // Create SimpleQueryBuilder Editor View Model
-const toSimpleQueryBuilderViewModel = (
+export const toSimpleQueryBuilderViewModel = (
   input: any
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
@@ -582,15 +584,18 @@ const toSimpleQueryBuilderViewModel = (
       operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
     }
 
-    const operationLiteral = createLiteralValueSegment(`@${negatory ? `not(${operator}` : operator}(`);
-    const endingLiteral = createLiteralValueSegment(negatory ? '))' : ')');
+    const operationLiteral = createLiteralValueSegment(`@${operator}(`);
+    const endingLiteral = createLiteralValueSegment(')');
 
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return advancedModeResult;
     }
 
-    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
-    const [operand1String, operand2String] = operandSubstring.splitAt(getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
+    const operandSubstring: string = stringValue.substring(
+      stringValue.indexOf('(') + 1,
+      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
+    );
+    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
 
     return {
       isOldFormat: true,

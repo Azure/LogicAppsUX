@@ -4,7 +4,7 @@ import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -25,11 +25,17 @@ import {
   useCanUndo,
   useCanRedo,
   onRedoClick,
+  serializeWorkflow,
+  getDocumentationMetadata,
+  resetDesignerView,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
+import { environment } from '../../../environments/environment';
+import { isSuccessResponse } from './Services/HttpClient';
+import { downloadDocumentAsFile } from '@microsoft/logic-apps-designer';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -108,6 +114,23 @@ export const DesignerCommandBar = ({
     }
   });
 
+  const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const workflow = await serializeWorkflow(designerState);
+    const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
+    const response = await ChatbotService().getCopilotDocumentation(
+      docMetaData,
+      workflow,
+      environment?.armToken ? `Bearer ${environment.armToken}` : ''
+    );
+    if (!isSuccessResponse(response.status)) {
+      alert('Failed to download document');
+      return;
+    }
+    const queryResponse: string = response.data.properties.response;
+    downloadDocumentAsFile(queryResponse);
+  });
+
   const designerIsDirty = useIsDesignerDirty();
 
   const allInputErrors = useSelector((state: RootState) => {
@@ -175,6 +198,7 @@ export const DesignerCommandBar = ({
         onClick: () => {
           switchViews();
           dispatch(collapsePanel());
+          dispatch(resetDesignerView());
         },
       },
       ...(showConnectionsPanel
@@ -214,6 +238,21 @@ export const DesignerCommandBar = ({
             area: 'chatbot',
             message: 'workflow assistant opened',
           });
+        },
+      },
+      {
+        key: 'document',
+        text: 'Document',
+        disabled: haveErrors || isDownloadingDocument,
+        onRenderIcon: () => {
+          return isDownloadingDocument ? (
+            <Spinner size={SpinnerSize.small} />
+          ) : (
+            <FontIcon aria-label="Download" iconName="Download" className={haveErrors ? classNames.azureGrey : classNames.azureBlue} />
+          );
+        },
+        onClick: () => {
+          downloadDocument();
         },
       },
       {
@@ -257,6 +296,8 @@ export const DesignerCommandBar = ({
       switchViews,
       haveConnectionErrors,
       enableCopilot,
+      isDownloadingDocument,
+      downloadDocument,
     ]
   );
 

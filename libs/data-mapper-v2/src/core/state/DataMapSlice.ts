@@ -103,7 +103,8 @@ export interface DataMapOperationState {
   // For each corner of the canvas
   nodesForScroll: Record<string, string>;
   handlePosition: Record<string, HandlePosition>;
-  schemaTreeData: Record<string, SchemaTreeDataProps>;
+  sourceSchemaTreeData: SchemaTreeDataProps;
+  targetSchemaTreeData: SchemaTreeDataProps;
   edgePopOverId?: string;
   state?: ComponentState;
 }
@@ -123,7 +124,16 @@ const emptyPristineState: DataMapOperationState = {
   targetOpenKeys: {},
   edgeLoopMapping: {},
   handlePosition: {},
-  schemaTreeData: {},
+  sourceSchemaTreeData: {
+    startIndex: -1,
+    endIndex: -1,
+    visibleNodes: [],
+  },
+  targetSchemaTreeData: {
+    startIndex: -1,
+    endIndex: -1,
+    visibleNodes: [],
+  },
   nodesForScroll: getIntermedateScrollNodeHandles(guid()),
 };
 
@@ -208,10 +218,12 @@ export const dataMapSlice = createSlice({
             return acc;
           }, {});
         currentState.flattenedSourceSchema = flattenedSchema;
+        currentState.sourceSchemaTreeData.visibleNodes = [];
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
 
         state.sourceInEditState = false;
+
         state.lastAction = 'Set initial Source schema';
       } else {
         const flattenedTargetSchema = flattenSchemaNode(action.payload.schema.schemaTreeRoot);
@@ -225,6 +237,7 @@ export const dataMapSlice = createSlice({
           }, {});
         currentState.flattenedTargetSchema = flattenedSchema;
         currentState.targetSchemaOrdering = targetSchemaSortArray;
+        currentState.targetSchemaTreeData.visibleNodes = [];
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
@@ -258,7 +271,16 @@ export const dataMapSlice = createSlice({
         dataMapConnections: dataMapConnections ?? {},
         handlePosition: {},
         loadedMapMetadata: metadata,
-        schemaTreeData: {},
+        sourceSchemaTreeData: {
+          startIndex: -1,
+          endIndex: -1,
+          visibleNodes: [],
+        },
+        targetSchemaTreeData: {
+          startIndex: -1,
+          endIndex: -1,
+          visibleNodes: [],
+        },
       };
 
       state.curDataMapOperation = newState;
@@ -507,9 +529,8 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
     updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
-      state.curDataMapOperation.handlePosition = {
-        ...state.curDataMapOperation.handlePosition,
-        [action.payload.key]: action.payload,
+      state.curDataMapOperation.handlePosition[action.payload.key] = {
+        ...action.payload,
       };
     },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
@@ -625,10 +646,15 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, { ...state, curDataMapOperation: newState }, 'Update function connection inputs');
     },
     updateTreeData: (state, action: PayloadAction<{ key: string; data: SchemaTreeDataProps }>) => {
-      state.curDataMapOperation.schemaTreeData = {
-        ...state.curDataMapOperation.schemaTreeData,
-        [action.payload.key]: action.payload.data,
-      };
+      if (isSourceNode(action.payload.key)) {
+        state.curDataMapOperation.sourceSchemaTreeData = {
+          ...action.payload.data,
+        };
+      } else {
+        state.curDataMapOperation.targetSchemaTreeData = {
+          ...action.payload.data,
+        };
+      }
     },
   },
 });

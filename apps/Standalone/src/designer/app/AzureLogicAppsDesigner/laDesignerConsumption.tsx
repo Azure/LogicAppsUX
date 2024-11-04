@@ -18,7 +18,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
+import { Chatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
@@ -205,8 +205,8 @@ const DesignerEditorConsumption = () => {
   const saveWorkflowFromCode = async (clearDirtyState: () => void) => {
     try {
       const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-      await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
-      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState);
+      await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
+      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState, /*shouldConvertToConsumption*/ false);
     } catch (error: any) {
       if (error.status !== 404) {
         alert(`Error converting code to workflow ${error}`);
@@ -228,7 +228,7 @@ const DesignerEditorConsumption = () => {
   };
 
   const getAuthToken = async () => {
-    return `Bearer ${environment.armToken}` ?? '';
+    return `Bearer ${environment.armToken}`;
   };
 
   const handleSwitchView = async () => {
@@ -237,10 +237,12 @@ const DesignerEditorConsumption = () => {
     } else {
       try {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
-        await validateWorkflowConsumption(workflowId, canonicalLocation, codeToConvert);
-        setDefinition(codeToConvert.definition);
-        setWorkflowDefinitionId(guid());
-        setDesignerView(true);
+        if (workflowAndArtifactsData) {
+          await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
+          setDefinition(codeToConvert.definition);
+          setWorkflowDefinitionId(guid());
+          setDesignerView(true);
+        }
       } catch (error: any) {
         if (error.status !== 404) {
           alert(`Error converting code to workflow ${error}`);
@@ -289,7 +291,6 @@ const DesignerEditorConsumption = () => {
                 isDarkMode={isDarkMode}
                 isDesignerView={designerView}
                 showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
@@ -343,7 +344,7 @@ const getDesignerServices = (
 
   const apimService = new BaseApiManagementService({
     ...defaultServiceParams,
-    apiVersion: '2019-12-01',
+    apiVersion: '2021-08-01',
     subscriptionId,
     includeBasePathInTemplate: true,
     queryClient,

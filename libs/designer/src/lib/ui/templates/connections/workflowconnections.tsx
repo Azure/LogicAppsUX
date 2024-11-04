@@ -1,4 +1,4 @@
-import type { IColumn, IContextualMenuProps, IDetailsRowProps } from '@fluentui/react';
+import type { IColumn, IContextualMenuProps, IDetailsRowProps, IGroup } from '@fluentui/react';
 import {
   ContextualMenuItemType,
   DetailsList,
@@ -13,7 +13,7 @@ import {
 } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
-import { ConnectionService, getObjectPropertyValue, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import { aggregate, ConnectionService, getObjectPropertyValue, guid, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { type IntlShape, useIntl } from 'react-intl';
@@ -21,8 +21,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectorIconWithName } from './connector';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useFunctionalState } from '@react-hookz/web';
-import { CreateConnectionInTemplate } from '../../panel/templatePanel/createConnection';
-import React, { useEffect, useState } from 'react';
+import { CreateConnectionInTemplate } from './createConnection';
+import React, { useEffect, useMemo, useState } from 'react';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getConnector } from '../../../core/queries/operation';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
@@ -41,7 +41,9 @@ const connectionStatus: Record<string, any> = {
 };
 
 interface ConnectionItem {
-  key: string;
+  id: string;
+  workflowId: string;
+  connectionKey: string;
   connectorId: string;
   connectorDisplayName?: string;
   connection?: {
@@ -52,32 +54,48 @@ interface ConnectionItem {
   allConnections?: Connection[];
 }
 
-export interface DisplayConnectionsProps {
+export interface WorkflowConnectionsProps {
   connections: Record<string, Template.Connection>;
 }
 
-export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => {
+export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const {
     subscriptionId,
     location,
     connections: { references, mapping },
-  } = useSelector((state: RootState) => state.workflow);
+    workflows,
+  } = useSelector((state: RootState) => ({
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
+    connections: state.workflow.connections,
+    workflows: state.template.workflows,
+  }));
   const columnsNames = {
     name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
     status: intl.formatMessage({ defaultMessage: 'Status', id: 't7ytOJ', description: 'Column name for connection status' }),
     connection: intl.formatMessage({ defaultMessage: 'Connection', id: 'hlrKDC', description: 'Column name for connection display name' }),
     connectionsList: intl.formatMessage({ defaultMessage: 'Connections list', id: 'w+7aGo', description: 'Connections list' }),
   };
+  const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
   const [isConnectionInCreate, setConnectionInCreate] = useState(false);
   const [connectionsList, setConnectionsList] = useFunctionalState<ConnectionItem[]>(
-    Object.keys(connections).map((key) => ({
-      key,
-      connectorId: normalizeConnectorId(connections[key].connectorId, subscriptionId, location),
-      hasConnection: mapping[key] !== undefined ? true : undefined,
-      connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
-    }))
+    aggregate(
+      Object.values(workflows).map((workflow) =>
+        workflow.connectionKeys.map((key) => {
+          const connectionItem = connections[key];
+          return {
+            id: guid(),
+            workflowId: workflow.id,
+            connectionKey: key,
+            connectorId: normalizeConnectorId(connectionItem.connectorId, subscriptionId, location),
+            hasConnection: mapping[key] !== undefined ? true : undefined,
+            connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
+          };
+        })
+      )
+    )
   );
 
   const _onColumnClick = (_event: React.MouseEvent<HTMLElement>, column: IColumn): void => {
@@ -89,7 +107,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     }
 
     // Sort the items.
-    const sortedItems = _copyAndSort(connectionsList(), column.fieldName as string, isSortedDescending);
+    const sortedItems = copyAndSort(connectionsList(), column.fieldName as string, isSortedDescending);
     setConnectionsList(sortedItems);
     setColumns(
       columns().map((col) => {
@@ -110,19 +128,18 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
       fieldName: '$name',
       key: '$name',
       isResizable: true,
-      minWidth: 1,
+      minWidth: 300,
       name: columnsNames.name,
-      maxWidth: 200,
+      maxWidth: 350,
       showSortIconWhenUnsorted: true,
       onColumnClick: _onColumnClick,
     },
     {
       ariaLabel: columnsNames.status,
       fieldName: '$status',
-      flexGrow: 1,
       key: '$status',
       isResizable: true,
-      minWidth: 1,
+      minWidth: 150,
       maxWidth: 150,
       name: columnsNames.status,
       showSortIconWhenUnsorted: true,
@@ -135,58 +152,95 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
       key: '$connection',
       isResizable: true,
       minWidth: 200,
+      maxWidth: 250,
       name: columnsNames.connection,
       showSortIconWhenUnsorted: true,
-      targetWidthProportion: 6,
       onColumnClick: _onColumnClick,
     },
     {
       ariaLabel: columnsNames.connectionsList,
       fieldName: '$connectionsList',
       key: '$connectionsList',
-      minWidth: 1,
+      minWidth: 10,
       maxWidth: 10,
       name: '',
     },
   ]);
 
-  const onConnectionsLoaded = async (connections: Connection[], item: ConnectionItem): Promise<void> => {
+  useEffect(() => {
+    if (!isSingleWorkflow) {
+      setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
+    }
+  }, [columns, isSingleWorkflow, setColumns]);
+
+  const [groups, setGroups] = useFunctionalState<IGroup[]>(
+    Object.values(workflows).map((workflow) => ({
+      key: workflow.id,
+      name: workflow.manifest?.title ?? workflow.workflowName ?? workflow.id,
+      level: 0,
+      startIndex: connectionsList().findIndex((item) => item.workflowId === workflow.id),
+      count: workflow.connectionKeys.length,
+    }))
+  );
+
+  const onConnectionsLoaded = async (loadedConnections: Connection[], item: ConnectionItem): Promise<void> => {
     const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
-    const connectionToUse = itemHasConnection ? connections.find((connection) => connection.id === item.connection?.id) : connections[0];
-    const hasConnection = connections.length > 0;
-    updateItemInConnectionsList(item.key, {
+    const connectionToUse = itemHasConnection
+      ? loadedConnections.find((connection) => connection.id === item.connection?.id)
+      : loadedConnections[0];
+    const hasConnection = loadedConnections.length > 0;
+    updateItemInConnectionsList({
       ...item,
-      allConnections: connections,
+      allConnections: loadedConnections,
       hasConnection,
       connection: connectionToUse ? { id: connectionToUse.id, displayName: getConnectionDisplayName(connectionToUse) } : undefined,
     });
 
     if (!itemHasConnection && connectionToUse) {
-      setupTemplateConnection(item.key, item.connectorId, connectionToUse, dispatch);
+      setupTemplateConnection(item.connectionKey, item.connectorId, connectionToUse, dispatch);
     }
   };
 
-  const completeConnectionCreate = (): void => {
+  const completeConnectionCreate = (workflowId: string, newItems: ConnectionItem[]): void => {
     setConnectionInCreate(false);
-    setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: true, onColumnClick: _onColumnClick })));
+    const updatedGroups = groups().reduce((result: IGroup[], current: IGroup) => {
+      const updatedGroup = { ...current, startIndex: newItems.findIndex((item) => item.workflowId === current.key) };
+      if (current.key === workflowId) {
+        updatedGroup.count = current.count - 1;
+      }
+      result.push(updatedGroup);
+      return result;
+    }, []);
+    setGroups(updatedGroups);
+
+    if (isSingleWorkflow) {
+      setColumns(
+        columns().map((col, index) => ({
+          ...col,
+          showSortIconWhenUnsorted: index !== 3,
+          onColumnClick: index === 3 ? undefined : _onColumnClick,
+        }))
+      );
+    }
   };
 
-  const updateItemInConnectionsList = (key: string, item: ConnectionItem) => {
-    const newList = connectionsList().map((connection: ConnectionItem) => (connection.key === key ? item : connection));
+  const updateItemInConnectionsList = (item: ConnectionItem) => {
+    const newList = connectionsList().map((connection: ConnectionItem) => (connection.id === item.id ? item : connection));
     setConnectionsList(newList);
   };
 
-  const handleConnectionCancelled = (key: string): void => {
-    setConnectionsList(connectionsList().filter((current: ConnectionItem) => current.key !== key));
-    completeConnectionCreate();
+  const handleConnectionCancelled = (workflowId: string, connectionKey: string): void => {
+    const newListItems = connectionsList().filter((current: ConnectionItem) => current.connectionKey !== connectionKey);
+    setConnectionsList(newListItems);
+    completeConnectionCreate(workflowId, newListItems);
   };
 
   const handleConnectionCreate = (item: ConnectionItem, connection: Connection) => {
-    const actualItemKey = item.key.replace(createPlaceholderKey, '');
+    const actualItemKey = item.connectionKey.replace(createPlaceholderKey, '');
     const newListItems = connectionsList()
-      .filter((current: ConnectionItem) => current.key !== item.key)
+      .filter((current: ConnectionItem) => current.connectionKey !== item.connectionKey)
       .map((current) =>
-        current.key === actualItemKey
+        current.connectionKey === actualItemKey
           ? {
               ...current,
               allConnections: [...(current.allConnections ?? []), connection],
@@ -196,21 +250,33 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
           : current
       );
     setConnectionsList(newListItems);
-    completeConnectionCreate();
+    completeConnectionCreate(item.workflowId, newListItems);
   };
 
   const handleConnectionCreateClick = (item: ConnectionItem) => {
     const newListItems = connectionsList().reduce((result: ConnectionItem[], current: ConnectionItem) => {
       result.push(current);
-      if (current.key === item.key) {
-        result.push({ ...current, key: `${createPlaceholderKey}${current.key}` });
+      if (current.workflowId === item.workflowId && current.connectionKey === item.connectionKey) {
+        result.push({ ...current, connectionKey: `${createPlaceholderKey}${current.connectionKey}`, id: guid() });
       }
 
       return result;
     }, []);
 
     setConnectionsList(newListItems);
-    setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
+    const updatedGroups = groups().reduce((result: IGroup[], current: IGroup) => {
+      const updatedGroup = { ...current, startIndex: newListItems.findIndex((item) => item.workflowId === current.key) };
+      if (current.key === item.workflowId) {
+        updatedGroup.count = current.count + 1;
+      }
+      result.push(updatedGroup);
+      return result;
+    }, []);
+    setGroups(updatedGroups);
+
+    if (isSingleWorkflow) {
+      setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
+    }
     setConnectionInCreate(true);
   };
 
@@ -218,15 +284,15 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     if (props) {
       const {
         item,
-        item: { key, connectorId },
+        item: { workflowId, connectionKey, connectorId },
       } = props;
-      if (key.startsWith(createPlaceholderKey)) {
+      if (connectionKey.startsWith(createPlaceholderKey)) {
         return (
           <CreateConnectionInTemplate
             connectorId={connectorId}
-            connectionKey={key.replace(createPlaceholderKey, '')}
+            connectionKey={connectionKey.replace(createPlaceholderKey, '')}
             onConnectionCreated={(connection) => handleConnectionCreate(item, connection)}
-            onConnectionCancelled={() => handleConnectionCancelled(key)}
+            onConnectionCancelled={() => handleConnectionCancelled(workflowId, connectionKey)}
           />
         );
       }
@@ -240,26 +306,34 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
     switch (column?.key) {
       case '$name':
         return (
-          <ConnectorIconWithName
-            connectorId={item.connectorId}
-            classes={{
-              root: 'msla-template-create-connector',
-              icon: 'msla-template-create-connector-icon',
-              text: 'msla-template-create-connector-text',
-            }}
-            showProgress={true}
-            onConnectorLoaded={
-              item.connectorDisplayName
-                ? undefined
-                : (connector: ConnectorInfo) =>
-                    updateItemInConnectionsList(item.key, { ...item, connectorDisplayName: connector.displayName })
-            }
-          />
+          <div className="msla-template-connection-name">
+            <ConnectorIconWithName
+              aria-label={item.connectorDisplayName}
+              connectorId={item.connectorId}
+              classes={{
+                root: 'msla-template-create-connector',
+                icon: 'msla-template-create-connector-icon',
+                text: 'msla-template-create-connector-text',
+              }}
+              showProgress={true}
+              onConnectorLoaded={
+                item.connectorDisplayName
+                  ? undefined
+                  : (connector: ConnectorInfo) => updateItemInConnectionsList({ ...item, connectorDisplayName: connector.displayName })
+              }
+            />
+            <Text className="msla-template-connection-key">{`(${item.connectionKey.replace('_#workflowname#', '')})`}</Text>
+          </div>
         );
 
       case '$status':
         return (
           <ConnectionStatusWithProgress
+            aria-label={
+              item.hasConnection
+                ? intl.formatMessage({ defaultMessage: 'Connected', description: 'Label text to connected status', id: 'XR5izH' })
+                : intl.formatMessage({ defaultMessage: 'Not connected', description: 'Label text to not connected status', id: 'YnSO/8' })
+            }
             item={item}
             intl={intl}
             onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
@@ -267,14 +341,26 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
         );
 
       case '$connection':
-        return <ConnectionName item={item} intl={intl} disabled={isConnectionInCreate} onCreate={handleConnectionCreateClick} />;
+        return (
+          <ConnectionName
+            aria-label={
+              item.connection?.displayName ??
+              intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })
+            }
+            item={item}
+            intl={intl}
+            disabled={isConnectionInCreate}
+            onCreate={handleConnectionCreateClick}
+          />
+        );
 
       case '$connectionsList':
         return (
           <ConnectionsList
+            aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'w+7aGo' })}
             item={item}
             intl={intl}
-            onSelect={(newItem: ConnectionItem) => updateItemInConnectionsList(item.key, newItem)}
+            onSelect={updateItemInConnectionsList}
             onCreate={handleConnectionCreateClick}
           />
         );
@@ -287,9 +373,10 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
   return (
     <div className="msla-template-create-tabs">
       <DetailsList
-        setKey="key"
+        setKey="id"
         items={connectionsList()}
         columns={columns()}
+        groups={isSingleWorkflow ? undefined : groups()}
         compact={true}
         onRenderRow={onRenderRow}
         onRenderItemColumn={onRenderItemColumn}
@@ -395,7 +482,7 @@ const ConnectionsList = ({
       connection: { id, displayName },
     });
 
-    setupTemplateConnection(item.key, item.connectorId, connection, dispatch);
+    setupTemplateConnection(item.connectionKey, item.connectorId, connection, dispatch);
   };
 
   const menuProps: IContextualMenuProps = {
@@ -426,17 +513,22 @@ const ConnectionsList = ({
   return <IconButton menuIconProps={{ iconName: 'More' }} menuProps={menuProps} className="msla-template-connection-list" />;
 };
 
-const setupTemplateConnection = async (key: string, connectorId: string, connection: Connection, dispatch: AppDispatch): Promise<void> => {
+const setupTemplateConnection = async (
+  connectionKey: string,
+  connectorId: string,
+  connection: Connection,
+  dispatch: AppDispatch
+): Promise<void> => {
   await ConnectionService().setupConnectionIfNeeded(connection);
   const connector = await getConnector(connectorId);
-  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: key }));
+  dispatch(updateTemplateConnection({ connector, connection: connection, nodeId: connectionKey, connectionKey }));
 };
 
 const getConnectionDisplayName = (connection: Connection): string => {
   return connection.properties.displayName ?? connection.id.split('/').slice(-1)[0];
 };
 
-function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] {
+const copyAndSort = (items: ConnectionItem[], columnKey: string, isSortedDescending?: boolean): ConnectionItem[] => {
   const keyPath =
     columnKey === '$name' ? ['connectorDisplayName'] : columnKey === '$status' ? ['hasConnection'] : ['connection', 'displayName'];
   return items.slice(0).sort((a: ConnectionItem, b: ConnectionItem) => {
@@ -448,4 +540,4 @@ function _copyAndSort(items: ConnectionItem[], columnKey: string, isSortedDescen
       ? 1
       : -1;
   });
-}
+};

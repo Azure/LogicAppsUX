@@ -18,20 +18,27 @@ resources:
       name: microsoft/vscode-azuretools
       ref: main
       endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
-    - repository: MicroBuildTemplate
-      type: git
-      name: MicroBuildTemplates/MicroBuildTemplates
-      ref: refs/heads/release 
+    - repository: LogicAppsUX
+      type: github
+      name: Azure/LogicAppsUX
+      endpoint: LogicApps-VSCode-connection  # The service connection to use when accessing this repository
 
 parameters:
   # When true, skips the deployment job which actually publishes the extension
   - name: dryRun
+    displayName: Dry run
     type: boolean
     default: true
+
+  - name: enableSigning
+    displayName: Enable signing
+    type: boolean
+    default: True
 
   # The intended extension version to publish. 
   # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
   - name: publishVersion
+    displayName: Version to publish
     type: string
 
   # Customize the environment to associate the deployment with. 
@@ -44,6 +51,8 @@ variables:
   # Required by MicroBuild template
   - name: TeamName
     value: "Azure Logic Apps for VS Code"
+  - name: working_directory
+    value: '.'
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
@@ -69,22 +78,17 @@ extends:
                   enabled: ${{ parameters.enableSigning }}
                   signType: real # options are 'real' & 'test'
                   zipSources: false
-            outputs:
-              - output: pipelineArtifact
-                targetPath: $(build.artifactstagingdirectory)/build/${{ job.name }}
-                artifactName: Build ${{ job.name }}
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
+                  artifactName: Build ${{ parameters.publishVersion }}
             steps:
-              - template: ./templates/build.yml
-              - template: ./templates/package.yml
-              - template: ./templates/sign.yml
-              - template: ./templates/stage-artifacts.yml
-      - stage: Release      
-        displayName: Publish extension
-        extends:
-          template: azure-pipelines/release-extension.yml@azExtTemplates
-          parameters:
-            pipelineID: $(resources.pipeline.build.pipelineID)
-            runID: $(resources.pipeline.build.runID)
-            publishVersion: ${{ parameters.publishVersion }}
-            dryRun: ${{ parameters.dryRun }}
-            environmentName: AzCodeDeploy
+              - script: git checkout v${{ parameters.publishVersion }} # Replace with your desired version to release
+                displayName: 'Checkout to specific branch'
+              - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/build.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/package.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
+                parameters:
+                  publishVersion: ${{ parameters.publishVersion }}

@@ -115,7 +115,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetch();
     }
   }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
-  const dependencies = useTokenDependencies(scopeId);
+  const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -139,6 +139,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       item: {
         id: id,
         dependencies,
+        loopSources,
         isScope: true,
       },
       canDrag: !readOnly,

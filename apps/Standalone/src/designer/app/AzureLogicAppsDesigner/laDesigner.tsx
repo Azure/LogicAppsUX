@@ -284,8 +284,7 @@ const DesignerEditor = () => {
 
     return saveWorkflowStandard(
       siteResourceId,
-      workflowName,
-      workflowToSave,
+      [{ name: workflowName, workflow: workflowToSave }],
       connectionsToUpdate,
       parametersToUpdate,
       settingsToUpdate,
@@ -300,8 +299,7 @@ const DesignerEditor = () => {
       // code view editor cannot add/remove connections, parameters, settings, or customcode
       saveWorkflowStandard(
         siteResourceId,
-        workflowName,
-        codeToConvert,
+        [{ name: workflowName, workflow: codeToConvert }],
         /*connections*/ undefined,
         /*parameters*/ undefined,
         /*settings*/ undefined,
@@ -490,7 +488,7 @@ const getDesignerServices = (
     },
   });
   const apiManagementService = new BaseApiManagementService({
-    apiVersion: '2019-12-01',
+    apiVersion: '2021-08-01',
     baseUrl,
     subscriptionId,
     httpClient,
@@ -756,7 +754,7 @@ const getDesignerServices = (
 
   const chatbotService = new BaseChatbotService({
     baseUrl: armUrl,
-    apiVersion: '2022-09-01-preview',
+    apiVersion: '2024-06-01-preview',
     subscriptionId,
     location,
   });

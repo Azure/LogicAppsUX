@@ -455,8 +455,10 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
 
 export const saveWorkflowStandard = async (
   siteResourceId: string,
-  workflowName: string,
-  workflow: any,
+  workflows: {
+    name: string;
+    workflow: any;
+  }[],
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
@@ -468,10 +470,12 @@ export const saveWorkflowStandard = async (
   }
 ): Promise<any> => {
   const data: any = {
-    files: {
-      [`${workflowName}/workflow.json`]: workflow,
-    },
+    files: {},
   };
+
+  for (const { name, workflow } of workflows) {
+    data.files[`${name}/workflow.json`] = workflow;
+  }
 
   if (connectionsData) {
     data.files['connections.json'] = connectionsData;
@@ -487,11 +491,13 @@ export const saveWorkflowStandard = async (
 
   try {
     if (!options?.skipValidation) {
-      try {
-        await validateWorkflowStandard(siteResourceId, workflowName, workflow, connectionsData, parametersData, settings);
-      } catch (error: any) {
-        if (error.status !== 404) {
-          return;
+      for (const { name, workflow } of workflows) {
+        try {
+          await validateWorkflowStandard(siteResourceId, name, workflow, connectionsData, parametersData, settings);
+        } catch (error: any) {
+          if (error.status !== 404) {
+            return;
+          }
         }
       }
     }
@@ -533,8 +539,13 @@ export const saveWorkflowStandard = async (
   }
 };
 
-export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any, clearDirtyState: () => void): Promise<any> => {
-  const workflowToSave = await convertDesignerWorkflowToConsumptionWorkflow(workflow);
+export const saveWorkflowConsumption = async (
+  outdatedWorkflow: Workflow,
+  workflow: any,
+  clearDirtyState: () => void,
+  shouldConvertToConsumption = true /* false when saving from code view*/
+): Promise<any> => {
+  const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
 
   const outputWorkflow: Workflow = {
     ...outdatedWorkflow,
@@ -607,10 +618,21 @@ export const validateWorkflowStandard = async (
   }
 };
 
-export const validateWorkflowConsumption = async (siteResourceId: string, location: string, workflow: any): Promise<any> => {
+export const validateWorkflowConsumption = async (
+  siteResourceId: string,
+  location: string,
+  outdatedWorkflow: any,
+  workflow: any
+): Promise<any> => {
   const { subscriptionId, resourceGroup, topResourceName } = new ArmParser(siteResourceId);
   const logicApp = {
-    properties: { definition: workflow.definition, parameters: workflow.parameters, connectionReferences: workflow.connectionReferences },
+    ...outdatedWorkflow,
+    properties: {
+      ...outdatedWorkflow?.properties,
+      definition: workflow.definition,
+      parameters: workflow.parameters,
+      connectionReferences: workflow.connectionReferences,
+    },
   };
   const response = await axios.post(
     `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
