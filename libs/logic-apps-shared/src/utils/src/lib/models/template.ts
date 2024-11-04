@@ -24,6 +24,7 @@ export interface Manifest {
   parameters: Parameter[];
   connections: Record<string, Connection>;
   featuredOperations?: { type: string; kind?: string }[];
+  sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
 }
 
 export interface Artifact {

@@ -29,7 +29,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     connections: state.template.connections,
     workflows: state.template.workflows,
   }));
-  const { title, description, details, detailsDescription } = manifest as Template.Manifest;
+  const { title, description, sourceCodeUrl, details, detailsDescription } = manifest as Template.Manifest;
   const resources = {
     by: intl.formatMessage({
       defaultMessage: 'By',
@@ -68,7 +68,13 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
   ).footerContent;
   return (
     <>
-      <QuickViewPanelHeader title={title} description={description} details={info} features={detailsDescription} />
+      <QuickViewPanelHeader
+        title={title}
+        description={description}
+        sourceCodeUrl={sourceCodeUrl}
+        details={info}
+        features={detailsDescription}
+      />
       <div className="msla-template-overview" style={{ marginTop: '-34px' }}>
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
