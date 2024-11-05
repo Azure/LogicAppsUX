@@ -1,12 +1,12 @@
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import { useEffect, useState } from 'react';
-import { DetailsList, type IColumn, Link, SelectionMode, setLayerHostSelector } from '@fluentui/react';
+import { DetailsList, type IColumn, SelectionMode, setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { getPropertyValue, unmap } from '@microsoft/logic-apps-shared';
-import { Text } from '@fluentui/react-components';
+import { Link, Text } from '@fluentui/react-components';
 import { QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { ConnectionsList } from './connections/connections';
 import { useFunctionalState } from '@react-hookz/web';
@@ -29,7 +29,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     connections: state.template.connections,
     workflows: state.template.workflows,
   }));
-  const { title, description, details, detailsDescription } = manifest as Template.Manifest;
+  const { title, description, sourceCodeUrl, details, detailsDescription } = manifest as Template.Manifest;
   const resources = {
     by: intl.formatMessage({
       defaultMessage: 'By',
@@ -68,7 +68,13 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
   ).footerContent;
   return (
     <>
-      <QuickViewPanelHeader title={title} description={description} details={info} features={detailsDescription} />
+      <QuickViewPanelHeader
+        title={title}
+        description={description}
+        sourceCodeUrl={sourceCodeUrl}
+        details={info}
+        features={detailsDescription}
+      />
       <div className="msla-template-overview" style={{ marginTop: '-34px' }}>
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
