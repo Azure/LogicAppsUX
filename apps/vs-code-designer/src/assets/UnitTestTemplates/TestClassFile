@@ -48,28 +48,23 @@ namespace <%= LogicAppName %>.Tests
         /// </summary>
         public Dictionary<string, ActionMock> actionMocks;
 
-        /// <summary>
+         /// <summary>
         /// Initializes a new instance of the class named <see cref="<%= UnitTestName %>" />.
-        /// This constructor loads the necessary paths for the workflow, connections, parameters, and local settings JSON files.
-        /// The constructor also loads the mock data from the file named <%= UnitTestName %>_mock.json.
         /// </summary>
         public <%= UnitTestName %>()
         {
-            //Get the root path of the workspace
-            this.rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+            this.rootPath = Path.GetFullPath(path: Path.Combine(basePath: AppContext.BaseDirectory, relativePath: @"..\..\..\..\.."));
 
-            // Build the full paths to the required JSON files.
-            this.workflowDefinitionPath = Path.Combine(rootPath, "<%= LogicAppName %>", "<%= WorkflowName %>", "workflow.json");
-            this.connectionsPath = Path.Combine(rootPath, "<%= LogicAppName %>", "connections.json");
-            this.parametersPath = Path.Combine(rootPath, "<%= LogicAppName %>", "parameters.json");
-            this.localSettingsPath = Path.Combine(rootPath, "<%= LogicAppName %>", "local.settings.json");
-
-            // Set path to the mock.json file.
-            var mockDataPath = Path.Combine(rootPath, "Tests", "<%= LogicAppName %>", "<%= WorkflowName %>", "<%= UnitTestName %>", "<%= UnitTestName %>-mock.json");
+            //  Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
+            this.rootPath = Path.GetFullPath(path: Path.Combine(basePath: AppContext.BaseDirectory, relativePath: @"..\..\..\..\.."));
+            this.workflowDefinitionPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", workflowFolder: "<%= WorkflowName %>", fileName: "workflow.json");
+            this.connectionsPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", fileName: "connections.json");
+            this.parametersPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", fileName: "parameters.json");
+            this.localSettingsPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", fileName: "local.settings.json");
 
             // Load the mock data from the corrected path.
-            var mockData = JObject.Parse(File.ReadAllText(mockDataPath));
-            this.triggerMock = mockData["triggerMocks"].ToObject<Dictionary<string, TriggerMock>>().FirstOrDefault().Value;
+            var mockData = JObject.Parse(File.ReadAllText("<%= UnitTestName %>-mock.json"));
+            this.triggerMock = mockData["triggerMocks"].ToObject<Dictionary<string, TriggerMock>>()?.FirstOrDefault()?.Value;
             this.actionMocks = mockData["actionMocks"].ToObject<Dictionary<string, ActionMock>>();
         }
 
@@ -90,13 +85,19 @@ namespace <%= LogicAppName %>.Tests
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-            var executor = new UnitTestExecutor(this.workflowDefinitionPath, this.connectionsPath, this.parametersPath, this.localSettingsPath);
-            var testRun = await executor.RunWorkflowAsync(this.triggerMock, actionMocks).ConfigureAwait(false);
+            var executor = new UnitTestExecutor(
+                workflowDefinitionPath: this.workflowDefinitionPath, 
+                connectionsPath: this.connectionsPath, 
+                parametersPath: this.parametersPath, 
+                localSettingsPath: this.localSettingsPath
+            );            
+            
+            var testRun = await executor.RunWorkflowAsync(triggerMock: this.triggerMock, actionMocks: actionMocks).ConfigureAwait(continueOnCapturedContext: false);
 
             // ASSERT
             // Verify that the workflow executed successfully, and the status is 'Succeeded'.
-            Assert.IsNotNull(testRun);
-            Assert.AreEqual(TestWorkflowStatus.Succeeded, testRun.Status);
+            Assert.IsNotNull(value: testRun);
+            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
         }
 
         #region Mock generator helpers
