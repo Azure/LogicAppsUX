@@ -1,14 +1,16 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
-import { type TemplatePanelTab, TemplatesPanelContent } from '@microsoft/designer-ui';
-import { TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { ChevronDown16Regular, ChevronUp16Regular } from '@fluentui/react-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
 import { Label } from '@fluentui/react';
 import Markdown from 'react-markdown';
+import { useCreateWorkflowPanelTabs } from './usePanelTabs';
+import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
+import type { CreateWorkflowHandler } from '../../../templates';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -18,17 +20,26 @@ export interface CreateWorkflowTabProps {
 }
 
 export const CreateWorkflowPanel = ({
-  panelTabs,
+  createWorkflow,
 }: {
-  panelTabs: TemplatePanelTab[];
+  createWorkflow: CreateWorkflowHandler | undefined;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const selectedTabId = useSelector((state: RootState) => state.panel.selectedTabId) ?? panelTabs[0]?.id;
+  const { selectedTabId, manifest } = useSelector((state: RootState) => ({
+    selectedTabId: state.panel.selectedTabId,
+    manifest: state.template.manifest,
+  }));
+  const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
+
+  const panelTabs = useCreateWorkflowPanelTabs({
+    isMultiWorkflowTemplate: isMultiWorkflow,
+    createWorkflow: createWorkflow ?? (() => Promise.resolve()),
+  });
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
   };
-  return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />;
+  return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />;
 };
 
 export const CreateWorkflowPanelHeader = ({

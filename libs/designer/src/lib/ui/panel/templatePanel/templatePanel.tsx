@@ -6,7 +6,6 @@ import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel, CreateWorkflowPanelHeader } from './createWorkflowPanel/createWorkflowPanel';
 import { QuickViewPanel, QuickViewPanelHeader } from './quickViewPanel/quickViewPanel';
 import { type TemplatePanelTab, TemplatesPanelFooter } from '@microsoft/designer-ui';
-import { useCreateWorkflowPanelTabs } from './createWorkflowPanel/usePanelTabs';
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
@@ -55,30 +54,16 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
     onClose?.();
   }, [clearDetailsOnClose, dispatch, onClose]);
 
-  const createWorkflowPanelTabs = useCreateWorkflowPanelTabs({
-    isMultiWorkflowTemplate,
-    createWorkflow: createWorkflow ?? (() => Promise.resolve()),
-  });
   const currentPanelTabs: TemplatePanelTab[] = useMemo(
     () =>
       isCreatePanelView
-        ? createWorkflowPanelTabs
+        ? []
         : getQuickViewTabs(intl, dispatch, workflowId as string, showCreate, {
             templateId: templateName ?? 'Unknown',
             workflowAppName,
             isMultiWorkflow: isMultiWorkflowTemplate,
           }),
-    [
-      isCreatePanelView,
-      createWorkflowPanelTabs,
-      intl,
-      dispatch,
-      workflowId,
-      showCreate,
-      templateName,
-      workflowAppName,
-      isMultiWorkflowTemplate,
-    ]
+    [isCreatePanelView, intl, dispatch, workflowId, showCreate, templateName, workflowAppName, isMultiWorkflowTemplate]
   );
 
   const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
@@ -140,7 +125,7 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
       isFooterAtBottom={true}
     >
       {isCreatePanelView ? (
-        <CreateWorkflowPanel panelTabs={createWorkflowPanelTabs} />
+        <CreateWorkflowPanel createWorkflow={createWorkflow} />
       ) : currentPanelView === 'quickView' ? (
         <QuickViewPanel workflowId={workflowId as string} clearDetailsOnClose={clearDetailsOnClose} />
       ) : null}
