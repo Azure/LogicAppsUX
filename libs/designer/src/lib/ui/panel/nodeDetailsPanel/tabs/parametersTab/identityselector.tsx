@@ -42,7 +42,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
+  const identity = useMemo(() => WorkflowService().getAppIdentity?.() as ManagedIdentity, []);
   const options = getIdentityDropdownOptions(identity, intl);
 
   const selectedIdentity = useSelector((state: RootState) => {
@@ -54,22 +54,14 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   const [selectedKey, setSelectedKey] = useState(selectedIdentity);
 
-  const isIdentityInLogicApp = useMemo(() => {
-    return isIdentityPresentInLogicApp(selectedKey, identity);
-  }, [identity, selectedKey]);
-
-  const isIdentityWithLogicApp = useMemo(() => {
-    return isIdentityAssociatedWithLogicApp(identity);
-  }, [identity]);
-
   useEffect(() => {
-    if (!isIdentityInLogicApp) {
+    if (!isIdentityPresentInLogicApp(selectedKey, identity)) {
       dispatch(
         updateErrorDetails({
           id: nodeId,
           errorInfo: {
             level: ErrorLevel.Connection,
-            message: isIdentityWithLogicApp
+            message: isIdentityAssociatedWithLogicApp(identity)
               ? intl.formatMessage({
                   defaultMessage:
                     'The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.',
@@ -86,7 +78,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
         })
       );
     }
-  }, [dispatch, intl, isIdentityInLogicApp, isIdentityWithLogicApp, nodeId]);
+  }, [dispatch, intl, identity, selectedKey, nodeId]);
 
   const handleUpdateIdentity = (_event: FormEvent, option?: IDropdownOption) => {
     dispatch(setIsWorkflowDirty(true));
