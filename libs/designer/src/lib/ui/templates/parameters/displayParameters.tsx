@@ -1,4 +1,5 @@
-import { Callout, css, DetailsList, type IColumn, Label, Link, SelectionMode, Text, TextField } from '@fluentui/react';
+import { Callout, css, DetailsList, type IColumn, Label, SelectionMode, TextField } from '@fluentui/react';
+import { Link, Text } from '@fluentui/react-components';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -173,7 +174,7 @@ const ParameterName = ({
 
   return (
     <div className="msla-template-parameters-tab-name">
-      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
+      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible}>
         <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
           {item.displayName}
         </Label>

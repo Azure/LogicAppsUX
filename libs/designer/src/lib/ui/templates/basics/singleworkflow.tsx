@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { ChoiceGroup, Label, TextField } from '@fluentui/react';
 import { updateKind, updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
-import { Text } from '@fluentui/react-components';
+import { Link, Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { Open16Regular } from '@fluentui/react-icons';
@@ -141,7 +141,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         </Label>
         <Text className="msla-templates-tab-label-description">
           {intlText.STATE_TYPE_DESCRIPTION}{' '}
-          <a
+          <Link
             className="msla-templates-tab-label-link"
             href={'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless'}
             target="_blank"
@@ -149,7 +149,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
           >
             {intlText.LEARN_MORE}
             <Open16Regular className="msla-templates-tab-description-icon" />
-          </a>
+          </Link>
         </Text>
         <ChoiceGroup
           className="msla-templates-tab-choiceGroup"

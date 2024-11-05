@@ -35,6 +35,7 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
   const isCreatePanelView = useMemo(() => currentPanelView === 'createWorkflow', [currentPanelView]);
   const templateTitle = manifest?.title ?? '';
   const templateDescription = manifest?.description ?? '';
+  const templateSourceCodeUrl = manifest?.sourceCodeUrl;
 
   const resources = {
     multiWorkflowCreateTitle: intl.formatMessage({
@@ -95,9 +96,22 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
           description={templateDescription}
         />
       ) : (
-        <QuickViewPanelHeader title={templateTitle} description={templateDescription} details={manifest?.details ?? {}} />
+        <QuickViewPanelHeader
+          title={templateTitle}
+          description={templateDescription}
+          sourceCodeUrl={templateSourceCodeUrl}
+          details={manifest?.details ?? {}}
+        />
       ),
-    [isCreatePanelView, isMultiWorkflowTemplate, resources.multiWorkflowCreateTitle, templateTitle, templateDescription, manifest?.details]
+    [
+      isCreatePanelView,
+      isMultiWorkflowTemplate,
+      resources.multiWorkflowCreateTitle,
+      templateTitle,
+      templateDescription,
+      templateSourceCodeUrl,
+      manifest?.details,
+    ]
   );
   const onRenderFooterContent = useCallback(
     () =>
