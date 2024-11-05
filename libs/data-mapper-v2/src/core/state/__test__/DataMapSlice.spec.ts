@@ -3,7 +3,7 @@ import { concatFunction } from '../../../__mocks__/FunctionMock';
 import type { FunctionData, FunctionDictionary } from '../../../models';
 import { FunctionCategory, functionMock } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
-import { applyConnectionValue, createNodeConnection, flattenInputs, isEmptyConnection } from '../../../utils/Connection.Utils';
+import { applyConnectionValue, createNodeConnection, isEmptyConnection } from '../../../utils/Connection.Utils';
 //import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
 import {
@@ -52,7 +52,7 @@ describe('DataMapSlice', () => {
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();
       expect(connections[destinationId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[destinationId].inputs).length).toEqual(1);
+      expect(connections[destinationId].inputs.length).toEqual(1);
     });
 
     it('Add function connection', () => {
@@ -80,12 +80,12 @@ describe('DataMapSlice', () => {
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
       expect(connections[functionId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[functionId].inputs).length).toEqual(2);
+      expect(connections[functionId].inputs.length).toEqual(2);
 
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();
       expect(connections[destinationId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[destinationId].inputs).length).toEqual(1);
+      expect(connections[destinationId].inputs.length).toEqual(1);
     });
 
     it('Add same function connection twice', () => {
@@ -119,12 +119,12 @@ describe('DataMapSlice', () => {
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
       expect(connections[functionId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[functionId].inputs).length).toEqual(2);
+      expect(connections[functionId].inputs.length).toEqual(2);
 
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();
       expect(connections[destinationId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[destinationId].inputs).length).toEqual(1);
+      expect(connections[destinationId].inputs.length).toEqual(1);
     });
   });
 
