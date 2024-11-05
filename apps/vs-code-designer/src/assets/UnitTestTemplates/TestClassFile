@@ -53,16 +53,17 @@ namespace <%= LogicAppName %>.Tests
         /// </summary>
         public <%= UnitTestName %>()
         {
-            //  Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
-            this.rootPath = Path.GetFullPath(path: Path.Combine(basePath: AppContext.BaseDirectory, relativePath: @"..\..\..\..\.."));
-            this.workflowDefinitionPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", workflowFolder: "<%= WorkflowName %>", fileName: "workflow.json");
-            this.connectionsPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", fileName: "connections.json");
-            this.parametersPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", fileName: "parameters.json");
-            this.localSettingsPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", fileName: "local.settings.json");
+            // Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
+            this.rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
+            this.workflowDefinitionPath = Path.Combine(rootPath, "<%= LogicAppName %>", "<%= WorkflowName %>", "workflow.json");
+            this.connectionsPath = Path.Combine(rootPath, "<%= LogicAppName %>", "connections.json");
+            this.parametersPath = Path.Combine(rootPath, "<%= LogicAppName %>", "parameters.json");
+            this.localSettingsPath = Path.Combine(rootPath, "<%= LogicAppName %>", "local.settings.json");
 
-            // Load the mock data from the corrected path.
-            var mockData = JObject.Parse(File.ReadAllText("<%= UnitTestName %>-mock.json"));
-            this.triggerMock = mockData["triggerMocks"].ToObject<Dictionary<string, TriggerMock>>()?.FirstOrDefault()?.Value;
+            // Load the mock data 
+            var mockDataPath = Path.Combine(rootPath, "Tests", "<%= LogicAppName %>", "<%= WorkflowName %>", "<%= UnitTestName %>", "<%= UnitTestName %>-mock.json");
+            var mockData = JObject.Parse(File.ReadAllText(mockDataPath));
+            this.triggerMock = mockData["triggerMocks"]?.ToObject<Dictionary<string, TriggerMock>>()?.Values.FirstOrDefault();
             this.actionMocks = mockData["actionMocks"].ToObject<Dictionary<string, ActionMock>>();
         }
 
@@ -82,14 +83,13 @@ namespace <%= LogicAppName %>.Tests
             // );
 
             // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.   
             var executor = new UnitTestExecutor(
-                workflowDefinitionPath: this.workflowDefinitionPath, 
-                connectionsPath: this.connectionsPath, 
-                parametersPath: this.parametersPath, 
-                localSettingsPath: this.localSettingsPath
-            );            
-            
+                workflowFilePath: this.workflowDefinitionPath, 
+                connectionsFilePath: this.connectionsPath, 
+                parametersFilePath: this.parametersPath, 
+                localSettingsFilePath: this.localSettingsPath
+            );                
             var testRun = await executor.RunWorkflowAsync(triggerMock: this.triggerMock, actionMocks: actionMocks).ConfigureAwait(continueOnCapturedContext: false);
 
             // ASSERT
