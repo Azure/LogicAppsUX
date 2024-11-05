@@ -2,6 +2,7 @@ import { heavyRepeatingMockSchema } from '../../__mocks__';
 //import { minFunction } from '../../__mocks__/FunctionMock';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
+import { createCustomInputConnection, createNodeConnection } from '../Connection.Utils';
 import {
   addQuotesToString,
   calculateIndexValue,
@@ -72,12 +73,7 @@ describe('utils/Functions', () => {
     const mockReactFlowKey = 'testFunctionInputKey';
     const mockConnections: ConnectionDictionary = {
       [mockReactFlowKey]: {
-        self: {
-          reactFlowKey: mockReactFlowKey,
-          node: {} as FunctionData,
-          isCustom: false,
-          isDefined: true,
-        },
+        self: createNodeConnection({} as FunctionData, mockReactFlowKey),
         inputs: [],
         outputs: [],
       },
@@ -88,7 +84,7 @@ describe('utils/Functions', () => {
     });
 
     it('Test function input that has inputs', () => {
-      mockConnections[mockReactFlowKey].inputs[0] = { isCustom: true, isDefined: true, value: 'testInput' };
+      mockConnections[mockReactFlowKey].inputs[0] = createCustomInputConnection('testInput');
       expect(functionInputHasInputs(mockReactFlowKey, mockConnections)).toEqual(true);
     });
   });
