@@ -9,6 +9,7 @@ import { clearTemplateDetails } from '../../../../../core/state/templates/templa
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 import { ConnectionsList } from '../../../../templates/connections/connections';
+import { Open16Regular } from '@fluentui/react-icons';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
@@ -87,8 +88,9 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
               })}
               :
             </Text>
-            <Link href={manifest?.sourceCodeUrl} target="_blank">
+            <Link className="msla-template-quickview-source-code" href={manifest?.sourceCodeUrl} target="_blank">
               {manifest?.sourceCodeUrl}
+              <Open16Regular className="msla-templates-tab-source-code-icon" />
             </Link>
           </div>
         )}

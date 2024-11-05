@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text } from '@fluentui/react-components';
-import { Icon, Link } from '@fluentui/react';
+import { Link, Text } from '@fluentui/react-components';
+import { Icon } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useState } from 'react';
 import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
@@ -90,7 +90,9 @@ export const QuickViewPanelHeader = ({
           </Link>
         )}
       </div>
-      <Markdown linkTarget="_blank">{description}</Markdown>
+      <Markdown className="msla-template-markdown" linkTarget="_blank">
+        {description}
+      </Markdown>
       {features && (
         <div className="msla-template-quickview-features">
           <Text>
@@ -101,7 +103,9 @@ export const QuickViewPanelHeader = ({
             })}
             :
           </Text>
-          <Markdown linkTarget="_blank">{features}</Markdown>
+          <Markdown className="msla-template-markdown" linkTarget="_blank">
+            {features}
+          </Markdown>
         </div>
       )}
     </TemplatesPanelHeader>
