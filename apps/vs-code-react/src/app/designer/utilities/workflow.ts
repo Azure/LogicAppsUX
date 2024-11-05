@@ -14,11 +14,12 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
   const serviceProviderConnections = connectionsData.serviceProviderConnections || {};
 
   for (const connectionReferenceKey of Object.keys(connectionReferences)) {
-    const { connection, api, authentication } = connectionReferences[connectionReferenceKey];
+    const { connection, api, connectionProperties, authentication } = connectionReferences[connectionReferenceKey];
     references[connectionReferenceKey] = {
       connection: { id: connection ? connection.id : '' },
       connectionName: connection && connection.id ? connection.id.split('/').slice(-1)[0] : '',
       api: { id: api ? api.id : '' },
+      connectionProperties,
       authentication,
     };
   }
