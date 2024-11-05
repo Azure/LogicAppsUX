@@ -5,13 +5,12 @@ import {
   DetailsRow,
   Icon,
   IconButton,
-  Link,
   SelectionMode,
   Shimmer,
   ShimmerElementType,
   SpinnerSize,
 } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
+import { Link, Text } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
 import { aggregate, ConnectionService, getObjectPropertyValue, guid, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';

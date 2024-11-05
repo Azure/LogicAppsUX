@@ -1,12 +1,12 @@
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import { useEffect, useState } from 'react';
-import { DetailsList, type IColumn, Link, SelectionMode, setLayerHostSelector } from '@fluentui/react';
+import { DetailsList, type IColumn, SelectionMode, setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { getPropertyValue, unmap } from '@microsoft/logic-apps-shared';
-import { Text } from '@fluentui/react-components';
+import { Link, Text } from '@fluentui/react-components';
 import { QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { ConnectionsList } from './connections/connections';
 import { useFunctionalState } from '@react-hookz/web';
