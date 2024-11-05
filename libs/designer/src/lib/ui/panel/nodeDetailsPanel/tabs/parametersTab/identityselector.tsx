@@ -10,7 +10,7 @@ import { Label } from '@microsoft/designer-ui';
 import { WorkflowService, isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -54,14 +54,22 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   const [selectedKey, setSelectedKey] = useState(selectedIdentity);
 
+  const isIdentityInLogicApp = useMemo(() => {
+    return isIdentityPresentInLogicApp(selectedKey, identity);
+  }, [identity, selectedKey]);
+
+  const isIdentityWithLogicApp = useMemo(() => {
+    return isIdentityAssociatedWithLogicApp(identity);
+  }, [identity]);
+
   useEffect(() => {
-    if (!isIdentityPresentInLogicApp(selectedKey, identity)) {
+    if (!isIdentityInLogicApp) {
       dispatch(
         updateErrorDetails({
           id: nodeId,
           errorInfo: {
             level: ErrorLevel.Connection,
-            message: isIdentityAssociatedWithLogicApp(identity)
+            message: isIdentityWithLogicApp
               ? intl.formatMessage({
                   defaultMessage:
                     'The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.',
@@ -78,7 +86,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
         })
       );
     }
-  }, [identity, dispatch, selectedKey, nodeId, intl]);
+  }, [dispatch, intl, isIdentityInLogicApp, isIdentityWithLogicApp, nodeId]);
 
   const handleUpdateIdentity = (_event: FormEvent, option?: IDropdownOption) => {
     dispatch(setIsWorkflowDirty(true));
