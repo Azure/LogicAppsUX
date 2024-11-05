@@ -9,8 +9,6 @@ import type { Progress } from 'vscode';
 import { localize } from '../../../../../localize';
 import { ext } from '../../../../../extensionVariables';
 import { createOrUpdateHybridApp, createLogicAppExtension } from '../../../../utils/codeless/hybridLogicApp/hybridApp';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { getAccountCredentials } from '../../../../utils/credentials';
 import { getAuthorizationToken } from '../../../../utils/codeless/getAuthorizationToken';
 
 export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardContext> {
@@ -22,8 +20,7 @@ export class HybridAppCreateStep extends AzureWizardExecuteStep<ILogicAppWizardC
       ext.outputChannel.appendLog(message);
       progress.report({ message });
 
-      const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-      const accessToken = await getAuthorizationToken(credentials);
+      const accessToken = await getAuthorizationToken();
 
       const hybridAppOptions = {
         sqlConnectionString: context.sqlConnectionString,
