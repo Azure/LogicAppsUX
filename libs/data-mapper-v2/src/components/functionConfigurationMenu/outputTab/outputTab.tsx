@@ -9,7 +9,7 @@ import { useStyles } from '../styles';
 import { List } from '@fluentui/react-list-preview';
 import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { flattenInputs, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
 import { isSchemaNodeExtended } from '../../../utils';
@@ -43,14 +43,14 @@ export const OutputTabContents = (props: {
     return connection.reactFlowKey;
   };
 
-  const removeConnection = (newOutput: InputConnection) => {
+  const removeConnection = (newOutput: InputConnection | undefined) => {
     if (newOutput === undefined) {
       return;
     }
     const dest = getIDForTargetConnection(newOutput);
     const destinationNode = connectionDictionary[dest];
-    const flattened = flattenInputs(destinationNode.inputs);
-    const index = flattened.findIndex((input) => getIDForTargetConnection(input) === props.functionId);
+    const inputs = destinationNode.inputs;
+    const index = inputs.findIndex((input) => getIDForTargetConnection(input) === props.functionId);
     dispatch(
       setConnectionInput({
         targetNode: destinationNode.self.node,
@@ -77,8 +77,11 @@ export const OutputTabContents = (props: {
   const validateAndCreateConnection = (
     optionValue: string | undefined,
     option: InputOptionProps | undefined,
-    oldOutput: InputConnection
+    oldOutput: InputConnection | undefined
   ) => {
+    if (oldOutput === undefined) {
+      return;
+    }
     removeConnection(oldOutput);
     if (optionValue) {
       const newOutput = validateAndCreateConnectionOutput(

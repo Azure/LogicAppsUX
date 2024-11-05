@@ -8,7 +8,6 @@ import type {
   ConnectionDictionary,
   NodeConnection,
   InputConnection,
-  InputConnections,
 } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { createEdgeId } from './Edge.Utils';
@@ -291,8 +290,6 @@ export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | 
   return true;
 };
 
-export const flattenInputs = (inputs: InputConnections): InputConnection[] => inputs.flatMap((value) => value); // danielle to remove
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const areAllFunctionInputsFilled = (inputs: InputConnection[], maxInputs: number): boolean => {
   return inputs.every((input) => !isEmptyConnection(input));
@@ -340,14 +337,14 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   }
 
   // Put 0 input, content enricher functions in the node bucket
-  const flattenedInputs = flattenInputs(currentConnection.inputs);
-  const customValueInputs = flattenedInputs.filter(isCustomValueConnection);
-  const definedNonCustomValueInputs: NodeConnection[] = flattenedInputs.filter(isConnectionUnit);
+  const inputs = currentConnection.inputs;
+  const customValueInputs = inputs.filter(isCustomValueConnection);
+  const definedNonCustomValueInputs: NodeConnection[] = inputs.filter(isConnectionUnit);
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node?.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node?.maxNumberOfInputs === 0);
 
   // All inputs are a mix of nodes and/or custom values
-  if (nodeInputs.length + customValueInputs.length === flattenedInputs.length) {
+  if (nodeInputs.length + customValueInputs.length === inputs.length) {
     return true;
 
     // Still have traversing to do
@@ -377,8 +374,8 @@ export const nodeHasSpecificInputEventually = (
     return true;
   }
 
-  const flattenedInputs = flattenInputs(currentConnection.inputs);
-  const nonCustomInputs: NodeConnection[] = flattenedInputs.filter(isConnectionUnit);
+  const inputs = currentConnection.inputs;
+  const nonCustomInputs: NodeConnection[] = inputs.filter(isConnectionUnit);
 
   return nonCustomInputs.some((input) =>
     nodeHasSpecificInputEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
@@ -410,7 +407,7 @@ export const nodeHasSpecificOutputEventually = (
 };
 
 export const collectSourceNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): NodeConnection[] => {
-  const connectionUnits: NodeConnection[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+  const connectionUnits: NodeConnection[] = currentFunction.inputs.filter(isConnectionUnit);
 
   if (connectionUnits.length > 0) {
     return [
@@ -448,7 +445,7 @@ export const getActiveNodes = (state: DataMapOperationState, selectedItemKey?: s
 };
 
 export const collectSourceNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
-  const connectionUnits: NodeConnection[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+  const connectionUnits: NodeConnection[] = currentFunction.inputs.filter(isConnectionUnit);
   return [
     currentFunction.self.reactFlowKey,
     createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),
@@ -510,7 +507,7 @@ export const getTargetSchemaNodeConnections = (
   const connectionValues = Object.values(connections);
   const outputFilteredConnections = currentTargetSchemaNode.children.flatMap((childNode) => {
     const foundConnection = connectionValues.find(
-      (connection) => connection.self.node.key === childNode.key && flattenInputs(connection.inputs).length > 0
+      (connection) => connection.self.node.key === childNode.key && connection.inputs.length > 0
     );
     return foundConnection ? [foundConnection] : [];
   });

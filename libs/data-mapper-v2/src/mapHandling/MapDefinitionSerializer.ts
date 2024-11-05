@@ -6,7 +6,6 @@ import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunction
 import { findLast } from '../utils/Array.Utils';
 import {
   collectTargetNodesForConnectionChain,
-  flattenInputs,
   isConnectionUnit,
   isCustomValueConnection,
   isEmptyConnection,
@@ -128,8 +127,8 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
 
   targetSchemaConnections.forEach(([_key, connection]) => {
-    const flattenedInputs = flattenInputs(connection?.inputs);
-    flattenedInputs.forEach((input) => {
+    const inputs = connection?.inputs;
+    inputs.forEach((input) => {
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         const pathToCreate = createNewPathItems(input, selfNode, connections);

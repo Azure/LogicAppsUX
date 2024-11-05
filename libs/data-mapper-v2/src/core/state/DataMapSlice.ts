@@ -5,7 +5,6 @@ import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
   createNewEmptyConnection,
-  flattenInputs,
   generateInputHandleId,
   getActiveNodes,
   getConnectedSourceSchemaNodes,
@@ -173,7 +172,7 @@ export interface SetConnectionInputAction {
   targetNode: SchemaNodeExtended | FunctionData;
   targetNodeReactFlowKey: string;
   inputIndex?: number;
-  input: InputConnection | null; // null is indicator to remove an unbounded input value
+  input: InputConnection | null | undefined; // null is indicator to remove an unbounded input value
   findInputSlot?: boolean;
   isRepeating?: boolean;
 }
@@ -728,7 +727,7 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
 
   if (newConnections[keyToDelete]) {
     // Step through all the connected inputs and delete the selected key from their outputs
-    flattenInputs(newConnections[keyToDelete].inputs).forEach((input) => {
+    newConnections[keyToDelete].inputs.forEach((input) => {
       if (isConnectionUnit(input)) {
         newConnections[input.reactFlowKey].outputs = newConnections[input.reactFlowKey].outputs.filter(
           (output) => output.reactFlowKey !== keyToDelete

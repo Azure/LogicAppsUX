@@ -217,7 +217,7 @@ const UnlimitedInputs = (props: {
 
 export const getInputTypeFromNode = (input: InputConnection | undefined) => {
   let inputType = '';
-  if (isConnectionUnit(input)) {
+  if (input !== undefined && isConnectionUnit(input)) {
     if (isSchemaNodeExtended(input.node)) {
       inputType = input?.node.type;
     } else {

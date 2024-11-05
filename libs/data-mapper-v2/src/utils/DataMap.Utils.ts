@@ -11,7 +11,7 @@ import {
   indexPseudoFunctionKey,
 } from '../models/Function';
 import { findLast } from './Array.Utils';
-import { applyConnectionValue, flattenInputs, isCustomValueConnection, nodeHasSpecificInputEventually } from './Connection.Utils';
+import { applyConnectionValue, isCustomValueConnection, nodeHasSpecificInputEventually } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -38,7 +38,7 @@ export const getInputValues = (
   shouldLocalizePaths = true
 ): string[] => {
   return currentConnection
-    ? (flattenInputs(currentConnection.inputs)
+    ? (currentConnection.inputs
         .flatMap((input) => {
           if (!input) {
             return undefined;
