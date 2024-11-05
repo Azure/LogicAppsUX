@@ -53,8 +53,6 @@ namespace <%= LogicAppName %>.Tests
         /// </summary>
         public <%= UnitTestName %>()
         {
-            this.rootPath = Path.GetFullPath(path: Path.Combine(basePath: AppContext.BaseDirectory, relativePath: @"..\..\..\..\.."));
-
             //  Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
             this.rootPath = Path.GetFullPath(path: Path.Combine(basePath: AppContext.BaseDirectory, relativePath: @"..\..\..\..\.."));
             this.workflowDefinitionPath = Path.Combine(rootDirectory: rootPath, logicAppFolder: "<%= LogicAppName %>", workflowFolder: "<%= WorkflowName %>", fileName: "workflow.json");
