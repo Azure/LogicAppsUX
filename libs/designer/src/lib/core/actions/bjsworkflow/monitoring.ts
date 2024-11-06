@@ -79,8 +79,8 @@ const getInputsOutputsBinding = async (
 
   const manifest = OperationManifestService().isSupported(type, kind) ? await getOperationManifest(operationInfo) : undefined;
   const customSwagger = manifest ? await getCustomSwaggerIfNeeded(manifest.properties, definition) : undefined;
-  const inputsToBind = getParametersToBind(operationInfo.type, inputs);
-  const outputsToBind = getParametersToBind(operationInfo.type, outputs);
+  const inputsToBind = getParametersToBind(operationInfo.type, inputs, true);
+  const outputsToBind = getParametersToBind(operationInfo.type, outputs, false);
 
   const nodeInputs =
     getRecordEntry(rootState.operations.inputParameters, nodeId)?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.parameters ?? [];
@@ -111,12 +111,10 @@ const getInputsOutputsBinding = async (
   return { boundInputs, boundOutputs };
 };
 
-const getParametersToBind = (type: string, payloadInputs: any): any => {
+const getParametersToBind = (type: string, payloadInputs: any, isInputs: boolean): any => {
   if (equals(type, constants.NODE.TYPE.QUERY)) {
     if (payloadInputs) {
-      return {
-        from: payloadInputs,
-      };
+      return isInputs ? { from: payloadInputs } : { body: payloadInputs };
     }
     return null;
   }
