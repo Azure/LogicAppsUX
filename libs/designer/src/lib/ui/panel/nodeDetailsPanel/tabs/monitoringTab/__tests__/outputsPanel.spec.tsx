@@ -1,13 +1,14 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { OutputsPanel, type OutputsPanelProps } from '../outputsPanel';
-import renderer from 'react-test-renderer';
 import { IntlProvider } from 'react-intl';
+import { InitHostService } from '@microsoft/logic-apps-shared';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 describe('OutputsPanel', () => {
-  let props: OutputsPanelProps;
+  let defaultProps: OutputsPanelProps;
 
   beforeEach(() => {
-    props = {
+    defaultProps = {
       runMetaData: {
         outputsLink: {
           uri: 'http://example.com',
@@ -39,46 +40,57 @@ describe('OutputsPanel', () => {
   });
 
   const renderComponent = (props: OutputsPanelProps) =>
-    renderer
-      .create(
-        <IntlProvider locale="en">
-          <OutputsPanel {...props} />
-        </IntlProvider>
-      )
-      .toJSON();
+    render(
+      <IntlProvider locale="en">
+        <OutputsPanel {...props} />
+      </IntlProvider>
+    );
 
   it('Should render OutputsPanel with outputs', () => {
-    const renderedComponent = renderComponent(props);
+    const renderedComponent = renderComponent(defaultProps);
     expect(renderedComponent).toMatchSnapshot();
   });
 
   it('Should render OutputsPanel with loading state', () => {
-    props.isLoading = true;
-    const renderedComponent = renderComponent(props);
+    defaultProps.isLoading = true;
+    const renderedComponent = renderComponent(defaultProps);
     expect(renderedComponent).toMatchSnapshot();
   });
 
   it('Should render OutputsPanel with error state', () => {
-    props.isError = true;
-    const renderedComponent = renderComponent(props);
+    defaultProps.isError = true;
+    const renderedComponent = renderComponent(defaultProps);
     expect(renderedComponent).toMatchSnapshot();
   });
 
   it('Should render OutputsPanel with no outputs', () => {
-    props.runMetaData.outputs = undefined;
-    const renderedComponent = renderComponent(props);
+    defaultProps.runMetaData.outputs = undefined;
+    const renderedComponent = renderComponent(defaultProps);
     expect(renderedComponent).toMatchSnapshot();
   });
 
   it('Should render OutputsPanel with secured outputs', () => {
-    props.runMetaData.outputsLink.secureData = {};
-    const renderedComponent = renderComponent(props);
+    defaultProps.runMetaData.outputsLink.secureData = {};
+    const renderedComponent = renderComponent(defaultProps);
     expect(renderedComponent).toMatchSnapshot();
   });
 
   it('Should render OutputsPanel without uri', () => {
-    props.runMetaData.outputsLink = { contentSize: 0 };
-    const renderedComponent = renderComponent(props);
+    defaultProps.runMetaData.outputsLink = { contentSize: 0 };
+    const renderedComponent = renderComponent(defaultProps);
     expect(renderedComponent).toMatchSnapshot();
+  });
+
+  it('should call onSeeRawOutputsClick when link is clicked', () => {
+    const hostService = {
+      fetchAndDisplayContent: async () => Promise.resolve('Clicked'),
+    } as any;
+    InitHostService(hostService);
+
+    renderComponent(defaultProps);
+    const fetchAndDisplayContentSpy = vi.spyOn(hostService, 'fetchAndDisplayContent');
+    const link = screen.getByText('Show raw outputs');
+    fireEvent.click(link);
+    expect(fetchAndDisplayContentSpy).toHaveBeenCalled();
   });
 });
