@@ -418,7 +418,7 @@ export function getParameterEditorProps(
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel: any;
   if (editor === constants.EDITOR.DICTIONARY) {
-    editorViewModel = toDictionaryViewModel(value);
+    editorViewModel = toDictionaryViewModel(value, editorOptions);
   } else if (editor === constants.EDITOR.TABLE) {
     editorViewModel = toTableViewModel(value, editorOptions);
   } else if (editor === constants.EDITOR.AUTHENTICATION) {
@@ -503,24 +503,29 @@ const containsExpression = (operand: string): boolean => {
   return operand.includes('(') && operand.includes(')');
 };
 
+export interface LoadParamteerValueFromStringOptions {
+  removeQuotesFromExpression?: boolean;
+  trimExpression?: boolean;
+  convertIfContainsExpression?: boolean;
+  parameterType?: string;
+}
+
 export const loadParameterValueFromString = (
   value: string,
-  removeQuotesFromExpression?: boolean,
-  trimExpression?: boolean,
-  convertIfContainsExpression?: boolean
+  options: LoadParamteerValueFromStringOptions = {
+    removeQuotesFromExpression: false,
+    trimExpression: false,
+    convertIfContainsExpression: false,
+  }
 ) => {
-  const inputParameter = convertStringToInputParameter(value, removeQuotesFromExpression, trimExpression, convertIfContainsExpression);
+  const inputParameter = convertStringToInputParameter(value, options);
   return loadParameterValue(inputParameter);
 };
 
-const convertStringToInputParameter = (
-  value: string,
-  removeQuotesFromExpression?: boolean,
-  trimExpression?: boolean,
-  convertIfContainsExpression?: boolean
-): InputParameter => {
+const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
+  const { removeQuotesFromExpression, trimExpression, convertIfContainsExpression, parameterType } = options ?? {};
   if (typeof value !== 'string') {
-    return { key: guid(), name: value, type: typeof value, hideInUI: false, value };
+    return { key: guid(), name: value, type: parameterType ?? typeof value, hideInUI: false, value };
   }
 
   let newValue = trimExpression ? value.trim() : value;
@@ -531,7 +536,14 @@ const convertStringToInputParameter = (
     newValue = `@${newValue}`;
   }
 
-  return { key: guid(), name: newValue, type: 'any', hideInUI: false, value: newValue, suppressCasting: true };
+  return {
+    key: guid(),
+    name: newValue,
+    type: parameterType ?? constants.SWAGGER.TYPE.ANY,
+    hideInUI: false,
+    value: newValue,
+    suppressCasting: true,
+  };
 };
 
 export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any; uncastedValue: undefined } => {
@@ -602,9 +614,17 @@ export const toSimpleQueryBuilderViewModel = (
       isRowFormat: true,
       itemValue: [
         operationLiteral,
-        loadParameterValueFromString(operand1String.trim(), true, true, true)[0],
+        loadParameterValueFromString(operand1String.trim(), {
+          removeQuotesFromExpression: true,
+          trimExpression: true,
+          convertIfContainsExpression: true,
+        })[0],
         createLiteralValueSegment(','),
-        loadParameterValueFromString(operand2String.trim(), true, true, true)[0],
+        loadParameterValueFromString(operand2String.trim(), {
+          removeQuotesFromExpression: true,
+          trimExpression: true,
+          convertIfContainsExpression: true,
+        })[0],
         endingLiteral,
       ],
     };
@@ -696,14 +716,22 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
     return {
       type: GroupType.ROW,
       operator: (isNegated ? 'not' : '') + key,
-      operand1: loadParameterValueFromString(value[0], true, true, true),
-      operand2: loadParameterValueFromString(value[1], true, true, true),
+      operand1: loadParameterValueFromString(value[0], {
+        removeQuotesFromExpression: true,
+        trimExpression: true,
+        convertIfContainsExpression: true,
+      }),
+      operand2: loadParameterValueFromString(value[1], {
+        removeQuotesFromExpression: true,
+        trimExpression: true,
+        convertIfContainsExpression: true,
+      }),
     };
   });
 }
 
 // Create Dictionary Editor View Model
-function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
+function toDictionaryViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
   const valueToParse = value !== null ? value ?? {} : value;
   const canParseObject = valueToParse !== null && isObject(valueToParse);
@@ -714,7 +742,7 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
       items.push({
         id: guid(),
         key: loadParameterValueFromString(itemKey),
-        value: loadParameterValueFromString(valueToParse[itemKey]),
+        value: loadParameterValueFromString(valueToParse[itemKey], { parameterType: editorOptions?.valueType }),
       });
     }
 
