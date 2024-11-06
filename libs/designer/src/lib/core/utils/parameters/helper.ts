@@ -761,12 +761,13 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
   const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;
+    const types = editorOptions.columns?.types;
     const items: DictionaryEditorItemProps[] = [];
     for (const item of value) {
       items.push({
         id: guid(),
-        key: loadParameterValueFromString(item[keys[0]]),
-        value: loadParameterValueFromString(item[keys[1]], { parameterType: editorOptions?.valueType }),
+        key: loadParameterValueFromString(item[keys[0]], { parameterType: types?.[keys[0]] }),
+        value: loadParameterValueFromString(item[keys[1]], { parameterType: types?.[keys[1]] }),
       });
     }
 
