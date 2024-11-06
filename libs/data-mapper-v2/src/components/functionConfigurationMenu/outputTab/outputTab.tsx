@@ -3,13 +3,13 @@ import { AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
-import type { ConnectionDictionary, NodeConnection, InputConnection } from '../../../models/Connection';
+import type { ConnectionDictionary, NodeConnection, InputConnection, EmptyConnection } from '../../../models/Connection';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { useStyles } from '../styles';
 import { List } from '@fluentui/react-list-preview';
 import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { createNewEmptyConnection, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
 import { isSchemaNodeExtended } from '../../../utils';
@@ -26,14 +26,14 @@ export const OutputTabContents = (props: {
   const styles = useStyles();
   const outputs: (NodeConnection | undefined)[] = [...connections[props.functionId].outputs];
   const dispatch = useDispatch();
-  const [additionalOutput, setAdditionalOutput] = useState<(NodeConnection | undefined)[]>([]);
+  const [additionalOutput, setAdditionalOutput] = useState<(NodeConnection | EmptyConnection | undefined)[]>([]);
 
   if (outputs.length === 0) {
     outputs[0] = undefined;
   }
 
   const addOutputClick = () => {
-    setAdditionalOutput([...additionalOutput, undefined]);
+    setAdditionalOutput([...additionalOutput, createNewEmptyConnection()]);
   };
 
   const getIDForTargetConnection = (connection: InputConnection) => {
@@ -45,6 +45,11 @@ export const OutputTabContents = (props: {
 
   const removeConnection = (newOutput: InputConnection | undefined) => {
     if (newOutput === undefined) {
+      return;
+    }
+    if (!isConnectionUnit(newOutput)) {
+      const shortenedOutput = additionalOutput.slice(0, additionalOutput.length - 2);
+      setAdditionalOutput(shortenedOutput);
       return;
     }
     const dest = getIDForTargetConnection(newOutput);

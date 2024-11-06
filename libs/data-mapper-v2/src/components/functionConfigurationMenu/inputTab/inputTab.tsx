@@ -17,7 +17,7 @@ import { InputDropdown } from '../inputDropdown/InputDropdown';
 import { useStyles } from './styles';
 import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
-import { isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { createCustomInputConnection, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
@@ -41,11 +41,7 @@ export const InputTabContents = (props: {
 
   if (props.func.maxNumberOfInputs !== UnboundedInput) {
     const tableContents = props.func.inputs.map((input, index) => {
-      const inputConnection = functionConnection
-        ? Object.values(functionConnection.inputs).length > 1
-          ? functionConnection.inputs[index]
-          : functionConnection.inputs[index]
-        : undefined;
+      const inputConnection = functionConnection && functionConnection.inputs[index] ? functionConnection.inputs[index] : undefined;
 
       const inputType = getInputTypeFromNode(inputConnection);
 
@@ -257,7 +253,7 @@ export const validateAndCreateConnectionInput = (
       return srcConUnit;
     }
     // Create custom value connection
-    const srcConUnit: CustomValueConnection = { isCustom: true, value: optionValue, isDefined: true };
+    const srcConUnit: CustomValueConnection = createCustomInputConnection(optionValue);
 
     return srcConUnit;
   }

@@ -178,6 +178,9 @@ export const InputDropdown = ({
     if (inputValue) {
       setSelectedOptions([inputValue]);
     }
+    if (inputValue === undefined) {
+      setSelectedOptions([]);
+    }
   }, [inputValue]);
 
   const originalOptions = useMemo(() => {
@@ -268,6 +271,12 @@ export const InputDropdown = ({
       validateAndCreateConnection(data.optionValue, option);
     }
   };
+
+  useEffect(() => {
+    if (inputValue === undefined) {
+      setCustomValue(undefined);
+    }
+  }, [inputValue]);
 
   const changeValue = (value: string) => {
     const matches = isNullOrEmpty(value)

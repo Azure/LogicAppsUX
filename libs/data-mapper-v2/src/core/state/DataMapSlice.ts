@@ -5,6 +5,7 @@ import {
   applyConnectionValue,
   createConnectionEntryIfNeeded,
   createNewEmptyConnection,
+  createNodeConnection,
   generateInputHandleId,
   getActiveNodes,
   getConnectedSourceSchemaNodes,
@@ -299,7 +300,7 @@ export const dataMapSlice = createSlice({
           },
         },
       };
-      newState.curDataMapOperation.dataMapConnections[action.payload].inputs.push(createNewEmptyConnection()); // danielle double check
+      newState.curDataMapOperation.dataMapConnections[action.payload].inputs.push(createNewEmptyConnection());
 
       doDataMapOperation(state, newState, 'Set connection input value');
     },
@@ -487,7 +488,7 @@ export const dataMapSlice = createSlice({
         return;
       }
       const sourceIdToRemove = isCustomValueConnection(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
-      deleteConnectionFromConnections(state.curDataMapOperation.dataMapConnections, sourceIdToRemove, action.payload.targetId, undefined);
+      deleteConnectionFromConnections(newConnections, sourceIdToRemove, action.payload.targetId, undefined);
       doDataMapOperation(
         state,
         { ...state, curDataMapOperation: { ...state.curDataMapOperation, dataMapConnections: newConnections } },
@@ -637,7 +638,7 @@ export const dataMapSlice = createSlice({
     updateFunctionConnectionInputs: (state, action: PayloadAction<{ functionKey: string; inputs: InputConnection[] }>) => {
       const newState = { ...state.curDataMapOperation };
       if (newState.dataMapConnections[action.payload.functionKey]?.inputs[0]) {
-        newState.dataMapConnections[action.payload.functionKey].inputs = action.payload.inputs; // danielle double check
+        newState.dataMapConnections[action.payload.functionKey].inputs = action.payload.inputs;
       } else {
         throw new Error('Function node not found in connections');
       }
@@ -712,12 +713,7 @@ const addConnection = (
     targetNodeReactFlowKey: nodes.reactFlowDestination,
     findInputSlot: true,
     inputIndex: nodes.specificInput,
-    input: {
-      reactFlowKey: nodes.reactFlowSource,
-      node: sourceNode,
-      isDefined: true,
-      isCustom: false,
-    },
+    input: createNodeConnection(sourceNode, nodes.reactFlowSource),
   });
 };
 
@@ -749,14 +745,14 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
 };
 
 export const deleteConnectionFromConnections = (
-  // danielle test this
   connections: ConnectionDictionary,
   inputKey: string,
   outputKey: string,
   port: string | undefined
 ) => {
-  connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
-
+  if (connections[inputKey] !== undefined) {
+    connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
+  }
   const outputNode = connections[outputKey].self.node;
   let outputNodeInputs = connections[outputKey].inputs;
   if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
@@ -769,7 +765,6 @@ export const deleteConnectionFromConnections = (
     });
   } else {
     outputNodeInputs = outputNodeInputs.map((inputEntry) => {
-      // danielle test for custom inputs
       if (
         (isConnectionUnit(inputEntry) && inputEntry.reactFlowKey === inputKey) ||
         (isCustomValueConnection(inputEntry) && inputEntry.value === inputKey)
