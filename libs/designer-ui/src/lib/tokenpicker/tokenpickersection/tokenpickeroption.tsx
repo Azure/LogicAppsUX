@@ -71,7 +71,6 @@ export const TokenPickerOptions = ({
       tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
     }
-    console.log('### Section tokens:', searchableTokens);
     setTokenLength((prevTokens) => {
       const newTokens = prevTokens;
       newTokens[index] = tokens?.length ?? searchableTokens.length;
