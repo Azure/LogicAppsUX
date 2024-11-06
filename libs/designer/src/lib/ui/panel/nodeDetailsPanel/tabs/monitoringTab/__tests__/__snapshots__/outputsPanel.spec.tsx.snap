@@ -1,0 +1,737 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
+<section
+  className="msla-trace-inputs-outputs"
+>
+  <div
+    className="msla-trace-inputs-outputs-header"
+  >
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+      id="outputs-node1"
+      style={
+        {
+          "borderColor": "#000000B3",
+        }
+      }
+    >
+      Outputs
+    </div>
+    <button
+      className="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+      data-is-focusable={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-185"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+          data-icon-name="ChevronRightSmall"
+          style={
+            {
+              "fontFamily": ""FabricMDL2Icons-3"",
+            }
+          }
+        >
+          
+        </i>
+        <span
+          className="ms-Button-textContainer textContainer-186"
+        >
+          <span
+            className="ms-Button-label label-188"
+            id="id__18"
+          >
+            Show raw outputs
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-labelledby="outputs-node1"
+    className="msla-trace-values"
+  >
+    <section
+      className="msla-trace-value-label"
+    >
+      <label
+        className="msla-trace-value-display-name"
+      />
+      <div
+        className="msla-colorizer-json-body"
+      >
+        <div
+          aria-readonly={true}
+          className="msla-colorizer-wrapper"
+          role="textbox"
+          tabIndex={0}
+        >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in ''"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Select all text in ''"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                  data-icon-name="SelectAll"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of '' to the clipboard"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Copy the value of '' to the clipboard"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                  data-icon-name="Copy"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
+          <pre
+            className="prism-code language-json"
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                ‌
+              </span>
+            </div>
+          </pre>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
+<section
+  className="msla-trace-inputs-outputs"
+>
+  <div
+    className="msla-trace-inputs-outputs-header"
+  >
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+      id="outputs-node1"
+      style={
+        {
+          "borderColor": "#000000B3",
+        }
+      }
+    >
+      Outputs
+    </div>
+    <button
+      className="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+      data-is-focusable={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-185"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+          data-icon-name="ChevronRightSmall"
+          style={
+            {
+              "fontFamily": ""FabricMDL2Icons-3"",
+            }
+          }
+        >
+          
+        </i>
+        <span
+          className="ms-Button-textContainer textContainer-186"
+        >
+          <span
+            className="ms-Button-label label-188"
+            id="id__9"
+          >
+            Show raw outputs
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-labelledby="outputs-node1"
+    className="msla-trace-values"
+  >
+    <section
+      className="msla-trace-value-label"
+    >
+      <label
+        className="msla-trace-value-display-name"
+      />
+      <div
+        className="msla-colorizer-json-body"
+      >
+        <div
+          aria-readonly={true}
+          className="msla-colorizer-wrapper"
+          role="textbox"
+          tabIndex={0}
+        >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in ''"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Select all text in ''"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                  data-icon-name="SelectAll"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of '' to the clipboard"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Copy the value of '' to the clipboard"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                  data-icon-name="Copy"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
+          <pre
+            className="prism-code language-json"
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                ‌
+              </span>
+            </div>
+          </pre>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
+<section
+  className="msla-trace-inputs-outputs"
+>
+  <div
+    className="msla-trace-inputs-outputs-header"
+  >
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+      id="outputs-node1"
+      style={
+        {
+          "borderColor": "#000000B3",
+        }
+      }
+    >
+      Outputs
+    </div>
+  </div>
+  <div
+    className="msla-trace-values"
+  >
+    <div
+      className="msla-trace-download-link"
+    >
+      <a
+        aria-label="Download (Alt or Option + select)"
+        className="ms-Link root-203"
+        download={true}
+        href="http://example.com"
+        onClick={[Function]}
+        rel="noopener"
+        target="_blank"
+      >
+        Download (Alt or Option + select)
+      </a>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
+<section
+  className="msla-trace-inputs-outputs"
+>
+  <div
+    className="msla-trace-inputs-outputs-header"
+  >
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+      id="outputs-node1"
+      style={
+        {
+          "borderColor": "#000000B3",
+        }
+      }
+    >
+      Outputs
+    </div>
+    <button
+      className="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+      data-is-focusable={true}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-185"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+          data-icon-name="ChevronRightSmall"
+          style={
+            {
+              "fontFamily": ""FabricMDL2Icons-3"",
+            }
+          }
+        >
+          
+        </i>
+        <span
+          className="ms-Button-textContainer textContainer-186"
+        >
+          <span
+            className="ms-Button-label label-188"
+            id="id__0"
+          >
+            Show raw outputs
+          </span>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div
+    aria-labelledby="outputs-node1"
+    className="msla-trace-values"
+  >
+    <section
+      className="msla-trace-value-label"
+    >
+      <label
+        className="msla-trace-value-display-name"
+      />
+      <div
+        className="msla-colorizer-json-body"
+      >
+        <div
+          aria-readonly={true}
+          className="msla-colorizer-wrapper"
+          role="textbox"
+          tabIndex={0}
+        >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in ''"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Select all text in ''"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                  data-icon-name="SelectAll"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of '' to the clipboard"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Copy the value of '' to the clipboard"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                  data-icon-name="Copy"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
+          <pre
+            className="prism-code language-json"
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                ‌
+              </span>
+            </div>
+          </pre>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with secured outputs 1`] = `
+<section
+  className="msla-trace-inputs-outputs"
+>
+  <div
+    className="msla-trace-inputs-outputs-header"
+  >
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+      style={
+        {
+          "borderColor": "#000000B3",
+        }
+      }
+    >
+      Outputs
+    </div>
+  </div>
+  <div
+    className="msla-trace-values"
+  >
+    <div
+      className="msla-trace-inputs-outputs-secured"
+    >
+      <div
+        className="msla-trace-secured-text"
+      >
+        Content not shown due to security configuration.
+      </div>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
+<section
+  className="msla-trace-inputs-outputs"
+>
+  <div
+    className="msla-trace-inputs-outputs-header"
+  >
+    <div
+      className="msla-trace-inputs-outputs-header-text"
+      id="outputs-node1"
+      style={
+        {
+          "borderColor": "#000000B3",
+        }
+      }
+    >
+      Outputs
+    </div>
+  </div>
+  <div
+    aria-labelledby="outputs-node1"
+    className="msla-trace-values"
+  >
+    <section
+      className="msla-trace-value-label"
+    >
+      <label
+        className="msla-trace-value-display-name"
+      />
+      <div
+        className="msla-colorizer-json-body"
+      >
+        <div
+          aria-readonly={true}
+          className="msla-colorizer-wrapper"
+          role="textbox"
+          tabIndex={0}
+        >
+          <div
+            className="buttons"
+          >
+            <button
+              aria-label="Select all text in ''"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Select all text in ''"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                  data-icon-name="SelectAll"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+            <button
+              aria-label="Copy the value of '' to the clipboard"
+              className="ms-Button ms-Button--icon root-194"
+              data-is-focusable={true}
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyPress={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseUp={[Function]}
+              title="Copy the value of '' to the clipboard"
+              type="button"
+            >
+              <span
+                className="ms-Button-flexContainer flexContainer-195"
+                data-automationid="splitbuttonprimary"
+              >
+                <i
+                  aria-hidden={true}
+                  className="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                  data-icon-name="Copy"
+                  style={
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
+                    }
+                  }
+                >
+                  
+                </i>
+              </span>
+            </button>
+          </div>
+          <pre
+            className="prism-code language-json"
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
+              }
+            }
+          >
+            <div
+              className="token-line"
+              style={
+                {
+                  "backgroundColor": undefined,
+                  "color": "#000000",
+                }
+              }
+            >
+              <span
+                className="token plain"
+              >
+                ‌
+              </span>
+            </div>
+          </pre>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+`;
