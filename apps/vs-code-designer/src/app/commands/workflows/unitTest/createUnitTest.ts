@@ -18,6 +18,7 @@ import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { FileManagement } from '../../generateDeploymentScripts/iacGestureHelperFunctions';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
@@ -166,6 +167,16 @@ async function generateCodefulUnitTest(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
     );
 
+    // Check if testsDirectory is already part of the workspace
+    const workspaceFolders = vscode.workspace.workspaceFolders || [];
+    const isTestsDirectoryInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === testsDirectory);
+
+    if (!isTestsDirectoryInWorkspace) {
+      // Add testsDirectory to workspace if not already included
+      ext.outputChannel.appendLog(localize('addingTestsDirectory', 'Adding tests directory to workspace: {0}', testsDirectory));
+      FileManagement.addFolderToWorkspace(testsDirectory);
+    }
+
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
@@ -228,14 +239,15 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
   const csTemplateFileName = 'TestClassFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
-  const templateContent = await fs.readFile(templatePath, 'utf-8');
-  const csContent = templateContent
+  let templateContent = await fs.readFile(templatePath, 'utf-8');
+
+  templateContent = templateContent
     .replace(/<%= UnitTestName %>/g, unitTestName)
     .replace(/<%= LogicAppName %>/g, logicAppName)
     .replace(/<%= WorkflowName %>/g, workflowName);
 
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
-  await fs.writeFile(csFilePath, csContent);
+  await fs.writeFile(csFilePath, templateContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
 }
