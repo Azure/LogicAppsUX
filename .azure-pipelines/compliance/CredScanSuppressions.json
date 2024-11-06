@@ -1,4 +1,9 @@
 {
     "tool": "Credential Scanner",
-    "suppressions": []
+    "suppressions": [
+        {
+            "folder": "\\logic-apps-shared\\src\\parsers\\lib\\resolution-service\\__test__",
+            "_justification": "This is a false positive"
+        }
+    ]
 }

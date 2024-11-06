@@ -13,7 +13,7 @@ steps:
     toolMajorVersion: V2
     suppressionsFile: '$(Build.SourcesDirectory)/.azure-pipelines/compliance/CredScanSuppressions.json'
     debugMode: true # Needed to suppress folders
-    folderSuppression: true
+    folderSuppression: false
   continueOnError: true
   condition: eq(variables['ENABLE_COMPLIANCE'], 'true')
 
