@@ -741,7 +741,7 @@ function toDictionaryViewModel(value: any, editorOptions: any): { items: Diction
     for (const itemKey of keys) {
       items.push({
         id: guid(),
-        key: loadParameterValueFromString(itemKey),
+        key: loadParameterValueFromString(itemKey, { parameterType: editorOptions?.keyType }),
         value: loadParameterValueFromString(valueToParse[itemKey], { parameterType: editorOptions?.valueType }),
       });
     }
@@ -766,7 +766,7 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
       items.push({
         id: guid(),
         key: loadParameterValueFromString(item[keys[0]]),
-        value: loadParameterValueFromString(item[keys[1]]),
+        value: loadParameterValueFromString(item[keys[1]], { parameterType: editorOptions?.valueType }),
       });
     }
 
