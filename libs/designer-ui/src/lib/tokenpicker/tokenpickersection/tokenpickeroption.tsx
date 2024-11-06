@@ -13,10 +13,14 @@ import { darken, hex2rgb, lighten, replaceWhiteSpaceWithUnderscore } from '@micr
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type GetValueSegmentHandler = (tokenProps: OutputToken, addImplicitForeach: boolean) => Promise<ValueSegment>;
+
+interface SearchOutputToken extends OutputToken {
+  sectionName: string;
+}
 
 interface TokenPickerOptionsProps extends TokenPickerBaseProps {
   section: TokenGroup;
@@ -50,20 +54,30 @@ export const TokenPickerOptions = ({
   const [moreOptions, { toggle: toggleMoreOptions }] = useBoolean(true);
   const [filteredTokens, setFilteredTokens] = useState(section.tokens);
 
+  const searchableTokens: SearchOutputToken[] = useMemo(
+    () =>
+      section.tokens.map((token) => ({
+        ...token,
+        sectionName: section.label,
+      })),
+    [section.tokens, section.label]
+  );
+
   useEffect(() => {
     let tokens: Token[];
     if (searchQuery) {
       const query = searchQuery.trim();
-      const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.4, ignoreLocation: true });
+      const fuse = new Fuse(searchableTokens, { keys: ['description', 'title', 'sectionName'], threshold: 0.4, ignoreLocation: true });
       tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
     }
+    console.log('### Section tokens:', searchableTokens);
     setTokenLength((prevTokens) => {
       const newTokens = prevTokens;
-      newTokens[index] = tokens?.length ?? section.tokens.length;
+      newTokens[index] = tokens?.length ?? searchableTokens.length;
       return newTokens;
     });
-  }, [index, searchQuery, section.tokens, setTokenLength]);
+  }, [index, searchQuery, searchableTokens, setTokenLength]);
 
   const buttonTextMore = intl.formatMessage(
     {
