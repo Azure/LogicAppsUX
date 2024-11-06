@@ -9,7 +9,12 @@ import { useStyles } from '../styles';
 import { List } from '@fluentui/react-list-preview';
 import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { createNewEmptyConnection, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import {
+  createNewEmptyConnection,
+  isConnectionUnit,
+  isEmptyConnection,
+  newConnectionWillHaveCircularLogic,
+} from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
 import { isSchemaNodeExtended } from '../../../utils';
@@ -24,7 +29,7 @@ export const OutputTabContents = (props: {
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const styles = useStyles();
-  const outputs: (NodeConnection | undefined)[] = [...connections[props.functionId].outputs];
+  const outputs: (NodeConnection | EmptyConnection | undefined)[] = [...connections[props.functionId].outputs];
   const dispatch = useDispatch();
   const [additionalOutput, setAdditionalOutput] = useState<(NodeConnection | EmptyConnection | undefined)[]>([]);
 
@@ -84,10 +89,9 @@ export const OutputTabContents = (props: {
     option: InputOptionProps | undefined,
     oldOutput: InputConnection | undefined
   ) => {
-    if (oldOutput === undefined) {
-      return;
+    if (oldOutput !== undefined) {
+      removeConnection(oldOutput);
     }
-    removeConnection(oldOutput);
     if (optionValue) {
       const newOutput = validateAndCreateConnectionOutput(
         optionValue,
@@ -109,7 +113,9 @@ export const OutputTabContents = (props: {
         <List>
           {outputs.concat(additionalOutput).map((output, index) => {
             let outputValue = undefined;
-            if (output) {
+            if (output && isEmptyConnection(output)) {
+              outputValue = '';
+            } else if (output) {
               outputValue = isSchemaNodeExtended(output?.node) ? output?.node.name : '';
             }
             const listItem = (
