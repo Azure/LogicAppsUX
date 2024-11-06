@@ -92,3 +92,4 @@ extends:
               - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
                 parameters:
                   publishVersion: ${{ parameters.publishVersion }}
+              - script: tree.com $(Build.SourcesDirectory) /f
