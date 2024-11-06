@@ -22,7 +22,7 @@ interface CollapsedAuthenticationProps {
   serializeValue: (value: ValueSegment[]) => void;
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const CollapsedAuthentication = ({
