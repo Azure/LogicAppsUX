@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { StringEditor } from '../editor/string';
 import type { AuthProperty } from './util';
@@ -11,7 +11,7 @@ interface AuthenticationPropertyProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   readonly?: boolean;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   onBlur?: ChangeHandler;
 }

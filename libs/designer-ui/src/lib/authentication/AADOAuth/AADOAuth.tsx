@@ -1,6 +1,6 @@
 import type { AuthProps, OAuthProps } from '..';
 import type { ValueSegment } from '../../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
@@ -24,7 +24,7 @@ interface ActiveDirectoryAuthenticationProps {
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const ActiveDirectoryAuthentication = ({

@@ -1,3 +1,4 @@
+import type { loadParameterValueFromStringHandler } from '..';
 import { FxBrandColor, FxIcon } from '../../../constants';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
 import { ValueSegmentType, type ValueSegment, TokenType } from '../../models/parameter';
@@ -11,7 +12,7 @@ import { useEffect } from 'react';
 
 interface PastePluginProps {
   segmentMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const PastePlugin = ({ segmentMapping, loadParameterValueFromString }: PastePluginProps) => {

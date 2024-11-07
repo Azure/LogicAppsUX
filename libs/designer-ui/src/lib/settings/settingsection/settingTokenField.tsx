@@ -8,7 +8,13 @@ import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type {
+  CallbackHandler,
+  CastHandler,
+  ChangeHandler,
+  GetTokenPickerHandler,
+  loadParameterValueFromStringHandler,
+} from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
 import { StringEditor } from '../../editor/string';
@@ -50,7 +56,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
