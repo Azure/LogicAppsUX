@@ -25,9 +25,9 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
 
   const resources = useMemo(
     () => ({
-      CODE_VIEW: intl.formatMessage({
-        defaultMessage: 'Code view',
-        id: 'M0xrm+',
+      CODE: intl.formatMessage({
+        defaultMessage: 'Code',
+        id: 'U9SHxw',
         description: 'Code view title',
       }),
       CLOSE_CODE_VIEW: intl.formatMessage({
@@ -49,7 +49,7 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
       id={'code-view-panel'}
       isOpen={isCodeViewOpen}
       title={{
-        text: resources.CODE_VIEW,
+        text: resources.CODE,
         icon: Code24Regular,
         rightAction: (
           <Button

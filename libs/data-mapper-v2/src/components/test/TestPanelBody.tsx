@@ -23,10 +23,10 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
 
   const stringResources = useMemo(
     () => ({
-      SAMPLE_TEST_DATA: intl.formatMessage({
-        defaultMessage: 'Sample test data',
-        id: 'zR2qGG',
-        description: 'Sample test data for testing',
+      SAMPLE_DATA: intl.formatMessage({
+        defaultMessage: 'Sample data',
+        id: 'nRjpgk',
+        description: 'Sample data for testing',
       }),
       SAMPLE_TEST_DATA_PLACEHOLDER: intl.formatMessage({
         defaultMessage: 'Paste your sample data to test the mapping',
@@ -116,7 +116,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
       <Accordion multiple={true} collapsible={true} defaultOpenItems={['sample-data', 'result']}>
         <AccordionItem value={'sample-data'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
-            {stringResources.SAMPLE_TEST_DATA}
+            {stringResources.SAMPLE_DATA}
           </AccordionHeader>
           <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor

@@ -329,7 +329,7 @@
       },
       {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
-        "title": "Data Mapper: Create new data map",
+        "title": "Data Mapper: Create data map",
         "icon": "$(add)"
       },
       {
@@ -368,7 +368,7 @@
     "viewsWelcome": [
       {
         "view": "azDataMapper",
-        "contents": "[Create new data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
+        "contents": "[Create data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -768,7 +768,7 @@
               1,
               2
             ],
-            "description": "The default version of Data Mapper to use when performing operations like \"Create new data map\".",
+            "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
             "enumDescriptions": [
               "Version 1",
               "Version 2 (Beta)"

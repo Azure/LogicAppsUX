@@ -190,8 +190,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
-        defaultMessage: 'View Code',
-        id: '/4vB3J',
+        defaultMessage: 'View code',
+        id: 'VysSj3',
         description: 'Button for View Code',
       }),
       DISABLED_TEST: intl.formatMessage({
