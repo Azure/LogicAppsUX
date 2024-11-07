@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.122.0](https://github.com/Azure/LogicAppsUX/compare/v4.121.0...v4.122.0) (2024-11-07)
+
+
+### Features
+
+* **Designer:** Adding section names to token search ([#6043](https://github.com/Azure/LogicAppsUX/issues/6043)) ([9410675](https://github.com/Azure/LogicAppsUX/commit/9410675c4ed517551c366185c413816205cbe823))
+* **Templates:** Source code button to view template ([#6025](https://github.com/Azure/LogicAppsUX/issues/6025)) ([315a7f8](https://github.com/Azure/LogicAppsUX/commit/315a7f843aba795dafe204bf9ba240b6592f8e5a))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update strings in Data mapper ([#6044](https://github.com/Azure/LogicAppsUX/issues/6044)) ([b762141](https://github.com/Azure/LogicAppsUX/commit/b762141926785cba9c9d13c46e95680784db8c36))
+* **designer:** Display correct outputs from query type actions ([#6035](https://github.com/Azure/LogicAppsUX/issues/6035)) ([e24ca47](https://github.com/Azure/LogicAppsUX/commit/e24ca4709ea198b6b0aaf4dac1c2e0c43b99f8aa))
+* **designer:** Fixing Some Non-string type Dictionary Serialization/Deserialization ([#6041](https://github.com/Azure/LogicAppsUX/issues/6041)) ([40f8a14](https://github.com/Azure/LogicAppsUX/commit/40f8a1452fb63c9b5988e537de07408cd181d8f0))
+* **vscode:** Add useMemo to avoid infinite loop in identity selector ([#6033](https://github.com/Azure/LogicAppsUX/issues/6033)) ([f24ea29](https://github.com/Azure/LogicAppsUX/commit/f24ea29763cd1e286e6a62e4c914e3eb48464205))
+
 ## [4.121.0](https://github.com/Azure/LogicAppsUX/compare/v4.120.0...v4.121.0) (2024-11-04)
 
 
