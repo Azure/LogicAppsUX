@@ -2,7 +2,7 @@ import type { GroupItems, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType, removeQuotes } from '../editor';
-import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
@@ -22,7 +22,7 @@ export interface SimpleQueryBuilderProps {
   itemValue: ValueSegment[];
   isRowFormat?: boolean;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }

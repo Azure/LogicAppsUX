@@ -1,6 +1,6 @@
 import type { ComboboxItem, SimpleArrayItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import { Combobox, StringEditor } from '..';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { notEqual } from '../editor/base/utils/helper';
 import { Label, RequiredMarkerSide } from '../label';
 import type { LabelProps } from '../label';
@@ -39,7 +39,7 @@ export interface ExpandedSimpleArrayProps {
   options?: ComboboxItem[];
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const ExpandedSimpleArray = ({

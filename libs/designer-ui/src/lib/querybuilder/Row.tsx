@@ -3,7 +3,7 @@ import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { createEmptyLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
@@ -37,7 +37,7 @@ type RowProps = {
   // isTop: boolean;
   // isBottom: boolean;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   readonly?: boolean;
   // handleMove?: (childIndex: number, moveOption: MoveOption) => void;

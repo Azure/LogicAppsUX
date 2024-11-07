@@ -1,6 +1,6 @@
 import type { MSIProps } from '..';
 import type { ValueSegment } from '../../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
@@ -17,7 +17,7 @@ interface MSIAuthenticationDefaultProps {
   onBlur: ChangeHandler;
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const MSIAuthenticationDefault = ({
