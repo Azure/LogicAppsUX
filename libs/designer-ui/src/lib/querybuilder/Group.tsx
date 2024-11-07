@@ -2,7 +2,7 @@ import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { AddSection } from './AddSection';
 import type { GroupDropdownOptions } from './GroupDropdown';
 import { GroupDropdown } from './GroupDropdown';
@@ -44,7 +44,7 @@ interface GroupProps {
   isTop: boolean;
   isBottom: boolean;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;

@@ -460,7 +460,7 @@ const ParameterSection = ({
           validationErrors,
           tokenMapping,
           nodeTitle,
-          loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
+          loadParameterValueFromString,
           onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),

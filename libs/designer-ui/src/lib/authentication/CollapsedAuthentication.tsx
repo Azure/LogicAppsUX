@@ -1,7 +1,7 @@
 import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
 import type { ValueSegment } from '../editor';
-import type { GetTokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { serializeEditorState } from '../editor/base/utils/editorToSegment';
@@ -22,7 +22,7 @@ interface CollapsedAuthenticationProps {
   serializeValue: (value: ValueSegment[]) => void;
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const CollapsedAuthentication = ({
