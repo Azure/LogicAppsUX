@@ -38,6 +38,7 @@ import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
+import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -245,6 +246,7 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
+          <DragPanMonitor />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}
