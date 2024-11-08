@@ -108,7 +108,7 @@ export const applyConnectionValue = (
         inputConnection = connection.inputs[inputIndex];
       }
 
-      if (inputConnection && isConnectionUnit(inputConnection)) {
+      if (inputConnection && isNodeConnection(inputConnection)) {
         connections[inputConnection.reactFlowKey].outputs = connections[inputConnection.reactFlowKey].outputs.filter(
           (output) => output.reactFlowKey !== targetNodeReactFlowKey
         );
@@ -136,7 +136,7 @@ export const applyConnectionValue = (
         const indexOfFirstOpenInput = connection.inputs.findIndex((inputCon) => !inputCon || isEmptyConnection(inputCon));
         confirmedInputIndex = indexOfFirstOpenInput >= 0 ? indexOfFirstOpenInput : connection.inputs.length;
       }
-    } else if (isConnectionUnit(input)) {
+    } else if (isNodeConnection(input)) {
       // Add input to first available slot (Handle & PropPane validation should guarantee there's at least one)
       confirmedInputIndex = connection.inputs.findIndex((inputCon) => isEmptyConnection(inputCon));
     } else if (isCustomValueConnection(input) && targetNode) {
@@ -168,7 +168,7 @@ export const applyConnectionValue = (
   } else {
     // Set the value (ConnectionUnit or custom value)
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      if (confirmedInputIndex === UnboundedInput && isConnectionUnit(input)) {
+      if (confirmedInputIndex === UnboundedInput && isNodeConnection(input)) {
         // Repeating schema node
         if (typeof input !== 'string') {
           input.isRepeating = isRepeating;
@@ -190,7 +190,7 @@ export const applyConnectionValue = (
     connections[targetNodeReactFlowKey] = connection;
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
-    if (isConnectionUnit(input)) {
+    if (isNodeConnection(input)) {
       const tgtConUnit: NodeConnection = {
         node: targetNode,
         reactFlowKey: targetNodeReactFlowKey,
@@ -319,12 +319,18 @@ export const createCustomInputConnection = (value: string): CustomValueConnectio
   };
 };
 
+export const connectionDoesExist = (
+  inputConnection: InputConnection | undefined
+): inputConnection is CustomValueConnection | NodeConnection => {
+  return inputConnection !== undefined && !isEmptyConnection(inputConnection);
+};
+
 export const isEmptyConnection = (connectionInput: InputConnection): connectionInput is EmptyConnection =>
   connectionInput !== undefined && connectionInput.isDefined === false;
 
 export const isCustomValueConnection = (connectionInput: InputConnection): connectionInput is CustomValueConnection =>
   connectionInput !== undefined && connectionInput.isCustom === true;
-export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is NodeConnection =>
+export const isNodeConnection = (connectionInput: InputConnection): connectionInput is NodeConnection =>
   connectionInput !== undefined && connectionInput.isDefined === true && connectionInput.isCustom === false;
 
 const onlyUniqueConnections = (value: NodeConnection, index: number, self: NodeConnection[]) => {
@@ -339,7 +345,7 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   // Put 0 input, content enricher functions in the node bucket
   const inputs = currentConnection.inputs;
   const customValueInputs = inputs.filter(isCustomValueConnection);
-  const definedNonCustomValueInputs: NodeConnection[] = inputs.filter(isConnectionUnit);
+  const definedNonCustomValueInputs: NodeConnection[] = inputs.filter(isNodeConnection);
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node?.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node?.maxNumberOfInputs === 0);
 
@@ -375,7 +381,7 @@ export const nodeHasSpecificInputEventually = (
   }
 
   const inputs = currentConnection.inputs;
-  const nonCustomInputs: NodeConnection[] = inputs.filter(isConnectionUnit);
+  const nonCustomInputs: NodeConnection[] = inputs.filter(isNodeConnection);
 
   return nonCustomInputs.some((input) =>
     nodeHasSpecificInputEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
@@ -399,7 +405,7 @@ export const nodeHasSpecificOutputEventually = (
     return true;
   }
 
-  const nonCustomOutputs: NodeConnection[] = currentConnection.outputs.filter(isConnectionUnit);
+  const nonCustomOutputs: NodeConnection[] = currentConnection.outputs.filter(isNodeConnection);
 
   return nonCustomOutputs.some((output) =>
     nodeHasSpecificOutputEventually(sourceKey, connections[output.reactFlowKey], connections, exactMatch)
@@ -407,7 +413,7 @@ export const nodeHasSpecificOutputEventually = (
 };
 
 export const collectSourceNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): NodeConnection[] => {
-  const connectionUnits: NodeConnection[] = currentFunction.inputs.filter(isConnectionUnit);
+  const connectionUnits: NodeConnection[] = currentFunction.inputs.filter(isNodeConnection);
 
   if (connectionUnits.length > 0) {
     return [
@@ -445,7 +451,7 @@ export const getActiveNodes = (state: DataMapOperationState, selectedItemKey?: s
 };
 
 export const collectSourceNodeIdsForConnectionChain = (previousNodeId: string, currentFunction: Connection): string[] => {
-  const connectionUnits: NodeConnection[] = currentFunction.inputs.filter(isConnectionUnit);
+  const connectionUnits: NodeConnection[] = currentFunction.inputs.filter(isNodeConnection);
   return [
     currentFunction.self.reactFlowKey,
     createEdgeId(currentFunction.self.reactFlowKey, previousNodeId),

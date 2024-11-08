@@ -11,7 +11,7 @@ import type { SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import {
   createNewEmptyConnection,
-  isConnectionUnit,
+  isNodeConnection,
   isEmptyConnection,
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
@@ -42,7 +42,7 @@ export const OutputTabContents = (props: {
   };
 
   const getIDForTargetConnection = (connection: InputConnection) => {
-    if (connection === undefined || !isConnectionUnit(connection)) {
+    if (connection === undefined || !isNodeConnection(connection)) {
       return '';
     }
     return connection.reactFlowKey;
@@ -52,7 +52,7 @@ export const OutputTabContents = (props: {
     if (newOutput === undefined) {
       return;
     }
-    if (!isConnectionUnit(newOutput)) {
+    if (!isNodeConnection(newOutput)) {
       const shortenedOutput = additionalOutput.slice(0, additionalOutput.length - 2);
       setAdditionalOutput(shortenedOutput);
       return;

@@ -14,7 +14,7 @@ import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } fr
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionDictionary, FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit, isCustomValueConnection, isEmptyConnection } from './Connection.Utils';
+import { connectionDoesExist, isNodeConnection, isCustomValueConnection, isEmptyConnection } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
@@ -98,7 +98,7 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection,
   if (isCustomValueConnection(firstInput)) {
     return firstInput.value;
   }
-  if (isConnectionUnit(firstInput)) {
+  if (isNodeConnection(firstInput)) {
     const node = firstInput.node;
     if (isSchemaNodeExtended(node)) {
       return calculateIndexValue(node);
@@ -225,7 +225,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
         if (input.node && isFunctionData(input.node)) {
           if (input.node.key === indexPseudoFunctionKey) {
             const sourceNode = connections[input.reactFlowKey].inputs[0];
-            return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+            return isNodeConnection(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
           }
 
           if (functionInputHasInputs(input.reactFlowKey, connections)) {
@@ -243,7 +243,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
   const inputs = connections?.[key]?.inputs?.[0];
   const sourceNode = inputs;
   let nodeName: string;
-  if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+  if (node.key === indexPseudoFunctionKey && isNodeConnection(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
     nodeName = calculateIndexValue(sourceNode.node);
   } else if (node.key === directAccessPseudoFunctionKey) {
     const functionValues = getInputValues(connections[key], connections);
@@ -275,7 +275,7 @@ export const getInputName = (
 };
 
 export const getInputValue = (inputConnection: InputConnection | undefined) => {
-  if (inputConnection && !isEmptyConnection(inputConnection)) {
+  if (connectionDoesExist(inputConnection)) {
     return isCustomValueConnection(inputConnection) ? inputConnection.value : inputConnection.reactFlowKey;
   }
 

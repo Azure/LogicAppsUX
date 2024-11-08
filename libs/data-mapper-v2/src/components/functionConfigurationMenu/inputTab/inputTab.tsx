@@ -17,7 +17,7 @@ import { InputDropdown } from '../inputDropdown/InputDropdown';
 import { useStyles } from './styles';
 import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
-import { createCustomInputConnection, isConnectionUnit, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import { createCustomInputConnection, isNodeConnection, newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
@@ -213,7 +213,7 @@ const UnlimitedInputs = (props: {
 
 export const getInputTypeFromNode = (input: InputConnection | undefined) => {
   let inputType = '';
-  if (input !== undefined && isConnectionUnit(input)) {
+  if (input !== undefined && isNodeConnection(input)) {
     if (isSchemaNodeExtended(input.node)) {
       inputType = input?.node.type;
     } else {

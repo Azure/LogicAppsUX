@@ -6,7 +6,7 @@ import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunction
 import { findLast } from '../utils/Array.Utils';
 import {
   collectTargetNodesForConnectionChain,
-  isConnectionUnit,
+  isNodeConnection,
   isCustomValueConnection,
   isEmptyConnection,
 } from '../utils/Connection.Utils';
@@ -212,7 +212,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         // Conditionals
         const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
         const sourceNode = rootSourceNodes; // danielle test
-        if (sourceNode && isConnectionUnit(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
+        if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         }
       }
@@ -225,7 +225,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       if (isFinalPath) {
         const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
         const inputNode = connectionsToTarget.inputs[0];
-        if (inputNode && isConnectionUnit(inputNode)) {
+        if (inputNode && isNodeConnection(inputNode)) {
           if (isFunctionData(inputNode.node)) {
             const valueToTrim = getSrcPathRelativeToLoop(newPath);
 
@@ -315,7 +315,7 @@ const addLoopingForToNewPathItems = (
   const rootSourceNodes = [...rootTargetConnection.inputs];
 
   rootSourceNodes.sort((nodeA, nodeB) => {
-    if (isConnectionUnit(nodeA) && isConnectionUnit(nodeB)) {
+    if (isNodeConnection(nodeA) && isNodeConnection(nodeB)) {
       let nodeAToUse = nodeA;
       let nodeBToUse = nodeB;
 
@@ -323,14 +323,14 @@ const addLoopingForToNewPathItems = (
       // That way if we have layered index pseudo functions they are sorted correctly
       if (nodeA.node.key === indexPseudoFunctionKey) {
         const sourceInput = connections[nodeA.reactFlowKey].inputs[0];
-        if (isConnectionUnit(sourceInput)) {
+        if (isNodeConnection(sourceInput)) {
           nodeAToUse = sourceInput;
         }
       }
 
       if (nodeB.node.key === indexPseudoFunctionKey) {
         const sourceInput = connections[nodeB.reactFlowKey].inputs[0];
-        if (isConnectionUnit(sourceInput)) {
+        if (isNodeConnection(sourceInput)) {
           nodeBToUse = sourceInput;
         }
       }
@@ -344,12 +344,12 @@ const addLoopingForToNewPathItems = (
   rootSourceNodes.forEach((sourceNode) => {
     let loopValue = '';
 
-    if (sourceNode && isConnectionUnit(sourceNode)) {
+    if (sourceNode && isNodeConnection(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
         if (sourceNode.node.key === ifPseudoFunctionKey) {
           const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1]; // danielle why 1?
           const sourceSchemaNodeReactFlowKey =
-            (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.reactFlowKey) || '';
+            (isNodeConnection(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.reactFlowKey) || '';
 
           const indexFunctions = collectTargetNodesForConnectionChain(connections[sourceSchemaNodeReactFlowKey], connections).filter(
             (connection) => connection.node.key === indexPseudoFunctionKey
@@ -358,7 +358,7 @@ const addLoopingForToNewPathItems = (
           if (indexFunctions.length > 0) {
             const indexConnection = connections[indexFunctions[0].reactFlowKey];
             const inputConnection = indexConnection.inputs[0];
-            const inputKey = isConnectionUnit(inputConnection) && inputConnection.node.key;
+            const inputKey = isNodeConnection(inputConnection) && inputConnection.node.key;
 
             loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})`;
           } else {

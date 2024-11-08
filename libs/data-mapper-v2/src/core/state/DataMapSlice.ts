@@ -10,7 +10,7 @@ import {
   getActiveNodes,
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
-  isConnectionUnit,
+  isNodeConnection,
   isCustomValueConnection,
   isEmptyConnection,
 } from '../../utils/Connection.Utils';
@@ -724,7 +724,7 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
   if (newConnections[keyToDelete]) {
     // Step through all the connected inputs and delete the selected key from their outputs
     newConnections[keyToDelete].inputs.forEach((input) => {
-      if (isConnectionUnit(input)) {
+      if (isNodeConnection(input)) {
         newConnections[input.reactFlowKey].outputs = newConnections[input.reactFlowKey].outputs.filter(
           (output) => output.reactFlowKey !== keyToDelete
         );
@@ -734,7 +734,7 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
     // Step through all the outputs and delete the selected key from their inputs
     newConnections[keyToDelete].outputs.forEach((outputConnection) => {
       newConnections[outputConnection.reactFlowKey].inputs = newConnections[outputConnection.reactFlowKey].inputs.filter((input) =>
-        isConnectionUnit(input) ? input.reactFlowKey !== keyToDelete : true
+        isNodeConnection(input) ? input.reactFlowKey !== keyToDelete : true
       );
     });
   }
@@ -757,7 +757,7 @@ export const deleteConnectionFromConnections = (
   let outputNodeInputs = connections[outputKey].inputs;
   if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     outputNodeInputs.forEach((input, inputIndex) => {
-      if (isConnectionUnit(input) && input.reactFlowKey === inputKey) {
+      if (isNodeConnection(input) && input.reactFlowKey === inputKey) {
         if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {
           outputNodeInputs[inputIndex] = createNewEmptyConnection(); // danielle test
         }
@@ -766,7 +766,7 @@ export const deleteConnectionFromConnections = (
   } else {
     outputNodeInputs = outputNodeInputs.map((inputEntry) => {
       if (
-        (isConnectionUnit(inputEntry) && inputEntry.reactFlowKey === inputKey) ||
+        (isNodeConnection(inputEntry) && inputEntry.reactFlowKey === inputKey) ||
         (isCustomValueConnection(inputEntry) && inputEntry.value === inputKey)
       ) {
         return createNewEmptyConnection();

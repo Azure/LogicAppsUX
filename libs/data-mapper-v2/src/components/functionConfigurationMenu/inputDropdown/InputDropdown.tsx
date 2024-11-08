@@ -180,6 +180,7 @@ export const InputDropdown = ({
     }
     if (inputValue === undefined) {
       setSelectedOptions([]);
+      setCustomValue(undefined);
     }
   }, [inputValue]);
 
@@ -271,12 +272,6 @@ export const InputDropdown = ({
       validateAndCreateConnection(data.optionValue, option);
     }
   };
-
-  useEffect(() => {
-    if (inputValue === undefined) {
-      setCustomValue(undefined);
-    }
-  }, [inputValue]);
 
   const changeValue = (value: string) => {
     const matches = isNullOrEmpty(value)
