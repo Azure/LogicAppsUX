@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.116.7](https://github.com/Azure/LogicAppsUX/compare/v4.116.6...v4.116.7) (2024-11-08)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed custom connector browse with extra capabilities ([#6056](https://github.com/Azure/LogicAppsUX/issues/6056)) ([c6b6380](https://github.com/Azure/LogicAppsUX/commit/c6b63809fd7aa0c9f06554192e09218a0e44c7a6))
+
 ### [4.116.6](https://github.com/Azure/LogicAppsUX/compare/v4.116.5...v4.116.6) (2024-11-08)
 
 
