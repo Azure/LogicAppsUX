@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/designer-ui",
-  "version": "4.116.4",
+  "version": "4.116.5",
   "dependencies": {
     "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.42.0",
