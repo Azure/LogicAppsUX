@@ -51,7 +51,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       if (filters['actionType'] && (allApiIdsWithActions.data.length > 0 || allApiIdsWithTriggers.data.length > 0)) {
         const capabilities = connector.properties?.capabilities ?? [];
-        const ignoreCapabilities = capabilities.length === 0;
+        const ignoreCapabilities = !capabilities.includes('triggers') && !capabilities.includes('actions');
         const connectorId = cleanConnectorId(connector.id);
         const supportsActions = (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connectorId);
         const supportsTriggers =
