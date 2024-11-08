@@ -48,7 +48,7 @@ export const OutputTabContents = (props: {
     return connection.reactFlowKey;
   };
 
-  const removeConnection = (newOutput: InputConnection | undefined) => {
+  const removeConnection = (newOutput?: InputConnection) => {
     if (newOutput === undefined) {
       return;
     }
