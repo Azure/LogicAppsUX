@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.116.6](https://github.com/Azure/LogicAppsUX/compare/v4.116.5...v4.116.6) (2024-11-08)
+
+
+### Bug Fixes
+
+* **Designer:** Null catch on connection query ([#6053](https://github.com/Azure/LogicAppsUX/issues/6053)) ([db9331d](https://github.com/Azure/LogicAppsUX/commit/db9331dfde419b045dcc1d3b92c4a61710437f4f)), closes [#6024](https://github.com/Azure/LogicAppsUX/issues/6024) [#6023](https://github.com/Azure/LogicAppsUX/issues/6023)
+
 ### [4.116.5](https://github.com/Azure/LogicAppsUX/compare/v4.116.4...v4.116.5) (2024-11-08)
 
 ### [4.116.4](https://github.com/Azure/LogicAppsUX/compare/v4.116.3...v4.116.4) (2024-11-08)
