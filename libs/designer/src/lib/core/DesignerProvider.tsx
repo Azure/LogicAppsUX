@@ -49,8 +49,8 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
     <ReduxProvider store={store}>
       <OptionsStateSet options={options}>
         <ProviderWrappedContext.Provider value={options.services}>
-          <ThemeProvider theme={azTheme}>
-            <FluentProvider theme={webTheme}>
+          <ThemeProvider theme={azTheme} style={{ height: 'inherit' }}>
+            <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
               <div
                 data-color-scheme={themeName}
                 className={`msla-theme-${themeName}`}
