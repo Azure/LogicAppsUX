@@ -77,6 +77,7 @@ export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): React
 const createReactFlowEdgeLabels = (connection: Connection, inputIndex: number): string[] => {
   let labels: string[] = [];
   if (isFunctionData(connection.self.node)) {
+    // only function nodes need labels for their multiple inputs
     if (connection.self.node.maxNumberOfInputs > UnboundedInput) {
       labels = [connection.self.node.inputs[inputIndex].name];
     } else {
