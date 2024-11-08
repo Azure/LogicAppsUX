@@ -89,7 +89,7 @@ export const getFunctionOutputValue = (inputValues: string[], functionName: stri
 
 export const functionInputHasInputs = (fnInputReactFlowKey: string, connections: ConnectionDictionary): boolean => {
   const fnInputConnection = connections[fnInputReactFlowKey];
-  return !!fnInputConnection && fnInputConnection.inputs.length > 0;
+  return fnInputConnection?.inputs && fnInputConnection.inputs.length > 0;
 };
 
 export const getIndexValueForCurrentConnection = (currentConnection: Connection, connections: ConnectionDictionary): string => {
