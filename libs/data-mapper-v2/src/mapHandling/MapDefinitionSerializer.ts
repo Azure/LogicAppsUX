@@ -211,7 +211,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       if (connectionsIntoCurrentTargetPath) {
         // Conditionals
         const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
-        const sourceNode = rootSourceNodes; // danielle test
+        const sourceNode = rootSourceNodes;
         if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         }
@@ -347,7 +347,7 @@ const addLoopingForToNewPathItems = (
     if (sourceNode && isNodeConnection(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
         if (sourceNode.node.key === ifPseudoFunctionKey) {
-          const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1]; // danielle why 1?
+          const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1];
           const sourceSchemaNodeReactFlowKey =
             (isNodeConnection(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.reactFlowKey) || '';
 

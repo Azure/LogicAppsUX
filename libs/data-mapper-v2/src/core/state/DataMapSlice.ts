@@ -759,7 +759,7 @@ export const deleteConnectionFromConnections = (
     outputNodeInputs.forEach((input, inputIndex) => {
       if (isNodeConnection(input) && input.reactFlowKey === inputKey) {
         if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {
-          outputNodeInputs[inputIndex] = createNewEmptyConnection(); // danielle test
+          outputNodeInputs[inputIndex] = createNewEmptyConnection();
         }
       }
     });

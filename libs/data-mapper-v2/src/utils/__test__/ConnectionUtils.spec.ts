@@ -11,7 +11,7 @@ import {
   createNewEmptyConnection,
   createNodeConnection,
   inputFromHandleId,
-  isConnectionUnit,
+  isNodeConnection,
   isEmptyConnection,
   isFunctionInputSlotAvailable,
   isValidConnectionByType,
@@ -91,7 +91,7 @@ describe('utils/Connections', () => {
 
   describe('applyConnectionValue', () => {
     const inputDoesExist = (inputs: InputConnection[], mockSourceReactFlowKey: string) => {
-      return inputs.some((input) => input && isConnectionUnit(input) && input.reactFlowKey === mockSourceReactFlowKey);
+      return inputs.some((input) => input && isNodeConnection(input) && input.reactFlowKey === mockSourceReactFlowKey);
     };
 
     describe('Test drawn/deserialized connections', () => {
@@ -140,7 +140,7 @@ describe('utils/Connections', () => {
         expect(mockConnections[mockSelfReactFlowKey]).toBeDefined();
         expect(
           mockConnections[mockSelfReactFlowKey].inputs.some(
-            (input) => input && isConnectionUnit(input) && input.reactFlowKey === mockSourceReactFlowKey
+            (input) => input && isNodeConnection(input) && input.reactFlowKey === mockSourceReactFlowKey
           )
         ).toEqual(true);
       });
@@ -200,7 +200,7 @@ describe('utils/Connections', () => {
 
         expect(mockConnections[mockSelfReactFlowKey]).toBeDefined();
         expect(isEmptyConnection(mockConnections[mockSelfReactFlowKey].inputs[0])).toBeTruthy();
-        expect(isConnectionUnit(mockConnections[mockSelfReactFlowKey].inputs[1])).toBeTruthy();
+        expect(isNodeConnection(mockConnections[mockSelfReactFlowKey].inputs[1])).toBeTruthy();
       });
 
       it('connects second repeating connection', () => {
@@ -231,11 +231,11 @@ describe('utils/Connections', () => {
         expect(connections['source-/ns0:bookstore/ns0:book'].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
         expect(connections['source-/ns0:bookstore/ns0:book/ns0:book2'].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
         expect(
-          isConnectionUnit(connections['target-/ns0:Root/Looping/Person'].inputs[0]) &&
+          isNodeConnection(connections['target-/ns0:Root/Looping/Person'].inputs[0]) &&
             connections['target-/ns0:Root/Looping/Person'].inputs[0].reactFlowKey
         ).toEqual('source-/ns0:bookstore/ns0:book');
         expect(
-          isConnectionUnit(connections['target-/ns0:Root/Looping/Person'].inputs[1]) &&
+          isNodeConnection(connections['target-/ns0:Root/Looping/Person'].inputs[1]) &&
             connections['target-/ns0:Root/Looping/Person'].inputs[1].reactFlowKey
         ).toEqual('source-/ns0:bookstore/ns0:book/ns0:book2');
 
@@ -429,8 +429,8 @@ describe('utils/Connections', () => {
           input: createNodeConnection({} as SchemaNodeExtended, 'newCon2'),
         });
 
-        expect(isConnectionUnit(unboundedMockConnections[currentNodeReactFlowKey].inputs[0])).toBeTruthy();
-        expect(isConnectionUnit(unboundedMockConnections[currentNodeReactFlowKey].inputs[1])).toBeTruthy();
+        expect(isNodeConnection(unboundedMockConnections[currentNodeReactFlowKey].inputs[0])).toBeTruthy();
+        expect(isNodeConnection(unboundedMockConnections[currentNodeReactFlowKey].inputs[1])).toBeTruthy();
       });
     });
   });

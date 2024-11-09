@@ -6,7 +6,7 @@ import {
   createCustomInputConnection,
   createNewEmptyConnection,
   createNodeConnection,
-  isConnectionUnit,
+  isNodeConnection,
   isCustomValueConnection,
 } from '../Connection.Utils';
 import { isFunctionData } from '../Function.Utils';
@@ -55,9 +55,9 @@ describe('utils/type-checker-utils', () => {
     expect(isCustomValueConnection(createCustomInputConnection('custom'))).toEqual(true);
   });
 
-  it('isConnectionUnit', () => {
-    expect(isConnectionUnit(createNewEmptyConnection())).toEqual(false);
-    expect(isConnectionUnit(createCustomInputConnection('custom'))).toEqual(false);
-    expect(isConnectionUnit(createNodeConnection({} as SchemaNodeExtended, 'nodeId'))).toEqual(true);
+  it('isNodeConnection', () => {
+    expect(isNodeConnection(createNewEmptyConnection())).toEqual(false);
+    expect(isNodeConnection(createCustomInputConnection('custom'))).toEqual(false);
+    expect(isNodeConnection(createNodeConnection({} as SchemaNodeExtended, 'nodeId'))).toEqual(true);
   });
 });

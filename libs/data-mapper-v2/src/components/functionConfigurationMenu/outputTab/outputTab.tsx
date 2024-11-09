@@ -14,6 +14,7 @@ import {
   isNodeConnection,
   isEmptyConnection,
   newConnectionWillHaveCircularLogic,
+  createCustomInputConnection,
 } from '../../../utils/Connection.Utils';
 import { makeConnectionFromMap, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { useState } from 'react';
@@ -184,7 +185,7 @@ const validateAndCreateConnectionOutput = (
       return srcConUnit;
     }
     // Create custom value connection
-    const srcConUnit: InputConnection = { isCustom: true, isDefined: true, value: optionValue };
+    const srcConUnit: InputConnection = createCustomInputConnection(optionValue);
 
     return srcConUnit;
   }
