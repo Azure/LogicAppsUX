@@ -117,19 +117,12 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const runAfterX = targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
   const runAfterY = targetY - runAfterHeight;
 
-  const targetXWithRunAfter = useMemo(() => {
-    if (showRunAfter) {
-      return targetX + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
-    }
-    return targetX;
-  }, [numRunAfters, raIndex, showRunAfter, targetX]);
-
   const [d] = useMemo(() => {
     return getSmoothStepPath({
       sourceX,
       sourceY,
       sourcePosition,
-      targetX: targetXWithRunAfter,
+      targetX,
       targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
       borderRadius: 8,
