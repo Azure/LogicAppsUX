@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [5.0.0](https://github.com/Azure/LogicAppsUX/compare/v4.122.0...v5.0.0) (2024-11-11)
+
+
+### Bug Fixes
+
+* **Designer:** Canvas pans when dragging a node to the edge of the canvas ([#6049](https://github.com/Azure/LogicAppsUX/issues/6049)) ([c76293e](https://github.com/Azure/LogicAppsUX/commit/c76293ea7fcdff5e1882e7a4c2f17388db6718db))
+* **Designer:** Designer now inherits container size instead of being 100vh ([#6058](https://github.com/Azure/LogicAppsUX/issues/6058)) ([ef55c25](https://github.com/Azure/LogicAppsUX/commit/ef55c2557cef9c92b817503521910864487d0d6f))
+* **Designer:** Fixed custom connector browse with extra capabilities ([#6055](https://github.com/Azure/LogicAppsUX/issues/6055)) ([998d644](https://github.com/Azure/LogicAppsUX/commit/998d6446dd608d2b258359fc767807df964e6188))
+
 ## [4.122.0](https://github.com/Azure/LogicAppsUX/compare/v4.121.0...v4.122.0) (2024-11-07)
 
 
