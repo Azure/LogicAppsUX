@@ -4,10 +4,10 @@
 .msla-colorizer-wrapper {
   border: 1px solid lightgray;
   margin: 0.5em 1.25em;
-  max-height: 12rem; /* 192px = 12×16px = 10×19px + 2px borders */
 }
 
 .msla-colorizer-json-body {
+  overflow: hidden;
   .monaco-editor {
     .decorationsOverviewRuler {
       display: none;
@@ -26,6 +26,7 @@
 }
 
 .msla-colorizer-wrapper {
+  max-height: 12rem;   /* 192px = 12×16px = 10×19px + 2px borders */
   position: relative;
   font-size: 13px;
   margin: 0;

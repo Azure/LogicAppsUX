@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { createEmptyLiteralValueSegment } from '../editor/base/utils/helper';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
@@ -42,7 +42,7 @@ export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
   showDescription?: boolean;

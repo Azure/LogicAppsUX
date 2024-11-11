@@ -74,7 +74,7 @@ describe('ui/settings/customTokenField', () => {
       editorOptions: {
         EditorComponent: MyCustomEditor,
         editor: 'dropdown',
-        editorOptions: { options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }] },
+        options: { options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }] },
         hideLabel: true,
       },
     });
@@ -85,9 +85,9 @@ describe('ui/settings/customTokenField', () => {
       const customTokenField = renderer.getRenderOutput();
 
       expect(customTokenField.type).toBe(MyCustomEditor);
-      expect(customTokenField.props).toEqual({
+      expect(customTokenField.props).toMatchObject({
         editor: props.editorOptions?.editor,
-        editorOptions: props.editorOptions?.editorOptions,
+        editorOptions: { options: props.editorOptions?.options },
         value: props.value,
         onValueChange: props.onValueChange,
         renderDefaultEditor: expect.any(Function),
@@ -124,9 +124,11 @@ describe('ui/settings/customTokenField', () => {
       const customTokenField = renderer.getRenderOutput();
 
       expect(customTokenField.type).toBe(MyCustomEditor);
-      expect(customTokenField.props).toEqual({
+      expect(customTokenField.props).toMatchObject({
         editor: props.editorOptions?.editor,
-        editorOptions: props.editorOptions?.editorOptions,
+        editorOptions: {
+          options: props.editorOptions?.options,
+        },
         value: props.value,
         onValueChange: props.onValueChange,
         renderDefaultEditor: expect.any(Function),
