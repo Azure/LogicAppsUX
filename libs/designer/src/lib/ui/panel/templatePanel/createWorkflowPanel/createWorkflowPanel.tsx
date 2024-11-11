@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
 import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { ChevronDown16Regular, ChevronUp16Regular } from '@fluentui/react-icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
 import { Label } from '@fluentui/react';
@@ -11,6 +11,7 @@ import Markdown from 'react-markdown';
 import { useCreateWorkflowPanelTabs } from './usePanelTabs';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 import type { CreateWorkflowHandler } from '../../../templates';
+import { useExistingWorkflowNames } from '../../../../core/queries/template';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -25,9 +26,11 @@ export const CreateWorkflowPanel = ({
   createWorkflow: CreateWorkflowHandler | undefined;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { selectedTabId, manifest } = useSelector((state: RootState) => ({
+  const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
+  const { selectedTabId, manifest, isOpen } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
+    isOpen: state.panel.isOpen,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
@@ -35,6 +38,12 @@ export const CreateWorkflowPanel = ({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      refetchWorkflowNames();
+    }
+  }, [isOpen, refetchWorkflowNames]);
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));

@@ -1,6 +1,6 @@
 import { Panel, PanelType } from '@fluentui/react';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel } from '../../../core/state/templates/panelSlice';
 import { CreateWorkflowPanel, CreateWorkflowPanelHeader } from './createWorkflowPanel/createWorkflowPanel';
@@ -9,7 +9,6 @@ import { type TemplatePanelTab, TemplatesPanelFooter } from '@microsoft/designer
 import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
 import { getQuickViewTabs } from '../../../core/templates/utils/helper';
-import { useExistingWorkflowNames } from '../../../core/queries/template';
 import type { CreateWorkflowHandler } from '../../templates';
 
 export interface TemplatePanelProps {
@@ -103,12 +102,6 @@ export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId,
       selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
     [selectedTabProps?.footerContent, showCreate]
   );
-  const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  useEffect(() => {
-    if (isOpen && isCreatePanelView) {
-      refetchWorkflowNames();
-    }
-  }, [isOpen, currentPanelView, refetchWorkflowNames, isCreatePanelView]);
 
   return (
     <Panel
