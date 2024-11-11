@@ -131,6 +131,20 @@
 
 .react-flow__edge-path {
   stroke-width: 2 !important;
+
+	&.highlighted {
+		stroke: #1f85ff;
+	}
+}
+
+.react-flow__edge {
+	marker > path {
+		fill: @ms-color-edge;
+	}
+
+	marker.highlighted > path {
+		fill: #1f85ff;
+	}
 }
 
 .msla-add-context-menu {
@@ -184,12 +198,20 @@
   }
 
   .react-flow__edge-path {
-    stroke: @ms-color-edge;
+    stroke: @ms-color-edge-dark;
+
+		&.highlighted {
+			stroke: #1f85ff;
+		}
   }
+
   .react-flow__edge {
     marker > path {
-      fill: @ms-color-edge;
+      fill: @ms-color-edge-dark;
     }
+		marker.highlighted > path {
+			fill: #1f85ff;
+		}
   }
 
   .ms-Pivot-link {
