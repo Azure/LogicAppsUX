@@ -12,7 +12,7 @@ import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useHoverFunctionNode, useSelectedNode } from '../../../core/state/selectors/selectors';
 import { useCallback, useMemo } from 'react';
-import { isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
+import { isEmptyConnection, isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
 import { customTokens } from '../../../core/ThemeConect';
 
 export interface FunctionCardProps extends CardProps {
@@ -47,9 +47,9 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   );
 
   const isLeftConnected =
-    functionWithConnections?.inputs[0] &&
-    functionWithConnections?.inputs[0].length > 0 &&
-    functionWithConnections?.inputs[0][0] !== undefined;
+    functionWithConnections?.inputs &&
+    functionWithConnections?.inputs.length > 0 &&
+    functionWithConnections?.inputs[0] !== undefined && !isEmptyConnection(functionWithConnections?.inputs[0]);
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
   const getHandleStyle = useCallback(
