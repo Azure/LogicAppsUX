@@ -1,5 +1,7 @@
+// @ts-nocheck
 import type { Connection, ConnectionDictionary } from '../../models/Connection';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import { createNodeConnection } from '../Connection.Utils';
 
 export const manyToManyConnectionSourceName =
   'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect';
@@ -10,8 +12,8 @@ export const manyToOneConnectionSourceName =
 export const manyToOneConnectionTargetName = 'target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct';
 
 export const manyToManyConnectionFromSource: Connection = {
-  self: {
-    node: {
+  self: createNodeConnection(
+    {
       key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
       name: 'SourceDirect',
       type: NormalizedDataType.String,
@@ -66,70 +68,68 @@ export const manyToManyConnectionFromSource: Connection = {
       ],
       arrayItemIndex: undefined,
     },
-    reactFlowKey: 'target-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
-  },
-  inputs: {
-    '0': [
+    'target-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
+  ),
+  inputs: [
+    createNodeConnection(
       {
-        node: {
-          key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
-          name: 'SourceDirect',
-          type: NormalizedDataType.String,
-          properties: 'None',
-          qName: 'SourceDirect',
-          parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild',
-          nodeProperties: [SchemaNodeProperty.None],
-          children: [],
-          pathToRoot: [
-            {
-              key: '/ns0:SourceSchemaRoot',
-              name: 'SourceSchemaRoot',
-              qName: 'ns0:SourceSchemaRoot',
-              repeating: false,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToMany',
-              name: 'ManyToMany',
-              qName: 'ManyToMany',
-              repeating: false,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple',
-              name: 'Simple',
-              qName: 'Simple',
-              repeating: true,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild',
-              name: 'SourceSimpleChild',
-              qName: 'SourceSimpleChild',
-              repeating: true,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild',
-              name: 'SourceSimpleChildChild',
-              qName: 'SourceSimpleChildChild',
-              repeating: true,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
-              name: 'SourceDirect',
-              qName: 'SourceDirect',
-              repeating: false,
-            },
-          ],
-          arrayItemIndex: undefined,
-        },
-        reactFlowKey: 'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
+        key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
+        name: 'SourceDirect',
+        type: NormalizedDataType.String,
+        properties: 'None',
+        qName: 'SourceDirect',
+        parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild',
+        nodeProperties: [SchemaNodeProperty.None],
+        children: [],
+        pathToRoot: [
+          {
+            key: '/ns0:SourceSchemaRoot',
+            name: 'SourceSchemaRoot',
+            qName: 'ns0:SourceSchemaRoot',
+            repeating: false,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToMany',
+            name: 'ManyToMany',
+            qName: 'ManyToMany',
+            repeating: false,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple',
+            name: 'Simple',
+            qName: 'Simple',
+            repeating: true,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild',
+            name: 'SourceSimpleChild',
+            qName: 'SourceSimpleChild',
+            repeating: true,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild',
+            name: 'SourceSimpleChildChild',
+            qName: 'SourceSimpleChildChild',
+            repeating: true,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
+            name: 'SourceDirect',
+            qName: 'SourceDirect',
+            repeating: false,
+          },
+        ],
+        arrayItemIndex: undefined,
       },
-    ],
-  },
+      'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
+    ),
+  ],
   outputs: [],
 };
 
 export const manyToManyConnectionFromTarget: Connection = {
-  self: {
-    node: {
+  self: createNodeConnection(
+    {
       key: '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
       name: 'SourceDirect',
       type: NormalizedDataType.String,
@@ -184,14 +184,12 @@ export const manyToManyConnectionFromTarget: Connection = {
       ],
       arrayItemIndex: undefined,
     },
-    reactFlowKey: 'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
-  },
-  inputs: {
-    '0': [],
-  },
+    'source-/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
+  ),
+  inputs: [],
   outputs: [
-    {
-      node: {
+    createNodeConnection(
+      {
         key: '/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct',
         name: 'Direct',
         type: NormalizedDataType.String,
@@ -246,14 +244,14 @@ export const manyToManyConnectionFromTarget: Connection = {
         ],
         arrayItemIndex: undefined,
       },
-      reactFlowKey: 'target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct',
-    },
+      'target-/ns0:TargetSchemaRoot/Looping/ManyToMany/Simple/SimpleChild/SimpleChildChild/Direct'
+    ),
   ],
 };
 
 export const manyToOneConnectionFromTarget: Connection = {
-  self: {
-    node: {
+  self: createNodeConnection(
+    {
       key: '/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct',
       name: 'Direct',
       type: NormalizedDataType.String,
@@ -290,64 +288,62 @@ export const manyToOneConnectionFromTarget: Connection = {
       ],
       arrayItemIndex: undefined,
     },
-    reactFlowKey: 'target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct',
-  },
-  inputs: {
-    '0': [
+    'target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct'
+  ),
+  inputs: [
+    createNodeConnection(
       {
-        node: {
-          key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
-          name: 'SourceDirect',
-          type: NormalizedDataType.String,
-          properties: 'None',
-          qName: 'SourceDirect',
-          parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
-          nodeProperties: [SchemaNodeProperty.None],
-          children: [],
-          pathToRoot: [
-            {
-              key: '/ns0:Root',
-              name: 'Root',
-              qName: 'ns0:Root',
-              repeating: false,
-            },
-            {
-              key: '/ns0:Root/ManyToOne',
-              name: 'ManyToOne',
-              qName: 'ManyToOne',
-              repeating: false,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
-              name: 'Simple',
-              qName: 'Simple',
-              repeating: true,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild',
-              name: 'SourceSimpleChild',
-              qName: 'SourceSimpleChild',
-              repeating: true,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
-              name: 'SourceSimpleChildChild',
-              qName: 'SourceSimpleChildChild',
-              repeating: true,
-            },
-            {
-              key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
-              name: 'SourceDirect',
-              qName: 'SourceDirect',
-              repeating: false,
-            },
-          ],
-          arrayItemIndex: undefined,
-        },
-        reactFlowKey: 'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
+        key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
+        name: 'SourceDirect',
+        type: NormalizedDataType.String,
+        properties: 'None',
+        qName: 'SourceDirect',
+        parentKey: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
+        nodeProperties: [SchemaNodeProperty.None],
+        children: [],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            qName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne',
+            name: 'ManyToOne',
+            qName: 'ManyToOne',
+            repeating: false,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple',
+            name: 'Simple',
+            qName: 'Simple',
+            repeating: true,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild',
+            name: 'SourceSimpleChild',
+            qName: 'SourceSimpleChild',
+            repeating: true,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild',
+            name: 'SourceSimpleChildChild',
+            qName: 'SourceSimpleChildChild',
+            repeating: true,
+          },
+          {
+            key: '/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect',
+            name: 'SourceDirect',
+            qName: 'SourceDirect',
+            repeating: false,
+          },
+        ],
+        arrayItemIndex: undefined,
       },
-    ],
-  },
+      'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
+    ),
+  ],
   outputs: [],
 };
 

@@ -1,10 +1,11 @@
 import { guid, type SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData, FunctionDictionary } from 'models';
-import type { ConnectionDictionary } from '../models/Connection';
-import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
+import { generateInputHandleId, isNodeConnection } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { nodeScrollDirections } from './Schema.Utils';
+import { UnboundedInput } from '../constants/FunctionConstants';
 
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
@@ -73,6 +74,19 @@ export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): React
   };
 };
 
+const createReactFlowEdgeLabels = (connection: Connection, inputIndex: number): string[] => {
+  let labels: string[] = [];
+  if (isFunctionData(connection.self.node)) {
+    // only function nodes need labels for their multiple inputs
+    if (connection.self.node.maxNumberOfInputs > UnboundedInput) {
+      labels = [connection.self.node.inputs[inputIndex].name];
+    } else {
+      labels = [generateInputHandleId(connection.self.node.inputs[0].name, inputIndex)]; // if unlimited inputs, the name is always the same
+    }
+  }
+  return labels;
+};
+
 export const convertWholeDataMapToLayoutTree = (
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
@@ -82,29 +96,23 @@ export const convertWholeDataMapToLayoutTree = (
   let nextEdgeIndex = 0;
   const layoutEdges: LayoutEdge[] = [];
 
+  // loops through all connections and adds if not a custom value
   Object.values(connections).forEach((connection) => {
-    Object.values(connection.inputs).forEach((inputValueArray, inputIndex) => {
-      inputValueArray.forEach((inputValue, inputValueIndex) => {
-        if (isConnectionUnit(inputValue)) {
-          const targetId = connection.self.reactFlowKey;
-          const labels = isFunctionData(connection.self.node)
-            ? connection.self.node?.maxNumberOfInputs > -1
-              ? [connection.self.node.inputs[inputIndex].name]
-              : [generateInputHandleId(connection.self.node.inputs[inputIndex].name, inputValueIndex)]
-            : [];
+    connection.inputs.forEach((input, inputIndex) => {
+      if (isNodeConnection(input)) {
+        const targetId = connection.self.reactFlowKey;
+        const labels = createReactFlowEdgeLabels(connection, inputIndex);
+        const nextEdge: LayoutEdge = {
+          id: `e${nextEdgeIndex}`,
+          sourceId: input.reactFlowKey,
+          targetId,
+          labels,
+          isRepeating: input.isRepeating ?? false,
+        };
 
-          const nextEdge: LayoutEdge = {
-            id: `e${nextEdgeIndex}`,
-            sourceId: inputValue.reactFlowKey,
-            targetId,
-            labels,
-            isRepeating: inputValue.isRepeating ?? false,
-          };
-
-          layoutEdges.push(nextEdge);
-          nextEdgeIndex += 1;
-        }
-      });
+        layoutEdges.push(nextEdge);
+        nextEdgeIndex += 1;
+      }
     });
   });
 

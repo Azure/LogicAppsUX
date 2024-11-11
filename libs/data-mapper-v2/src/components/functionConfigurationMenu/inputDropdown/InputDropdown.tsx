@@ -178,6 +178,10 @@ export const InputDropdown = ({
     if (inputValue) {
       setSelectedOptions([inputValue]);
     }
+    if (inputValue === undefined) {
+      setSelectedOptions([]);
+      setCustomValue(undefined);
+    }
   }, [inputValue]);
 
   const originalOptions = useMemo(() => {
