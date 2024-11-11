@@ -165,24 +165,27 @@
 .msla-panel-mode {
   position: relative;
 
-  .msla-drop-zone-viewmanager2 {
+  .msla-drop-zone-viewmanager {
     display: flex;
     justify-content: center;
     align-content: center;
-    width: 196px; /* Note: Width is set to 196px and not 200px here because the border radius is 2px when dragging over this div which makes the parent scope container increase in width by 4px and create a jumping effect. */
     height: @card-v2-small-height;
+		max-width: @card-v2-small-width;
     cursor: grab;
+		margin: 0px auto;
+		box-sizing: border-box;
 
     &.canDrop {
       background: #e7f4ff;
       outline: 2px dashed #0078d4;
-      border-radius: 2px;
+      border-radius: 4px;
     }
 
     &.cannotDrop {
-      background: #edebe9;
-      outline: 2px dashed #797775;
-      border-radius: 2px;
+      background: #b1b1b7;
+			max-width: 24px;
+			height: 24px;
+      border-radius: 12px;
     }
   }
 }
@@ -210,17 +213,14 @@
     stroke: #c2cbd6;
   }
 
-  .msla-drop-zone-viewmanager2 {
+  .msla-drop-zone-viewmanager {
     &.canDrop {
       background: #00245b;
       outline: 2px dashed #2899f5;
-      border-radius: 2px;
     }
 
     &.cannotDrop {
-      background: #323130;
-      outline: 2px dashed #a19f9d;
-      border-radius: 2px;
+      background: #8a8886;
     }
   }
 }
