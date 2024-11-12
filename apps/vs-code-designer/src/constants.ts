@@ -19,6 +19,7 @@ export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
+export const nugetFileName = 'nuget.config';
 
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
