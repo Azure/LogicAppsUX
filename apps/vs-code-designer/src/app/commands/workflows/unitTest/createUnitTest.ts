@@ -176,7 +176,6 @@ async function generateCodefulUnitTest(
       ext.outputChannel.appendLog(localize('addingTestsDirectory', 'Adding tests directory to workspace: {0}', testsDirectory));
       FileManagement.addFolderToWorkspace(testsDirectory);
     }
-
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
@@ -229,6 +228,7 @@ async function createCsprojFile(csprojFilePath: string, logicAppName: string): P
 
 /**
  * Creates a .cs file in the specified unit test folder using a template.
+ * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
  * @param {string} unitTestFolderPath - The path to the unit test folder.
  * @param {string} unitTestName - The name of the unit test.
  * @param {string} workflowName - The name of the workflow.
@@ -241,12 +241,25 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
 
   let templateContent = await fs.readFile(templatePath, 'utf-8');
 
-  templateContent = templateContent
-    .replace(/<%= UnitTestName %>/g, unitTestName)
-    .replace(/<%= LogicAppName %>/g, logicAppName)
-    .replace(/<%= WorkflowName %>/g, workflowName);
+  const sanitizedUnitTestName = unitTestName.replace(/-/g, '_');
+  const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
+  const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
 
-  const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
+  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${sanitizedLogicAppName}.Tests`);
+  templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${sanitizedUnitTestName}`);
+  templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${sanitizedUnitTestName}" />`);
+  templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${sanitizedUnitTestName}()`);
+  templateContent = templateContent.replace(
+    /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS\(\)/g,
+    `public async Task ${sanitizedWorkflowName}_${sanitizedUnitTestName}_ExecuteWorkflow_SUCCESS()`
+  );
+
+  templateContent = templateContent
+    .replace(/<%= LogicAppName %>/g, logicAppName)
+    .replace(/<%= WorkflowName %>/g, workflowName)
+    .replace(/<%= UnitTestName %>/g, unitTestName);
+
+  const csFilePath = path.join(unitTestFolderPath, `${sanitizedUnitTestName}.cs`);
   await fs.writeFile(csFilePath, templateContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
