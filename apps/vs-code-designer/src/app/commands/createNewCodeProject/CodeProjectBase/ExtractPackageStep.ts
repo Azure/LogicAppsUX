@@ -5,6 +5,10 @@ import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 import * as fse from 'fs-extra';
 
 export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+  /**
+   * Unzips package contents to package path and removes unnecessary files
+   * @param context - Project wizard context containing user selections and settings
+   */
   public async prompt(context: IFunctionWizardContext): Promise<void> {
     try {
       const data: Buffer | Buffer[] = fse.readFileSync(context.packagePath);
@@ -32,6 +36,7 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
         context.telemetry.properties.excludedFile = `Excluded ${path.basename} from package`;
       });
 
+      // Create README.md file
       fse.writeFileSync(path.join(context.projectPath, 'README.md'), this.getReadMeContent());
     } catch (error) {
       context.telemetry.properties.error = error.message;
@@ -39,6 +44,11 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
     }
   }
 
+  /**
+   * Checks if this step should prompt the user
+   * @param context - Project wizard context containing user selections and settings
+   * @returns True if user should be prompted, otherwise false
+   */
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return context.packagePath !== undefined && context.projectPath !== undefined;
   }

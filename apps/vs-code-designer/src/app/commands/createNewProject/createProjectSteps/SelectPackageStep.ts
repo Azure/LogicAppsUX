@@ -25,11 +25,20 @@ export class SelectPackageStep extends AzureWizardPromptStep<IFunctionWizardCont
     return packageFile && packageFile.data ? packageFile.data : (await context.ui.showOpenDialog(options))[0].fsPath;
   }
 
+  /**
+   * Prompts the user to select the package to be imported to the new logic app workspace
+   * @param context - Project wizard context containing user selections and settings
+   */
   public async prompt(context: IFunctionWizardContext): Promise<void> {
     const placeHolder: string = localize('selectPackage', 'Select the package to import to your new logic app workspace');
     context.packagePath = await SelectPackageStep.selectPackagePath(context, placeHolder);
   }
 
+  /**
+   * Checks if this step should prompt the user
+   * @param context - Project wizard context containing user selections and settings
+   * @returns True if user should be prompted, otherwise false
+   */
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return context.packagePath === undefined;
   }

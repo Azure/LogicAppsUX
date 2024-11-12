@@ -44,7 +44,7 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
   public priority = 200;
 
   /**
-   * Executes the step to open the folder in Visual Studio Code.
+   * Executes the step to integrate the package into the new Logic App workspace
    * @param context The context object for the project wizard.
    * @returns A Promise that resolves to void.
    */
@@ -58,6 +58,8 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
 
     try {
       const connectionsString = await getConnectionsJson(context.projectPath);
+
+      // merge the app settings from local.settings.json and the settings from the zip file
       appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
       const zipEntries = await this.getPackageEntries(context.packagePath);
       const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === 'local.settings.json');
@@ -74,6 +76,8 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
 
       connectionsData = JSON.parse(connectionsString);
       if (Object.keys(connectionsData).length && connectionsData.managedApiConnections) {
+        /** Extract details from connections and add to local.settings.json
+         * independent of the parameterizeConnectionsInProject setting */
         appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
         await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
