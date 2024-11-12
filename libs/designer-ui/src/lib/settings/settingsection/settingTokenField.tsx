@@ -37,6 +37,7 @@ import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
+import { useMemo } from 'react';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -114,8 +115,8 @@ export const TokenField = ({
   getTokenPicker,
   suppressCastingForSerialize,
 }: TokenFieldProps) => {
-  const dropdownOptions = getDropdownOptionsFromOptions(editorOptions);
-  const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
+  const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
+  const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
 
   switch (editor?.toLowerCase()) {
     case constants.PARAMETER.EDITOR.ARRAY:

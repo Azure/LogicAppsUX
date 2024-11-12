@@ -65,11 +65,12 @@ export class BaseAppServiceService implements IAppServiceService {
     const schema = { type: 'object', properties: {} as any, required: [] as string[] };
 
     if (isInput) {
-      const baseUrl = swagger.api.host
-        ? swagger.api.schemes?.length
-          ? `${swagger.api.schemes.at(-1)}://${swagger.api.host}`
-          : `http://${swagger.api.host}`
-        : 'NotFound';
+      const element = document.createElement('a');
+      element.href = swaggerUrl;
+
+      const scheme = swagger.api.schemes?.at(-1) || 'http';
+      const host = swagger.api.host || element.host;
+      const baseUrl = `${scheme}://${host}`;
       schema.properties = {
         method: { type: 'string', default: operation.method, 'x-ms-visibility': 'hideInUI', title: 'Method' },
         uri: {
