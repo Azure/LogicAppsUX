@@ -187,12 +187,12 @@ describe('panel/templatePanel/quickViewPanel', () => {
   });
 
   it('Ensures the quickView panel is open with header', async () => {
-    const newState = { ...store.getState() };
+    const newState = store.getState();
     newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
     store = setupStore(newState);
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
-    expect(screen.queryByText(store.getState().template.manifest?.detailsDescription ?? '')).toBeDefined();
+    expect(screen.queryByText('No connections are needed in this template')).toBeDefined();
   });
 });
