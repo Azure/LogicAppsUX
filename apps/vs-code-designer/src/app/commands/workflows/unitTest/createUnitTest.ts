@@ -235,8 +235,8 @@ async function createCsprojFile(csprojFilePath: string, logicAppName: string): P
  */
 async function createNugetConfigFile(nugetConfigFilePath: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
-  const csprojTemplateFileName = 'TestProjectFile';
-  const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
+  const nugetConfigTemplateFileName = 'TestNugetConfig';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
 
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   await fs.writeFile(nugetConfigFilePath, templateContent);
