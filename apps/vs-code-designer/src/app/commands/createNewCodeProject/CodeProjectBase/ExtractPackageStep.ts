@@ -2,16 +2,15 @@ import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import path from 'path';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
-import * as fs from 'fs';
-import { rimraf } from 'rimraf';
+import * as fse from 'fs-extra';
 
 export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public async prompt(context: IFunctionWizardContext): Promise<void> {
     try {
-      const data: Buffer | Buffer[] = fs.readFileSync(context.packagePath);
+      const data: Buffer | Buffer[] = fse.readFileSync(context.packagePath);
       await unzipLogicAppArtifacts(data, context.projectPath);
 
-      const projectFiles = fs.readdirSync(context.projectPath);
+      const projectFiles = fse.readdirSync(context.projectPath);
       const filesToExclude = [];
       const excludedFiles = ['.vscode', 'obj', 'bin', 'local.settings.json', 'host.json'];
       const excludedExt = ['.csproj'];
@@ -23,15 +22,17 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
       });
 
       excludedFiles.forEach((excludedFile) => {
-        if (fs.existsSync(path.join(context.projectPath, excludedFile))) {
+        if (fse.existsSync(path.join(context.projectPath, excludedFile))) {
           filesToExclude.push(path.join(context.projectPath, excludedFile));
         }
       });
 
       filesToExclude.forEach((path) => {
-        rimraf.sync(path);
+        fse.removeSync(path);
         context.telemetry.properties.excludedFile = `Excluded ${path.basename} from package`;
       });
+
+      fse.writeFileSync(path.join(context.projectPath, 'README.md'), this.getReadMeContent());
     } catch (error) {
       context.telemetry.properties.error = error.message;
       console.error(`Failed to extract contents of package to ${context.projectPath}`, error);
@@ -41,4 +42,9 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return context.packagePath !== undefined && context.projectPath !== undefined;
   }
+
+  private getReadMeContent = () => {
+    return `README content goes here
+  `;
+  };
 }

@@ -1,4 +1,4 @@
-import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { parameterizeConnectionsInProjectLoadSetting } from '../../../../constants';
 import path from 'path';
@@ -16,8 +16,29 @@ import { getConnectionsJson } from '../../../utils/codeless/connection';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
 import AdmZip from 'adm-zip';
 import { extend, isEmptyString } from '@microsoft/logic-apps-shared';
-import { window } from 'vscode';
-import { localize } from 'vscode-nls';
+import { Uri, window, workspace } from 'vscode';
+import { localize } from '../../../../localize';
+import * as fse from 'fs-extra';
+import { getContainingWorkspace } from '../../../utils/workspace';
+import { ext } from '../../../../extensionVariables';
+
+interface ICachedTextDocument {
+  projectPath: string;
+  textDocumentPath: string;
+}
+
+const cacheKey = 'azLAPostExtractReadMe';
+
+export function runPostExtractStepsFromCache(): void {
+  const cachedDocument: ICachedTextDocument | undefined = ext.context.globalState.get(cacheKey);
+  if (cachedDocument) {
+    try {
+      runPostExtractSteps(cachedDocument);
+    } finally {
+      ext.context.globalState.update(cacheKey, undefined);
+    }
+  }
+}
 
 export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 200;
@@ -63,10 +84,17 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
         await changeAuthTypeToRaw(context, parameterizeConnectionsSetting);
         await updateConnectionKeys(context);
         await cleanLocalSettings(context);
-
-        context.telemetry.properties.finishedImportingProject = 'Finished importing project';
-        window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
       }
+
+      // OpenFolder will restart the extension host so we will cache README to open on next activation
+      const readMePath = path.join(context.projectPath, 'README.md');
+      const postExtractCache: ICachedTextDocument = { projectPath: context.projectPath, textDocumentPath: readMePath };
+      ext.context.globalState.update(cacheKey, postExtractCache);
+      // Delete cached information if the extension host was not restarted after 5 seconds
+      setTimeout(() => {
+        ext.context.globalState.update(cacheKey, undefined);
+      }, 5 * 1000);
+      runPostExtractSteps(postExtractCache);
     } catch (error) {
       context.telemetry.properties.error = error.message;
     }
@@ -85,4 +113,18 @@ export class ProcessPackageStep extends AzureWizardExecuteStep<IProjectWizardCon
     const zip = new AdmZip(zipFilePath);
     return zip.getEntries();
   }
+}
+
+function runPostExtractSteps(cache: ICachedTextDocument): void {
+  callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
+    context.telemetry.suppressIfSuccessful = true;
+
+    if (getContainingWorkspace(cache.projectPath)) {
+      if (await fse.pathExists(cache.textDocumentPath)) {
+        window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
+      }
+    }
+    context.telemetry.properties.finishedImportingProject = 'Finished importing project';
+    window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
+  });
 }
