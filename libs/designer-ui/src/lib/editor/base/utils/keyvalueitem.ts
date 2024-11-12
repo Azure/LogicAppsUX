@@ -56,18 +56,12 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
 
 // we want to default to string type when the value is type any
 export const convertValueType = (value: ValueSegment[], type?: string): string | undefined => {
-  if (type !== constants.SWAGGER.TYPE.ANY) {
+  if (type && type !== constants.SWAGGER.TYPE.ANY) {
     return type;
   }
   const stringSegments = convertSegmentsToString(value).trim();
-  // checks for known types
-  if (
-    (stringSegments.startsWith('@{') && stringSegments.indexOf('}') === stringSegments.length - 1) ||
-    isNumber(stringSegments) ||
-    isBoolean(stringSegments) ||
-    /^\[.*\]$/.test(stringSegments)
-  ) {
-    return type;
-  }
-  return constants.SWAGGER.TYPE.STRING;
+  const isExpressionOrObject = (stringSegments.startsWith('@{') || stringSegments.startsWith('{')) && stringSegments.endsWith('}');
+  const isKnownType = isExpressionOrObject || isNumber(stringSegments) || isBoolean(stringSegments) || /^\[.*\]$/.test(stringSegments);
+
+  return isKnownType ? type : constants.SWAGGER.TYPE.STRING;
 };

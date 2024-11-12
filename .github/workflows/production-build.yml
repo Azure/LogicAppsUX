@@ -92,7 +92,7 @@ jobs:
           fallback: 0.0.0
 
       - name: Archive VSIX
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: |
             apps/vs-code-designer/dist/*.vsix

@@ -1,6 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
-import type { GetTokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryValidation';
@@ -18,7 +18,7 @@ export type CollapsedDictionaryProps = {
   onBlur?: () => void;
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 };
 
 export const CollapsedDictionary = ({

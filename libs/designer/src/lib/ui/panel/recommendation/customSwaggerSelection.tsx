@@ -30,7 +30,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
   const [swaggerUrl, setSwaggerUrl] = useState('');
 
   const submitCallback = useCallback(() => {
-    const newNodeId = operation.name.replaceAll(' ', '_');
+    const newNodeId = (operation?.properties?.summary ?? operation.name).replaceAll(' ', '_');
     dispatch(
       addOperation({
         operation,

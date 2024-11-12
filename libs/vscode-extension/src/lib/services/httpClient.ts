@@ -61,9 +61,8 @@ export class HttpClient implements IHttpClient {
     const responseData = await axios({
       method: HTTP_METHODS.POST,
       ...request,
-    }).catch((error) => {
-      return { status: error.response.status, data: error.response.data };
     });
+
     if (!isSuccessResponse(responseData.status)) {
       return Promise.reject(responseData);
     }

@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
+import type { Connection, ConnectionDictionary, NodeConnection } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
   directAccessPseudoFunction,
@@ -11,7 +11,7 @@ import {
   indexPseudoFunctionKey,
 } from '../models/Function';
 import { findLast } from './Array.Utils';
-import { applyConnectionValue, flattenInputs, isCustomValue, nodeHasSpecificInputEventually } from './Connection.Utils';
+import { applyConnectionValue, isCustomValueConnection, nodeHasSpecificInputEventually } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -38,15 +38,19 @@ export const getInputValues = (
   shouldLocalizePaths = true
 ): string[] => {
   return currentConnection
-    ? (flattenInputs(currentConnection.inputs)
+    ? (currentConnection.inputs
         .flatMap((input) => {
           if (!input) {
             return undefined;
           }
 
+          if (!input.isDefined) {
+            return undefined;
+          }
+
           // Handle custom values, source schema node, and Function inputs for Function nodes
-          if (isCustomValue(input)) {
-            return input;
+          if (isCustomValueConnection(input)) {
+            return input.value;
           }
           if (isSchemaNodeExtended(input.node)) {
             return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
@@ -149,7 +153,7 @@ export const invalidFunctions = (connections: ConnectionDictionary) => {
     const selfNode = connection.self.node;
     if (isFunctionData(selfNode)) {
       return selfNode.inputs.find((nodeInput, index) => {
-        return !nodeInput.isOptional && connection.inputs[index].length === 0;
+        return !nodeInput.isOptional && connection.inputs[index] !== undefined;
       });
     }
 
@@ -576,7 +580,7 @@ export const addParentConnectionForRepeatingElementsNested = (
         true
       );
 
-      let parentConn: ConnectionUnit | undefined;
+      let parentConn: NodeConnection | undefined;
       if (dataMapConnections[prefixedSourceKey]) {
         parentConn = dataMapConnections[prefixedSourceKey].outputs.find((output) => {
           if (output.isRepeating && isParentTargetNode(flattenedTargetSchema, firstRepeatingTargetNode, output.node.key)) {
@@ -594,6 +598,8 @@ export const addParentConnectionForRepeatingElementsNested = (
           input: {
             reactFlowKey: prefixedSourceKey,
             node: firstRepeatingSourceNode,
+            isCustom: false,
+            isDefined: true,
           },
           isRepeating: true,
         });
