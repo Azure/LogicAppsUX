@@ -1,17 +1,18 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectPanelTab } from '../../../../core/state/templates/panelSlice';
-import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
+import { type TemplatePanelTab, TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { ChevronDown16Regular, ChevronUp16Regular } from '@fluentui/react-icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
-import { Label } from '@fluentui/react';
+import { Label, Panel, PanelType } from '@fluentui/react';
 import Markdown from 'react-markdown';
 import { useCreateWorkflowPanelTabs } from './usePanelTabs';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 import type { CreateWorkflowHandler } from '../../../templates';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
+import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 
 export interface CreateWorkflowTabProps {
   isCreating: boolean;
@@ -20,24 +21,50 @@ export interface CreateWorkflowTabProps {
   hasError: boolean;
 }
 
-export const CreateWorkflowPanel = ({
-  createWorkflow,
-}: {
-  createWorkflow: CreateWorkflowHandler | undefined;
-}) => {
+export interface CreateWorkflowPanelProps {
+  createWorkflow?: CreateWorkflowHandler;
+  clearDetailsOnClose?: boolean;
+  onClose?: () => void;
+}
+
+const layerProps = {
+  hostId: 'msla-layer-host',
+  eventBubblingEnabled: true,
+};
+
+export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClose = true }: CreateWorkflowPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  const { selectedTabId, manifest, isOpen } = useSelector((state: RootState) => ({
+  const { selectedTabId, manifest, isOpen, currentPanelView } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
     isOpen: state.panel.isOpen,
+    currentPanelView: state.panel.currentPanelView,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
-  const panelTabs = useCreateWorkflowPanelTabs({
+  const panelTabs: TemplatePanelTab[] = useCreateWorkflowPanelTabs({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
   });
+
+  // const panelTabs: TemplatePanelTab[] = useMemo(
+  //   () =>
+  //     useCreateWorkflowPanelTabs({
+  //       isMultiWorkflowTemplate: isMultiWorkflow,
+  //       createWorkflow: createWorkflow ?? (() => Promise.resolve()),
+  //     }),
+  //   [intl, dispatch, workflowId, isMultiWorkflowTemplate]
+  // );
+
+  const resources = {
+    multiWorkflowCreateTitle: intl.formatMessage({
+      defaultMessage: 'Create workflows from template',
+      id: '5pSOjg',
+      description: 'Panel header title for creating workflows',
+    }),
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -48,7 +75,51 @@ export const CreateWorkflowPanel = ({
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
   };
-  return <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />;
+
+  const dismissPanel = useCallback(() => {
+    dispatch(closePanel());
+
+    if (clearDetailsOnClose) {
+      dispatch(clearTemplateDetails());
+    }
+
+    onClose?.();
+  }, [clearDetailsOnClose, dispatch, onClose]);
+
+  const onRenderHeaderContent = useCallback(
+    () => (
+      <CreateWorkflowPanelHeader
+        headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : undefined}
+        title={manifest?.title ?? ''}
+        description={manifest?.description ?? ''}
+      />
+    ),
+    [isMultiWorkflowTemplate, resources.multiWorkflowCreateTitle, manifest?.details]
+  );
+
+  const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
+  const onRenderFooterContent = useCallback(
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null),
+    [selectedTabProps?.footerContent]
+  );
+
+  return (
+    <Panel
+      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      isLightDismiss
+      type={PanelType.custom}
+      customWidth={'50%'}
+      isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
+      onDismiss={dismissPanel}
+      hasCloseButton={true}
+      onRenderHeader={onRenderHeaderContent}
+      onRenderFooterContent={onRenderFooterContent}
+      layerProps={layerProps}
+      isFooterAtBottom={true}
+    >
+      <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+    </Panel>
+  );
 };
 
 export const CreateWorkflowPanelHeader = ({

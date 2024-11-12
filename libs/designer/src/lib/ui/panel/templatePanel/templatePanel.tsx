@@ -1,127 +1,125 @@
-import { Panel, PanelType } from '@fluentui/react';
-import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { closePanel } from '../../../core/state/templates/panelSlice';
-import { CreateWorkflowPanel, CreateWorkflowPanelHeader } from './createWorkflowPanel/createWorkflowPanel';
-import { QuickViewPanel, QuickViewPanelHeader } from './quickViewPanel/quickViewPanel';
-import { type TemplatePanelTab, TemplatesPanelFooter } from '@microsoft/designer-ui';
-import { clearTemplateDetails } from '../../../core/state/templates/templateSlice';
-import { useIntl } from 'react-intl';
-import { getQuickViewTabs } from '../../../core/templates/utils/helper';
+import type { RootState } from '../../../core/state/templates/store';
+import { useSelector } from 'react-redux';
+import { TemplatePanelView } from '../../../core/state/templates/panelSlice';
+import { CreateWorkflowPanel } from './createWorkflowPanel/createWorkflowPanel';
+import { QuickViewPanel } from './quickViewPanel/quickViewPanel';
 import type { CreateWorkflowHandler } from '../../templates';
 
 export interface TemplatePanelProps {
   showCreate: boolean;
-  workflowId?: string;
+  workflowId: string;
   createWorkflow?: CreateWorkflowHandler;
   clearDetailsOnClose?: boolean;
   onClose?: () => void;
 }
 
-export const TemplatePanel = ({ createWorkflow, onClose, showCreate, workflowId, clearDetailsOnClose = true }: TemplatePanelProps) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const intl = useIntl();
-  const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
-  const { templateName, workflowAppName, manifest, workflows } = useSelector((state: RootState) => ({
-    templateName: state.template.templateName,
-    workflowAppName: state.workflow.workflowAppName,
-    manifest: state.template.manifest,
-    workflows: state.template.workflows,
-  }));
-  const isMultiWorkflowTemplate = useMemo(() => Object.keys(workflows).length > 1, [workflows]);
-  const isCreatePanelView = useMemo(() => currentPanelView === 'createWorkflow', [currentPanelView]);
-  const templateTitle = manifest?.title ?? '';
-  const templateDescription = manifest?.description ?? '';
-  const templateSourceCodeUrl = manifest?.sourceCodeUrl;
+export const TemplatePanel = (props: TemplatePanelProps) => {
+  const { isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
 
-  const resources = {
-    multiWorkflowCreateTitle: intl.formatMessage({
-      defaultMessage: 'Create workflows from template',
-      id: '5pSOjg',
-      description: 'Panel header title for creating workflows',
-    }),
-  };
+  if (!isOpen) {
+    return null;
+  }
 
-  const dismissPanel = useCallback(() => {
-    dispatch(closePanel());
+  return currentPanelView === TemplatePanelView.QuickView ? <QuickViewPanel {...props} /> : <CreateWorkflowPanel {...props} />;
+  // const dispatch = useDispatch<AppDispatch>();
+  // const intl = useIntl();
+  // const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => state.panel);
+  // const { templateName, workflowAppName, manifest, workflows } = useSelector((state: RootState) => ({
+  //   templateName: state.template.templateName,
+  //   workflowAppName: state.workflow.workflowAppName,
+  //   manifest: state.template.manifest,
+  //   workflows: state.template.workflows,
+  // }));
+  // const isMultiWorkflowTemplate = useMemo(() => Object.keys(workflows).length > 1, [workflows]);
+  // const isCreatePanelView = useMemo(() => currentPanelView === 'createWorkflow', [currentPanelView]);
+  // const templateTitle = manifest?.title ?? '';
+  // const templateDescription = manifest?.description ?? '';
+  // const templateSourceCodeUrl = manifest?.sourceCodeUrl;
 
-    if (clearDetailsOnClose) {
-      dispatch(clearTemplateDetails());
-    }
+  // const resources = {
+  //   multiWorkflowCreateTitle: intl.formatMessage({
+  //     defaultMessage: 'Create workflows from template',
+  //     id: '5pSOjg',
+  //     description: 'Panel header title for creating workflows',
+  //   }),
+  // };
 
-    onClose?.();
-  }, [clearDetailsOnClose, dispatch, onClose]);
+  // const dismissPanel = useCallback(() => {
+  //   dispatch(closePanel());
 
-  const currentPanelTabs: TemplatePanelTab[] = useMemo(
-    () =>
-      isCreatePanelView
-        ? []
-        : getQuickViewTabs(intl, dispatch, workflowId as string, showCreate, {
-            templateId: templateName ?? 'Unknown',
-            workflowAppName,
-            isMultiWorkflow: isMultiWorkflowTemplate,
-          }),
-    [isCreatePanelView, intl, dispatch, workflowId, showCreate, templateName, workflowAppName, isMultiWorkflowTemplate]
-  );
+  //   if (clearDetailsOnClose) {
+  //     dispatch(clearTemplateDetails());
+  //   }
 
-  const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
-  const layerProps = {
-    hostId: 'msla-layer-host',
-    eventBubblingEnabled: true,
-  };
+  //   onClose?.();
+  // }, [clearDetailsOnClose, dispatch, onClose]);
 
-  const onRenderHeaderContent = useCallback(
-    () =>
-      isCreatePanelView ? (
-        <CreateWorkflowPanelHeader
-          headerTitle={isMultiWorkflowTemplate ? resources.multiWorkflowCreateTitle : undefined}
-          title={templateTitle}
-          description={templateDescription}
-        />
-      ) : (
-        <QuickViewPanelHeader
-          title={templateTitle}
-          description={templateDescription}
-          sourceCodeUrl={templateSourceCodeUrl}
-          details={manifest?.details ?? {}}
-        />
-      ),
-    [
-      isCreatePanelView,
-      isMultiWorkflowTemplate,
-      resources.multiWorkflowCreateTitle,
-      templateTitle,
-      templateDescription,
-      templateSourceCodeUrl,
-      manifest?.details,
-    ]
-  );
-  const onRenderFooterContent = useCallback(
-    () =>
-      selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
-    [selectedTabProps?.footerContent, showCreate]
-  );
+  // const currentPanelTabs: TemplatePanelTab[] = useMemo(
+  //   () =>
+  //     isCreatePanelView
+  //       ? []
+  //       : getQuickViewTabs(intl, dispatch, workflowId as string, showCreate, {
+  //           templateId: templateName ?? 'Unknown',
+  //           workflowAppName,
+  //           isMultiWorkflow: isMultiWorkflowTemplate,
+  //         }),
+  //   [isCreatePanelView, intl, dispatch, workflowId, showCreate, templateName, workflowAppName, isMultiWorkflowTemplate]
+  // );
 
-  return (
-    <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss
-      type={isCreatePanelView ? PanelType.custom : PanelType.medium}
-      customWidth={'50%'}
-      isOpen={isOpen}
-      onDismiss={dismissPanel}
-      hasCloseButton={true}
-      onRenderHeader={onRenderHeaderContent}
-      onRenderFooterContent={onRenderFooterContent}
-      layerProps={layerProps}
-      isFooterAtBottom={true}
-    >
-      {isCreatePanelView ? (
-        <CreateWorkflowPanel createWorkflow={createWorkflow} />
-      ) : currentPanelView === 'quickView' ? (
-        <QuickViewPanel workflowId={workflowId as string} clearDetailsOnClose={clearDetailsOnClose} />
-      ) : null}
-    </Panel>
-  );
+  // const selectedTabProps = selectedTabId ? currentPanelTabs?.find((tab) => tab.id === selectedTabId) : currentPanelTabs[0];
+  // const layerProps = {
+  //   hostId: 'msla-layer-host',
+  //   eventBubblingEnabled: true,
+  // };
+
+  // const onRenderHeaderContent = useCallback(
+  //   () =>
+  //     isCreatePanelView ? (
+  //       <CreateWorkflowPanelHeader
+  //         headerTitle={isMultiWorkflowTemplate ? resources.multiWorkflowCreateTitle : undefined}
+  //         title={templateTitle}
+  //         description={templateDescription}
+  //       />
+  //     ) : (
+  //       <QuickViewPanelHeader
+  //         title={templateTitle}
+  //         description={templateDescription}
+  //         sourceCodeUrl={templateSourceCodeUrl}
+  //         details={manifest?.details ?? {}}
+  //       />
+  //     ),
+  //   [
+  //     isCreatePanelView,
+  //     isMultiWorkflowTemplate,
+  //     resources.multiWorkflowCreateTitle,
+  //     templateTitle,
+  //     templateDescription,
+  //     templateSourceCodeUrl,
+  //     manifest?.details,
+  //   ]
+  // );
+  // const onRenderFooterContent = useCallback(
+  //   () =>
+  //     selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
+  //   [selectedTabProps?.footerContent, showCreate]
+  // );
+
+  // return (
+  //   <Panel
+  //     styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+  //     isLightDismiss
+  //     type={isCreatePanelView ? PanelType.custom : PanelType.medium}
+  //     customWidth={'50%'}
+  //     isOpen={isOpen}
+  //     onDismiss={dismissPanel}
+  //     hasCloseButton={true}
+  //     onRenderHeader={onRenderHeaderContent}
+  //     onRenderFooterContent={onRenderFooterContent}
+  //     layerProps={layerProps}
+  //     isFooterAtBottom={true}
+  //   >
+  //     {/* <QuickViewPanel workflowId={workflowId as string} clearDetailsOnClose={clearDetailsOnClose} /> */}
+
+  //   </Panel>
+  // );
 };
