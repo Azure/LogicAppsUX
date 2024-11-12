@@ -49,15 +49,6 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
   });
 
-  // const panelTabs: TemplatePanelTab[] = useMemo(
-  //   () =>
-  //     useCreateWorkflowPanelTabs({
-  //       isMultiWorkflowTemplate: isMultiWorkflow,
-  //       createWorkflow: createWorkflow ?? (() => Promise.resolve()),
-  //     }),
-  //   [intl, dispatch, workflowId, isMultiWorkflowTemplate]
-  // );
-
   const resources = {
     multiWorkflowCreateTitle: intl.formatMessage({
       defaultMessage: 'Create workflows from template',

@@ -107,14 +107,6 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
         <TemplatesPanelFooter showPrimaryButton={true} {...footerContentProps} />
       </div>
 
-      {/* {selectedWorkflow ? (
-        <TemplatePanel
-          showCreate={false}
-          workflowId={selectedWorkflow}
-          clearDetailsOnClose={false}
-          onClose={() => setSelectedWorkflow(undefined)}
-        />
-      ) : null} */}
       {selectedWorkflow ? (
         <QuickViewPanel
           showCreate={false}
@@ -123,14 +115,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
           onClose={() => setSelectedWorkflow(undefined)}
         />
       ) : null}
-      {/* {showCreatePanel ? (
-        <TemplatePanel
-          showCreate={true}
-          createWorkflow={createWorkflow}
-          clearDetailsOnClose={false}
-          onClose={() => setShowCreatePanel(false)}
-        />
-      ) : null} */}
+
       {showCreatePanel ? (
         <CreateWorkflowPanel createWorkflow={createWorkflow} onClose={() => setShowCreatePanel(false)} clearDetailsOnClose={false} />
       ) : null}
