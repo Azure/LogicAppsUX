@@ -55,13 +55,14 @@ namespace <%= LogicAppName %>.Tests
         {
             // Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
             this.rootPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\.."));
-            this.workflowDefinitionPath = Path.Combine(rootPath, "<%= LogicAppName %>", "<%= WorkflowName %>", "workflow.json");
-            this.connectionsPath = Path.Combine(rootPath, "<%= LogicAppName %>", "connections.json");
-            this.parametersPath = Path.Combine(rootPath, "<%= LogicAppName %>", "parameters.json");
-            this.localSettingsPath = Path.Combine(rootPath, "<%= LogicAppName %>", "local.settings.json");
+            this.workflowDefinitionPath = Path.Combine(this.rootPath, "<%= LogicAppName %>", "<%= WorkflowName %>", "workflow.json");
+            this.connectionsPath = Path.Combine(this.rootPath, "<%= LogicAppName %>", "connections.json");
+            this.parametersPath = Path.Combine(this.rootPath, "<%= LogicAppName %>", "parameters.json");
+            this.localSettingsPath = Path.Combine(this.rootPath, "<%= LogicAppName %>", "local.settings.json");
+
 
             // Load the mock data 
-            var mockDataPath = Path.Combine(rootPath, "Tests", "<%= LogicAppName %>", "<%= WorkflowName %>", "<%= UnitTestName %>", "<%= UnitTestName %>-mock.json");
+            var mockDataPath = Path.Combine(this.rootPath, "Tests", "<%= LogicAppName %>", "<%= WorkflowName %>", "<%= UnitTestName %>", "<%= UnitTestName %>-mock.json");
             var mockData = JObject.Parse(File.ReadAllText(mockDataPath));
             this.triggerMock = mockData["triggerMocks"]?.ToObject<Dictionary<string, TriggerMock>>()?.Values.FirstOrDefault();
             this.actionMocks = mockData["actionMocks"].ToObject<Dictionary<string, ActionMock>>();
@@ -75,9 +76,9 @@ namespace <%= LogicAppName %>.Tests
         public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS()
         {
             // PREPARE Mock
-            // var actionMocks = this.actionMocks;
-            // actionMocks["<actionName>"] = new ActionMock(
-            //     "<actionName>",
+            var actionMocks = this.actionMocks;
+            // actionMocks["actionName"] = new ActionMock(
+            //     "actionName",
             //     TestWorkflowStatus.Succeeded,
             //     onGetActionOutputsCallback: this.MockActionOutputCallback
             // );
@@ -99,8 +100,9 @@ namespace <%= LogicAppName %>.Tests
         }
 
         #region Mock generator helpers
-         /// <summary>
-        /// The callback method to dynamically generate mocked data for the action named '<actionName>'.
+
+        /// <summary>
+        /// The callback method to dynamically generate mocked data for the action named 'actionName'.
         /// You can modify this method to return different mock outputs based on the test scenario.
         /// </summary>
         /// <param name="context">The test execution context that contains information about the current test run.</param>
@@ -115,8 +117,8 @@ namespace <%= LogicAppName %>.Tests
             //     }
             // }");
 
-            // Sample mock data 2: Modify the existing mocked data dynamically for <actionName>.
-            // var mockDataToModify = this.actionMocks["<actionName>"];
+            // Sample mock data 2: Modify the existing mocked data dynamically for 'actionName'.
+            // var mockDataToModify = this.actionMocks["actionName"];
             // mockDataToModify.Outputs["body"]["<property1Name>"] = "<your-test-string-value>";
             // return mockDataToModify.Outputs;
             return new JObject();
