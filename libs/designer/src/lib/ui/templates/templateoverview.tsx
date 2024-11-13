@@ -7,15 +7,15 @@ import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { getPropertyValue, unmap } from '@microsoft/logic-apps-shared';
 import { Link, Text } from '@fluentui/react-components';
-import { QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
+import { QuickViewPanel, QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { ConnectionsList } from './connections/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../core/actions/bjsworkflow/templates';
 import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
-import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
+import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
 export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWorkflowHandler }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -114,20 +114,16 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
       </div>
 
       {selectedWorkflow ? (
-        <TemplatePanel
+        <QuickViewPanel
           showCreate={false}
           workflowId={selectedWorkflow}
           clearDetailsOnClose={false}
           onClose={() => setSelectedWorkflow(undefined)}
         />
       ) : null}
+
       {showCreatePanel ? (
-        <TemplatePanel
-          showCreate={true}
-          createWorkflow={createWorkflow}
-          clearDetailsOnClose={false}
-          onClose={() => setShowCreatePanel(false)}
-        />
+        <CreateWorkflowPanel createWorkflow={createWorkflow} onClose={() => setShowCreatePanel(false)} clearDetailsOnClose={false} />
       ) : null}
       <div
         id={'msla-layer-host'}

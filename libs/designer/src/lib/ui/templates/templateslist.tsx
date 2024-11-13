@@ -1,7 +1,6 @@
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
-import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -10,6 +9,8 @@ import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
+import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
+import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
 export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -77,7 +78,10 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       )}
 
       {templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
-        <TemplatePanel showCreate={true} workflowId={Object.keys(workflows)[0]} createWorkflow={createWorkflowCall} />
+        <>
+          <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
+          <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
+        </>
       )}
 
       <div
