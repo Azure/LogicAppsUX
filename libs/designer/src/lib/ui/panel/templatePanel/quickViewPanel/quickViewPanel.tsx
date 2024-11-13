@@ -108,7 +108,15 @@ export const QuickViewPanelHeader = ({
   sourceCodeUrl,
   details,
   features,
-}: { title: string; description: string; sourceCodeUrl: string | undefined; details: Record<string, string>; features?: string }) => {
+  onBackClick,
+}: {
+  title: string;
+  description: string;
+  sourceCodeUrl: string | undefined;
+  details: Record<string, string>;
+  features?: string;
+  onBackClick?: () => void;
+}) => {
   const intl = useIntl();
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
@@ -124,7 +132,7 @@ export const QuickViewPanelHeader = ({
   };
 
   return (
-    <TemplatesPanelHeader title={title}>
+    <TemplatesPanelHeader title={title} onBackClick={onBackClick}>
       <div className="msla-template-quickview-tags">
         {Object.keys(detailsTags).map((key: string, index: number, array: any[]) => {
           return (
