@@ -114,43 +114,44 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
     );
 
     const badges: CardBadgeProps[] = useMemo(
-      () => [
-        {
-          enabled: isLoadingDynamicData,
-          active: true,
-          content: strings.LOADING_DYNAMIC_DATA,
-          badgeContent: <Spinner className="msla-badge-spinner" size={'extra-tiny'} />,
-          title: strings.LOADING_DYNAMIC_DATA,
-        },
-        {
-          enabled: staticResultsEnabled,
-          active: true,
-          content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
-          iconProps: staticResultIconProps,
-          title: strings.PANEL_STATIC_RESULT_TITLE,
-        },
-        {
-          enabled: !!commentBox?.comment,
-          active: true,
-          content: commentBox?.comment,
-          iconProps: commentIconProps,
-          title: strings.COMMENT,
-        },
-        {
-          enabled: !!(connectionRequired || connectionDisplayName),
-          active: !!connectionDisplayName,
-          content: connectionDisplayName || connectionTitle,
-          iconProps: connectionIconProps,
-          title: connectionTitle,
-        },
-        {
-          enabled: isSecureInputsOutputs,
-          active: true,
-          content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
-          iconProps: lockIconProps,
-          title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
-        },
-      ],
+      () =>
+        [
+          {
+            enabled: isLoadingDynamicData,
+            active: true,
+            content: strings.LOADING_DYNAMIC_DATA,
+            badgeContent: <Spinner className="msla-badge-spinner" size={'extra-tiny'} />,
+            title: strings.LOADING_DYNAMIC_DATA,
+          },
+          {
+            enabled: staticResultsEnabled,
+            active: true,
+            content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
+            iconProps: staticResultIconProps,
+            title: strings.PANEL_STATIC_RESULT_TITLE,
+          },
+          {
+            enabled: !!commentBox?.comment,
+            active: true,
+            content: commentBox?.comment,
+            iconProps: commentIconProps,
+            title: strings.COMMENT,
+          },
+          {
+            enabled: !!(connectionRequired || connectionDisplayName),
+            active: !!connectionDisplayName,
+            content: connectionDisplayName || connectionTitle,
+            iconProps: connectionIconProps,
+            title: connectionTitle,
+          },
+          {
+            enabled: isSecureInputsOutputs,
+            active: true,
+            content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
+            iconProps: lockIconProps,
+            title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
+          },
+        ].filter((badge) => badge.enabled),
       [
         commentBox,
         connectionDisplayName,
