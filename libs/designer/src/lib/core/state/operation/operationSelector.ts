@@ -181,6 +181,9 @@ export const useNodesInitialized = () => useSelector(createSelector(getOperation
 export const useNodesAndDynamicDataInitialized = () =>
   useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesAndDynamicDataInitialized));
 
+export const useNodeDynamicDataStatus = (nodeId: string) =>
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.inputParameters, nodeId)?.dynamicLoadStatus));
+
 const getTopErrorInOperation = (errors?: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
   if (!errors) {
     return undefined;
