@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { workflowFileName } from '../../../../constants';
+import { workflowFileName, nugetFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
 import { getTestsDirectory, validateUnitTestName } from '../../../utils/unitTests';
@@ -148,6 +148,7 @@ async function generateCodefulUnitTest(
     await fs.ensureDir(unitTestFolderPath);
 
     const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+    const nugetConfigFilePath = path.join(logicAppFolderPath, nugetFileName);
 
     // Unzip the response into the unit test folder (Mock.json)
     ext.outputChannel.appendLog(localize('unzippingFiles', 'Unzipping Mock.json into: {0}', unitTestFolderPath));
@@ -162,6 +163,7 @@ async function generateCodefulUnitTest(
       ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
       await createCsprojFile(csprojFilePath, logicAppName);
     }
+    await createNugetConfigFile(nugetConfigFilePath);
 
     vscode.window.showInformationMessage(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
@@ -224,6 +226,22 @@ async function createCsprojFile(csprojFilePath: string, logicAppName: string): P
   await fs.writeFile(csprojFilePath, csprojContent);
 
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
+}
+
+/**
+ * Creates a nuget.config file in the specified logic app folder using a template.
+ * @param {string} nugetConfigFilePath - The path where the .csproj file will be created.
+ * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
+ */
+async function createNugetConfigFile(nugetConfigFilePath: string): Promise<void> {
+  const templateFolderName = 'UnitTestTemplates';
+  const nugetConfigTemplateFileName = 'TestNugetConfig';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
+
+  const templateContent = await fs.readFile(templatePath, 'utf-8');
+  await fs.writeFile(nugetConfigFilePath, templateContent);
+
+  ext.outputChannel.appendLog(localize('nugetConfigFileCreated', 'Created nuget.config file at: {0}', nugetConfigFilePath));
 }
 
 /**
