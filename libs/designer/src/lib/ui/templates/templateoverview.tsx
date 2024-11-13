@@ -14,6 +14,7 @@ import type { WorkflowTemplateData } from '../../core/actions/bjsworkflow/templa
 import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
+import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
 export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWorkflowHandler }) => {
@@ -53,6 +54,10 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     setSelectedWorkflow(workflowId);
   };
 
+  const goBackToTemplateLibrary = () => {
+    dispatch(clearTemplateDetails());
+  };
+
   // TODO: Need to open new create panel for multi workflow here.
   const footerContentProps = workflowTab(
     intl,
@@ -74,6 +79,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
         sourceCodeUrl={sourceCodeUrl}
         details={info}
         features={detailsDescription}
+        onBackClick={goBackToTemplateLibrary}
       />
       <div className="msla-template-overview" style={{ marginTop: '-34px' }}>
         <div className="msla-template-overview-section">
