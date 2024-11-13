@@ -1,4 +1,4 @@
-import { describe, beforeAll, expect, it, beforeEach, vi } from 'vitest';
+import { describe, beforeAll, expect, it, beforeEach } from 'vitest';
 import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
 import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
@@ -6,15 +6,15 @@ import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
-import constants from '../../../../common/constants';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
-import { CreateWorkflowPanel } from '../createWorkflowPanel/createWorkflowPanel';
+import { QuickViewPanel } from '../quickViewPanel/quickViewPanel';
+import constants from '../../../../common/constants';
 
-describe('panel/templatePanel/createWorkflowPanel', () => {
+describe('panel/templatePanel/quickViewPanel', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
   let template1Manifest: Template.Manifest;
@@ -151,8 +151,8 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       template: templateSliceData,
       panel: {
         isOpen: true,
-        currentPanelView: TemplatePanelView.CreateWorkflow,
-        selectedTabId: undefined,
+        currentPanelView: TemplatePanelView.QuickView,
+        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
       },
     };
     store = setupStore(minimalStoreData);
@@ -163,7 +163,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
     renderWithProviders(
       <QueryClientProvider client={queryClient}>
-        <CreateWorkflowPanel createWorkflow={vi.fn()} />
+        <QuickViewPanel showCreate={true} workflowId={defaultWorkflowId} />
       </QueryClientProvider>,
       { store }
     );
@@ -179,66 +179,20 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
     expect(store.getState().template.connections).toBe(template1Manifest.connections);
   });
 
-  it('Shows Connections Tab for the first rendering without selected tab id', async () => {
+  it('Ensures the quickView panel is open with header', async () => {
     expect(store.getState().panel.isOpen).toBe(true);
-    expect(store.getState().panel.currentPanelView).toBe('createWorkflow');
-    expect(store.getState().panel.selectedTabId).toBe(undefined);
+    expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW);
+    expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
   });
 
-  it('Hides Connections Tab on no connections', async () => {
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
-  });
-
-  it('Hides basic tab on consumption only template', async () => {
-    templateSliceData = {
-      workflows: {
-        [defaultWorkflowId]: {
-          id: defaultWorkflowId,
-          workflowName: '',
-          kind: undefined,
-          manifest: template2Manifest,
-          workflowDefinition: {
-            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
-            contentVersion: '',
-          },
-          errors: {
-            workflow: undefined,
-            kind: undefined,
-          },
-          connectionKeys: [],
-        },
-      },
-      templateName: template2Manifest.title,
-      manifest: template2Manifest,
-      parameterDefinitions: template2Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
-        result[parameter.name] = {
-          ...parameter,
-          value: parameter.default,
-        };
-        return result;
-      }, {}),
-      connections: template2Manifest.connections,
-      servicesInitialized: false,
-      errors: {
-        parameters: {},
-        connections: undefined,
-      },
-    };
-    const minimalStoreData = {
-      template: templateSliceData,
-      panel: {
-        isOpen: true,
-        currentPanelView: TemplatePanelView.CreateWorkflow,
-        selectedTabId: undefined,
-      },
-    };
-    store = setupStore(minimalStoreData);
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeNull();
-    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
+  it('Ensures the quickView panel is open with header', async () => {
+    const newState = store.getState();
+    newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
+    store = setupStore(newState);
+    expect(store.getState().panel.isOpen).toBe(true);
+    expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
+    expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
+    expect(screen.queryByText('No connections are needed in this template')).toBeDefined();
   });
 });
