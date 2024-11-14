@@ -1,4 +1,31 @@
 # Logic Apps Designer
+### [4.116.7](https://github.com/Azure/LogicAppsUX/compare/v4.116.6...v4.116.7) (2024-11-08)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed custom connector browse with extra capabilities ([#6056](https://github.com/Azure/LogicAppsUX/issues/6056)) ([c6b6380](https://github.com/Azure/LogicAppsUX/commit/c6b63809fd7aa0c9f06554192e09218a0e44c7a6))
+
+### [4.116.6](https://github.com/Azure/LogicAppsUX/compare/v4.116.5...v4.116.6) (2024-11-08)
+
+
+### Bug Fixes
+
+* **Designer:** Null catch on connection query ([#6053](https://github.com/Azure/LogicAppsUX/issues/6053)) ([db9331d](https://github.com/Azure/LogicAppsUX/commit/db9331dfde419b045dcc1d3b92c4a61710437f4f)), closes [#6024](https://github.com/Azure/LogicAppsUX/issues/6024) [#6023](https://github.com/Azure/LogicAppsUX/issues/6023)
+
+### [4.116.5](https://github.com/Azure/LogicAppsUX/compare/v4.116.4...v4.116.5) (2024-11-08)
+
+### [4.116.4](https://github.com/Azure/LogicAppsUX/compare/v4.116.3...v4.116.4) (2024-11-08)
+
+### [4.116.3](https://github.com/Azure/LogicAppsUX/compare/v4.116.2...v4.116.3) (2024-11-01)
+
+
+### Bug Fixes
+
+* **designer:** Cherry pick PRs ([#6017](https://github.com/Azure/LogicAppsUX/issues/6017)) ([ff646be](https://github.com/Azure/LogicAppsUX/commit/ff646bee02fc315f28995d57c79e8598192afbb9)), closes [#5986](https://github.com/Azure/LogicAppsUX/issues/5986) [#6009](https://github.com/Azure/LogicAppsUX/issues/6009) [#6011](https://github.com/Azure/LogicAppsUX/issues/6011)
+
+### [4.116.2](https://github.com/Azure/LogicAppsUX/compare/v4.116.1...v4.116.2) (2024-11-01)
+
 ### [4.116.1](https://github.com/Azure/LogicAppsUX/compare/v4.116.0...v4.116.1) (2024-11-01)
 
 
