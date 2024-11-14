@@ -47,7 +47,7 @@ export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, v
     },
   ];
   const items = Object.entries(value).reduce((pairs: Record<string, any>[], [$key, $value]) => {
-    const pVal = { $key, $value };
+    const pVal = { $key, $value: typeof $value === 'object' ? JSON.stringify($value) : $value };
     pairs.push(pVal);
     return pairs;
   }, []);
@@ -57,14 +57,14 @@ export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, v
       <label className="msla-trace-value-display-name">{displayName}</label>
       <div className="msla-trace-value-text msla-trace-value-key-value-pairs">
         <DetailsList
-          ariaLabel={displayName}
+          ariaLabelForGrid={displayName}
           ariaLabelForListHeader={displayName}
           checkboxVisibility={CheckboxVisibility.hidden}
           columns={columns}
           compact={true}
           isHeaderVisible={true}
           items={items}
-          layoutMode={DetailsListLayoutMode.justified}
+          layoutMode={DetailsListLayoutMode.fixedColumns}
           selectionMode={SelectionMode.none}
         />
       </div>
