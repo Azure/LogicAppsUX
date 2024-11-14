@@ -3,11 +3,6 @@ import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
-interface Options {
-  key: string;
-  text: string;
-}
-
 const useGatewayPickerStyles = makeStyles({
   dropdownContainer: {
     display: 'flex',
@@ -25,7 +20,23 @@ const useGatewayPickerStyles = makeStyles({
   },
 });
 
-const GatewayPicker = (props: any) => {
+type GatewaysWithNewOption = (Gateway | NewGatewayOption)[];
+
+type NewGatewayOption = { id: string; properties: { displayName: string } };
+
+export interface GatewayPickerProps {
+  parameterKey: string;
+  selectedSubscriptionId: string;
+  selectSubscriptionCallback: (subscriptionId: string) => void;
+  availableGateways: Gateway[];
+  availableSubscriptions: Subscription[];
+  isSubscriptionDropdownDisabled: any;
+  isLoading: boolean;
+  value: any;
+  setValue: (value: any) => void;
+}
+
+export const GatewayPicker = (props: GatewayPickerProps) => {
   const {
     parameterKey,
     selectedSubscriptionId,
@@ -35,7 +46,7 @@ const GatewayPicker = (props: any) => {
     isSubscriptionDropdownDisabled,
     isLoading,
     value,
-    setValue,
+    setValue, // accepts full gateway path as ID ex: /subscriptions/{subscription-GUID}/resourceGroups/{RG-name}/providers/Microsoft.Web/connectionGateways/daniellesGateway
   } = props;
 
   const intl = useIntl();
@@ -45,49 +56,40 @@ const GatewayPicker = (props: any) => {
   const [gatewayValue, setGatewayValue] = React.useState<string | undefined>(value?.text);
 
   const newGatewayUrl = 'http://aka.ms/logicapps-installgateway';
-  const newGatewayOption = useMemo(
+  const newGatewayOption = useMemo<NewGatewayOption>(
     () => ({
-      key: newGatewayUrl,
-      text: intl.formatMessage(
-        {
-          defaultMessage: '{addIcon} Install gateway',
-          id: 'h+ZYip',
-          description: 'Option to install a new gateway, links to new page',
-        },
-        { addIcon: '+ ' }
-      ),
+      id: newGatewayUrl,
+      properties: {
+        displayName: intl.formatMessage(
+          {
+            defaultMessage: '{addIcon} Install gateway',
+            id: 'h+ZYip',
+            description: 'Option to install a new gateway, links to new page',
+          },
+          { addIcon: '+ ' }
+        ),
+      },
     }),
     [intl]
   );
 
-  const subscriptionOptions: Options[] = useMemo<Options[]>(
-    () =>
-      (availableSubscriptions ?? [])
-        .map((subscription: Subscription) => ({
-          key: subscription.id,
-          text: subscription.displayName,
-        }))
-        .sort((a: any, b: any) => a.text.localeCompare(b.text)),
+  const subscriptionOptions: Subscription[] = useMemo<Subscription[]>(
+    () => (availableSubscriptions ?? []).sort((a, b) => a.displayName.localeCompare(b.displayName)),
     [availableSubscriptions]
   );
 
-  const gatewayOptions: Options[] = useMemo<Options[]>(
-    () => [
-      ...(availableGateways ?? [])
-        .map((gateway: Gateway) => ({
-          key: gateway.id,
-          text: gateway.properties.displayName ?? '',
-        }))
-        .sort((a: any, b: any) => a.text.localeCompare(b.text)),
-      newGatewayOption,
-    ],
-    [availableGateways, newGatewayOption]
-  );
+  const gatewayOptions = useMemo<GatewaysWithNewOption>(() => {
+    const sorted: GatewaysWithNewOption = [
+      ...(availableGateways ?? []).sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName)),
+    ];
+    sorted.push(newGatewayOption);
+    return sorted;
+  }, [availableGateways, newGatewayOption]);
 
   useEffect(() => {
     if (gatewayOptions && value) {
-      const gate = gatewayOptions.find((gt) => gt.text === value.id);
-      setSelectedGatewayOptions(gate ? [gate.key] : []);
+      const gate = gatewayOptions.find((gt) => gt.id === value.id);
+      setSelectedGatewayOptions(gate ? [gate.id] : []);
     }
   }, [value, gatewayOptions]);
 
@@ -137,8 +139,8 @@ const GatewayPicker = (props: any) => {
             size="small"
           >
             {subscriptionOptions.map((option) => (
-              <Option key={option.text} value={option.key}>
-                {option.text}
+              <Option key={option.id} value={option.id}>
+                {option.displayName}
               </Option>
             ))}
           </Dropdown>
@@ -159,8 +161,8 @@ const GatewayPicker = (props: any) => {
           size="small"
         >
           {gatewayOptions.map((option) => (
-            <Option key={option.key} value={option.key}>
-              {option.text}
+            <Option key={option.id} value={option.id}>
+              {option.properties.displayName}
             </Option>
           ))}
         </Dropdown>
