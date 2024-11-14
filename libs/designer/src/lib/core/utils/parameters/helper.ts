@@ -142,7 +142,6 @@ import {
   GroupType,
   AuthenticationType,
   ColumnMode,
-  DynamicCallStatus,
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
@@ -365,7 +364,7 @@ export function createParameterInfo(
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
-    dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
+    dynamicData: parameter.dynamicValues ? { status: DynamicLoadStatus.NOTSTARTED } : undefined,
     editor,
     editorOptions,
     editorViewModel,
@@ -1800,7 +1799,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
-              dynamicData: { status: DynamicCallStatus.NOTSTARTED },
+              dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
               editorOptions: { options: [] },
             },
           });
@@ -1904,6 +1903,7 @@ export const updateDynamicDataInNode = async (
     if (!details) {
       continue;
     }
+
     const parameter = await fetchDynamicValuesForParameter(
       details.groupId,
       details.parameter.id,
@@ -1913,7 +1913,9 @@ export const updateDynamicDataInNode = async (
       nodeDependencies,
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
-      workflowParameters.definitions
+      workflowParameters.definitions,
+      nodeId,
+      dispatch
     );
 
     if (!isNullOrUndefined(parameter)) {
@@ -2192,7 +2194,7 @@ export async function loadDynamicTreeItemsForParameter(
               parameterId,
               groupId,
               propertiesToUpdate: {
-                dynamicData: { status: DynamicCallStatus.STARTED },
+                dynamicData: { status: DynamicLoadStatus.LOADING },
                 editorOptions: { ...originalEditorOptions, items: [] },
               },
             },
@@ -2219,7 +2221,7 @@ export async function loadDynamicTreeItemsForParameter(
                 parameterId,
                 groupId,
                 propertiesToUpdate: {
-                  dynamicData: { status: DynamicCallStatus.SUCCEEDED },
+                  dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
                   editorOptions: { ...originalEditorOptions, items: treeItems },
                 },
               },
@@ -2234,7 +2236,7 @@ export async function loadDynamicTreeItemsForParameter(
               {
                 parameterId,
                 groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+                propertiesToUpdate: { dynamicData: { status: DynamicLoadStatus.FAILED, error: error as Exception } },
               },
             ],
           })
@@ -2276,7 +2278,7 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
 
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 
@@ -2290,11 +2292,11 @@ export async function loadDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
   }
 
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
@@ -2309,7 +2311,9 @@ export async function fetchDynamicValuesForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   idReplacements: Record<string, string> = {},
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  nodeId: string,
+  dispatch: Dispatch
 ): Promise<{ parameterId: string; groupId: string; propertiesToUpdate: any } | undefined> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -2328,7 +2332,10 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
+
+  // Send the initial status update to the store
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 
   try {
     const dynamicValues = await getDynamicValues(
@@ -2340,11 +2347,11 @@ export async function fetchDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
   }
 
   return { parameterId, groupId, propertiesToUpdate };
@@ -2441,7 +2448,7 @@ function showErrorWhenDependenciesNotReady(
                   { parameters: `${invalidParameterNames.join(' , ')}` }
                 ),
               },
-              status: DynamicCallStatus.FAILED,
+              status: DynamicLoadStatus.FAILED,
             },
           },
         },
@@ -2478,7 +2485,7 @@ function fetchErrorWhenDependenciesNotReady(
             { parameters: `${invalidParameterNames.join(' , ')}` }
           ),
         },
-        status: DynamicCallStatus.FAILED,
+        status: DynamicLoadStatus.FAILED,
       },
     },
   };

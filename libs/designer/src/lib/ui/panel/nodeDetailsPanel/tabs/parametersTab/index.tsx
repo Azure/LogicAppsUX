@@ -44,7 +44,6 @@ import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
 import {
-  DynamicCallStatus,
   PanelLocation,
   TokenPicker,
   TokenPickerButtonLocation,
@@ -119,7 +118,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     if (!nodesInitialized) {
       return true;
     }
-    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) {
+    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.LOADING) {
       return true;
     }
     return false;
@@ -293,7 +292,7 @@ const ParameterSection = ({
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
-    if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
+    if (parameter.dynamicData?.status === DynamicLoadStatus.FAILED || parameter.dynamicData?.status === DynamicLoadStatus.NOTSTARTED) {
       loadDynamicValuesForParameter(
         nodeId,
         group.id,
@@ -455,7 +454,7 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
-          isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
+          isLoading: dynamicData?.status === DynamicLoadStatus.LOADING,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,

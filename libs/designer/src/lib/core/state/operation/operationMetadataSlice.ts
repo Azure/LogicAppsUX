@@ -42,10 +42,10 @@ export interface OutputInfo {
 }
 
 export const DynamicLoadStatus = {
-  NOTSTARTED: 'NotStarted',
-  STARTED: 'Started',
-  FAILED: 'Failed',
-  SUCCEEDED: 'Succeeded',
+  NOTSTARTED: 'notstarted',
+  LOADING: 'loading',
+  FAILED: 'failed',
+  SUCCEEDED: 'succeeded',
 } as const;
 export type DynamicLoadStatus = (typeof DynamicLoadStatus)[keyof typeof DynamicLoadStatus];
 

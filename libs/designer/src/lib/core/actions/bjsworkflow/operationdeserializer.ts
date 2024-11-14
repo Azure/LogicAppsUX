@@ -553,38 +553,39 @@ export const initializeDynamicDataInNodes = async (
     operations: { dependencies, operationInfo, errors },
     connections,
   } = rootState;
-  for (const [nodeId, operation] of Object.entries(operations)) {
-    if (operationsToInitialize && !operationsToInitialize.includes(nodeId)) {
-      continue;
-    }
-    if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
-      continue;
-    }
-    if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) {
-      continue;
-    }
+  await Promise.all(
+    Object.entries(operations).map(([nodeId, operation]) => {
+      if (operationsToInitialize && !operationsToInitialize.includes(nodeId)) {
+        return;
+      }
+      if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+        return;
+      }
+      if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) {
+        return;
+      }
 
-    const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
-    const nodeDependencies = getRecordEntry(dependencies, nodeId);
+      const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
+      const nodeDependencies = getRecordEntry(dependencies, nodeId);
+      if (!nodeOperationInfo || !nodeDependencies) {
+        return;
+      }
 
-    if (!nodeOperationInfo || !nodeDependencies) {
-      continue;
-    }
+      const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
+      const connectionReference = getConnectionReference(connections, nodeId);
 
-    const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
-    const connectionReference = getConnectionReference(connections, nodeId);
-
-    updateDynamicDataForValidConnection(
-      nodeId,
-      isTrigger,
-      nodeOperationInfo,
-      connectionReference,
-      nodeDependencies,
-      dispatch,
-      getState,
-      operation
-    );
-  }
+      return updateDynamicDataForValidConnection(
+        nodeId,
+        isTrigger,
+        nodeOperationInfo,
+        connectionReference,
+        nodeDependencies,
+        dispatch,
+        getState,
+        operation
+      );
+    })
+  );
 
   dispatch(updateDynamicDataLoadStatus(true));
 };
@@ -602,7 +603,7 @@ const updateDynamicDataForValidConnection = async (
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
 
   if (isValidConnection) {
-    updateDynamicDataInNode(nodeId, isTrigger, operationInfo, reference, dependencies, dispatch, getState, operation);
+    await updateDynamicDataInNode(nodeId, isTrigger, operationInfo, reference, dependencies, dispatch, getState, operation);
   } else {
     LoggerService().log({
       level: LogEntryLevel.Warning,
