@@ -16,12 +16,14 @@ export type CardFooterProps = Pick<
   | 'isSecureInputsOutputs'
   | 'nodeIndex'
   | 'isLoadingDynamicData'
+  | 'title'
 >;
 
 interface CardBadgeBarProps {
   badges: CardBadgeProps[];
   brandColor?: string;
   tabIndex?: number;
+  cardTitle?: string;
 }
 
 interface CardBadgeProps {
@@ -32,6 +34,7 @@ interface CardBadgeProps {
   badgeContent?: any;
   title: string;
   tabIndex?: number;
+  cardTitle?: string;
 }
 
 const commentIconProps: IIconProps = {
@@ -52,6 +55,7 @@ const lockIconProps: IIconProps = {
 
 export const CardFooter: React.FC<CardFooterProps> = memo(
   ({
+    title: cardTitle,
     commentBox,
     connectionDisplayName,
     connectionRequired,
@@ -61,7 +65,6 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
     nodeIndex,
   }) => {
     const intl = useIntl();
-
     const strings = useMemo(
       () => ({
         CONNECTION_NAME_DISPLAY: intl.formatMessage({
@@ -170,19 +173,20 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
 
     return (
       <div className="msla-card-v2-footer">
-        <CardBadgeBar badges={badges} tabIndex={nodeIndex} />
+        <CardBadgeBar badges={badges} tabIndex={nodeIndex} cardTitle={cardTitle} />
       </div>
     );
   }
 );
 
-const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex }) => {
+const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex, cardTitle }) => {
   return (
     <div className="msla-badges" style={getHeaderStyle(brandColor)}>
       {badges.map(({ enabled, active, content, badgeContent, iconProps, title }) => (
         <CardBadge
           key={title}
           title={title}
+          cardTitle={cardTitle}
           content={content}
           badgeContent={badgeContent}
           iconProps={iconProps}
@@ -195,16 +199,16 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabInde
   );
 };
 
-const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, tabIndex }) => {
+const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, cardTitle, tabIndex }) => {
   if (!enabled || !content) {
     return null;
   }
 
   return active ? (
-    <Tooltip relationship={'label'} withArrow={true} content={content}>
+    <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
       {badgeContent ?? (
         <div>
-          <Icon className={'panel-card-v2-badge active'} {...iconProps} aria-label={`${title}: ${content}`} tabIndex={tabIndex} />
+          <Icon role="button" className={'panel-card-v2-badge active'} {...iconProps} tabIndex={tabIndex} />
         </div>
       )}
     </Tooltip>

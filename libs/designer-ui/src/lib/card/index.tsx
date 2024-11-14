@@ -215,6 +215,7 @@ export const Card: React.FC<CardProps> = memo(
             isSecureInputsOutputs={isSecureInputsOutputs}
             isLoadingDynamicData={isLoadingDynamicData}
             nodeIndex={nodeIndex}
+            title={title}
           />
         </div>
       </div>
