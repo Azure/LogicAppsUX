@@ -98,7 +98,12 @@ export async function getDependenciesVersion(context: IActionContext): Promise<I
  * @param {IHostJsonV2} hostJson - Host.json configuration.
  */
 export async function addDefaultBundle(context: IActionContext, hostJson: IHostJsonV2): Promise<void> {
-  const versionRange: string = defaultVersionRange;
+  let versionRange: string;
+  try {
+    versionRange = await getLatestVersionRange(context);
+  } catch {
+    versionRange = defaultVersionRange;
+  }
 
   hostJson.extensionBundle = {
     id: extensionBundleId,
