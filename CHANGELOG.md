@@ -1,4 +1,31 @@
 # Logic Apps Designer
+## [5.1.0](https://github.com/Azure/LogicAppsUX/compare/v5.0.0...v5.1.0) (2024-11-14)
+
+
+### Features
+
+* **Data Mapper:** Refactored connections ([#6022](https://github.com/Azure/LogicAppsUX/issues/6022)) ([3fb2b71](https://github.com/Azure/LogicAppsUX/commit/3fb2b71dc7b1df59715e8b32a9102e6a8a8f2727))
+* **Designer:** Dragging node instantly shows what locations are valid / invalid ([#6067](https://github.com/Azure/LogicAppsUX/issues/6067)) ([7c8ac25](https://github.com/Azure/LogicAppsUX/commit/7c8ac25ab54103ce7ff1233e3bf97ead457616fd))
+* **Designer:** Edges connected to selected node are highlighted ([#6066](https://github.com/Azure/LogicAppsUX/issues/6066)) ([c25093a](https://github.com/Azure/LogicAppsUX/commit/c25093a9caac574c10c7ec3af1f3fc94f4dbcf1f))
+* **Templates:** Detail page dismiss button back to templates designer ([#6081](https://github.com/Azure/LogicAppsUX/issues/6081)) ([6a76229](https://github.com/Azure/LogicAppsUX/commit/6a76229def3b262d8e0ca0d53e7f1d03e4de3c27))
+
+
+### Bug Fixes
+
+* **Data Mapper:** now using v2 service ([#6080](https://github.com/Azure/LogicAppsUX/issues/6080)) ([dff323b](https://github.com/Azure/LogicAppsUX/commit/dff323bc1bedafe9eaf8dda1e1ba027d0ccd5a2c))
+* **designer:** Use Default swagger Host when api host is not set ([#6068](https://github.com/Azure/LogicAppsUX/issues/6068)) ([57b5eae](https://github.com/Azure/LogicAppsUX/commit/57b5eae32ee90d2a969d7797ad7fa39b2b8dd590))
+* **Templates:** Quickview panel header for accelerator displaying accelerator info ([#6077](https://github.com/Azure/LogicAppsUX/issues/6077)) ([dfad10f](https://github.com/Azure/LogicAppsUX/commit/dfad10f557b346bc5927e85f896b46c86526e50e))
+* **vscode:** Remove extra error encapsulation ([#6064](https://github.com/Azure/LogicAppsUX/issues/6064)) ([4a5150d](https://github.com/Azure/LogicAppsUX/commit/4a5150d30333e6161bdd0e796854ed03c94943bd))
+
+## [5.0.0](https://github.com/Azure/LogicAppsUX/compare/v4.122.0...v5.0.0) (2024-11-11)
+
+
+### Bug Fixes
+
+* **Designer:** Canvas pans when dragging a node to the edge of the canvas ([#6049](https://github.com/Azure/LogicAppsUX/issues/6049)) ([c76293e](https://github.com/Azure/LogicAppsUX/commit/c76293ea7fcdff5e1882e7a4c2f17388db6718db))
+* **Designer:** Designer now inherits container size instead of being 100vh ([#6058](https://github.com/Azure/LogicAppsUX/issues/6058)) ([ef55c25](https://github.com/Azure/LogicAppsUX/commit/ef55c2557cef9c92b817503521910864487d0d6f))
+* **Designer:** Fixed custom connector browse with extra capabilities ([#6055](https://github.com/Azure/LogicAppsUX/issues/6055)) ([998d644](https://github.com/Azure/LogicAppsUX/commit/998d6446dd608d2b258359fc767807df964e6188))
+
 ## [4.122.0](https://github.com/Azure/LogicAppsUX/compare/v4.121.0...v4.122.0) (2024-11-07)
 
 

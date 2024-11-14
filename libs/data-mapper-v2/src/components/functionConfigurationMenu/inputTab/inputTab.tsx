@@ -2,17 +2,27 @@ import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
-import { createInputSlotForUnboundedInput, setConnectionInput, updateFunctionConnectionInputs } from '../../../core/state/DataMapSlice';
+import {
+  createInputSlotForUnboundedInput,
+  deleteConnectionFromFunctionMenu,
+  setConnectionInput,
+  updateFunctionConnectionInputs,
+} from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import type { FunctionData, FunctionDictionary } from '../../../models';
-import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../../models/Connection';
+import type { ConnectionDictionary, NodeConnection, CustomValueConnection, InputConnection } from '../../../models/Connection';
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
 import { useStyles } from './styles';
 import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
-import { newConnectionWillHaveCircularLogic } from '../../../utils/Connection.Utils';
+import {
+  connectionDoesExist,
+  createCustomInputConnection,
+  isNodeConnection,
+  newConnectionWillHaveCircularLogic,
+} from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
@@ -36,11 +46,7 @@ export const InputTabContents = (props: {
 
   if (props.func.maxNumberOfInputs !== UnboundedInput) {
     const tableContents = props.func.inputs.map((input, index) => {
-      const inputConnection = functionConnection
-        ? Object.values(functionConnection.inputs).length > 1
-          ? functionConnection.inputs[index][0]
-          : functionConnection.inputs[0][index]
-        : undefined;
+      const inputConnection = functionConnection && functionConnection.inputs[index] ? functionConnection.inputs[index] : undefined;
 
       const inputType = getInputTypeFromNode(inputConnection);
 
@@ -74,11 +80,9 @@ export const InputTabContents = (props: {
       const removeConnection = (inputIndex: number) => {
         const targetNodeReactFlowKey = props.functionKey;
         dispatch(
-          setConnectionInput({
-            targetNode: props.func,
-            targetNodeReactFlowKey,
+          deleteConnectionFromFunctionMenu({
             inputIndex,
-            input: undefined,
+            targetId: targetNodeReactFlowKey,
           })
         );
       };
@@ -187,7 +191,7 @@ const UnlimitedInputs = (props: {
         </span>
       </div>
       <DraggableList<TemplateItemProps, CommonProps, any>
-        list={Object.entries(functionConnection.inputs[0]).map((input, index) => ({ input: input[1], index }))}
+        list={Object.entries(functionConnection.inputs).map((input, index) => ({ input: input[1], index }))}
         commonProps={{
           functionKey: props.functionKey,
           data: props.func,
@@ -214,7 +218,7 @@ const UnlimitedInputs = (props: {
 
 export const getInputTypeFromNode = (input: InputConnection | undefined) => {
   let inputType = '';
-  if (typeof input !== 'string' && input !== undefined) {
+  if (connectionDoesExist(input) && isNodeConnection(input)) {
     if (isSchemaNodeExtended(input.node)) {
       inputType = input?.node.type;
     } else {
@@ -244,15 +248,17 @@ export const validateAndCreateConnectionInput = (
 
       // Create connection
       const source = isSelectedInputFunction ? functionNodeDictionary[selectedInputKey] : sourceSchemaDictionary[selectedInputKey];
-      const srcConUnit: ConnectionUnit = {
+      const srcConUnit: NodeConnection = {
         node: source,
         reactFlowKey: selectedInputKey,
+        isCustom: false,
+        isDefined: true,
       };
 
       return srcConUnit;
     }
     // Create custom value connection
-    const srcConUnit: InputConnection = optionValue;
+    const srcConUnit: CustomValueConnection = createCustomInputConnection(optionValue);
 
     return srcConUnit;
   }
