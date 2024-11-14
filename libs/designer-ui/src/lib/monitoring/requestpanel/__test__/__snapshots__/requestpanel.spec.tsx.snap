@@ -1412,7 +1412,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -1451,7 +1451,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -1495,7 +1495,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -2299,7 +2299,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -2338,7 +2338,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -2382,7 +2382,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >

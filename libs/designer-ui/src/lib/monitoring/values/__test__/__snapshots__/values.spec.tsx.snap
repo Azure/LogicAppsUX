@@ -191,7 +191,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
       }
     >
       <div
-        className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-122"
+        className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-122"
         data-automationid="DetailsList"
         data-is-scrollable="false"
       >
@@ -230,7 +230,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                 role="columnheader"
                 style={
                   {
-                    "width": 120,
+                    "width": NaN,
                   }
                 }
               >
@@ -274,7 +274,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                 role="columnheader"
                 style={
                   {
-                    "width": 120,
+                    "width": NaN,
                   }
                 }
               >
@@ -381,7 +381,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                               role="gridcell"
                               style={
                                 {
-                                  "width": 120,
+                                  "width": "auto",
                                 }
                               }
                             >
@@ -394,7 +394,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                               role="gridcell"
                               style={
                                 {
-                                  "width": 120,
+                                  "width": "auto",
                                 }
                               }
                             >
@@ -437,7 +437,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                               role="gridcell"
                               style={
                                 {
-                                  "width": 120,
+                                  "width": "auto",
                                 }
                               }
                             >
@@ -450,7 +450,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                               role="gridcell"
                               style={
                                 {
-                                  "width": 120,
+                                  "width": "auto",
                                 }
                               }
                             >
@@ -493,7 +493,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                               role="gridcell"
                               style={
                                 {
-                                  "width": 120,
+                                  "width": "auto",
                                 }
                               }
                             >
@@ -506,7 +506,7 @@ exports[`ui/monitoring/values/value > should render a key-value pairs details li
                               role="gridcell"
                               style={
                                 {
-                                  "width": 120,
+                                  "width": "auto",
                                 }
                               }
                             >
