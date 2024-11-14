@@ -2,13 +2,13 @@ import { environment } from '../../../../environments/environment';
 import { useQuery } from '@tanstack/react-query';
 import type { AppDispatch } from '../../../state/store';
 import { useAppId, useIsMonitoringView, useRunId, useWorkflowName } from '../../../state/workflowLoadingSelectors';
-import { changeRunId, setAppid, setResourcePath, setWorkflowName } from '../../../state/workflowLoadingSlice';
+import { changeRunId, setAppid, setResourcePath } from '../../../state/workflowLoadingSlice';
 import { useFetchConsumptionApps } from '../Queries/FetchConsumptionApps';
 import type { IComboBoxOption, IStackProps, IComboBoxStyles, IDropdownOption } from '@fluentui/react';
 import { ComboBox, Dropdown, Spinner, Stack } from '@fluentui/react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { RunList } from '../Models/WorkflowListTypes';
 
 const columnProps: Partial<IStackProps> = {
@@ -31,8 +31,29 @@ export const AzureConsumptionLogicAppSelector = () => {
   const runId = useRunId();
   const isMonitoringView = useIsMonitoringView();
 
+  const [selectedSiteResourceId, setSelectedSiteResourceId] = useState<string | undefined>(undefined);
+
+  const filteredAppList = useMemo(() => {
+    if (selectedSiteResourceId) {
+      const updatedFilteredAppList = appList?.filter((app) => app.id.startsWith(selectedSiteResourceId)) ?? [];
+      const firstResource = updatedFilteredAppList?.[0];
+      if (firstResource) {
+        dispatch(setAppid(firstResource.id));
+        dispatch(setResourcePath(firstResource.id));
+      }
+      return updatedFilteredAppList;
+    }
+    return appList;
+  }, [dispatch, appList, selectedSiteResourceId]);
+
+  const siteResourceIdOptions: IComboBoxOption[] =
+    Array.from(new Set(appList?.map((app) => app.id.split('/providers')[0]) ?? []))?.map((siteResourceId) => ({
+      key: siteResourceId,
+      text: `${siteResourceId.split('/')?.slice(-1)} (${siteResourceId})`,
+    })) ?? [];
+
   const appOptions: IComboBoxOption[] =
-    appList?.map((app) => {
+    filteredAppList?.map((app) => {
       return {
         key: app.id,
         text: `${app.name} (${app.id})`,
@@ -78,6 +99,26 @@ export const AzureConsumptionLogicAppSelector = () => {
     <Stack {...columnProps}>
       <div style={{ position: 'relative' }}>
         <ComboBox
+          placeholder={
+            isAppsLoading ? '' : siteResourceIdOptions.length > 0 ? 'Filter Workflows by Site Resource Id' : 'No Resource Ids to Select'
+          }
+          label="(Optional) Filter Workflows by Site Resource Id"
+          allowFreeform={true}
+          autoComplete={'on'}
+          options={siteResourceIdOptions}
+          selectedKey={workflowName}
+          disabled={siteResourceIdOptions.length === 0 || isAppsLoading}
+          onChange={(_, option) => {
+            const selectedAppId = (option?.key ?? '') as string;
+            setSelectedSiteResourceId(selectedAppId);
+          }}
+        />
+        {isAppsLoading ? (
+          <Spinner style={{ position: 'absolute', bottom: '6px', left: '8px' }} labelPosition="right" label="Loading Workflows..." />
+        ) : null}
+      </div>
+      <div style={{ position: 'relative' }}>
+        <ComboBox
           placeholder={isAppsLoading ? '' : appOptions.length > 0 ? 'Select an App' : 'No Apps to Select'}
           label="Consumption Logic Apps"
           allowFreeform={true}
@@ -91,7 +132,6 @@ export const AzureConsumptionLogicAppSelector = () => {
             }
             dispatch(setAppid(selectedAppId));
             dispatch(setResourcePath(selectedAppId));
-            dispatch(setWorkflowName(option?.data.name as string));
           }}
           styles={comboBoxStyles}
           disabled={appOptions.length === 0 || isAppsLoading}
