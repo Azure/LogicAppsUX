@@ -4,7 +4,19 @@ import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
-const GatewayPicker = (props: any) => {
+export interface GatewayPickerProps {
+  parameterKey: string;
+  selectedSubscriptionId: string;
+  selectSubscriptionCallback: (subscriptionId: string) => void;
+  availableGateways: any;
+  availableSubscriptions: any;
+  isSubscriptionDropdownDisabled: any;
+  isLoading: boolean;
+  value: any;
+  setValue: (value: any) => void;
+}
+
+export const GatewayPicker = (props: GatewayPickerProps) => {
   const {
     parameterKey,
     selectedSubscriptionId,
