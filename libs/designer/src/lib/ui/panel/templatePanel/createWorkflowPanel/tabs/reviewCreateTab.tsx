@@ -62,6 +62,11 @@ export const ReviewCreatePanel = () => {
       id: 'cNXS5n',
       description: 'Dropdown option for stateless type',
     }),
+    NO_CONFIG: intl.formatMessage({
+      defaultMessage: 'Select Create to start a new workflow based on this template, no configuration required.',
+      id: '1vqDeQ',
+      description: 'Accessibility label for no configuration required',
+    }),
   };
 
   return (
@@ -96,6 +101,12 @@ export const ReviewCreatePanel = () => {
           </div>
         </>
       )}
+
+      {isConsumption && !Object.keys(connections).length && !Object.keys(parameterDefinitions).length ? (
+        <div className="msla-templates-empty-review-tab">
+          <Text className="msla-templates-tab-review-section-details-value">{intlText.NO_CONFIG}</Text>
+        </div>
+      ) : null}
 
       {Object.keys(connections).length > 0 && (
         <>
