@@ -121,7 +121,7 @@ exports[`lib/card/cardfooter > should render with an inactive connection icon 1`
       aria-label="Connection required"
       className="panel-card-v2-badge inactive root-114"
       data-icon-name="Link"
-      role="button"
+      role="img"
       tabIndex={0}
     >
       
