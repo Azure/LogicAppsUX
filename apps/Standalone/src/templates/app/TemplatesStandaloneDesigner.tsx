@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
-import { TemplatesDataProvider, templateStore, type WorkflowParameter } from '@microsoft/logic-apps-designer';
+import { isOpenApiSchemaVersion, TemplatesDataProvider, templateStore, type WorkflowParameter } from '@microsoft/logic-apps-designer';
 import { environment, loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
@@ -184,6 +184,7 @@ export const TemplatesStandaloneDesigner = () => {
         );
       } else if (hostingPlan === 'consumption') {
         console.log('working on it');
+        const uniqueIdentifier = '';
 
         let sanitizedWorkflowDefinition = JSON.stringify(workflows[0].definition);
 
@@ -191,7 +192,7 @@ export const TemplatesStandaloneDesigner = () => {
         // Sanitizing parameter name & body
         Object.keys(parametersData).forEach((key) => {
           const parameter = parametersData[key];
-          const sanitizedParameterName = replaceWithWorkflowName(parameter.name, /* uniqueIdentifier */ '');
+          const sanitizedParameterName = replaceWithWorkflowName(parameter.name, uniqueIdentifier);
           sanitizedParameterData[sanitizedParameterName] = {
             name: parameter.name,
             type: parameter.type,
@@ -204,11 +205,32 @@ export const TemplatesStandaloneDesigner = () => {
             `parameters('${sanitizedParameterName}')`
           );
         });
-        const workflowToSave = {
-          definition: JSON.parse(sanitizedWorkflowDefinition),
+
+        const workflowDefinition = JSON.parse(sanitizedWorkflowDefinition);
+        const workflowToSave: any = {
+          definition: workflowDefinition,
           parameters: sanitizedParameterData,
-          connectionReferences: {}, //TODO,
+          connectionReferences,
         };
+
+        const newConnectionsObj: Record<string, any> = {};
+        if (Object.keys(connectionReferences ?? {}).length) {
+          await Promise.all(
+            Object.keys(connectionReferences).map(async (referenceKey) => {
+              const reference = connectionReferences[referenceKey];
+              const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
+              newConnectionsObj[referenceKey] = {
+                api,
+                connection,
+                connectionId: isOpenApiSchemaVersion(workflowDefinition) ? undefined : connection.id,
+                connectionProperties,
+                connectionRuntimeUrl,
+              };
+            })
+          );
+        }
+        workflowToSave.connections = newConnectionsObj;
+
         const workflowArtifacts = await getWorkflowAndArtifactsConsumption(workflowId!);
         await saveWorkflowConsumption(workflowArtifacts, workflowToSave, () => {}, { throwError: true });
         alert('Workflow saved successfully!');
