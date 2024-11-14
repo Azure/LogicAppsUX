@@ -43,7 +43,7 @@ describe('ui/monitoring/values/_keyvaluepairs', () => {
     expect(text.props.className.split(' ')).toEqual(expect.arrayContaining([classNames.keyValuePairs, classNames.text]));
 
     const detailsList = React.Children.only(text.props.children);
-    expect(detailsList.props.ariaLabel).toBe(props.displayName);
+    expect(detailsList.props.ariaLabelForGrid).toBe(props.displayName);
     expect(detailsList.props.ariaLabelForListHeader).toBe(props.displayName);
     expect(detailsList.props.checkboxVisibility).toBe(CheckboxVisibility.hidden);
     expect(detailsList.props.columns).toEqual([
@@ -86,7 +86,7 @@ describe('ui/monitoring/values/_keyvaluepairs', () => {
         $value: 'no-referred-when-downgrade',
       },
     ]);
-    expect(detailsList.props.layoutMode).toBe(DetailsListLayoutMode.justified);
+    expect(detailsList.props.layoutMode).toBe(DetailsListLayoutMode.fixedColumns);
     expect(detailsList.props.selectionMode).toBe(SelectionMode.none);
   });
 
