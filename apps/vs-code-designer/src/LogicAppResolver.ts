@@ -89,8 +89,12 @@ export class LogicAppResolver implements AppResourceResolver {
 
             resolve();
           })
-          .catch((reason) => {
-            reject(reason);
+          .catch((error) => {
+            if (error?.statusCode !== 400) {
+              reject(error);
+            } else {
+              resolve();
+            }
           });
       });
 
