@@ -86,7 +86,9 @@ export const useCreateWorkflowPanelTabs = ({
 
     const isMissingWorkflowInfo = Object.values(workflows).some(
       (workflowData) =>
-        !workflowData.workflowName || workflowData.errors.kind || workflowData.errors.workflow || !workflowData.workflowDefinition
+        (!isConsumption && (!workflowData.workflowName || workflowData.errors.kind)) ||
+        workflowData.errors.workflow ||
+        !workflowData.workflowDefinition
     );
 
     const isMissingInfo = isMissingWorkflowInfo || connectionsError || Object.values(parameterErrors)?.filter((error) => error).length > 0;
@@ -105,7 +107,17 @@ export const useCreateWorkflowPanelTabs = ({
       connections,
       parameterDefinitions
     );
-  }, [connections, connectionsError, createWorkflow, intl, isMultiWorkflowTemplate, parameterDefinitions, parameterErrors, workflows]);
+  }, [
+    isConsumption,
+    connections,
+    connectionsError,
+    createWorkflow,
+    intl,
+    isMultiWorkflowTemplate,
+    parameterDefinitions,
+    parameterErrors,
+    workflows,
+  ]);
 
   const { isLoading: isCreating, mutate: createWorkflowFromTemplate } = useMutation(async () => {
     setErrorMessage(undefined);
