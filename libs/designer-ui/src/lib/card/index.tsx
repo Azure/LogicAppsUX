@@ -212,6 +212,7 @@ export const Card: React.FC<CardProps> = memo(
             staticResultsEnabled={staticResultsEnabled}
             isSecureInputsOutputs={isSecureInputsOutputs}
             nodeIndex={nodeIndex}
+            title={title}
           />
         </div>
       </div>
