@@ -84,7 +84,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
         </>
       )}
 
-      <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" />
+      {description ? <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" /> : null}
     </button>
   );
 };
