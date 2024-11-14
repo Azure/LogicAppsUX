@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [5.2.0](https://github.com/Azure/LogicAppsUX/compare/v5.1.0...v5.2.0) (2024-11-14)
+
+
+### Bug Fixes
+
+* **designer:** Don't render info bubble in operation search if there is no description ([#6118](https://github.com/Azure/LogicAppsUX/issues/6118)) ([c8e61b1](https://github.com/Azure/LogicAppsUX/commit/c8e61b1db0ecfeae9cbbc61c01af6495ac3b2ff2))
+* **Designer:** DynamicData initialization hook fix, new indicator ([#6091](https://github.com/Azure/LogicAppsUX/issues/6091)) ([435336d](https://github.com/Azure/LogicAppsUX/commit/435336d522f362c9396dd416f86a948752b84f60))
+* **designer:** Fix a11y issue where footer icons are technically clickable but not have button role ([#6120](https://github.com/Azure/LogicAppsUX/issues/6120)) ([57abc46](https://github.com/Azure/LogicAppsUX/commit/57abc46445d7b848930f6b32ca9e646f11661cb5))
+* **designer:** Prevent crashing when having object in key/value ([#6121](https://github.com/Azure/LogicAppsUX/issues/6121)) ([ccb51f5](https://github.com/Azure/LogicAppsUX/commit/ccb51f5d417fc0cd7fbe24a82fcdf6083335fc6a))
+
 ## [5.1.0](https://github.com/Azure/LogicAppsUX/compare/v5.0.0...v5.1.0) (2024-11-14)
 
 
