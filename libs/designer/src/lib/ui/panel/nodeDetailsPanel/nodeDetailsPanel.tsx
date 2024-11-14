@@ -11,7 +11,7 @@ import {
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panel/panelSelectors';
 import { expandPanel, setPinnedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
-import { useStateHistoryItemIndex } from '../../../core/state/undoRedo/undoRedoSelectors';
+import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
@@ -218,11 +218,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return undefined;
   };
 
-  const getChildWorkflowIdFromInputs = (inputs: any): string | undefined => {
-    if (!isNullOrEmpty(inputs)) {
-      const workflow = getObjectPropertyValue(inputs, ['host', 'value', 'workflow']);
+  const getChildWorkflowIdFromInputs = (childWorkflowInputs: any): string | undefined => {
+    if (!isNullOrEmpty(childWorkflowInputs)) {
+      const workflow = getObjectPropertyValue(childWorkflowInputs, ['host.workflow.id']);
       if (!isNullOrEmpty(workflow)) {
-        return workflow.id;
+        return workflow.value;
       }
     }
     return undefined;
@@ -244,11 +244,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   }, [runData?.inputs, runName]);
 
   // Re-render panel when undo/redo is performed to update panel parameter values, title etc.
-  const stateHistoryItemIndex = useStateHistoryItemIndex();
+  const undoRedoClickToggle = useUndoRedoClickToggle();
 
   return (
     <PanelContainer
-      key={stateHistoryItemIndex}
+      key={undoRedoClickToggle}
       {...commonPanelProps}
       noNodeSelected={!selectedNode}
       panelScope={PanelScope.CardLevel}

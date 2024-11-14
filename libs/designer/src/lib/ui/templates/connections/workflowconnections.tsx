@@ -5,13 +5,12 @@ import {
   DetailsRow,
   Icon,
   IconButton,
-  Link,
   SelectionMode,
   Shimmer,
   ShimmerElementType,
   SpinnerSize,
 } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
+import { Link, Text } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
 import { aggregate, ConnectionService, getObjectPropertyValue, guid, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -308,6 +307,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
         return (
           <div className="msla-template-connection-name">
             <ConnectorIconWithName
+              aria-label={item.connectorDisplayName}
               connectorId={item.connectorId}
               classes={{
                 root: 'msla-template-create-connector',
@@ -328,6 +328,11 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
       case '$status':
         return (
           <ConnectionStatusWithProgress
+            aria-label={
+              item.hasConnection
+                ? intl.formatMessage({ defaultMessage: 'Connected', description: 'Label text to connected status', id: 'XR5izH' })
+                : intl.formatMessage({ defaultMessage: 'Not connected', description: 'Label text to not connected status', id: 'YnSO/8' })
+            }
             item={item}
             intl={intl}
             onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
@@ -335,10 +340,29 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
         );
 
       case '$connection':
-        return <ConnectionName item={item} intl={intl} disabled={isConnectionInCreate} onCreate={handleConnectionCreateClick} />;
+        return (
+          <ConnectionName
+            aria-label={
+              item.connection?.displayName ??
+              intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })
+            }
+            item={item}
+            intl={intl}
+            disabled={isConnectionInCreate}
+            onCreate={handleConnectionCreateClick}
+          />
+        );
 
       case '$connectionsList':
-        return <ConnectionsList item={item} intl={intl} onSelect={updateItemInConnectionsList} onCreate={handleConnectionCreateClick} />;
+        return (
+          <ConnectionsList
+            aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'w+7aGo' })}
+            item={item}
+            intl={intl}
+            onSelect={updateItemInConnectionsList}
+            onCreate={handleConnectionCreateClick}
+          />
+        );
 
       default:
         return null;

@@ -3,9 +3,10 @@ import { existsSync, writeFile, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const releaseBranch = 'release/20241007';
+const releaseBranch = 'release/20241028';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
+const sourceCodeURL = `https://github.com/Azure/LogicAppsTemplates/tree/${releaseBranch}`;
 const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
 
 const downloadFile = async (path) => {
@@ -35,11 +36,20 @@ const downloadTemplate = async (path) => {
   for (const artifact of templateManifest.artifacts) {
     await downloadFile(`${path}/${artifact.file}`);
   }
-  templateManifest.images = {
-    light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
-    dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
-  };
+  templateManifest.images =
+    templateManifest.images.light && templateManifest.images.dark
+      ? {
+          light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
+          dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
+        }
+      : undefined;
+  templateManifest.sourceCodeUrl = `${sourceCodeURL}/${path}/manifest.json`;
   writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2), () => {});
+
+  for (const workflowId of Object.keys(templateManifest.workflows ?? {})) {
+    createTemplatesFolder(`${path}/${workflowId}`);
+    await downloadTemplate(`${path}/${workflowId}`);
+  }
 };
 
 const run = async () => {

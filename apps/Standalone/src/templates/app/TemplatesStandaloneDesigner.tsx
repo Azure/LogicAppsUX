@@ -358,8 +358,11 @@ const getServices = (
 
   const templateService = isConsumption
     ? new BaseTemplateService({
-        openBladeAfterCreate: (workflowName: string) => {
-          console.log('Open blade after create, workflowName is: ', workflowName);
+        openBladeAfterCreate: (workflowName: string | undefined) => {
+          window.alert(`Open blade after create, workflowName is: ${workflowName}`);
+        },
+        onAddBlankWorkflow: () => {
+          console.log('On add blank workflow click');
         },
       })
     : new StandardTemplateService({
@@ -370,8 +373,11 @@ const getServices = (
           subscription: apiVersion,
           gateway: '2018-11-01',
         },
-        openBladeAfterCreate: (workflowName: string) => {
-          console.log('Open blade after create, workflowName is: ', workflowName);
+        openBladeAfterCreate: (workflowName: string | undefined) => {
+          window.alert(`Open blade after create, workflowName is: ${workflowName}`);
+        },
+        onAddBlankWorkflow: () => {
+          console.log('On add blank workflow click');
         },
       });
 

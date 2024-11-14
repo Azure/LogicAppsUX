@@ -16,16 +16,12 @@
         "type": "InitializeVariable"
       },
       "Compose": {
-        "inputs": "a",
         "runAfter": {
           "Init_all": ["SUCCEEDED"]
         },
         "type": "Compose"
       },
       "Execute_a_navigation_plan": {
-        "inputs": {
-          "a": "A"
-        },
         "runAfter": {
           "Init_all": ["SUCCEEDED"]
         },

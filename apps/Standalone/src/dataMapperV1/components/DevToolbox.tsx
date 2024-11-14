@@ -30,7 +30,7 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
     data: {
       mapDefinitionString: fullTranscriptMapDefinitionString,
       mapMetadataString: JSON.stringify(testMetadata),
-      associatedSchemaIdx: 1,
+      associatedSchemaIdx: 2,
     },
   },
   {
@@ -51,17 +51,18 @@ interface SchemaFileData {
 }
 const sourceSchemaFileOptions: SchemaFileData[] = [
   { filename: 'PlaygroundSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'ProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'SourceSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'ComprehensiveSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'SourceSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
+  { filename: 'ProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
 ];
 const targetSchemaFileOptions: SchemaFileData[] = [
   { filename: 'PlaygroundTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'TargetSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'OebsProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'TargetSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'ComprehensiveTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'TargetSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
+  { filename: 'OebsProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
 ];
 const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: SchemaFileData[]) =>
   schemaFileData.map<IDropdownOption>((schemaOpt) => ({

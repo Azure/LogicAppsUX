@@ -24,7 +24,7 @@ export class ManifestInputsBinder extends Binder {
     customSwagger: SwaggerParser | undefined
   ): Promise<BoundParameters> {
     if (inputs === undefined) {
-      return {};
+      return inputs;
     }
 
     const inputsToBind = { inputs };

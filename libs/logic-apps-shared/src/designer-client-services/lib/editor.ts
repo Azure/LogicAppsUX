@@ -80,6 +80,10 @@ export interface IEditorProps {
    * Whether the editor is disabled.
    */
   disabled?: boolean;
+  /**
+   * Map a token string value to corresponding value segment.
+   */
+  tokenMapping?: Record<string, ValueSegment>;
 }
 
 export interface IEditorParameterInfo {
@@ -103,7 +107,11 @@ export interface ICustomEditorOptions {
   /**
    * The original editor options.
    */
-  editorOptions?: Record<string, any>;
+  options?: Record<string, any>;
+  /**
+   * The visibility of the editor
+   */
+  visibility?: string;
 }
 
 export interface IEditorService {

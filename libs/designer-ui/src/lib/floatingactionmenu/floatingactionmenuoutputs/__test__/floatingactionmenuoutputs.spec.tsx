@@ -98,6 +98,8 @@ describe('ui/floatingactionmenuoutputs', () => {
     const { getByPlaceholderText } = render(<FloatingActionMenuOutputs {...minimal} onChange={onChange} />);
     const newText = 'New text';
     fireEvent.change(getByPlaceholderText('Enter a name'), { target: { value: newText } });
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.blur(getByPlaceholderText('Enter a name'));
     const expectedOnChange = {
       value: minimal.initialValue,
       viewModel: {
@@ -132,6 +134,8 @@ describe('ui/floatingactionmenuoutputs', () => {
     const { getByPlaceholderText } = render(<FloatingActionMenuOutputs {...minimal} onChange={onChange} />);
     const newText = 'New text';
     fireEvent.change(getByPlaceholderText('Enter a description of the output'), { target: { value: newText } });
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.blur(getByPlaceholderText('Enter a description of the output'));
     const expectedOnChange = {
       value: minimal.initialValue,
       viewModel: {

@@ -1,7 +1,6 @@
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { TemplateCard } from './cards/templateCard';
-import { TemplatePanel } from '../panel/templatePanel/templatePanel';
+import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
 import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -10,6 +9,8 @@ import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
+import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
+import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
 export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -19,8 +20,9 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
     filteredTemplateNames,
-    filters: { pageNum },
+    filters: { pageNum, detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
+  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
 
   const intlText = {
     NO_RESULTS: intl.formatMessage({
@@ -47,6 +49,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div>
           <div className="msla-templates-list">
+            {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard />}
             {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
               <TemplateCard key={templateName} templateName={templateName} />
             ))}
@@ -75,7 +78,10 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       )}
 
       {templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
-        <TemplatePanel showCreate={true} workflowId={Object.keys(workflows)[0]} createWorkflow={createWorkflowCall} />
+        <>
+          <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
+          <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
+        </>
       )}
 
       <div

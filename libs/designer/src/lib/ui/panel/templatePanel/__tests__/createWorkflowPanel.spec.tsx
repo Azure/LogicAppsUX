@@ -7,12 +7,12 @@ import { screen } from '@testing-library/react';
 import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
-import { TemplatePanel } from '../templatePanel';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
+import { CreateWorkflowPanel } from '../createWorkflowPanel/createWorkflowPanel';
 
 describe('panel/templatePanel/createWorkflowPanel', () => {
   let store: AppStore;
@@ -32,8 +32,11 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         subscription: '2018-07-01-preview',
         gateway: '2018-11-01',
       },
-      openBladeAfterCreate: (workflowName: string) => {
+      openBladeAfterCreate: (workflowName: string | undefined) => {
         console.log('Open blade after create', workflowName);
+      },
+      onAddBlankWorkflow: () => {
+        console.log('Add blank workflow');
       },
     })
   );
@@ -125,6 +128,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
             workflow: undefined,
             kind: undefined,
           },
+          connectionKeys: [],
         },
       },
       templateName: template1Manifest.title,
@@ -159,7 +163,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
 
     renderWithProviders(
       <QueryClientProvider client={queryClient}>
-        <TemplatePanel workflowId={defaultWorkflowId} showCreate={true} createWorkflow={vi.fn()} />
+        <CreateWorkflowPanel createWorkflow={vi.fn()} />
       </QueryClientProvider>,
       { store }
     );
@@ -204,6 +208,7 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
             workflow: undefined,
             kind: undefined,
           },
+          connectionKeys: [],
         },
       },
       templateName: template2Manifest.title,

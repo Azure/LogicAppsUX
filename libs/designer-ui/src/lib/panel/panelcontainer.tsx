@@ -1,6 +1,15 @@
 import type { ILayerProps } from '@fluentui/react';
-import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Button, Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
+import {
+  Button,
+  Divider,
+  mergeClasses,
+  MessageBar,
+  MessageBarBody,
+  Text,
+  OverlayDrawer,
+  Spinner,
+  MessageBarTitle,
+} from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
 import { useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -150,6 +159,12 @@ export const PanelContainer = ({
     description: 'label for operation details panel component',
   });
 
+  const panelErrorTitle = intl.formatMessage({
+    defaultMessage: 'Operation details error',
+    id: 'ir+plQ',
+    description: 'title for panel error',
+  });
+
   const panelErrorMessage = intl.formatMessage({
     defaultMessage: 'Error loading operation data',
     id: '62Ypnr',
@@ -168,13 +183,18 @@ export const PanelContainer = ({
       return (
         <div className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
           {renderHeader(contentsNode)}
-          <div className="msla-panel-contents">
+          <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
             {isLoading ? (
               <div className="msla-loading-container">
                 <Spinner size={'large'} />
               </div>
             ) : isError ? (
-              <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
+              <MessageBar intent={'error'}>
+                <MessageBarBody>
+                  <MessageBarTitle>{panelErrorTitle}</MessageBarTitle>
+                  <Text>{errorMessage ?? panelErrorMessage}</Text>
+                </MessageBarBody>
+              </MessageBar>
             ) : (
               <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
             )}
@@ -182,7 +202,7 @@ export const PanelContainer = ({
         </div>
       );
     },
-    [renderHeader, panelErrorMessage, trackEvent]
+    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle]
   );
 
   const minWidth = pinnedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
@@ -203,7 +223,7 @@ export const PanelContainer = ({
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', width: drawerWidth }}
+      style={{ position: 'absolute', maxWidth: '100%', width: drawerWidth }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button

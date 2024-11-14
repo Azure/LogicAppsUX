@@ -313,7 +313,7 @@ export abstract class BaseConnectionService implements IConnectionService {
           : this.getAllConnectionsInLocation();
         const allConnections = await connectionsCall;
         const filteredConnections = allConnections.filter((connection) => {
-          return equals(connection.properties.api.id, connectorId);
+          return equals(connection.properties?.api?.id, connectorId);
         });
         return filteredConnections;
       }
@@ -321,7 +321,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       const { location, apiVersion, httpClient } = this.options;
 
       return (
-        (await queryClient?.fetchQuery(['connections', connectorId], async () => {
+        (await queryClient?.fetchQuery(['connections', connectorId?.toLowerCase()], async () => {
           const uri = `${this._subscriptionResourceGroupWebUrl}/connections`;
           const queryParameters: QueryParameters = {
             'api-version': apiVersion,
@@ -337,7 +337,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
 
     return Object.keys(this._connections)
-      .filter((connectionId) => equals(this._connections[connectionId].properties.api.id, connectorId))
+      .filter((connectionId) => equals(this._connections[connectionId].properties?.api?.id, connectorId))
       .map((connectionId) => this._connections[connectionId]);
   }
 
