@@ -3740,13 +3740,14 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
-    .map((expression) => {
-      let expressionValue = forValidation ? expression.value || null : unescapeString(expression.value);
-      if (isTokenValueSegment(expression)) {
-        expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
+    .map((segment) => {
+      const { value: segmentValue } = segment;
+      if (isTokenValueSegment(segment)) {
+        const token = forValidation ? segmentValue || null : unescapeString(segmentValue);
+        return shouldInterpolateTokens ? `@{${token}}` : `@${token}`;
       }
 
-      return expressionValue;
+      return forValidation ? segmentValue || null : segmentValue;
     })
     .join('');
 }
