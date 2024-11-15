@@ -3635,7 +3635,6 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
 
 export function parameterValueWithoutCasting(parameter: ParameterInfo, shouldInterpolateSingleToken = false): any {
   const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value, false, shouldInterpolateSingleToken);
-  console.log(stringifiedValue);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 
