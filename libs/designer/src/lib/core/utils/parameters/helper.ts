@@ -788,8 +788,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValueFromString(value.username),
-              basicPassword: loadParameterValueFromString(value.password),
+              basicUsername: loadParameterValueFromString(value.username, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              basicPassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -798,8 +798,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValueFromString(value.pfx),
-              clientCertificatePassword: loadParameterValueFromString(value.password),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              clientCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -809,14 +809,14 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValueFromString(value.tenant),
-              oauthAudience: loadParameterValueFromString(value.audience),
-              oauthAuthority: loadParameterValueFromString(value.authority),
-              oauthClientId: loadParameterValueFromString(value.clientId),
+              oauthTenant: loadParameterValueFromString(value.tenant, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthAuthority: loadParameterValueFromString(value.authority, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthClientId: loadParameterValueFromString(value.clientId, { parameterType: constants.SWAGGER.TYPE.STRING }),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValueFromString(value.secret),
-              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx),
-              oauthTypeCertificatePassword: loadParameterValueFromString(value.password),
+              oauthTypeSecret: loadParameterValueFromString(value.secret, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -836,7 +836,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValueFromString(value.audience),
+              msiAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
               msiIdentity: value.identity,
             },
           },
@@ -3635,6 +3635,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
 
 export function parameterValueWithoutCasting(parameter: ParameterInfo, shouldInterpolateSingleToken = false): any {
   const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value, false, shouldInterpolateSingleToken);
+  console.log(stringifiedValue);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 

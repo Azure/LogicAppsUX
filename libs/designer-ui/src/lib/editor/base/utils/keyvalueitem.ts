@@ -70,7 +70,7 @@ export const convertValueType = (value: ValueSegment[], type?: string): string |
 const isNonString = (value: string): boolean => {
   try {
     const parsedValue = JSON.parse(value);
-    return Array.isArray(parsedValue) || typeof parsedValue === 'object';
+    return parsedValue === null || Array.isArray(parsedValue) || typeof parsedValue !== 'string';
   } catch {
     return false;
   }
