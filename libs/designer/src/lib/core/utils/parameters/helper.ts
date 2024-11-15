@@ -891,7 +891,6 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
-  console.log(parameter);
   let valueObject: unknown = undefined;
 
   if (parameter.isNotificationUrl) {
