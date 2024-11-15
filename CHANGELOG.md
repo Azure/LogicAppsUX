@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.107.4](https://github.com/Azure/LogicAppsUX/compare/v4.107.3...v4.107.4) (2024-11-15)
+
+
+### Bug Fixes
+
+* **vscode:** Add default credentials for ResourceGraphClient in non-public clouds ([#6119](https://github.com/Azure/LogicAppsUX/issues/6119)) ([d45d21a](https://github.com/Azure/LogicAppsUX/commit/d45d21a19cda62b95184b1f2281c1aefbf00f9c7))
+
 ### [4.107.3](https://github.com/Azure/LogicAppsUX/compare/v4.107.2...v4.107.3) (2024-10-24)
 
 
