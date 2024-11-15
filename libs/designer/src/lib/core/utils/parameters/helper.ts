@@ -118,6 +118,7 @@ import {
   canStringBeConverted,
   isStringLiteral,
   splitAtIndex,
+  unescapeString,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -890,6 +891,7 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
+  console.log(parameter);
   let valueObject: unknown = undefined;
 
   if (parameter.isNotificationUrl) {
@@ -954,7 +956,7 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType: string): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
@@ -3590,6 +3592,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
+      const stringifiedTokenExpression = tokenExpression;
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
@@ -3602,20 +3605,15 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
           );
         }
 
-        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@{${stringifiedTokenExpression}}`;
       } else {
         // Add quotes around tokens. Tokens directly after a literal need a leading quote, and those before another literal need an ending quote.
         const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegmentType.TOKEN;
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
-
-        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@${stringifiedTokenExpression}`;
-        // eslint-disable-next-line no-useless-escape
-        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
-        // eslint-disable-next-line no-useless-escape
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
+        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
@@ -3744,7 +3742,7 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
 
   return value
     .map((expression) => {
-      let expressionValue = forValidation ? expression.value || null : expression.value;
+      let expressionValue = forValidation ? expression.value || null : unescapeString(expression.value);
       if (isTokenValueSegment(expression)) {
         expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
       }
