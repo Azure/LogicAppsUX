@@ -19,6 +19,7 @@ export interface CreateWorkflowTabProps {
   previousTabId?: string;
   nextTabId?: string;
   hasError: boolean;
+  shouldClearDetails: boolean;
 }
 
 export interface CreateWorkflowPanelProps {
