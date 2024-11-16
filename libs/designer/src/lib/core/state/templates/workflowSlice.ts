@@ -59,6 +59,7 @@ export const workflowSlice = createSlice({
       state.existingWorkflowName = undefined;
     },
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferences>) => {
+      console.log('---initializeConnectionReferences: ', action.payload);
       const references = action.payload;
       state.connections.references = references;
     },

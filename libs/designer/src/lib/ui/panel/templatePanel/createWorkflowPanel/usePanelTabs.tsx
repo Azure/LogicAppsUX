@@ -97,6 +97,8 @@ export const useCreateWorkflowPanelTabs = ({
       throw new Error(isMultiWorkflowTemplate ? resources.multiMissingInfo : resources.singleMissingInfo);
     }
 
+    //TODO: investigate here to see why definition is in definition when connections are present.
+    console.log('usePanelTabs: ', workflows);
     await createWorkflow(
       Object.values(workflows).map((data) => ({
         id: data.id,

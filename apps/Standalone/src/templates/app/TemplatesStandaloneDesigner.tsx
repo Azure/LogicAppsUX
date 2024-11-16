@@ -186,6 +186,30 @@ export const TemplatesStandaloneDesigner = () => {
         console.log('working on it');
         const uniqueIdentifier = '';
 
+        const getExistingWorkflowParametersConnections = async () => {
+          try {
+            const response = await axios.get(`https://management.azure.com${appId}?api-version=2016-10-01&relativepath=1`, {
+              headers: {
+                'If-Match': '*',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${environment.armToken}`,
+              },
+            });
+            console.log(response);
+            return response.data?.properties?.parameters;
+          } catch (error: any) {
+            return error?.response?.status === 404 ? {} : undefined;
+          }
+        };
+
+        const parametersConnections = await getExistingWorkflowParametersConnections();
+        const existingConnections = parametersConnections?.$connections?.value;
+        const existingParametersData = { ...parametersConnections };
+        delete existingParametersData?.$connections;
+
+        console.log('existingConnections', existingConnections);
+        console.log('existingParametersData', existingParametersData);
+
         let sanitizedWorkflowDefinition = JSON.stringify(workflows[0].definition);
 
         const sanitizedParameterData: Record<string, WorkflowParameter> = {};
@@ -194,7 +218,7 @@ export const TemplatesStandaloneDesigner = () => {
           const parameter = parametersData[key];
           const sanitizedParameterName = replaceWithWorkflowName(parameter.name, uniqueIdentifier);
           sanitizedParameterData[sanitizedParameterName] = {
-            name: parameter.name,
+            // name: parameter.name,
             type: parameter.type,
             defaultValue: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
             // allowedValues: parameter.allowedValues,
@@ -206,18 +230,48 @@ export const TemplatesStandaloneDesigner = () => {
           );
         });
 
+        const { connectionsData: updatedConnectionsData, workflowsJsonString: updatedWorkflowsJsonString } =
+          await updateConnectionsDataWithNewConnections(
+            connectionsData(),
+            settingsData()?.properties,
+            connectionsMapping,
+            [
+              {
+                name: '',
+                kind: '',
+                definition: sanitizedWorkflowDefinition,
+              },
+            ],
+            uniqueIdentifier
+          );
+
+        sanitizedWorkflowDefinition = updatedWorkflowsJsonString[0].definition;
+
+        console.log('originalConnectionsData ', originalConnectionsData);
+        console.log('updatedConnectionsData ', updatedConnectionsData);
+        const updatedConnectionReferences = Object.values(updatedConnectionsData).reduce((acc, group) => {
+          for (const key in group) {
+            acc[key] = group[key];
+          }
+          return acc;
+        }, {});
+
+        console.log('updatedConnectionReferences: ', updatedConnectionReferences);
+
         const workflowDefinition = JSON.parse(sanitizedWorkflowDefinition);
         const workflowToSave: any = {
           definition: workflowDefinition,
           parameters: sanitizedParameterData,
-          connectionReferences,
+          connectionReferences: updatedConnectionReferences,
         };
 
+        //TODO: definition is going under definition: definition after connections.... need to fix this
+        //  Parameter could also be a suspect.
         const newConnectionsObj: Record<string, any> = {};
-        if (Object.keys(connectionReferences ?? {}).length) {
+        if (Object.keys(updatedConnectionReferences ?? {}).length) {
           await Promise.all(
-            Object.keys(connectionReferences).map(async (referenceKey) => {
-              const reference = connectionReferences[referenceKey];
+            Object.keys(updatedConnectionReferences).map(async (referenceKey) => {
+              const reference = updatedConnectionReferences[referenceKey];
               const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
               newConnectionsObj[referenceKey] = {
                 api,
@@ -230,6 +284,7 @@ export const TemplatesStandaloneDesigner = () => {
           );
         }
         workflowToSave.connections = newConnectionsObj;
+        console.log('newConnectionsObj: ', newConnectionsObj);
 
         const workflowArtifacts = await getWorkflowAndArtifactsConsumption(workflowId!);
         await saveWorkflowConsumption(workflowArtifacts, workflowToSave, () => {}, { throwError: true });
@@ -364,7 +419,7 @@ const getServices = (
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
-        baseUrl,
+        baseUrl: armUrl,
         subscriptionId,
         resourceGroup,
         location,
