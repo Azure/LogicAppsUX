@@ -373,7 +373,6 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
     try {
       JSON.parse(value);
     } catch (e) {
-      console.log(e);
       if (!parameterHasOnlyTokenBinding(parameterValue)) {
         errors.push(
           intl.formatMessage({
