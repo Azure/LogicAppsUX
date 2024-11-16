@@ -196,22 +196,6 @@ exports[`lib/monitoring/statuspill/statusicon > renders (status = Unknown, has r
 exports[`lib/monitoring/statuspill/statusicon > renders (status = Waiting, has retries = false) 1`] = `
 <div
   aria-label="Run information loading"
-  className="fui-Spinner r82apo5"
-  role="progressbar"
->
-  <span
-    className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
-  >
-    <span
-      className="fui-Spinner__spinnerTail rxov3xa"
-    />
-  </span>
-</div>
-`;
-
-exports[`lib/monitoring/statuspill/statusicon > renders (status = Waiting, has retries = false) 2`] = `
-<div
-  aria-label="Run information loading"
   className="fui-Spinner r1k3z50n"
   role="progressbar"
 >
