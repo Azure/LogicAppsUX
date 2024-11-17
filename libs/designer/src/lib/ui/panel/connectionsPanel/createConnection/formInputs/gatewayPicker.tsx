@@ -33,7 +33,7 @@ export interface GatewayPickerProps {
   isSubscriptionDropdownDisabled: boolean | undefined;
   isLoading: boolean | undefined;
   value: any;
-  setValue: ((value: any) => void) | undefined;
+  setValue: (value: any) => void;
 }
 
 export const GatewayPicker = (props: GatewayPickerProps) => {
