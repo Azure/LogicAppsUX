@@ -10,7 +10,7 @@ const useGatewayPickerStyles = makeStyles({
     width: 'inherit',
   },
   dropdown: {
-    borderRadius: '0',
+    ...shorthands.borderRadius('0px'),
     ...shorthands.borderColor('black'),
     ...shorthands.borderWidth('1px'),
     ':hover': {
@@ -26,14 +26,14 @@ type NewGatewayOption = { id: string; properties: { displayName: string } };
 
 export interface GatewayPickerProps {
   parameterKey: string;
-  selectedSubscriptionId: string;
-  selectSubscriptionCallback: (subscriptionId: string) => void;
-  availableGateways: Gateway[];
-  availableSubscriptions: Subscription[];
-  isSubscriptionDropdownDisabled: any;
-  isLoading: boolean;
+  selectedSubscriptionId: string | undefined;
+  selectSubscriptionCallback: ((subscriptionId: string) => void) | undefined;
+  availableGateways: any; // type hint:Gateway[] | undefined
+  availableSubscriptions: any; // type hint: Subscription[] | undefined
+  isSubscriptionDropdownDisabled: boolean | undefined;
+  isLoading: boolean | undefined;
   value: any;
-  setValue: (value: any) => void;
+  setValue: ((value: any) => void) | undefined;
 }
 
 export const GatewayPicker = (props: GatewayPickerProps) => {
@@ -41,13 +41,14 @@ export const GatewayPicker = (props: GatewayPickerProps) => {
     parameterKey,
     selectedSubscriptionId,
     selectSubscriptionCallback,
-    availableGateways,
-    availableSubscriptions,
     isSubscriptionDropdownDisabled,
     isLoading,
     value,
     setValue, // accepts full gateway path as ID ex: /subscriptions/{subscription-GUID}/resourceGroups/{RG-name}/providers/Microsoft.Web/connectionGateways/daniellesGateway
   } = props;
+
+  const availableSubscriptions = props.availableSubscriptions as Subscription[] | undefined;
+  const availableGateways = props.availableGateways as Gateway[] | undefined;
 
   const intl = useIntl();
   const styles = useGatewayPickerStyles();
@@ -135,7 +136,7 @@ export const GatewayPicker = (props: GatewayPickerProps) => {
             disabled={isLoading}
             aria-label={subscriptionDropdownLabel}
             placeholder={subscriptionDropdownLabel}
-            positioning={{ fallbackPositions: ['below', 'above'] }}
+            positioning={{ fallbackPositions: ['below', 'above'] }} // Fluent UI type error here but configuration is respected during runtime
             size="small"
           >
             {subscriptionOptions.map((option) => (
@@ -156,7 +157,7 @@ export const GatewayPicker = (props: GatewayPickerProps) => {
           value={gatewayValue ?? gatewayDropdownLabel}
           placeholder={gatewayDropdownLabel}
           selectedOptions={selectedGatewayOptions}
-          positioning={{ fallbackPositions: ['below', 'above'] }}
+          positioning={{ fallbackPositions: ['below', 'above'] }} // Fluent UI type error here but configuration is respected during runtime
           aria-label={gatewayDropdownLabel}
           size="small"
         >
