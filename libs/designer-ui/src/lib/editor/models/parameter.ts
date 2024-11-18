@@ -12,7 +12,7 @@ export interface ParameterInfo {
   conditionalVisibility?: boolean;
   dynamicData?: {
     error?: Exception;
-    status: DynamicCallStatus;
+    status: DynamicLoadStatus;
   };
   editor?: string;
   editorOptions?: Record<string, any>;
@@ -53,13 +53,13 @@ export interface ParameterDetails {
   deserialization?: ParameterDeserializationOptions;
 }
 
-export const DynamicCallStatus = {
-  STARTED: 'started',
-  SUCCEEDED: 'succeeded',
-  FAILED: 'failed',
+export const DynamicLoadStatus = {
   NOTSTARTED: 'notstarted',
+  LOADING: 'loading',
+  FAILED: 'failed',
+  SUCCEEDED: 'succeeded',
 } as const;
-export type DynamicCallStatus = (typeof DynamicCallStatus)[keyof typeof DynamicCallStatus];
+export type DynamicLoadStatus = (typeof DynamicLoadStatus)[keyof typeof DynamicLoadStatus];
 
 export interface ValueSegment {
   id: string;

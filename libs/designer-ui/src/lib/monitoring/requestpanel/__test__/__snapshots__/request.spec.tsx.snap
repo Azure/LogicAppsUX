@@ -261,7 +261,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
           }
         >
           <div
-            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
+            className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-121"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -300,7 +300,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
                     role="columnheader"
                     style={
                       {
-                        "width": 120,
+                        "width": NaN,
                       }
                     }
                   >
@@ -344,7 +344,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
                     role="columnheader"
                     style={
                       {
-                        "width": 120,
+                        "width": NaN,
                       }
                     }
                   >
@@ -685,7 +685,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
           }
         >
           <div
-            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
+            className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-121"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -724,7 +724,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
                     role="columnheader"
                     style={
                       {
-                        "width": 120,
+                        "width": NaN,
                       }
                     }
                   >
@@ -768,7 +768,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
                     role="columnheader"
                     style={
                       {
-                        "width": 120,
+                        "width": NaN,
                       }
                     }
                   >
@@ -1251,7 +1251,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
           }
         >
           <div
-            className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-121"
+            className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-121"
             data-automationid="DetailsList"
             data-is-scrollable="false"
           >
@@ -1290,7 +1290,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
                     role="columnheader"
                     style={
                       {
-                        "width": 120,
+                        "width": NaN,
                       }
                     }
                   >
@@ -1334,7 +1334,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
                     role="columnheader"
                     style={
                       {
-                        "width": 120,
+                        "width": NaN,
                       }
                     }
                   >
