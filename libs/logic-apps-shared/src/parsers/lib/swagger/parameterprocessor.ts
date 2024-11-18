@@ -246,7 +246,7 @@ export class ParametersProcessor {
     const encode = parameter[Constants.ExtensionProperties.Encode];
     const format = parameter.format;
     const $in = parameter.in;
-    const name = encodePropertySegment(parameter.name);
+    const name = parameter.name;
     const recommended = parameter[Constants.ExtensionProperties.SchedulerRecommendation];
     const required = !!parameter.required;
     const summary = parameter[Constants.ExtensionProperties.Summary];
