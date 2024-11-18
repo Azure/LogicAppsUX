@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/Store';
 import { InputDropdown, type InputOptionProps } from '../inputDropdown/InputDropdown';
 import { getInputTypeFromNode, validateAndCreateConnectionInput } from './inputTab';
-import { setConnectionInput } from '../../../core/state/DataMapSlice';
+import { deleteConnectionFromFunctionMenu, setConnectionInput } from '../../../core/state/DataMapSlice';
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import { useStyles } from './styles';
 import { ListItem } from '@fluentui/react-list-preview';
@@ -60,14 +60,12 @@ const InputList = (props: InputListProps) => {
   const removeUnboundedInput = useCallback(() => {
     const targetNodeReactFlowKey = functionKey;
     dispatch(
-      setConnectionInput({
-        targetNode: data,
-        targetNodeReactFlowKey,
+      deleteConnectionFromFunctionMenu({
+        targetId: targetNodeReactFlowKey,
         inputIndex: index,
-        input: null,
       })
     );
-  }, [data, dispatch, functionKey, index]);
+  }, [dispatch, functionKey, index]);
 
   const updateInput = useCallback(
     (newValue: InputConnection) => {

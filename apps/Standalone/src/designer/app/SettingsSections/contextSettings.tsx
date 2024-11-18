@@ -76,6 +76,11 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
       <Checkbox
+        label="Collapse Graphs"
+        checked={hostOptions.collapseGraphsByDefault}
+        onChange={(_, checked) => dispatch(setHostOptions({ collapseGraphsByDefault: !!checked }))}
+      />
+      <Checkbox
         label="Suppress default node click"
         checked={suppressDefaultNodeSelect}
         onChange={(_, checked) => dispatch(setSuppressDefaultNodeSelect(!!checked))}

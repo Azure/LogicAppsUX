@@ -556,10 +556,25 @@ export class StandardConnectionService extends BaseConnectionService implements 
   ): Promise<HttpResponse<any>> {
     try {
       const { httpClient, baseUrl, apiVersion } = this._options;
+      let uri = `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`;
+      let queryParameters: Record<string, string> = { 'api-version': apiVersion };
+      let headers: Record<string, string> = {};
+
+      if (isHybridLogicApp(uri)) {
+        const [baseUri, proxyPath] = uri.split('/hostruntime');
+        uri = `${getHybridAppBaseRelativeUrl(baseUri)}/invoke?api-version=2024-02-02-preview`;
+        queryParameters = {};
+        headers = {
+          'x-ms-logicapps-proxy-path': proxyPath || '',
+          'x-ms-logicapps-proxy-method': 'POST',
+        };
+      }
+
       const response = await httpClient.post<any, any>({
-        uri: `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${requestUrl}`,
-        queryParameters: { 'api-version': apiVersion },
+        uri,
+        queryParameters,
         content: connectionData,
+        headers,
       });
 
       if (!response || response.status < 200 || response.status >= 300) {
@@ -788,6 +803,5 @@ function createLocalConnectionsData(
 }
 
 export function escapeSpecialChars(value: string): string {
-  const escapedUnderscore = value.replace(/_/g, '__');
-  return escapedUnderscore.replace(/-/g, '_1');
+  return value.replace(/-/g, '_1');
 }

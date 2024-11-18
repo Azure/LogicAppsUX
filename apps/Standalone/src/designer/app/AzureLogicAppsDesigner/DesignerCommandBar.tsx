@@ -1,8 +1,7 @@
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
-import { Badge } from '@fluentui/react-components';
+import { Badge, Spinner } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
-import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
@@ -27,6 +26,8 @@ import {
   onRedoClick,
   serializeWorkflow,
   getDocumentationMetadata,
+  resetDesignerView,
+  useNodesAndDynamicDataInitialized,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
@@ -131,6 +132,7 @@ export const DesignerCommandBar = ({
   });
 
   const designerIsDirty = useIsDesignerDirty();
+  const isInitialized = useNodesAndDynamicDataInitialized();
 
   const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
@@ -164,7 +166,7 @@ export const DesignerCommandBar = ({
         disabled: saveIsDisabled,
         onRenderIcon: () => {
           return isSaving ? (
-            <Spinner size={SpinnerSize.small} />
+            <Spinner size={'extra-tiny'} />
           ) : (
             <FontIcon aria-label="Save" iconName="Save" className={saveIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
           );
@@ -197,6 +199,7 @@ export const DesignerCommandBar = ({
         onClick: () => {
           switchViews();
           dispatch(collapsePanel());
+          dispatch(resetDesignerView());
         },
       },
       ...(showConnectionsPanel
@@ -244,7 +247,7 @@ export const DesignerCommandBar = ({
         disabled: haveErrors || isDownloadingDocument,
         onRenderIcon: () => {
           return isDownloadingDocument ? (
-            <Spinner size={SpinnerSize.small} />
+            <Spinner size={'extra-small'} />
           ) : (
             <FontIcon aria-label="Download" iconName="Download" className={haveErrors ? classNames.azureGrey : classNames.azureBlue} />
           );
@@ -300,17 +303,31 @@ export const DesignerCommandBar = ({
   );
 
   return (
-    <CommandBar
-      items={items}
-      ariaLabel="Use left and right arrow keys to navigate between commands"
-      styles={{
-        root: {
-          borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
-          position: 'relative',
-          padding: '4px 8px',
-        },
-      }}
-    />
+    <>
+      <div
+        style={{
+          position: 'absolute',
+          top: '60px',
+          left: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}
+      >
+        {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
+      </div>
+      <CommandBar
+        items={items}
+        ariaLabel="Use left and right arrow keys to navigate between commands"
+        styles={{
+          root: {
+            borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
+            position: 'relative',
+            padding: '4px 8px',
+          },
+        }}
+      />
+    </>
   );
 };
 

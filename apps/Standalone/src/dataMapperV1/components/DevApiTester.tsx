@@ -14,7 +14,7 @@ import {
 } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { MonacoEditor } from '@microsoft/designer-ui';
-import { generateDataMapXslt, getFunctions, getSelectedSchema, testDataMap } from '@microsoft/logic-apps-data-mapper';
+import { generateDataMapXslt, getFunctions, getSelectedSchema, testDataMap } from '@microsoft/logic-apps-data-mapper-v2';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 

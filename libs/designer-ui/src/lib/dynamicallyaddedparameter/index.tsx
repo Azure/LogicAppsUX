@@ -1,6 +1,7 @@
 import type { IContextualMenuProps } from '@fluentui/react';
 import { DirectionalHint, IconButton, TextField, TooltipHost } from '@fluentui/react';
 import type React from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import StringStack from './plugins/stringstack';
 
@@ -230,6 +231,9 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
       : dropdownTitleText
     : '';
 
+  const [titleValue, setTitleValue] = useState(title ?? '');
+  const [descriptionValue, setDescriptionValue] = useState(props?.description ?? '');
+
   const renderDynamicParameterContainer = (): JSX.Element => {
     const iconStyle = {
       background: `url('${icon}') no-repeat center`,
@@ -238,12 +242,20 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
 
     const onTitleChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
       e.preventDefault();
-      props.onTitleChange(schemaKey, newValue);
+      setTitleValue(newValue ?? '');
     };
 
     const onDescriptionChange = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
       e.preventDefault();
-      props?.onDescriptionChange?.(schemaKey, newValue);
+      setDescriptionValue(newValue ?? '');
+    };
+
+    const onTitleBlur = (): void => {
+      props.onTitleChange(schemaKey, titleValue);
+    };
+
+    const onDescriptionBlur = (): void => {
+      props?.onDescriptionChange?.(schemaKey, descriptionValue);
     };
 
     return (
@@ -251,7 +263,13 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
         <div className="msla-dynamic-added-param-header">
           <div className="msla-dynamic-added-param-icon" style={iconStyle} />
           <div className="msla-dynamic-added-param-inputs-container">
-            <TextField className="msla-dynamic-added-param-title" placeholder={titlePlaceholder} value={title} onChange={onTitleChange} />
+            <TextField
+              className="msla-dynamic-added-param-title"
+              placeholder={titlePlaceholder}
+              value={titleValue}
+              onChange={onTitleChange}
+              onBlur={onTitleBlur}
+            />
             <div className="msla-dynamic-added-param-value">{onRenderValueField(schemaKey)}</div>
           </div>
           <div className="msla-dynamic-add-param-menu-container">{renderMenuButton()}</div>
@@ -261,8 +279,9 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
             <TextField
               className="msla-dynamic-added-param-description"
               placeholder={props?.descriptionPlaceholder}
-              value={props?.description}
+              value={descriptionValue}
               onChange={onDescriptionChange}
+              onBlur={onDescriptionBlur}
             />
           </div>
         )}

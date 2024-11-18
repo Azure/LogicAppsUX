@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FunctionCategory } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';

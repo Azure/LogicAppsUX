@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
 import { createEmptyLiteralValueSegment } from '../editor/base/utils/helper';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
@@ -42,7 +42,7 @@ export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
   tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
   showDescription?: boolean;
@@ -65,7 +65,7 @@ export const QueryBuilderEditor = ({
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: { items: getRootProp() } });
+    onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: JSON.parse(JSON.stringify({ items: getRootProp() })) });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);

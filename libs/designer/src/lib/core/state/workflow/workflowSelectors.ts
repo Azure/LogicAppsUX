@@ -308,3 +308,15 @@ export const useParentRunId = (id: string | undefined): string | undefined => {
     })
   );
 };
+
+export const useRootTriggerId = (): string =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      for (const [id, node] of Object.entries(state.nodesMetadata)) {
+        if (node.graphId === 'root' && node.isRoot === true) {
+          return id;
+        }
+      }
+      return '';
+    })
+  );

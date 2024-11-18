@@ -1,6 +1,6 @@
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
-import type { AppDispatch } from '../../../core';
+import type { AppDispatch, RootState } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { setValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
@@ -16,6 +16,7 @@ export const ValidationErrorKeys = {
   TIMEOUT_VALUE_INVALID: 'TimeoutValueInvalid',
   CANNOT_DELETE_LAST_ACTION: 'CannotDeleteLastAction',
   CANNOT_DELETE_LAST_STATUS: 'CannotDeleteLastStatus',
+  CANNOT_RUN_AFTER_TRIGGER_AND_ACTION: 'CannotRunAfterTriggerAndAction',
 } as const;
 export type ValidationErrorKeys = (typeof ValidationErrorKeys)[keyof typeof ValidationErrorKeys];
 
@@ -36,6 +37,7 @@ export const validateNodeSettings = (
   selectedNode: string,
   settingsToValidate: Settings,
   settingSection: SettingSectionName,
+  state: RootState,
   dispatch: AppDispatch
 ) => {
   const intl = getIntl();
@@ -94,12 +96,20 @@ export const validateNodeSettings = (
     description: 'error message for invalid timeout value',
   });
 
-  const validationErrors: ValidationError[] = [];
+  const cannotRunAfterTriggerAndAction = intl.formatMessage({
+    defaultMessage: 'Cannot run after both trigger and action',
+    id: '2OQU3/',
+    description: 'error message for running after both trigger and action',
+  });
+
+  let validationErrors: ValidationError[] = state.settings.validationErrors[selectedNode] ?? [];
 
   switch (settingSection) {
     case SettingSectionName.GENERAL: {
       {
         const { conditionExpressions } = settingsToValidate;
+        // Remove empty condition errors
+        validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.TRIGGER_CONDITION_EMPTY);
         if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
           validationErrors.push({
             key: ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
@@ -110,9 +120,34 @@ export const validateNodeSettings = (
       }
       break;
     }
+    case SettingSectionName.RUNAFTER: {
+      {
+        const runAfterKeys = Object.keys((state.workflow?.operations?.[selectedNode] as any)?.runAfter ?? {}) ?? [];
+        let rootTriggerId = '';
+        for (const [id, node] of Object.entries(state.workflow.nodesMetadata)) {
+          if (node.graphId === 'root' && node.isRoot === true) {
+            rootTriggerId = id;
+          }
+        }
+
+        const runningAfterTrigger = runAfterKeys.some((key) => key === rootTriggerId);
+        const runningAfterAction = runAfterKeys.some((key) => key !== rootTriggerId);
+
+        validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.CANNOT_RUN_AFTER_TRIGGER_AND_ACTION);
+        if (runningAfterTrigger && runningAfterAction) {
+          validationErrors.push({
+            key: ValidationErrorKeys.CANNOT_RUN_AFTER_TRIGGER_AND_ACTION,
+            errorType: ValidationErrorType.ERROR,
+            message: cannotRunAfterTriggerAndAction,
+          });
+        }
+      }
+      break;
+    }
     case SettingSectionName.NETWORKING: {
       {
         const { paging, retryPolicy, requestOptions } = settingsToValidate;
+        validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.PAGING_COUNT);
         if (paging?.value?.enabled) {
           const { value } = paging.value;
           if (Number.isNaN(Number(value)) || !value || value <= 0) {
@@ -134,6 +169,7 @@ export const validateNodeSettings = (
           if (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) {
             const retryCount = Number(count);
             // Invalid retry count
+            validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.RETRY_COUNT_INVALID);
             if (
               (!isTemplateExpression(count?.toString() ?? '') && Number.isNaN(retryCount)) ||
               retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
@@ -146,6 +182,7 @@ export const validateNodeSettings = (
               });
             }
             // Invalid retry interval
+            validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.RETRY_INTERVAL_INVALID);
             if (!isTemplateExpression(interval?.toString() ?? '') && !isISO8601(retryPolicy?.value?.interval ?? '')) {
               validationErrors.push({
                 key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
@@ -169,6 +206,8 @@ export const validateNodeSettings = (
             }
           }
         }
+        // Invalid timeout value
+        validationErrors = validationErrors.filter((error) => error.key !== ValidationErrorKeys.TIMEOUT_VALUE_INVALID);
         if (requestOptions?.isSupported && requestOptions.value?.timeout && !isISO8601(requestOptions.value.timeout)) {
           validationErrors.push({
             key: ValidationErrorKeys.TIMEOUT_VALUE_INVALID,

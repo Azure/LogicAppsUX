@@ -18,6 +18,7 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
   useOperationVisuals,
+  useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
@@ -78,6 +79,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
+  const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -114,7 +116,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
   }, [dispatch, id, repetitionData, runInstance?.id]);
 
-  const dependencies = useTokenDependencies(id);
+  const { dependencies, loopSources } = useTokenDependencies(id);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -139,6 +141,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       item: {
         id: id,
         dependencies,
+        loopSources,
         graphId: metadata?.graphId,
       },
       canDrag: !readOnly && !isTrigger,
@@ -325,6 +328,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults}
           isSecureInputsOutputs={isSecureInputsOutputs}
+          isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
         />
         {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}

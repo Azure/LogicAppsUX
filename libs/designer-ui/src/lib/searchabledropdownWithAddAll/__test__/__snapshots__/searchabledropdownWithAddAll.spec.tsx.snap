@@ -46,7 +46,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   </div>
   <button
     aria-label="Add all tooltip"
-    className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
+    className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
     data-automation-id="msla-add-all-button"
     disabled={false}
     onBlur={[Function]}
@@ -60,7 +60,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   </button>
   <button
     aria-label="Remove all tooltip"
-    className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
+    className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
     data-automation-id="msla-remove-all-button"
     disabled={false}
     onBlur={[Function]}
@@ -121,7 +121,7 @@ exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add
   </div>
   <button
     aria-label="Add all tooltip"
-    className="fui-Button r1alrhcs ___4925fp0_1xt5260 f1c21dwh fjxutwb fwiml72 fh7ncta fneth5b ft85np5 fy9rknc figsok6 fwrc4pm fazmxh"
+    className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
     data-automation-id="msla-add-all-button"
     disabled={false}
     onBlur={[Function]}

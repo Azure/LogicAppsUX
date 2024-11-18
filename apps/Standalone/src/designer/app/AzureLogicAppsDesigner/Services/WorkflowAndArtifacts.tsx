@@ -172,7 +172,7 @@ export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
   });
 };
 
-const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
+export const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
   const uri = `${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`;
   const response = await axios.get(uri, {
     headers: {
@@ -539,8 +539,18 @@ export const saveWorkflowStandard = async (
   }
 };
 
-export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workflow: any, clearDirtyState: () => void): Promise<any> => {
-  const workflowToSave = await convertDesignerWorkflowToConsumptionWorkflow(workflow);
+export const saveWorkflowConsumption = async (
+  outdatedWorkflow: Workflow,
+  workflow: any,
+  clearDirtyState: () => void,
+  options?: {
+    shouldConvertToConsumption?: boolean /* false when saving from code view*/;
+    throwError?: boolean;
+  }
+): Promise<any> => {
+  const shouldConvertToConsumption = options?.shouldConvertToConsumption ?? true;
+
+  const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
 
   const outputWorkflow: Workflow = {
     ...outdatedWorkflow,
@@ -561,6 +571,9 @@ export const saveWorkflowConsumption = async (outdatedWorkflow: Workflow, workfl
     clearDirtyState();
   } catch (error) {
     console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
   }
 };
 
@@ -613,10 +626,21 @@ export const validateWorkflowStandard = async (
   }
 };
 
-export const validateWorkflowConsumption = async (siteResourceId: string, location: string, workflow: any): Promise<any> => {
+export const validateWorkflowConsumption = async (
+  siteResourceId: string,
+  location: string,
+  outdatedWorkflow: any,
+  workflow: any
+): Promise<any> => {
   const { subscriptionId, resourceGroup, topResourceName } = new ArmParser(siteResourceId);
   const logicApp = {
-    properties: { definition: workflow.definition, parameters: workflow.parameters, connectionReferences: workflow.connectionReferences },
+    ...outdatedWorkflow,
+    properties: {
+      ...outdatedWorkflow?.properties,
+      definition: workflow.definition,
+      parameters: workflow.parameters,
+      connectionReferences: workflow.connectionReferences,
+    },
   };
   const response = await axios.post(
     `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Logic/locations/${location}/workflows/${topResourceName}/validate?api-version=2016-10-01`,
