@@ -1,5 +1,6 @@
 using Microsoft.Azure.Workflows.UnitTesting;
 using Microsoft.Azure.Workflows.UnitTesting.Definitions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -64,8 +65,9 @@ namespace <%= LogicAppName %>.Tests
             // Load the mock data 
             var mockDataPath = Path.Combine(this.rootPath, "Tests", "<%= LogicAppName %>", "<%= WorkflowName %>", "<%= UnitTestName %>", "<%= UnitTestName %>-mock.json");
             var mockData = JObject.Parse(File.ReadAllText(mockDataPath));
-            this.triggerMock = mockData["triggerMocks"]?.ToObject<Dictionary<string, TriggerMock>>()?.Values.FirstOrDefault();
-            this.actionMocks = mockData["actionMocks"].ToObject<Dictionary<string, ActionMock>>();
+            var mockData = JsonConvert.DeserializeObject<TestMockData>(File.ReadAllText(mockDataPath));
+            this.triggerMock = mockData.TriggerMock;
+            this.actionMocks = mockData.ActionMocks;
         }
 
         /// <summary>
