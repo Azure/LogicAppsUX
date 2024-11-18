@@ -206,7 +206,7 @@ const DesignerEditorConsumption = () => {
     try {
       const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
       await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
-      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState, /*shouldConvertToConsumption*/ false);
+      saveWorkflowConsumption(workflowAndArtifactsData, codeToConvert, clearDirtyState, { shouldConvertToConsumption: false });
     } catch (error: any) {
       if (error.status !== 404) {
         alert(`Error converting code to workflow ${error}`);
