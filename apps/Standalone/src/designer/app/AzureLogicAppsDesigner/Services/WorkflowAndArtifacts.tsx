@@ -172,7 +172,7 @@ export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
   });
 };
 
-const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
+export const getWorkflowAndArtifactsConsumption = async (workflowId: string): Promise<Workflow> => {
   const uri = `${baseUrl}${workflowId}?api-version=${consumptionApiVersion}`;
   const response = await axios.get(uri, {
     headers: {
@@ -543,8 +543,13 @@ export const saveWorkflowConsumption = async (
   outdatedWorkflow: Workflow,
   workflow: any,
   clearDirtyState: () => void,
-  shouldConvertToConsumption = true /* false when saving from code view*/
+  options?: {
+    shouldConvertToConsumption?: boolean /* false when saving from code view*/;
+    throwError?: boolean;
+  }
 ): Promise<any> => {
+  const shouldConvertToConsumption = options?.shouldConvertToConsumption ?? true;
+
   const workflowToSave = shouldConvertToConsumption ? await convertDesignerWorkflowToConsumptionWorkflow(workflow) : workflow;
 
   const outputWorkflow: Workflow = {
@@ -566,6 +571,9 @@ export const saveWorkflowConsumption = async (
     clearDirtyState();
   } catch (error) {
     console.log(error);
+    if (options?.throwError) {
+      throw error;
+    }
   }
 };
 

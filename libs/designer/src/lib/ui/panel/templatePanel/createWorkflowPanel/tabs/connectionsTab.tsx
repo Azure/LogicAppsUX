@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { WorkflowConnections } from '../../../../templates/connections/workflowconnections';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const ConnectionsPanel: React.FC = () => {
   const { connections } = useSelector((state: RootState) => state.template);
@@ -16,7 +17,7 @@ export const ConnectionsPanel: React.FC = () => {
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
+  { shouldClearDetails, previousTabId, isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -40,13 +41,27 @@ export const connectionsTab = (
     primaryButtonOnClick: () => {
       dispatch(selectPanelTab(nextTabId));
     },
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Previous',
-      id: 'Yua/4o',
-      description: 'Button text for moving to the previous tab in the create workflow panel',
-    }),
+    secondaryButtonText: previousTabId
+      ? intl.formatMessage({
+          defaultMessage: 'Previous',
+          id: 'Yua/4o',
+          description: 'Button text for moving to the previous tab in the create workflow panel',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
     secondaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC));
+      if (previousTabId) {
+        dispatch(selectPanelTab(previousTabId));
+      } else {
+        dispatch(closePanel());
+
+        if (shouldClearDetails) {
+          dispatch(clearTemplateDetails());
+        }
+      }
     },
     secondaryButtonDisabled: isCreating,
   },

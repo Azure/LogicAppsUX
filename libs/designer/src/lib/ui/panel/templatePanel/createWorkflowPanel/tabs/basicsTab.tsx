@@ -17,8 +17,7 @@ export const WorkflowBasics = () => {
 export const basicsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  shouldClearDetails: boolean,
-  { isCreating, nextTabId, hasError }: CreateWorkflowTabProps
+  { shouldClearDetails, isCreating, nextTabId, hasError }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({

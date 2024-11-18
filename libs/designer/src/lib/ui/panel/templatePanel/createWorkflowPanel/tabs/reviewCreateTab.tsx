@@ -5,10 +5,12 @@ import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { selectPanelTab } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
 import { WorkflowKind } from '../../../../../core/state/workflow/workflowInterfaces';
+import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
+import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -62,6 +64,11 @@ export const ReviewCreatePanel = () => {
       id: 'cNXS5n',
       description: 'Dropdown option for stateless type',
     }),
+    NO_CONFIG: intl.formatMessage({
+      defaultMessage: 'Select Create to start a new workflow based on this template, no configuration required.',
+      id: '1vqDeQ',
+      description: 'Accessibility label for no configuration required',
+    }),
   };
 
   return (
@@ -96,6 +103,12 @@ export const ReviewCreatePanel = () => {
           </div>
         </>
       )}
+
+      {isConsumption && !Object.keys(connections).length && !Object.keys(parameterDefinitions).length ? (
+        <div className="msla-templates-empty-review-tab">
+          <Text className="msla-templates-tab-review-section-details-value">{intlText.NO_CONFIG}</Text>
+        </div>
+      ) : null}
 
       {Object.keys(connections).length > 0 && (
         <>
@@ -140,16 +153,15 @@ export const reviewCreateTab = (
   dispatch: AppDispatch,
   onCreateClick: () => void,
   {
+    shouldClearDetails,
     isCreating,
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
   }: {
-    isCreating: boolean;
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
-    previousTabId: string;
-  }
+  } & CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: intl.formatMessage({
@@ -180,12 +192,28 @@ export const reviewCreateTab = (
     ),
     primaryButtonOnClick: onCreateClick,
     primaryButtonDisabled: isPrimaryButtonDisabled || isCreating,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Previous',
-      id: 'Yua/4o',
-      description: 'Button text for moving to the previous tab in the create workflow panel',
-    }),
-    secondaryButtonOnClick: () => dispatch(selectPanelTab(previousTabId)),
+    secondaryButtonText: previousTabId
+      ? intl.formatMessage({
+          defaultMessage: 'Previous',
+          id: 'Yua/4o',
+          description: 'Button text for moving to the previous tab in the create workflow panel',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
+    secondaryButtonOnClick: () => {
+      if (previousTabId) {
+        dispatch(selectPanelTab(previousTabId));
+      } else {
+        dispatch(closePanel());
+
+        if (shouldClearDetails) {
+          dispatch(clearTemplateDetails());
+        }
+      }
+    },
     secondaryButtonDisabled: isCreating,
   },
 });

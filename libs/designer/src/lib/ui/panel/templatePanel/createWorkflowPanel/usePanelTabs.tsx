@@ -86,7 +86,9 @@ export const useCreateWorkflowPanelTabs = ({
 
     const isMissingWorkflowInfo = Object.values(workflows).some(
       (workflowData) =>
-        !workflowData.workflowName || workflowData.errors.kind || workflowData.errors.workflow || !workflowData.workflowDefinition
+        (!isConsumption && (!workflowData.workflowName || workflowData.errors.kind)) ||
+        workflowData.errors.workflow ||
+        !workflowData.workflowDefinition
     );
 
     const isMissingInfo = isMissingWorkflowInfo || connectionsError || Object.values(parameterErrors)?.filter((error) => error).length > 0;
@@ -105,7 +107,17 @@ export const useCreateWorkflowPanelTabs = ({
       connections,
       parameterDefinitions
     );
-  }, [connections, connectionsError, createWorkflow, intl, isMultiWorkflowTemplate, parameterDefinitions, parameterErrors, workflows]);
+  }, [
+    isConsumption,
+    connections,
+    connectionsError,
+    createWorkflow,
+    intl,
+    isMultiWorkflowTemplate,
+    parameterDefinitions,
+    parameterErrors,
+    workflows,
+  ]);
 
   const { isLoading: isCreating, mutate: createWorkflowFromTemplate } = useMutation(async () => {
     setErrorMessage(undefined);
@@ -143,7 +155,8 @@ export const useCreateWorkflowPanelTabs = ({
 
   const nameStateTabItem = useMemo(
     () => ({
-      ...basicsTab(intl, dispatch, !isMultiWorkflowTemplate, {
+      ...basicsTab(intl, dispatch, {
+        shouldClearDetails: !isMultiWorkflowTemplate,
         nextTabId: connectionsExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
           : parametersExist
@@ -159,42 +172,55 @@ export const useCreateWorkflowPanelTabs = ({
   const connectionsTabItem = useMemo(
     () => ({
       ...connectionsTab(intl, dispatch, {
+        shouldClearDetails: !isMultiWorkflowTemplate,
+        previousTabId: isConsumption ? undefined : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
         nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
         hasError: !!connectionsError,
         isCreating,
       }),
     }),
-    [intl, dispatch, isCreating, connectionsError, parametersExist]
+    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, connectionsError, parametersExist]
   );
 
   const parametersTabItem = useMemo(
     () => ({
       ...parametersTab(intl, dispatch, {
-        previousTabId: connectionsExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
+        shouldClearDetails: !isMultiWorkflowTemplate,
+        previousTabId: connectionsExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+          : isConsumption
+            ? undefined
+            : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
         hasError: hasParametersValidationErrors,
         isCreating,
       }),
     }),
-    [intl, dispatch, isCreating, hasParametersValidationErrors, connectionsExist]
+    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, hasParametersValidationErrors, connectionsExist]
   );
 
   const reviewCreateTabItem = useMemo(
     () => ({
       ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
+        shouldClearDetails: !isMultiWorkflowTemplate,
         isCreating,
         errorMessage,
+        hasError: false,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-            : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
+            : isConsumption
+              ? undefined
+              : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
       }),
     }),
     [
       intl,
       dispatch,
       createWorkflowFromTemplate,
+      isMultiWorkflowTemplate,
+      isConsumption,
       isCreating,
       errorMessage,
       nameStateTabItem.hasError,

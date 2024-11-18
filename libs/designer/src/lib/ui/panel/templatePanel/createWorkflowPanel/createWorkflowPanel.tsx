@@ -19,6 +19,7 @@ export interface CreateWorkflowTabProps {
   previousTabId?: string;
   nextTabId?: string;
   hasError: boolean;
+  shouldClearDetails: boolean;
 }
 
 export interface CreateWorkflowPanelProps {
@@ -85,7 +86,7 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
         description={manifest?.description ?? ''}
       />
     ),
-    [isMultiWorkflowTemplate, resources.multiWorkflowCreateTitle, manifest?.details]
+    [resources.multiWorkflowCreateTitle, isMultiWorkflow, manifest]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];

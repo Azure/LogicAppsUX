@@ -13,7 +13,7 @@ export const validateResourceId = (resourceId: string): string => {
 export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
   const requestPage = async (value: any[] = [], pageNum = 0, currentSkipToken = ''): Promise<any> => {
     try {
-      const pageSize = 1000;
+      const pageSize = 500;
       const { data } = await axios.post(
         'https://edge.management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01',
         {
