@@ -39,7 +39,7 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
       nodeId && connectionId
         ? {
             isLoading,
-            result: isLoading ? '' : connection?.properties?.displayName ?? connectionId.split('/').at(-1),
+            result: isLoading ? '' : (connection?.properties?.displayName ?? connectionId.split('/').at(-1)),
           }
         : {
             isLoading: false,

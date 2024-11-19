@@ -49,7 +49,8 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
   const isLeftConnected =
     functionWithConnections?.inputs &&
     functionWithConnections?.inputs.length > 0 &&
-    functionWithConnections?.inputs[0] !== undefined && !isEmptyConnection(functionWithConnections?.inputs[0]);
+    functionWithConnections?.inputs[0] !== undefined &&
+    !isEmptyConnection(functionWithConnections?.inputs[0]);
   const isRightConnected = functionWithConnections?.outputs.length > 0;
 
   const getHandleStyle = useCallback(

@@ -2,7 +2,7 @@
   "name": "@microsoft/logicappsux",
   "version": "5.3.0",
   "devDependencies": {
-    "@biomejs/biome": "1.6.4",
+    "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
     "@faker-js/faker": "^8.4.1",
@@ -29,7 +29,7 @@
     "esbuild-plugin-less": "^1.3.3",
     "esbuild-plugin-svg": "^0.1.0",
     "esbuild-plugin-svgr": "^2.1.0",
-    "eslint": "8.56.0",
+    "eslint": "8.57.1",
     "eslint-config-standard-with-typescript": "^43.0.1",
     "eslint-plugin-formatjs": "^4.13.0",
     "eslint-plugin-import": "^2.29.1",
@@ -66,11 +66,7 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --apply"
-    ]
+    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
   },
   "private": true,
   "scripts": {
@@ -78,7 +74,7 @@
     "build": "turbo run build",
     "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
-    "check": "biome check --apply .",
+    "check": "biome check --write .",
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "e2e:setup": "playwright install --with-deps",
