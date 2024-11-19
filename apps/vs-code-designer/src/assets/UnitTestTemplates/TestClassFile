@@ -73,10 +73,10 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
             var sampleActionMock = mockData.ActionMocks.FirstOrDefault();
-            sampleActionMock.Value.Outputs["somePropertyName"] = "somePropertyValue";
+            sampleActionMock.Value.Outputs["your-property-name"] = "your-property-value";
 
             // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.   
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
             var executor = new UnitTestExecutor(
                 workflowFilePath: this.workflowDefinitionPath,
                 connectionsFilePath: this.connectionsPath,
@@ -92,7 +92,7 @@ namespace <%= LogicAppName %>.Tests
         }
 
         /// <summary>
-        /// A sample unit test for executing the workflow named Stateful1 with dynamic mocked data.
+        /// A sample unit test for executing the workflow named <%= WorkflowName %> with dynamic mocked data.
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
@@ -105,7 +105,7 @@ namespace <%= LogicAppName %>.Tests
             mockData.ActionMocks[sampleActionMock.Key] = new ActionMock(name: sampleActionMock.Key, status: TestWorkflowStatus.Succeeded, onGetActionOutputsCallback: this.MockActionOutputCallback);
 
             // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.   
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
             var executor = new UnitTestExecutor(
                 workflowFilePath: this.workflowDefinitionPath,
                 connectionsFilePath: this.connectionsPath,
@@ -121,7 +121,7 @@ namespace <%= LogicAppName %>.Tests
         }
 
         /// <summary>
-        /// A sample unit test for executing the workflow named Stateful1 with failed mocked data.
+        /// A sample unit test for executing the workflow named <%= WorkflowName %> with failed mocked data.
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
@@ -135,7 +135,7 @@ namespace <%= LogicAppName %>.Tests
             mockData.ActionMocks[sampleActionMock.Key] = new ActionMock(name: sampleActionMock.Key, status: TestWorkflowStatus.Failed, error: mockError);
 
             // ACT
-            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.   
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
             var executor = new UnitTestExecutor(
                 workflowFilePath: this.workflowDefinitionPath,
                 connectionsFilePath: this.connectionsPath,
@@ -164,7 +164,7 @@ namespace <%= LogicAppName %>.Tests
         /// <param name="context">The test execution context that contains information about the current test run.</param>
         public JToken MockActionOutputCallback(TestExecutionContext context)
         {
-            // Sample mock data: Replace <your-test-JSON-value> with the appropriate mock data for the test.
+            // Sample mock data 1: Replace <your-test-JSON-value> with the appropriate mock data for the test.
             // return JObject.Parse(@"
             // {
             //     'statusCode': '200',
@@ -176,7 +176,7 @@ namespace <%= LogicAppName %>.Tests
             // Sample mock data 2: Modify the existing mocked data dynamically for "actionName".
             var mockData = this.GetTestMockDefinition();
             var modifiedMockOutput = mockData.ActionMocks["actionName"].Outputs;
-            modifiedMockOutput["somePropertyName"] = "somePropertyValue";
+            modifiedMockOutput["your-property-name"] = "your-property-value";
             return modifiedMockOutput;
         }
 
