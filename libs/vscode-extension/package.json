@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
@@ -55,7 +55,7 @@
   "scripts": {
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
-    "test:lib": "vitest --retry=3",
+    "test:lib": "vitest run --retry=3",
     "unpublish:local": "pnpm unpublish --force"
   },
   "sideEffects": false,
