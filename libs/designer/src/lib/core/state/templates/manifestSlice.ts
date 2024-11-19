@@ -75,12 +75,14 @@ export const manifestSlice = createSlice({
     },
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
       state.filters.keyword = action.payload;
+      state.filters.pageNum = 0;
     },
     setSortKey: (state, action: PayloadAction<string>) => {
       state.filters.sortKey = action.payload;
     },
     setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
+      state.filters.pageNum = 0;
     },
     setDetailsFilters: (
       state,
@@ -96,6 +98,7 @@ export const manifestSlice = createSlice({
         delete currentDetailFilters[action.payload.filterName];
       }
       state.filters.detailFilters = currentDetailFilters;
+      state.filters.pageNum = 0;
     },
   },
   extraReducers: (builder) => {
