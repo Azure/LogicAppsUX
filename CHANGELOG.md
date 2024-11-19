@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.3.0](https://github.com/Azure/LogicAppsUX/compare/v5.2.0...v5.3.0) (2024-11-18)
+
+
+### Features
+
+* **designer:** No longer escapes characters in token expressions ([#6131](https://github.com/Azure/LogicAppsUX/issues/6131)) ([a3f6e31](https://github.com/Azure/LogicAppsUX/commit/a3f6e31c76e630f32c3fac7bb60f1690f6cc0fca))
+* **Templates:** Support Consumption Template Creation + UI ([#6132](https://github.com/Azure/LogicAppsUX/issues/6132)) ([e5afa22](https://github.com/Azure/LogicAppsUX/commit/e5afa227818d80a28b7bd3e423136c69a1abd258))
+
+
+### Bug Fixes
+
+* **designer:** Remove encoding in parameter name ([#6134](https://github.com/Azure/LogicAppsUX/issues/6134)) ([7bc895f](https://github.com/Azure/LogicAppsUX/commit/7bc895fa7b4917b62bcb39c887808b760adc48f8))
+
 ## [5.2.0](https://github.com/Azure/LogicAppsUX/compare/v5.1.0...v5.2.0) (2024-11-14)
 
 
