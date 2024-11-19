@@ -1,4 +1,45 @@
 # Logic Apps Designer
+## [5.3.0](https://github.com/Azure/LogicAppsUX/compare/v5.2.0...v5.3.0) (2024-11-18)
+
+
+### Features
+
+* **designer:** No longer escapes characters in token expressions ([#6131](https://github.com/Azure/LogicAppsUX/issues/6131)) ([a3f6e31](https://github.com/Azure/LogicAppsUX/commit/a3f6e31c76e630f32c3fac7bb60f1690f6cc0fca))
+* **Templates:** Support Consumption Template Creation + UI ([#6132](https://github.com/Azure/LogicAppsUX/issues/6132)) ([e5afa22](https://github.com/Azure/LogicAppsUX/commit/e5afa227818d80a28b7bd3e423136c69a1abd258))
+
+
+### Bug Fixes
+
+* **designer:** Remove encoding in parameter name ([#6134](https://github.com/Azure/LogicAppsUX/issues/6134)) ([7bc895f](https://github.com/Azure/LogicAppsUX/commit/7bc895fa7b4917b62bcb39c887808b760adc48f8))
+
+## [5.2.0](https://github.com/Azure/LogicAppsUX/compare/v5.1.0...v5.2.0) (2024-11-14)
+
+
+### Bug Fixes
+
+* **designer:** Don't render info bubble in operation search if there is no description ([#6118](https://github.com/Azure/LogicAppsUX/issues/6118)) ([c8e61b1](https://github.com/Azure/LogicAppsUX/commit/c8e61b1db0ecfeae9cbbc61c01af6495ac3b2ff2))
+* **Designer:** DynamicData initialization hook fix, new indicator ([#6091](https://github.com/Azure/LogicAppsUX/issues/6091)) ([435336d](https://github.com/Azure/LogicAppsUX/commit/435336d522f362c9396dd416f86a948752b84f60))
+* **designer:** Fix a11y issue where footer icons are technically clickable but not have button role ([#6120](https://github.com/Azure/LogicAppsUX/issues/6120)) ([57abc46](https://github.com/Azure/LogicAppsUX/commit/57abc46445d7b848930f6b32ca9e646f11661cb5))
+* **designer:** Prevent crashing when having object in key/value ([#6121](https://github.com/Azure/LogicAppsUX/issues/6121)) ([ccb51f5](https://github.com/Azure/LogicAppsUX/commit/ccb51f5d417fc0cd7fbe24a82fcdf6083335fc6a))
+
+## [5.1.0](https://github.com/Azure/LogicAppsUX/compare/v5.0.0...v5.1.0) (2024-11-14)
+
+
+### Features
+
+* **Data Mapper:** Refactored connections ([#6022](https://github.com/Azure/LogicAppsUX/issues/6022)) ([3fb2b71](https://github.com/Azure/LogicAppsUX/commit/3fb2b71dc7b1df59715e8b32a9102e6a8a8f2727))
+* **Designer:** Dragging node instantly shows what locations are valid / invalid ([#6067](https://github.com/Azure/LogicAppsUX/issues/6067)) ([7c8ac25](https://github.com/Azure/LogicAppsUX/commit/7c8ac25ab54103ce7ff1233e3bf97ead457616fd))
+* **Designer:** Edges connected to selected node are highlighted ([#6066](https://github.com/Azure/LogicAppsUX/issues/6066)) ([c25093a](https://github.com/Azure/LogicAppsUX/commit/c25093a9caac574c10c7ec3af1f3fc94f4dbcf1f))
+* **Templates:** Detail page dismiss button back to templates designer ([#6081](https://github.com/Azure/LogicAppsUX/issues/6081)) ([6a76229](https://github.com/Azure/LogicAppsUX/commit/6a76229def3b262d8e0ca0d53e7f1d03e4de3c27))
+
+
+### Bug Fixes
+
+* **Data Mapper:** now using v2 service ([#6080](https://github.com/Azure/LogicAppsUX/issues/6080)) ([dff323b](https://github.com/Azure/LogicAppsUX/commit/dff323bc1bedafe9eaf8dda1e1ba027d0ccd5a2c))
+* **designer:** Use Default swagger Host when api host is not set ([#6068](https://github.com/Azure/LogicAppsUX/issues/6068)) ([57b5eae](https://github.com/Azure/LogicAppsUX/commit/57b5eae32ee90d2a969d7797ad7fa39b2b8dd590))
+* **Templates:** Quickview panel header for accelerator displaying accelerator info ([#6077](https://github.com/Azure/LogicAppsUX/issues/6077)) ([dfad10f](https://github.com/Azure/LogicAppsUX/commit/dfad10f557b346bc5927e85f896b46c86526e50e))
+* **vscode:** Remove extra error encapsulation ([#6064](https://github.com/Azure/LogicAppsUX/issues/6064)) ([4a5150d](https://github.com/Azure/LogicAppsUX/commit/4a5150d30333e6161bdd0e796854ed03c94943bd))
+
 ## [5.0.0](https://github.com/Azure/LogicAppsUX/compare/v4.122.0...v5.0.0) (2024-11-11)
 
 

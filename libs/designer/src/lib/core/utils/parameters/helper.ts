@@ -118,6 +118,7 @@ import {
   canStringBeConverted,
   isStringLiteral,
   splitAtIndex,
+  unescapeString,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -142,7 +143,6 @@ import {
   GroupType,
   AuthenticationType,
   ColumnMode,
-  DynamicCallStatus,
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
@@ -365,7 +365,7 @@ export function createParameterInfo(
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
-    dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
+    dynamicData: parameter.dynamicValues ? { status: DynamicLoadStatus.NOTSTARTED } : undefined,
     editor,
     editorOptions,
     editorViewModel,
@@ -473,7 +473,7 @@ export function getParameterEditorProps(
     editorOptions = {
       ...editorOptions,
       serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
-      options: dropdownOptions.length > 0 ? dropdownOptions : modifiedOptions ?? [],
+      options: dropdownOptions.length > 0 ? dropdownOptions : (modifiedOptions ?? []),
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
@@ -733,7 +733,7 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
 // Create Dictionary Editor View Model
 function toDictionaryViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
-  const valueToParse = value !== null ? value ?? {} : value;
+  const valueToParse = value !== null ? (value ?? {}) : value;
   const canParseObject = valueToParse !== null && isObject(valueToParse);
 
   if (canParseObject) {
@@ -788,8 +788,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValueFromString(value.username),
-              basicPassword: loadParameterValueFromString(value.password),
+              basicUsername: loadParameterValueFromString(value.username, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              basicPassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -798,8 +798,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValueFromString(value.pfx),
-              clientCertificatePassword: loadParameterValueFromString(value.password),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              clientCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -809,14 +809,14 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValueFromString(value.tenant),
-              oauthAudience: loadParameterValueFromString(value.audience),
-              oauthAuthority: loadParameterValueFromString(value.authority),
-              oauthClientId: loadParameterValueFromString(value.clientId),
+              oauthTenant: loadParameterValueFromString(value.tenant, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthAuthority: loadParameterValueFromString(value.authority, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthClientId: loadParameterValueFromString(value.clientId, { parameterType: constants.SWAGGER.TYPE.STRING }),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValueFromString(value.secret),
-              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx),
-              oauthTypeCertificatePassword: loadParameterValueFromString(value.password),
+              oauthTypeSecret: loadParameterValueFromString(value.secret, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -836,7 +836,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValueFromString(value.audience),
+              msiAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
               msiIdentity: value.identity,
             },
           },
@@ -955,7 +955,7 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType: string): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
@@ -1800,7 +1800,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
-              dynamicData: { status: DynamicCallStatus.NOTSTARTED },
+              dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
               editorOptions: { options: [] },
             },
           });
@@ -1904,6 +1904,7 @@ export const updateDynamicDataInNode = async (
     if (!details) {
       continue;
     }
+
     const parameter = await fetchDynamicValuesForParameter(
       details.groupId,
       details.parameter.id,
@@ -1913,7 +1914,9 @@ export const updateDynamicDataInNode = async (
       nodeDependencies,
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
-      workflowParameters.definitions
+      workflowParameters.definitions,
+      nodeId,
+      dispatch
     );
 
     if (!isNullOrUndefined(parameter)) {
@@ -2192,7 +2195,7 @@ export async function loadDynamicTreeItemsForParameter(
               parameterId,
               groupId,
               propertiesToUpdate: {
-                dynamicData: { status: DynamicCallStatus.STARTED },
+                dynamicData: { status: DynamicLoadStatus.LOADING },
                 editorOptions: { ...originalEditorOptions, items: [] },
               },
             },
@@ -2219,7 +2222,7 @@ export async function loadDynamicTreeItemsForParameter(
                 parameterId,
                 groupId,
                 propertiesToUpdate: {
-                  dynamicData: { status: DynamicCallStatus.SUCCEEDED },
+                  dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
                   editorOptions: { ...originalEditorOptions, items: treeItems },
                 },
               },
@@ -2234,7 +2237,7 @@ export async function loadDynamicTreeItemsForParameter(
               {
                 parameterId,
                 groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+                propertiesToUpdate: { dynamicData: { status: DynamicLoadStatus.FAILED, error: error as Exception } },
               },
             ],
           })
@@ -2276,7 +2279,7 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
 
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 
@@ -2290,11 +2293,11 @@ export async function loadDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
   }
 
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
@@ -2309,7 +2312,9 @@ export async function fetchDynamicValuesForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   idReplacements: Record<string, string> = {},
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  nodeId: string,
+  dispatch: Dispatch
 ): Promise<{ parameterId: string; groupId: string; propertiesToUpdate: any } | undefined> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -2328,7 +2333,10 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
+
+  // Send the initial status update to the store
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 
   try {
     const dynamicValues = await getDynamicValues(
@@ -2340,11 +2348,11 @@ export async function fetchDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
   }
 
   return { parameterId, groupId, propertiesToUpdate };
@@ -2441,7 +2449,7 @@ function showErrorWhenDependenciesNotReady(
                   { parameters: `${invalidParameterNames.join(' , ')}` }
                 ),
               },
-              status: DynamicCallStatus.FAILED,
+              status: DynamicLoadStatus.FAILED,
             },
           },
         },
@@ -2478,7 +2486,7 @@ function fetchErrorWhenDependenciesNotReady(
             { parameters: `${invalidParameterNames.join(' , ')}` }
           ),
         },
-        status: DynamicCallStatus.FAILED,
+        status: DynamicLoadStatus.FAILED,
       },
     },
   };
@@ -3583,6 +3591,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
+      const stringifiedTokenExpression = tokenExpression;
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
@@ -3595,20 +3604,15 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
           );
         }
 
-        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@{${stringifiedTokenExpression}}`;
       } else {
         // Add quotes around tokens. Tokens directly after a literal need a leading quote, and those before another literal need an ending quote.
         const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegmentType.TOKEN;
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
-
-        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@${stringifiedTokenExpression}`;
-        // eslint-disable-next-line no-useless-escape
-        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
-        // eslint-disable-next-line no-useless-escape
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
+        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
@@ -3736,13 +3740,14 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
-    .map((expression) => {
-      let expressionValue = forValidation ? expression.value || null : expression.value;
-      if (isTokenValueSegment(expression)) {
-        expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
+    .map((segment) => {
+      const { value: segmentValue } = segment;
+      if (isTokenValueSegment(segment)) {
+        const token = forValidation ? segmentValue || null : unescapeString(segmentValue);
+        return shouldInterpolateTokens ? `@{${token}}` : `@${token}`;
       }
 
-      return expressionValue;
+      return forValidation ? segmentValue || null : segmentValue;
     })
     .join('');
 }
@@ -3947,8 +3952,8 @@ export function validateUntilAction(
   const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
   const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
 
-  const countValue = countParameter?.id === parameterId ? changedParameter?.value ?? [] : countParameter?.value ?? [];
-  const timeoutValue = timeoutParameter?.id === parameterId ? changedParameter?.value ?? [] : timeoutParameter?.value ?? [];
+  const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
+  const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);
 
   if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
     dispatch(

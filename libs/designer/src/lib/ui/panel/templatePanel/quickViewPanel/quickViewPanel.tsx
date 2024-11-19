@@ -1,21 +1,37 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Text } from '@fluentui/react-components';
-import { Icon } from '@fluentui/react';
+import { Icon, Panel, PanelType } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import { useState } from 'react';
-import { TemplatesPanelContent, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { useCallback, useState } from 'react';
+import { TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 import { Open16Regular } from '@fluentui/react-icons';
+import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
+import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 
-export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId: string; clearDetailsOnClose: boolean }) => {
+export interface QuickViewPanelProps {
+  showCreate: boolean;
+  workflowId: string;
+  clearDetailsOnClose?: boolean;
+  onClose?: () => void;
+}
+
+const layerProps = {
+  hostId: 'msla-layer-host',
+  eventBubblingEnabled: true,
+};
+
+export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOnClose = true }: QuickViewPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateName, workflowAppName } = useSelector((state: RootState) => ({
+  const { templateName, workflowAppName, isOpen, currentPanelView } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
+    isOpen: state.panel.isOpen,
+    currentPanelView: state.panel.currentPanelView,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
   const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
@@ -24,6 +40,35 @@ export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId
     isMultiWorkflow: false,
   });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
+
+  const dismissPanel = useCallback(() => {
+    dispatch(closePanel());
+
+    if (clearDetailsOnClose) {
+      dispatch(clearTemplateDetails());
+    }
+
+    onClose?.();
+  }, [clearDetailsOnClose, dispatch, onClose]);
+
+  const onRenderHeaderContent = useCallback(
+    () => (
+      <QuickViewPanelHeader
+        title={manifest.title}
+        description={manifest.description}
+        sourceCodeUrl={manifest.sourceCodeUrl}
+        details={manifest?.details ?? {}}
+      />
+    ),
+    [manifest]
+  );
+
+  const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
+  const onRenderFooterContent = useCallback(
+    () =>
+      selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
+    [selectedTabProps?.footerContent, showCreate]
+  );
 
   if (!manifest) {
     return null;
@@ -34,12 +79,26 @@ export const QuickViewPanel = ({ workflowId, clearDetailsOnClose }: { workflowId
   };
 
   return (
-    <TemplatesPanelContent
-      className="msla-template-quickview-tabs"
-      tabs={panelTabs}
-      selectedTab={selectedTabId}
-      selectTab={onTabSelected}
-    />
+    <Panel
+      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      isLightDismiss
+      type={PanelType.medium}
+      customWidth={'50%'}
+      isOpen={isOpen && currentPanelView === TemplatePanelView.QuickView}
+      onDismiss={dismissPanel}
+      hasCloseButton={true}
+      onRenderHeader={onRenderHeaderContent}
+      onRenderFooterContent={onRenderFooterContent}
+      layerProps={layerProps}
+      isFooterAtBottom={true}
+    >
+      <TemplatesPanelContent
+        className="msla-template-quickview-tabs"
+        tabs={panelTabs}
+        selectedTab={selectedTabId}
+        selectTab={onTabSelected}
+      />
+    </Panel>
   );
 };
 
@@ -49,7 +108,15 @@ export const QuickViewPanelHeader = ({
   sourceCodeUrl,
   details,
   features,
-}: { title: string; description: string; sourceCodeUrl: string | undefined; details: Record<string, string>; features?: string }) => {
+  onBackClick,
+}: {
+  title: string;
+  description: string;
+  sourceCodeUrl: string | undefined;
+  details: Record<string, string>;
+  features?: string;
+  onBackClick?: () => void;
+}) => {
   const intl = useIntl();
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
@@ -65,7 +132,7 @@ export const QuickViewPanelHeader = ({
   };
 
   return (
-    <TemplatesPanelHeader title={title}>
+    <TemplatesPanelHeader title={title} onBackClick={onBackClick}>
       <div className="msla-template-quickview-tags">
         {Object.keys(detailsTags).map((key: string, index: number, array: any[]) => {
           return (

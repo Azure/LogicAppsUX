@@ -24,19 +24,23 @@ export const TemplatesPanelContent = ({ tabs = [], selectedTab, selectTab, class
   const tabClass = className ?? 'msla-templates-panel-tabs';
   return (
     <div className="msla-templates-panel">
-      <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
-        {tabs.map(({ id, title, hasError = false }) => (
-          <Tab key={id} id={id} data-testid={id} className="msla-templates-panel-tabName" value={id} role={'tab'}>
-            {hasError && (
-              <span className="msla-templates-panel-error-icon">
-                <Dismiss12Filled />
-              </span>
-            )}
-            {title}
-          </Tab>
-        ))}
-      </TabList>
-      {selectedTabProps?.description && <div className="msla-panel-content-description">{selectedTabProps?.description}</div>}
+      {tabs.length > 1 && (
+        <>
+          <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
+            {tabs.map(({ id, title, hasError = false }) => (
+              <Tab key={id} id={id} data-testid={id} className="msla-templates-panel-tabName" value={id} role={'tab'}>
+                {hasError && (
+                  <span className="msla-templates-panel-error-icon">
+                    <Dismiss12Filled />
+                  </span>
+                )}
+                {title}
+              </Tab>
+            ))}
+          </TabList>
+          {selectedTabProps?.description && <div className="msla-panel-content-description">{selectedTabProps?.description}</div>}
+        </>
+      )}
       <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
     </div>
   );
