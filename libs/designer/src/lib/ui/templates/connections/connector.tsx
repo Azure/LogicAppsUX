@@ -27,19 +27,19 @@ export const ConnectorIcon = ({
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
 
+  const wrappedIcon = (
+    <div className={classes['root']}>
+      <img className={classes['icon']} src={connector?.iconUrl} />
+    </div>
+  );
+
   if (!connector.displayName) {
-    return (
-      <div className={classes['root']}>
-        <img className={classes['icon']} src={connector?.iconUrl} />
-      </div>
-    );
+    return wrappedIcon;
   }
 
   return (
     <Tooltip content={connector.displayName} relationship="label" positioning="below-start" withArrow showDelay={100} hideDelay={500}>
-      <div className={classes['root']}>
-        <img className={classes['icon']} src={connector?.iconUrl} />
-      </div>
+      {wrappedIcon}
     </Tooltip>
   );
 };
