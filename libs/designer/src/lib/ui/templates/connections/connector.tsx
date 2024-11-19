@@ -29,7 +29,7 @@ export const ConnectorIcon = ({
 
   const wrappedIcon = (
     <div className={classes['root']}>
-      <img className={classes['icon']} src={connector?.iconUrl} />
+      <img className={classes['icon']} src={connector?.iconUrl} alt={connector?.displayName ?? connector?.id?.split('/')?.slice(-1)} />
     </div>
   );
 
