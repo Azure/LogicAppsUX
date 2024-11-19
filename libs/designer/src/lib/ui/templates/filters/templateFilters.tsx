@@ -28,7 +28,8 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { sortKey, detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
   const intl = useIntl();
-  const { availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
+  const { isConsumption, availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
+    isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
@@ -83,32 +84,38 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     },
   ];
 
-  const templateTabs = [
-    {
-      value: templateDefaultTabKey,
-      displayName: intl.formatMessage({
-        defaultMessage: 'All',
-        id: 'YX0jQs',
-        description: 'All templates tab',
-      }),
-    },
-    {
-      value: 'Workflow',
-      displayName: intl.formatMessage({
-        defaultMessage: 'Workflows',
-        id: 'fxue5l',
-        description: 'Workflows only templates tab',
-      }),
-    },
-    {
-      value: 'Accelerator',
-      displayName: intl.formatMessage({
-        defaultMessage: 'Accelerators',
-        id: 'A5/UwX',
-        description: 'Accelerators only templates tab',
-      }),
-    },
-  ];
+  const templateTabs = useMemo(() => {
+    const basicTabs = [
+      {
+        value: templateDefaultTabKey,
+        displayName: intl.formatMessage({
+          defaultMessage: 'All',
+          id: 'YX0jQs',
+          description: 'All templates tab',
+        }),
+      },
+    ];
+
+    if (!isConsumption) {
+      basicTabs.push({
+        value: 'Workflow',
+        displayName: intl.formatMessage({
+          defaultMessage: 'Workflows',
+          id: 'fxue5l',
+          description: 'Workflows only templates tab',
+        }),
+      });
+      basicTabs.push({
+        value: 'Accelerator',
+        displayName: intl.formatMessage({
+          defaultMessage: 'Accelerators',
+          id: 'A5/UwX',
+          description: 'Accelerators only templates tab',
+        }),
+      });
+    }
+    return basicTabs;
+  }, [isConsumption, intl]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
