@@ -213,6 +213,6 @@ const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeCo
       )}
     </Tooltip>
   ) : (
-    badgeContent ?? <Icon className="panel-card-v2-badge inactive" {...iconProps} aria-label={title} tabIndex={0} />
+    (badgeContent ?? <Icon className="panel-card-v2-badge inactive" {...iconProps} aria-label={title} tabIndex={0} />)
   );
 };

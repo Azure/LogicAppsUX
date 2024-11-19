@@ -17,13 +17,6 @@
     "declaration": true
   },
   "files": [],
-  "include": [
-    "**/src/**/*.ts",
-    "**/src/**/*.tsx"
-  ],
-  "exclude": [
-    "**/__test__/**",
-    "**/__tests__/**",
-    "**/build/**"
-  ]
+  "include": ["**/src/**/*.ts", "**/src/**/*.tsx"],
+  "exclude": ["**/__test__/**", "**/__tests__/**", "**/build/**"]
 }
