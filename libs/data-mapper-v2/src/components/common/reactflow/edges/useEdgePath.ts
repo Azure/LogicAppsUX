@@ -1,12 +1,13 @@
-import { type EdgeProps, type InternalNode, type Node, useReactFlow } from '@xyflow/react';
+import { type EdgeProps, useInternalNode } from '@xyflow/react';
+import type { Handle } from '@xyflow/system';
 import { NodeIds } from '../../../../constants/ReactFlowConstants';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, getTreeNodeId, isFunctionNode } from '../../../../utils/ReactFlow.Util';
 import { useEffect, useMemo, useState } from 'react';
 import type { RootState } from '../../../../core/state/Store';
 import { useSelector } from 'react-redux';
 import { flattenSchemaNode } from '../../../../utils';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import type { HandlePosition, SchemaTreeDataProps } from '../../../../core/state/DataMapSlice';
+import { equals, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { SchemaTreeDataProps } from '../../../../core/state/DataMapSlice';
 
 // Return [x, y] coordinates for the handle along with the scenario of the handle,
 // Scenario can be one of 'direct' (straight connection), or 'collpased' (parent is collapsed, at any level) or 'scroll' (handle scrolled out of view)
@@ -17,9 +18,10 @@ const getCoordinatesForHandle = (
   schema: SchemaNodeExtended[],
   openKeys: Record<string, boolean>,
   createReactFlowKey: (key: string) => string,
-  handlePositionFromStore: Record<string, HandlePosition>,
   treeData?: SchemaTreeDataProps,
-  node?: InternalNode<Node>,
+  nodeX?: number,
+  nodeY?: number,
+  handleBounds?: Handle[],
   handleId?: string
 ): [number | undefined, number | undefined, string | undefined] => {
   // If the node is a function node, return the current x and y coordinates
@@ -27,19 +29,25 @@ const getCoordinatesForHandle = (
     return [currentX, currentY, 'direct'];
   }
 
-  const reactflowHandles = node?.internals.handleBounds?.source ?? node?.internals.handleBounds?.target ?? [];
-
-  if (handleId && node?.internals.positionAbsolute && treeData && treeData.startIndex > -1 && treeData.endIndex > -1) {
+  if (
+    handleId &&
+    nodeX !== undefined &&
+    nodeY !== undefined &&
+    handleBounds !== undefined &&
+    treeData &&
+    treeData.startIndex > -1 &&
+    treeData.endIndex > -1
+  ) {
     let x: number | undefined = undefined;
     let y: number | undefined = undefined;
     let scenario: 'direct' | 'collapsed' | 'scroll' | undefined;
-    let currentHandle: HandlePosition | undefined = handlePositionFromStore[handleId];
+    let currentHandle = handleBounds.find((handle) => equals(handleId, handle.id ?? ''));
 
     if (treeData.visibleNodes.find((node) => node.key === getTreeNodeId(handleId))) {
-      if (currentHandle && !currentHandle.hidden) {
+      if (currentHandle) {
         // If the handle is present in the current view, return the x and y coordinates
-        x = currentHandle.position.x;
-        y = currentHandle.position.y;
+        x = currentHandle.x;
+        y = currentHandle.y;
         scenario = 'direct';
       }
     }
@@ -56,12 +64,12 @@ const getCoordinatesForHandle = (
             openKeys[path.key] === false &&
             treeData.visibleNodes.find((node) => node.key === path.key)
           ) {
-            currentHandle = handlePositionFromStore[createReactFlowKey(path.key)];
+            currentHandle = handleBounds.find((handle) => equals(createReactFlowKey(path.key), handle.id ?? ''));
             // If handle is found => Parent is collapsed and we have the dimensions for the handle
             // handle.hidden is used to check if the handle is scrolled out of view or not
-            if (currentHandle && !currentHandle.hidden) {
-              x = currentHandle.position.x;
-              y = currentHandle.position.y;
+            if (currentHandle) {
+              x = currentHandle.x;
+              y = currentHandle.y;
               scenario = 'collapsed';
               break;
             }
@@ -74,17 +82,17 @@ const getCoordinatesForHandle = (
       const indexForNodeInSchema = schema.findIndex((node) => node.key === getTreeNodeId(handleId));
       if (indexForNodeInSchema >= 0) {
         if (indexForNodeInSchema > treeData.endIndex) {
-          const reactflowHandle = reactflowHandles.find((handle) => handle.id?.startsWith('bottom-'));
+          const reactflowHandle = handleBounds.find((handle) => handle.id?.startsWith('bottom-'));
           if (reactflowHandle) {
-            x = reactflowHandle.x + node.internals.positionAbsolute.x;
-            y = reactflowHandle.y + node.internals.positionAbsolute.y;
+            x = reactflowHandle.x;
+            y = reactflowHandle.y;
             scenario = 'scroll';
           }
         } else {
-          const reactflowHandle = reactflowHandles.find((handle) => handle.id?.startsWith('top-'));
+          const reactflowHandle = handleBounds.find((handle) => handle.id?.startsWith('top-'));
           if (reactflowHandle) {
-            x = reactflowHandle.x + node.internals.positionAbsolute.x;
-            y = reactflowHandle.y + node.internals.positionAbsolute.y;
+            x = reactflowHandle.x;
+            y = reactflowHandle.y;
             scenario = 'scroll';
           }
         }
@@ -92,7 +100,7 @@ const getCoordinatesForHandle = (
     }
 
     if (x !== undefined && y !== undefined && scenario !== undefined) {
-      return [x + 8, y + 8, scenario];
+      return [x + nodeX + 8, y + nodeY + 8, scenario];
     }
   }
   return [undefined, undefined, undefined];
@@ -100,7 +108,6 @@ const getCoordinatesForHandle = (
 
 const useEdgePath = (props: EdgeProps) => {
   const { source, target, sourceX, sourceY, targetX, targetY, data } = props;
-  const { getInternalNode } = useReactFlow();
   const [updatedSourceCoordinates, setUpdatedSourceCoordinates] = useState<{
     sourceX?: number;
     sourceY?: number;
@@ -121,11 +128,21 @@ const useEdgePath = (props: EdgeProps) => {
     targetScenario: undefined,
   });
 
-  const sourceNode = useMemo(() => getInternalNode(NodeIds.source), [getInternalNode]);
-  const targetNode = useMemo(() => getInternalNode(NodeIds.target), [getInternalNode]);
+  const sourceNode = useInternalNode(NodeIds.source);
+  const targetNode = useInternalNode(NodeIds.target);
+  const absoluteSourceNodeX = sourceNode?.internals.positionAbsolute.x;
+  const absoluteSourceNodeY = sourceNode?.internals.positionAbsolute.y;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const sourceHandleBounds = sourceNode?.internals.handleBounds?.source ?? [];
 
-  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, handlePosition, sourceSchemaTreeData, targetSchemaTreeData } =
-    useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const absoluteTargetNodeX = targetNode?.internals.positionAbsolute.x;
+  const absoluteTargetNodeY = targetNode?.internals.positionAbsolute.y;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const targetHandleBounds = targetNode?.internals.handleBounds?.target ?? [];
+
+  const { sourceSchema, targetSchema, sourceOpenKeys, targetOpenKeys, sourceSchemaTreeData, targetSchemaTreeData } = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation
+  );
 
   const flattenendSourceSchema = useMemo(
     () => (sourceSchema?.schemaTreeRoot ? flattenSchemaNode(sourceSchema?.schemaTreeRoot) : []),
@@ -144,9 +161,10 @@ const useEdgePath = (props: EdgeProps) => {
       flattenendSourceSchema,
       sourceOpenKeys,
       addSourceReactFlowPrefix,
-      handlePosition,
       sourceSchemaTreeData,
-      sourceNode,
+      absoluteSourceNodeX,
+      absoluteSourceNodeY,
+      sourceHandleBounds,
       data?.sourceHandleId as string | undefined
     );
 
@@ -164,10 +182,11 @@ const useEdgePath = (props: EdgeProps) => {
   }, [
     data?.sourceHandleId,
     flattenendSourceSchema,
-    handlePosition,
     sourceSchemaTreeData,
     source,
-    sourceNode,
+    absoluteSourceNodeX,
+    absoluteSourceNodeY,
+    sourceHandleBounds,
     sourceOpenKeys,
     sourceX,
     sourceY,
@@ -184,9 +203,10 @@ const useEdgePath = (props: EdgeProps) => {
       flattenendTargetSchema,
       targetOpenKeys,
       addTargetReactFlowPrefix,
-      handlePosition,
       targetSchemaTreeData,
-      targetNode,
+      absoluteTargetNodeX,
+      absoluteTargetNodeY,
+      targetHandleBounds,
       data?.targetHandleId as string | undefined
     );
 
@@ -206,8 +226,6 @@ const useEdgePath = (props: EdgeProps) => {
     source,
     target,
     data,
-    sourceNode,
-    targetNode,
     sourceX,
     sourceY,
     targetX,
@@ -216,11 +234,13 @@ const useEdgePath = (props: EdgeProps) => {
     flattenendTargetSchema,
     sourceOpenKeys,
     targetOpenKeys,
-    handlePosition,
     updatedTargetCoordinates.targetX,
     updatedTargetCoordinates.targetY,
     updatedTargetCoordinates.targetScenario,
     targetSchemaTreeData,
+    absoluteTargetNodeX,
+    absoluteTargetNodeY,
+    targetHandleBounds,
   ]);
 
   return { ...updatedSourceCoordinates, ...updatedTargetCoordinates };

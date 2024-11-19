@@ -9,6 +9,13 @@ import { getReactFlowNodeId } from '../../utils';
 import { type HandleType, Position } from '@xyflow/react';
 import { useHandleStyles } from './tree/styles';
 
+export type HandleResponseProps = {
+  id: string;
+  position: Position;
+  type: HandleType;
+  className: string;
+};
+
 type useSchemaProps = {
   id: string;
   currentNodeKey?: string;
@@ -52,7 +59,7 @@ const useSchema = (props: useSchemaProps) => {
       position: isSourceSchema ? Position.Right : Position.Left,
       type: (isSourceSchema ? 'source' : 'target') as HandleType,
       className: isSourceSchema ? handleStyles.left : handleStyles.right,
-    },
+    } as HandleResponseProps,
   };
 };
 
