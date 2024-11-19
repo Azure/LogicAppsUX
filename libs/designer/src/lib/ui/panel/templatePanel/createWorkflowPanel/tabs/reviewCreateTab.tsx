@@ -94,7 +94,7 @@ export const ReviewCreatePanel = () => {
                     <Text className="msla-templates-tab-review-section-details-value">
                       {equals(workflow.kind, WorkflowKind.STATEFUL)
                         ? intlText.kind_stateful
-                        : intlText.kind_stateless ?? intlText.PLACEHOLDER}
+                        : (intlText.kind_stateless ?? intlText.PLACEHOLDER)}
                     </Text>
                   </div>
                 </div>

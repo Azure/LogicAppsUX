@@ -275,15 +275,12 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
 
       {isExpanded && currentNode && tabToDisplay && (
         <div className={styles.paneContent} style={{ height: contentHeight }}>
-          {tabToDisplay === PropertiesPaneTabs.Properties && (
-            <>
-              {isFunctionData(currentNode) ? (
-                <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />
-              ) : (
-                <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />
-              )}
-            </>
-          )}
+          {tabToDisplay === PropertiesPaneTabs.Properties &&
+            (isFunctionData(currentNode) ? (
+              <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />
+            ) : (
+              <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />
+            ))}
 
           {tabToDisplay === PropertiesPaneTabs.Code && (
             <CodeTab key={currentNode.key} currentNode={currentNode} contentHeight={contentHeight} />
