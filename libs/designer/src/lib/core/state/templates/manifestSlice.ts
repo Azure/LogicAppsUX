@@ -5,6 +5,7 @@ import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
 export const templatesCountPerPage = 25;
+const initialPageNum = 0;
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
@@ -24,7 +25,7 @@ type ManifestName = string;
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
   filters: {
-    pageNum: 0,
+    pageNum: initialPageNum,
     sortKey: 'a-to-z',
     connectors: undefined,
     detailFilters: {},
@@ -75,12 +76,14 @@ export const manifestSlice = createSlice({
     },
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
       state.filters.keyword = action.payload;
+      state.filters.pageNum = initialPageNum;
     },
     setSortKey: (state, action: PayloadAction<string>) => {
       state.filters.sortKey = action.payload;
     },
     setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
+      state.filters.pageNum = initialPageNum;
     },
     setDetailsFilters: (
       state,
@@ -96,6 +99,7 @@ export const manifestSlice = createSlice({
         delete currentDetailFilters[action.payload.filterName];
       }
       state.filters.detailFilters = currentDetailFilters;
+      state.filters.pageNum = initialPageNum;
     },
   },
   extraReducers: (builder) => {
