@@ -1,15 +1,16 @@
 import { type SchemaNodeExtended, type SchemaExtended, SchemaNodeProperty, equals } from '@microsoft/logic-apps-shared';
 import type { NodeRendererProps } from 'react-arborist';
-import { useTreeNodeStyles, useStyles, useHandleStyles } from './styles';
+import { useTreeNodeStyles, useStyles } from './styles';
 import { Caption2, mergeClasses } from '@fluentui/react-components';
-import { ChevronRightRegular, ChevronDownRegular, ArrowRepeatAllFilled } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
+import { useCallback, useMemo, useState } from 'react';
 import useSchema from '../useSchema';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
-import { setHoverState, setSelectedItem, updateHandlePosition } from '../../../core/state/DataMapSlice';
+import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
-import { Handle, useEdges } from '@xyflow/react';
+import { useEdges } from '@xyflow/react';
+import SchemaTreeNodeHandle from './SchemaTreeNodeHandle';
 
 type SchemaTreeNodeProps = {
   id: string;
@@ -33,9 +34,8 @@ const TypeAnnotation = (props: { schemaNode: SchemaNodeExtended }) => {
 
 const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   const { style, node, dragHandle, id, containerTop, containerBottom } = props;
-  const handleRef = useRef<HTMLDivElement | null>(null);
+  const [rowRefRect, setRowRefRect] = useState<DOMRect>();
   const styles = useTreeNodeStyles();
-  const handleStyles = useHandleStyles();
   const edges = useEdges();
   const dispatch = useDispatch<AppDispatch>();
   const data: SchemaNodeExtended = useMemo(() => node.data, [node]);
@@ -47,7 +47,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   });
   const isSelected = useSelector((state: RootState) => !!state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[nodeId]);
   const hover = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.state?.hover);
-  const { handlePosition, loadedMapMetadata } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const isHover = useMemo(
     () => hover?.type === 'node' && hover?.isSourceSchema === isSourceSchema && equals(hover?.id, key),
@@ -108,104 +107,83 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [node]
   );
 
-  const handleComponent = useMemo(
-    () => (
-      <Handle
-        ref={handleRef}
-        data-selectableid={handle.id}
-        id={handle.id}
-        key={handle.id}
-        className={mergeClasses(
-          handleStyles.wrapper,
-          handle.className,
-          isRepeatingNode ? handleStyles.repeating : '',
-          isConnected ? handleStyles.connected : '',
-          isSelected || isHover ? handleStyles.selected : '',
-          (isSelected || isHover) && isConnected ? handleStyles.connectedAndSelected : ''
-        )}
-        position={handle.position}
-        type={handle.type}
-        isConnectable={true}
-      >
-        {isRepeatingNode && (
-          <ArrowRepeatAllFilled
-            className={mergeClasses(
-              handleStyles.repeatingIcon,
-              isConnected ? handleStyles.repeatingConnectionIcon : isSelected || isHover ? handleStyles.repeatingAndActiveNodeIcon : ''
-            )}
-          />
-        )}
-      </Handle>
-    ),
-    [
-      handle.id,
-      handle.className,
-      handle.position,
-      handle.type,
-      handleStyles.wrapper,
-      handleStyles.repeating,
-      handleStyles.connected,
-      handleStyles.selected,
-      handleStyles.connectedAndSelected,
-      handleStyles.repeatingIcon,
-      handleStyles.repeatingConnectionIcon,
-      handleStyles.repeatingAndActiveNodeIcon,
-      isRepeatingNode,
-      isConnected,
-      isSelected,
-      isHover,
-    ]
-  );
+  // useEffect(() => {
+  //   if (
+  //     handleRef?.current &&
+  //     containerTop !== undefined &&
+  //     containerBottom !== undefined &&
+  //     loadedMapMetadata?.canvasRect &&
+  //     loadedMapMetadata.canvasRect.width > 0 &&
+  //     loadedMapMetadata.canvasRect.height > 0 &&
+  //     !isHover
+  //   ) {
+  //     const newX =
+  //       handleRef.current.getBoundingClientRect().x -
+  //       loadedMapMetadata.canvasRect.x;
+  //     const newY =
+  //       handleRef.current.getBoundingClientRect().y -
+  //       loadedMapMetadata.canvasRect.y;
+  //     const currentHandlePosition = handlePosition[nodeId];
+  //     const newHidden =
+  //       containerTop > handleRef.current.getBoundingClientRect().bottom ||
+  //       handleRef.current.getBoundingClientRect().top > containerBottom;
 
-  useEffect(() => {
-    if (
-      handleRef?.current &&
-      containerTop !== undefined &&
-      containerBottom !== undefined &&
-      loadedMapMetadata?.canvasRect &&
-      loadedMapMetadata.canvasRect.width > 0 &&
-      loadedMapMetadata.canvasRect.height > 0 &&
-      !isHover
-    ) {
-      const newX = handleRef.current.getBoundingClientRect().x - loadedMapMetadata.canvasRect.x;
-      const newY = handleRef.current.getBoundingClientRect().y - loadedMapMetadata.canvasRect.y;
-      const currentHandlePosition = handlePosition[nodeId];
-      const newHidden =
-        containerTop > handleRef.current.getBoundingClientRect().bottom || handleRef.current.getBoundingClientRect().top > containerBottom;
-
-      if (
-        currentHandlePosition?.position.x !== newX ||
-        currentHandlePosition?.position.y !== newY ||
-        newHidden !== currentHandlePosition?.hidden
-      ) {
-        dispatch(
-          updateHandlePosition({
-            key: nodeId,
-            position: {
-              x: newX,
-              y: newY,
-            },
-            hidden: newHidden,
-          })
-        );
-      }
-    }
-  }, [
-    dispatch,
-    nodeId,
-    handleRef,
-    handlePosition,
-    containerTop,
-    containerBottom,
-    loadedMapMetadata?.canvasRect,
-    loadedMapMetadata?.canvasRect?.height,
-    loadedMapMetadata?.canvasRect?.width,
-    isHover,
-  ]);
+  //     if (
+  //       currentHandlePosition?.position.x !== newX ||
+  //       currentHandlePosition?.position.y !== newY ||
+  //       newHidden !== currentHandlePosition?.hidden
+  //     ) {
+  //       dispatch(
+  //         updateHandlePosition({
+  //           key: nodeId,
+  //           position: {
+  //             x: newX,
+  //             y: newY,
+  //           },
+  //           hidden: newHidden,
+  //         })
+  //       );
+  //     }
+  //   }
+  // }, [
+  //   dispatch,
+  //   nodeId,
+  //   handleRef,
+  //   handlePosition,
+  //   containerTop,
+  //   containerBottom,
+  //   loadedMapMetadata?.canvasRect,
+  //   loadedMapMetadata?.canvasRect?.height,
+  //   loadedMapMetadata?.canvasRect?.width,
+  //   isHover,
+  // ]);
 
   return (
-    <div className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)} ref={dragHandle}>
-      {isSourceSchema ? null : handleComponent}
+    <div
+      className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)}
+      ref={(ref) => {
+        if (ref) {
+          const newRect = ref.getBoundingClientRect();
+          if (!rowRefRect || rowRefRect.top !== newRect.top || rowRefRect?.bottom !== newRect.bottom) {
+            setRowRefRect(ref.getBoundingClientRect());
+          }
+          if (dragHandle) {
+            dragHandle(ref);
+          }
+        }
+      }}
+    >
+      <SchemaTreeNodeHandle
+        visible={isSourceSchema}
+        isConnected={isConnected}
+        isSelected={isSelected}
+        isHover={isHover}
+        isRepeatingNode={isRepeatingNode}
+        treeContainerTop={containerTop}
+        treeContainerBottom={containerBottom}
+        rowRect={rowRefRect}
+        handleProps={handle}
+      />
       <div
         className={mergeClasses(
           styles.container,
@@ -234,7 +212,17 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
           {isSelected || isHover ? <TypeAnnotation schemaNode={data} /> : null}
         </div>
       </div>
-      {isSourceSchema ? handleComponent : null}
+      <SchemaTreeNodeHandle
+        visible={!isSourceSchema}
+        isConnected={isConnected}
+        isSelected={isSelected}
+        isHover={isHover}
+        isRepeatingNode={isRepeatingNode}
+        treeContainerTop={containerTop}
+        treeContainerBottom={containerBottom}
+        rowRect={rowRefRect}
+        handleProps={handle}
+      />
     </div>
   );
 };
