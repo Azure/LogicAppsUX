@@ -70,7 +70,7 @@ export interface SettingTokenFieldProps extends SettingProps {
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
-  const normalizedLabel = props.label.replace(/ /g, '-');
+  const normalizedLabel = props.label?.replace(/ /g, '-');
   const labelId = useId(normalizedLabel);
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
