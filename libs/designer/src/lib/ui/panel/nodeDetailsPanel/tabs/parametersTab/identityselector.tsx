@@ -48,7 +48,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
   const selectedIdentity = useSelector((state: RootState) => {
     const { connectionProperties } = getConnectionReference(state.connections, nodeId);
     return equals(connectionProperties?.authentication?.type, 'ManagedServiceIdentity')
-      ? connectionProperties?.authentication?.identity ?? constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+      ? (connectionProperties?.authentication?.identity ?? constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY)
       : undefined;
   });
 

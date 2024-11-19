@@ -425,5 +425,5 @@ function stringifyValue(value: any): string {
 }
 
 function getFieldBooleanValue(value: boolean | Record<string, boolean> | undefined, fieldKey: string): boolean {
-  return typeof value === 'boolean' ? value : getRecordEntry(value, fieldKey) ?? false;
+  return typeof value === 'boolean' ? value : (getRecordEntry(value, fieldKey) ?? false);
 }

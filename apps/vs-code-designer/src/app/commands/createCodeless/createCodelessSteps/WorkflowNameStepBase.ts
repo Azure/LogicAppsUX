@@ -47,7 +47,7 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     if (!name) {
       return localize('emptyTemplateNameError', 'The function name cannot be empty.');
     }
-    if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
+    if (!functionNameRegex.test(name)) {
       return localize(
         'functionNameInvalidMessage',
         'Function name must start with a letter and can only contain letters, digits, "_" and "-".'
@@ -56,3 +56,5 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     return await this.validateFunctionNameCore(context, name);
   }
 }
+
+const functionNameRegex = /^[a-z][a-z\d_-]*$/i;

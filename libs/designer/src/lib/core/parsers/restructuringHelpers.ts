@@ -144,7 +144,7 @@ export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metad
     ) ?? [];
 
   (graph.children ?? []).forEach((node) => {
-    const isRoot = node.id === constants.NODE.TYPE.PLACEHOLDER_TRIGGER ? true : rootNodeIds?.includes(node.id) ?? false;
+    const isRoot = node.id === constants.NODE.TYPE.PLACEHOLDER_TRIGGER ? true : (rootNodeIds?.includes(node.id) ?? false);
     const nodeMetadata = getRecordEntry(metadata, node.id);
     if (nodeMetadata) {
       nodeMetadata.isRoot = isRoot;

@@ -581,7 +581,7 @@ export class SchemaProcessor {
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
         ? defaultItemTitle
-        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name, description) ?? key;
+        : (getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name, description) ?? key);
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

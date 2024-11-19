@@ -67,7 +67,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
 
   const GetRunAfterProps = (): RunAfterActionDetailsProps[] => {
     const items: RunAfterActionDetailsProps[] = [];
-    const runAfterValue = Object.keys(nodeData?.runAfter ?? {}).length ? nodeData.runAfter ?? {} : dummyTriggerRunAfterSetting;
+    const runAfterValue = Object.keys(nodeData?.runAfter ?? {}).length ? (nodeData.runAfter ?? {}) : dummyTriggerRunAfterSetting;
     const isSingleRunAfter = Object.keys(runAfterValue).length === 1;
     const isAfterTrigger = Object.keys(runAfterValue)?.[0] === rootTriggerId;
     Object.entries(runAfterValue).forEach(([id, value], _i) => {

@@ -9,6 +9,7 @@ import { localize } from '../../../../../localize';
 import { createContainerClient } from '../../../../utils/azureClients';
 import type { ContainerAppsAPIClient } from '@azure/arm-appcontainers';
 
+const containerNameValidation = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
   public async prompt(context: ILogicAppWizardContext): Promise<void> {
     const nameAvailabiltyValidationError = await this.validateNameAvailable(context, context.newSiteName);
@@ -42,7 +43,7 @@ export class ContainerAppNameStep extends AzureWizardPromptStep<ILogicAppWizardC
     name = name ? name.trim() : '';
 
     const { minLength, maxLength } = { minLength: 1, maxLength: 32 };
-    if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
+    if (!containerNameValidation.test(name)) {
       return localize(
         'invalidChar',
         `A name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character and cannot have '--'.`

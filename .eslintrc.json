@@ -1,12 +1,7 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "formatjs",
-    "react",
-    "react-hooks",
-    "@typescript-eslint"
-  ],
+  "plugins": ["formatjs", "react", "react-hooks", "@typescript-eslint"],
   "settings": {
     "react": {
       "version": "detect"
@@ -15,16 +10,8 @@
   "extends": "eslint:recommended",
   "overrides": [
     {
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "extends": [
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:import/recommended",
-        "plugin:import/typescript"
-      ],
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:react/recommended", "plugin:react-hooks/recommended", "plugin:import/recommended", "plugin:import/typescript"],
       "rules": {
         "no-unused-vars": "off",
         "no-redeclare": "off",
@@ -80,26 +67,14 @@
         "formatjs/enforce-placeholders": [
           "error",
           {
-            "ignoreList": [
-              "foo"
-            ]
+            "ignoreList": ["foo"]
           }
         ],
         "no-param-reassign": "off",
-        "formatjs/enforce-default-message": [
-          "error",
-          "literal"
-        ],
-        "formatjs/enforce-description": [
-          "error",
-          "literal"
-        ],
-        "formatjs/no-multiple-whitespaces": [
-          1
-        ],
-        "formatjs/no-multiple-plurals": [
-          "error"
-        ],
+        "formatjs/enforce-default-message": ["error", "literal"],
+        "formatjs/enforce-description": ["error", "literal"],
+        "formatjs/no-multiple-whitespaces": [1],
+        "formatjs/no-multiple-plurals": ["error"],
         "formatjs/no-complex-selectors": [
           "error",
           {

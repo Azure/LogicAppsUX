@@ -149,7 +149,7 @@ export const getLegacyDynamicSchema = async (
   }
 
   const schemaPath = extension['value-path'] ? extension['value-path'].split('/').filter((s) => s) : undefined;
-  return schemaPath ? getObjectPropertyValue(response, schemaPath) ?? null : { properties: response, type: Types.Object };
+  return schemaPath ? (getObjectPropertyValue(response, schemaPath) ?? null) : { properties: response, type: Types.Object };
 };
 
 export const getDynamicSchemaProperties = async (

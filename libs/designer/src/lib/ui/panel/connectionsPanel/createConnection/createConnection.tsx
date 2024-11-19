@@ -253,7 +253,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
       const capability =
         (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
-          ? parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general'
+          ? (parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general')
           : 'general';
       output[capability] = {
         ...output[capability],

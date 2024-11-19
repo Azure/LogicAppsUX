@@ -15,19 +15,9 @@
     "baseUrl": "./src",
     "rootDir": "./src",
     "declaration": true,
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals"]
   },
   "files": [],
-  "include": [
-    "**/src/**/*.ts",
-    "**/src/**/*.tsx"
-  ],
-  "exclude": [
-    "**/__test__/**",
-    "**/__tests__/**",
-    "**/build/**",
-    "jest.config.ts"
-  ]
+  "include": ["**/src/**/*.ts", "**/src/**/*.tsx"],
+  "exclude": ["**/__test__/**", "**/__tests__/**", "**/build/**", "jest.config.ts"]
 }

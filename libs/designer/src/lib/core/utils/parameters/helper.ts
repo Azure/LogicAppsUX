@@ -473,7 +473,7 @@ export function getParameterEditorProps(
     editorOptions = {
       ...editorOptions,
       serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
-      options: dropdownOptions.length > 0 ? dropdownOptions : modifiedOptions ?? [],
+      options: dropdownOptions.length > 0 ? dropdownOptions : (modifiedOptions ?? []),
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
@@ -733,7 +733,7 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
 // Create Dictionary Editor View Model
 function toDictionaryViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
-  const valueToParse = value !== null ? value ?? {} : value;
+  const valueToParse = value !== null ? (value ?? {}) : value;
   const canParseObject = valueToParse !== null && isObject(valueToParse);
 
   if (canParseObject) {
@@ -3952,8 +3952,8 @@ export function validateUntilAction(
   const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
   const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
 
-  const countValue = countParameter?.id === parameterId ? changedParameter?.value ?? [] : countParameter?.value ?? [];
-  const timeoutValue = timeoutParameter?.id === parameterId ? changedParameter?.value ?? [] : timeoutParameter?.value ?? [];
+  const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
+  const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);
 
   if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
     dispatch(

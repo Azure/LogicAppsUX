@@ -247,7 +247,7 @@ function GeneralSettings({
   );
 
   const onConcurrencyToggle = (checked: boolean): void => {
-    const value = checked ? concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT : undefined;
+    const value = checked ? (concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT) : undefined;
     updateSettings({
       concurrency: {
         isSupported: !!concurrency?.isSupported,
