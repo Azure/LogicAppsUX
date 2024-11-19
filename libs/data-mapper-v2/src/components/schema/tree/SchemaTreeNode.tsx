@@ -107,57 +107,6 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
     [node]
   );
 
-  // useEffect(() => {
-  //   if (
-  //     handleRef?.current &&
-  //     containerTop !== undefined &&
-  //     containerBottom !== undefined &&
-  //     loadedMapMetadata?.canvasRect &&
-  //     loadedMapMetadata.canvasRect.width > 0 &&
-  //     loadedMapMetadata.canvasRect.height > 0 &&
-  //     !isHover
-  //   ) {
-  //     const newX =
-  //       handleRef.current.getBoundingClientRect().x -
-  //       loadedMapMetadata.canvasRect.x;
-  //     const newY =
-  //       handleRef.current.getBoundingClientRect().y -
-  //       loadedMapMetadata.canvasRect.y;
-  //     const currentHandlePosition = handlePosition[nodeId];
-  //     const newHidden =
-  //       containerTop > handleRef.current.getBoundingClientRect().bottom ||
-  //       handleRef.current.getBoundingClientRect().top > containerBottom;
-
-  //     if (
-  //       currentHandlePosition?.position.x !== newX ||
-  //       currentHandlePosition?.position.y !== newY ||
-  //       newHidden !== currentHandlePosition?.hidden
-  //     ) {
-  //       dispatch(
-  //         updateHandlePosition({
-  //           key: nodeId,
-  //           position: {
-  //             x: newX,
-  //             y: newY,
-  //           },
-  //           hidden: newHidden,
-  //         })
-  //       );
-  //     }
-  //   }
-  // }, [
-  //   dispatch,
-  //   nodeId,
-  //   handleRef,
-  //   handlePosition,
-  //   containerTop,
-  //   containerBottom,
-  //   loadedMapMetadata?.canvasRect,
-  //   loadedMapMetadata?.canvasRect?.height,
-  //   loadedMapMetadata?.canvasRect?.width,
-  //   isHover,
-  // ]);
-
   return (
     <div
       className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)}

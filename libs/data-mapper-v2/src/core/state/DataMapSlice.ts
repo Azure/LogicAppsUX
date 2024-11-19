@@ -67,12 +67,6 @@ export interface Draft2 {
   draft: Draft<DataMapState>;
 }
 
-export interface HandlePosition {
-  key: string;
-  position: XYPosition;
-  hidden?: boolean;
-}
-
 export interface SchemaTreeDataProps {
   visibleNodes: SchemaNodeExtended[];
   startIndex: number;
@@ -102,7 +96,6 @@ export interface DataMapOperationState {
   // Temporary Nodes for when the scrolling is happening and the tree-nodes are not in view
   // For each corner of the canvas
   nodesForScroll: Record<string, string>;
-  handlePosition: Record<string, HandlePosition>;
   sourceSchemaTreeData: SchemaTreeDataProps;
   targetSchemaTreeData: SchemaTreeDataProps;
   edgePopOverId?: string;
@@ -123,7 +116,6 @@ const emptyPristineState: DataMapOperationState = {
   sourceOpenKeys: {},
   targetOpenKeys: {},
   edgeLoopMapping: {},
-  handlePosition: {},
   sourceSchemaTreeData: {
     startIndex: -1,
     endIndex: -1,
@@ -269,7 +261,6 @@ export const dataMapSlice = createSlice({
         functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
-        handlePosition: {},
         loadedMapMetadata: metadata,
         sourceSchemaTreeData: {
           startIndex: -1,
@@ -528,11 +519,6 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation.selectedItemKey = key;
       state.curDataMapOperation.selectedItemConnectedNodes = getActiveNodes(state.curDataMapOperation, key);
     },
-    updateHandlePosition: (state, action: PayloadAction<HandlePosition>) => {
-      state.curDataMapOperation.handlePosition[action.payload.key] = {
-        ...action.payload,
-      };
-    },
     toggleNodeExpandCollapse: (state, action: PayloadAction<ExpandCollapseAction>) => {
       const newState = { ...state.curDataMapOperation };
       const { keys, isExpanded } = action.payload;
@@ -682,7 +668,6 @@ export const {
   toggleTargetEditState,
   setHoverState,
   updateCanvasDimensions,
-  updateHandlePosition,
   updateFunctionConnectionInputs,
   updateTreeData,
 } = dataMapSlice.actions;
