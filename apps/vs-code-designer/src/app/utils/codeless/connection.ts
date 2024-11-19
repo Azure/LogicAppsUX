@@ -98,6 +98,7 @@ async function addConnectionDataInJson(
   ConnectionAndAppSetting: ConnectionAndAppSetting,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
+  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
@@ -122,7 +123,9 @@ async function addConnectionDataInJson(
     return;
   }
 
-  parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+  if (parameterizeConnectionsSetting) {
+    parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+  }
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
@@ -244,7 +247,7 @@ export async function getConnectionsAndSettingsToUpdate(
     } else if (isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
-      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         context,
         referenceKey,

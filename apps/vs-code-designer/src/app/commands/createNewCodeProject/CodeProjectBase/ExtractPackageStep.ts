@@ -37,7 +37,9 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
       });
 
       // Create README.md file
-      fse.writeFileSync(path.join(context.projectPath, 'README.md'), this.getReadMeContent());
+      const readMePath = path.join(__dirname, 'assets', 'readmes', 'importReadMe.md');
+      const readMeContent = fse.readFileSync(readMePath, 'utf8');
+      fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
     } catch (error) {
       context.telemetry.properties.error = error.message;
       console.error(`Failed to extract contents of package to ${context.projectPath}`, error);
@@ -52,9 +54,4 @@ export class ExtractPackageStep extends AzureWizardPromptStep<IFunctionWizardCon
   public shouldPrompt(context: IProjectWizardContext): boolean {
     return context.packagePath !== undefined && context.projectPath !== undefined;
   }
-
-  private getReadMeContent = () => {
-    return `README content goes here
-  `;
-  };
 }
