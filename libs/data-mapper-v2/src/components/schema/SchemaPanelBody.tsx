@@ -99,7 +99,7 @@ export const SchemaPanelBody = ({
     (item: IFileSysTreeItem) => {
       setSelectedSchemaFile({
         name: item.name ?? '',
-        path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
+        path: equals(item.type, 'file') ? ((item as ITreeFile).fullPath ?? '') : '',
         type: schemaType,
       });
     },

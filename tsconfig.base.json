@@ -11,21 +11,13 @@
     "importHelpers": true,
     "target": "ESNext",
     "module": "esnext",
-    "lib": [
-      "esnext",
-      "dom",
-    ],
+    "lib": ["esnext", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "resolveJsonModule": false,
     "downlevelIteration": true,
-    "noImplicitReturns": false,
+    "noImplicitReturns": false
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ],
-  "include": [
-    "../types/*"
-  ]
+  "exclude": ["node_modules", "tmp"],
+  "include": ["../types/*"]
 }

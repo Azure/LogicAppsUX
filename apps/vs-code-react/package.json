@@ -4,7 +4,7 @@
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-components": "9.56.0",
     "@fluentui/react-hooks": "8.6.20",
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-chatbot": "workspace:*",
@@ -41,4 +41,4 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "type": "module"
-} 
+}

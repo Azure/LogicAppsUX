@@ -4,7 +4,7 @@
       "indentWidth": 2,
       "indentStyle": "space",
       "lineWidth": 140,
-      "trailingComma": "es5",
+      "trailingCommas": "es5",
       "quoteStyle": "single"
     }
   },
@@ -18,14 +18,7 @@
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": [
-      "dist/*",
-      "**/build/**",
-      "**/*.d.ts",
-      "test-results/*",
-      "tmp/*",
-      "playwright-report/*"
-    ]
+    "ignore": ["dist/*", "**/build/**", "**/*.d.ts", "test-results/*", "tmp/*", "playwright-report/*"]
   },
   "linter": {
     "enabled": true,
@@ -33,7 +26,10 @@
       "recommended": false,
       "performance": {
         "all": true,
-        "noDelete": "off"
+        "noDelete": "off",
+        "noBarrelFile": "off",
+        "noReExportAll": "off",
+        "useTopLevelRegex": "off"
       },
       "a11y": {
         "all": false
@@ -113,7 +109,7 @@
         "useForOf": "error",
         "useExportType": "error",
         "useExponentiationOperator": "error",
-        "useEnumInitializers" : "error",
+        "useEnumInitializers": "error",
         "useConst": "error",
         "useConsistentArrayType": "error",
         "useCollapsedElseIf": "error",
@@ -184,35 +180,12 @@
         "noConsoleLog": "off"
       }
     },
-    "include": [
-      "libs/**/*.ts",
-      "libs/**/*.tsx",
-      "apps/**/*.ts",
-      "apps/**/*.tsx"
-    ],
-    "ignore": [
-      "**/__test__/**",
-      "dist/*",
-      "**/build/**",
-      "**/*.d.ts",
-      "test-results/*",
-      "tmp/*",
-      "playwright-report/*"
-    ]
+    "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+    "ignore": ["**/__test__/**", "dist/*", "**/build/**", "**/*.d.ts", "test-results/*", "tmp/*", "playwright-report/*"]
   },
   "organizeImports": {
     "enabled": false,
-    "include": [
-      "libs/**/*.ts",
-      "libs/**/*.tsx",
-      "apps/**/*.ts",
-      "apps/**/*.tsx"
-    ],
-    "ignore": [
-      "dist/*",
-      "test-results/*",
-      "tmp/*",
-      "playwright-report/*"
-    ]
+    "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
   }
 }

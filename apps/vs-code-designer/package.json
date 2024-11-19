@@ -34,7 +34,6 @@
     "process-tree": "^1.0.3",
     "ps-tree": "^1.2.0",
     "recursive-copy": "^2.0.14",
-    "request": "2.88.2",
     "semver": "^6.3.1",
     "tslib": "2.4.0",
     "uuid": "^10.0.0",
@@ -51,6 +50,6 @@
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test:extension-unit": "vitest --retry=3"
+    "test:extension-unit": "vitest run --retry=3"
   }
 }

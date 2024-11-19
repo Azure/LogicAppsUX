@@ -4,7 +4,7 @@
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-components": "9.56.0",
     "@fluentui/react-hooks": "8.6.20",
     "@fluentui/react-icons": "2.0.224",
     "@fluentui/utilities": "8.15.0",
@@ -13,7 +13,7 @@
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
-    "@xyflow/react": "^12.0.2",
+    "@xyflow/react": "^12.3.5",
     "elkjs": "0.8.2",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
@@ -55,10 +55,7 @@
     },
     "./package.json": "./package.json"
   },
-  "files": [
-    "build/lib/**/*",
-    "src"
-  ],
+  "files": ["build/lib/**/*", "src"],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
@@ -85,7 +82,7 @@
   "scripts": {
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
-    "test:lib": "vitest --retry=3",
+    "test:lib": "vitest run --retry=3",
     "unpublish:local": "pnpm unpublish --force"
   },
   "sideEffects": false,

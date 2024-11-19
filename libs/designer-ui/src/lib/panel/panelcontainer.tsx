@@ -88,7 +88,7 @@ export const PanelContainer = ({
 
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
-    : (canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium);
+    : ((canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium));
 
   useEffect(() => {
     selectedElementRef.current = node?.nodeId ? document.getElementById(`msla-node-${node.nodeId}`) : null;
