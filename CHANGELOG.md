@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.116.8](https://github.com/Azure/LogicAppsUX/compare/v4.116.7...v4.116.8) (2024-11-14)
+
+
+### Bug Fixes
+
+* **designer:** Prevent crashing when having object in key/value ([#6121](https://github.com/Azure/LogicAppsUX/issues/6121)) ([#6124](https://github.com/Azure/LogicAppsUX/issues/6124)) ([d488bec](https://github.com/Azure/LogicAppsUX/commit/d488becf1e85f98f87f6626c5fbacb01764eb369))
+
 ### [4.116.7](https://github.com/Azure/LogicAppsUX/compare/v4.116.6...v4.116.7) (2024-11-08)
 
 
