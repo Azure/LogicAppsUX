@@ -268,8 +268,8 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
   templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${sanitizedUnitTestName}" />`);
   templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${sanitizedUnitTestName}()`);
   templateContent = templateContent.replace(
-    /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS\(\)/g,
-    `public async Task ${sanitizedWorkflowName}_${sanitizedUnitTestName}_ExecuteWorkflow_SUCCESS()`
+    /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow/g,
+    `public async Task ${sanitizedWorkflowName}_${sanitizedUnitTestName}_ExecuteWorkflow`
   );
 
   templateContent = templateContent
@@ -277,7 +277,7 @@ async function createCsFile(unitTestFolderPath: string, unitTestName: string, wo
     .replace(/<%= WorkflowName %>/g, workflowName)
     .replace(/<%= UnitTestName %>/g, unitTestName);
 
-  const csFilePath = path.join(unitTestFolderPath, `${sanitizedUnitTestName}.cs`);
+  const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fs.writeFile(csFilePath, templateContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
