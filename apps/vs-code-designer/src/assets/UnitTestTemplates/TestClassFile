@@ -67,7 +67,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %><%= UnitTestName %>ExecuteWorkflowSUCCESSSample1()
+        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
         {
             // PREPARE Mock
             // Generate mock action and trigger data.
@@ -96,7 +96,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %><%= UnitTestName %>ExecuteWorkflowSUCCESSSample2()
+        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample2()
         {
             // PREPARE
             // Generate mock action and trigger data.
@@ -125,7 +125,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %><%= UnitTestName %>ExecuteWorkflowFAILEDSample3()
+        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
         {
             // PREPARE
             // Generate mock action and trigger data.
