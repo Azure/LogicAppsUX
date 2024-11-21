@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.5.0](https://github.com/Azure/LogicAppsUX/compare/v5.4.0...v5.5.0) (2024-11-21)
+
+
+### Bug Fixes
+
+* **designer:** Fixed fluent drawer stutter ([#6163](https://github.com/Azure/LogicAppsUX/issues/6163)) ([ee40498](https://github.com/Azure/LogicAppsUX/commit/ee404986071c2c0c2118923ecdf152b2e46c48c7))
+
 ## [5.4.0](https://github.com/Azure/LogicAppsUX/compare/v5.3.0...v5.4.0) (2024-11-21)
 
 
