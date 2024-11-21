@@ -156,19 +156,21 @@ export class MapDefinitionDeserializer {
     const tokens = separateFunctions(key);
     const functionMetadata = funcMetadata || createSchemaNodeOrFunction(tokens).term;
 
-    let sourceSchemaNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
+    let possibleSourceSchemaNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
 
-    if (!sourceSchemaNode && funcMetadata?.type === 'SingleValueMetadata') {
-      sourceSchemaNode = findNodeForKey(funcMetadata.value, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
+    if (!possibleSourceSchemaNode && funcMetadata?.type === 'SingleValueMetadata') {
+      possibleSourceSchemaNode = findNodeForKey(funcMetadata.value, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
     }
 
-    if (this._loop.length > 0 && !sourceSchemaNode) {
-      if (!sourceSchemaNode) {
-        sourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
+    if (this._loop.length > 0 && !possibleSourceSchemaNode) {
+      if (!possibleSourceSchemaNode) {
+        possibleSourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
+      } if (!possibleSourceSchemaNode) {
+        throw new Error(`Source loop node not found for key ${key}`);
       }
       if (isSchemaNodeExtended(targetNode)) {
         addParentConnectionForRepeatingElementsNested(
-          sourceSchemaNode,
+          possibleSourceSchemaNode,
           targetNode as SchemaNodeExtended,
           this._sourceSchemaFlattened,
           this._targetSchemaFlattened,
@@ -177,11 +179,11 @@ export class MapDefinitionDeserializer {
       }
     }
 
-    if (sourceSchemaNode && this._conditional) {
-      this._conditional.children.push(sourceSchemaNode.key);
+    if (possibleSourceSchemaNode && this._conditional) {
+      this._conditional.children.push(possibleSourceSchemaNode.key);
     }
 
-    if (!sourceSchemaNode && functionMetadata.type === 'Function') {
+    if (!possibleSourceSchemaNode && functionMetadata.type === 'Function') {
       let funcKey = '';
       let func: FunctionData;
       const metadataString = JSON.stringify(functionMetadata);
@@ -224,16 +226,18 @@ export class MapDefinitionDeserializer {
           this.handleSingleValueOrFunction(srcStr, input, func, connections);
         });
       }
-    } else if (!sourceSchemaNode && functionMetadata.type !== 'Function') {
+    } else if (!possibleSourceSchemaNode && functionMetadata.type !== 'Function') {
       // custom value or index
       this.handleSingleValue(key, targetNode, connections);
-    } else if (targetNode && sourceSchemaNode) {
+    } else if (targetNode && possibleSourceSchemaNode) { // source schema node
       applyConnectionValue(connections, {
         targetNode: targetNode,
         targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
-        input: createNodeConnection(sourceSchemaNode, addSourceReactFlowPrefix(sourceSchemaNode.key)),
+        input: createNodeConnection(possibleSourceSchemaNode, addSourceReactFlowPrefix(possibleSourceSchemaNode.key)),
       });
+    } else {
+      throw new Error(`Cannot find value for ${key} in LML file`); // danielle show error here
     }
   };
 
@@ -253,6 +257,9 @@ export class MapDefinitionDeserializer {
             this._sourceSchema.schemaTreeRoot,
             false
           ) as SchemaNodeExtended;
+          if (!loopSrc) {
+            throw Error(`Loop source not found for key ${loop.key}`);
+          }
           let key = addSourceReactFlowPrefix(loopSrc.key);
           if (loop.indexFn) {
             loopSrc = this.getFunctionMetadataForKey(loop.indexFn) as FunctionData;
@@ -333,7 +340,12 @@ export class MapDefinitionDeserializer {
         }
       } else {
         Object.entries(rightSideStringOrObject).forEach((child) => {
-          this.createConnectionsForLMLObject(child[1], child[0], targetNode, connections);
+          try {
+            this.createConnectionsForLMLObject(child[1], child[0], targetNode, connections);
+          } catch (error) {
+            // Danielle log to UI here
+            console.log(error);
+          }
         });
       }
     } else {
@@ -396,13 +408,17 @@ export class MapDefinitionDeserializer {
         });
       }
     }
+    this.resetConditionalStateToEmpty();
+  };
+
+  private resetConditionalStateToEmpty = () => {
     this._conditional = {
       key: '',
       needsConnection: false,
       children: [],
       needsObjectConnection: false,
     };
-  };
+  }
 
   private handleIfFunction = (functionMetadata: ParseFunc, connections: ConnectionDictionary) => {
     const func = getSourceNode(
@@ -479,6 +495,8 @@ export class MapDefinitionDeserializer {
         };
         this._loop.push(loopMetadata);
         this.createIndexFunctionIfNeeded(forFunc, loopSource, connections, loopMetadata);
+      } else {
+        throw Error(`Loop source not found for key ${sourceLoopKey.value}`);
       }
     } else {
       const meta: FunctionCreationMetadata = this.getSourceLoopFromSequenceFunctions(sourceFor);
@@ -510,11 +528,11 @@ export class MapDefinitionDeserializer {
   };
 
   private isCustomValue = (value: string): boolean => {
-    return value.startsWith('"') || !Number.isNaN(Number.parseInt(value));
+    return value.startsWith('"') || !Number.isNaN(Number.parseInt(value)) || !Number.isNaN(Number.parseFloat(value));
   };
 
   private handleSingleValue = (key: string, targetNode: SchemaNodeExtended | FunctionData, connections: ConnectionDictionary) => {
-    if (key === '.') {
+    if (key === '.') { // danielle can we make this less explicit here? Can it be combined with another case?
       // current loop
       const lastLoop = this._loop[this._loop.length - 1].key;
 
@@ -532,8 +550,7 @@ export class MapDefinitionDeserializer {
         findInputSlot: true,
         input: createCustomInputConnection(key),
       });
-      // index
-    } else if (key.startsWith('$')) {
+    } else if (this.isIndexValue(key)) {
       const indexFnKey = this._createdFunctions[key];
       const indexFn = connections[indexFnKey];
       if (indexFn) {
@@ -544,25 +561,26 @@ export class MapDefinitionDeserializer {
           input: createNodeConnection(indexFn.self.node, indexFn.self.reactFlowKey),
         });
       }
-    } else if (key.includes('[')) {
+    } else if (this.isDirectAccessValue(key)) {
       // using this older function for now
       const amendedSourceKey = amendSourceKeyForDirectAccessIfNeeded(key);
 
       const directAccessSeparated = separateFunctions(amendedSourceKey[0]);
-      const idk = createSchemaNodeOrFunction(directAccessSeparated);
+      const schemaNodeOrFunction = createSchemaNodeOrFunction(directAccessSeparated);
 
-      this.handleSingleValueOrFunction('', idk.term, targetNode, connections);
-    } else if (targetNode) {
-      this._conditional.children.push(key);
-
-      applyConnectionValue(connections, {
-        targetNode: targetNode,
-        targetNodeReactFlowKey: this.getTargetKey(targetNode),
-        findInputSlot: true,
-        input: createCustomInputConnection(key),
-      });
+      this.handleSingleValueOrFunction('', schemaNodeOrFunction.term, targetNode, connections);
+    } else if (key) {
+      throw new Error(`Key ${key} not found in source schema`); // Danielle log to UI here
     }
   };
+
+  private isDirectAccessValue = (key: string): boolean => {
+   return key.includes('[');
+  }
+
+  private isIndexValue = (key: string): boolean => {
+    return key.startsWith('$');
+  }
 
   private isSchemaNodeTargetKey = (key: string) => {
     if (!key.includes(DReservedToken.for) && !key.includes(DReservedToken.if)) {
