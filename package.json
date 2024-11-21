@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "5.3.0",
+  "version": "5.4.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3.0.2",
@@ -66,7 +66,11 @@
   },
   "license": "MIT",
   "lint-staged": {
-    "*.{js,ts,tsx}": ["npm run extract", "eslint --cache --fix", "biome check --write"]
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --write"
+    ]
   },
   "private": true,
   "scripts": {

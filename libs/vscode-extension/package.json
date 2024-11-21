@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "5.3.0",
+  "version": "5.4.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
@@ -31,7 +31,10 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
