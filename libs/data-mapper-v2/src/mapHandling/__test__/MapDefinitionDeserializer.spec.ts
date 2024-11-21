@@ -1597,6 +1597,25 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[1][1]).toBeTruthy();
         expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
       })
+
+      it ('continues after not finding source conditional node', () => {
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '$if(/ns0:Root/ConditionalMapping/ItemQuantityDoesNotExist)': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(0);
+        // danielle expect error here
+
+      })
     })
 
     const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0] as ConnectionUnit).reactFlowKey;

@@ -477,7 +477,7 @@ export class MapDefinitionDeserializer {
   private getSourceLoopFromSequenceFunctions = (metadata: FunctionCreationMetadata) => {
     // loop through sequence functions until we get the loop
     while (metadata.type === 'Function') {
-      metadata = metadata.inputs[0];
+      metadata = metadata.inputs[0]; // repeating input to sequence function is always at index 0
     }
     return metadata;
   };
@@ -569,7 +569,7 @@ export class MapDefinitionDeserializer {
       const schemaNodeOrFunction = createSchemaNodeOrFunction(directAccessSeparated);
 
       this.handleSingleValueOrFunction('', schemaNodeOrFunction.term, targetNode, connections);
-    } else if (key) {
+    } else {
       throw new Error(`Key ${key} not found in source schema`); // Danielle log to UI here
     }
   };
