@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [5.4.0](https://github.com/Azure/LogicAppsUX/compare/v5.3.0...v5.4.0) (2024-11-21)
+
+
+### Features
+
+* **Data Mapper:** Move edge path logic to useInternal Reactflow state ([#6139](https://github.com/Azure/LogicAppsUX/issues/6139)) ([9603d91](https://github.com/Azure/LogicAppsUX/commit/9603d918093c86f519f99aab7e68566139eb768f))
+* **Templates:** Hover text for connectors ([#6152](https://github.com/Azure/LogicAppsUX/issues/6152)) ([29d7fcb](https://github.com/Azure/LogicAppsUX/commit/29d7fcbeea29f0a6bd2f3e8c88c524d302a56b38))
+
+
+### Bug Fixes
+
+* **designer:** Prevent Crash When No Parameter Label ([#6146](https://github.com/Azure/LogicAppsUX/issues/6146)) ([ac3b09f](https://github.com/Azure/LogicAppsUX/commit/ac3b09f758a5bd9fbe5d94d39bf7d6f1d4e473f5))
+* **Designer:** Prevent HTML editor from allowing DOM-based XSS ([#6147](https://github.com/Azure/LogicAppsUX/issues/6147)) ([f85d50f](https://github.com/Azure/LogicAppsUX/commit/f85d50f1a7b46adf301f0ad8ff0ba2c872181a9b))
+* **Designer:** Updated to Fluent V9 component to fix scroll ([#6123](https://github.com/Azure/LogicAppsUX/issues/6123)) ([ae3e44e](https://github.com/Azure/LogicAppsUX/commit/ae3e44e42f2961f124f049f8364992c29bcd196b))
+* **Templates:** Pagination bug of not resetting page num on filter change ([#6150](https://github.com/Azure/LogicAppsUX/issues/6150)) ([46f62d3](https://github.com/Azure/LogicAppsUX/commit/46f62d3c13587d9114db5203a37fb9abd9d5bdb8))
+
 ## [5.3.0](https://github.com/Azure/LogicAppsUX/compare/v5.2.0...v5.3.0) (2024-11-18)
 
 
