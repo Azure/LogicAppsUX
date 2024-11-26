@@ -9,7 +9,6 @@ import {
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
   localSettingsFileName,
-  extensionCommand,
   COMMON_ERRORS,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -19,7 +18,7 @@ import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { isConnectionsParameterized } from '../../utils/codeless/parameterizer';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
+import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { parameterizeConnections } from '../parameterizeConnections';
@@ -42,7 +41,6 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    showPreviewWarning(extensionCommand.generateDeploymentScripts);
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const projectRoot = vscode.Uri.file(projectPath);
