@@ -162,12 +162,16 @@ async function generateCodefulUnitTest(
     if (!(await fs.pathExists(csprojFilePath))) {
       ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
       await createCsprojFile(csprojFilePath, logicAppName);
+      const action = 'Reload Window';
+      vscode.window
+        .showInformationMessage('Reload Required: Please reload the VS Code window to enable test discovery in the Test Explorer', action)
+        .then((selectedAction) => {
+          if (selectedAction === action) {
+            vscode.commands.executeCommand('workbench.action.reloadWindow');
+          }
+        });
     }
     await createNugetConfigFile(nugetConfigFilePath);
-
-    vscode.window.showInformationMessage(
-      localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
-    );
 
     // Check if testsDirectory is already part of the workspace
     const workspaceFolders = vscode.workspace.workspaceFolders || [];
