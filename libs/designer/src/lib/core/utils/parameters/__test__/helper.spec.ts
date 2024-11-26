@@ -1280,7 +1280,7 @@ describe('core/utils/parameters/helper', () => {
         parameter.info.format = '';
 
         const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-        expect(expressionString).toEqual(`@body('action')['path']`);
+        expect(expressionString).toEqual(`@{body('action')['path']}`);
       });
     }
 
