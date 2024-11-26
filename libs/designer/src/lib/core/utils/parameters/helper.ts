@@ -116,7 +116,6 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
-  isStringLiteral,
   splitAtIndex,
   unescapeString,
 } from '@microsoft/logic-apps-shared';
@@ -3563,8 +3562,8 @@ export function parameterValueToString(
             !remappedParameterInfo.suppressCasting &&
             parameterType === 'string' &&
             segment.token?.type !== 'string' &&
-            segment.token?.expression &&
-            isStringLiteral(segment.token.expression);
+            segment.token?.tokenType !== TokenType.FX;
+
           expressionValue = `@${shouldCastToString ? `{${expressionValue}}` : expressionValue}`;
         }
       }
