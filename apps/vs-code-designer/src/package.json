@@ -67,7 +67,6 @@
         "command": "azureLogicAppsStandard.createNewCodeProject",
         "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
-        "preview": true,
         "icon": {
           "light": "assets/light/CreateNewCodeProject.svg",
           "dark": "assets/dark/CreateNewCodeProject.svg"
@@ -92,8 +91,7 @@
       {
         "command": "azureLogicAppsStandard.generateDeploymentScripts",
         "title": "Generate deployment scripts...",
-        "category": "Azure Logic Apps",
-        "preview": true
+        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
