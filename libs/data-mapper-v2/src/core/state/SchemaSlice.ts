@@ -1,4 +1,4 @@
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 
@@ -10,7 +10,7 @@ export const initialSchemaState: SchemaState = {
   availableSchemas: [],
 };
 
-export const schemaSlice = createSlice({
+export const schemaSlice: Slice<SchemaState> = createSlice({
   name: 'schema',
   initialState: initialSchemaState,
   reducers: {

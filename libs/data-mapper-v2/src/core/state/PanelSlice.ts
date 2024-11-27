@@ -1,7 +1,7 @@
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { SchemaFile } from '../../models/Schema';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import type { TestMapResponse } from '../services/dataMapperApiService';
 
 export const ConfigPanelView = {
@@ -55,7 +55,7 @@ const initialState: PanelState = {
   },
 };
 
-export const panelSlice = createSlice({
+export const panelSlice: Slice<PanelState> = createSlice({
   name: 'panel',
   initialState,
   reducers: {

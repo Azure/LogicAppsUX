@@ -56,7 +56,7 @@ import type {
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapState {
@@ -144,7 +144,7 @@ export interface DeleteConnectionAction {
   inputKey: string;
 }
 
-export const dataMapSlice = createSlice({
+export const dataMapSlice: Slice<DataMapState> = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {

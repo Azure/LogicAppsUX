@@ -1,4 +1,5 @@
 import { SchemaType } from '@microsoft/logic-apps-shared';
+import type { Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const ConfigPanelView = {
@@ -15,7 +16,7 @@ export interface PanelState {
 
 const initialState: PanelState = {};
 
-export const panelSlice = createSlice({
+export const panelSlice: Slice<PanelState> = createSlice({
   name: 'panel',
   initialState,
   reducers: {
