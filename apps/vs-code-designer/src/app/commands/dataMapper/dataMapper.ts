@@ -81,22 +81,22 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   // Try to load the draft file first
   if (draftFileIsFoundAndShouldBeUsed) {
     const fileContents = await fs.readFile(draftMapDefinitionPath, 'utf-8');
-    mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
+    mapDefinition = DataMapperExt.loadMapDefinition(fileContents, ext);
   }
 
   //If there is no draft file, or the draft file fails to deserialize, fall back to the base file
   if (Object.keys(mapDefinition).length === 0) {
     const fileContents = await fs.readFile(mapDefinitionPath, 'utf-8');
-    mapDefinition = DataMapperExt.loadMapDefinition(fileContents);
+    mapDefinition = DataMapperExt.loadMapDefinition(fileContents, ext);
   }
 
-  if (
+  if ( Object.keys(mapDefinition).length !== 0 &&
     !mapDefinition.$sourceSchema ||
     typeof mapDefinition.$sourceSchema !== 'string' ||
     !mapDefinition.$targetSchema ||
     typeof mapDefinition.$targetSchema !== 'string'
   ) {
-    context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions';
+    context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions'; // only show error if schemas are missing but object exists
     ext.showError(localize('MissingSourceTargetSchema', 'Invalid map definition: $sourceSchema and $targetSchema must be defined.'));
     return;
   }
