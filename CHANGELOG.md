@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.6.0](https://github.com/Azure/LogicAppsUX/compare/v5.5.0...v5.6.0) (2024-11-28)
+
+
+### Features
+
+* **vscode:** Removed preview tag for workspace and IaC ([#6190](https://github.com/Azure/LogicAppsUX/issues/6190)) ([b878b59](https://github.com/Azure/LogicAppsUX/commit/b878b59474ff5960f0f41268f1eb571710f09a43))
+
+
+### Bug Fixes
+
+* **designer:** Implicit String type conversions ([#6185](https://github.com/Azure/LogicAppsUX/issues/6185)) ([19829eb](https://github.com/Azure/LogicAppsUX/commit/19829ebf16055d01ee296189140ef9dff27e1059))
+* **vscode:** Remove warning preview messages to non preview features ([#6191](https://github.com/Azure/LogicAppsUX/issues/6191)) ([6db03b7](https://github.com/Azure/LogicAppsUX/commit/6db03b7e001d34db64cd6c4544b4d972dcbca53d))
+
 ## [5.5.0](https://github.com/Azure/LogicAppsUX/compare/v5.4.0...v5.5.0) (2024-11-21)
 
 
