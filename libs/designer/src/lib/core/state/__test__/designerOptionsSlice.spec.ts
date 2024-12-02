@@ -21,5 +21,6 @@ describe('designer options slice reducers', () => {
 
     expect(state.readOnly).toEqual(true);
     expect(state.hostOptions.maxStateHistorySize).toEqual(5);
+    expect(state.isVSCode).toEqual(false);
   });
 });

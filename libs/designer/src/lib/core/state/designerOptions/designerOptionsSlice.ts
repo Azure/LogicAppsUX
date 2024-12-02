@@ -34,6 +34,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isDarkMode: false,
+  isVSCode: false,
   servicesInitialized: false,
   designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
@@ -164,6 +165,7 @@ export const designerOptionsSlice = createSlice({
       };
       state.showPerformanceDebug = action.payload.showPerformanceDebug;
       state.designerOptionsInitialized = true;
+      state.isVSCode = action.payload.isVSCode ?? false;
     },
   },
   extraReducers: (builder) => {

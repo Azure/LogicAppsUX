@@ -1,7 +1,7 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly, useHostOptions } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
@@ -78,6 +78,7 @@ export const Designer = (props: DesignerProps) => {
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
+  const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
   const onNodesChange = useCallback(
@@ -135,7 +136,12 @@ export const Designer = (props: DesignerProps) => {
   useHotkeys(['meta+shift+p', 'ctrl+shift+p'], (event) => {
     event.preventDefault();
     dispatch(openPanel({ panelMode: 'NodeSearch' }));
-  });
+  },{enabled: !isVSCode});
+
+  useHotkeys(['meta+alt+p', 'ctrl+alt+p', 'meta+option+p',  'ctrl+option+p'], (event) => {
+    event.preventDefault();
+    dispatch(openPanel({ panelMode: 'NodeSearch' }));
+  }, {enabled: isVSCode});
 
   const isMonitoringView = useMonitoringView();
   const DND_OPTIONS: any = {
