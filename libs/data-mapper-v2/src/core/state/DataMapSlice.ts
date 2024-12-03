@@ -27,7 +27,7 @@ import type {
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import { emptyCanvasRect, guid, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import type { PayloadAction, Slice } from '@reduxjs/toolkit';
+import type { PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapHandling/MapMetadataSerializer';
 import type { Rect, XYPosition } from '@xyflow/react';
@@ -181,7 +181,40 @@ export interface DeleteConnectionAction {
   inputKey: string;
 }
 
-export const dataMapSlice: Slice<DataMapState> = createSlice({
+type Reducers = {
+  setXsltFilename: (state: DataMapState, action: PayloadAction<string>) => void;
+  setXsltContent: (state: DataMapState, action: PayloadAction<string>) => void;
+  setInitialSchema: (state: DataMapState, action: PayloadAction<InitialSchemaAction>) => void;
+  setInitialDataMap: (state: DataMapState, action: PayloadAction<InitialDataMapAction>) => void;
+  setConnectionInput: (state: DataMapState, action: PayloadAction<SetConnectionInputAction>) => void;
+  makeConnectionFromMap: (state: DataMapState, action: PayloadAction<ConnectionAction>) => void;
+  updateDataMapLML: (state: DataMapState, action: PayloadAction<string>) => void;
+  addFunctionNode: (
+    state: DataMapState,
+    action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>
+  ) => void;
+  saveDataMap: (
+    state: DataMapState,
+    action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
+  ) => void;
+  updateFunctionPosition: (state: DataMapState, action: PayloadAction<{ id: string; position: XYPosition }>) => void;
+  deleteConnectionFromFunctionMenu: (state: DataMapState, action: PayloadAction<{ inputIndex: number; targetId: string }>) => void;
+  deleteFunction: (state: DataMapState, action: PayloadAction<string>) => void;
+  setSelectedItem: (state: DataMapState, action: PayloadAction<string | undefined>) => void;
+  toggleNodeExpandCollapse: (state: DataMapState, action: PayloadAction<ExpandCollapseAction>) => void;
+  updateFunctionNodesPosition: (state: DataMapState, action: PayloadAction<Record<string, XYPosition>>) => void;
+  updateEdgePopOverId: (state: DataMapState, action: PayloadAction<string | undefined>) => void;
+  deleteEdge: (state: DataMapState, action: PayloadAction<string>) => void;
+  toggleSourceEditState: (state: DataMapState, action: PayloadAction<boolean>) => void;
+  toggleTargetEditState: (state: DataMapState, action: PayloadAction<boolean>) => void;
+  setHoverState: (state: DataMapState, action: PayloadAction<HoverState | undefined>) => void;
+  updateCanvasDimensions: (state: DataMapState, action: PayloadAction<Rect>) => void;
+  updateFunctionConnectionInputs: (state: DataMapState, action: PayloadAction<{ functionKey: string; inputs: InputConnection[] }>) => void;
+  updateTreeData: (state: DataMapState, action: PayloadAction<{ key: string; data: SchemaTreeDataProps }>) => void;
+  createInputSlotForUnboundedInput: (state: DataMapState, action: PayloadAction<string>) => void;
+};
+
+export const dataMapSlice = createSlice<DataMapState, Reducers, 'dataMap', any>({
   name: 'dataMap',
   initialState,
   reducers: {
@@ -672,7 +705,8 @@ export const {
   updateTreeData,
 } = dataMapSlice.actions;
 
-export default dataMapSlice.reducer;
+const dataMapReducer: Reducer<DataMapState> = dataMapSlice.reducer;
+export default dataMapReducer;
 
 /* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, action: string) => {

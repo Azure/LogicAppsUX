@@ -1,5 +1,5 @@
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
-import { type AnyAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { type Action, createAsyncThunk } from '@reduxjs/toolkit';
 import { default as CONSTANTS } from '../../../common/constants';
 import { setStateAfterUndoRedo } from '../../state/global';
 import { changePanelNode, setSelectedPanelActiveTab } from '../../state/panel/panelSlice';
@@ -15,7 +15,7 @@ import {
 
 export const storeStateToUndoRedoHistory = createAsyncThunk(
   'storeStateToUndoRedoHistory',
-  async (action: AnyAction, { dispatch, getState }): Promise<void> => {
+  async (action: Action, { dispatch, getState }): Promise<void> => {
     const rootState = getState() as RootState;
     const stateHistoryLimit = rootState.designerOptions.hostOptions.maxStateHistorySize || CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE;
     const idReplacements = rootState.workflow.idReplacements;

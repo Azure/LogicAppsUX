@@ -56,7 +56,7 @@ import type {
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import type { PayloadAction, Slice } from '@reduxjs/toolkit';
+import type { PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapState {
@@ -144,7 +144,43 @@ export interface DeleteConnectionAction {
   inputKey: string;
 }
 
-export const dataMapSlice: Slice<DataMapState> = createSlice({
+type Reducers = {
+  setXsltFilename: (state: DataMapState, action: PayloadAction<string>) => void;
+  setXsltContent: (state: DataMapState, action: PayloadAction<string>) => void;
+  setInitialSchema: (state: DataMapState, action: PayloadAction<InitialSchemaAction>) => void;
+  setInitialDataMap: (state: DataMapState, action: PayloadAction<InitialDataMapAction>) => void;
+  changeSourceSchema: (state: DataMapState, action: PayloadAction<DataMapOperationState | undefined>) => void;
+  changeTargetSchema: (state: DataMapState, action: PayloadAction<DataMapOperationState | undefined>) => void;
+  setCurrentSourceSchemaNodes: (state: DataMapState, action: PayloadAction<SchemaNodeExtended[] | undefined>) => void;
+  addSourceSchemaNodes: (state: DataMapState, action: PayloadAction<SchemaNodeExtended[]>) => void;
+  removeSourceSchemaNodes: (state: DataMapState, action: PayloadAction<SchemaNodeExtended[]>) => void;
+  setCurrentTargetSchemaNode: (state: DataMapState, action: PayloadAction<SchemaNodeExtended | undefined>) => void;
+  setSelectedItem: (state: DataMapState, action: PayloadAction<string | undefined>) => void;
+  deleteCurrentlySelectedItem: (state: DataMapState) => void;
+  addFunctionNode: (
+    state: DataMapState,
+    action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>
+  ) => void;
+  deleteConnection: (state: DataMapState, action: PayloadAction<{ inputKey: string; outputKey: string; port?: string }>) => void;
+  makeConnection: (state: DataMapState, action: PayloadAction<ConnectionAction>) => void;
+  setConnectionInput: (state: DataMapState, action: PayloadAction<SetConnectionInputAction>) => void;
+  saveDataMap: (
+    state: DataMapState,
+    action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
+  ) => void;
+  discardDataMap: (state: DataMapState) => void;
+  showNotification: (state: DataMapState, action: PayloadAction<NotificationData>) => void;
+  hideNotification: (state: DataMapState) => void;
+  setSourceNodeConnectionBeingDrawnFromId: (state: DataMapState, action: PayloadAction<string | undefined>) => void;
+  updateFunctionPosition: (state: DataMapState, action: PayloadAction<{ id: string; positionMetadata: FunctionPositionMetadata }>) => void;
+  setInlineFunctionInputOutputKeys: (
+    state: DataMapState,
+    action: PayloadAction<{ inputKey: string; outputKey: string; port?: string; x?: string; y?: string } | undefined>
+  ) => void;
+  setCanvasToolboxTabToDisplay: (state: DataMapState, action: PayloadAction<ToolboxPanelTabs | ''>) => void;
+};
+
+export const dataMapSlice = createSlice<DataMapState, Reducers, 'dataMap', any>({
   name: 'dataMap',
   initialState,
   reducers: {
@@ -591,8 +627,8 @@ export const {
   setCanvasToolboxTabToDisplay,
 } = dataMapSlice.actions;
 
-export default dataMapSlice.reducer;
-
+const dataMapReducer: Reducer<DataMapState> = dataMapSlice.reducer;
+export default dataMapReducer;
 /* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperationState, action: string) => {
   newCurrentState.lastAction = action;

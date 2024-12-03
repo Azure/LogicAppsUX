@@ -1,5 +1,5 @@
 import type { FunctionData } from '../../models/Function';
-import type { PayloadAction, Slice } from '@reduxjs/toolkit';
+import type { PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface FunctionState {
@@ -12,7 +12,12 @@ export const initialFunctionState: FunctionState = {
   customXsltFilePaths: [],
 };
 
-export const functionSlice: Slice<FunctionState> = createSlice({
+type Reducers = {
+  loadFunctions: (state: FunctionState, action: PayloadAction<FunctionData[]>) => void;
+  loadCustomXsltFilePaths: (state: FunctionState, action: PayloadAction<string[]>) => void;
+};
+
+export const functionSlice = createSlice<FunctionState, Reducers, 'function', any>({
   name: 'function',
   initialState: initialFunctionState,
   reducers: {
@@ -27,4 +32,5 @@ export const functionSlice: Slice<FunctionState> = createSlice({
 
 export const { loadFunctions, loadCustomXsltFilePaths } = functionSlice.actions;
 
-export default functionSlice.reducer;
+const functionReducer: Reducer<FunctionState> = functionSlice.reducer;
+export default functionReducer;

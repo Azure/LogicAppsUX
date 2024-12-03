@@ -1,4 +1,4 @@
-import type { Slice } from '@reduxjs/toolkit';
+import type { Reducer } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 // NOTE: Currently, modal is just used for discard data map changes warning
@@ -16,8 +16,13 @@ const initialState: ModalState = {
   isWarningModalOpen: false,
   isOkClicked: false,
 };
+type Reducers = {
+  openDiscardWarningModal: (state: ModalState) => void;
+  closeModal: (state: ModalState) => void;
+  setModalOkClicked: (state: ModalState) => void;
+};
 
-export const modalSlice: Slice<ModalState> = createSlice({
+export const modalSlice = createSlice<ModalState, Reducers, 'modal', any>({
   name: 'modal',
   initialState,
   reducers: {
@@ -38,4 +43,5 @@ export const modalSlice: Slice<ModalState> = createSlice({
 
 export const { openDiscardWarningModal, closeModal, setModalOkClicked } = modalSlice.actions;
 
-export default modalSlice.reducer;
+const modalReducer: Reducer<ModalState> = modalSlice.reducer;
+export default modalReducer;

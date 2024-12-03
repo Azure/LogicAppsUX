@@ -1,6 +1,6 @@
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction, Slice } from '@reduxjs/toolkit';
+import type { PayloadAction, Reducer } from '@reduxjs/toolkit';
 
 export interface AppState {
   theme: ThemeType;
@@ -10,7 +10,11 @@ const initialState: AppState = {
   theme: ThemeType.Light,
 };
 
-export const appSlice: Slice<AppState> = createSlice({
+type Reducers = {
+  changeTheme: (state: AppState, action: PayloadAction<ThemeType>) => void;
+};
+
+export const appSlice = createSlice<AppState, Reducers, 'app', any>({
   name: 'app',
   initialState,
   reducers: {
@@ -22,4 +26,5 @@ export const appSlice: Slice<AppState> = createSlice({
 
 export const { changeTheme } = appSlice.actions;
 
-export default appSlice.reducer;
+const appReducer: Reducer<AppState> = appSlice.reducer;
+export default appReducer;
