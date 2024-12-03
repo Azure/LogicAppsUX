@@ -50,7 +50,9 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
       canSelectMany: false,
       canSelectFiles: true,
       canSelectFolders: false,
-      filters: { 'Data Map Definition': supportedDataMapDefinitionFileExts.map((ext) => ext.replace('.', '')) },
+      filters: {
+        'Data Map Definition': supportedDataMapDefinitionFileExts.map((ext) => ext.replace('.', '')),
+      },
     });
 
     if (fileUris && fileUris.length > 0) {
@@ -90,14 +92,16 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     mapDefinition = DataMapperExt.loadMapDefinition(fileContents, ext);
   }
 
-  if ( Object.keys(mapDefinition).length !== 0 &&
+  if (
     !mapDefinition.$sourceSchema ||
     typeof mapDefinition.$sourceSchema !== 'string' ||
     !mapDefinition.$targetSchema ||
     typeof mapDefinition.$targetSchema !== 'string'
   ) {
-    context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions'; // only show error if schemas are missing but object exists
-    ext.showError(localize('MissingSourceTargetSchema', 'Invalid map definition: $sourceSchema and $targetSchema must be defined.'));
+    if (Object.keys(mapDefinition).length !== 0) {
+      context.telemetry.properties.eventDescription = 'Attempted to load invalid map, missing schema definitions'; // only show error if schemas are missing but object exists
+      ext.showError(localize('MissingSourceTargetSchema', 'Invalid map definition: $sourceSchema and $targetSchema must be defined.'));
+    }
     return;
   }
 
