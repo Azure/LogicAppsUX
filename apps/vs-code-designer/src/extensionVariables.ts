@@ -90,7 +90,7 @@ export namespace ext {
   export const showError = (errMsg: string, options?: MessageOptions) => {
     ext.log(errMsg);
     if (options && options.detail) {
-      ext.log(options.detail)
+      ext.log(options.detail);
     }
     window.showErrorMessage(errMsg, options);
   };
