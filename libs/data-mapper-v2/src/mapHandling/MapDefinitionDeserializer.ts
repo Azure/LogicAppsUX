@@ -496,6 +496,7 @@ export class MapDefinitionDeserializer {
     // take out for statement to get to inner objects
     const forFunc = sourceFor as ParseFunc;
     const sourceLoopKey = forFunc.inputs[0];
+
     if (sourceLoopKey.type === 'SingleValueMetadata') {
       const loopSource = this.getLoopNode(sourceLoopKey.value);
       if (loopSource) {

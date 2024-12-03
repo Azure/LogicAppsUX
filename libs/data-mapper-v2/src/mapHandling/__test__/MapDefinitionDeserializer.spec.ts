@@ -1519,7 +1519,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[1][1]).toBeTruthy();
         expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
-        // expect error message here
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
 
       it('continues after finding invalid source node', () => {
@@ -1547,7 +1547,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[1][1]).toBeTruthy();
         expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
 
-        // expect error message here
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
 
       it('continues after not finding source loop node', () => {
