@@ -48,9 +48,8 @@ export interface DesignerProps {
 }
 
 type NodeTypesObj = {
-  [key in WorkflowNodeType]?: React.ComponentType<any>;
+  [key in WorkflowNodeType]: React.ComponentType<any>;
 };
-
 const nodeTypes: NodeTypesObj = {
   OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
