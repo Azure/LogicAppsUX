@@ -24,6 +24,10 @@ export const useIsDarkMode = () => {
   return useSelector((state: RootState) => state.designerOptions.isDarkMode);
 };
 
+export const useIsVSCode = () => {
+  return useSelector((state: RootState) => state.designerOptions.isVSCode);
+};
+
 export const useSuppressDefaultNodeSelectFunctionality = () => {
   return useSelector((state: RootState) => state.designerOptions.suppressDefaultNodeSelectFunctionality);
 };

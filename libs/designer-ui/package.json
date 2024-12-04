@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/designer-ui",
-  "version": "5.3.0",
+  "version": "5.6.0",
   "dependencies": {
     "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.56.0",
@@ -46,7 +46,10 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",
