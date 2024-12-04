@@ -1,10 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { mapDefinitionVersion, mapNodeParams, reservedMapDefinitionKeys } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary, NodeConnection, InputConnection } from '../models/Connection';
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { findLast } from '../utils/Array.Utils';
-import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
+import {
+  collectTargetNodesForConnectionChain,
+  isNodeConnection,
+  isCustomValueConnection,
+  isEmptyConnection,
+} from '../utils/Connection.Utils';
 import {
   collectConditionalValues,
   collectFunctionValue,
@@ -39,6 +44,7 @@ interface SuccessfulMapDefinition {
 }
 
 export const convertToMapDefinition = (
+  // danielle can you make the map definition an array instead of an object?
   connections: ConnectionDictionary,
   sourceSchema: SchemaExtended | undefined,
   targetSchema: SchemaExtended | undefined,
@@ -56,18 +62,24 @@ export const convertToMapDefinition = (
     generateMapDefinitionBody(mapDefinition, connections);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
-    const map = yaml
-      .dump(mapDefinition, {
-        replacer: yamlReplacer,
-        noRefs: true,
-        sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray),
-      })
-      .replaceAll(/'"|"'/g, '"');
+    const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
 
     return { isSuccess: true, definition: map };
   }
 
   return { isSuccess: false, errorNodes: [] };
+};
+
+export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
+  // Custom values directly on target nodes need to have extra single quotes stripped out
+  const map = yaml
+    .dump(mapDefinition, {
+      replacer: yamlReplacer,
+      noRefs: true,
+      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition), // danielle pass map definition here to sort
+    })
+    .replaceAll(/'"|"'/g, '"');
+  return map;
 };
 
 const yamlReplacer = (key: string, value: any) => {
@@ -115,8 +127,8 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
 
   targetSchemaConnections.forEach(([_key, connection]) => {
-    const flattenedInputs = flattenInputs(connection?.inputs);
-    flattenedInputs.forEach((input) => {
+    const inputs = connection?.inputs;
+    inputs.forEach((input) => {
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         const pathToCreate = createNewPathItems(input, selfNode, connections);
@@ -137,9 +149,9 @@ const createSourcePath = (
   if (isFinalPath) {
     // Handle custom values, source schema nodes, or Functions applied to the current target schema node
     let value = '';
-    if (input) {
-      if (isCustomValue(input)) {
-        value = input;
+    if (input && !isEmptyConnection(input)) {
+      if (isCustomValueConnection(input)) {
+        value = input.value;
       } else if (isSchemaNodeExtended(input.node)) {
         value = input.node.key;
       } else if (input.node.key.startsWith(ifPseudoFunctionKey)) {
@@ -173,7 +185,7 @@ const getSrcPathRelativeToLoop = (newPath: OutputPathItem[]) => {
   return valueToTrim;
 };
 
-const getPathForSrcSchemaNode = (sourceNode: ConnectionUnit, formattedLmlSnippetForTarget: string) => {
+const getPathForSrcSchemaNode = (sourceNode: NodeConnection, formattedLmlSnippetForTarget: string) => {
   const res = findLast(
     (sourceNode.node as SchemaNodeExtended).pathToRoot,
     (pathItem) => pathItem.repeating && pathItem.key !== formattedLmlSnippetForTarget
@@ -199,8 +211,8 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       if (connectionsIntoCurrentTargetPath) {
         // Conditionals
         const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
-        const sourceNode = rootSourceNodes[0];
-        if (sourceNode && isConnectionUnit(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
+        const sourceNode = rootSourceNodes;
+        if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         }
       }
@@ -212,9 +224,8 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       // construct source side of LML for connection
       if (isFinalPath) {
         const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
-        const inputIntoTargetNode = connectionsToTarget.inputs[0];
-        const inputNode = inputIntoTargetNode[0];
-        if (inputNode && isConnectionUnit(inputNode)) {
+        const inputNode = connectionsToTarget.inputs[0];
+        if (inputNode && isNodeConnection(inputNode)) {
           if (isFunctionData(inputNode.node)) {
             const valueToTrim = getSrcPathRelativeToLoop(newPath);
 
@@ -301,25 +312,25 @@ const addLoopingForToNewPathItems = (
   newPath: OutputPathItem[],
   currentLoop: { loop: string }
 ) => {
-  const rootSourceNodes = [...rootTargetConnection.inputs[0]];
+  const rootSourceNodes = [...rootTargetConnection.inputs];
 
   rootSourceNodes.sort((nodeA, nodeB) => {
-    if (isConnectionUnit(nodeA) && isConnectionUnit(nodeB)) {
+    if (isNodeConnection(nodeA) && isNodeConnection(nodeB)) {
       let nodeAToUse = nodeA;
       let nodeBToUse = nodeB;
 
       // If we are using indices, we want to instead sort off of the schema node, not the index
       // That way if we have layered index pseudo functions they are sorted correctly
       if (nodeA.node.key === indexPseudoFunctionKey) {
-        const sourceInput = connections[nodeA.reactFlowKey].inputs[0][0];
-        if (isConnectionUnit(sourceInput)) {
+        const sourceInput = connections[nodeA.reactFlowKey].inputs[0];
+        if (isNodeConnection(sourceInput)) {
           nodeAToUse = sourceInput;
         }
       }
 
       if (nodeB.node.key === indexPseudoFunctionKey) {
-        const sourceInput = connections[nodeB.reactFlowKey].inputs[0][0];
-        if (isConnectionUnit(sourceInput)) {
+        const sourceInput = connections[nodeB.reactFlowKey].inputs[0];
+        if (isNodeConnection(sourceInput)) {
           nodeBToUse = sourceInput;
         }
       }
@@ -333,12 +344,12 @@ const addLoopingForToNewPathItems = (
   rootSourceNodes.forEach((sourceNode) => {
     let loopValue = '';
 
-    if (sourceNode && isConnectionUnit(sourceNode)) {
+    if (sourceNode && isNodeConnection(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
         if (sourceNode.node.key === ifPseudoFunctionKey) {
-          const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1][0];
+          const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1];
           const sourceSchemaNodeReactFlowKey =
-            (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.reactFlowKey) || '';
+            (isNodeConnection(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.reactFlowKey) || '';
 
           const indexFunctions = collectTargetNodesForConnectionChain(connections[sourceSchemaNodeReactFlowKey], connections).filter(
             (connection) => connection.node.key === indexPseudoFunctionKey
@@ -346,8 +357,8 @@ const addLoopingForToNewPathItems = (
 
           if (indexFunctions.length > 0) {
             const indexConnection = connections[indexFunctions[0].reactFlowKey];
-            const inputConnection = indexConnection.inputs[0][0];
-            const inputKey = isConnectionUnit(inputConnection) && inputConnection.node.key;
+            const inputConnection = indexConnection.inputs[0];
+            const inputKey = isNodeConnection(inputConnection) && inputConnection.node.key;
 
             loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})`;
           } else {
@@ -427,6 +438,7 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   path.every((pathItem, pathIndex) => {
     if (pathItem.arrayIndex !== undefined) {
       // When dealing with the map definition we need to access the previous path item, instead of the current
+      // this gives us the parent, to put the current node in its parent
       const curPathItem = path[pathIndex - 1];
       const curItem = mapDefinition[curPathItem.key];
       let newArray: (any | undefined)[] = curItem && Array.isArray(curItem) ? curItem : Array(pathItem.arrayIndex + 1).fill(undefined);
@@ -461,23 +473,54 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   });
 };
 
-const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[]): number => {
-  const potentialKeyObjects = targetSchemaSortArray.filter((node, _index, origArray) => {
-    if (node.endsWith(nameA)) {
-      const trimmedNode = node.substring(0, node.indexOf(nameA) - 1);
-      const hasNodeB = origArray.find((nodeB) => nodeB === `${trimmedNode}/${nameB}`);
+const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | undefined => {
+  if (mapDefinition[key]) {
+    return key;
+  }
 
-      return !!hasNodeB;
+  const keys = Object.keys(mapDefinition);
+  for (const currentKey of keys) {
+    if (typeof mapDefinition[currentKey] === 'object') {
+      const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
+      if (foundKey) {
+        const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
+        return childKey;
+      }
     }
+  }
 
+  return undefined;
+};
+
+const sortMapDefinition = (nameA: any, nameB: any, targetSchemaSortArray: string[], mapDefinition: MapDefinitionEntry): number => {
+  let targetForA = nameA;
+  if (nameA.startsWith(mapNodeParams.for) || nameA.startsWith(mapNodeParams.if)) {
+    // find 'A' in the mapDefintion and find the first child
+    targetForA = findKeyInMap(mapDefinition, nameA) ?? '';
+  }
+  let targetForB = nameB;
+  if (nameB.startsWith(mapNodeParams.for) || nameB.startsWith(mapNodeParams.if)) {
+    // find 'B' in the mapDefintion and find the first child
+    targetForB = findKeyInMap(mapDefinition, nameB) ?? '';
+  }
+
+  const potentialKeyObjectsA = targetSchemaSortArray.findIndex((node, _index) => {
+    if (node.endsWith(targetForA)) {
+      const trimmedNode = node.substring(0, node.indexOf(targetForA) - 1);
+      return trimmedNode;
+    }
     return false;
   });
 
-  if (potentialKeyObjects.length === 0) {
-    return 0;
-  }
+  // this does not work 100%, we need full path in next iteration
 
-  const keyA = potentialKeyObjects[0];
-  const trimmedNode = keyA.substring(0, keyA.indexOf(nameA) - 1);
-  return targetSchemaSortArray.indexOf(keyA) - targetSchemaSortArray.indexOf(`${trimmedNode}/${nameB}`);
+  const potentialKeyObjectsB = targetSchemaSortArray.findIndex((node, _index) => {
+    if (node.endsWith(targetForB)) {
+      const trimmedNode = node.substring(0, node.indexOf(targetForB) - 1);
+      return trimmedNode;
+    }
+    return false;
+  });
+
+  return potentialKeyObjectsA - potentialKeyObjectsB;
 };

@@ -11,6 +11,7 @@ import {
   generateExpressionFromKey,
   loadDynamicContentForInputsInNode,
   loadParameterValue,
+  toSimpleQueryBuilderViewModel,
 } from '../helper';
 import * as Helper from '../helper';
 import * as VariableHelper from '../../variables';
@@ -410,7 +411,7 @@ describe('core/utils/parameters/helper', () => {
       ];
 
       expect(parameterValueToJSONString(parameterValue, /* applyCasting */ false, /* forValidation */ true)).toBe(
-        '{"newUnb3_1":"@xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')"}'
+        '{\n  "newUnb3_1": @{xpath(xml(triggerBody()), \'string(/*[local-name()="DynamicsSOCSV"])\')}\n}'
       );
     });
 
@@ -484,7 +485,7 @@ describe('core/utils/parameters/helper', () => {
       ];
 
       expect(parameterValueToJSONString(parameterValue, /* applyCasting */ false, /* forValidation */ true)).toBe(
-        '{"newUnb3_1":"@{xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')}"}'
+        '{\n  "newUnb3_1": "@{xpath(xml(triggerBody()), \'string(/*[local-name()="DynamicsSOCSV"])\')}"\n}'
       );
     });
 
@@ -1279,7 +1280,7 @@ describe('core/utils/parameters/helper', () => {
         parameter.info.format = '';
 
         const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);
-        expect(expressionString).toEqual(`@body('action')['path']`);
+        expect(expressionString).toEqual(`@{body('action')['path']}`);
       });
     }
 
@@ -3447,6 +3448,66 @@ describe('core/utils/parameters/helper', () => {
       );
 
       expect(dispatchMockFn).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('toSimpleQueryBuilderViewModel', () => {
+    it('should handle simple query builder cases', () => {
+      const input = "@equals('test','test2')";
+      const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
+      expect(isOldFormat).toEqual(true);
+      expect(isRowFormat).toEqual(true);
+      expect(itemValue?.length).toEqual(5);
+      expect(itemValue?.[0].type).toEqual('literal');
+      expect(itemValue?.[0].value).toEqual('@equals(');
+      expect(itemValue?.[1].value).toEqual('test');
+      expect(itemValue?.[2].value).toEqual(',');
+      expect(itemValue?.[3].value).toEqual('test2');
+      expect(itemValue?.[4].type).toEqual('literal');
+      expect(itemValue?.[4].value).toEqual(')');
+    });
+
+    it('should handle expression tokens', () => {
+      const input = "@greater(concat(1,2),'test')";
+      const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
+      expect(isOldFormat).toEqual(true);
+      expect(isRowFormat).toEqual(true);
+      expect(itemValue?.length).toEqual(5);
+      expect(itemValue?.[0].type).toEqual('literal');
+      expect(itemValue?.[0].value).toEqual('@greater(');
+      expect(itemValue?.[1].token?.value).toEqual('concat(1,2)');
+      expect(itemValue?.[2].value).toEqual(',');
+      expect(itemValue?.[3].value).toEqual('test');
+      expect(itemValue?.[4].type).toEqual('literal');
+      expect(itemValue?.[4].value).toEqual(')');
+    });
+
+    it('should handle non-query builder values', () => {
+      const input = 'this is a string';
+      const result = toSimpleQueryBuilderViewModel(input);
+      expect(result).toEqual({ isOldFormat: true, isRowFormat: false, itemValue: undefined });
+    });
+
+    it('should expect single tokens to not be itemized', () => {
+      const input = '@parameters("test")';
+      const result = toSimpleQueryBuilderViewModel(input);
+      expect(result).toEqual({ isOldFormat: true, isRowFormat: false, itemValue: undefined });
+    });
+
+    it('should handle with not queries and expression tokens', () => {
+      const input = "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))";
+      const { isOldFormat, isRowFormat, itemValue } = toSimpleQueryBuilderViewModel(input);
+      expect(isOldFormat).toEqual(true);
+      expect(isRowFormat).toEqual(true);
+      expect(itemValue?.length).toEqual(5);
+      expect(itemValue?.[0].type).toEqual('literal');
+      expect(itemValue?.[0].value).toEqual('@notcontains(');
+      expect(itemValue?.[1].type).toEqual('token');
+      expect(itemValue?.[1].token?.value).toEqual("length(split(item(), '|')?[0])");
+      expect(itemValue?.[2].value).toEqual(',');
+      expect(itemValue?.[3].token?.value).toEqual("length(split(item(), '|')?[0])");
+      expect(itemValue?.[4].type).toEqual('literal');
+      expect(itemValue?.[4].value).toEqual(')');
     });
   });
 });

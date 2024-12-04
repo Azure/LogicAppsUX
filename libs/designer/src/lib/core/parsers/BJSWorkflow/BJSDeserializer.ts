@@ -381,7 +381,7 @@ export const buildGraphFromActions = (
           continue;
         }
         const caseAction: any = action.cases?.[key];
-        const newCaseId = pasteScopeParams ? pasteScopeParams.renamedNodes[key] ?? key : getUniqueName(allActionNames, key).name;
+        const newCaseId = pasteScopeParams ? (pasteScopeParams.renamedNodes[key] ?? key) : getUniqueName(allActionNames, key).name;
         allActionNames.push(newCaseId);
         if (caseAction) {
           action.cases = {

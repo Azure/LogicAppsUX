@@ -149,7 +149,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [connectionParameters]
   );
   const multiAuthParams = useMemo(
-    () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
+    () => connectionParameterSets?.values[selectedParamSetIndex]?.parameters ?? {},
     [connectionParameterSets, selectedParamSetIndex]
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
@@ -253,7 +253,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
       const capability =
         (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
-          ? parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general'
+          ? (parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general')
           : 'general';
       output[capability] = {
         ...output[capability],

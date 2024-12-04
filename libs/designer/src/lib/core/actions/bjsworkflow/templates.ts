@@ -287,7 +287,7 @@ const getWorkflowAndManifest = async (templatePath: string, manifest: Template.M
   const templateManifest: Template.Manifest =
     !manifest && paths.length === 2
       ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
-      : manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default;
+      : (manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default);
 
   const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition =
     paths.length === 2

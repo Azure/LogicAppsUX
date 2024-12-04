@@ -1,4 +1,5 @@
-import { Callout, css, DetailsList, type IColumn, Label, Link, SelectionMode, Text, TextField } from '@fluentui/react';
+import { Callout, css, DetailsList, type IColumn, Label, SelectionMode, TextField } from '@fluentui/react';
+import { Link, Text } from '@fluentui/react-components';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -122,15 +123,20 @@ export const DisplayParameters = () => {
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
       case '$displayName':
-        return <ParameterName item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
+        return <ParameterName aria-label={item.displayName} item={item} intl={intl} isSingleWorkflow={isSingleWorkflow} />;
 
       case '$type':
-        return <Text className="msla-templates-parameters-values">{item.type}</Text>;
+        return (
+          <Text className="msla-templates-parameters-values" aria-label={item.type}>
+            {item.type}
+          </Text>
+        );
 
       case '$value':
         return (
           <TextField
             className="msla-templates-parameters-values"
+            aria-label={item.value}
             value={item.value}
             onChange={(_event, newValue) => {
               handleParameterValueChange(item, newValue ?? '');
@@ -168,7 +174,7 @@ const ParameterName = ({
 
   return (
     <div className="msla-template-parameters-tab-name">
-      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible} required={true}>
+      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible}>
         <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
           {item.displayName}
         </Label>

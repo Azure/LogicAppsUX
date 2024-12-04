@@ -38,25 +38,13 @@ exports[`lib/card > should render 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-<<<<<<< HEAD
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
-=======
             className="fui-Spinner r82apo5 msla-card-header-spinner"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-<<<<<<< HEAD
-                className="fui-Spinner__spinnerTail r1lregi5"
-              />
-            </span>
-          </div>
-        </div>
-        <div
-=======
                 className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
@@ -115,14 +103,14 @@ exports[`lib/card > should render 2`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail r1lregi5"
+                className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
           </div>
@@ -181,25 +169,13 @@ exports[`lib/card > should render as cloned 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-<<<<<<< HEAD
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
-=======
             className="fui-Spinner r82apo5 msla-card-header-spinner"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-<<<<<<< HEAD
-                className="fui-Spinner__spinnerTail r1lregi5"
-              />
-            </span>
-          </div>
-        </div>
-        <div
-=======
                 className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
@@ -258,14 +234,14 @@ exports[`lib/card > should render as cloned 2`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail r1lregi5"
+                className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
           </div>
@@ -337,25 +313,13 @@ exports[`lib/card > should render as draggable 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-<<<<<<< HEAD
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
-=======
             className="fui-Spinner r82apo5 msla-card-header-spinner"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-<<<<<<< HEAD
-                className="fui-Spinner__spinnerTail r1lregi5"
-              />
-            </span>
-          </div>
-        </div>
-        <div
-=======
                 className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
@@ -427,14 +391,14 @@ exports[`lib/card > should render as draggable 2`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail r1lregi5"
+                className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
           </div>
@@ -493,22 +457,14 @@ exports[`lib/card > should render as inactive 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-<<<<<<< HEAD
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
-=======
             className="fui-Spinner r82apo5 msla-card-header-spinner"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-<<<<<<< HEAD
-                className="fui-Spinner__spinnerTail r1lregi5"
-=======
                 className="fui-Spinner__spinnerTail rxov3xa"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
               />
             </span>
           </div>
@@ -528,17 +484,10 @@ exports[`lib/card > should render as inactive 1`] = `
 </div>
 `;
 
-<<<<<<< HEAD
-exports[`lib/card > should render as pinned 1`] = `
-<div
-  aria-label="title operation"
-  className="msla-panel-card-container"
-=======
 exports[`lib/card > should render as inactive 2`] = `
 <div
   aria-label="title operation"
   className="msla-panel-card-container inactive"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
   data-automation-id="card-title"
   data-testid="card-title"
   id="msla-node-id"
@@ -554,11 +503,7 @@ exports[`lib/card > should render as inactive 2`] = `
   }
 >
   <div
-<<<<<<< HEAD
-    className="msla-selection-box pinned"
-=======
     className="msla-selection-box"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
   />
   <div
     className="panel-card-main"
@@ -577,14 +522,14 @@ exports[`lib/card > should render as inactive 2`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail r1lregi5"
+                className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
           </div>
@@ -598,8 +543,6 @@ exports[`lib/card > should render as inactive 2`] = `
             title
           </div>
         </div>
-<<<<<<< HEAD
-=======
       </div>
     </div>
   </div>
@@ -644,14 +587,14 @@ exports[`lib/card > should render as pinned 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r82apo5 msla-card-header-spinner"
+            className="fui-Spinner r1k3z50n msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail rxov3xa"
+                className="fui-Spinner__spinnerTail r1lregi5"
               />
             </span>
           </div>
@@ -709,14 +652,14 @@ exports[`lib/card > should render as pinned 2`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail r1lregi5"
+                className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
           </div>
@@ -730,7 +673,6 @@ exports[`lib/card > should render as pinned 2`] = `
             title
           </div>
         </div>
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
       </div>
     </div>
   </div>
@@ -775,25 +717,13 @@ exports[`lib/card > should render as selected 1`] = `
           className="panel-card-content-icon-section"
         >
           <div
-<<<<<<< HEAD
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
-=======
             className="fui-Spinner r82apo5 msla-card-header-spinner"
->>>>>>> f823f3361ee8955038ccd375761822baddadf52c
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-<<<<<<< HEAD
-                className="fui-Spinner__spinnerTail r1lregi5"
-              />
-            </span>
-          </div>
-        </div>
-        <div
-=======
                 className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
@@ -852,14 +782,14 @@ exports[`lib/card > should render as selected 2`] = `
           className="panel-card-content-icon-section"
         >
           <div
-            className="fui-Spinner r1k3z50n msla-card-header-spinner"
+            className="fui-Spinner r82apo5 msla-card-header-spinner"
             role="progressbar"
           >
             <span
               className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
             >
               <span
-                className="fui-Spinner__spinnerTail r1lregi5"
+                className="fui-Spinner__spinnerTail rxov3xa"
               />
             </span>
           </div>

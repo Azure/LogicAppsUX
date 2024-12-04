@@ -2,7 +2,7 @@
 
 exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=false 1`] = `
 <div
-  className="fui-MenuItem r11normc"
+  className="fui-MenuItem rszfvis"
   data-automation-id="msla-pin-menu-option"
   onClick={[Function]}
   onKeyDown={[Function]}
@@ -53,7 +53,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=fals
 
 exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=false 2`] = `
 <div
-  className="fui-MenuItem rszfvis"
+  className="fui-MenuItem r11normc"
   data-automation-id="msla-pin-menu-option"
   onClick={[Function]}
   onKeyDown={[Function]}
@@ -63,7 +63,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=fals
   tabIndex={0}
 >
   <span
-    className="fui-MenuItem__icon r9c34qo"
+    className="fui-MenuItem__icon ro9koqv"
   >
     <svg
       aria-hidden={true}
@@ -104,7 +104,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=fals
 
 exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=true 1`] = `
 <div
-  className="fui-MenuItem r11normc"
+  className="fui-MenuItem rszfvis"
   data-automation-id="msla-pin-menu-option"
   onClick={[Function]}
   onKeyDown={[Function]}
@@ -155,7 +155,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=true
 
 exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=true 2`] = `
 <div
-  className="fui-MenuItem rszfvis"
+  className="fui-MenuItem r11normc"
   data-automation-id="msla-pin-menu-option"
   onClick={[Function]}
   onKeyDown={[Function]}
@@ -165,7 +165,7 @@ exports[`lib/ui/menuItems/pinMenuItem > should render for actions if pinned=true
   tabIndex={0}
 >
   <span
-    className="fui-MenuItem__icon r9c34qo"
+    className="fui-MenuItem__icon ro9koqv"
   >
     <svg
       aria-hidden={true}

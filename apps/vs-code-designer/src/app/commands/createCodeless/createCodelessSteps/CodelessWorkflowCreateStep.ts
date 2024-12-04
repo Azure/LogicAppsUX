@@ -121,7 +121,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
   ): Promise<T> {
     if (await fse.pathExists(filePath)) {
       const data: string = (await fse.readFile(filePath)).toString();
-      if (/[^\s]/.test(data)) {
+      if (emptyStringTest.test(data)) {
         try {
           return parseJson(data);
         } catch (error) {
@@ -151,3 +151,5 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     return defaultValue;
   }
 }
+
+const emptyStringTest = /[^\s]/;

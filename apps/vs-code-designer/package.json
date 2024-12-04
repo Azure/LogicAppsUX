@@ -10,11 +10,13 @@
     "@microsoft/vscode-azext-azureappservice": "0.8.1",
     "@microsoft/vscode-azext-azureutils": "^0.3.9",
     "@microsoft/vscode-azext-utils": "0.4.6",
+    "@microsoft/vscode-azext-azureauth": "3.0.0",
     "@microsoft/vscode-extension-logic-apps": "workspace:*",
     "@azure/storage-file-share": "^12.16.0",
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
     "@microsoft/vscode-azureresources-api": "^2.0.2",
     "@azure/arm-resourcegraph": "^4.2.1",
+    "@azure/identity": "^4.5.0",
     "@types/adm-zip": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/vscode": "1.76.0",
@@ -32,7 +34,6 @@
     "process-tree": "^1.0.3",
     "ps-tree": "^1.2.0",
     "recursive-copy": "^2.0.14",
-    "request": "2.88.2",
     "semver": "^6.3.1",
     "tslib": "2.4.0",
     "uuid": "^10.0.0",
@@ -49,6 +50,6 @@
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test:extension-unit": "vitest --retry=3"
+    "test:extension-unit": "vitest run --retry=3"
   }
 }

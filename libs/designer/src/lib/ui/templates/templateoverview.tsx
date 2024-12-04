@@ -1,20 +1,21 @@
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import { useEffect, useState } from 'react';
-import { DetailsList, type IColumn, Link, SelectionMode, setLayerHostSelector } from '@fluentui/react';
+import { DetailsList, type IColumn, SelectionMode, setLayerHostSelector } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { getPropertyValue, unmap } from '@microsoft/logic-apps-shared';
-import { Text } from '@fluentui/react-components';
-import { QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
+import { Link, Text } from '@fluentui/react-components';
+import { QuickViewPanel, QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { ConnectionsList } from './connections/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../core/actions/bjsworkflow/templates';
 import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
-import { TemplatePanel } from '../panel/templatePanel/templatePanel';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
+import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
+import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
 export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWorkflowHandler }) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
@@ -29,7 +30,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     connections: state.template.connections,
     workflows: state.template.workflows,
   }));
-  const { title, description, details, detailsDescription } = manifest as Template.Manifest;
+  const { title, description, sourceCodeUrl, details, detailsDescription } = manifest as Template.Manifest;
   const resources = {
     by: intl.formatMessage({
       defaultMessage: 'By',
@@ -53,6 +54,10 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     setSelectedWorkflow(workflowId);
   };
 
+  const goBackToTemplateLibrary = () => {
+    dispatch(clearTemplateDetails());
+  };
+
   // TODO: Need to open new create panel for multi workflow here.
   const footerContentProps = workflowTab(
     intl,
@@ -68,7 +73,14 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
   ).footerContent;
   return (
     <>
-      <QuickViewPanelHeader title={title} description={description} details={info} features={detailsDescription} />
+      <QuickViewPanelHeader
+        title={title}
+        description={description}
+        sourceCodeUrl={sourceCodeUrl}
+        details={info}
+        features={detailsDescription}
+        onBackClick={goBackToTemplateLibrary}
+      />
       <div className="msla-template-overview" style={{ marginTop: '-34px' }}>
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
@@ -102,20 +114,16 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
       </div>
 
       {selectedWorkflow ? (
-        <TemplatePanel
+        <QuickViewPanel
           showCreate={false}
           workflowId={selectedWorkflow}
           clearDetailsOnClose={false}
           onClose={() => setSelectedWorkflow(undefined)}
         />
       ) : null}
+
       {showCreatePanel ? (
-        <TemplatePanel
-          showCreate={true}
-          createWorkflow={createWorkflow}
-          clearDetailsOnClose={false}
-          onClose={() => setShowCreatePanel(false)}
-        />
+        <CreateWorkflowPanel createWorkflow={createWorkflow} onClose={() => setShowCreatePanel(false)} clearDetailsOnClose={false} />
       ) : null}
       <div
         id={'msla-layer-host'}
@@ -205,13 +213,17 @@ const WorkflowList = ({
     switch (column?.key) {
       case 'name':
         return (
-          <Link href="#" as="button" onClick={() => showDetails(item.id)}>
+          <Link aria-label={item.name} as="button" onClick={() => showDetails(item.id)}>
             {item.name}
           </Link>
         );
 
       case 'trigger':
-        return <Text className="msla-template-overview-text">{item.trigger}</Text>;
+        return (
+          <Text aria-label={item.trigger} className="msla-template-overview-text">
+            {item.trigger}
+          </Text>
+        );
 
       default:
         return null;

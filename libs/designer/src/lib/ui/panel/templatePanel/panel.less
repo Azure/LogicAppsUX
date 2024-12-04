@@ -1,3 +1,18 @@
+// Universal across templates
+.msla-template-markdown {
+    * {
+        margin: 0;
+    }
+
+    a {
+        color: #115EA3;
+    }
+}
+
+.msla-templates-tab-source-code-icon {
+    padding-left: 4px;
+}
+
 .msla-template-quickview-tags {
     display: flex;
     flex-direction: row;
@@ -6,6 +21,15 @@
 
     .msla-template-last-tag {
         vertical-align: middle;
+    }
+
+    .msla-template-quickview-source-code {
+        padding-left: 20px;
+        display: inline-flex;
+        flex-direction: row;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
     }
 }
 
@@ -70,6 +94,11 @@
 }
 
 .msla-templates-tab {
+    .msla-templates-empty-review-tab {
+        padding: 80px 0px;
+        text-align: center;
+    }
+
     .msla-templates-tab-label {
         font-size: 14px;
         font-weight: 600;
@@ -220,11 +249,7 @@
             }
         }
 
-        .msla-template-markdown {
-            * {
-                margin: 0;
-            }
-        }
+
     }
 }
 

@@ -8,9 +8,7 @@ import { getRandomHexString } from '../../../utils/fs';
 import { createOrUpdateHybridApp } from '../../../utils/codeless/hybridLogicApp/hybridApp';
 import { updateSMBConnectedEnvironment } from '../../../utils/codeless/hybridLogicApp/connectedEnvironment';
 import path from 'path';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
-import { getAccountCredentials } from '../../../utils/credentials';
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import { azurePublicBaseUrl, driveLetterSMBSetting } from '../../../../constants';
 import axios from 'axios';
@@ -31,8 +29,7 @@ export const deployHybridLogicApp = async (context: IActionContext, node: SlotTr
 
         const newSmbFolderName = `${node.hybridSite.name}-${getRandomHexString(32 - node.hybridSite.name.length - 1)}`.toLowerCase();
 
-        const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-        const accessToken = await getAuthorizationToken(credentials);
+        const accessToken = await getAuthorizationToken();
 
         progress.report({ increment: 16, message: 'Connecting to SMB and uploading files' });
 
@@ -113,8 +110,7 @@ const getSMBDetails = async (context: IActionContext, node: SlotTreeItem) => {
 };
 
 const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName: string, context: IActionContext, node: SlotTreeItem) => {
-  const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-  const accessToken = await getAuthorizationToken(credentials);
+  const accessToken = await getAuthorizationToken();
 
   const url = `${azurePublicBaseUrl}/${connectedEnvId}/storages/${storageName}?api-version=2024-02-02-preview`;
 

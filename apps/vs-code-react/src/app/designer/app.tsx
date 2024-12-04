@@ -202,21 +202,25 @@ export const DesignerApp = () => {
   );
 
   return (
-    <DesignerProvider
-      locale="en-US"
-      options={{
-        isDarkMode: theme === Theme.Dark,
-        readOnly,
-        isMonitoringView,
-        isUnitTest,
-        services: services,
-        hostOptions: {
-          displayRuntimeInfo: true,
-        },
-      }}
-    >
-      {designerCommandBar}
-      {isError ? errorApp : isFetching || isLoading ? loadingApp : designerApp}
-    </DesignerProvider>
+    <div style={{ height: '100vh' }}>
+      <DesignerProvider
+        locale="en-US"
+        
+        options={{       
+          isDarkMode: theme === Theme.Dark,
+          isUnitTest,
+          isVSCode: true,
+          readOnly,
+          isMonitoringView,
+          services: services,
+          hostOptions: {
+            displayRuntimeInfo: true,
+          },
+        }}
+      >
+        {designerCommandBar}
+        {isError ? errorApp : isFetching || isLoading ? loadingApp : designerApp}
+      </DesignerProvider>
+    </div>
   );
 };

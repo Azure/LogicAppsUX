@@ -260,7 +260,14 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         setIsGeneratingAnswer(false);
       }
     },
-    [lastSubmittedQuery, expression.value, intlText.errors, signal]
+    [
+      lastSubmittedQuery,
+      expression.value,
+      intlText.errors.duplicateSubmissionError,
+      intlText.errors.originalExpressionError,
+      tokenGroup,
+      signal,
+    ]
   );
 
   const onQueryChange = (_ev: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue: string | undefined) => {

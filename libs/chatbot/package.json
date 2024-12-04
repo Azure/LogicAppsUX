@@ -1,9 +1,9 @@
 {
   "name": "@microsoft/logic-apps-chatbot",
-  "version": "4.114.0",
+  "version": "5.6.0",
   "dependencies": {
     "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-components": "9.56.0",
     "@fluentui/react-icons": "2.0.224",
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-designer": "workspace:*",
@@ -54,7 +54,7 @@
   "scripts": {
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
-    "test:lib": "vitest --retry=3",
+    "test:lib": "vitest run --retry=3",
     "unpublish:local": "pnpm unpublish --force"
   },
   "sideEffects": false,

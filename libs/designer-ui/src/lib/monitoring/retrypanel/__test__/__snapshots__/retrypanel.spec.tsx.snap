@@ -81,7 +81,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -883,7 +883,7 @@ exports[`lib/monitoring/retrypanel > should render 2`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -1685,7 +1685,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -2599,7 +2599,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -3513,7 +3513,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -4315,7 +4315,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -5117,7 +5117,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -5949,7 +5949,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 2`] =
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>

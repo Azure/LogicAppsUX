@@ -354,7 +354,6 @@ describe('utils/Connections', () => {
         inputs: {},
         outputs: [],
       };
-
       mockBoundedFunctionInputs.forEach((_input, idx) => {
         mockConnection.inputs[idx] = [''];
       });
@@ -363,11 +362,27 @@ describe('utils/Connections', () => {
     });
 
     it('Test bounded input with an available slot', () => {
-      expect(isFunctionInputSlotAvailable(undefined, mockBoundedFunctionInputs.length)).toEqual(true);
+      const mockConnection: Connection = {
+        self: {
+          reactFlowKey: 'Placeholder',
+          node: {} as SchemaNodeExtended,
+        },
+        inputs: {},
+        outputs: [],
+      };
+      expect(isFunctionInputSlotAvailable(mockConnection, 3)).toEqual(true);
     });
 
     it('Test unbounded input', () => {
-      expect(isFunctionInputSlotAvailable(undefined, -1)).toEqual(true);
+      const mockConnection: Connection = {
+        self: {
+          reactFlowKey: 'Placeholder',
+          node: {} as SchemaNodeExtended,
+        },
+        inputs: {},
+        outputs: [],
+      };
+      expect(isFunctionInputSlotAvailable(mockConnection, -1)).toEqual(true);
     });
   });
 

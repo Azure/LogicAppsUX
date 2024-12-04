@@ -10,7 +10,6 @@ import {
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerBase } from './openDesignerBase';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IWorkflowFileContent, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
@@ -103,8 +102,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const credentials: ServiceClientCredentials = this.node.credentials;
-    const accessToken: string = await getAuthorizationToken(credentials);
+    const accessToken: string = await getAuthorizationToken();
 
     return {
       panelId: this.panelName,

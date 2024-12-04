@@ -24,7 +24,6 @@ import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import { createUnitTest } from './unitTest/createUnitTest';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -45,7 +44,6 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let panelName = '';
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
-  let credentials: ServiceClientCredentials;
   let isWorkflowRuntimeRunning: boolean;
   let triggerName: string;
   const workflowNode = getWorkflowNode(node);
@@ -69,8 +67,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     workflowName = workflowNode.name;
     panelName = `${workflowNode.id}-${workflowName}-overview`;
     workflowContent = workflowNode.workflowFileContent;
-    credentials = workflowNode.credentials;
-    accessToken = await getAuthorizationToken(credentials);
+    accessToken = await workflowNode.subscription.credentials.getToken();
     baseUrl = getWorkflowManagementBaseURI(workflowNode);
     apiVersion = workflowAppApiVersion;
     triggerName = getTriggerName(workflowContent.definition);
@@ -144,7 +141,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
         // Just shipping the access Token every 5 seconds is easier and more
         // performant that asking for it every time and waiting.
         interval = setInterval(async () => {
-          const updatedAccessToken = await getAuthorizationToken(credentials);
+          const updatedAccessToken = await getAuthorizationToken();
 
           if (updatedAccessToken !== accessToken) {
             accessToken = updatedAccessToken;

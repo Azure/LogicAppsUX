@@ -19,6 +19,7 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
   useOperationVisuals,
+  useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
@@ -84,6 +85,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
+  const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -335,6 +337,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults}
           isSecureInputsOutputs={isSecureInputsOutputs}
+          isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
         />
         {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}

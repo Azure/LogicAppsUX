@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "4.114.0",
+  "version": "5.6.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -71,7 +71,6 @@
         "command": "azureLogicAppsStandard.createNewCodeProject",
         "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
-        "preview": true,
         "icon": {
           "light": "assets/light/CreateNewCodeProject.svg",
           "dark": "assets/dark/CreateNewCodeProject.svg"
@@ -96,8 +95,7 @@
       {
         "command": "azureLogicAppsStandard.generateDeploymentScripts",
         "title": "Generate deployment scripts...",
-        "category": "Azure Logic Apps",
-        "preview": true
+        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
@@ -329,7 +327,7 @@
       },
       {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
-        "title": "Data Mapper: Create new data map",
+        "title": "Data Mapper: Create data map",
         "icon": "$(add)"
       },
       {
@@ -390,7 +388,7 @@
     "viewsWelcome": [
       {
         "view": "azDataMapper",
-        "contents": "[Create new data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
+        "contents": "[Create data map](command:azureLogicAppsStandard.dataMap.createNewDataMap)\n[Load existing data map](command:azureLogicAppsStandard.dataMap.loadDataMapFile)"
       }
     ],
     "menus": {
@@ -830,7 +828,7 @@
               1,
               2
             ],
-            "description": "The default version of Data Mapper to use when performing operations like \"Create new data map\".",
+            "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
             "enumDescriptions": [
               "Version 1",
               "Version 2 (Beta)"
@@ -1023,7 +1021,6 @@
     ]
   },
   "extensionDependencies": [
-    "ms-vscode.azure-account",
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",

@@ -81,7 +81,7 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -659,7 +659,7 @@ exports[`lib/monitoring/requestpanel > should render 2`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -1237,7 +1237,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -1990,7 +1990,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -2029,7 +2029,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -2073,7 +2073,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -2236,7 +2236,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 2`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -2989,7 +2989,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 2`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -3028,7 +3028,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 2`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -3072,7 +3072,7 @@ exports[`lib/monitoring/requestpanel > should render with a request 2`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -3235,7 +3235,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -3876,7 +3876,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -3915,7 +3915,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -3959,7 +3959,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -4234,7 +4234,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 2`] = `
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -4875,7 +4875,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 2`] = `
               }
             >
               <div
-                className="ms-DetailsList ms-DetailsList--Compact is-horizontalConstrained root-129"
+                className="ms-DetailsList is-fixed ms-DetailsList--Compact is-horizontalConstrained root-129"
                 data-automationid="DetailsList"
                 data-is-scrollable="false"
               >
@@ -4914,7 +4914,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 2`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -4958,7 +4958,7 @@ exports[`lib/monitoring/requestpanel > should render with a response 2`] = `
                         role="columnheader"
                         style={
                           {
-                            "width": 120,
+                            "width": NaN,
                           }
                         }
                       >
@@ -5233,7 +5233,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -5842,7 +5842,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 2`] 
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
@@ -6451,7 +6451,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
           >
             1 of 1
           </span>
@@ -7060,7 +7060,7 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 2`]
           className="msla-pager-v2--inner"
         >
           <span
-            className="fui-Text ___nzdt000_bc09y70 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1mtd64y f1y7q3j9 f2jf649"
+            className="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
           >
             1 of 1
           </span>
