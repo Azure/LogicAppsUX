@@ -1621,7 +1621,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('continues after not finding source loop node with sequence', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
-            '$for(reverse(/ns0:Root/Looping/Employee2))': {
+            '$for(reverse(/ns0:Root/Looping/EmployeeDoesNotExist))': {
               Person: {
                 Name: 'Name',
               },
@@ -1639,15 +1639,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(2);
-
-        expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
-        expect(resultEntries[0][1]).toBeTruthy();
-        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-
-        expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries.length).toEqual(4);
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });

@@ -168,9 +168,7 @@ export class MapDefinitionDeserializer {
       if (!possibleSourceSchemaNode) {
         possibleSourceSchemaNode = this.getSourceNodeForRelativeKeyInLoop(key, connections, targetNode);
       }
-      if (!possibleSourceSchemaNode) {
-        throw new Error(`Source loop node not found for key ${key}`);
-      }
+
       if (isSchemaNodeExtended(targetNode)) {
         addParentConnectionForRepeatingElementsNested(
           possibleSourceSchemaNode,
@@ -544,7 +542,6 @@ export class MapDefinitionDeserializer {
 
   private handleSingleValue = (key: string, targetNode: SchemaNodeExtended | FunctionData, connections: ConnectionDictionary) => {
     if (key === '.') {
-      // danielle can we make this less explicit here? Can it be combined with another case?
       // current loop
       const lastLoop = this._loop[this._loop.length - 1].key;
 
@@ -582,7 +579,7 @@ export class MapDefinitionDeserializer {
 
       this.handleSingleValueOrFunction('', schemaNodeOrFunction.term, targetNode, connections);
     } else {
-      throw new Error(`Key ${key} not found in source schema`); // Danielle log to UI here
+      throw new Error(`Key ${key} not found in source schema`);
     }
   };
 
