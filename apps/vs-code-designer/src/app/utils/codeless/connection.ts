@@ -9,6 +9,7 @@ import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
+import { getCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -40,6 +41,11 @@ export async function getConnectionsFromFile(context: IActionContext, workflowFi
 export async function getParametersFromFile(context: IActionContext, workflowFilePath: string): Promise<Record<string, Parameter>> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
   return getParametersJson(projectRoot);
+}
+
+export async function getCustomCodeFromFiles(context: IActionContext, workflowFilePath: string): Promise<Record<string, string>> {
+  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
+  return getCustomCode(projectRoot);
 }
 
 export async function getConnectionsJson(projectRoot: string): Promise<string> {
@@ -352,7 +358,7 @@ export async function createAclInConnectionIfNeeded(
   try {
     const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connectionAcls = response.parsedBody.value;
-  } catch (error) {
+  } catch (_error) {
     connectionAcls = [];
   }
 

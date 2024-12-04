@@ -46,6 +46,7 @@ export abstract class OpenDesignerBase {
   protected oauthRedirectUrl?: string;
   protected schemaArtifacts?: FileDetails[] | undefined;
   protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
+  protected customCode?: Record<string, string>;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,

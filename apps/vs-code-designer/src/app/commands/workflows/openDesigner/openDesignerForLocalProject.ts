@@ -14,6 +14,7 @@ import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
+  getCustomCodeFromFiles,
   getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
@@ -124,6 +125,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     });
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
+    this.panelMetadata.customCodeData = this.customCode;
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
 
@@ -411,6 +413,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
+    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.context, this.workflowFilePath);
+    const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
+    const artifacts = await getArtifactsInLocalProject(projectPath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -431,11 +436,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       azureDetails,
       accessToken: azureDetails.accessToken,
       workflowContent,
-      workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
+      workflowDetails,
       workflowName: this.workflowName,
-      artifacts: await getArtifactsInLocalProject(projectPath),
+      artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
+      customCodeData,
     };
   }
 

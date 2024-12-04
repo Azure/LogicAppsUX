@@ -13,6 +13,7 @@ import {
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
+// import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
@@ -62,11 +63,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
     if (!hasParametersErrors) {
-      await vscode.postMessage({
+      vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
         parameters,
         connectionReferences,
+        // customCodeData,
       });
     }
   });
@@ -220,3 +222,24 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     />
   );
 };
+
+// const getCustomCodeToUpdate = async (
+//   originalCustomCodeData: string[],
+//   customCode: CustomCodeFileNameMapping,
+//   appId?: string
+// ): Promise<AllCustomCodeFiles | undefined> => {
+//   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
+//   if (!customCode || Object.keys(customCode).length === 0) {
+//     return;
+//   }
+//   const appFiles = await getCustomCodeAppFiles(appId, customCode);
+
+//   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+//     const { isModified, isDeleted } = customCodeData;
+
+//     if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
+//       filteredCustomCodeMapping[fileName] = { ...customCodeData };
+//     }
+//   });
+//   return { customCodeFiles: filteredCustomCodeMapping, appFiles };
+// };
