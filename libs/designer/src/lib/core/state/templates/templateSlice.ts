@@ -143,10 +143,6 @@ export const templateSlice = createSlice({
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;
     });
-
-    builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
-      state.servicesInitialized = action.payload;
-    });
   },
 });
 

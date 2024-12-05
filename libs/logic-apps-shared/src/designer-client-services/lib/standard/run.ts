@@ -243,17 +243,12 @@ export class StandardRunService implements IRunService {
   }
 
   /**
-   * Retrieves the action links for a given action metadata.
+   * Gets the inputs and outputs for an action repetition from a workflow run
    * @param {{inputsLink: ContentLink, outputsLink: ContentLink}} actionMetadata - Workflow file path.
-   * @param {string} nodeId - The ID of the node.
-   * @param {boolean} parseLink - Indicates whether to parse the action links or not.
-   * @returns A promise that resolves to an object containing the parsed inputs and outputs action links.
+   * @param {string} nodeId - Action ID.
+   * @returns {Promise<any>} Action inputs and outputs.
    */
-  async getActionLinks(
-    actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink },
-    nodeId?: string,
-    parseLink = true
-  ): Promise<any> {
+  async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
     const { inputsLink, outputsLink } = actionMetadata ?? {};
     const { updateCors } = this.options;
     let inputs: Record<string, any> = {};

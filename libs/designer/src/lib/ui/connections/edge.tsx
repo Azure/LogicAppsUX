@@ -130,11 +130,11 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     });
   }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY]);
 
+  const tabIndex = useEdgeIndex(id);
+
   const highlighted = useMemo(() => {
     return sourceId === selectedNode || targetId === selectedNode;
   }, [sourceId, targetId, selectedNode]);
-
-  const tabIndex = useEdgeIndex(id);
 
   return (
     <>

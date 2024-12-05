@@ -87,7 +87,7 @@ export abstract class BaseSearchService implements ISearchService {
     try {
       const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
       return { value, hasMore: !!nextLink };
-    } catch (error) {
+    } catch {
       return { value: [], hasMore: false };
     }
   }
@@ -105,7 +105,7 @@ export abstract class BaseSearchService implements ISearchService {
           return await requestPage(nextLink, value);
         }
         return value;
-      } catch (error) {
+      } catch {
         return value;
       }
     };
@@ -143,9 +143,6 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
-    if (this._isHybridLogicApp) {
-      return Promise.resolve([]);
-    }
     if (this._isDev) {
       if (page === 0) {
         return Promise.resolve(azureOperationsResponse);
@@ -184,9 +181,6 @@ export abstract class BaseSearchService implements ISearchService {
   }
 
   async getAzureConnectorsByPage(page: number): Promise<Connector[]> {
-    if (this._isHybridLogicApp) {
-      return Promise.resolve([]);
-    }
     if (this._isDev) {
       if (page === 0) {
         const connectors = AzureConnectorMock.value as Connector[];
@@ -218,7 +212,7 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       return this.getAzureResourceRecursive(uri, queryParameters);
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -237,7 +231,7 @@ export abstract class BaseSearchService implements ISearchService {
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
-    } catch (error) {
+    } catch {
       return [];
     }
   }

@@ -266,6 +266,7 @@ describe('lib/nl2fExpressionAssistant', () => {
         });
       }
     }
+
     InitCopilotService(new TestCopilotService({}));
 
     const { getByTestId } = render(
