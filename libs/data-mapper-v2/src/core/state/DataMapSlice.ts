@@ -181,11 +181,6 @@ export interface DeleteConnectionAction {
   inputKey: string;
 }
 
-type ReactFlowNodesUpdateProps = {
-  isSource: boolean;
-  nodes: Record<string, Node>;
-};
-
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,

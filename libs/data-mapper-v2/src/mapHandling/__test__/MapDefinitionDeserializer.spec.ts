@@ -123,7 +123,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       });
 
       it('creates a connection between one source and target node with leading @', () => {
-        // danielle diagnose this
         simpleMap['ns0:Root'] = {
           DataTranslation: {
             EmployeeName: {

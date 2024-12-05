@@ -87,25 +87,6 @@ export const parsePropertiesIntoNodeProperties = (propertiesString: string): Sch
   return [];
 };
 
-//
-export const getChildParentSchemaMapping = (schema: SchemaExtended): Record<string, string[]> => {
-  const result: Record<string, string[]> = {};
-
-  const addParentToChild = (root: SchemaNodeExtended, parentSetSoFar: string[]) => {
-    result[root.key] = parentSetSoFar;
-    for (const child of root.children) {
-      addParentToChild(child, [...parentSetSoFar, root.key]);
-      [];
-    }
-  };
-
-  if (schema.schemaTreeRoot) {
-    addParentToChild(schema.schemaTreeRoot, []);
-  }
-
-  return result;
-};
-
 export const flattenSchemaIntoDictionary = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
   const idPrefix = schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;

@@ -132,6 +132,7 @@ export const iconForNormalizedDataType = (
       icons = [CalendarClockRegular, CalendarClockFilled];
       break;
     }
+    case NormalizedDataType.Complex:
     case NormalizedDataType.Object: {
       if (nodeProperties && nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1) {
         icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];

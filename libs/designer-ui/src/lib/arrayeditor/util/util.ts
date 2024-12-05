@@ -82,7 +82,6 @@ export const convertComplexItemsToArray = (
                 arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
               }
             });
-            console.log(arrayVal);
             returnItem[keyName] = arrayVal;
           }
         } else {
@@ -182,7 +181,7 @@ export const validationAndSerializeSimpleArray = (
       setItems(returnItems);
     }
     setIsValid?.(true);
-  } catch (e) {
+  } catch {
     setIsValid?.(false);
     setCollapsed?.(true);
   }
@@ -227,7 +226,7 @@ export const validationAndSerializeComplexArray = (
       setItems(returnItems);
     }
     setIsValid?.(true);
-  } catch (e) {
+  } catch {
     setIsValid?.(false);
     setCollapsed?.(true);
   }
