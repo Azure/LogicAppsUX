@@ -79,12 +79,6 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
-  "+nCfrr": [
-    {
-      "type": 0,
-      "value": "Delete assertion"
-    }
-  ],
   "+oelX4": [
     {
       "type": 0,
@@ -623,12 +617,6 @@
       "value": "End time"
     }
   ],
-  "2M+Kcv": [
-    {
-      "type": 0,
-      "value": "Timed out"
-    }
-  ],
   "2MOA1x": [
     {
       "type": 0,
@@ -1127,12 +1115,6 @@
       "value": "Authority"
     }
   ],
-  "5U6Dee": [
-    {
-      "type": 0,
-      "value": "Action Result"
-    }
-  ],
   "5WTRY8": [
     {
       "type": 0,
@@ -1443,12 +1425,6 @@
     {
       "type": 0,
       "value": "\" cannot be found for this operation"
-    }
-  ],
-  "7PTnxD": [
-    {
-      "type": 0,
-      "value": "New assertion"
     }
   ],
   "7PtWvu": [
@@ -2563,12 +2539,6 @@
       "value": "Converts the parameter to a decimal number"
     }
   ],
-  "EINKvY": [
-    {
-      "type": 0,
-      "value": "Create unit test"
-    }
-  ],
   "ERAWZA": [
     {
       "type": 0,
@@ -2887,12 +2857,6 @@
       "value": "Explain flow"
     }
   ],
-  "GX3fkR": [
-    {
-      "type": 0,
-      "value": "New assertion"
-    }
-  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -3035,12 +2999,6 @@
     {
       "type": 0,
       "value": "Required. The key name of the form data value to return."
-    }
-  ],
-  "HF2SNx": [
-    {
-      "type": 0,
-      "value": "Is successful"
     }
   ],
   "HGA9iU": [
@@ -3637,12 +3595,6 @@
     {
       "type": 0,
       "value": "Removed this action"
-    }
-  ],
-  "LdBN0m": [
-    {
-      "type": 0,
-      "value": "Assertion name"
     }
   ],
   "LdITnG": [
@@ -4373,12 +4325,6 @@
       "value": "Workflow functions"
     }
   ],
-  "PhBS5+": [
-    {
-      "type": 0,
-      "value": "Enter name"
-    }
-  ],
   "PjBcG3": [
     {
       "type": 0,
@@ -4585,12 +4531,6 @@
     {
       "type": 0,
       "value": "h"
-    }
-  ],
-  "R/UPRD": [
-    {
-      "type": 0,
-      "value": "Mocked Results Tab"
     }
   ],
   "R/aiRy": [
@@ -4807,12 +4747,6 @@
     {
       "type": 0,
       "value": "Save"
-    }
-  ],
-  "Sm3qmB": [
-    {
-      "type": 0,
-      "value": "Skipped, timed out, or failed actions do not support mocking outputs. Mocking is only supported for successful actions."
     }
   ],
   "SmCQys": [
@@ -5997,12 +5931,6 @@
       "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
     }
   ],
-  "YjSqtf": [
-    {
-      "type": 0,
-      "value": "Must provide the Assertion name."
-    }
-  ],
   "YlesUQ": [
     {
       "type": 0,
@@ -6209,12 +6137,6 @@
     {
       "type": 0,
       "value": "Second"
-    }
-  ],
-  "aWkG01": [
-    {
-      "type": 0,
-      "value": "This operation does not support mocking. Mocking is only supported for operations that are connected to a service provider, function, API connection, or API Management."
     }
   ],
   "aYTy7X": [
@@ -6545,12 +6467,6 @@
       "value": "(UTC-04:00) Cuiaba"
     }
   ],
-  "cySYfO": [
-    {
-      "type": 0,
-      "value": "Has failed"
-    }
-  ],
   "d020eg": [
     {
       "type": 0,
@@ -6649,12 +6565,6 @@
       "value": "Italic (Ctrl+I)"
     }
   ],
-  "dgPMsl": [
-    {
-      "type": 0,
-      "value": "Completed"
-    }
-  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -6683,12 +6593,6 @@
     {
       "type": 0,
       "value": "Warnings"
-    }
-  ],
-  "dzPAxq": [
-    {
-      "type": 0,
-      "value": "Edit assertion"
     }
   ],
   "e+GuGo": [
@@ -6755,12 +6659,6 @@
     {
       "type": 0,
       "value": "Specify the duration in ISO 8601 format"
-    }
-  ],
-  "eIzHIR": [
-    {
-      "type": 0,
-      "value": "Empty"
     }
   ],
   "eO1h/h": [
@@ -7041,12 +6939,6 @@
       "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
-  "gX4ect": [
-    {
-      "type": 0,
-      "value": "Is skipped"
-    }
-  ],
   "gYaVvl": [
     {
       "type": 0,
@@ -7203,12 +7095,6 @@
     {
       "type": 0,
       "value": "Undo"
-    }
-  ],
-  "hW7oe7": [
-    {
-      "type": 0,
-      "value": "Enter description"
     }
   ],
   "hZqQdt": [
@@ -7721,12 +7607,6 @@
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
     }
   ],
-  "kSXjTx": [
-    {
-      "type": 0,
-      "value": "No description"
-    }
-  ],
   "kVwJXt": [
     {
       "type": 0,
@@ -7821,12 +7701,6 @@
       "value": "(UTC+01:00) Windhoek"
     }
   ],
-  "l0hO5f": [
-    {
-      "type": 0,
-      "value": "Assertion name already exists."
-    }
-  ],
   "l2YXln": [
     {
       "type": 0,
@@ -7867,12 +7741,6 @@
     {
       "type": 0,
       "value": "Enter a valid number."
-    }
-  ],
-  "lC+EbT": [
-    {
-      "type": 0,
-      "value": "Mocked Results"
     }
   ],
   "lM9qrG": [
@@ -8405,12 +8273,6 @@
     {
       "type": 0,
       "value": "Item"
-    }
-  ],
-  "oFq3ng": [
-    {
-      "type": 0,
-      "value": "Assertions"
     }
   ],
   "oLtwMw": [
@@ -8989,12 +8851,6 @@
       "value": "Open folder"
     }
   ],
-  "s4omwa": [
-    {
-      "type": 0,
-      "value": "Description"
-    }
-  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -9489,12 +9345,6 @@
     {
       "type": 0,
       "value": "16"
-    }
-  ],
-  "ujp53j": [
-    {
-      "type": 0,
-      "value": "Condition expression"
     }
   ],
   "unMG8m": [
