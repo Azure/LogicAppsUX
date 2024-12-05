@@ -526,6 +526,11 @@ export const workflowSlice = createSlice({
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
+    builder.addCase(updateNodeSettings, (state, action) => {
+      if (!action.payload.ignoreDirty) {
+        state.isDirty = true;
+      }
+    });
     builder.addMatcher(
       isAnyOf(
         addNode,
@@ -541,7 +546,6 @@ export const workflowSlice = createSlice({
         removeEdgeFromRunAfter,
         addEdgeFromRunAfter,
         replaceId,
-        updateNodeSettings,
         updateNodeConnection.fulfilled,
         updateStaticResults,
         updateParameterConditionalVisibility

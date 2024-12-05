@@ -89,6 +89,7 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
       updateNodeSettings({
         id: selectedNode,
         settings,
+        ignoreDirty: false,
       })
     );
     if (shouldValidateSetting) {
@@ -339,6 +340,7 @@ function GeneralSettings({
             value: { value: invokerConnection?.value?.value, enabled: checked },
           },
         },
+        ignoreDirty: false,
       })
     );
   };

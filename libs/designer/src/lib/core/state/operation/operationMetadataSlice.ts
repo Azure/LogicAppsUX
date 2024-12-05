@@ -161,6 +161,7 @@ export interface NodeData {
 interface AddSettingsPayload {
   id: string;
   settings: Settings;
+  ignoreDirty: boolean;
 }
 
 interface AddStaticResultsPayload {
