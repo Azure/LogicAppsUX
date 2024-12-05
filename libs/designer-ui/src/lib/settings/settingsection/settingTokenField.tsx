@@ -42,6 +42,7 @@ import { useMemo } from 'react';
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
+  isDynamic?: boolean;
   isLoading?: boolean;
   errorDetails?: { message: string };
   editor?: string;
@@ -99,6 +100,7 @@ export const TokenField = ({
   placeholder,
   readOnly,
   value,
+  isDynamic,
   isLoading,
   errorDetails,
   showTokens,
@@ -136,6 +138,7 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
+          isDynamic={isDynamic}
           options={dropdownOptions}
           isLoading={isLoading}
           errorDetails={errorDetails}
