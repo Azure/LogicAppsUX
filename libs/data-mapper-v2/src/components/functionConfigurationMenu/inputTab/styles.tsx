@@ -31,7 +31,7 @@ export const useStyles = makeStyles({
     width: '170px',
     textAlign: 'end',
   },
-  allowedTypes: {
+  typesParent: {
     fontSize: '14px',
   },
   inputNameDiv: {

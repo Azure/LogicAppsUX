@@ -1,5 +1,5 @@
 import { Badge, Button, Caption1, Caption2, Text } from '@fluentui/react-components';
-import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
+import { AddRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
 import {
@@ -15,7 +15,6 @@ import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
 import { useStyles } from './styles';
-import { mergeStyles } from '@fluentui/react';
 import { isSchemaNodeExtended } from '../../../utils';
 import {
   connectionDoesExist,
@@ -36,10 +35,10 @@ export const InputTabContents = (props: {
   const intl = useIntl();
   const resources = useMemo(
     () => ({
-      ALLOWED_TYPES: intl.formatMessage({
-        defaultMessage: 'Allowed types: ',
-        id: 'EWgDpM',
-        description: 'Allowed types',
+      ACCEPTED_TYPES: intl.formatMessage({
+        defaultMessage: 'Accepted types: ',
+        id: 'ZgyD93',
+        description: 'Accepted types',
       }),
     }),
     [intl]
@@ -106,7 +105,7 @@ export const InputTabContents = (props: {
               <Caption2>{input.tooltip ?? input.placeHolder ?? ''}</Caption2>
             </div>
             <Caption2 className={styles.allowedTypesComponent}>
-              <Text className={styles.allowedTypes}>{resources.ALLOWED_TYPES}</Text>
+              <Text className={styles.typesParent}>{resources.ACCEPTED_TYPES}</Text>
               {input.allowedTypes}
             </Caption2>
           </div>
@@ -132,7 +131,7 @@ export const InputTabContents = (props: {
             <Button
               className={styles.listButton}
               appearance="transparent"
-              icon={<LinkDismissRegular />}
+              icon={<DeleteRegular />}
               onClick={() => removeConnection(index)}
             />
           </div>
@@ -174,6 +173,11 @@ const UnlimitedInputs = (props: {
         id: '6eDY1H',
         description: 'Optional Keyword',
       }),
+      ADD_INPUT: intl.formatMessage({
+        defaultMessage: 'Add Input',
+        id: 'wx/ZQP',
+        description: 'Add Input',
+      }),
     }),
     [intl]
   );
@@ -200,8 +204,11 @@ const UnlimitedInputs = (props: {
         <span className={styles.unlimitedInputHeaderCell} key="input-name">
           <Caption1>{`${inputsFromManifest[0].name}${inputsFromManifest[0].isOptional ? ` (${stringResources.OPTIONAL})` : ''}`}</Caption1>
         </span>
-        <span className={mergeStyles(styles.unlimitedInputHeaderCell, styles.allowedTypes)} key="input-types">
-          <Caption2>{`${stringResources.ACCEPT_TYPES}${inputsFromManifest[0].allowedTypes}`}</Caption2>
+        <span className={styles.unlimitedInputHeaderCell} key="input-types">
+          <Caption2>
+            <Text className={styles.typesParent}>{stringResources.ACCEPT_TYPES}</Text>
+            {inputsFromManifest[0].allowedTypes}
+          </Caption2>
         </span>
       </div>
       <DraggableList<TemplateItemProps, CommonProps, any>
@@ -227,7 +234,7 @@ const UnlimitedInputs = (props: {
         className={styles.addButton}
         appearance="transparent"
       >
-        <Caption1>Add Input</Caption1>
+        <Caption1>{stringResources.ADD_INPUT}</Caption1>
       </Button>
     </div>
   );
