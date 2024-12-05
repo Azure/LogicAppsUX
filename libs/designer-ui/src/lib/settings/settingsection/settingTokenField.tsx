@@ -136,7 +136,7 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={dropdownOptions.length > 0 ? dropdownOptions : undefined}
+          options={dropdownOptions}
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -163,6 +163,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
+
     case constants.PARAMETER.EDITOR.CODE: {
       const customCodeEditor = isCustomCode(editor, editorOptions?.language);
       let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
@@ -186,6 +187,7 @@ export const TokenField = ({
         />
       );
     }
+
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox
